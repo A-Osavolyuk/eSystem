@@ -3,49 +3,67 @@ using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
 
 namespace eShop.Auth.Api.Services;
 
-internal sealed class TokenHandler(IOptions<JwtOptions> options, AuthDbContext context) : ITokenHandler
+internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManager securityManager) : ITokenHandler
 {
-    private readonly JwtOptions jwtOptions = options.Value;
-    private readonly AuthDbContext context = context;
+    private readonly ISecurityManager securityManager = securityManager;
+    private const int AccessTokenExpirationMinutes = 30;
+    private readonly JwtOptions options = options.Value;
+    private readonly JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 
-    public async Task<TokenResponse> GenerateTokenAsync(AppUser user, List<string> roles, List<string> permissions)
+    public async Task<Token> GenerateTokenAsync(AppUser user, List<string> roles, List<string> permissions)
     {
-        var handler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(options.Key);
+        var algorithm = SecurityAlgorithms.HmacSha256Signature;
+        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
 
-        var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(key: Encoding.UTF8.GetBytes(jwtOptions.Key)),
-            algorithm: SecurityAlgorithms.HmacSha256Signature);
+        var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
+        var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
 
-        var accessToken = handler.WriteToken(new JwtSecurityToken(
-            audience: jwtOptions.Audience,
-            issuer: jwtOptions.Issuer,
-            claims: SetClaims(user, roles, permissions),
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: signingCredentials));
+        var claims = SetClaims(user, roles, permissions);
+        var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
+        var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        var refreshToken = handler.WriteToken(new JwtSecurityToken(
-            audience: jwtOptions.Audience,
-            issuer: jwtOptions.Issuer,
-            claims: SetClaims(user, roles, permissions),
-            expires: DateTime.Now.AddSeconds(jwtOptions.ExpirationSeconds),
-            signingCredentials: signingCredentials));
+        await securityManager.SaveTokenAsync(user, refreshToken, refreshTokenExpiration);
 
-        await context.SecurityTokens.AddAsync(new() { UserId = user.Id, Token = refreshToken });
-        await context.SaveChangesAsync();
-
-        return new TokenResponse()
+        return new Token()
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
         };
     }
 
+
+    public string RefreshToken(string token)
+    {
+        var rawToken = DecryptToken(token);
+        var claims = GetClaimsFromToken(rawToken);
+        var key = Encoding.UTF8.GetBytes(options.Key);
+        var algorithm = SecurityAlgorithms.HmacSha256Signature;
+        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
+        var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
+        var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
+
+        return refreshToken;
+    }
+
+    private string WriteToken(List<Claim> claims, SigningCredentials signingCredentials, DateTime expiration)
+    {
+        var securityToken = new JwtSecurityToken(
+            audience: options.Audience,
+            issuer: options.Issuer,
+            claims: claims,
+            expires: expiration,
+            signingCredentials: signingCredentials);
+        var token = handler.WriteToken(securityToken);
+        return token;
+    }
+
     private List<Claim> SetClaims(AppUser user, List<string> roles, List<string> permissions)
     {
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, user.UserName ?? "None"),
-            new(ClaimTypes.Email, user.Email ?? "None"),
+            new(ClaimTypes.UserName, user.UserName ?? ""),
+            new(ClaimTypes.Email, user.Email ?? ""),
             new(ClaimTypes.Id, user.Id),
             new(ClaimTypes.PhoneNumber, user.PhoneNumber ?? "")
         };
@@ -71,8 +89,6 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, AuthDbContext c
 
     private JwtSecurityToken? DecryptToken(string token)
     {
-        var handler = new JwtSecurityTokenHandler();
-
         if (!string.IsNullOrEmpty(token) && handler.CanReadToken(token))
         {
             var rawToken = handler.ReadJwtToken(token);
@@ -85,11 +101,6 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, AuthDbContext c
         }
     }
 
-    private DateTime? GetTokenExpirationDate(JwtSecurityToken token)
-    {
-        return token.ValidTo;
-    }
-
     private List<Claim> GetClaimsFromToken(JwtSecurityToken? token)
     {
         if (token is null)
@@ -99,14 +110,13 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, AuthDbContext c
 
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserName)!.Value),
-            new(ClaimTypes.Email, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value),
-            new(ClaimTypes.Id, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Id)!.Value),
-            new(ClaimTypes.PhoneNumber, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)!.Value),
+            new(ClaimTypes.UserName, GetClaimValue(token, ClaimTypes.UserName)),
+            new(ClaimTypes.Email, GetClaimValue(token, ClaimTypes.Email)),
+            new(ClaimTypes.Id, GetClaimValue(token, ClaimTypes.Id)),
+            new(ClaimTypes.PhoneNumber, GetClaimValue(token, ClaimTypes.PhoneNumber)),
         };
 
-        var roles = token.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value)
-            .ToList();
+        var roles = token.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
         var permissions = token.Claims.Where(x => x.Type == ClaimTypes.Permission).Select(x => x.Value).ToList();
 
         if (roles.Any())
@@ -128,47 +138,9 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, AuthDbContext c
         return claims;
     }
 
-    public TokenResponse? RefreshToken(string token)
+    private string GetClaimValue(JwtSecurityToken token, string claimType)
     {
-        if (string.IsNullOrEmpty(token))
-        {
-            return null;
-        }
-
-        var rawToken = DecryptToken(token);
-
-        if (rawToken is null)
-        {
-            return null;
-        }
-
-        var claims = GetClaimsFromToken(rawToken);
-        var validateTo = GetTokenExpirationDate(rawToken);
-
-        var handler = new JwtSecurityTokenHandler();
-
-        var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(key: Encoding.UTF8.GetBytes(jwtOptions.Key)),
-            algorithm: SecurityAlgorithms.HmacSha256Signature);
-
-        var accessToken = handler.WriteToken(new JwtSecurityToken(
-            audience: jwtOptions.Audience,
-            issuer: jwtOptions.Issuer,
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: signingCredentials));
-
-        var refreshToken = handler.WriteToken(new JwtSecurityToken(
-            audience: jwtOptions.Audience,
-            issuer: jwtOptions.Issuer,
-            claims: claims,
-            expires: validateTo,
-            signingCredentials: signingCredentials));
-
-        return new TokenResponse
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        };
+        var value = token.Claims.FirstOrDefault(x => x.Type == claimType)!.Value;
+        return value;
     }
 }
