@@ -1,4 +1,7 @@
-﻿namespace eShop.AppHost.Extensions;
+﻿using eShop.AppHost.Options;
+using Microsoft.Extensions.Configuration;
+
+namespace eShop.AppHost.Extensions;
 
 public static class MongoExpressExtensions
 {
@@ -35,5 +38,19 @@ public static class MongoExpressExtensions
         builder.WithEnvironment("ME_CONFIG_MONGODB_URL", url);
         
         return builder;
+    }
+
+    public static IResourceBuilder<MongoDBServerResource> WithMongoExpress(
+        this IResourceBuilder<MongoDBServerResource> builder, IConfigurationManager configuration)
+    {
+        var options = configuration.GetSectionValue<MongoExpressOptions>("Configuration:MongoExpress");
+        
+        return builder.WithMongoExpress(cfg =>
+        {
+            cfg.WithAuthentication();
+            cfg.WithMongoCredentials(options.User, options.Password);
+            cfg.WithMongoServer(options.MongoServer);
+            cfg.WithMongoUrl(options.MongoUrl);
+        }, options.Name);
     }
 }
