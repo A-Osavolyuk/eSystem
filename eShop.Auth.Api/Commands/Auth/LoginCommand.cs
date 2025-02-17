@@ -37,13 +37,12 @@ internal sealed class LoginCommandHandler(
 
         if (securityToken is not null)
         {
-            var tokens = tokenHandler.RefreshToken(securityToken.Token);
+            var token = tokenHandler.RefreshToken(securityToken.Token);
 
             return new(new LoginResponse()
             {
                 User = userDto,
-                AccessToken = tokens!.AccessToken,
-                RefreshToken = tokens.RefreshToken,
+                RefreshToken = token,
                 Message = "Successfully logged in.",
                 HasTwoFactorAuthentication = false
             });

@@ -37,22 +37,21 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 
         if (user is not null)
         {
-            var userDto = new User(user.Email!, user.UserName!, user.Id);
             var securityToken = await appManager.SecurityManager.FindTokenAsync(user);
 
             if (securityToken is not null)
             {
-                var tokens = tokenHandler.RefreshToken(securityToken.Token);
+                var token = tokenHandler.RefreshToken(securityToken.Token);
 
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
-                    new { tokens!.AccessToken, tokens.RefreshToken, request.ReturnUri });
+                    new { token, request.ReturnUri });
                 return new(link);
             }
             else
             {
-                var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-                var permissions = (await appManager.PermissionManager.GetUserPermissionsAsync(user)).ToList();
-                var tokens = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
+                var roles = await appManager.UserManager.GetRolesAsync(user);
+                var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
+                var tokens = await tokenHandler.GenerateTokenAsync(user, roles.ToList(), permissions);
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { tokens!.AccessToken, tokens.RefreshToken, request.ReturnUri });
                 return new(link);
