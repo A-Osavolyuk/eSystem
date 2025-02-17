@@ -16,7 +16,7 @@
           "Key": "",
           "Audience": "",
           "Issuer": "",
-          "ExpirationSeconds": 0
+          "ExpirationDays": 0
         }
       },
       "Authorization": {

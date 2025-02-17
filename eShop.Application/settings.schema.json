@@ -43,7 +43,7 @@
                     "Issuer": {
                       "type": "string"
                     },
-                    "ExpirationSeconds": {
+                    "ExpirationDays": {
                       "type": "integer"
                     }
                   },
@@ -51,7 +51,7 @@
                     "Key",
                     "Audience",
                     "Issuer",
-                    "ExpirationSeconds"
+                    "ExpirationDays"
                   ]
                 }
               }
