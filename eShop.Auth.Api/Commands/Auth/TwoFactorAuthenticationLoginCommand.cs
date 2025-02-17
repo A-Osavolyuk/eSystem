@@ -33,7 +33,7 @@ internal sealed class TwoFactorAuthenticationLoginCommandHandler(
 
         if (securityToken is not null)
         {
-            var token = tokenHandler.RefreshToken(securityToken.Token);
+            var token = await tokenHandler.RefreshTokenAsync(user, securityToken.Token);
 
             return new(new LoginResponse()
             {

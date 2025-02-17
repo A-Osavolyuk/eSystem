@@ -33,7 +33,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     }
 
 
-    public string RefreshToken(string token)
+    public async Task<string> RefreshTokenAsync(AppUser user, string token)
     {
         var rawToken = DecryptToken(token);
         var claims = GetClaimsFromToken(rawToken);
@@ -43,6 +43,8 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
+        await securityManager.SaveTokenAsync(user, refreshToken, refreshTokenExpiration);
+        
         return refreshToken;
     }
 

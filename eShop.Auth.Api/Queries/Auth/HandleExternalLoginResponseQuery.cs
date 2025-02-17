@@ -41,7 +41,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 
             if (securityToken is not null)
             {
-                var token = tokenHandler.RefreshToken(securityToken.Token);
+                var token = await tokenHandler.RefreshTokenAsync(user, securityToken.Token);
 
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { token, request.ReturnUri });
