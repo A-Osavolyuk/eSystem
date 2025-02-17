@@ -181,6 +181,17 @@ internal sealed class SecurityManager(
         return IdentityResult.Success;
     }
 
+    public async ValueTask SaveTokenAsync(AppUser user, string token, DateTime tokenExpiration)
+    {
+        await context.SecurityTokens.AddAsync(new()
+        {
+            UserId = user.Id, 
+            Token = token,
+            ExpiredAt = tokenExpiration,
+        });
+        await context.SaveChangesAsync();
+    }
+
     #region Private methods
 
     private string GenerateCode()
