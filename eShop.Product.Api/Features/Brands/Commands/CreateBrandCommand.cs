@@ -1,4 +1,4 @@
-﻿namespace eShop.Product.Api.Commands.Brands;
+﻿namespace eShop.Product.Api.Features.Brands.Commands;
 
 internal sealed record CreateBrandCommand(CreateBrandRequest Request) : IRequest<Result<CreateBrandResponse>>;
 

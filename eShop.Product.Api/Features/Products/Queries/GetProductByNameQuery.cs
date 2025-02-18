@@ -1,39 +1,37 @@
 ﻿using eShop.Domain.DTOs;
 using eShop.Product.Api.Entities;
 
-namespace eShop.Product.Api.Queries.Products;
+namespace eShop.Product.Api.Features.Products.Queries;
 
-internal sealed record GetProductByArticleQuery(string ProductArticle) : IRequest<Result<ProductDto>>;
+internal sealed record GetProductByNameQuery(string ProductName) : IRequest<Result<ProductDto>>;
 
-internal sealed class GetProductByArticleQueryHandler(AppDbContext context, ICacheService cacheService)
-    : IRequestHandler<GetProductByArticleQuery, Result<ProductDto>>
+internal sealed class GetProductQueryByNameHandler(AppDbContext context, ICacheService cacheService)
+    : IRequestHandler<GetProductByNameQuery, Result<ProductDto>>
 {
     private readonly AppDbContext context = context;
     private readonly ICacheService cacheService = cacheService;
 
-    public async Task<Result<ProductDto>> Handle(GetProductByArticleQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ProductDto>> Handle(GetProductByNameQuery request, CancellationToken cancellationToken)
     {
-        var key = $"product-{request.ProductArticle}";
+        var key = $"product-{request.ProductName}";
         var cachedEntity = await cacheService.GetAsync<ProductDto>(key);
 
         if (cachedEntity is null)
         {
-            if (string.IsNullOrEmpty(request.ProductArticle) || !decimal.TryParse(request.ProductArticle, out _))
+            if (string.IsNullOrEmpty(request.ProductName))
             {
-                return new Result<ProductDto>(
-                    new BadRequestException($"You must provide a product article in request"));
+                return new Result<ProductDto>(new BadRequestException($"You must provide a product name in request"));
             }
 
             var entity = await context.Products
                 .AsNoTracking()
                 .Include(p => p.Seller)
                 .Include(p => p.Brand)
-                .FirstOrDefaultAsync(x => x.Article == request.ProductArticle, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Name == request.ProductName, cancellationToken);
 
             if (entity is null)
             {
-                return new Result<ProductDto>(
-                    new NotFoundException($"Cannot find product with article {request.ProductArticle}"));
+                return new Result<ProductDto>(new NotFoundException($"Cannot find product {request.ProductName}"));
             }
 
             var response = await Map(entity);
@@ -43,7 +41,7 @@ internal sealed class GetProductByArticleQueryHandler(AppDbContext context, ICac
             return new Result<ProductDto>(response);
         }
 
-        return new(cachedEntity);
+        return new(cachedEntity!);
     }
 
     private async Task<ProductDto> Map(ProductEntity entity)

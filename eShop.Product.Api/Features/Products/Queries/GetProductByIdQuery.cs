@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.DTOs;
 using eShop.Product.Api.Entities;
 
-namespace eShop.Product.Api.Queries.Products;
+namespace eShop.Product.Api.Features.Products.Queries;
 
 internal sealed record GetProductByIdQuery(Guid ProductId) : IRequest<Result<ProductDto>>;
 

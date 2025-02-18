@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.DTOs;
 
-namespace eShop.Product.Api.Queries.Products;
+namespace eShop.Product.Api.Features.Products.Queries;
 
 internal sealed record GetProductsQuery() : IRequest<Result<List<ProductDto>>>;
 

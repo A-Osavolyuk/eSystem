@@ -42,5 +42,9 @@
 			<GrpcCSharpNamespace>eShop.Product.Api</GrpcCSharpNamespace>
 		</Protobuf>
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Features\Sellers\Queries\" />
+	</ItemGroup>
 
 </Project>

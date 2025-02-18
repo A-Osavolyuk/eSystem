@@ -1,6 +1,6 @@
 ﻿using eShop.Product.Api.Entities;
 
-namespace eShop.Product.Api.Commands.Sellers;
+namespace eShop.Product.Api.Features.Sellers.Commands;
 
 internal sealed record RegisterSellerCommand(RegisterSellerRequest Request) : IRequest<Result<RegisterSellerResponse>>;
 

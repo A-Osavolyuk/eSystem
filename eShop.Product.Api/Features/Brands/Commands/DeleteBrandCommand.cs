@@ -1,4 +1,4 @@
-﻿namespace eShop.Product.Api.Commands.Brands;
+﻿namespace eShop.Product.Api.Features.Brands.Commands;
 
 internal sealed record DeleteBrandCommand(DeleteBrandRequest Request) : IRequest<Result<DeleteBrandResponse>>;
 
