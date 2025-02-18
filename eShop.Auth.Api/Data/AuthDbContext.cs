@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data;
 
-internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<AppUser>(options)
+internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<AppUser, AppRole, Guid>(options)
 {
     public DbSet<PersonalDataEntity> PersonalData => Set<PersonalDataEntity>();
     public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
@@ -70,7 +70,7 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
                 LastName = "Osavolyuk",
                 Gender = "Male",
                 DateOfBirth = new DateTime(2004, 2, 11),
-                UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"
+                UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3")
             });
         });
 
@@ -134,7 +134,7 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
                 UserName = "sasha.osavolll111@gmail.com",
                 NormalizedUserName = "sasha.osavolll111@gmail.com".ToUpper(),
                 PasswordHash = "AQAAAAIAAYagAAAAEHeZ7iJce/rkJIBOAFdarWHCG1NUYQ1y67q5EyVGG9ttMlkXR2wxOMAQRsg+HtNtCg==",
-                Id = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
+                Id = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 TwoFactorEnabled = false,

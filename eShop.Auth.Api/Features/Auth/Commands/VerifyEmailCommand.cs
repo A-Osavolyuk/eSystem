@@ -37,7 +37,7 @@ internal sealed class VerifyEmailCommandHandler(
             UserName = user.UserName!
         });
 
-        var response = await client.InitiateUserAsync(new InitiateUserRequest() { UserId = user.Id });
+        var response = await client.InitiateUserAsync(new InitiateUserRequest() { UserId = user.Id.ToString() });
 
         if (!response.IsSucceeded)
         {

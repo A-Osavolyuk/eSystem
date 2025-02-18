@@ -65,7 +65,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         {
             new(ClaimTypes.UserName, user.UserName ?? ""),
             new(ClaimTypes.Email, user.Email ?? ""),
-            new(ClaimTypes.Id, user.Id),
+            new(ClaimTypes.Id, user.Id.ToString()),
             new(ClaimTypes.PhoneNumber, user.PhoneNumber ?? "")
         };
 

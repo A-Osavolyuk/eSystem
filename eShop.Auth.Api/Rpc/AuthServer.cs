@@ -34,7 +34,7 @@ internal sealed class AuthServer(AppManager manager, ILogger<AuthServer> logger)
                 IsSucceeded = true,
                 User = new UserData()
                 {
-                    Id = user.Id,
+                    Id = user.Id.ToString(),
                     Email = user.Email,
                     Username = user.UserName,
                     PhoneNumber = user.PhoneNumber,

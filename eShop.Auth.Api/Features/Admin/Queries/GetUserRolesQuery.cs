@@ -24,7 +24,7 @@ internal sealed class GetUserRolesQueryHandler(
             return new(new NotFoundException($"Cannot find roles for user with ID {request.Id}."));
         }
 
-        var result = new UserRolesResponse() with { UserId = Guid.Parse(user.Id) };
+        var result = new UserRolesResponse() with { UserId = user.Id };
 
         foreach (var role in roleList)
         {

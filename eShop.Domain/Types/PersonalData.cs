@@ -2,7 +2,7 @@
 
 public record PersonalData : IIdentifiable<Guid>
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
