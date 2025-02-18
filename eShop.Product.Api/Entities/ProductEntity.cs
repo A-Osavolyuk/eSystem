@@ -1,10 +1,9 @@
 ﻿namespace eShop.Product.Api.Entities;
 
-public class ProductEntity
+public class ProductEntity : IIdentifiable<Guid>, IAuditable
 {
     public ProductEntity() => Article = GenerateArticle();
-
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; init; } = Guid.CreateVersion7();
     public ProductTypes ProductType { get; set; } = ProductTypes.None;
     public string Article { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -12,11 +11,11 @@ public class ProductEntity
     public decimal Price { get; set; }
     public ProductCurrency ProductCurrency { get; set; }
     public List<string> Images { get; set; } = new List<string>();
-
     public Guid BrandId { get; set; }
     public Guid SellerId { get; set; }
     public BrandEntity Brand { get; set; } = new BrandEntity();
     public SellerEntity Seller { get; set; } = new SellerEntity();
-
-    public static string GenerateArticle() => new Random().NextInt64(100_000_000, 999_999_999_999).ToString();
+    public DateTime CreateDate { get; init; }
+    public DateTime UpdateDate { get; init; }
+    private static string GenerateArticle() => new Random().NextInt64(100_000_000, 999_999_999_999).ToString();
 }
