@@ -48,9 +48,8 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
 
         foreach (var permission in permissions)
         {
-            var permissionId =
-                (await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == permission))!.Id;
-            await context.UserPermissions.AddAsync(new() { UserId = Guid.Parse(user.Id), Id = permissionId });
+            var entity = await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == permission);
+            await context.UserPermissions.AddAsync(new() { UserId = Guid.Parse(user.Id), Id = entity!.Id });
         }
 
         await context.SaveChangesAsync();
