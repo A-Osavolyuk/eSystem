@@ -23,7 +23,7 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(AppManager manag
 
         var entity = await manager.SecurityManager.FindCodeAsync(user.Email!, VerificationCodeType.VerifyEmail);
 
-        if (entity is null || entity.ExpiresAt < DateTime.UtcNow)
+        if (entity is null || entity.ExpireDate < DateTime.UtcNow)
         {
             code = await manager.SecurityManager.GenerateVerificationCodeAsync(user.Email!,
                 VerificationCodeType.VerifyEmail);

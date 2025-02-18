@@ -9,7 +9,7 @@ public class CodeEntity : IIdentifiable<Guid>, IAuditable
     public string Code { get; init; } = string.Empty;
     public VerificationCodeType VerificationCodeType { get; init; }
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
-    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(10);
+    public DateTime ExpireDate { get; init; } = DateTime.UtcNow.AddMinutes(10);
     public DateTime CreateDate { get; init; }
     public DateTime UpdateDate { get; init; }
 }

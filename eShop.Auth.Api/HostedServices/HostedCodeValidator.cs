@@ -31,7 +31,7 @@ public class HostedCodeValidator(IServiceScopeFactory scopeFactory) : IHostedSer
 
             foreach (var code in codes)
             {
-                if (code.ExpiresAt <= DateTime.UtcNow)
+                if (code.ExpireDate <= DateTime.UtcNow)
                 {
                     codesToRemove.Add(code);
                 }

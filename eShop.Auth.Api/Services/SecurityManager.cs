@@ -145,7 +145,7 @@ internal sealed class SecurityManager(
                 x => x.SentTo == sentTo
                      && x.Code == code
                      && x.VerificationCodeType == codeType
-                     && x.ExpiresAt < DateTime.UtcNow);
+                     && x.ExpireDate < DateTime.UtcNow);
 
         if (entity is null)
         {
@@ -207,7 +207,7 @@ internal sealed class SecurityManager(
             Code = code,
             VerificationCodeType = verificationCodeType,
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(10)
+            ExpireDate = DateTime.UtcNow.AddMinutes(10)
         });
 
         await context.SaveChangesAsync();
@@ -243,7 +243,7 @@ internal sealed class SecurityManager(
             });
         }
 
-        if (entity.ExpiresAt < DateTime.UtcNow)
+        if (entity.ExpireDate < DateTime.UtcNow)
         {
             return IdentityResult.Failed(new IdentityError()
             {
