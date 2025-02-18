@@ -2,8 +2,8 @@
 
 public class JwtOptions
 {
-    public int ExpirationDays { get; set; }
-    public string Key { get; set; } = "";
-    public string Audience { get; set; } = "";
-    public string Issuer { get; set; } = "";
+    public int ExpirationDays { get; init; }
+    public string Key { get; init; } = "";
+    public string Audience { get; init; } = "";
+    public string Issuer { get; init; } = "";
 }

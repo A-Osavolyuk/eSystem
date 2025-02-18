@@ -21,7 +21,7 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
 
     public async ValueTask<IdentityResult> SetPersonalDataAsync(AppUser user, PersonalDataEntity personalData)
     {
-        personalData.UserId = user.Id;
+        personalData = personalData with { UserId = user.Id };
         await context.PersonalData.AddAsync(personalData);
         await context.SaveChangesAsync();
 

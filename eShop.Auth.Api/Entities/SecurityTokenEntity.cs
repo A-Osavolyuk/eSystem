@@ -2,10 +2,10 @@
 
 public class SecurityTokenEntity
 {
-    public Guid Id { get; set; }
-    public string UserId { get; set; } = string.Empty;
-    public string Token { get; set; } = string.Empty;
-    public DateTime ExpiredAt { get; set; }
+    public Guid Id { get; init; }
+    public string UserId { get; init; } = string.Empty;
+    public string Token { get; init; } = string.Empty;
+    public DateTime ExpiredAt { get; init; }
 
-    public AppUser User { get; set; } = null!;
+    public AppUser User { get; init; } = null!;
 }
