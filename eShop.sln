@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.AppHost", "eShop.AppH
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.ServiceDefaults", "eShop.ServiceDefaults\eShop.ServiceDefaults.csproj", "{B8F5BFB0-038B-49F2-A3D1-518BB35B4D3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Commets.Api", "eShop.Commets.Api\eShop.Commets.Api.csproj", "{6521BC9F-1951-4C8E-9216-193A25F3C3DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Comments.Api", "eShop.Comments.Api\eShop.Comments.Api.csproj", "{6521BC9F-1951-4C8E-9216-193A25F3C3DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Cart.Api", "eShop.Cart.Api\eShop.Cart.Api.csproj", "{FF34FF4A-E9FA-42B4-8C0E-5AEBE61458EA}"
 EndProject
