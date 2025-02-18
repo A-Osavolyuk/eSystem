@@ -1,9 +1,11 @@
 ﻿using eShop.Application.Extensions;
 using eShop.Domain.Interfaces;
+using eShop.Files.Api.Interfaces;
+using eShop.Files.Api.Services;
 using eShop.ServiceDefaults;
-using Interfaces_IStoreService = eShop.FilesStorage.Api.Interfaces.IStoreService;
+using Interfaces_IStoreService = eShop.Files.Api.Interfaces.IStoreService;
 
-namespace eShop.FilesStorage.Api.Extensions;
+namespace eShop.Files.Api.Extensions;
 
 public static class BuilderExtensions
 {
@@ -32,7 +34,7 @@ public static class BuilderExtensions
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddScoped<Interfaces_IStoreService, StoreService>();
+        builder.Services.AddScoped<IStoreService, StoreService>();
         builder.Services.AddScoped<ICacheService, CacheService>();
     }
 }

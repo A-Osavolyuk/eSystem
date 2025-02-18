@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Exceptions;
-using eShop.FilesStorage.Api.Interfaces;
+using eShop.Files.Api.Interfaces;
 
-namespace eShop.FilesStorage.Api.Features.Queries;
+namespace eShop.Files.Api.Features.Queries;
 
 internal sealed record GetUserAvatarQuery(Guid UserId) : IRequest<Result<string>>;
 

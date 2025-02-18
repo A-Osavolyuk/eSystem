@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Responses.Api.Files;
-using eShop.FilesStorage.Api.Interfaces;
+using eShop.Files.Api.Interfaces;
 
-namespace eShop.FilesStorage.Api.Features.Commands;
+namespace eShop.Files.Api.Features.Commands;
 
 internal sealed record DeleteProductImagesCommand(Guid ProductId) : IRequest<Result<DeleteProductImagesResponse>>;
 

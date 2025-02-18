@@ -43,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Gateway", "eShop.Gate
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eShop.AngularWebUI", "eShop.AngularWebUI\eShop.AngularWebUI.esproj", "{A0D750E3-848A-4BE9-9F85-805B6B228091}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.FilesStorage.Api", "eShop.FilesStorage.Api\eShop.FilesStorage.Api.csproj", "{1F9BA980-B39D-49DD-A4FD-D2FE91A996C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.Files.Api", "eShop.Files.Api\eShop.Files.Api.csproj", "{1F9BA980-B39D-49DD-A4FD-D2FE91A996C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.SmsSender.Api", "eShop.SmsSender.Api\eShop.SmsSender.Api.csproj", "{F142D343-82AD-4B8E-8EB8-F9C86CDF6546}"
 EndProject

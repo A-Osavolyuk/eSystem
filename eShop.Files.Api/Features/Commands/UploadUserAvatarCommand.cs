@@ -1,8 +1,8 @@
 ﻿using eShop.Domain.Exceptions;
 using eShop.Domain.Responses.Api.Files;
-using eShop.FilesStorage.Api.Interfaces;
+using eShop.Files.Api.Interfaces;
 
-namespace eShop.FilesStorage.Api.Features.Commands;
+namespace eShop.Files.Api.Features.Commands;
 
 internal sealed record UploadUserAvatarCommand(IFormFile File, Guid UserId) : IRequest<Result<UploadAvatarResponse>>;
 
