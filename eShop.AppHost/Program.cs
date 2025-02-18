@@ -46,13 +46,13 @@ var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
 var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
     .WaitForReference(authApi);
 
-var reviewsApi = builder.AddProject<Projects.eShop_Reviews_Api>("reviews-api")
+var reviewsApi = builder.AddProject<Projects.eShop_Commets_Api>("reviews-api")
     .WaitForReference(authApi);
 
 var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
     .WaitForReference(authApi);
 
-var filesStorageApi = builder.AddProject<Projects.eShop_FilesStorage_Api>("file-store-api")
+var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
     .WaitForReference(authApi);
 
 var gateway = builder.AddProject<Projects.eShop_Gateway>("gateway");

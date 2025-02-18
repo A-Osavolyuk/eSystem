@@ -39,7 +39,7 @@
     <ProjectReference Include="..\eShop.Files.Api\eShop.Files.Api.csproj" />
     <ProjectReference Include="..\eShop.Gateway\eShop.Gateway.csproj" />
     <ProjectReference Include="..\eShop.Product.Api\eShop.Product.Api.csproj" />
-    <ProjectReference Include="..\eShop.Reviews.Api\eShop.Reviews.Api.csproj" />
+    <ProjectReference Include="..\eShop.Commets.Api\eShop.Commets.Api.csproj" />
     <ProjectReference Include="..\eShop.SmsSender.Api\eShop.SmsSender.Api.csproj" />
     <ProjectReference Include="..\eShop.TelegramBot.Api\eShop.TelegramBot.Api.csproj" />
   </ItemGroup>
