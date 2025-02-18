@@ -1,6 +1,4 @@
-﻿using eShop.Auth.Api.Entities;
-
-namespace eShop.Auth.Api.Services;
+﻿namespace eShop.Auth.Api.Services;
 
 internal sealed class PermissionManager(AuthDbContext context) : IPermissionManager
 {
@@ -20,7 +18,9 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
 
     public async ValueTask<List<string>> GetUserPermissionsAsync(AppUser user)
     {
-        var permissions = await context.UserPermissions.AsNoTracking().Where(x => x.UserId == user.Id).ToListAsync();
+        var permissions = await context.UserPermissions.AsNoTracking()
+            .Where(x => x.UserId == Guid.Parse(user.Id))
+            .ToListAsync();
         var result = new List<string>();
 
         if (!permissions.Any())
@@ -48,9 +48,9 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
 
         foreach (var permission in permissions)
         {
-            var permisisonId =
+            var permissionId =
                 (await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == permission))!.Id;
-            await context.UserPermissions.AddAsync(new() { UserId = user.Id, Id = permisisonId });
+            await context.UserPermissions.AddAsync(new() { UserId = Guid.Parse(user.Id), Id = permissionId });
         }
 
         await context.SaveChangesAsync();
@@ -59,9 +59,8 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
 
     public async ValueTask<IdentityResult> IssuePermissionAsync(AppUser user, string permission)
     {
-        var permissionId = (await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == permission))!
-            .Id;
-        await context.UserPermissions.AddAsync(new() { UserId = user.Id, Id = permissionId });
+        var entity = await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == permission);
+        await context.UserPermissions.AddAsync(new() { UserId = Guid.Parse(user.Id), Id = entity!.Id });
         await context.SaveChangesAsync();
         return IdentityResult.Success;
     }
@@ -69,7 +68,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
     public async ValueTask<IdentityResult> RemoveFromPermissionAsync(AppUser user, PermissionEntity permissionEntity)
     {
         var userPermission = await context.UserPermissions.AsNoTracking()
-            .SingleOrDefaultAsync(x => x.UserId == user.Id && x.Id == permissionEntity.Id);
+            .SingleOrDefaultAsync(x => x.UserId == Guid.Parse(user.Id) && x.Id == permissionEntity.Id);
 
         if (userPermission is null)
         {
@@ -78,7 +77,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
                 {
                     Code = "404",
                     Description = string.Format("Cannot find permission {0} for user with ID {1}",
-                        permissionEntity.Name, user.Id)
+                        permissionEntity.Name, Guid.Parse(user.Id))
                 });
         }
 
@@ -92,7 +91,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
     {
         var userPermissions = await context.UserPermissions
             .AsNoTracking()
-            .Where(x => x.UserId == user.Id)
+            .Where(x => x.UserId == Guid.Parse(user.Id))
             .ToListAsync();
 
         if (userPermissions.Any())
@@ -119,7 +118,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         }
 
         var hasUserPermission = await context.UserPermissions.AsNoTracking()
-            .AnyAsync(x => x.UserId == user.Id && x.Id == permission.Id);
+            .AnyAsync(x => x.UserId == Guid.Parse(user.Id) && x.Id == permission.Id);
 
         if (hasUserPermission)
         {

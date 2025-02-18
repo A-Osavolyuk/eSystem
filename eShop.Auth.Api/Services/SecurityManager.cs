@@ -1,6 +1,4 @@
-﻿using eShop.Auth.Api.Entities;
-
-namespace eShop.Auth.Api.Services;
+﻿namespace eShop.Auth.Api.Services;
 
 internal sealed class SecurityManager(
     AuthDbContext context,

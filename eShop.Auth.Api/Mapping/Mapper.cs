@@ -1,6 +1,4 @@
-﻿using eShop.Auth.Api.Entities;
-
-namespace eShop.Auth.Api.Mapping;
+﻿namespace eShop.Auth.Api.Mapping;
 
 public static class Mapper
 {

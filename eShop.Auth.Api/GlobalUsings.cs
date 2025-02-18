@@ -11,6 +11,7 @@ global using eShop.Auth.Api.Commands.Account;
 global using eShop.Auth.Api.Commands.Admin;
 global using eShop.Auth.Api.Commands.Auth;
 global using eShop.Auth.Api.Data;
+global using eShop.Auth.Api.Entities;
 global using eShop.Auth.Api.Extensions;
 global using eShop.Auth.Api.HostedServices;
 global using eShop.Auth.Api.Interfaces;
