@@ -11,7 +11,7 @@ public static class Mapper
         return new()
         {
             Items = entity.Items,
-            Id = entity.FavoritesId,
+            Id = entity.Id,
             Count = entity.ItemsCount,
         };
     }
@@ -31,7 +31,7 @@ public static class Mapper
         return new()
         {
             Items = entity.Items,
-            Id = entity.CartId,
+            Id = entity.Id,
             Count = entity.ItemsCount,
         };
     }

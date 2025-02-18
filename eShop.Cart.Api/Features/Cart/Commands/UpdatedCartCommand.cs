@@ -14,26 +14,26 @@ internal sealed class UpdatedCartCommandHandler(DbClient client)
     {
         var cartCollection = client.GetCollection<CartEntity>("Carts");
 
-        var cart = await cartCollection.Find(x => x.CartId == request.Request.CartId)
+        var cart = await cartCollection.Find(x => x.Id == request.Request.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (cart is null)
         {
-            return new(new NotFoundException($"Cannot find cart with ID {request.Request.CartId}."));
+            return new(new NotFoundException($"Cannot find cart with ID {request.Request.Id}."));
         }
         else
         {
             var newCart = new CartEntity
             {
-                CartId = cart.CartId,
+                Id = cart.Id,
                 UserId = cart.UserId,
                 ItemsCount = request.Request.ItemsCount,
-                UpdatedAt = DateTime.Now,
-                CreatedAt = cart.CreatedAt,
+                UpdateDate = DateTime.Now,
+                CreateDate = cart.CreateDate,
                 Items = request.Request.Items
             };
 
-            await cartCollection.ReplaceOneAsync(x => x.CartId == request.Request.CartId, newCart,
+            await cartCollection.ReplaceOneAsync(x => x.Id == request.Request.Id, newCart,
                 cancellationToken: cancellationToken);
 
             return new UpdateCartResponse()

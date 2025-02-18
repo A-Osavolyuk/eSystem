@@ -31,22 +31,22 @@ public static class WebApplicationExtensions
 
         await cartCollection.InsertOneAsync(new CartEntity()
         {
-            CartId = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
             ItemsCount = 0,
             Items = new List<CartItem>(),
-            UpdatedAt = DateTime.UtcNow,
-            CreatedAt = DateTime.UtcNow
+            UpdateDate = DateTime.UtcNow,
+            CreateDate = DateTime.UtcNow
         });
 
         await favoritesCollection.InsertOneAsync(new FavoritesEntity()
         {
-            FavoritesId = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
             ItemsCount = 0,
             Items = new List<FavoritesItem>(),
-            UpdatedAt = DateTime.UtcNow,
-            CreatedAt = DateTime.UtcNow
+            UpdateDate = DateTime.UtcNow,
+            CreateDate = DateTime.UtcNow
         });
     }
 }

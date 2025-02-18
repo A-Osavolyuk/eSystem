@@ -2,15 +2,14 @@
 
 namespace eShop.Cart.Api.Entities;
 
-public class FavoritesEntity
+public class FavoritesEntity : IIdentifiable<Guid>, IAuditable
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]
-    public Guid FavoritesId { get; set; }
-
-    [BsonRepresentation(BsonType.String)] public Guid UserId { get; set; }
-    public int ItemsCount { get; set; }
-    public DateTime UpdatedAt { get; set; } = DateTime.Now;
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public List<FavoritesItem> Items { get; set; } = new List<FavoritesItem>();
+    public Guid Id { get; init; }
+    [BsonRepresentation(BsonType.String)] public Guid UserId { get; init; }
+    public int ItemsCount { get; init; }
+    public List<FavoritesItem> Items { get; init; } = new List<FavoritesItem>();
+    public DateTime CreateDate { get; init; }
+    public DateTime UpdateDate { get; init; }
 }

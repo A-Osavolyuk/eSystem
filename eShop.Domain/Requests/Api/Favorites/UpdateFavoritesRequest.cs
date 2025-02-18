@@ -1,8 +1,8 @@
 ﻿namespace eShop.Domain.Requests.Api.Favorites;
 
-public record UpdateFavoritesRequest
+public record UpdateFavoritesRequest : IIdentifiable<Guid>
 {
-    public Guid FavoritesId { get; set; }
+    public Guid Id { get; init; }
     public int ItemsCount { get; set; }
     public List<FavoritesItem> Items { get; set; } = new List<FavoritesItem>();
 }

@@ -2,15 +2,15 @@
 
 namespace eShop.Cart.Api.Entities;
 
-public class CartEntity
+public class CartEntity : IIdentifiable<Guid>, IAuditable
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]
-    public Guid CartId { get; set; }
+    public Guid Id { get; init; }
 
-    [BsonRepresentation(BsonType.String)] public Guid UserId { get; set; }
-    public int ItemsCount { get; set; }
-    public DateTime UpdatedAt { get; set; } = DateTime.Now;
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public List<CartItem> Items { get; set; } = new List<CartItem>();
+    [BsonRepresentation(BsonType.String)] public Guid UserId { get; init; }
+    public int ItemsCount { get; init; }
+    public List<CartItem> Items { get; init; } = new List<CartItem>();
+    public DateTime CreateDate { get; init; }
+    public DateTime UpdateDate { get; init; }
 }

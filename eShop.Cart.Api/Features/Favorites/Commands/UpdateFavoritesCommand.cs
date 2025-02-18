@@ -14,25 +14,25 @@ internal sealed class UpdateFavoritesCommandHandler(DbClient client)
         CancellationToken cancellationToken)
     {
         var collection = client.GetCollection<FavoritesEntity>("Favorites");
-        var favorites = await collection.Find(x => x.FavoritesId == request.Request.FavoritesId)
+        var favorites = await collection.Find(x => x.Id == request.Request.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (favorites is null)
         {
-            return new(new NotFoundException($"Cannot find favorites with ID {request.Request.FavoritesId}."));
+            return new(new NotFoundException($"Cannot find favorites with ID {request.Request.Id}."));
         }
 
         var newFavorites = new FavoritesEntity()
         {
-            CreatedAt = favorites.CreatedAt,
-            UpdatedAt = DateTime.UtcNow,
-            FavoritesId = favorites.FavoritesId,
+            CreateDate = favorites.CreateDate,
+            UpdateDate = DateTime.UtcNow,
+            Id = favorites.Id,
             ItemsCount = request.Request.ItemsCount,
             UserId = favorites.UserId,
             Items = request.Request.Items
         };
 
-        await collection.ReplaceOneAsync(x => x.FavoritesId == request.Request.FavoritesId, newFavorites,
+        await collection.ReplaceOneAsync(x => x.Id == request.Request.Id, newFavorites,
             cancellationToken: cancellationToken);
 
         return new UpdateFavoritesResponse()
