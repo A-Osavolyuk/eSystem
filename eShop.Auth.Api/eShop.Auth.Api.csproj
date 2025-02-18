@@ -54,4 +54,8 @@
             <GrpcCSharpNamespace>eShop.Auth.Api</GrpcCSharpNamespace>
         </Protobuf>
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Features\Account\Queries\" />
+    </ItemGroup>
 </Project>
