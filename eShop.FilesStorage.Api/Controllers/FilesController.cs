@@ -1,8 +1,8 @@
 ﻿using eShop.Application.Utilities;
 using eShop.Domain.Common.Api;
-using eShop.FilesStorage.Api.Commands;
+using eShop.FilesStorage.Api.Features.Commands;
+using eShop.FilesStorage.Api.Features.Queries;
 using eShop.FilesStorage.Api.Interfaces;
-using eShop.FilesStorage.Api.Queries;
 
 namespace eShop.FilesStorage.Api.Controllers;
 

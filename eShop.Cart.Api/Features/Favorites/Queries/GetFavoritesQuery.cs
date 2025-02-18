@@ -2,7 +2,7 @@
 using eShop.Cart.Api.Mapping;
 using eShop.Domain.DTOs;
 
-namespace eShop.Cart.Api.Queries.Favorites;
+namespace eShop.Cart.Api.Features.Favorites.Queries;
 
 internal sealed record GetFavoritesQuery(Guid UserId) : IRequest<Result<FavoritesDto>>;
 

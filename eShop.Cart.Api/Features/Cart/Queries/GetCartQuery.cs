@@ -2,7 +2,7 @@
 using eShop.Cart.Api.Mapping;
 using eShop.Domain.DTOs;
 
-namespace eShop.Cart.Api.Queries.Carts;
+namespace eShop.Cart.Api.Features.Cart.Queries;
 
 internal sealed record GetCartQuery(Guid UserId) : IRequest<Result<CartDto>>;
 
