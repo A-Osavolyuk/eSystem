@@ -1,8 +1,8 @@
 ﻿namespace eShop.Comments.Api.Entities;
 
-public record class CommentEntity
+public record class CommentEntity : IIdentifiable<Guid>, IAuditable
 {
-    public Guid CommentId { get; set; }
+    public Guid Id { get; init; }
     public Guid ProductId { get; set; }
 
     public Guid UserId { get; set; }
@@ -12,6 +12,6 @@ public record class CommentEntity
     public List<string> Images { get; set; } = new List<string>();
     public int Rating { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTime CreateDate { get; init; }
+    public DateTime UpdateDate { get; init; }
 }

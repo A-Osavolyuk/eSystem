@@ -15,14 +15,14 @@ internal sealed class UpdateCommentCommandHandler(
     {
         var comment = await context.Comments
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.CommentId == request.Request.CommentId, cancellationToken);
+            .SingleOrDefaultAsync(x => x.Id == request.Request.CommentId, cancellationToken);
 
         if (comment is null)
         {
             return new(new NotFoundException($"Cannot find comment with id: {request.Request.CommentId}."));
         }
 
-        var newComment = Mapper.ToCommentEntity(request.Request) with { UpdatedAt = DateTime.UtcNow };
+        var newComment = Mapper.ToCommentEntity(request.Request) with { UpdateDate = DateTime.UtcNow };
         context.Comments.Update(newComment);
         await context.SaveChangesAsync(cancellationToken);
 

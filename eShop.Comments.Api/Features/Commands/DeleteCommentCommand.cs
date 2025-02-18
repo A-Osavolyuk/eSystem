@@ -14,7 +14,7 @@ internal sealed class DeleteCommentCommandHandler(
     {
         var comment = await context.Comments
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.CommentId == request.Request.CommentId,
+            .SingleOrDefaultAsync(x => x.Id == request.Request.CommentId,
                 cancellationToken: cancellationToken);
 
         if (comment is null)

@@ -9,10 +9,10 @@ public static class Mapper
     {
         return new()
         {
-            UpdateDate = entity.UpdatedAt,
-            Id = entity.CommentId,
+            UpdateDate = entity.UpdateDate,
+            Id = entity.Id,
             UserId = entity.UserId,
-            CreateDate = entity.CreatedAt,
+            CreateDate = entity.CreateDate,
             Rating = entity.Rating,
             Text = entity.CommentText,
             Images = entity.Images,
@@ -28,7 +28,7 @@ public static class Mapper
             Images = request.Images,
             Rating = request.Rating,
             CommentText = request.CommentText,
-            CreatedAt = DateTime.Now,
+            CreateDate = DateTime.Now,
             ProductId = request.ProductId,
             UserId = request.UserId
         };
@@ -42,9 +42,9 @@ public static class Mapper
             Images = request.Images,
             Rating = request.Rating,
             CommentText = request.CommentText,
-            UpdatedAt = DateTime.Now,
+            UpdateDate = DateTime.Now,
             ProductId = request.ProductId,
-            CommentId = request.CommentId,
+            Id = request.CommentId,
             UserId = request.UserId
         };
     }
