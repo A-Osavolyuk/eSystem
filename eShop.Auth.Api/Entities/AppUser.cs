@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class AppUser : IdentityUser<Guid>, IAuditable
+public class AppUser : IdentityUser, IAuditable
 {
     public PersonalDataEntity? PersonalData { get; init; }
     public SecurityTokenEntity? AuthenticationToken { get; init; }

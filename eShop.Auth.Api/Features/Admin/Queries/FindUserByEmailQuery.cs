@@ -27,7 +27,7 @@ internal sealed class FindUserByEmailQueryHandler(
             return new(new NotFoundException($"Cannot find roles for user with email {user.Email}."));
         }
 
-        var permissionData = new PermissionsData() { Id = user.Id };
+        var permissionData = new PermissionsData() { Id = Guid.Parse(user.Id) };
         foreach (var role in rolesList)
         {
             var roleInfo = await appManager.RoleManager.FindByNameAsync(role);

@@ -9,6 +9,6 @@ public record class PersonalDataEntity : IAuditable, IIdentifiable<Guid>
     public DateTime DateOfBirth { get; init; } = new DateTime(1980, 1, 1);
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
-    [JsonIgnore] public Guid UserId { get; init; }
+    [JsonIgnore] public string UserId { get; init; } = string.Empty;
     [JsonIgnore] public AppUser? User { get; init; }
 }
