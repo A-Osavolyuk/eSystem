@@ -4,8 +4,6 @@ public static class BuilderExtensions
 {
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {
-        builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
-
         builder.AddVersioning();
         builder.AddValidation();
         builder.AddMessageBus();
@@ -17,6 +15,7 @@ public static class BuilderExtensions
         builder.AddMediatR();
         builder.AddSqlDb();
         builder.AddGrpc();
+        builder.AddLogging();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -33,6 +32,12 @@ public static class BuilderExtensions
         });
     }
 
+    private static void AddLogging(this IHostApplicationBuilder builder)
+    {
+        const string key = "Configuration:Logging";
+        builder.Logging.AddConfiguration(builder.Configuration.GetSection(key));
+    }
+
     private static void AddGrpc(this IHostApplicationBuilder builder)
     {
         builder.Services.AddGrpc(options =>
@@ -43,16 +48,18 @@ public static class BuilderExtensions
 
     private static void AddSqlDb(this IHostApplicationBuilder builder)
     {
+        const string connectionStringPath = "Configuration:Storage:Databases:SQL:MSSQL:ConnectionString";
         builder.Services.AddDbContext<AuthDbContext>(cfg =>
         {
-            cfg.UseSqlServer(builder.Configuration["Configuration:Storage:Databases:SQL:MSSQL:ConnectionString"]!);
+            cfg.UseSqlServer(builder.Configuration[connectionStringPath]!);
         });
     }
 
     private static void AddIdentity(this IHostApplicationBuilder builder)
     {
-        builder.Services.Configure<JwtOptions>(
-            builder.Configuration.GetSection("Configuration:Security:Authentication:JWT"));
+        var configuration = builder.Configuration;
+        
+        builder.Services.Configure<JwtOptions>(configuration.GetSection("Configuration:Security:Authentication:JWT"));
         
         builder.Services.AddIdentity<AppUser, AppRole>(options =>
         {
@@ -67,47 +74,46 @@ public static class BuilderExtensions
             })
             .AddGoogle(options =>
             {
-                options.ClientId =
-                    builder.Configuration["Configuration:Security:Authentication:Providers:Google:ClientId"] ?? "";
-                options.ClientSecret =
-                    builder.Configuration["Configuration:Security:Authentication:Providers:Google:ClientSecret"] ?? "";
-                options.SaveTokens = true;
-                options.CallbackPath = "/signin-google";
+                var settings = configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Google");
+                
+                options.ClientId = settings.ClientId ?? "";
+                options.ClientSecret = settings.ClientSecret ?? "";
+                options.SaveTokens = settings.SaveTokens;
+                options.CallbackPath = settings.CallbackPath;
             })
             .AddFacebook(options =>
             {
-                options.ClientId =
-                    builder.Configuration["Configuration:Security:Authentication:Providers:Facebook:ClientId"] ?? "";
-                options.ClientSecret =
-                    builder.Configuration["Configuration:Security:Authentication:Providers:Facebook:ClientSecret"] ??
-                    "";
-                options.SaveTokens = true;
-                options.CallbackPath = "/signin-facebook";
+                var settings = configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Facebook");
+                
+                options.ClientId = settings.ClientId ?? "";
+                options.ClientSecret = settings.ClientSecret ?? "";
+                options.SaveTokens = settings.SaveTokens;
+                options.CallbackPath = settings.CallbackPath;
             })
             .AddMicrosoftAccount(options =>
             {
-                options.ClientId =
-                    builder.Configuration["Configuration:Security:Authentication:Providers:Microsoft:ClientId"] ?? "";
-                options.ClientSecret =
-                    builder.Configuration["Configuration:Security:Authentication:Providers:Microsoft:ClientSecret"] ??
-                    "";
-                options.SaveTokens = true;
-                options.CallbackPath = "/signin-microsoft";
+                var settings = configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Microsoft");
+                
+                options.ClientId = settings.ClientId ?? "";
+                options.ClientSecret = settings.ClientSecret ?? "";
+                options.SaveTokens = settings.SaveTokens;
+                options.CallbackPath = settings.CallbackPath;
             })
             .AddJwtBearer(options =>
             {
+                var settings = configuration.Get<JwtOptions>("Configuration:Security:Authentication:JWT");
+                var encodedKey = Encoding.UTF8.GetBytes(settings.Key);
+                var symmetricSecurityKey = new SymmetricSecurityKey(encodedKey);
+                
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidAudience = builder.Configuration["Configuration:Security:Authentication:JWT:Audience"],
-                    ValidIssuer = builder.Configuration["Configuration:Security:Authentication:JWT:Issuer"],
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(
-                                builder.Configuration["Configuration:Security:Authentication:JWT:Key"]!))
+                    ValidAudience = settings.Audience,
+                    ValidIssuer = settings.Issuer,
+                    IssuerSigningKey = symmetricSecurityKey
                 };
             });
 

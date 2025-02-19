@@ -17,12 +17,14 @@ public static class BuilderExtensions
     {
         builder.Services.AddApiVersioning(options =>
         {
+            const string key = "api-version";
+            
             options.ReportApiVersions = true;
             options.DefaultApiVersion = ApiVersion.Default;
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.ApiVersionReader = ApiVersionReader.Combine(
-                new QueryStringApiVersionReader("api-version"),
-                new HeaderApiVersionReader("api-version"));
+                new QueryStringApiVersionReader(key),
+                new HeaderApiVersionReader(key));
         });
 
         builder.Services.AddVersionedApiExplorer(options =>
@@ -45,16 +47,20 @@ public static class BuilderExtensions
         })
         .AddJwtBearer(options =>
         {
+            const string audiencePath = "Configuration:Security:Authentication:JWT:Audience";
+            const string issuerPath = "Configuration:Security:Authentication:JWT:Issuer";
+            const string keyPath = "Configuration:Security:Authentication:JWT:Key";
+            
             options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateAudience = true,
                 ValidateIssuer = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidAudience = builder.Configuration["Configuration:Security:Authentication:JWT:Audience"],
-                ValidIssuer = builder.Configuration["Configuration:Security:Authentication:JWT:Issuer"],
+                ValidAudience = builder.Configuration[audiencePath],
+                ValidIssuer = builder.Configuration[issuerPath],
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(builder.Configuration["Configuration:Security:Authentication:JWT:Key"]!))
+                    Encoding.UTF8.GetBytes(builder.Configuration[keyPath]!))
             };
         });
 
@@ -63,8 +69,11 @@ public static class BuilderExtensions
 
     public static IHostApplicationBuilder AddRedisCache(this IHostApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration["Configuration:Services:Cache:Redis:ConnectionString"]!;
-        var instanceName = builder.Configuration["Configuration:Services:Cache:Redis:InstanceName"]!;
+        const string connsectionStringPath = "Configuration:Services:Cache:Redis:ConnectionString";
+        const string instanceNamePath = "Configuration:Services:Cache:Redis:InstanceName";
+        
+        var connectionString = builder.Configuration[connsectionStringPath]!;
+        var instanceName = builder.Configuration[instanceNamePath]!;
         
         builder.Services.AddSingleton<IConnectionMultiplexer>(sp => 
                 ConnectionMultiplexer.Connect(connectionString));
