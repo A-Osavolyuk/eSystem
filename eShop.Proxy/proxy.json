@@ -1,4 +1,5 @@
 ﻿{
+  "$schema": "proxy.schema.json",
   "ReverseProxy": {
     "Routes": {
       "auth-route": {
