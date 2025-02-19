@@ -9,8 +9,13 @@ public static class BuilderExtensions
     {
         builder.AddServiceDefaults();
         builder.AddJwtAuthentication();
-        builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
-        builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+        builder.AddLogging();
+        builder.AddReverseProxy();
         builder.Services.AddOpenApi();
+    }
+
+    private static void AddReverseProxy(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
     }
 }

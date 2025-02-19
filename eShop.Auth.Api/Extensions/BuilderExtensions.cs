@@ -32,12 +32,6 @@ public static class BuilderExtensions
         });
     }
 
-    private static void AddLogging(this IHostApplicationBuilder builder)
-    {
-        const string key = "Configuration:Logging";
-        builder.Logging.AddConfiguration(builder.Configuration.GetSection(key));
-    }
-
     private static void AddGrpc(this IHostApplicationBuilder builder)
     {
         builder.Services.AddGrpc(options =>

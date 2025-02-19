@@ -1,4 +1,5 @@
-﻿using eShop.EmailSender.Api.Services;
+﻿using eShop.Application.Extensions;
+using eShop.EmailSender.Api.Services;
 
 namespace eShop.EmailSender.Api.Extensions;
 
@@ -7,9 +8,7 @@ public static class BuilderExtensions
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddServiceDefaults();
-
-        builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
-
+        builder.AddLogging();
         builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Configuration:Services:SMTP"));
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddOptions();

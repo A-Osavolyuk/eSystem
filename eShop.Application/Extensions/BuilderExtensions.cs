@@ -69,10 +69,10 @@ public static class BuilderExtensions
 
     public static IHostApplicationBuilder AddRedisCache(this IHostApplicationBuilder builder)
     {
-        const string connsectionStringPath = "Configuration:Services:Cache:Redis:ConnectionString";
+        const string connectionStringPath = "Configuration:Services:Cache:Redis:ConnectionString";
         const string instanceNamePath = "Configuration:Services:Cache:Redis:InstanceName";
         
-        var connectionString = builder.Configuration[connsectionStringPath]!;
+        var connectionString = builder.Configuration[connectionStringPath]!;
         var instanceName = builder.Configuration[instanceNamePath]!;
         
         builder.Services.AddSingleton<IConnectionMultiplexer>(sp => 
@@ -85,5 +85,11 @@ public static class BuilderExtensions
         });
         
         return builder;
+    }
+    
+    public static void AddLogging(this IHostApplicationBuilder builder)
+    {
+        const string key = "Configuration:Logging";
+        builder.Logging.AddConfiguration(builder.Configuration.GetSection(key));
     }
 }
