@@ -3,7 +3,7 @@
 public static class RoleManagerExtensions
 {
     public static async Task<IEnumerable<RoleData>?> GetRolesDataAsync<TRole>(this RoleManager<TRole> roleManager,
-        IEnumerable<string> roles) where TRole : IdentityRole
+        IEnumerable<string> roles) where TRole : IdentityRole<Guid>
     {
         var rolesList = roles.ToList();
         if (!rolesList.Any())
@@ -19,7 +19,7 @@ public static class RoleManagerExtensions
 
             rolesInfo.Add(new RoleData()
             {
-                Id = Guid.Parse(roleInfo!.Id),
+                Id = roleInfo!.Id,
                 Name = roleInfo.Name!,
                 NormalizedName = roleInfo.NormalizedName!
             });

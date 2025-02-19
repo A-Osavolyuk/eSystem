@@ -12,7 +12,7 @@ internal sealed class DeleteRoleCommandHandler(
     {
         var role = await appManager.RoleManager.FindByIdAsync(request.Request.Id.ToString());
 
-        if (role is null || role.Id != request.Request.Id.ToString())
+        if (role is null || role.Id != request.Request.Id)
         {
             return new(new NotFoundException($"Cannot find role with ID {request.Request.Id}."));
         }

@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data;
 
-internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<AppUser>(options)
+internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<AppUser, AppRole, Guid>(options)
 {
     public DbSet<PersonalDataEntity> PersonalData => Set<PersonalDataEntity>();
     public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
@@ -39,22 +39,26 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
             }
         );
 
-        builder.Entity<IdentityUserRole<string>>().HasData(
-            new IdentityUserRole<string>()
-            {
-                RoleId = "e6d15d97-b803-435a-9dc2-a7c45c08a1af",
-                UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"
-            },
-            new IdentityUserRole<string>()
-            {
-                RoleId = "270910a1-d582-4ce0-8b23-c8141d720064",
-                UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"
-            },
-            new IdentityUserRole<string>()
-            {
-                RoleId = "26bb7907-e254-41d4-96f0-8afb7deccae4",
-                UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"
-            });
+        builder.Entity<IdentityUserRole<string>>(x =>
+        {
+            x.HasKey(role => new { UserId = role.UserId, RoleId = role.RoleId });
+            x.HasData(
+                new IdentityUserRole<string>()
+                {
+                    RoleId = "e6d15d97-b803-435a-9dc2-a7c45c08a1af",
+                    UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"
+                },
+                new IdentityUserRole<string>()
+                {
+                    RoleId = "270910a1-d582-4ce0-8b23-c8141d720064",
+                    UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"
+                },
+                new IdentityUserRole<string>()
+                {
+                    RoleId = "26bb7907-e254-41d4-96f0-8afb7deccae4",
+                    UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"
+                });
+        });
 
         builder.Entity<PersonalDataEntity>(x =>
         {
@@ -70,7 +74,7 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
                 LastName = "Osavolyuk",
                 Gender = "Male",
                 DateOfBirth = new DateTime(2004, 2, 11),
-                UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"
+                UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3")
             });
         });
 
@@ -134,7 +138,7 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
                 UserName = "sasha.osavolll111@gmail.com",
                 NormalizedUserName = "sasha.osavolll111@gmail.com".ToUpper(),
                 PasswordHash = "AQAAAAIAAYagAAAAEHeZ7iJce/rkJIBOAFdarWHCG1NUYQ1y67q5EyVGG9ttMlkXR2wxOMAQRsg+HtNtCg==",
-                Id = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
+                Id = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 TwoFactorEnabled = false,
@@ -156,27 +160,27 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
             x.HasData(
                 new UserPermissionsEntity()
                 {
-                    UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
+                    UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                     Id = Guid.Parse("349898ee-1f26-4877-86ca-0960361b5e3e")
                 },
                 new UserPermissionsEntity()
                 {
-                    UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
+                    UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                     Id = Guid.Parse("74e0644b-6f9d-4964-a9a6-341a7834cc0e")
                 },
                 new UserPermissionsEntity()
                 {
-                    UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
+                    UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                     Id = Guid.Parse("e14d7bcf-0ab4-4168-b2b5-ff0894782097")
                 },
                 new UserPermissionsEntity()
                 {
-                    UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
+                    UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                     Id = Guid.Parse("df258394-6290-43b8-abc9-d52aba8ff6e6")
                 },
                 new UserPermissionsEntity()
                 {
-                    UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
+                    UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                     Id = Guid.Parse("dba6e723-ac0f-42a3-91fd-e40bdb08e26b")
                 });
         });

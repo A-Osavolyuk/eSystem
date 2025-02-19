@@ -26,7 +26,7 @@ internal sealed class GetRolesListQueryHandler(
 
             response.Add(new()
             {
-                Id = Guid.Parse(role!.Id),
+                Id = role!.Id,
                 Name = role.Name!,
                 NormalizedName = role.NormalizedName!,
                 MembersCount = memberCount,

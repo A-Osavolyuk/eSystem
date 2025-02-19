@@ -32,7 +32,7 @@ internal sealed class LoginCommandHandler(
             return new(new BadRequestException("The password is not valid."));
         }
 
-        var userDto = new User(user.Email!, user.UserName!, Guid.Parse(user.Id));
+        var userDto = new User(user.Email!, user.UserName!, user.Id);
         var securityToken = await appManager.SecurityManager.FindTokenAsync(user);
 
         if (securityToken is not null)

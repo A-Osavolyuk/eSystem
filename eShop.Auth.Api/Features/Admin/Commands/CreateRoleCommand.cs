@@ -17,7 +17,7 @@ internal sealed class CreateRoleCommandHandler(
             return new(new CreateRoleResponse() { Message = "Role already exists.", Succeeded = true });
         }
 
-        var result = await appManager.RoleManager.CreateAsync(new IdentityRole() { Name = request.Request.Name });
+        var result = await appManager.RoleManager.CreateAsync(new AppRole() { Name = request.Request.Name });
 
         if (!result.Succeeded)
         {

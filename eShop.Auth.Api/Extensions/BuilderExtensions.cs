@@ -54,7 +54,7 @@ public static class BuilderExtensions
         builder.Services.Configure<JwtOptions>(
             builder.Configuration.GetSection("Configuration:Security:Authentication:JWT"));
         
-        builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+        builder.Services.AddIdentity<AppUser, AppRole>(options =>
         {
             options.User.RequireUniqueEmail = true;
             options.SignIn.RequireConfirmedEmail = true;

@@ -28,7 +28,7 @@ internal sealed class TwoFactorAuthenticationLoginCommandHandler(
             return new(new BadRequestException($"Invalid two-factor code {request.Request.Code}."));
         }
 
-        var userDto = new User(user.Email!, user.UserName!, Guid.Parse(user.Id));
+        var userDto = new User(user.Email!, user.UserName!, user.Id);
         var securityToken = await appManager.SecurityManager.FindTokenAsync(user);
 
         if (securityToken is not null)

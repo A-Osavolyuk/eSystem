@@ -19,7 +19,7 @@ internal sealed class CreateUserAccountCommandHandler(
         var userId = Guid.NewGuid();
         var user = new AppUser()
         {
-            Id = userId.ToString(),
+            Id = userId,
             Email = request.Request.Email,
             UserName = request.Request.UserName,
             PhoneNumber = request.Request.PhoneNumber,
@@ -47,7 +47,7 @@ internal sealed class CreateUserAccountCommandHandler(
 
         await appManager.ProfileManager.SetPersonalDataAsync(user, new PersonalDataEntity()
         {
-            UserId = userId.ToString(),
+            UserId = userId,
             FirstName = request.Request.FirstName,
             LastName = request.Request.LastName,
             DateOfBirth = request.Request.DateOfBirth,
