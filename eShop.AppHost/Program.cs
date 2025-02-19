@@ -55,7 +55,7 @@ var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
 var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
     .WaitForReference(authApi);
 
-var gateway = builder.AddProject<Projects.eShop_Gateway>("gateway");
+var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
 
 var blazorClient = builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
     .WaitForReference(gateway)

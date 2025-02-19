@@ -37,9 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Comments.Api", "eShop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Cart.Api", "eShop.Cart.Api\eShop.Cart.Api.csproj", "{FF34FF4A-E9FA-42B4-8C0E-5AEBE61458EA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{B69FD745-58C4-46EB-A0A2-1C7242B25750}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Proxy", "Proxy", "{B69FD745-58C4-46EB-A0A2-1C7242B25750}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Gateway", "eShop.Gateway\eShop.Gateway.csproj", "{4F4C7074-77BA-4A0D-AB71-77B5AD746292}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Proxy", "eShop.Proxy\eShop.Proxy.csproj", "{4F4C7074-77BA-4A0D-AB71-77B5AD746292}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eShop.AngularWebUI", "eShop.AngularWebUI\eShop.AngularWebUI.esproj", "{A0D750E3-848A-4BE9-9F85-805B6B228091}"
 EndProject

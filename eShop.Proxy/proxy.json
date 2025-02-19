@@ -1,24 +1,4 @@
-{
-  "AllowedHosts": "*",
-  "$schema": "../eShop.Application/settings.schema.json",
-  "Configuration": {
-    "Security": {
-      "Authentication": {
-        "JWT": {
-          "Key": "ZIRNssDs8De2K0PhEtwfZoFPwzxznhrV",
-          "Audience": "eShop.Client",
-          "Issuer": "eShop.AuthWebApi",
-          "ExpirationSeconds": 2592000
-        }
-      }
-    },
-    "Logging": {
-      "LogLevel": {
-        "Default": "Information",
-        "Microsoft.AspNetCore": "Warning"
-      }
-    }
-  },
+﻿{
   "ReverseProxy": {
     "Routes": {
       "auth-route": {

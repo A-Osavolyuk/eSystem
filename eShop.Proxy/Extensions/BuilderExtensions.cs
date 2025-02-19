@@ -1,7 +1,7 @@
 ﻿using eShop.Application.Extensions;
 using eShop.ServiceDefaults;
 
-namespace eShop.Gateway.Extensions;
+namespace eShop.Proxy.Extensions;
 
 public static class BuilderExtensions
 {
@@ -12,6 +12,7 @@ public static class BuilderExtensions
         builder.AddLogging();
         builder.AddReverseProxy();
         builder.Services.AddOpenApi();
+        builder.Configuration.AddJsonFile("proxy.json", optional: false, reloadOnChange: true);
     }
 
     private static void AddReverseProxy(this IHostApplicationBuilder builder)

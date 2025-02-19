@@ -1,4 +1,4 @@
-using eShop.Gateway.Extensions;
+using eShop.Proxy.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

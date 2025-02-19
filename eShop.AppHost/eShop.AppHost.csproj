@@ -37,7 +37,7 @@
     <ProjectReference Include="..\eShop.Cart.Api\eShop.Cart.Api.csproj" />
     <ProjectReference Include="..\eShop.EmailSender.Api\eShop.EmailSender.Api.csproj" />
     <ProjectReference Include="..\eShop.Files.Api\eShop.Files.Api.csproj" />
-    <ProjectReference Include="..\eShop.Gateway\eShop.Gateway.csproj" />
+    <ProjectReference Include="..\eShop.Proxy\eShop.Proxy.csproj" />
     <ProjectReference Include="..\eShop.Product.Api\eShop.Product.Api.csproj" />
     <ProjectReference Include="..\eShop.Comments.Api\eShop.Comments.Api.csproj" />
     <ProjectReference Include="..\eShop.SmsSender.Api\eShop.SmsSender.Api.csproj" />
