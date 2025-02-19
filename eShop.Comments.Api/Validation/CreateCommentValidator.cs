@@ -1,4 +1,4 @@
-﻿using eShop.Comments.Api.Commands.Comments;
+﻿using eShop.Comments.Api.Features.Commands;
 
 namespace eShop.Comments.Api.Validation;
 

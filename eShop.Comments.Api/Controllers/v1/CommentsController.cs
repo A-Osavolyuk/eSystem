@@ -1,8 +1,8 @@
-﻿using eShop.Comments.Api.Commands.Comments;
-using eShop.Comments.Api.Queries.Comments;
+﻿using eShop.Comments.Api.Features.Commands;
+using eShop.Comments.Api.Features.Queries;
 using Response = eShop.Domain.Common.Api.Response;
 
-namespace eShop.Comments.Api.Controllers;
+namespace eShop.Comments.Api.Controllers.v1;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]

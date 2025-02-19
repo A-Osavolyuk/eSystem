@@ -1,7 +1,7 @@
 ﻿using eShop.Product.Api.Features.Sellers.Commands;
 using Response = eShop.Domain.Common.Api.Response;
 
-namespace eShop.Product.Api.Controllers;
+namespace eShop.Product.Api.Controllers.v1;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]

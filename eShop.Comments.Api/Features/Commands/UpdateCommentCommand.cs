@@ -1,7 +1,4 @@
-﻿using eShop.Comments.Api.Data;
-using eShop.Comments.Api.Mapping;
-
-namespace eShop.Comments.Api.Commands.Comments;
+﻿namespace eShop.Comments.Api.Features.Commands;
 
 internal sealed record UpdateCommentCommand(UpdateCommentRequest Request) : IRequest<Result<UpdateCommentResponse>>;
 

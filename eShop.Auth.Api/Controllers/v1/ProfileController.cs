@@ -1,7 +1,7 @@
 ﻿using eShop.Auth.Api.Features.Account.Commands;
 using eShop.Auth.Api.Features.Auth.Queries;
 
-namespace eShop.Auth.Api.Controllers;
+namespace eShop.Auth.Api.Controllers.v1;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]

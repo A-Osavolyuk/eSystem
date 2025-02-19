@@ -1,7 +1,7 @@
 ﻿using eShop.EmailSender.Api.Requests;
 using Response = eShop.Domain.Common.Api.Response;
 
-namespace eShop.EmailSender.Api.Controllers;
+namespace eShop.EmailSender.Api.Controllers.v1;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]

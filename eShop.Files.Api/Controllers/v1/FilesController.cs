@@ -4,7 +4,7 @@ using eShop.Files.Api.Features.Commands;
 using eShop.Files.Api.Features.Queries;
 using eShop.Files.Api.Interfaces;
 
-namespace eShop.Files.Api.Controllers;
+namespace eShop.Files.Api.Controllers.v1;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]

@@ -2,7 +2,7 @@
 using eShop.Domain.Requests.Api.Telegram;
 using Response = eShop.Domain.Common.Api.Response;
 
-namespace eShop.TelegramBot.Api.Controllers;
+namespace eShop.TelegramBot.Api.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
