@@ -10,6 +10,6 @@ public class CodeEntity : IIdentifiable<Guid>, IAuditable
     public VerificationCodeType VerificationCodeType { get; init; }
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     public DateTime ExpireDate { get; init; } = DateTime.UtcNow.AddMinutes(10);
-    public DateTime CreateDate { get; init; }
-    public DateTime UpdateDate { get; init; }
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
 }

@@ -12,6 +12,6 @@ public record class CommentEntity : IIdentifiable<Guid>, IAuditable
     public List<string> Images { get; set; } = new List<string>();
     public int Rating { get; set; }
 
-    public DateTime CreateDate { get; init; }
-    public DateTime UpdateDate { get; init; }
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
 }

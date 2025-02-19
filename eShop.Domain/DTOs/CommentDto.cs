@@ -2,7 +2,7 @@
 
 public class CommentDto : IAuditable, IIdentifiable<Guid>
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     public Guid UserId { get; set; }
     public string Username { get; set; } = string.Empty;
     public string Text { get; set; } = string.Empty;

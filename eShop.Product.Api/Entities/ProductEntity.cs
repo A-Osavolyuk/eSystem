@@ -15,7 +15,7 @@ public class ProductEntity : IIdentifiable<Guid>, IAuditable
     public Guid SellerId { get; set; }
     public BrandEntity Brand { get; set; } = new BrandEntity();
     public SellerEntity Seller { get; set; } = new SellerEntity();
-    public DateTime CreateDate { get; init; }
-    public DateTime UpdateDate { get; init; }
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
     private static string GenerateArticle() => new Random().NextInt64(100_000_000, 999_999_999_999).ToString();
 }

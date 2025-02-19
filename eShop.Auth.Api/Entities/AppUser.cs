@@ -5,6 +5,6 @@ public class AppUser : IdentityUser<Guid>, IAuditable
     public PersonalDataEntity? PersonalData { get; init; }
     public SecurityTokenEntity? AuthenticationToken { get; init; }
     public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;
-    public DateTime CreateDate { get; init; }
-    public DateTime UpdateDate { get; init; }
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
 }

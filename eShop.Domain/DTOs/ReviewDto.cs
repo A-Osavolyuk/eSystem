@@ -2,7 +2,7 @@
 
 public class ReviewDto : IAuditable, IIdentifiable<Guid>
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     public Guid ProductId { get; set; }
     public Guid UserId { get; set; }
     public string UserName { get; set; } = string.Empty;

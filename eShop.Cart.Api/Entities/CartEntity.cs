@@ -11,6 +11,6 @@ public class CartEntity : IIdentifiable<Guid>, IAuditable
     [BsonRepresentation(BsonType.String)] public Guid UserId { get; init; }
     public int ItemsCount { get; init; }
     public List<CartItem> Items { get; init; } = new List<CartItem>();
-    public DateTime CreateDate { get; init; }
-    public DateTime UpdateDate { get; init; }
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
 }

@@ -2,7 +2,7 @@
 
 public record ProductDto : IIdentifiable<Guid>
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     public ProductTypes Type { get; set; } = ProductTypes.None;
     public string Article { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;

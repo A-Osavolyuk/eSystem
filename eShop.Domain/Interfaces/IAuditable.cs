@@ -2,6 +2,6 @@
 
 public interface IAuditable
 {
-    DateTime CreateDate { get; init; }
-    DateTime UpdateDate { get; init; }
+    DateTime CreateDate { get; set; }
+    DateTime UpdateDate { get; set; }
 }

@@ -5,7 +5,7 @@ namespace eShop.Domain.Types;
 public record PermissionsData : IIdentifiable<Guid>
 {
     [JsonIgnore]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     public List<RoleData> Roles { get; set; } = new List<RoleData>();
     public List<Permission> Permissions { get; set; } = new List<Permission>();
 }

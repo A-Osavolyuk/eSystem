@@ -8,6 +8,6 @@ public class SellerEntity : IIdentifiable<Guid>, IAuditable
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Article { get; set; } = string.Empty;
-    public DateTime CreateDate { get; init; }
-    public DateTime UpdateDate { get; init; }
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
 }
