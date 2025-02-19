@@ -22,12 +22,20 @@
                         },
                         "ClientSecret": {
                           "type": "string"
+                        },
+                        "SaveTokens": {
+                          "type": "boolean"
+                        },
+                        "CallbackPath": {
+                          "type": "string"
                         }
                       },
                       "required": [
                         "ClientId",
-                        "ClientSecret"
-                      ]
+                        "ClientSecret",
+                        "SaveTokens",
+                        "CallbackPath"
+                        ]
                     }
                   }
                 },

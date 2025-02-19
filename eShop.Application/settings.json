@@ -5,11 +5,21 @@
         "Providers": {
           "Google": {
             "ClientId": "",
-            "ClientSecret": ""
+            "ClientSecret": "",
+            "SaveTokens": true,
+            "CallbackPath": ""
           },
           "Facebook": {
             "ClientId": "",
-            "ClientSecret": ""
+            "ClientSecret": "",
+            "SaveTokens": true,
+            "CallbackPath": ""
+          },
+          "Microsoft": {
+            "ClientId": "",
+            "ClientSecret": "",
+            "SaveTokens": true,
+            "CallbackPath": ""
           }
         },
         "JWT": {
