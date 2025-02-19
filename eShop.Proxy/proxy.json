@@ -1,5 +1,5 @@
 ﻿{
-  "$schema": "proxy.schema.json",
+  "$schema": "https://raw.githubusercontent.com/A-Osavolyuk/Schemas/main/proxy.schema.json",
   "ReverseProxy": {
     "Routes": {
       "auth-route": {
