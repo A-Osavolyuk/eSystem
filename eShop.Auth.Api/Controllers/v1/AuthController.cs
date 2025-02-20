@@ -195,7 +195,7 @@ public class AuthController(SignInManager<AppUser> signInManager, ISender sender
         [FromBody] TwoFactorAuthenticationLoginRequest request)
     {
         var result =
-            await sender.Send(new TwoFactorAuthenticationLoginCommand(request));
+            await sender.Send(new LoginWith2FaCommand(request));
 
         return result.Match(
             succ => Ok(new ResponseBuilder().Succeeded().WithResult(succ).WithMessage(succ.Message).Build()),

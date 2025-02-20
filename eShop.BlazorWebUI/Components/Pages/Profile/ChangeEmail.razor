@@ -21,10 +21,10 @@
                     </MudGrid>
                     <MudGrid Justify="Justify.Center">
                         <MudItem xs="12">
-                            <EditForm Context="formcontext" Model="Request" FormName="change-email-form" OnValidSubmit="OnValidSubmit">
+                            <EditForm Context="formcontext" Model="request" FormName="change-email-form" OnValidSubmit="OnValidSubmit">
                                 <FluentValidationValidator Validator="Validator" />
-                                <MudTextField ReadOnly Label="Current email" @bind-Value="Request.CurrentEmail" Variant="Variant.Outlined" />
-                                <MudTextField Immediate Clearable For="@(() => Request.NewEmail)" Label="New email" @bind-Value="Request.NewEmail" Variant="Variant.Outlined" />
+                                <MudTextField ReadOnly Label="Current email" @bind-Value="request.CurrentEmail" Variant="Variant.Outlined" />
+                                <MudTextField Immediate Clearable For="@(() => request.NewEmail)" Label="New email" @bind-Value="request.NewEmail" Variant="Variant.Outlined" />
                                 <MudButton Class="mt-3" Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Success" EndIcon="@Icons.Material.Filled.Save">Save changes</MudButton>
                             </EditForm>
                         </MudItem>
@@ -39,21 +39,21 @@
 </AuthorizeView>
 
 @code {
-    private ChangeEmailRequest Request = new();
+    private ChangeEmailRequest request = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             var email = await UserStorage.GetEmailAsync();
-            Request = new() { CurrentEmail = email! };
+            request = new() { CurrentEmail = email! };
             StateHasChanged();
         }
     }
 
     private async Task OnValidSubmit()
     {
-        var response = await AuthService.RequestChangeEmailAsync(Request);
+        var response = await AuthService.RequestChangeEmailAsync(request);
 
         if (response.Success)
         {

@@ -12,7 +12,7 @@ var sqlServer = builder.AddSqlServer()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume();
 
-var mongo = builder.AddMongoDB()
+var mongo = builder.AddMongoDb()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume()
     .WithMongoExpress(configuration);
@@ -22,7 +22,7 @@ var authDb = sqlServer.AddDatabase("auth-db", "AuthDB");
 var reviewsDb = sqlServer.AddDatabase("reviews-db", "ReviewsDB");
 var productDb = sqlServer.AddDatabase("product-db", "ProductDB");
 
-var rabbitMq = builder.AddRabbitMQ()
+var rabbitMq = builder.AddRabbitMq()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithManagementPlugin()
     .WithDataVolume();

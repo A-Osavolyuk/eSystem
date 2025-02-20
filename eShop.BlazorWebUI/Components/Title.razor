@@ -1,10 +1,10 @@
-﻿@inject IJSRuntime JS
+﻿@inject IJSRuntime Js
 
 @code {
     [Parameter] public string Text { get; set; } = string.Empty;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JS.InvokeVoidAsync("setTitle", Text);
+        await Js.InvokeVoidAsync("setTitle", Text);
     }
 }

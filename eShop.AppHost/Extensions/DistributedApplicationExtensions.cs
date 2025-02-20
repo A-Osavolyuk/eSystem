@@ -47,7 +47,7 @@ public static class DistributedApplicationExtensions
         return builder.AddRedis(options.Name, options.Port);
     }
     
-    public static IResourceBuilder<MongoDBServerResource> AddMongoDB(this IDistributedApplicationBuilder builder)
+    public static IResourceBuilder<MongoDBServerResource> AddMongoDb(this IDistributedApplicationBuilder builder)
     {
         var options = builder.Configuration.GetSectionValue<MongoDbOptions>("Configuration:MongoDB");
         var password = builder.AddParameter("mongo-password", options.Password);
@@ -56,7 +56,7 @@ public static class DistributedApplicationExtensions
         return builder.AddMongoDB(options.Name, options.Port, user, password);
     }
     
-    public static IResourceBuilder<RabbitMQServerResource> AddRabbitMQ(this IDistributedApplicationBuilder builder)
+    public static IResourceBuilder<RabbitMQServerResource> AddRabbitMq(this IDistributedApplicationBuilder builder)
     {
         var options = builder.Configuration.GetSectionValue<RabbitMqOptions>("Configuration:RabbitMQ");
         var defaultPassword = builder.AddParameter("rabbit-mq-password", options.Password);

@@ -1,16 +1,16 @@
 ﻿namespace eShop.Auth.Api.Features.Auth.Commands;
 
-internal sealed record TwoFactorAuthenticationLoginCommand(TwoFactorAuthenticationLoginRequest Request)
+internal sealed record LoginWith2FaCommand(TwoFactorAuthenticationLoginRequest Request)
     : IRequest<Result<LoginResponse>>;
 
-internal sealed class TwoFactorAuthenticationLoginCommandHandler(
+internal sealed class LoginWith2FaCommandHandler(
     AppManager appManager,
-    ITokenHandler tokenHandler) : IRequestHandler<TwoFactorAuthenticationLoginCommand, Result<LoginResponse>>
+    ITokenHandler tokenHandler) : IRequestHandler<LoginWith2FaCommand, Result<LoginResponse>>
 {
     private readonly AppManager appManager = appManager;
     private readonly ITokenHandler tokenHandler = tokenHandler;
 
-    public async Task<Result<LoginResponse>> Handle(TwoFactorAuthenticationLoginCommand request,
+    public async Task<Result<LoginResponse>> Handle(LoginWith2FaCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
