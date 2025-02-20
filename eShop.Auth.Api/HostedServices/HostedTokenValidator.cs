@@ -28,7 +28,7 @@ public class HostedTokenValidator(IServiceScopeFactory scopeFactory) : IHostedSe
 
         foreach (var userToken in tokens)
         {
-            if (userToken.ExpiredAt <= DateTime.UtcNow)
+            if (userToken.ExpireDate <= DateTime.UtcNow)
             {
                 tokensToRemove.Add(userToken);
             }

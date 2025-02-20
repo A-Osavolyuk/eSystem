@@ -173,7 +173,7 @@ internal sealed class SecurityManager(
         {
             UserId = user.Id, 
             Token = token,
-            ExpiredAt = validTo,
+            ExpireDate = validTo,
         });
         await context.SaveChangesAsync();
     }
