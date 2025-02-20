@@ -1,7 +1,7 @@
 ﻿@page "/profile/change-username"
 @inherits PageBase
 
-@inject ISecurityService AuthService
+@inject IAuthenticationService AuthService
 @inject IProfileService ProfileService
 @inject UserNameValidator Validator
 @inject AuthenticationStateProvider AuthenticationStateProvider

@@ -1,6 +1,6 @@
 ﻿@page "/account/change-email/"
 
-@inject ISecurityService SecurityService
+@inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationState
 @inject ITokenProvider TokenProvider
@@ -22,7 +22,7 @@
             CodeSet = new CodeSet()
         };
 
-        var result = await SecurityService.ConfirmChangeEmailAsync(Request);
+        var result = await AuthenticationService.ConfirmChangeEmailAsync(Request);
 
         if (result.Success)
         {

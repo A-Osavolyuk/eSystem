@@ -5,13 +5,13 @@ namespace eShop.Infrastructure.Account;
 
 public class ApplicationAuthenticationStateProvider(
     ITokenProvider tokenProvider,
-    ISecurityService securityService,
+    IAuthenticationService authenticationService,
     ILocalStorage localStorage,
     IUserStorage userStorage) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
-    private readonly ISecurityService securityService = securityService;
+    private readonly IAuthenticationService authenticationService = authenticationService;
     private readonly ILocalStorage localStorage = localStorage;
     private readonly IUserStorage userStorage = userStorage;
 
@@ -182,7 +182,7 @@ public class ApplicationAuthenticationStateProvider(
 
     private async Task<AuthenticationState> RefreshTokenAsync(string expiredToken)
     {
-        var result = await securityService.RefreshToken(new RefreshTokenRequest() { Token = expiredToken });
+        var result = await authenticationService.RefreshToken(new RefreshTokenRequest() { Token = expiredToken });
 
         if (result.Success)
         {

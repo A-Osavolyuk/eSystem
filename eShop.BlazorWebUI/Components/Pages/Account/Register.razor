@@ -1,7 +1,7 @@
 ﻿@page "/account/register"
 @inherits PageBase
 
-@inject ISecurityService SecurityService
+@inject IAuthenticationService AuthenticationService
 @inject RegistrationValidator Validator
 
 <Title Text="Register"/>
@@ -49,7 +49,7 @@
 
     private async Task RegisterUserAsync()
     {
-        var result = await SecurityService.RegisterAsync(RegistrationRequest);
+        var result = await AuthenticationService.RegisterAsync(RegistrationRequest);
 
         if (result.Success)
         {

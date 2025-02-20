@@ -3,7 +3,7 @@
 
 @inherits PageBase
 
-@inject ISecurityService SecurityService
+@inject IAuthenticationService AuthenticationService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject LoginValidator Validator
 @inject IConfiguration Configuration
@@ -101,7 +101,7 @@
 
     private async Task LoginClick()
     {
-        var result = await SecurityService.LoginAsync(LoginRequest);
+        var result = await AuthenticationService.LoginAsync(LoginRequest);
 
         if (result.Success)
         {

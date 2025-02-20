@@ -1,7 +1,7 @@
 ﻿@page "/account/login-2fa/{Email}"
 @inherits PageBase
 
-@inject ISecurityService SecurityService
+@inject IAuthenticationService AuthenticationService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Title Text="Login with 2FA"/>
@@ -50,7 +50,7 @@
 
     private async Task OnVerifySubmit()
     {
-        var result = await SecurityService.LoginWithTwoFactorAuthenticationAsync(With2FaRequest with { Email = Email });
+        var result = await AuthenticationService.LoginWithTwoFactorAuthenticationAsync(With2FaRequest with { Email = Email });
 
         if (result.Success)
         {

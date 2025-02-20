@@ -23,7 +23,7 @@ public static class Extensions
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddHttpClient();
-        builder.Services.AddHttpClient<ISecurityService, SecurityService>();
+        builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>();
         builder.Services.AddHttpClient<IProductService, ProductService>();
         builder.Services.AddHttpClient<IBrandService, BrandSevice>();
         builder.Services.AddHttpClient<ICommentService, CommentService>();
@@ -36,7 +36,7 @@ public static class Extensions
 
         builder.Services.AddScoped<IHttpClientService, HttpClientService>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
-        builder.Services.AddScoped<ISecurityService, SecurityService>();
+        builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<IBrandService, BrandSevice>();
         builder.Services.AddScoped<ILocalStorage, LocalStorage>();

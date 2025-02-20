@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Interfaces.Client;
 
-public interface ISecurityService
+public interface IAuthenticationService
 {
     public ValueTask<Response> LoginAsync(LoginRequest request);
     public ValueTask<Response> RegisterAsync(RegistrationRequest request);
