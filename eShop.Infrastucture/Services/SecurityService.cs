@@ -1,8 +1,8 @@
 ﻿namespace eShop.Infrastructure.Services;
 
-public class AuthenticationService(
+public class SecurityService(
     IHttpClientService clientService,
-    IConfiguration configuration) : IAuthenticationService
+    IConfiguration configuration) : ISecurityService
 {
     private readonly IHttpClientService clientService = clientService;
     private readonly IConfiguration configuration = configuration;

@@ -1,6 +1,6 @@
 ﻿using ClaimTypes = System.Security.Claims.ClaimTypes;
 
-namespace eShop.Auth.Api.Features.Auth.Queries;
+namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record HandleExternalLoginResponseQuery(
     ExternalLoginInfo ExternalLoginInfo,

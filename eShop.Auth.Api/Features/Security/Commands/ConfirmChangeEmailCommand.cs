@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.Auth.Commands;
+﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record ConfirmChangeEmailCommand(ConfirmChangeEmailRequest Request)
     : IRequest<Result<ConfirmChangeEmailResponse>>;

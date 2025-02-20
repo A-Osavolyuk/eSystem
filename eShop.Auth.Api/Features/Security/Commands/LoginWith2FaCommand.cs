@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.Auth.Commands;
+﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record LoginWith2FaCommand(LoginWith2FaRequest With2FaRequest)
     : IRequest<Result<LoginResponse>>;

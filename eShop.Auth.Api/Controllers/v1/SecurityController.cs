@@ -1,5 +1,5 @@
-﻿using eShop.Auth.Api.Features.Auth.Commands;
-using eShop.Auth.Api.Features.Auth.Queries;
+﻿using eShop.Auth.Api.Features.Security.Commands;
+using eShop.Auth.Api.Features.Security.Queries;
 
 namespace eShop.Auth.Api.Controllers.v1;
 
@@ -7,7 +7,7 @@ namespace eShop.Auth.Api.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Authorize]
-public class AuthController(SignInManager<AppUser> signInManager, ISender sender) : ControllerBase
+public class SecurityController(SignInManager<AppUser> signInManager, ISender sender) : ControllerBase
 {
     private readonly SignInManager<AppUser> signInManager = signInManager;
     private readonly ISender sender = sender;

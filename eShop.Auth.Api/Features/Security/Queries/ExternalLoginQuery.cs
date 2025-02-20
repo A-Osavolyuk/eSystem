@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.Auth.Queries;
+﻿namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record ExternalLoginQuery(string Provider, string? ReturnUri) : IRequest<Result<ExternalLoginResponse>>;
 

@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.Auth.Commands;
+﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record ChangePasswordCommand(ChangePasswordRequest Request)
     : IRequest<Result<ChangePasswordResponse>>;

@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.Auth.Commands;
+﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request)
     : IRequest<Result<ChangePhoneNumberResponse>>;

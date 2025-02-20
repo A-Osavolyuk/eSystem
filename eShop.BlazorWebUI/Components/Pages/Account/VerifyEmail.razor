@@ -2,7 +2,7 @@
 @using Severity = MudBlazor.Severity;
 @inherits PageBase
 
-@inject IAuthenticationService AuthenticationService
+@inject ISecurityService SecurityService
 
 <Title Text="Verify email"></Title>
 
@@ -60,7 +60,7 @@
     private async Task VerifyEmailAsync()
     {
         VerifyEmailRequest.Email = Email;
-        var result = await AuthenticationService.VerifyEmailAsync(VerifyEmailRequest);
+        var result = await SecurityService.VerifyEmailAsync(VerifyEmailRequest);
 
         if (result.Success)
         {
@@ -73,7 +73,7 @@
 
     private async Task ResendCodeAsync()
     {
-        var response = await AuthenticationService.ResendVerificationCodeAsync(new () { Email = Email });
+        var response = await SecurityService.ResendVerificationCodeAsync(new () { Email = Email });
 
         if (response.Success)
         {

@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.Auth.Commands;
+﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record Change2FaStateCommand(Change2FaStateRequest Request)
     : IRequest<Result<Change2FaStateResponse>>;
