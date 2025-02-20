@@ -17,18 +17,22 @@ public static class BuilderExtensions
         builder.AddDependencyInjection();
         builder.AddServiceDefaults();
         builder.AddRedisCache();
+        builder.AddMediatR();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarker));
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddOpenApi();
+    }
+
+    private static void AddMediatR(this IHostApplicationBuilder builder)
+    {
         builder.Services.AddMediatR(x =>
         {
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
             x.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
         });
-
-        builder.Services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarker));
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
-        builder.Services.AddOpenApi();
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)

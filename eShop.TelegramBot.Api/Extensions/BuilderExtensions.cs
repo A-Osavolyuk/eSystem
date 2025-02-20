@@ -11,18 +11,24 @@ public static class BuilderExtensions
         builder.AddValidation();
         builder.AddDependencyInjection();
         builder.AddMessageBus();
+        builder.AddMediatR();
+        
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddMediatR(x =>
-        {
-            x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            x.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
-        });
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
 
         return builder;
+    }
+
+    private static void AddMediatR(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddMediatR(x =>
+        {
+            x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
+            x.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
+        });
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)

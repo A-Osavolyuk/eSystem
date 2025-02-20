@@ -9,10 +9,14 @@ public static class BuilderExtensions
     {
         builder.AddServiceDefaults();
         builder.AddLogging();
+        builder.AddMessageBus();
         builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Configuration:Services:SMTP"));
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddOptions();
+    }
 
+    private static void AddMessageBus(this IHostApplicationBuilder builder)
+    {
         builder.Services.AddMassTransit(x =>
         {
             x.UsingRabbitMq((context, cfg) =>

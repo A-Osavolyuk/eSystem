@@ -2,6 +2,7 @@
 using eShop.Comments.Api.Data;
 using eShop.Comments.Api.Receivers;
 using eShop.Comments.Api.Services;
+using eShop.Domain.Enums;
 
 namespace eShop.Comments.Api.Extensions;
 
@@ -17,23 +18,32 @@ public static class BuilderExtensions
         builder.AddDependencyInjection();
         builder.AddMessageBus();
         builder.AddRedisCache();
-        builder.Services.AddDbContext<AppDbContext>(cfg =>
-        {
-            cfg.UseSqlServer(builder.Configuration["Configuration:Storage:Databases:SQL:MSSQL:ConnectionString"]!);
-        });
+        builder.AddMediatR();
+
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
+
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddOpenApi();
+
+        return builder;
+    }
+
+    private static void AddSqlDb(this IHostApplicationBuilder builder)
+    {
+        var connectionString = builder.Configuration.GetConnectionString(SqlDb.SqlServer);
+        builder.Services.AddDbContext<AppDbContext>(cfg => { cfg.UseSqlServer(connectionString); });
+    }
+
+    private static void AddMediatR(this IHostApplicationBuilder builder)
+    {
         builder.Services.AddMediatR(x =>
         {
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
             x.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
             x.AddOpenBehavior(typeof(TransactionBehaviour<,>), ServiceLifetime.Transient);
         });
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
-        builder.Services.AddOpenApi();
-
-        return builder;
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)

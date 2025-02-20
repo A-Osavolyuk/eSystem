@@ -14,18 +14,23 @@ public static class BuilderExtensions
         builder.AddValidation();
         builder.AddServiceDefaults();
         builder.AddRedisCache();
+        builder.AddMediatR();
         builder.Services.AddGrpc();
         builder.Services.AddControllers();
-        builder.Services.AddMediatR(x =>
-        {
-            x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            x.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
-        });
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
     }
 
+    private static void AddMediatR(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddMediatR(x =>
+        {
+            x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
+            x.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
+        });
+    }
+    
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
         builder.Services.Configure<MongoDbSettings>(

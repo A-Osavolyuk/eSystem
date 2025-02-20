@@ -42,10 +42,10 @@ public static class BuilderExtensions
 
     private static void AddSqlDb(this IHostApplicationBuilder builder)
     {
-        const string connectionStringPath = "Configuration:Storage:Databases:SQL:MSSQL:ConnectionString";
+        var connectionString = builder.Configuration.GetConnectionString(SqlDb.SqlServer);
         builder.Services.AddDbContext<AuthDbContext>(cfg =>
         {
-            cfg.UseSqlServer(builder.Configuration[connectionStringPath]!);
+            cfg.UseSqlServer(connectionString);
         });
     }
 
