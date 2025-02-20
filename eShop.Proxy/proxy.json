@@ -2,16 +2,22 @@
   "$schema": "https://raw.githubusercontent.com/A-Osavolyuk/Schemas/main/proxy.schema.json",
   "ReverseProxy": {
     "Routes": {
-      "auth-route": {
-        "ClusterID": "auth-cluster",
+      "security-route": {
+        "ClusterID": "security-cluster",
         "Match": {
-          "Path": "api/v1/Auth/{**catch-all}"
+          "Path": "api/v1/Security/{**catch-all}"
         }
       },
       "admin-route": {
-        "ClusterID": "auth-cluster",
+        "ClusterID": "security-cluster",
         "Match": {
           "Path": "api/v1/Admin/{**catch-all}"
+        }
+      },
+      "profile-route": {
+        "ClusterID": "security-cluster",
+        "Match": {
+          "Path": "api/v1/Profile/{**catch-all}"
         }
       },
       "cart-route": {
@@ -58,9 +64,9 @@
       }
     },
     "Clusters": {
-      "auth-cluster": {
+      "security-cluster": {
         "Destinations": {
-          "auth-destination": {
+          "security-destination": {
             "Address": "https://localhost:40201"
           }
         }
