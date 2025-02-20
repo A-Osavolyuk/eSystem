@@ -6,13 +6,13 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
     public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
     public DbSet<UserPermissionsEntity> UserPermissions => Set<UserPermissionsEntity>();
     public DbSet<SecurityTokenEntity> SecurityTokens => Set<SecurityTokenEntity>();
-    public DbSet<CodeEntity> Codes => Set<CodeEntity>();
+    public DbSet<VerificationCodeEntity> Codes => Set<VerificationCodeEntity>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<CodeEntity>(e =>
+        builder.Entity<VerificationCodeEntity>(e =>
         {
             e.HasKey(x => x.Id);
             e.Property(x => x.Code).HasMaxLength(6);

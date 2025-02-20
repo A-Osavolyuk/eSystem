@@ -27,7 +27,7 @@ public class HostedCodeValidator(IServiceScopeFactory scopeFactory) : IHostedSer
 
         if (codes.Any())
         {
-            var codesToRemove = new List<CodeEntity>();
+            var codesToRemove = new List<VerificationCodeEntity>();
 
             foreach (var code in codes)
             {

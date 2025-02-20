@@ -120,7 +120,7 @@ internal sealed class SecurityManager(
         var result = await userManager.ChangePhoneNumberAsync(user, newPhoneNumber);
         return result;
     }
-    public async ValueTask<CodeEntity?> FindCodeAsync(string destination, VerificationCodeType codeType)
+    public async ValueTask<VerificationCodeEntity?> FindCodeAsync(string destination, VerificationCodeType codeType)
     {
         var entity = await context.Codes
             .AsNoTracking()
@@ -188,7 +188,7 @@ internal sealed class SecurityManager(
 
     private async Task SaveCodeAsync(string code, string sentTo, VerificationCodeType verificationCodeType)
     {
-        await context.Codes.AddAsync(new CodeEntity()
+        await context.Codes.AddAsync(new VerificationCodeEntity()
         {
             Id = Guid.CreateVersion7(),
             Destination = sentTo,
@@ -201,7 +201,7 @@ internal sealed class SecurityManager(
         await context.SaveChangesAsync();
     }
 
-    private async Task<CodeEntity?> FindCodeAsync(string code, string sentTo, VerificationCodeType verificationCodeType)
+    private async Task<VerificationCodeEntity?> FindCodeAsync(string code, string sentTo, VerificationCodeType verificationCodeType)
     {
         var entity = await context.Codes
             .AsNoTracking()
@@ -211,7 +211,7 @@ internal sealed class SecurityManager(
         return entity;
     }
 
-    private async Task RemoveCodeAsync(CodeEntity entity)
+    private async Task RemoveCodeAsync(VerificationCodeEntity entity)
     {
         context.Codes.Remove(entity);
         await context.SaveChangesAsync();
