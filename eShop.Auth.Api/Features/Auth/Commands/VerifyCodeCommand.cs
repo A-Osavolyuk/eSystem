@@ -9,7 +9,7 @@ internal sealed class VerifyCodeCommandHandler(AppManager manager)
 
     public async Task<Result<VerifyCodeResponse>> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
     {
-        var result = await manager.SecurityManager.VerifyCodeAsync(request.Request.Code, request.Request.SentTo,
+        var result = await manager.SecurityManager.VerifyCodeAsync(request.Request.Code, request.Request.Destination,
             request.Request.CodeType);
 
         if (!result.Succeeded)

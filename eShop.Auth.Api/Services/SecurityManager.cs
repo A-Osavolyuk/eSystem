@@ -21,20 +21,20 @@ internal sealed class SecurityManager(
 
         return sb.ToString();
     }
-    public async ValueTask<string> GenerateVerificationCodeAsync(string sentTo,
-        VerificationCodeType verificationCodeType)
+    public async ValueTask<string> GenerateVerificationCodeAsync(string destination,
+        VerificationCodeType codeType)
     {
         var code = GenerateCode();
-        await SaveCodeAsync(code, sentTo, verificationCodeType);
+        await SaveCodeAsync(code, destination, codeType);
         return code;
     }
     public async ValueTask<CodeSet> GenerateVerificationCodeSetAsync(DestinationSet destinationSet,
-        VerificationCodeType verificationCodeType)
+        VerificationCodeType codeType)
     {
         var codeSet = new CodeSet()
         {
-            Current = await GenerateVerificationCodeAsync(destinationSet.Current, verificationCodeType),
-            Next = await GenerateVerificationCodeAsync(destinationSet.Next, verificationCodeType)
+            Current = await GenerateVerificationCodeAsync(destinationSet.Current, codeType),
+            Next = await GenerateVerificationCodeAsync(destinationSet.Next, codeType)
         };
 
         return codeSet;
@@ -120,20 +120,20 @@ internal sealed class SecurityManager(
         var result = await userManager.ChangePhoneNumberAsync(user, newPhoneNumber);
         return result;
     }
-    public async ValueTask<CodeEntity?> FindCodeAsync(string sentTo, VerificationCodeType type)
+    public async ValueTask<CodeEntity?> FindCodeAsync(string destination, VerificationCodeType codeType)
     {
         var entity = await context.Codes
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.SentTo == sentTo && c.VerificationCodeType == type);
+            .FirstOrDefaultAsync(c => c.Destination == destination && c.VerificationCodeType == codeType);
 
         return entity;
     }
-    public async ValueTask<IdentityResult> VerifyCodeAsync(string code, string sentTo, VerificationCodeType type)
+    public async ValueTask<IdentityResult> VerifyCodeAsync(string code, string destination, VerificationCodeType type)
     {
         var entity = await context.Codes
             .AsNoTracking()
             .SingleOrDefaultAsync(
-                x => x.SentTo == sentTo
+                x => x.Destination == destination
                      && x.Code == code
                      && x.VerificationCodeType == type
                      && x.ExpireDate < DateTime.UtcNow);
@@ -191,7 +191,7 @@ internal sealed class SecurityManager(
         await context.Codes.AddAsync(new CodeEntity()
         {
             Id = Guid.CreateVersion7(),
-            SentTo = sentTo,
+            Destination = sentTo,
             Code = code,
             VerificationCodeType = verificationCodeType,
             CreatedAt = DateTime.UtcNow,
@@ -206,7 +206,7 @@ internal sealed class SecurityManager(
         var entity = await context.Codes
             .AsNoTracking()
             .FirstOrDefaultAsync(c =>
-                c.Code == code && c.SentTo == sentTo && c.VerificationCodeType == verificationCodeType);
+                c.Code == code && c.Destination == sentTo && c.VerificationCodeType == verificationCodeType);
 
         return entity;
     }
