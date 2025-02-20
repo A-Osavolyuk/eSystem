@@ -126,7 +126,7 @@
 
     private void ExternalLogin(string providerName)
     {
-        var authUrl = $"{Configuration["Configuration:Services:Proxy:Gateway"]!}/api/v1/Auth/external-login/{providerName}";
+        var authUrl = $"{Configuration["Configuration:Services:Proxy:Gateway"]!}/api/v1/Security/external-login/{providerName}";
         NavigationManager.NavigateTo(authUrl);
     }
 
