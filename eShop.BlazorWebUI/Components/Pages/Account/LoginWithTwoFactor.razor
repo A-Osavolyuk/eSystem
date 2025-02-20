@@ -12,7 +12,7 @@
             <MudText Align="Align.Center" Typo="Typo.h4">Two-factor verification</MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm Model="Request">
+            <MudForm Model="With2FaRequest">
                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1" Style="width: 50ch; margin: auto">
                     Your account has enabled 2-FA (Two-factor authentication). 
                     To verify a log in attempt, please enter the 6-digit code from the letter we
@@ -21,11 +21,11 @@
                 <MudGrid Justify="Justify.Center" Spacing="1">
                     <MudItem xs="7">
                         <br>
-                        <MudCodeInput Count="6" Margin="Margin.Normal" @bind-Value="Request.Code"
+                        <MudCodeInput Count="6" Margin="Margin.Normal" @bind-Value="With2FaRequest.Code"
                                       Variant="Variant.Outlined"/>
                     </MudItem>
                     <MudItem xs="12">
-                        <MudLoadingButton ButtonType="ButtonType.Button" Disabled="Request.Code.Length <= 5"
+                        <MudLoadingButton ButtonType="ButtonType.Button" Disabled="With2FaRequest.Code.Length <= 5"
                                           StartIcon="@Icons.Material.Filled.Login"
                                           OnClick="async () => await OnVerifySubmit()"
                                           Variant="Variant.Filled" Color="Color.Primary" FullWidth>
@@ -46,11 +46,11 @@
 
 @code {
     [Parameter] public string Email { get; set; } = string.Empty;
-    private TwoFactorAuthenticationLoginRequest Request { get; set; } = new();
+    private LoginWith2FaRequest With2FaRequest { get; set; } = new();
 
     private async Task OnVerifySubmit()
     {
-        var result = await AuthenticationService.LoginWithTwoFactorAuthenticationAsync(Request with { Email = Email });
+        var result = await AuthenticationService.LoginWithTwoFactorAuthenticationAsync(With2FaRequest with { Email = Email });
 
         if (result.Success)
         {

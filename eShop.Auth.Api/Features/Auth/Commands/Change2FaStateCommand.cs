@@ -1,16 +1,16 @@
 ﻿namespace eShop.Auth.Api.Features.Auth.Commands;
 
-internal sealed record ChangeTwoFactorAuthenticationStateCommand(ChangeTwoFactorAuthenticationRequest Request)
-    : IRequest<Result<ChangeTwoFactorAuthenticationResponse>>;
+internal sealed record Change2FaStateCommand(Change2FaStateRequest Request)
+    : IRequest<Result<Change2FaStateResponse>>;
 
 internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
     AppManager appManager)
-    : IRequestHandler<ChangeTwoFactorAuthenticationStateCommand, Result<ChangeTwoFactorAuthenticationResponse>>
+    : IRequestHandler<Change2FaStateCommand, Result<Change2FaStateResponse>>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<ChangeTwoFactorAuthenticationResponse>> Handle(
-        ChangeTwoFactorAuthenticationStateCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Change2FaStateResponse>> Handle(
+        Change2FaStateCommand request, CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
@@ -32,7 +32,7 @@ internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
 
         var state = user.TwoFactorEnabled ? "disabled" : "enabled";
 
-        return new(new ChangeTwoFactorAuthenticationResponse()
+        return new(new Change2FaStateResponse()
         {
             Message = $"Two factor authentication was successfully {state}.",
             TwoFactorAuthenticationState = user.TwoFactorEnabled,

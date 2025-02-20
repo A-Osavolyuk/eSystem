@@ -47,11 +47,11 @@ public class AuthenticationService(
             Methods: HttpMethods.Get));
 
     public async ValueTask<Response>
-        LoginWithTwoFactorAuthenticationAsync(TwoFactorAuthenticationLoginRequest request) =>
+        LoginWithTwoFactorAuthenticationAsync(LoginWith2FaRequest with2FaRequest) =>
         await clientService.SendAsync(new Request(
             Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Auth/2fa-login",
             Methods: HttpMethods.Post,
-            Data: request));
+            Data: with2FaRequest));
 
     public async ValueTask<Response> RequestChangeEmailAsync(ChangeEmailRequest request) =>
         await clientService.SendAsync(
@@ -71,7 +71,7 @@ public class AuthenticationService(
                 Methods: HttpMethods.Put, Data: request));
 
     public async ValueTask<Response> ChangeTwoFactorAuthenticationStateAsync(
-        ChangeTwoFactorAuthenticationRequest request) => await clientService.SendAsync(
+        Change2FaStateRequest request) => await clientService.SendAsync(
         new Request(Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Auth/change-2fa-state",
             Methods: HttpMethods.Post, Data: request));
 

@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Features.Auth.Commands;
 
-internal sealed record LoginWith2FaCommand(TwoFactorAuthenticationLoginRequest Request)
+internal sealed record LoginWith2FaCommand(LoginWith2FaRequest With2FaRequest)
     : IRequest<Result<LoginResponse>>;
 
 internal sealed class LoginWith2FaCommandHandler(
@@ -13,19 +13,19 @@ internal sealed class LoginWith2FaCommandHandler(
     public async Task<Result<LoginResponse>> Handle(LoginWith2FaCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await appManager.UserManager.FindByEmailAsync(request.With2FaRequest.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.Request.Email}."));
+            return new(new NotFoundException($"Cannot find user with email {request.With2FaRequest.Email}."));
         }
 
         var result =
-            await appManager.UserManager.VerifyTwoFactorTokenAsync(user, "Email", request.Request.Code);
+            await appManager.UserManager.VerifyTwoFactorTokenAsync(user, "Email", request.With2FaRequest.Code);
 
         if (!result)
         {
-            return new(new BadRequestException($"Invalid two-factor code {request.Request.Code}."));
+            return new(new BadRequestException($"Invalid two-factor code {request.With2FaRequest.Code}."));
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);

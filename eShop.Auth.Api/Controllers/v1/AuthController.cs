@@ -21,12 +21,12 @@ public class AuthController(SignInManager<AppUser> signInManager, ISender sender
     [HttpGet("get-2fa-state/{email}")]
     public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(string email)
     {
-        var result = await sender.Send(new GetTwoFactorAuthenticationStateQuery(email));
+        var result = await sender.Send(new Get2FaStateQuery(email));
 
         return result.Match(
             s => Ok(new ResponseBuilder()
                 .Succeeded()
-                .WithMessage(s.State.Enabled
+                .WithMessage(s.Enabled
                     ? "Two factor authentication state is enabled."
                     : "Two factor authentication state is disabled.")
                 .WithResult(s)
@@ -177,9 +177,9 @@ public class AuthController(SignInManager<AppUser> signInManager, ISender sender
     [Authorize(Policy = "ManageAccountPolicy")]
     [HttpPost("change-2fa-state")]
     public async ValueTask<ActionResult<Response>> ChangeTwoFactorAuthentication(
-        [FromBody] ChangeTwoFactorAuthenticationRequest request)
+        [FromBody] Change2FaStateRequest request)
     {
-        var result = await sender.Send(new ChangeTwoFactorAuthenticationStateCommand(request));
+        var result = await sender.Send(new Change2FaStateCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
@@ -192,10 +192,10 @@ public class AuthController(SignInManager<AppUser> signInManager, ISender sender
     [AllowAnonymous]
     [HttpPost("2fa-login")]
     public async ValueTask<ActionResult<Response>> LoginWithTwoFactorAuthenticationCode(
-        [FromBody] TwoFactorAuthenticationLoginRequest request)
+        [FromBody] LoginWith2FaRequest with2FaRequest)
     {
         var result =
-            await sender.Send(new LoginWith2FaCommand(request));
+            await sender.Send(new LoginWith2FaCommand(with2FaRequest));
 
         return result.Match(
             succ => Ok(new ResponseBuilder().Succeeded().WithResult(succ).WithMessage(succ.Message).Build()),
