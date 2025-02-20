@@ -124,7 +124,7 @@ internal sealed class SecurityManager(
     {
         var entity = await context.Codes
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.Destination == destination && c.VerificationCodeType == codeType);
+            .FirstOrDefaultAsync(c => c.Destination == destination && c.CodeType == codeType);
 
         return entity;
     }
@@ -135,7 +135,7 @@ internal sealed class SecurityManager(
             .SingleOrDefaultAsync(
                 x => x.Destination == destination
                      && x.Code == code
-                     && x.VerificationCodeType == type
+                     && x.CodeType == type
                      && x.ExpireDate < DateTime.UtcNow);
 
         if (entity is null)
@@ -193,8 +193,8 @@ internal sealed class SecurityManager(
             Id = Guid.CreateVersion7(),
             Destination = sentTo,
             Code = code,
-            VerificationCodeType = verificationCodeType,
-            CreatedAt = DateTime.UtcNow,
+            CodeType = verificationCodeType,
+            CreateDate = DateTime.UtcNow,
             ExpireDate = DateTime.UtcNow.AddMinutes(10)
         });
 
@@ -206,7 +206,7 @@ internal sealed class SecurityManager(
         var entity = await context.Codes
             .AsNoTracking()
             .FirstOrDefaultAsync(c =>
-                c.Code == code && c.Destination == sentTo && c.VerificationCodeType == verificationCodeType);
+                c.Code == code && c.Destination == sentTo && c.CodeType == verificationCodeType);
 
         return entity;
     }
