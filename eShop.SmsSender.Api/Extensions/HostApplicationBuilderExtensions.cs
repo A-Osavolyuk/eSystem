@@ -3,7 +3,7 @@ using eShop.SmsSender.Api.Interfaces;
 
 namespace eShop.SmsSender.Api.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static IHostApplicationBuilder AddApiServices(this IHostApplicationBuilder builder)
     {

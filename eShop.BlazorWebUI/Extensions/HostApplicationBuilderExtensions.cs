@@ -5,7 +5,7 @@ using MudExtensions.Services;
 
 namespace eShop.BlazorWebUI.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static void AddAppServices(this IHostApplicationBuilder builder)
     {

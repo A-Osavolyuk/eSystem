@@ -5,11 +5,11 @@ using StackExchange.Redis;
 
 namespace eShop.Application.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static void AddValidation(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddValidatorsFromAssemblyContaining(typeof(BuilderExtensions));
+        builder.Services.AddValidatorsFromAssemblyContaining(typeof(HostApplicationBuilderExtensions));
     }
 
     public static void AddVersioning(this IHostApplicationBuilder builder)

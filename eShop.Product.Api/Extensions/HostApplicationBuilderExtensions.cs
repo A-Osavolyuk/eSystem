@@ -1,44 +1,52 @@
-﻿using eShop.Cart.Api.Services;
+﻿using eShop.Product.Api.Services;
 
-namespace eShop.Cart.Api.Extensions;
+namespace eShop.Product.Api.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddLogging();
+        builder.AddServiceDefaults();
         builder.AddJwtAuthentication();
-        builder.AddVersioning();
         builder.AddDependencyInjection();
+        builder.AddVersioning();
         builder.AddMessageBus();
         builder.AddValidation();
-        builder.AddServiceDefaults();
         builder.AddRedisCache();
         builder.AddMediatR();
-        builder.Services.AddGrpc();
+        builder.AddSqlDb();
+        
         builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
     }
 
-    private static void AddMediatR(this IHostApplicationBuilder builder)
+    private static void AddSqlDb(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddMediatR(x =>
+        var connectionString = builder.Configuration.GetConnectionString(SqlDb.SqlServer);
+        builder.Services.AddDbContext<AppDbContext>(cfg =>
         {
-            x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            x.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
+            cfg.UseSqlServer(connectionString);
         });
     }
-    
+
+    private static void AddMediatR(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddMediatR(c =>
+        {
+            c.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
+            c.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
+            c.AddOpenBehavior(typeof(TransactionBehaviour<,>), ServiceLifetime.Transient);
+        });
+    }
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.Configure<MongoDbSettings>(
-            builder.Configuration.GetSection("Configuration:Storage:Databases:NoSQL:Mongo"));
-
         builder.Services.AddScoped<ICacheService, CacheService>();
 
-        builder.Services.AddSingleton<DbClient>();
+        builder.Services.AddScoped<AuthClient>();
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)

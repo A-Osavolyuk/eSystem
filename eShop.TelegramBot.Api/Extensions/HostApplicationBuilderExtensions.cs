@@ -1,6 +1,6 @@
 ﻿namespace eShop.TelegramBot.Api.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static IHostApplicationBuilder AddApiServices(this IHostApplicationBuilder builder)
     {

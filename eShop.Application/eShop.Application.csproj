@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Extensions\BuilderExtensions.cs" />
+    <None Include="Extensions\HostApplicationBuilderExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

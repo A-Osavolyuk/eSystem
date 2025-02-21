@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {

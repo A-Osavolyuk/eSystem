@@ -7,7 +7,7 @@ using Interfaces_IStoreService = eShop.Files.Api.Interfaces.IStoreService;
 
 namespace eShop.Files.Api.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {

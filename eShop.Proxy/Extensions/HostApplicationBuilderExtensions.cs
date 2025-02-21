@@ -3,7 +3,7 @@ using eShop.ServiceDefaults;
 
 namespace eShop.Proxy.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static void AppApiServices(this IHostApplicationBuilder builder)
     {

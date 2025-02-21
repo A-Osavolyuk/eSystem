@@ -3,7 +3,7 @@ using eShop.EmailSender.Api.Services;
 
 namespace eShop.EmailSender.Api.Extensions;
 
-public static class BuilderExtensions
+public static class HostApplicationBuilderExtensions
 {
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {
