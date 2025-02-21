@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Extensions;
 
-public static class ConfigurationManagerExtensions
+public static class ConfigurationExtensions
 {
     public static TValue Get<TValue>(this IConfiguration configurationManager, string key)
     {
