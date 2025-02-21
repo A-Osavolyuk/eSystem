@@ -10,6 +10,7 @@ public static class WebApplicationExtensions
         {
             app.MapOpenApi();
             app.MapScalarApiReference();
+            app.UseCors();
         }
 
         app.MapDefaultEndpoints();

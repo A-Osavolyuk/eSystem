@@ -12,6 +12,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddDependencyInjection();
         builder.AddMessageBus();
         builder.AddMediatR();
+        builder.AddCors();
         
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();

@@ -10,6 +10,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddLogging();
         builder.AddMessageBus();
+        builder.AddCors();
         builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Configuration:Services:SMTP"));
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddOptions();

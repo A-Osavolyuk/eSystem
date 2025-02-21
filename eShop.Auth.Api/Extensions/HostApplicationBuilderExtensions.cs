@@ -126,19 +126,6 @@ public static class HostApplicationBuilderExtensions
         });
     }
 
-    private static void AddCors(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddCors(o =>
-        {
-            o.AddDefaultPolicy(p =>
-            {
-                p.AllowAnyHeader();
-                p.AllowAnyMethod();
-                p.AllowAnyOrigin();
-            });
-        });
-    }
-
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<ITokenHandler, TokenHandler>();

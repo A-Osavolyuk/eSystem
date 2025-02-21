@@ -11,6 +11,7 @@ public static class WebApplicationExtensions
         {
             app.MapOpenApi();
             app.MapScalarApiReference();
+            app.UseCors();
             await app.ConfigureDatabaseAsync<AppDbContext>();
         }
 

@@ -85,4 +85,17 @@ public static class HostApplicationBuilderExtensions
         const string key = "Configuration:Logging";
         builder.Logging.AddConfiguration(builder.Configuration.GetSection(key));
     }
+    
+    public static void AddCors(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddCors(o =>
+        {
+            o.AddDefaultPolicy(p =>
+            {
+                p.AllowAnyHeader();
+                p.AllowAnyMethod();
+                p.AllowAnyOrigin();
+            });
+        });
+    }
 }

@@ -7,6 +7,7 @@ public static class WebApplicationBuilder
         app.MapDefaultEndpoints();
         app.UseHttpsRedirection();
         app.MapOpenApi();
+        app.UseCors();
         app.MapScalarApiReference();
     }
 }

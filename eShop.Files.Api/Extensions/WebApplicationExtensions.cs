@@ -11,6 +11,7 @@ public static class WebApplicationExtensions
         {
             app.MapOpenApi();
             app.MapScalarApiReference();
+            app.UseCors();
         }
 
         app.UseHttpsRedirection();

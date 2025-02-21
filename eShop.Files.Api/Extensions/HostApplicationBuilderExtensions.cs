@@ -18,6 +18,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddRedisCache();
         builder.AddMediatR();
+        builder.AddCors();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarker));

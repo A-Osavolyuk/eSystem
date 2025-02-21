@@ -15,6 +15,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddRedisCache();
         builder.AddMediatR();
+        builder.AddCors();
         builder.Services.AddGrpc();
         builder.Services.AddControllers();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
