@@ -7,13 +7,12 @@ namespace eShop.Application.Extensions;
 
 public static class BuilderExtensions
 {
-    public static IHostApplicationBuilder AddValidation(this IHostApplicationBuilder builder)
+    public static void AddValidation(this IHostApplicationBuilder builder)
     {
         builder.Services.AddValidatorsFromAssemblyContaining(typeof(BuilderExtensions));
-        return builder;
     }
 
-    public static IHostApplicationBuilder AddVersioning(this IHostApplicationBuilder builder)
+    public static void AddVersioning(this IHostApplicationBuilder builder)
     {
         builder.Services.AddApiVersioning(options =>
         {
@@ -34,11 +33,9 @@ public static class BuilderExtensions
             options.SubstituteApiVersionInUrl = true;
             options.GroupNameFormat = "'v'V";
         });
-
-        return builder;
     }
 
-    public static IHostApplicationBuilder AddJwtAuthentication(this IHostApplicationBuilder builder)
+    public static void AddJwtAuthentication(this IHostApplicationBuilder builder)
     {
         builder.Services.AddAuthentication(options =>
         {
@@ -63,11 +60,9 @@ public static class BuilderExtensions
                     Encoding.UTF8.GetBytes(builder.Configuration[keyPath]!))
             };
         });
-
-        return builder;
     }
 
-    public static IHostApplicationBuilder AddRedisCache(this IHostApplicationBuilder builder)
+    public static void AddRedisCache(this IHostApplicationBuilder builder)
     {
         const string connectionStringPath = "Configuration:Services:Cache:Redis:ConnectionString";
         const string instanceNamePath = "Configuration:Services:Cache:Redis:InstanceName";
@@ -83,8 +78,6 @@ public static class BuilderExtensions
             cfg.Configuration = connectionString;
             cfg.InstanceName = instanceName;
         });
-        
-        return builder;
     }
     
     public static void AddLogging(this IHostApplicationBuilder builder)
