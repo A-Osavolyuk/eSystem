@@ -19,13 +19,18 @@ public class ValidationFilter() : Attribute, IAsyncActionFilter
                 if (scope.ServiceProvider.GetService(validatorType) is IValidator validator)
                 {
                     var validationResult = await validator.ValidateAsync(new ValidationContext<object>(parameter.Value));
-
+                    
+                    var errors = validationResult.Errors
+                        .GroupBy(x => x.PropertyName)
+                        .ToDictionary(x => x.Key, 
+                            x => x.Select(failure => failure.ErrorMessage).ToList());
+                    
                     if (!validationResult.IsValid)
                     {
                         context.Result = new BadRequestObjectResult(
                             new ResponseBuilder()
                                 .Failed()
-                                .WithResult(new FailedValidationException(validationResult.Errors))
+                                .WithResult(errors)
                                 .Build());
                         
                         return;
