@@ -11,37 +11,50 @@ public static class WebApplicationExtensions
     {
         using var score = app.Services.CreateScope();
         var context = score.ServiceProvider.GetRequiredService<TDbContext>();
-        await context.Database.EnsureDeletedAsync();
-        await context.Database.EnsureCreatedAsync();
-        // await EnsureDatabaseAsync(context);
-        // await RunMigrationsAsync(context);
+        await EnsureDatabaseAsync(context);
+        await RunMigrationsAsync(context);
     }
 
     private static async Task EnsureDatabaseAsync(DbContext context)
     {
-        var dbCreator = context.GetService<IRelationalDatabaseCreator>();
-        var strategy = context.Database.CreateExecutionStrategy();
-
-        await Task.Delay(1000);
-
-        await strategy.ExecuteAsync(async () =>
+        if (!DoesDatabaseExist(context))
         {
-            if (!await dbCreator.ExistsAsync())
-            {
-                await dbCreator.CreateAsync();
-            }
-        });
+            var dbCreator = context.GetService<IRelationalDatabaseCreator>();
+            var strategy = context.Database.CreateExecutionStrategy();
 
+            await strategy.ExecuteAsync(async () =>
+            {
+                if (!await dbCreator.ExistsAsync())
+                {
+                    await dbCreator.CreateAsync();
+                }
+            });
+        }
     }
 
     private static async Task RunMigrationsAsync(DbContext context)
     {
-        var strategy = context.Database.CreateExecutionStrategy();
-        await strategy.ExecuteAsync(async () =>
+        if (!IsDatabaseMigrated(context))
         {
-            await using var transaction = await context.Database.BeginTransactionAsync();
-            await context.Database.MigrateAsync();
-            await transaction.CommitAsync();
-        });
+            var strategy = context.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await context.Database.BeginTransactionAsync();
+                await context.Database.MigrateAsync();
+                await transaction.CommitAsync();
+            });
+        }
+    }
+    
+    private static bool IsDatabaseMigrated(DbContext context)
+    {
+        var pendingMigrations = context.Database.GetPendingMigrations();
+        return !pendingMigrations.Any();
+    }
+    
+    private static bool DoesDatabaseExist(DbContext context)
+    {
+        var dbExists = context.Database.CanConnect();
+        return dbExists;
     }
 }
