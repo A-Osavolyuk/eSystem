@@ -19,11 +19,10 @@ public static class HostApplicationBuilderExtensions
         builder.AddRedisCache();
         builder.AddMediatR();
         builder.AddCors();
+        builder.AddExceptionHandler();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarker));
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
     }
 

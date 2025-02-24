@@ -17,11 +17,10 @@ public static class HostApplicationBuilderExtensions
         builder.AddMediatR();
         builder.AddSqlDb();
         builder.AddCors();
+        builder.AddExceptionHandler();
         
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
     }
 

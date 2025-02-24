@@ -6,6 +6,7 @@ public static class WebApplicationBuilder
     {
         app.MapDefaultEndpoints();
         app.UseHttpsRedirection();
+        app.UseExceptionHandler();
         app.MapOpenApi();
         app.UseCors();
         app.MapScalarApiReference();

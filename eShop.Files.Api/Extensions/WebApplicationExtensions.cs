@@ -18,6 +18,7 @@ public static class WebApplicationExtensions
         app.UseAuthorization();
         app.MapControllers();
         app.MapDefaultEndpoints();
+        app.UseExceptionHandler();
 
         app.Run();
     }

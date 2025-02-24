@@ -13,11 +13,10 @@ public static class HostApplicationBuilderExtensions
         builder.AddMessageBus();
         builder.AddMediatR();
         builder.AddCors();
+        builder.AddExceptionHandler();
         
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
 
         return builder;

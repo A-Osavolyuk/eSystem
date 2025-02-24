@@ -1,3 +1,4 @@
+using eShop.Application.Middlewares;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -97,5 +98,11 @@ public static class HostApplicationBuilderExtensions
                 p.AllowAnyOrigin();
             });
         });
+    }
+
+    public static void AddExceptionHandler(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
     }
 }

@@ -16,10 +16,9 @@ public static class HostApplicationBuilderExtensions
         builder.AddSqlDb();
         builder.AddGrpc();
         builder.AddLogging();
+        builder.AddExceptionHandler();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
     }
 
