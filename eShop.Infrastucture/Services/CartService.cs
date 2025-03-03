@@ -7,10 +7,10 @@ internal class CartService(IHttpClientService httpClient, IConfiguration configu
 
     public async ValueTask<Response> GetCartAsync(Guid userId) => await httpClient.SendAsync(
         new Request(
-            Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Carts/get-cart/{userId}", Methods: HttpMethods.Get));
+            Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Carts/get-cart/{userId}", Methods: HttpMethods.Get));
 
     public async ValueTask<Response> UpdateCartAsync(UpdateCartRequest request) => await httpClient.SendAsync(
         new Request(
-            Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Carts/update-cart",
+            Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Carts/update-cart",
             Methods: HttpMethods.Put, Data: request));
 }

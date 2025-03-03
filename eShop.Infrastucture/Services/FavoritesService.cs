@@ -8,8 +8,8 @@ public class FavoritesService(
     private readonly IConfiguration configuration = configuration;
 
     public async ValueTask<Response> GetFavoritesAsync(Guid userId) => await clientService.SendAsync(
-        new Request(Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Favorites/get-favorites/{userId}", Methods: HttpMethods.Get));
+        new Request(Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Favorites/get-favorites/{userId}", Methods: HttpMethods.Get));
 
     public async ValueTask<Response> UpdateFavoritesAsync(UpdateFavoritesRequest request) => await clientService.SendAsync(
-        new Request(Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Favorites/update-favorites", Methods: HttpMethods.Put, Data: request));
+        new Request(Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Favorites/update-favorites", Methods: HttpMethods.Put, Data: request));
 }

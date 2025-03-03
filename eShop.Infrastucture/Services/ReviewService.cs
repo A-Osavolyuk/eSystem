@@ -7,20 +7,20 @@ public class ReviewService(IHttpClientService httpClient, IConfiguration configu
 
     public async Task<Response> CreateReviewAsync(CreateReviewRequest request) => await httpClient.SendAsync(
         new Request(
-            Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Reviews/create-review",
+            Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Reviews/create-review",
             Methods: HttpMethods.Post, Data: request));
 
     public async Task<Response> DeleteReviewsWithProductIdAsync(Guid id) => await httpClient.SendAsync(new Request(
         Url:
-        $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Reviews/delete-reviews-with-product-id/{id}",
+        $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Reviews/delete-reviews-with-product-id/{id}",
         Methods: HttpMethods.Delete));
 
     public async Task<Response> GetReviewListByProductIdAsync(Guid id) => await httpClient.SendAsync(new Request(
-        Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Reviews/get-reviews-by-product-id/{id}",
+        Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Reviews/get-reviews-by-product-id/{id}",
         Methods: HttpMethods.Get));
 
     public async Task<Response> UpdateReviewAsync(UpdateReviewRequest request) => await httpClient.SendAsync(
         new Request(
-            Url: $"{configuration["Configuration:Services:Proxy:Gateway"]}/api/v1/Reviews/update-review",
+            Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Reviews/update-review",
             Methods: HttpMethods.Put, Data: request));
 }
