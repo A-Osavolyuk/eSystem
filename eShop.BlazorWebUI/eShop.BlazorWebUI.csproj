@@ -11,10 +11,7 @@
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
 		<PackageReference Include="Azure.Storage.Files.Shares" Version="12.21.0" />
 		<PackageReference Include="Azure.Storage.Queues" Version="12.21.0" />
-		<PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
-		<PackageReference Include="Blazored.Toast" Version="4.2.1" />
 		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Azure" Version="1.10.0" />
 		<PackageReference Include="MudBlazor" Version="8.2.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

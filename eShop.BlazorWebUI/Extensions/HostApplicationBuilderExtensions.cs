@@ -1,5 +1,4 @@
-﻿using Blazored.Toast;
-using eShop.Application.Extensions;
+﻿using eShop.Application.Extensions;
 using MudBlazor.Services;
 using MudExtensions.Services;
 
@@ -28,7 +27,7 @@ public static class HostApplicationBuilderExtensions
             config.SnackbarConfiguration.ShowTransitionDuration = 500;
             config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
         });
-        builder.Services.AddBlazoredToast();
+
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
     }
