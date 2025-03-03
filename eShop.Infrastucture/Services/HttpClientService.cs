@@ -113,13 +113,8 @@ public class HttpClientService(IHttpClientFactory clientFactory, ITokenProvider 
 
         return httpResponse.StatusCode switch
         {
-            HttpStatusCode.InternalServerError => new ResponseBuilder().Failed()
-                .WithMessage(response!.Message).Build(),
-            HttpStatusCode.NotFound => new ResponseBuilder().Failed().WithMessage(response!.Message).Build(),
-            HttpStatusCode.Forbidden => new ResponseBuilder().Failed().WithMessage("Forbidden").Build(),
-            HttpStatusCode.Unauthorized => new ResponseBuilder().Failed().WithMessage("Unauthorized").Build(),
-            HttpStatusCode.BadRequest => new ResponseBuilder().Failed().WithMessage("Bad Request").Build(),
-            _ => response!
+            HttpStatusCode.OK => response!,
+            _ => new ResponseBuilder().Failed().WithMessage(response!.Message).Build(),
         };
     }
 }
