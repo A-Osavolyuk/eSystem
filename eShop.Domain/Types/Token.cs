@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Responses.Api.Auth;
+﻿namespace eShop.Domain.Types;
 
 public class Token
 {
