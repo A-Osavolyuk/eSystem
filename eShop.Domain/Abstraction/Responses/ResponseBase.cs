@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Responses;
+﻿namespace eShop.Domain.Abstraction.Responses;
 
 public class ResponseBase
 {
