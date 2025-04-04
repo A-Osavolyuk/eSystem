@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Requests\Api\" />
-    <Folder Include="Responses\Api\" />
+    <Folder Include="Requests\API\" />
+    <Folder Include="Responses\API\" />
   </ItemGroup>
 
 </Project>

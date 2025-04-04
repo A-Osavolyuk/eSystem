@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Exceptions.Interfaces;
+﻿using eShop.Domain.Abstraction.Exceptions;
 
 namespace eShop.Application.Behaviours;
 

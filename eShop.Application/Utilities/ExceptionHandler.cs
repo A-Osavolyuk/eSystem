@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Exceptions.Interfaces;
+﻿using eShop.Domain.Abstraction.Exceptions;
+using eShop.Domain.Common.Api;
 
 namespace eShop.Application.Utilities;
 

@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Exceptions;
+﻿using eShop.Domain.Abstraction.Exceptions;
+
+namespace eShop.Domain.Exceptions;
 
 public class FailedValidationException : Exception, IFailedValidationException
 {
