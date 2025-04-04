@@ -55,7 +55,7 @@
 
         if (response.Success)
         {
-            var data = ResponseConverter.Deserialize<List<ProductDto>>(response.Result!);
+            var data = response.Get<List<ProductDto>>()!;
             ProductsList = data;
         }
         else

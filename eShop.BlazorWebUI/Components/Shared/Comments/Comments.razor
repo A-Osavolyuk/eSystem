@@ -51,7 +51,7 @@ else
 
             if (response.Success)
             {
-                var data = ResponseConverter.Deserialize<GetCommentsResponse>(response.Result!);
+                var data = response.Get<GetCommentsResponse>()!;
                 commentsList = await data.Comments
                     .AsQueryable()
                     .Select(x => new CommentModel()

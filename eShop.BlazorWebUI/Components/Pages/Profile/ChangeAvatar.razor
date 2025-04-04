@@ -96,7 +96,7 @@
 
         if (response.Success)
         {
-            var data = ResponseConverter.Deserialize<UploadAvatarResponse>(response.Result!);
+            var data = response.Get<UploadAvatarResponse>();
             //TODO: Added saving an avatar
             NavigationManager.NavigateTo("/profile");
         }
