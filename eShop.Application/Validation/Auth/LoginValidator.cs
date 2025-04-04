@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class LoginValidator : AbstractValidator<LoginRequest>
+public class LoginValidator : Validator<LoginRequest>
 {
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
     {

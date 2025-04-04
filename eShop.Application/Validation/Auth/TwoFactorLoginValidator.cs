@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class TwoFactorLoginValidator : AbstractValidator<LoginWith2FaRequest>
+public class TwoFactorLoginValidator : Validator<LoginWith2FaRequest>
 {
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
     {

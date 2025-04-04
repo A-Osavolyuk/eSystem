@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Admin;
 
-public class CreateRoleValidator : AbstractValidator<CreateRoleRequest>
+public class CreateRoleValidator : Validator<CreateRoleRequest>
 {
     public CreateRoleValidator()
     {

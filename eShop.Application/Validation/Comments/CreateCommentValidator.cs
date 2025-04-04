@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Comments;
 
-public class CreateCommentValidator : AbstractValidator<CreateCommentRequest>
+public class CreateCommentValidator : Validator<CreateCommentRequest>
 {
     public CreateCommentValidator()
     {

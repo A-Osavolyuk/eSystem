@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class ChangeEmailValidator : AbstractValidator<ChangeEmailRequest>
+public class ChangeEmailValidator : Validator<ChangeEmailRequest>
 {
     public ChangeEmailValidator()
     {

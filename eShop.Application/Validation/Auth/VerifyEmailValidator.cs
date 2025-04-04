@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class VerifyEmailValidator : AbstractValidator<VerifyEmailRequest>
+public class VerifyEmailValidator : Validator<VerifyEmailRequest>
 {
     public VerifyEmailValidator()
     {

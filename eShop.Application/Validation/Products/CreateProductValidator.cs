@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Products;
 
-public class CreateProductValidator : AbstractValidator<CreateProductRequest>
+public class CreateProductValidator : Validator<CreateProductRequest>
 {
     
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>

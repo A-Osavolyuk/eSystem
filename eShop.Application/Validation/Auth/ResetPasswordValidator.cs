@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class ResetPasswordValidator : AbstractValidator<ConfirmResetPasswordRequest>
+public class ResetPasswordValidator : Validator<ConfirmResetPasswordRequest>
 {
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
     {

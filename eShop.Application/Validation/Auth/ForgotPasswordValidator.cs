@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class ForgotPasswordValidator : AbstractValidator<ForgotPasswordRequest>
+public class ForgotPasswordValidator : Validator<ForgotPasswordRequest>
 {
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
     {

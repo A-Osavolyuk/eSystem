@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Products;
 
-public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
+public class UpdateProductValidator : Validator<UpdateProductRequest>
 {
     public UpdateProductValidator()
     {

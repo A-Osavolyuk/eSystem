@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class ChangePasswordValidator : AbstractValidator<ChangePasswordRequest>
+public class ChangePasswordValidator : Validator<ChangePasswordRequest>
 {
     public ChangePasswordValidator()
     {

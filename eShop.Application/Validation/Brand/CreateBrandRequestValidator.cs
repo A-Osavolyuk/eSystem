@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Brand;
 
-public class CreateBrandRequestValidator : AbstractValidator<CreateBrandRequest>
+public class CreateBrandRequestValidator : Validator<CreateBrandRequest>
 {
     public CreateBrandRequestValidator()
     {

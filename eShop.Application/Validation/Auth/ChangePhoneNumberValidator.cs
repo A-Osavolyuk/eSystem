@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class ChangePhoneNumberValidator : AbstractValidator<ChangePhoneNumberRequest>
+public class ChangePhoneNumberValidator : Validator<ChangePhoneNumberRequest>
 {
     public ChangePhoneNumberValidator()
     {

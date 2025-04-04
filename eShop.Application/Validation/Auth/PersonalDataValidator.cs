@@ -2,7 +2,7 @@
 
 namespace eShop.Application.Validation.Auth;
 
-public class PersonalDataValidator : AbstractValidator<ChangePersonalDataRequest>
+public class PersonalDataValidator : Validator<ChangePersonalDataRequest>
 {
     public PersonalDataValidator()
     {

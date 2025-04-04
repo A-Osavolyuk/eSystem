@@ -1,5 +1,6 @@
 ﻿global using System.Reflection;
 global using System.Text;
+global using eShop.Domain.Abstraction.Validation;
 global using eShop.Domain.Enums;
 global using eShop.Domain.Exceptions;
 global using FluentValidation;
