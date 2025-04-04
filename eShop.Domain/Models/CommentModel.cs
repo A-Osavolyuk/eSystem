@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Models;
+﻿using eShop.Domain.Abstraction.Data;
+
+namespace eShop.Domain.Models;
 
 public class CommentModel : IIdentifiable<Guid>, IAuditable
 {

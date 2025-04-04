@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Entities;
 
-public class VerificationCodeEntity : IIdentifiable<Guid>, IAuditable, IExpirable
+public class VerificationCodeEntity : IIdentifiable<Guid>, IAuditable, IExpireable
 {
     public Guid Id { get; init; } = Guid.CreateVersion7();
     public string Destination { get; init; } = string.Empty;

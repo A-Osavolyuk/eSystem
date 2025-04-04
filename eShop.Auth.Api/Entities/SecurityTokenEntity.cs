@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class SecurityTokenEntity : IIdentifiable<Guid>, IAuditable, IExpirable
+public class SecurityTokenEntity : IIdentifiable<Guid>, IAuditable, IExpireable
 {
     public Guid Id { get; init; }
     public Guid UserId { get; init; }

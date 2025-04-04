@@ -1,4 +1,6 @@
-﻿namespace eShop.Comments.Api.Entities;
+﻿using eShop.Domain.Abstraction.Data;
+
+namespace eShop.Comments.Api.Entities;
 
 public record class CommentEntity : IIdentifiable<Guid>, IAuditable
 {

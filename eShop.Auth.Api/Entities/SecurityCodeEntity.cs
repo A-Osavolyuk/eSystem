@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class SecurityCodeEntity : IIdentifiable<Guid>, IAuditable, IExpirable
+public class SecurityCodeEntity : IIdentifiable<Guid>, IAuditable, IExpireable
 {
     public Guid Id { get; init; }
     public string Destination { get; init; } = string.Empty;
