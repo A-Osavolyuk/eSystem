@@ -1,13 +1,13 @@
 ﻿namespace eShop.Product.Api.Features.Products.Commands;
 
-internal sealed record DeleteProductCommand(DeleteProductRequest Request) : IRequest<Result<DeleteProductResponse>>;
+internal sealed record DeleteProductCommand(DeleteProductRequest Request) : IRequest<Result>;
 
 internal sealed class DeleteProductCommandHandler(AppDbContext context)
-    : IRequestHandler<DeleteProductCommand, Result<DeleteProductResponse>>
+    : IRequestHandler<DeleteProductCommand, Result>
 {
     private readonly AppDbContext context = context;
 
-    public async Task<Result<DeleteProductResponse>> Handle(DeleteProductCommand request,
+    public async Task<Result> Handle(DeleteProductCommand request,
         CancellationToken cancellationToken)
     {
         var entity = await context.Products.AsNoTracking()
@@ -15,15 +15,17 @@ internal sealed class DeleteProductCommandHandler(AppDbContext context)
 
         if (entity is null)
         {
-            return new Result<DeleteProductResponse>(
-                new NotFoundException($"Cannot find product with ID {request.Request.ProductId}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find product with ID {request.Request.ProductId}"
+            });
         }
 
         context.Products.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
-        return new Result<DeleteProductResponse>(new DeleteProductResponse()
-        {
-            Message = "Product was successfully deleted",
-        });
+        
+        return Result.Success("Product was successfully deleted");
     }
 }

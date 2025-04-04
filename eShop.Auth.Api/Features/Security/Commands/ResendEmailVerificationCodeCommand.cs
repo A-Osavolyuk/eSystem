@@ -1,22 +1,27 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record ResendEmailVerificationCodeCommand(ResendEmailVerificationCodeRequest Request)
-    : IRequest<Result<ResendEmailVerificationCodeResponse>>;
+    : IRequest<Result>;
 
 internal sealed class ResendEmailVerificationCodeCommandHandler(AppManager manager, IMessageService messageService)
-    : IRequestHandler<ResendEmailVerificationCodeCommand, Result<ResendEmailVerificationCodeResponse>>
+    : IRequestHandler<ResendEmailVerificationCodeCommand, Result>
 {
     private readonly AppManager manager = manager;
     private readonly IMessageService messageService = messageService;
 
-    public async Task<Result<ResendEmailVerificationCodeResponse>> Handle(ResendEmailVerificationCodeCommand request,
+    public async Task<Result> Handle(ResendEmailVerificationCodeCommand request,
         CancellationToken cancellationToken)
     {
         var user = await manager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email: {request.Request.Email}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with email: {request.Request.Email}"
+            });
         }
 
         string code;
@@ -41,9 +46,6 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(AppManager manag
             UserName = user.UserName!
         });
 
-        return new Result<ResendEmailVerificationCodeResponse>(new ResendEmailVerificationCodeResponse()
-        {
-            Message = "Verification code was successfully resend"
-        });
+        return Result.Success("Verification code was successfully resend");
     }
 }

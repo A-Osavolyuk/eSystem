@@ -3,15 +3,15 @@ using eShop.Domain.Interfaces.API;
 
 namespace eShop.Product.Api.Features.Products.Queries;
 
-internal sealed record GetProductsQuery() : IRequest<Result<List<ProductDto>>>;
+internal sealed record GetProductsQuery() : IRequest<Result>;
 
 internal sealed class GetProductsQueryHandler(AppDbContext context, ICacheService cacheService)
-    : IRequestHandler<GetProductsQuery, Result<List<ProductDto>>>
+    : IRequestHandler<GetProductsQuery, Result>
 {
     private readonly AppDbContext context = context;
     private readonly ICacheService cacheService = cacheService;
 
-    public async Task<Result<List<ProductDto>>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
         var key = "products";
         var cache = await cacheService.GetAsync<List<ProductDto>>(key);
@@ -30,9 +30,9 @@ internal sealed class GetProductsQueryHandler(AppDbContext context, ICacheServic
 
             await cacheService.SetAsync(key, response, TimeSpan.FromMinutes(30));
 
-            return new Result<List<ProductDto>>(response);
+            return Result.Success(response);
         }
 
-        return new Result<List<ProductDto>>(cache!);
+        return Result.Success(cache!);
     }
 }

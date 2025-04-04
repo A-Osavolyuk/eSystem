@@ -1,28 +1,29 @@
 ﻿namespace eShop.Product.Api.Features.Brands.Commands;
 
-internal sealed record UpdateBrandCommand(UpdateBrandRequest Request) : IRequest<Result<UpdateBrandResponse>>;
+internal sealed record UpdateBrandCommand(UpdateBrandRequest Request) : IRequest<Result>;
 
 internal sealed class UpdateBrandCommandHandler(
-    AppDbContext context) : IRequestHandler<UpdateBrandCommand, Result<UpdateBrandResponse>>
+    AppDbContext context) : IRequestHandler<UpdateBrandCommand, Result>
 {
     private readonly AppDbContext context = context;
 
-    public async Task<Result<UpdateBrandResponse>> Handle(UpdateBrandCommand request,
+    public async Task<Result> Handle(UpdateBrandCommand request,
         CancellationToken cancellationToken)
     {
         if (!await context.Brands.AsNoTracking().AnyAsync(x => x.Id == request.Request.Id, cancellationToken))
         {
-            return new Result<UpdateBrandResponse>(
-                new NotFoundException($"Cannot find brand with ID {request.Request.Id}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find brand with ID {request.Request.Id}"
+            });
         }
 
         var entity = Mapper.ToBrandEntity(request.Request);
         context.Brands.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new Result<UpdateBrandResponse>(new UpdateBrandResponse()
-        {
-            Message = "Brand was successfully updated"
-        });
+        return Result.Success("Brand was successfully updated");
     }
 }

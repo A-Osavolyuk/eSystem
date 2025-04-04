@@ -1,26 +1,32 @@
 ﻿using eShop.Cart.Api.Entities;
 using eShop.Cart.Api.Mapping;
 using eShop.Domain.DTOs;
+using eShop.Domain.Enums;
 
 namespace eShop.Cart.Api.Features.Favorites.Queries;
 
-internal sealed record GetFavoritesQuery(Guid UserId) : IRequest<Result<FavoritesDto>>;
+internal sealed record GetFavoritesQuery(Guid UserId) : IRequest<Result>;
 
 internal sealed class GetFavoritesQueryHandler(DbClient client)
-    : IRequestHandler<GetFavoritesQuery, Result<FavoritesDto>>
+    : IRequestHandler<GetFavoritesQuery, Result>
 {
     private readonly DbClient client = client;
 
-    public async Task<Result<FavoritesDto>> Handle(GetFavoritesQuery request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(GetFavoritesQuery request, CancellationToken cancellationToken)
     {
         var collection = client.GetCollection<FavoritesEntity>("Favorites");
         var favorites = await collection.Find(x => x.UserId == request.UserId).FirstOrDefaultAsync(cancellationToken);
 
         if (favorites is null)
         {
-            return new(new NotFoundException($"Cannot find favorites with user ID {request.UserId}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find favorites with user ID {request.UserId}"
+            });
         }
 
-        return Mapper.ToFavoritesDto(favorites);
+        return Result.Success(Mapper.Map(favorites));
     }
 }

@@ -1,13 +1,13 @@
 ﻿namespace eShop.Product.Api.Features.Brands.Commands;
 
-internal sealed record DeleteBrandCommand(DeleteBrandRequest Request) : IRequest<Result<DeleteBrandResponse>>;
+internal sealed record DeleteBrandCommand(DeleteBrandRequest Request) : IRequest<Result>;
 
 internal sealed class DeleteBrandCommandHandler(
-    AppDbContext context) : IRequestHandler<DeleteBrandCommand, Result<DeleteBrandResponse>>
+    AppDbContext context) : IRequestHandler<DeleteBrandCommand, Result>
 {
     private readonly AppDbContext context = context;
 
-    public async Task<Result<DeleteBrandResponse>> Handle(DeleteBrandCommand request,
+    public async Task<Result> Handle(DeleteBrandCommand request,
         CancellationToken cancellationToken)
     {
         var entity = await context.Brands.AsNoTracking()
@@ -15,16 +15,17 @@ internal sealed class DeleteBrandCommandHandler(
 
         if (entity is null)
         {
-            return new Result<DeleteBrandResponse>(
-                new NotFoundException($"Cannot find brand with ID {request.Request.Id}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find brand with ID {request.Request.Id}"
+            });
         }
 
         context.Brands.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new Result<DeleteBrandResponse>(new DeleteBrandResponse()
-        {
-            Message = "Brand was successfully deleted"
-        });
+        return Result.Success("Brand was successfully deleted");
     }
 }

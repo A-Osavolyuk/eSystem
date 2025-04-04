@@ -1,15 +1,16 @@
 ﻿using eShop.Cart.Api.Entities;
+using eShop.Domain.Enums;
 
 namespace eShop.Cart.Api.Features.Cart.Commands;
 
-internal sealed record UpdatedCartCommand(UpdateCartRequest Request) : IRequest<Result<UpdateCartResponse>>;
+internal sealed record UpdatedCartCommand(UpdateCartRequest Request) : IRequest<Result>;
 
 internal sealed class UpdatedCartCommandHandler(DbClient client)
-    : IRequestHandler<UpdatedCartCommand, Result<UpdateCartResponse>>
+    : IRequestHandler<UpdatedCartCommand, Result>
 {
     private readonly DbClient client = client;
 
-    public async Task<Result<UpdateCartResponse>> Handle(UpdatedCartCommand request,
+    public async Task<Result> Handle(UpdatedCartCommand request,
         CancellationToken cancellationToken)
     {
         var cartCollection = client.GetCollection<CartEntity>("Carts");
@@ -19,7 +20,12 @@ internal sealed class UpdatedCartCommandHandler(DbClient client)
 
         if (cart is null)
         {
-            return new(new NotFoundException($"Cannot find cart with ID {request.Request.Id}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find cart with ID {request.Request.Id}."
+            });
         }
         else
         {
@@ -36,10 +42,7 @@ internal sealed class UpdatedCartCommandHandler(DbClient client)
             await cartCollection.ReplaceOneAsync(x => x.Id == request.Request.Id, newCart,
                 cancellationToken: cancellationToken);
 
-            return new UpdateCartResponse()
-            {
-                Message = "Cart was successfully updated",
-            };
+            return Result.Success("Cart was successfully updated");
         }
     }
 }

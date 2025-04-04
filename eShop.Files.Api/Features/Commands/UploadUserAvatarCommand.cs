@@ -1,27 +1,33 @@
-﻿using eShop.Domain.Exceptions;
+﻿using eShop.Domain.Enums;
+using eShop.Domain.Exceptions;
 using eShop.Domain.Responses.Api.Files;
 using eShop.Files.Api.Interfaces;
 
 namespace eShop.Files.Api.Features.Commands;
 
-internal sealed record UploadUserAvatarCommand(IFormFile File, Guid UserId) : IRequest<Result<UploadAvatarResponse>>;
+internal sealed record UploadUserAvatarCommand(IFormFile File, Guid UserId) : IRequest<Result>;
 
 internal sealed class UploadUserAvatarCommandHandler(
-    IStoreService service) : IRequestHandler<UploadUserAvatarCommand, Result<UploadAvatarResponse>>
+    IStoreService service) : IRequestHandler<UploadUserAvatarCommand, Result>
 {
     private readonly IStoreService service = service;
 
-    public async Task<Result<UploadAvatarResponse>> Handle(UploadUserAvatarCommand request,
+    public async Task<Result> Handle(UploadUserAvatarCommand request,
         CancellationToken cancellationToken)
     {
         var response = await service.UploadUserAvatarAsync(request.File, request.UserId);
 
         if (string.IsNullOrEmpty(response))
         {
-            return new(new FailedOperationException($"Cannot upload avatar of user with ID {request.UserId}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot upload avatar of user with ID {request.UserId}"
+            });
         }
 
-        return new(new UploadAvatarResponse()
+        return Result.Success(new UploadAvatarResponse()
         {
             Message = "User avatar was uploaded successfully",
             Uri = response

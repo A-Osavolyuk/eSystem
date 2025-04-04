@@ -4,15 +4,15 @@ using eShop.Product.Api.Entities;
 
 namespace eShop.Product.Api.Features.Products.Queries;
 
-internal sealed record GetProductByIdQuery(Guid ProductId) : IRequest<Result<ProductDto>>;
+internal sealed record GetProductByIdQuery(Guid ProductId) : IRequest<Result>;
 
 internal sealed class GetProductByIdQueryHandler(AppDbContext context, ICacheService cacheService)
-    : IRequestHandler<GetProductByIdQuery, Result<ProductDto>>
+    : IRequestHandler<GetProductByIdQuery, Result>
 {
     private readonly AppDbContext context = context;
     private readonly ICacheService cacheService = cacheService;
 
-    public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
         var key = $"product-{request.ProductId}";
         var cachedEntity = await cacheService.GetAsync<ProductDto>(key);
@@ -21,7 +21,12 @@ internal sealed class GetProductByIdQueryHandler(AppDbContext context, ICacheSer
         {
             if (request.ProductId == Guid.Empty)
             {
-                return new Result<ProductDto>(new NotFoundException($"Cannot find product with ID, article or name"));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found",
+                    Details = $"Cannot find product with ID, article or name"
+                });
             }
 
             var entity = await context.Products
@@ -32,18 +37,22 @@ internal sealed class GetProductByIdQueryHandler(AppDbContext context, ICacheSer
 
             if (entity is null)
             {
-                return new Result<ProductDto>(
-                    new NotFoundException($"Cannot find product with ID {request.ProductId}"));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found",
+                    Details = $"Cannot find product with ID {request.ProductId}"
+                });
             }
 
             var response = await Map(entity);
 
             await cacheService.SetAsync(key, response, TimeSpan.FromMinutes(30));
 
-            return new Result<ProductDto>(response);
+            return Result.Success(response);
         }
 
-        return new(cachedEntity);
+        return Result.Success(cachedEntity);
     }
 
     private async Task<ProductDto> Map(ProductEntity entity)

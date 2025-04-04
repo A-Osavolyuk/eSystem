@@ -1,13 +1,15 @@
-﻿namespace eShop.Comments.Api.Features.Commands;
+﻿using eShop.Domain.Enums;
 
-internal sealed record DeleteCommentCommand(DeleteCommentRequest Request) : IRequest<Result<DeleteCommentResponse>>;
+namespace eShop.Comments.Api.Features.Commands;
+
+internal sealed record DeleteCommentCommand(DeleteCommentRequest Request) : IRequest<Result>;
 
 internal sealed class DeleteCommentCommandHandler(
-    AppDbContext context) : IRequestHandler<DeleteCommentCommand, Result<DeleteCommentResponse>>
+    AppDbContext context) : IRequestHandler<DeleteCommentCommand, Result>
 {
     private readonly AppDbContext context = context;
 
-    public async Task<Result<DeleteCommentResponse>> Handle(DeleteCommentCommand request,
+    public async Task<Result> Handle(DeleteCommentCommand request,
         CancellationToken cancellationToken)
     {
         var comment = await context.Comments
@@ -17,15 +19,17 @@ internal sealed class DeleteCommentCommandHandler(
 
         if (comment is null)
         {
-            return new(new NotFoundException($"Cannot find comment with id: {request.Request.CommentId}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find comment with id: {request.Request.CommentId}."
+            });
         }
 
         context.Comments.Remove(comment);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new(new DeleteCommentResponse()
-        {
-            Message = "Comment successfully deleted.",
-        });
+        return Result.Success("Comment successfully deleted.");
     }
 }

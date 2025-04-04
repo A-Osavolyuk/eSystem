@@ -1,16 +1,17 @@
 ﻿using eShop.Cart.Api.Entities;
+using eShop.Domain.Enums;
 
 namespace eShop.Cart.Api.Features.Favorites.Commands;
 
 internal sealed record UpdateFavoritesCommand(UpdateFavoritesRequest Request)
-    : IRequest<Result<UpdateFavoritesResponse>>;
+    : IRequest<Result>;
 
 internal sealed class UpdateFavoritesCommandHandler(DbClient client)
-    : IRequestHandler<UpdateFavoritesCommand, Result<UpdateFavoritesResponse>>
+    : IRequestHandler<UpdateFavoritesCommand, Result>
 {
     private readonly DbClient client = client;
 
-    public async Task<Result<UpdateFavoritesResponse>> Handle(UpdateFavoritesCommand request,
+    public async Task<Result> Handle(UpdateFavoritesCommand request,
         CancellationToken cancellationToken)
     {
         var collection = client.GetCollection<FavoritesEntity>("Favorites");
@@ -19,7 +20,12 @@ internal sealed class UpdateFavoritesCommandHandler(DbClient client)
 
         if (favorites is null)
         {
-            return new(new NotFoundException($"Cannot find favorites with ID {request.Request.Id}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find favorites with ID {request.Request.Id}."
+            });
         }
 
         var newFavorites = new FavoritesEntity()
@@ -35,9 +41,6 @@ internal sealed class UpdateFavoritesCommandHandler(DbClient client)
         await collection.ReplaceOneAsync(x => x.Id == request.Request.Id, newFavorites,
             cancellationToken: cancellationToken);
 
-        return new UpdateFavoritesResponse()
-        {
-            Message = "Favorites successfully updated"
-        };
+        return Result.Success("Favorites successfully updated");
     }
 }

@@ -1,5 +1,4 @@
 ﻿using eShop.Application.Utilities;
-using eShop.Domain.Common.Api;
 using eShop.Files.Api.Features.Commands;
 using eShop.Files.Api.Features.Queries;
 using eShop.Files.Api.Interfaces;
@@ -20,7 +19,7 @@ public class FilesController(
     [EndpointDescription("Gets product images")]
     [ProducesResponseType(200)]
     [HttpGet("get-product-images/{productId:guid}")]
-    public async ValueTask<ActionResult> GetProductImagesAsync(Guid productId)
+    public async ValueTask<ActionResult<Response>> GetProductImagesAsync(Guid productId)
     {
         var response = await sender.Send(new GetProductImagesQuery(productId));
         return response.Match(
@@ -32,7 +31,7 @@ public class FilesController(
     [EndpointDescription("Gets user avatar")]
     [ProducesResponseType(200)]
     [HttpGet("get-user-avatar/{userId:guid}")]
-    public async ValueTask<ActionResult> GetUserAvatarAsync(Guid userId)
+    public async ValueTask<ActionResult<Response>> GetUserAvatarAsync(Guid userId)
     {
         var response = await sender.Send(new GetUserAvatarQuery(userId));
         return response.Match(

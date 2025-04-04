@@ -1,33 +1,42 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<Result<VerifyEmailResponse>>;
+internal sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<Result>;
 
 internal sealed class VerifyEmailCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    CartClient client) : IRequestHandler<VerifyEmailCommand, Result<VerifyEmailResponse>>
+    CartClient client) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
     private readonly CartClient client = client;
 
-    public async Task<Result<VerifyEmailResponse>> Handle(VerifyEmailCommand request,
+    public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.Request.Email}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with email {request.Request.Email}."
+            });
         }
 
         var confirmResult = await appManager.SecurityManager.VerifyEmailAsync(user, request.Request.Code);
 
         if (!confirmResult.Succeeded)
         {
-            return new(new FailedOperationException(
-                $"Cannot confirm email address of user with email {request.Request.Email} " +
-                $"due to server error: {confirmResult.Errors.First().Description}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.InternalServerError,
+                Message = "Internal server error.",
+                Details = $"Cannot confirm email address of user with email {request.Request.Email} " +
+                          $"due to server error: {confirmResult.Errors.First().Description}."
+            });
         }
 
         await messageService.SendMessageAsync("email-verified", new EmailVerifiedMessage()
@@ -41,9 +50,14 @@ internal sealed class VerifyEmailCommandHandler(
 
         if (!response.IsSucceeded)
         {
-            return new(new FailedRpcException(response.Message));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.InternalServerError,
+                Message = "Internal server error",
+                Details = response.Message
+            });
         }
 
-        return new(new VerifyEmailResponse() { Message = "Your email address was successfully confirmed." });
+        return Result.Success("Your email address was successfully confirmed.");
     }
 }

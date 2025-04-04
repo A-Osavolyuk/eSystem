@@ -2,30 +2,40 @@
 
 namespace eShop.Product.Api.Features.Sellers.Commands;
 
-internal sealed record RegisterSellerCommand(RegisterSellerRequest Request) : IRequest<Result<RegisterSellerResponse>>;
+internal sealed record RegisterSellerCommand(RegisterSellerRequest Request) : IRequest<Result>;
 
 internal sealed class RegisterSellerCommandHandler(
     AppDbContext context,
-    AuthClient client) : IRequestHandler<RegisterSellerCommand, Result<RegisterSellerResponse>>
+    AuthClient client) : IRequestHandler<RegisterSellerCommand, Result>
 {
     private readonly AppDbContext context = context;
     private readonly AuthClient client = client;
 
-    public async Task<Result<RegisterSellerResponse>> Handle(RegisterSellerCommand request,
+    public async Task<Result> Handle(RegisterSellerCommand request,
         CancellationToken cancellationToken)
     {
         var userResponse = await client.GetUserAsync(request.Request.UserId);
 
         if (!userResponse.IsSucceeded)
         {
-            return new Result<RegisterSellerResponse>(new NotFoundException(userResponse.Message));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = userResponse.Message
+            });
         }
 
         var initiateSellerResponse = await client.InitiateSellerAsync(request.Request.UserId);
 
         if (!initiateSellerResponse.IsSucceeded)
         {
-            return new Result<RegisterSellerResponse>(new FailedRpcException(initiateSellerResponse.Message));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.InternalServerError,
+                Message = "Internal server error",
+                Details = initiateSellerResponse.Message
+            });
         }
 
         var entity = new SellerEntity()
@@ -39,9 +49,6 @@ internal sealed class RegisterSellerCommandHandler(
         await context.Sellers.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new RegisterSellerResponse()
-        {
-            Message = "Seller was successfully registered"
-        };
+        return Result.Success("Seller was successfully registered");
     }
 }

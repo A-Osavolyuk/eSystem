@@ -1,24 +1,30 @@
-﻿using eShop.Domain.Exceptions;
+﻿using eShop.Domain.Enums;
+using eShop.Domain.Exceptions;
 using eShop.Files.Api.Interfaces;
 
 namespace eShop.Files.Api.Features.Queries;
 
-internal sealed record GetUserAvatarQuery(Guid UserId) : IRequest<Result<string>>;
+internal sealed record GetUserAvatarQuery(Guid UserId) : IRequest<Result>;
 
 internal sealed class GetUserAvatarQueryHandler(IStoreService service)
-    : IRequestHandler<GetUserAvatarQuery, Result<string>>
+    : IRequestHandler<GetUserAvatarQuery, Result>
 {
     private readonly IStoreService service = service;
 
-    public async Task<Result<string>> Handle(GetUserAvatarQuery request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(GetUserAvatarQuery request, CancellationToken cancellationToken)
     {
         var response = await service.GetUserAvatarAsync(request.UserId);
 
         if (string.IsNullOrWhiteSpace(response))
         {
-            return new(new FailedOperationException($"Cannot get avatar of user with ID {request.UserId}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot get avatar of user with ID {request.UserId}"
+            });
         }
 
-        return new(response);
+        return Result.Success(response);
     }
 }

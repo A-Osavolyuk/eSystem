@@ -1,26 +1,31 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record RequestResetPasswordCommand(ResetPasswordRequest Request)
-    : IRequest<Result<ResetPasswordResponse>>;
+    : IRequest<Result>;
 
 internal sealed class RequestResetPasswordCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<RequestResetPasswordCommand, Result<ResetPasswordResponse>>
+    IConfiguration configuration) : IRequestHandler<RequestResetPasswordCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
     private readonly IConfiguration configuration = configuration;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
-    public async Task<Result<ResetPasswordResponse>> Handle(RequestResetPasswordCommand request,
+    public async Task<Result> Handle(RequestResetPasswordCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.Request.Email}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with email {request.Request.Email}."
+            });
         }
 
         var code = await appManager.SecurityManager.GenerateVerificationCodeAsync(user.Email!,
@@ -34,10 +39,7 @@ internal sealed class RequestResetPasswordCommandHandler(
             UserName = user.UserName!
         });
 
-        return new(new ResetPasswordResponse()
-        {
-            Message = $"You have to confirm password reset. " +
-                      $"We have sent an email with instructions to your email address."
-        });
+        return Result.Success($"You have to confirm password reset. " +
+                              $"We have sent an email with instructions to your email address.");
     }
 }

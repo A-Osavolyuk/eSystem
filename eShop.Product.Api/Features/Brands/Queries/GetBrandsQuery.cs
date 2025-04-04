@@ -2,17 +2,17 @@
 
 namespace eShop.Product.Api.Features.Brands.Queries;
 
-internal sealed record GetBrandsQuery() : IRequest<Result<List<BrandDto>>>;
+internal sealed record GetBrandsQuery() : IRequest<Result>;
 
 internal sealed class GetBrandsQueryHandler(AppDbContext context)
-    : IRequestHandler<GetBrandsQuery, Result<List<BrandDto>>>
+    : IRequestHandler<GetBrandsQuery, Result>
 {
     private readonly AppDbContext context = context;
 
-    public async Task<Result<List<BrandDto>>> Handle(GetBrandsQuery request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(GetBrandsQuery request, CancellationToken cancellationToken)
     {
         var brands = await context.Brands.AsNoTracking().ToListAsync(cancellationToken);
         var response = brands.Select(Mapper.ToBrandDto).ToList();
-        return response;
+        return Result.Success(response);
     }
 }

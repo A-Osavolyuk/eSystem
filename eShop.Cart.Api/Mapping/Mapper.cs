@@ -6,7 +6,7 @@ namespace eShop.Cart.Api.Mapping;
 
 public static class Mapper
 {
-    public static FavoritesDto ToFavoritesDto(FavoritesEntity entity)
+    public static FavoritesDto Map(FavoritesEntity entity)
     {
         return new()
         {
@@ -16,17 +16,7 @@ public static class Mapper
         };
     }
 
-    public static FavoritesModel ToFavoritesModel(FavoritesDto dto)
-    {
-        return new()
-        {
-            Id = dto.Id,
-            Items = dto.Items,
-            ItemsCount = dto.Count,
-        };
-    }
-
-    public static CartDto ToCartDto(CartEntity entity)
+    public static CartDto Map(CartEntity entity)
     {
         return new()
         {

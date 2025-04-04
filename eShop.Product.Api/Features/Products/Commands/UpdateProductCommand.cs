@@ -1,31 +1,43 @@
 ﻿namespace eShop.Product.Api.Features.Products.Commands;
 
-internal sealed record UpdateProductCommand(UpdateProductRequest Request) : IRequest<Result<UpdateProductResponse>>;
+internal sealed record UpdateProductCommand(UpdateProductRequest Request) : IRequest<Result>;
 
 internal sealed class UpdateProductCommandHandler(AppDbContext context)
-    : IRequestHandler<UpdateProductCommand, Result<UpdateProductResponse>>
+    : IRequestHandler<UpdateProductCommand, Result>
 {
     private readonly AppDbContext context = context;
 
-    public async Task<Result<UpdateProductResponse>> Handle(UpdateProductCommand request,
+    public async Task<Result> Handle(UpdateProductCommand request,
         CancellationToken cancellationToken)
     {
         if (!await context.Products.AsNoTracking().AnyAsync(x => x.Id == request.Request.Id, cancellationToken))
         {
-            return new Result<UpdateProductResponse>(
-                new NotFoundException($"Cannot find product with ID {request.Request.Id}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find product with ID {request.Request.Id}"
+            });
         }
 
         if (!await context.Brands.AsNoTracking().AnyAsync(x => x.Id == request.Request.Brand.Id, cancellationToken))
         {
-            return new Result<UpdateProductResponse>(
-                new NotFoundException($"Cannot find brand with ID {request.Request.Brand.Id}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find brand with ID {request.Request.Brand.Id}"
+            });
         }
 
         if (!await context.Sellers.AsNoTracking().AnyAsync(x => x.Id == request.Request.Seller.Id, cancellationToken))
         {
-            return new Result<UpdateProductResponse>(
-                new NotFoundException($"Cannot find seller with ID {request.Request.Seller.Id}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find seller with ID {request.Request.Seller.Id}"
+            });
         }
 
         var entity = request.Request.ProductType switch
@@ -37,9 +49,7 @@ internal sealed class UpdateProductCommandHandler(AppDbContext context)
 
         context.Products.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
-        return new Result<UpdateProductResponse>(new UpdateProductResponse
-        {
-            Message = "Product was updated successfully.",
-        });
+        
+        return Result.Success("Product was updated successfully.");
     }
 }

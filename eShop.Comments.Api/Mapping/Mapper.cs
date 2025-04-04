@@ -5,7 +5,7 @@ namespace eShop.Comments.Api.Mapping;
 
 public static class Mapper
 {
-    public static CommentDto ToCommentDto(CommentEntity entity)
+    public static CommentDto Map(CommentEntity entity)
     {
         return new()
         {
@@ -20,7 +20,7 @@ public static class Mapper
         };
     }
 
-    public static CommentEntity ToCommentEntity(CreateCommentRequest request)
+    public static CommentEntity Map(CreateCommentRequest request)
     {
         return new()
         {
@@ -34,7 +34,7 @@ public static class Mapper
         };
     }
 
-    public static CommentEntity ToCommentEntity(UpdateCommentRequest request)
+    public static CommentEntity Map(UpdateCommentRequest request)
     {
         return new()
         {

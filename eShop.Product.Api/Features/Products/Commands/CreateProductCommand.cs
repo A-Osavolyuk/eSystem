@@ -1,25 +1,33 @@
 ﻿namespace eShop.Product.Api.Features.Products.Commands;
 
-internal sealed record CreateProductCommand(CreateProductRequest Request) : IRequest<Result<CreateProductResponse>>;
+internal sealed record CreateProductCommand(CreateProductRequest Request) : IRequest<Result>;
 
 internal sealed class CreateProductCommandHandler(
-    AppDbContext context) : IRequestHandler<CreateProductCommand, Result<CreateProductResponse>>
+    AppDbContext context) : IRequestHandler<CreateProductCommand, Result>
 {
     private readonly AppDbContext context = context;
 
-    public async Task<Result<CreateProductResponse>> Handle(CreateProductCommand request,
+    public async Task<Result> Handle(CreateProductCommand request,
         CancellationToken cancellationToken)
     {
         if (!await context.Brands.AsNoTracking().AnyAsync(x => x.Id == request.Request.Brand.Id, cancellationToken))
         {
-            return new Result<CreateProductResponse>(
-                new NotFoundException($"Cannot find brand with ID {request.Request.Brand.Id}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find brand with ID {request.Request.Brand.Id}"
+            });
         }
 
         if (!await context.Sellers.AsNoTracking().AnyAsync(x => x.Id == request.Request.Seller.Id, cancellationToken))
         {
-            return new Result<CreateProductResponse>(
-                new NotFoundException($"Cannot find seller with ID {request.Request.Seller.Id}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find seller with ID {request.Request.Seller.Id}"
+            });
         }
 
         var entity = request.Request.ProductType switch
@@ -32,9 +40,6 @@ internal sealed class CreateProductCommandHandler(
         await context.Products.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new Result<CreateProductResponse>(new CreateProductResponse()
-        {
-            Message = "Product created successfully"
-        });
+        return Result.Success("Product created successfully");
     }
 }

@@ -1,11 +1,11 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record RegisterCommand(RegistrationRequest Request) : IRequest<Result<RegistrationResponse>>;
+internal sealed record RegisterCommand(RegistrationRequest Request) : IRequest<Result>;
 
 internal sealed class RegisterCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<RegisterCommand, Result<RegistrationResponse>>
+    IConfiguration configuration) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
@@ -13,14 +13,19 @@ internal sealed class RegisterCommandHandler(
     private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
     private readonly string defaultPermission = configuration["Configuration:General:DefaultValues:DefaultPermission"]!;
 
-    public async Task<Result<RegistrationResponse>> Handle(RegisterCommand request,
+    public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is not null)
         {
-            return new(new BadRequestException("User already exists"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = "User already exists"
+            });
         }
 
         var newUser = Mapper.ToAppUser(request.Request);
@@ -28,17 +33,25 @@ internal sealed class RegisterCommandHandler(
 
         if (!registrationResult.Succeeded)
         {
-            return new(new FailedOperationException(
-                $"Cannot create user due to server error: {registrationResult.Errors.First().Description}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.InternalServerError,
+                Message = "Internal server error",
+                Details = $"Cannot create user due to server error: {registrationResult.Errors.First().Description}"
+            });
         }
 
         var assignDefaultRoleResult = await appManager.UserManager.AddToRoleAsync(newUser, defaultRole);
 
         if (!assignDefaultRoleResult.Succeeded)
         {
-            return new(new FailedOperationException(
-                $"Cannot assign role {defaultRole} to user with email {newUser.Email} " +
-                $"due to server errors: {assignDefaultRoleResult.Errors.First().Description}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.InternalServerError,
+                Message = "Internal server error",
+                Details = $"Cannot assign role {defaultRole} to user with email {newUser.Email} " +
+                          $"due to server errors: {assignDefaultRoleResult.Errors.First().Description}"
+            });
         }
 
         var issuingPermissionsResult =
@@ -46,9 +59,13 @@ internal sealed class RegisterCommandHandler(
 
         if (!issuingPermissionsResult.Succeeded)
         {
-            return new(new FailedOperationException(
-                $"Cannot issue permissions for user with email {request.Request.Email} " +
-                $"due to server errors: {issuingPermissionsResult.Errors.First().Description}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.InternalServerError,
+                Message = "Internal server error",
+                Details = $"Cannot issue permissions for user with email {request.Request.Email} " +
+                          $"due to server errors: {issuingPermissionsResult.Errors.First().Description}"
+            });
         }
 
         var code = await appManager.SecurityManager.GenerateVerificationCodeAsync(newUser.Email!,
@@ -63,11 +80,8 @@ internal sealed class RegisterCommandHandler(
         });
 
 
-        return new(new RegistrationResponse()
-        {
-            Message = $"Your account have been successfully registered. " +
-                      $"Now you have to confirm you email address to log in. " +
-                      $"We have sent an email with instructions to your email address."
-        });
+        return Result.Success($"Your account have been successfully registered. " +
+                              $"Now you have to confirm you email address to log in. " +
+                              $"We have sent an email with instructions to your email address.");
     }
 }
