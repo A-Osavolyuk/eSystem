@@ -1,4 +1,5 @@
-﻿using eShop.Product.Api.Services;
+﻿using eShop.Domain.Interfaces.API;
+using eShop.Product.Api.Services;
 
 namespace eShop.Product.Api.Extensions;
 

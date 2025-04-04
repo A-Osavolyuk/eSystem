@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Entities;
+﻿using eShop.Domain.Abstraction.Data;
+
+namespace eShop.Auth.Api.Entities;
 
 public class SecurityTokenEntity : IIdentifiable<Guid>, IAuditable, IExpireable
 {

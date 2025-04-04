@@ -1,5 +1,6 @@
 ﻿using eShop.Application.Extensions;
 using eShop.Domain.Interfaces;
+using eShop.Domain.Interfaces.API;
 using eShop.Files.Api.Interfaces;
 using eShop.Files.Api.Services;
 using eShop.ServiceDefaults;

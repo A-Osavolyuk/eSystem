@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Interfaces;
+﻿namespace eShop.Domain.Interfaces.API;
 
 public interface ICacheService
 {

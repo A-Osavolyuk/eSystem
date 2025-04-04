@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using eShop.Domain.Abstraction.Data;
 
 namespace eShop.Auth.Api.Entities;
 

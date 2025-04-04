@@ -1,4 +1,6 @@
-﻿namespace eShop.Comments.Api.Services;
+﻿using eShop.Domain.Interfaces.API;
+
+namespace eShop.Comments.Api.Services;
 
 public class CacheService(IDistributedCache cache) : ICacheService
 {

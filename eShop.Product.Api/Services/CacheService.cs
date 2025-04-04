@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Services;
+﻿using eShop.Domain.Interfaces.API;
+
+namespace eShop.Product.Api.Services;
 
 public class CacheService(IDistributedCache cache) : ICacheService
 {

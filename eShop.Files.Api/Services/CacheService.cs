@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Interfaces;
+using eShop.Domain.Interfaces.API;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 

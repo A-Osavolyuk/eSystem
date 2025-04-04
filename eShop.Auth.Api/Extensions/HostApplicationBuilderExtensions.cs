@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Extensions;
+﻿using eShop.Domain.Interfaces.API;
+
+namespace eShop.Auth.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
