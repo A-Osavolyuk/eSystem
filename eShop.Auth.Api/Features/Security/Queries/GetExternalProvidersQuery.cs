@@ -2,17 +2,17 @@
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 
-internal sealed record GetExternalProvidersQuery() : IRequest<Result<IEnumerable<ExternalProviderDto>>>;
+internal sealed record GetExternalProvidersQuery() : IRequest<Result>;
 
 internal sealed class GetExternalProvidersQueryHandler(
     AppManager appManager,
     ICacheService cacheService)
-    : IRequestHandler<GetExternalProvidersQuery, Result<IEnumerable<ExternalProviderDto>>>
+    : IRequestHandler<GetExternalProvidersQuery, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly ICacheService cacheService = cacheService;
 
-    public async Task<Result<IEnumerable<ExternalProviderDto>>> Handle(GetExternalProvidersQuery request,
+    public async Task<Result> Handle(GetExternalProvidersQuery request,
         CancellationToken cancellationToken)
     {
         var key = "external-providers";
@@ -25,9 +25,9 @@ internal sealed class GetExternalProvidersQueryHandler(
 
             await cacheService.SetAsync(key, providers, TimeSpan.FromHours(6));
 
-            return new Result<IEnumerable<ExternalProviderDto>>(providers);
+            return Result.Success(providers);
         }
 
-        return new Result<IEnumerable<ExternalProviderDto>>(result);
+        return Result.Success(result);
     }
 }

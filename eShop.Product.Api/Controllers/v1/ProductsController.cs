@@ -21,7 +21,7 @@ public class ProductsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get product by name")]
@@ -34,7 +34,7 @@ public class ProductsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get product by article")]
@@ -47,7 +47,7 @@ public class ProductsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get product by id")]
@@ -60,7 +60,7 @@ public class ProductsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Create product")]
@@ -74,7 +74,7 @@ public class ProductsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Update product")]
@@ -88,7 +88,7 @@ public class ProductsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Delete product")]
@@ -101,6 +101,6 @@ public class ProductsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 }

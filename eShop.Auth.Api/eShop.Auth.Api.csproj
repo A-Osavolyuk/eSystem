@@ -21,7 +21,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-        <PackageReference Include="LanguageExt.Core" Version="4.4.9"/>
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1"/>
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.6" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="9.0.2" />

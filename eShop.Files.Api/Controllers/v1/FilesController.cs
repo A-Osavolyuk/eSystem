@@ -25,7 +25,7 @@ public class FilesController(
         var response = await sender.Send(new GetProductImagesQuery(productId));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get user avatar")]
@@ -37,7 +37,7 @@ public class FilesController(
         var response = await sender.Send(new GetUserAvatarQuery(userId));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Upload product images")]
@@ -49,7 +49,7 @@ public class FilesController(
         var response = await sender.Send(new UploadProductImagesCommand(files, productId));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Upload user avatar")]
@@ -61,7 +61,7 @@ public class FilesController(
         var response = await sender.Send(new UploadUserAvatarCommand(file, userId));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Delete product images")]
@@ -73,7 +73,7 @@ public class FilesController(
         var response = await sender.Send(new DeleteProductImagesCommand(productId));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Delete user avatar")]
@@ -85,6 +85,6 @@ public class FilesController(
         var response = await sender.Send(new DeleteUserAvatarCommand(userId));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 }

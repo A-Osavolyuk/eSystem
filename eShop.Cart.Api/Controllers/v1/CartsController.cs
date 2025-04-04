@@ -21,7 +21,7 @@ public class CartsController(ISender sender) : ControllerBase
 
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get cart")]
@@ -34,6 +34,6 @@ public class CartsController(ISender sender) : ControllerBase
 
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 }

@@ -1,23 +1,28 @@
 ﻿namespace eShop.Auth.Api.Features.Account.Commands;
 
 internal sealed record ChangePersonalDataCommand(ChangePersonalDataRequest Request)
-    : IRequest<Result<ChangePersonalDataResponse>>;
+    : IRequest<Result>;
 
 internal sealed class ChangePersonalDataCommandHandler(
     AppManager appManager,
-    AuthDbContext context) : IRequestHandler<ChangePersonalDataCommand, Result<ChangePersonalDataResponse>>
+    AuthDbContext context) : IRequestHandler<ChangePersonalDataCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly AuthDbContext context = context;
 
-    public async Task<Result<ChangePersonalDataResponse>> Handle(ChangePersonalDataCommand request,
+    public async Task<Result> Handle(ChangePersonalDataCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.Request.Email}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with email {request.Request.Email}."
+            });
         }
 
         var entity = Mapper.ToPersonalDataEntity(request.Request);
@@ -25,13 +30,14 @@ internal sealed class ChangePersonalDataCommandHandler(
 
         if (!result.Succeeded)
         {
-            return new Result<ChangePersonalDataResponse>(new FailedOperationException(
-                $"Failed on changing personal data with message: {result.Errors.First().Description}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.InternalServerError,
+                Message = "Server error",
+                Details = $"Failed on changing personal data with message: {result.Errors.First().Description}"
+            });
         }
 
-        return new(new ChangePersonalDataResponse()
-        {
-            Message = "Personal data was successfully updated"
-        });
+        return Result.Success("Personal data was successfully updated");
     }
 }

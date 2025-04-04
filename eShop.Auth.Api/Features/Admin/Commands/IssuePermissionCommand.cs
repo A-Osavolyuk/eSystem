@@ -1,21 +1,26 @@
 ﻿namespace eShop.Auth.Api.Features.Admin.Commands;
 
 internal sealed record IssuePermissionCommand(IssuePermissionRequest Request)
-    : IRequest<Result<IssuePermissionsResponse>>;
+    : IRequest<Result>;
 
 internal sealed class IssuePermissionCommandHandler(
-    AppManager appManager) : IRequestHandler<IssuePermissionCommand, Result<IssuePermissionsResponse>>
+    AppManager appManager) : IRequestHandler<IssuePermissionCommand, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<IssuePermissionsResponse>> Handle(IssuePermissionCommand request,
+    public async Task<Result> Handle(IssuePermissionCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByIdAsync(request.Request.UserId);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with ID {request.Request.UserId}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"User does not exist."
+            });
         }
 
         var permissions = new List<PermissionEntity>();
@@ -26,7 +31,12 @@ internal sealed class IssuePermissionCommandHandler(
 
             if (permission is null)
             {
-                return new(new NotFoundException($"Cannot find permission {permissionName}."));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found",
+                    Details = $"Permission {permissionName} does not exist."
+                });
             }
 
             permissions.Add(permission);
@@ -42,13 +52,16 @@ internal sealed class IssuePermissionCommandHandler(
 
                 if (!result.Succeeded)
                 {
-                    return new(new FailedOperationException(
-                        $"Failed on issuing permission with message: {result.Errors.First().Description}"));
+                    return Result.Failure(new Error()
+                    {
+                        Code = ErrorCode.InternalServerError,
+                        Message = "Server error",
+                        Details = $"Failed on issuing permission with message: {result.Errors.First().Description}"
+                    });
                 }
             }
         }
 
-        return new(new IssuePermissionsResponse()
-            { Succeeded = true, Message = "Successfully issued permissions." });
+        return Result.Success("Successfully issued permissions.");
     }
 }

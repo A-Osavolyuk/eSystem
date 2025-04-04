@@ -14,7 +14,6 @@ global using eShop.Domain.Requests.Api.Favorites;
 global using eShop.Domain.Responses.Api.Cart;
 global using eShop.ServiceDefaults;
 global using Grpc.Core;
-global using LanguageExt.Common;
 global using MassTransit;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;

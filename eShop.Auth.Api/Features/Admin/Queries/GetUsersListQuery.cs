@@ -1,13 +1,13 @@
 ﻿namespace eShop.Auth.Api.Features.Admin.Queries;
 
-internal sealed record GetUsersListQuery() : IRequest<Result<IEnumerable<UserDto>>>;
+internal sealed record GetUsersListQuery() : IRequest<Result>;
 
 internal sealed class GetUsersListQueryHandler(
-    AppManager appManager) : IRequestHandler<GetUsersListQuery, Result<IEnumerable<UserDto>>>
+    AppManager appManager) : IRequestHandler<GetUsersListQuery, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<IEnumerable<UserDto>>> Handle(GetUsersListQuery request,
+    public async Task<Result> Handle(GetUsersListQuery request,
         CancellationToken cancellationToken)
     {
         var usersList = await appManager.UserManager.Users.AsNoTracking()
@@ -15,7 +15,7 @@ internal sealed class GetUsersListQueryHandler(
 
         if (!usersList.Any())
         {
-            return new(new List<UserDto>());
+            return Result.Success(new List<UserDto>());
         }
 
         var users = new List<UserDto>();
@@ -28,7 +28,12 @@ internal sealed class GetUsersListQueryHandler(
 
             if (!rolesList.Any())
             {
-                return new(new NotFoundException($"Cannot find roles for user with ID {user.Id}."));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found",
+                    Details = $"Cannot find roles for user with ID {user.Id}."
+                });
             }
 
             var rolesData = (await appManager.RoleManager.GetRolesDataAsync(rolesList) ?? Array.Empty<RoleData>())
@@ -38,7 +43,12 @@ internal sealed class GetUsersListQueryHandler(
 
             if (!roleInfos.Any())
             {
-                return new(new NotFoundException("Cannot find roles data."));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found",
+                    Details = "Cannot find roles data."
+                });
             }
 
             var permissionsList = new List<Permission>();
@@ -49,7 +59,12 @@ internal sealed class GetUsersListQueryHandler(
 
                 if (permissionInfo is null)
                 {
-                    return new(new NotFoundException($"Cannot find permission {permission}."));
+                    return Result.Failure(new Error()
+                    {
+                        Code = ErrorCode.NotFound,
+                        Message = "Not found",
+                        Details = $"Cannot find permission {permission}."
+                    });
                 }
 
                 permissionsList.Add(new Permission()
@@ -73,6 +88,6 @@ internal sealed class GetUsersListQueryHandler(
             });
         }
 
-        return users;
+        return Result.Success(users);
     }
 }

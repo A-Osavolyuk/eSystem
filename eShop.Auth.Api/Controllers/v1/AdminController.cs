@@ -22,7 +22,7 @@ public class AdminController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Find user by id")]
@@ -36,7 +36,7 @@ public class AdminController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get all users")]
@@ -50,7 +50,7 @@ public class AdminController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get roles")]
@@ -64,7 +64,7 @@ public class AdminController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get user roles")]
@@ -78,7 +78,7 @@ public class AdminController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get lockout status")]
@@ -92,7 +92,7 @@ public class AdminController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get permissions")]
@@ -106,7 +106,7 @@ public class AdminController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Assign role")]
@@ -119,7 +119,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new AssignRoleCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Issue permissions")]
@@ -132,7 +132,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new IssuePermissionCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Create role")]
@@ -146,7 +146,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new CreateRoleCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Create user account")]
@@ -159,7 +159,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new CreateUserAccountCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Lockout user")]
@@ -172,7 +172,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new LockoutUserCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Unlock user")]
@@ -185,7 +185,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new UnlockUserCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Remove user roles")]
@@ -198,7 +198,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new RemoveUserRolesCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Remove user role")]
@@ -211,7 +211,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new RemoveUserRoleCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Delete role")]
@@ -224,7 +224,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new DeleteRoleCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Release user from permission")]
@@ -238,7 +238,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new RemoveUserFromPermissionCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Delete user account")]
@@ -251,6 +251,6 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new DeleteUserAccountCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 }

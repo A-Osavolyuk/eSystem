@@ -1,23 +1,28 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record LoginWith2FaCommand(LoginWith2FaRequest With2FaRequest)
-    : IRequest<Result<LoginResponse>>;
+    : IRequest<Result>;
 
 internal sealed class LoginWith2FaCommandHandler(
     AppManager appManager,
-    ITokenHandler tokenHandler) : IRequestHandler<LoginWith2FaCommand, Result<LoginResponse>>
+    ITokenHandler tokenHandler) : IRequestHandler<LoginWith2FaCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly ITokenHandler tokenHandler = tokenHandler;
 
-    public async Task<Result<LoginResponse>> Handle(LoginWith2FaCommand request,
+    public async Task<Result> Handle(LoginWith2FaCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.With2FaRequest.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.With2FaRequest.Email}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found.",
+                Details = $"Cannot find user with email {request.With2FaRequest.Email}."
+            });
         }
 
         var result =
@@ -25,7 +30,12 @@ internal sealed class LoginWith2FaCommandHandler(
 
         if (!result)
         {
-            return new(new BadRequestException($"Invalid two-factor code {request.With2FaRequest.Code}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Message = "Bad request.",
+                Details = $"Invalid two-factor code {request.With2FaRequest.Code}."
+            });
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
@@ -35,7 +45,7 @@ internal sealed class LoginWith2FaCommandHandler(
         {
             var token = await tokenHandler.RefreshTokenAsync(user, securityToken.Token);
 
-            return new(new LoginResponse()
+            return Result.Success(new LoginResponse()
             {
                 User = userDto,
                 RefreshToken = token,
@@ -49,7 +59,7 @@ internal sealed class LoginWith2FaCommandHandler(
             var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
             var tokens = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
 
-            return new(new LoginResponse()
+            return Result.Success(new LoginResponse()
             {
                 User = userDto,
                 AccessToken = tokens.AccessToken,

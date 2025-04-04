@@ -20,6 +20,6 @@ public class SellerController(ISender sender) : ControllerBase
 
         return response.Match(
             s => StatusCode(201, new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 }

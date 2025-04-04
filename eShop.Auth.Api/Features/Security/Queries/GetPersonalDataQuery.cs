@@ -2,16 +2,16 @@
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 
-internal sealed record GetPersonalDataQuery(string Email) : IRequest<Result<PersonalDataResponse>>;
+internal sealed record GetPersonalDataQuery(string Email) : IRequest<Result>;
 
 internal sealed class GetPersonalDataQueryHandler(
     AppManager appManager,
-    ICacheService cacheService) : IRequestHandler<GetPersonalDataQuery, Result<PersonalDataResponse>>
+    ICacheService cacheService) : IRequestHandler<GetPersonalDataQuery, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly ICacheService cacheService = cacheService;
 
-    public async Task<Result<PersonalDataResponse>> Handle(GetPersonalDataQuery request,
+    public async Task<Result> Handle(GetPersonalDataQuery request,
         CancellationToken cancellationToken)
     {
         var key = $"personal-data-{request.Email}";
@@ -23,22 +23,31 @@ internal sealed class GetPersonalDataQueryHandler(
 
             if (user is null)
             {
-                return new(new NotFoundException($"Cannot find user with email {request.Email}."));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found",
+                    Details = $"Cannot find user with email {request.Email}."
+                });
             }
 
             var personalData = await appManager.ProfileManager.FindPersonalDataAsync(user);
 
             if (personalData is null)
             {
-                return new(new NotFoundException(
-                    $"Cannot find or user with email {user.Email} has no personal data."));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found",
+                    Details = $"Cannot find or user with email {user.Email} has no personal data."
+                });
             }
 
             await cacheService.SetAsync(key, personalData, TimeSpan.FromHours(6));
 
-            return new(Mapper.ToPersonalDataResponse(personalData));
+            return Result.Success(Mapper.ToPersonalDataResponse(personalData));
         }
 
-        return new(Mapper.ToPersonalDataResponse(data));
+        return Result.Success(Mapper.ToPersonalDataResponse(data));
     }
 }

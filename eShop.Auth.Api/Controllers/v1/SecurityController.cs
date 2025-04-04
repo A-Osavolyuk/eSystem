@@ -26,12 +26,10 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
         return result.Match(
             s => Ok(new ResponseBuilder()
                 .Succeeded()
-                .WithMessage(s.Enabled
-                    ? "Two factor authentication state is enabled."
-                    : "Two factor authentication state is disabled.")
+                .WithMessage(s.Message)
                 .WithResult(s)
                 .Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("External login")]
@@ -44,8 +42,12 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
         var result = await sender.Send(new ExternalLoginQuery(provider, returnUri));
 
         return result.Match(
-            s => Challenge(s.AuthenticationProperties, s.Provider),
-            ExceptionHandler.HandleException);
+            s =>
+            {
+                var response = s.Value as ExternalLoginResponse;
+                return Challenge(response!.AuthenticationProperties, response.Provider);
+            },
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Handle external login response")]
@@ -61,8 +63,8 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
         var result = await sender.Send(new HandleExternalLoginResponseQuery(info!, remoteError, returnUri));
 
         return result.Match(
-            Redirect,
-            ExceptionHandler.HandleException);
+            s => Redirect(Convert.ToString(s.Value)!),
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get external login providers")]
@@ -76,7 +78,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     #endregion
@@ -94,7 +96,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             succ => Ok(new ResponseBuilder().Succeeded().WithMessage(succ.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Resend verification code")]
@@ -109,7 +111,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             succ => Ok(new ResponseBuilder().Succeeded().WithMessage(succ.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Register")]
@@ -124,7 +126,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             succ => Ok(new ResponseBuilder().Succeeded().WithMessage(succ.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Login")]
@@ -139,7 +141,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             succ => Ok(new ResponseBuilder().Succeeded().WithResult(succ).WithMessage(succ.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Request reset password")]
@@ -153,7 +155,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Verify email")]
@@ -168,7 +170,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Change 2FA state")]
@@ -183,7 +185,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Login 2FA")]
@@ -199,7 +201,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             succ => Ok(new ResponseBuilder().Succeeded().WithResult(succ).WithMessage(succ.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Confirm change email")]
@@ -214,7 +216,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Confirm change phone number")]
@@ -229,7 +231,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     #endregion
@@ -249,7 +251,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Request change email")]
@@ -265,7 +267,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Request change phone number")]
@@ -281,7 +283,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Change password")]
@@ -297,7 +299,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     #endregion

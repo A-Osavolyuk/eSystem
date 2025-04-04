@@ -25,7 +25,7 @@ public class BrandsController(ISender sender) : ControllerBase
                 var response1 = new ResponseBuilder().Succeeded().WithResult(s).Build();
                 return Ok(response1);
             },
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Create brand")]
@@ -39,7 +39,7 @@ public class BrandsController(ISender sender) : ControllerBase
 
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Update brand")]
@@ -53,7 +53,7 @@ public class BrandsController(ISender sender) : ControllerBase
 
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Delete brand")]
@@ -66,6 +66,6 @@ public class BrandsController(ISender sender) : ControllerBase
 
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 }

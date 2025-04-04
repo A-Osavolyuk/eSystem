@@ -8,6 +8,5 @@ public enum ErrorCode
     Forbidden = 403,
     NotFound = 404,
     MethodNotAllowed = 405,
-    NotAcceptable = 406,
     InternalServerError = 500,
 }

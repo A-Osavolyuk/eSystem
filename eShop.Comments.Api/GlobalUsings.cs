@@ -15,7 +15,6 @@ global using eShop.Comments.Api.Mapping;
 global using eShop.Comments.Api.Receivers;
 global using eShop.ServiceDefaults;
 global using FluentValidation;
-global using LanguageExt.Common;
 global using MassTransit;
 global using MediatR;
 global using Microsoft.AspNetCore.Authorization;

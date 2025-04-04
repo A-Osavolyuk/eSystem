@@ -1,20 +1,25 @@
 ﻿namespace eShop.Auth.Api.Features.Admin.Queries;
 
-internal sealed record FindUserByEmailQuery(string Email) : IRequest<Result<UserDto>>;
+internal sealed record FindUserByEmailQuery(string Email) : IRequest<Result>;
 
 internal sealed class FindUserByEmailQueryHandler(
-    AppManager appManager) : IRequestHandler<FindUserByEmailQuery, Result<UserDto>>
+    AppManager appManager) : IRequestHandler<FindUserByEmailQuery, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<UserDto>> Handle(FindUserByEmailQuery request,
+    public async Task<Result> Handle(FindUserByEmailQuery request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.Email}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with email {request.Email}."
+            });
         }
 
         var accountData = Mapper.ToAccountData(user);
@@ -24,7 +29,12 @@ internal sealed class FindUserByEmailQueryHandler(
 
         if (!rolesList.Any())
         {
-            return new(new NotFoundException($"Cannot find roles for user with email {user.Email}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found.",
+                Details = $"Cannot find roles for user with email {user.Email}."
+            });
         }
 
         var permissionData = new PermissionsData() { Id = user.Id };
@@ -34,7 +44,12 @@ internal sealed class FindUserByEmailQueryHandler(
 
             if (roleInfo is null)
             {
-                return new(new NotFoundException($"Cannot find role {role}."));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found.",
+                    Details = $"Cannot find role {role}."
+                });
             }
 
             permissionData.Roles.Add(new RoleData()
@@ -51,7 +66,12 @@ internal sealed class FindUserByEmailQueryHandler(
 
             if (permissionInfo is null)
             {
-                return new(new NotFoundException($"Cannot find permission {permission}."));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found.",
+                    Details = $"Cannot find permission {permission}."
+                });
             }
 
             permissionData.Permissions.Add(new Permission()
@@ -68,6 +88,6 @@ internal sealed class FindUserByEmailQueryHandler(
             PermissionsData = permissionData
         };
 
-        return new(response);
+        return Result.Success(response);
     }
 }

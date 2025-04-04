@@ -1,27 +1,30 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request)
-    : IRequest<Result<ChangePhoneNumberResponse>>;
+    : IRequest<Result>;
 
 internal sealed class RequestChangePhoneNumberCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<ChangePhoneNumberCommand, Result<ChangePhoneNumberResponse>>
+    IConfiguration configuration) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
-    private readonly IConfiguration configuration = configuration;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
-    public async Task<Result<ChangePhoneNumberResponse>> Handle(ChangePhoneNumberCommand request,
+    public async Task<Result> Handle(ChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber);
 
         if (user is null)
         {
-            return new(new NotFoundException(
-                $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}."
+            });
         }
 
         var destinationSet = new DestinationSet()
@@ -44,9 +47,6 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
             PhoneNumber = request.Request.NewPhoneNumber
         });
 
-        return new(new ChangePhoneNumberResponse()
-        {
-            Message = "We have sent sms messages to your phone numbers."
-        });
+        return Result.Success("We have sent sms messages to your phone numbers.");
     }
 }

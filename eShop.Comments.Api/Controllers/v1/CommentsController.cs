@@ -21,7 +21,7 @@ public class CommentsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Creating a comment")]
@@ -35,7 +35,7 @@ public class CommentsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Update comment")]
@@ -49,7 +49,7 @@ public class CommentsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Delete comment")]
@@ -62,6 +62,6 @@ public class CommentsController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 }

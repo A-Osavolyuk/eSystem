@@ -1,22 +1,16 @@
 ﻿namespace eShop.Auth.Api.Features.Admin.Queries;
 
-internal sealed record GetRolesListQuery() : IRequest<Result<IEnumerable<RoleDto>>>;
+internal sealed record GetRolesListQuery() : IRequest<Result>;
 
 internal sealed class GetRolesListQueryHandler(
-    AppManager appManager) : IRequestHandler<GetRolesListQuery, Result<IEnumerable<RoleDto>>>
+    AppManager appManager) : IRequestHandler<GetRolesListQuery, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<IEnumerable<RoleDto>>> Handle(GetRolesListQuery request,
+    public async Task<Result> Handle(GetRolesListQuery request,
         CancellationToken cancellationToken)
     {
         var roles = await appManager.RoleManager.Roles.ToListAsync(cancellationToken);
-
-        if (roles.Count == 0)
-        {
-            return new(new NotFoundException("Cannot find roles."));
-        }
-
         var response = new List<RoleDto>();
         foreach (var role in roles)
         {
@@ -33,6 +27,6 @@ internal sealed class GetRolesListQueryHandler(
             });
         }
 
-        return new(response);
+        return Result.Success(response);
     }
 }

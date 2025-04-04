@@ -1,23 +1,28 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record ConfirmResetPasswordCommand(ConfirmResetPasswordRequest Request)
-    : IRequest<Result<ConfirmResetPasswordResponse>>;
+    : IRequest<Result>;
 
 internal sealed class ConfirmResetPasswordCommandHandler(
     AppManager appManager,
     ILogger<ConfirmResetPasswordCommandHandler> logger)
-    : IRequestHandler<ConfirmResetPasswordCommand, Result<ConfirmResetPasswordResponse>>
+    : IRequestHandler<ConfirmResetPasswordCommand, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<ConfirmResetPasswordResponse>> Handle(ConfirmResetPasswordCommand request,
+    public async Task<Result> Handle(ConfirmResetPasswordCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.Request.Email}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with email {request.Request.Email}."
+            });
         }
 
         var resetResult =
@@ -26,14 +31,15 @@ internal sealed class ConfirmResetPasswordCommandHandler(
 
         if (!resetResult.Succeeded)
         {
-            return new(new FailedOperationException(
-                $"Cannot reset password for user with email {request.Request.Email} " +
-                $"due to server error: {resetResult.Errors.First().Description}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.InternalServerError,
+                Message = "Internal server error",
+                Details = $"Cannot reset password for user with email {request.Request.Email} " +
+                          $"due to server error: {resetResult.Errors.First().Description}."
+            });
         }
 
-        return new(new ConfirmResetPasswordResponse()
-        {
-            Message = "Your password has been successfully reset."
-        });
+        return Result.Success("Your password has been successfully reset.");
     }
 }

@@ -1,27 +1,37 @@
 ﻿namespace eShop.Auth.Api.Features.Admin.Queries;
 
-internal sealed record GetUserRolesQuery(Guid Id) : IRequest<Result<UserRolesResponse>>;
+internal sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
 
 internal sealed class GetUserRolesQueryHandler(
-    AppManager appManager) : IRequestHandler<GetUserRolesQuery, Result<UserRolesResponse>>
+    AppManager appManager) : IRequestHandler<GetUserRolesQuery, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<UserRolesResponse>> Handle(GetUserRolesQuery request,
+    public async Task<Result> Handle(GetUserRolesQuery request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByIdAsync(request.Id);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with ID {request.Id}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with ID {request.Id}."
+            });
         }
 
         var roleList = await appManager.UserManager.GetRolesAsync(user);
 
         if (!roleList.Any())
         {
-            return new(new NotFoundException($"Cannot find roles for user with ID {request.Id}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find roles for user with ID {request.Id}."
+            });
         }
 
         var result = new UserRolesResponse() with { UserId = user.Id };
@@ -32,7 +42,12 @@ internal sealed class GetUserRolesQueryHandler(
 
             if (roleInfo is null)
             {
-                return new(new NotFoundException($"Cannot find role {role}"));
+                return Result.Failure(new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Message = "Not found",
+                    Details = $"Cannot find role {role}"
+                });
             }
 
             result.Roles.Add(new RoleData()
@@ -43,6 +58,6 @@ internal sealed class GetUserRolesQueryHandler(
             });
         }
 
-        return result;
+        return Result.Success(result);
     }
 }

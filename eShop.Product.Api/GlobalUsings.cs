@@ -21,7 +21,6 @@ global using eShop.Product.Api.Mapping;
 global using eShop.Product.Api.Rpc;
 global using eShop.ServiceDefaults;
 global using Grpc.Net.Client;
-global using LanguageExt.Common;
 global using MassTransit;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;

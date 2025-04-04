@@ -1,22 +1,17 @@
 ﻿namespace eShop.Auth.Api.Features.Admin.Queries;
 
-internal sealed record GetPermissionsListQuery() : IRequest<Result<IEnumerable<PermissionEntity>>>;
+internal sealed record GetPermissionsListQuery() : IRequest<Result>;
 
 internal sealed class GetPermissionsListQueryHandler(
-    AppManager appManager) : IRequestHandler<GetPermissionsListQuery, Result<IEnumerable<PermissionEntity>>>
+    AppManager appManager) : IRequestHandler<GetPermissionsListQuery, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<IEnumerable<PermissionEntity>>> Handle(GetPermissionsListQuery request,
+    public async Task<Result> Handle(GetPermissionsListQuery request,
         CancellationToken cancellationToken)
     {
         var permissions = await appManager.PermissionManager.GetPermissionsAsync();
 
-        if (!permissions.Any())
-        {
-            return new(new NotFoundException("Cannot find permissions."));
-        }
-
-        return permissions.ToList();
+        return Result.Success(permissions.ToList());
     }
 }

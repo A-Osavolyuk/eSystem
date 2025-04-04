@@ -22,7 +22,7 @@ public class ProfileController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Get phone number")]
@@ -36,7 +36,7 @@ public class ProfileController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Change username")]
@@ -53,7 +53,7 @@ public class ProfileController(ISender sender) : ControllerBase
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message)
                 .WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 
     [EndpointSummary("Change personal data")]
@@ -71,6 +71,6 @@ public class ProfileController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded()
                 .WithMessage("Personal data was successfully changed.")
                 .WithResult(s).Build()),
-            ExceptionHandler.HandleException);
+            ErrorHandler.Handle);
     }
 }

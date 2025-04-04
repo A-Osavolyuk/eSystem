@@ -1,25 +1,30 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<Result<ChangeEmailResponse>>;
+internal sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<Result>;
 
 internal sealed class RequestChangeEmailCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<ChangeEmailCommand, Result<ChangeEmailResponse>>
+    IConfiguration configuration) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
     private readonly IConfiguration configuration = configuration;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
-    public async Task<Result<ChangeEmailResponse>> Handle(ChangeEmailCommand request,
+    public async Task<Result> Handle(ChangeEmailCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.CurrentEmail);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.Request.CurrentEmail}"));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with email {request.Request.CurrentEmail}"
+            });
         }
 
         var destination = new DestinationSet()
@@ -47,9 +52,6 @@ internal sealed class RequestChangeEmailCommandHandler(
             To = request.Request.NewEmail,
         });
 
-        return new(new ChangeEmailResponse()
-        {
-            Message = "We have sent a letter with instructions to your current and new email addresses"
-        });
+        return Result.Success("We have sent a letter with instructions to your current and new email addresses");
     }
 }

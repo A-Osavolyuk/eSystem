@@ -1,20 +1,25 @@
 ﻿namespace eShop.Auth.Api.Features.Admin.Commands;
 
-internal sealed record LockoutUserCommand(LockoutUserRequest Request) : IRequest<Result<LockoutUserResponse>>;
+internal sealed record LockoutUserCommand(LockoutUserRequest Request) : IRequest<Result>;
 
 internal sealed class LockoutUserCommandHandler(
-    AppManager appManager) : IRequestHandler<LockoutUserCommand, Result<LockoutUserResponse>>
+    AppManager appManager) : IRequestHandler<LockoutUserCommand, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result<LockoutUserResponse>> Handle(LockoutUserCommand request,
+    public async Task<Result> Handle(LockoutUserCommand request,
         CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByIdAsync(request.Request.UserId);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with ID {request.Request.UserId}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with ID {request.Request.UserId}."
+            });
         }
 
         if (request.Request.Permanent)
@@ -23,7 +28,7 @@ internal sealed class LockoutUserCommandHandler(
             await appManager.UserManager.SetLockoutEnabledAsync(user, true);
             await appManager.UserManager.SetLockoutEndDateAsync(user, lockoutEndDate);
 
-            return new(new LockoutUserResponse()
+            return Result.Success(new LockoutUserResponse()
             {
                 LockoutEnabled = true,
                 LockoutEnd = lockoutEndDate,
@@ -36,7 +41,7 @@ internal sealed class LockoutUserCommandHandler(
             await appManager.UserManager.SetLockoutEnabledAsync(user, true);
             await appManager.UserManager.SetLockoutEndDateAsync(user, request.Request.LockoutEnd);
 
-            return new(new LockoutUserResponse()
+            return Result.Success(new LockoutUserResponse()
             {
                 LockoutEnabled = true,
                 LockoutEnd = request.Request.LockoutEnd,

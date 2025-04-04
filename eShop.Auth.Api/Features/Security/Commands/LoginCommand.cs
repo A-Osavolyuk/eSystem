@@ -1,35 +1,50 @@
 ﻿namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result<LoginResponse>>;
+internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 internal sealed class LoginCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    ITokenHandler tokenHandler) : IRequestHandler<LoginCommand, Result<LoginResponse>>
+    ITokenHandler tokenHandler) : IRequestHandler<LoginCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
     private readonly ITokenHandler tokenHandler = tokenHandler;
 
-    public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
-            return new(new NotFoundException($"Cannot find user with email {request.Request.Email}."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Message = "Not found",
+                Details = $"Cannot find user with email {request.Request.Email}."
+            });
         }
 
         if (!user.EmailConfirmed)
         {
-            return new(new BadRequestException("The email address is not confirmed."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Message = "Bad request",
+                Details = "The email address is not confirmed."
+            });
         }
 
         var isValidPassword = await appManager.UserManager.CheckPasswordAsync(user, request.Request.Password);
 
         if (!isValidPassword)
         {
-            return new(new BadRequestException("The password is not valid."));
+            return Result.Failure(new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Message = "Bad request",
+                Details = "The password is not valid."
+            });
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
@@ -39,7 +54,7 @@ internal sealed class LoginCommandHandler(
         {
             var token = await tokenHandler.RefreshTokenAsync(user, securityToken.Token);
 
-            return new(new LoginResponse()
+            return Result.Success(new LoginResponse()
             {
                 User = userDto,
                 RefreshToken = token,
@@ -61,7 +76,7 @@ internal sealed class LoginCommandHandler(
                     Code = loginCode
                 });
 
-                return new(new LoginResponse()
+                return Result.Success(new LoginResponse()
                 {
                     User = userDto,
                     Message = "We have sent an email with 2FA code at your email address.",
@@ -73,7 +88,7 @@ internal sealed class LoginCommandHandler(
             var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
             var tokens = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
 
-            return new(new LoginResponse()
+            return Result.Success(new LoginResponse()
             {
                 User = userDto,
                 AccessToken = tokens.AccessToken,
