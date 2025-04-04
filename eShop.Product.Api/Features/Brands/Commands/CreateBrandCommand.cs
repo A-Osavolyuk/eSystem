@@ -10,7 +10,7 @@ internal sealed class CreateBrandCommandHandle(
     public async Task<Result> Handle(CreateBrandCommand request,
         CancellationToken cancellationToken)
     {
-        var entity = Mapper.ToBrandEntity(request.Request);
+        var entity = Mapper.Map(request.Request);
         await context.Brands.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 

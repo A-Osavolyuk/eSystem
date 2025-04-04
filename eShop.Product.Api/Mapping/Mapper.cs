@@ -19,8 +19,8 @@ public static class Mapper
             ProductAudience = request.ProductAudience,
             ProductType = request.ProductType,
             Article = request.Article,
-            Brand = ToBrandEntity(request.Brand),
-            Seller = ToSellerDto(request.Seller),
+            Brand = Map(request.Brand),
+            Seller = Map(request.Seller),
             Color = request.Color,
             Description = request.Description,
             Images = request.Images,
@@ -40,8 +40,8 @@ public static class Mapper
             ProductAudience = request.ProductAudience,
             ProductType = request.ProductType,
             Article = request.Article,
-            Brand = ToBrandEntity(request.Brand),
-            Seller = ToSellerDto(request.Seller),
+            Brand = Map(request.Brand),
+            Seller = Map(request.Seller),
             Color = request.Color,
             Description = request.Description,
             Images = request.Images,
@@ -60,8 +60,8 @@ public static class Mapper
             ProductCurrency = request.ProductCurrency,
             ProductType = request.ProductType,
             Article = request.Article,
-            Brand = ToBrandEntity(request.Brand),
-            Seller = ToSellerDto(request.Seller),
+            Brand = Map(request.Brand),
+            Seller = Map(request.Seller),
             Description = request.Description,
             Images = request.Images,
         };
@@ -82,8 +82,8 @@ public static class Mapper
             ProductAudience = request.ProductAudience,
             ProductType = request.ProductType,
             Article = request.Article,
-            Brand = ToBrandEntity(request.Brand),
-            Seller = ToSellerDto(request.Seller),
+            Brand = Map(request.Brand),
+            Seller = Map(request.Seller),
             Color = request.Color,
             Description = request.Description,
             Images = request.Images,
@@ -102,8 +102,8 @@ public static class Mapper
             ProductAudience = request.ProductAudience,
             ProductType = request.ProductType,
             Article = request.Article,
-            Brand = ToBrandEntity(request.Brand),
-            Seller = ToSellerDto(request.Seller),
+            Brand = Map(request.Brand),
+            Seller = Map(request.Seller),
             Color = request.Color,
             Description = request.Description,
             Images = request.Images,
@@ -121,8 +121,8 @@ public static class Mapper
             ProductCurrency = request.ProductCurrency,
             ProductType = request.ProductType,
             Article = request.Article,
-            Brand = ToBrandEntity(request.Brand),
-            Seller = ToSellerDto(request.Seller),
+            Brand = Map(request.Brand),
+            Seller = Map(request.Seller),
             Description = request.Description,
             Images = request.Images,
         };
@@ -138,8 +138,8 @@ public static class Mapper
         {
             Id = entity.Id,
             Article = entity.Article,
-            Brand = ToBrandDto(entity.Brand),
-            Seller = ToSellerDto(entity.Seller),
+            Brand = Map(entity.Brand),
+            Seller = Map(entity.Seller),
             Description = entity.Description,
             Images = entity.Images,
             Type = entity.ProductType,
@@ -155,8 +155,8 @@ public static class Mapper
         {
             Id = entity.Id,
             Article = entity.Article,
-            Brand = ToBrandDto(entity.Brand),
-            Seller = ToSellerDto(entity.Seller),
+            Brand = Map(entity.Brand),
+            Seller = Map(entity.Seller),
             Description = entity.Description,
             Images = entity.Images,
             Type = entity.ProductType,
@@ -175,8 +175,8 @@ public static class Mapper
         {
             Id = entity.Id,
             Article = entity.Article,
-            Brand = ToBrandDto(entity.Brand),
-            Seller = ToSellerDto(entity.Seller),
+            Brand = Map(entity.Brand),
+            Seller = Map(entity.Seller),
             Description = entity.Description,
             Images = entity.Images,
             Type = entity.ProductType,
@@ -190,7 +190,7 @@ public static class Mapper
 
     #endregion
 
-    public static BrandEntity ToBrandEntity(CreateBrandRequest request)
+    public static BrandEntity Map(CreateBrandRequest request)
     {
         return new()
         {
@@ -199,7 +199,7 @@ public static class Mapper
         };
     }
 
-    public static BrandEntity ToBrandEntity(UpdateBrandRequest request)
+    public static BrandEntity Map(UpdateBrandRequest request)
     {
         return new()
         {
@@ -208,7 +208,7 @@ public static class Mapper
         };
     }
 
-    public static BrandDto ToBrandDto(BrandEntity entity)
+    public static BrandDto Map(BrandEntity entity)
     {
         return new()
         {
@@ -218,7 +218,7 @@ public static class Mapper
         };
     }
 
-    public static BrandEntity ToBrandEntity(BrandDto dto)
+    public static BrandEntity Map(BrandDto dto)
     {
         return new()
         {
@@ -228,7 +228,7 @@ public static class Mapper
         };
     }
 
-    public static SellerDto ToSellerDto(SellerEntity entity)
+    public static SellerDto Map(SellerEntity entity)
     {
         return new()
         {
@@ -241,7 +241,7 @@ public static class Mapper
         };
     }
 
-    public static SellerEntity ToSellerDto(SellerDto dto)
+    public static SellerEntity Map(SellerDto dto)
     {
         return new()
         {

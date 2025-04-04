@@ -20,7 +20,7 @@ internal sealed class UpdateBrandCommandHandler(
             });
         }
 
-        var entity = Mapper.ToBrandEntity(request.Request);
+        var entity = Mapper.Map(request.Request);
         context.Brands.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
 
