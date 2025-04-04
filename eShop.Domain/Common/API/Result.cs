@@ -2,6 +2,8 @@
 
 public class Result
 {
+    private Result(){}
+    
     public bool Succeeded { get; set; }
     public object? Value { get; set; }
     public string Message { get; set; } = string.Empty;
