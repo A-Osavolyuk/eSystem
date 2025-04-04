@@ -82,7 +82,6 @@
 
         if (response.Success)
         {
-            var data = JsonConvert.DeserializeObject<ChangePersonalDataResponse>(response.Result!.ToString()!);
             //TODO: personal data reload
             //await LocalDataAccessor.WritePersonalDataAsync(PersonalDataMapper.ToPersonalDataModel(data!));
             NavigationManager.NavigateTo("/account/profile", true);

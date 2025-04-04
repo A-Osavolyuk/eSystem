@@ -57,8 +57,7 @@
 
         if (response.Success)
         {
-            var data = JsonConvert.DeserializeObject<ChangeEmailResponse>(response.Result!.ToString()!);
-            Snackbar.Add(data!.Message, MudBlazor.Severity.Success);
+            Snackbar.Add(response.Message, MudBlazor.Severity.Success);
         }
         else
         {

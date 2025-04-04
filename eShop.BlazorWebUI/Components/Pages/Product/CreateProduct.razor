@@ -217,8 +217,7 @@
 
         if (response.Success)
         {
-            var data = response.Get<CreateProductResponse>()!;
-            Snackbar.Add(data.Message, Severity.Success);
+            Snackbar.Add(response.Message, Severity.Success);
             NavigationManager.NavigateTo("products");
         }
         else

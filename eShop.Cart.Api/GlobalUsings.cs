@@ -11,7 +11,6 @@ global using eShop.Domain.Exceptions;
 global using eShop.Domain.Interfaces;
 global using eShop.Domain.Requests.Api.Cart;
 global using eShop.Domain.Requests.Api.Favorites;
-global using eShop.Domain.Responses.Api.Cart;
 global using eShop.ServiceDefaults;
 global using Grpc.Core;
 global using MassTransit;

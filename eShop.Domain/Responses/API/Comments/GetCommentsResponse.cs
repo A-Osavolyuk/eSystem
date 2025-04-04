@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Responses.Api.Comments;
+﻿using eShop.Domain.Abstraction.Responses;
+
+namespace eShop.Domain.Responses.Api.Comments;
 
 public class GetCommentsResponse : ResponseBase
 {

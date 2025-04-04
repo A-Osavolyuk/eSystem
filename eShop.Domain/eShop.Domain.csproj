@@ -20,6 +20,7 @@
   <ItemGroup>
     <Folder Include="Requests\API\" />
     <Folder Include="Responses\API\" />
+    <Folder Include="Responses\API\Telegram\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Responses.Api.Files;
+﻿using eShop.Domain.Abstraction.Responses;
+
+namespace eShop.Domain.Responses.Api.Files;
 
 public class UploadProductImagesResponse : ResponseBase
 {
