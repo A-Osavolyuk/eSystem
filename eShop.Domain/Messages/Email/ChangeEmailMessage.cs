@@ -1,6 +1,8 @@
-﻿namespace eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Abstraction.Messaging;
 
-public class ChangeEmailMessage : EmailBase
+namespace eShop.Domain.Messages.Email;
+
+public class ChangeEmailMessage : EmailMessage
 {
     public string Code { get; set; } = string.Empty;
     public string NewEmail { get; set; } = string.Empty;

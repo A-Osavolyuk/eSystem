@@ -14,6 +14,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddMediatR();
         builder.AddCors();
         builder.AddExceptionHandler();
+        builder.AddTelegramBot();
         
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -32,6 +33,10 @@ public static class HostApplicationBuilderExtensions
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
+    {
+    }
+
+    private static void AddTelegramBot(this IHostApplicationBuilder builder)
     {
         var section = builder.Configuration.GetSection("Configuration:Services:Bots:Telegram");
         builder.Services.Configure<BotOptions>(section);

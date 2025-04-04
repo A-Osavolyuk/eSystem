@@ -1,6 +1,8 @@
-﻿namespace eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Abstraction.Messaging;
 
-public class TwoFactorAuthenticationCodeMessage : EmailBase
+namespace eShop.Domain.Messages.Email;
+
+public class TwoFactorAuthenticationCodeMessage : EmailMessage
 {
     public string Code { get; set; } = string.Empty;
 }

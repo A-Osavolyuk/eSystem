@@ -1,6 +1,8 @@
-﻿namespace eShop.Domain.Messages.Sms;
+﻿using eShop.Domain.Abstraction.Messaging;
 
-public class ChangePhoneNumberMessage : SmsBase
+namespace eShop.Domain.Messages.Sms;
+
+public class ChangePhoneNumberMessage : SmsMessage
 {
     public string Code { get; set; } = string.Empty;
 }

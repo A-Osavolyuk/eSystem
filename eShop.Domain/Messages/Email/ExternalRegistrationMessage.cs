@@ -1,6 +1,8 @@
-﻿namespace eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Abstraction.Messaging;
 
-public class ExternalRegistrationMessage : EmailBase
+namespace eShop.Domain.Messages.Email;
+
+public class ExternalRegistrationMessage : EmailMessage
 {
     public string TempPassword { get; set; } = string.Empty;
     public string ProviderName { get; set; } = string.Empty;

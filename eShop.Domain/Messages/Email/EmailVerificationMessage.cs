@@ -1,6 +1,8 @@
-﻿namespace eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Abstraction.Messaging;
 
-public class EmailVerificationMessage : EmailBase
+namespace eShop.Domain.Messages.Email;
+
+public class EmailVerificationMessage : EmailMessage
 {
     public string Code { get; init; } = string.Empty;
 }

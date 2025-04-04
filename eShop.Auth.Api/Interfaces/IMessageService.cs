@@ -1,7 +1,9 @@
-﻿namespace eShop.Auth.Api.Interfaces;
+﻿using eShop.Domain.Abstraction.Messaging;
+
+namespace eShop.Auth.Api.Interfaces;
 
 public interface IMessageService
 {
-    public ValueTask SendMessageAsync(string queryName, EmailBase message);
-    public ValueTask SendMessageAsync(string queryName, SmsBase message);
+    public ValueTask SendMessageAsync(string queryName, EmailMessage message);
+    public ValueTask SendMessageAsync(string queryName, SmsMessage message);
 }

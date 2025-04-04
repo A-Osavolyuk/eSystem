@@ -1,8 +1,10 @@
-﻿namespace eShop.EmailSender.Api.Mapping;
+﻿using eShop.Domain.Abstraction.Messaging;
+
+namespace eShop.EmailSender.Api.Mapping;
 
 public static class Mapper
 {
-    public static MessageOptions ToMessageOptions(EmailBase email)
+    public static MessageOptions ToMessageOptions(EmailMessage email)
     {
         return new MessageOptions()
         {

@@ -1,6 +1,8 @@
-﻿namespace eShop.Domain.Messages.Sms;
+﻿using eShop.Domain.Abstraction.Messaging;
 
-public class VerifyPhoneNumberMessage : SmsBase
+namespace eShop.Domain.Messages.Sms;
+
+public class VerifyPhoneNumberMessage : SmsMessage
 {
     public string Code { get; set; } = string.Empty;
 }

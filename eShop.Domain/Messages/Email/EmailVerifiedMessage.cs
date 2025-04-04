@@ -1,5 +1,7 @@
-﻿namespace eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Abstraction.Messaging;
 
-public class EmailVerifiedMessage : EmailBase
+namespace eShop.Domain.Messages.Email;
+
+public class EmailVerifiedMessage : EmailMessage
 {
 }
