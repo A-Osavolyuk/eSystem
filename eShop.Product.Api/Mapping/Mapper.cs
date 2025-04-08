@@ -15,7 +15,7 @@ public static class Mapper
             Id = request.Id,
             Name = request.Name,
             Price = request.Price,
-            ProductCurrency = request.ProductCurrency,
+            Currency = request.Currency,
             ProductAudience = request.ProductAudience,
             ProductType = request.ProductType,
             Article = request.Article,
@@ -36,7 +36,7 @@ public static class Mapper
             Id = request.Id,
             Name = request.Name,
             Price = request.Price,
-            ProductCurrency = request.ProductCurrency,
+            Currency = request.Currency,
             ProductAudience = request.ProductAudience,
             ProductType = request.ProductType,
             Article = request.Article,
@@ -57,7 +57,7 @@ public static class Mapper
             Id = request.Id,
             Name = request.Name,
             Price = request.Price,
-            ProductCurrency = request.ProductCurrency,
+            Currency = request.Currency,
             ProductType = request.ProductType,
             Article = request.Article,
             Brand = Map(request.Brand),
@@ -78,7 +78,7 @@ public static class Mapper
         {
             Name = request.Name,
             Price = request.Price,
-            ProductCurrency = request.ProductCurrency,
+            Currency = request.Currency,
             ProductAudience = request.ProductAudience,
             ProductType = request.ProductType,
             Article = request.Article,
@@ -98,7 +98,7 @@ public static class Mapper
         {
             Name = request.Name,
             Price = request.Price,
-            ProductCurrency = request.ProductCurrency,
+            Currency = request.Currency,
             ProductAudience = request.ProductAudience,
             ProductType = request.ProductType,
             Article = request.Article,
@@ -118,7 +118,7 @@ public static class Mapper
         {
             Name = request.Name,
             Price = request.Price,
-            ProductCurrency = request.ProductCurrency,
+            Currency = request.Currency,
             ProductType = request.ProductType,
             Article = request.Article,
             Brand = Map(request.Brand),
@@ -145,7 +145,7 @@ public static class Mapper
             Type = entity.ProductType,
             Name = entity.Name,
             Price = entity.Price,
-            Currency = entity.ProductCurrency,
+            Currency = entity.Currency,
         };
     }
 
@@ -162,7 +162,7 @@ public static class Mapper
             Type = entity.ProductType,
             Name = entity.Name,
             Price = entity.Price,
-            Currency = entity.ProductCurrency,
+            Currency = entity.Currency,
             ProductAudience = entity.ProductAudience,
             Color = entity.Color,
             Size = entity.Size,

@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Enums;
 
-public enum ProductCurrency
+public enum Currency
 {
     None,
     Dollar,

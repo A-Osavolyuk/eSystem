@@ -30,8 +30,8 @@ public class CreateProductValidator : Validator<CreateProductRequest>
             .MinimumLength(9).WithMessage("Article must be at least 9 characters long")
             .MaximumLength(12).WithMessage("Article must be no more than 12 characters");
         
-        RuleFor(x => x.ProductCurrency)
-            .NotEqual(ProductCurrency.None).WithMessage("Choose currency");
+        RuleFor(x => x.Currency)
+            .NotEqual(Currency.None).WithMessage("Choose currency");
             
         RuleFor(x => x.Price)
             .GreaterThan(0).WithMessage("Price must be greater than 0")
@@ -53,7 +53,7 @@ public class CreateProductValidator : Validator<CreateProductRequest>
             .When(x => x?.Brand is not null);
         
         RuleFor(x => x.Size)
-            .Must(x => !x.Contains(ProductSize.None)).WithMessage("Size is required")
+            .Must(x => !x.Contains(Size.None)).WithMessage("Size is required")
             .When(x => x.ProductType is ProductTypes.Shoes or ProductTypes.Clothing)
             .Must(x => x.Any()).WithMessage("Size is required")
             .When(x => x.ProductType switch

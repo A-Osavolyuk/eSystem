@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Enums;
 
-public enum ProductSize
+public enum Size
 {
     None,
     Xxs,

@@ -1,7 +1,9 @@
-﻿@using CreateProductRequest = eShop.Domain.Requests.Api.Product.CreateProductRequest
+﻿@using eShop.Domain.Requests.Api.Product
+@using Size = eShop.Domain.Enums.Size
+ CreateProductRequest = eShop.Domain.Requests.Api.Product.CreateProductRequest
 
 <MudSelect
-    T="ProductSize"
+    T="Size"
     SelectedValues="Model.Size"
     MultiSelection
     Variant="Variant.Outlined"
@@ -14,7 +16,7 @@
     @foreach (var size in GetSizes())
     {
         <MudSelectItem
-            T="ProductSize"
+            T="Size"
             Value="size">
         </MudSelectItem>
     }
@@ -67,11 +69,11 @@
 @code {
     [Parameter] public CreateProductRequest Model { get; set; } = new();
 
-    private List<ProductSize> GetSizes()
+    private List<Size> GetSizes()
     {
         return Enum
-            .GetValues<ProductSize>()
-            .Where(x => x != ProductSize.None)
+            .GetValues<Size>()
+            .Where(x => x != Size.None)
             .ToList();
     }
 

@@ -8,11 +8,11 @@ public record CreateProductRequest
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
-    public ProductCurrency ProductCurrency { get; set; }
+    public Currency Currency { get; set; }
     public List<string> Images { get; set; } = new List<string>();
     public BrandDto Brand { get; set; } = new BrandDto();
     public SellerDto Seller { get; set; } = new SellerDto();
     public ProductColor Color { get; set; } = ProductColor.None;
-    public IEnumerable<ProductSize> Size { get; set; } = Enumerable.Empty<ProductSize>();
+    public IEnumerable<Size> Size { get; set; } = Enumerable.Empty<Size>();
     public ProductAudience ProductAudience { get; set; } = ProductAudience.None;
 };

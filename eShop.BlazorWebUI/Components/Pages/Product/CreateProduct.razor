@@ -72,13 +72,13 @@
                                         <MudSelect
                                             Variant="Variant.Outlined"
                                             Immediate
-                                            @bind-Value="Model.ProductCurrency"
-                                            For="() => Model.ProductCurrency"
+                                            @bind-Value="Model.Currency"
+                                            For="() => Model.Currency"
                                             Label="Currency">
-                                            <MudSelectItem Value="ProductCurrency.None" Disabled>None</MudSelectItem>
+                                            <MudSelectItem Value="Currency.None" Disabled>None</MudSelectItem>
                                             @foreach (var currency in GetCurrencies())
                                             {
-                                                <MudSelectItem Value="Enum.Parse<ProductCurrency>(currency)">@currency</MudSelectItem>
+                                                <MudSelectItem Value="Enum.Parse<Currency>(currency)">@currency</MudSelectItem>
                                             }
                                         </MudSelect>
                                     </MudItem>
@@ -174,8 +174,8 @@
 
     private List<string> GetCurrencies()
     {
-        return Enum.GetNames<ProductCurrency>()
-            .Where(x => x != ProductCurrency.None.ToString())
+        return Enum.GetNames<Currency>()
+            .Where(x => x != Currency.None.ToString())
             .ToList();
     }
 
