@@ -2,7 +2,7 @@
 @inherits ComponentBase
 
 @code {
-    [Inject] public ILocalStorage LocalStorage { get; private set; } = null!;
+    [Inject] public IStorage LocalStorage { get; private set; } = null!;
     [Inject] public IUserStorage UserStorage { get; set; } = null!;
     [Inject] public NavigationManager NavigationManager { get; private set; } = null!;
     [Inject] public ISnackbar Snackbar { get; private set; } = null!;

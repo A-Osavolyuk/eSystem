@@ -1,5 +1,5 @@
 ﻿@inject NavigationManager NavigationManager
-@inject ILocalStorage LocalStorage
+@inject IStorage LocalStorage
 @inject ISnackbar Snackbar
 @inject INotificationService NotificationService
 @inject IFavoritesService FavoritesService
@@ -205,7 +205,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        isFavorite = await LocalStorage.IsInFavoriteGoodsAsync(Model.Id.ToString());
+        //TODO: Check if good in favorites list 
+        //sFavorite = await LocalStorage.IsInFavoriteGoodsAsync(Model.Id.ToString());
     }
 
     private async Task AddToCartAsync()

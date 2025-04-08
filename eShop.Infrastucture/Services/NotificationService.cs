@@ -4,11 +4,11 @@ namespace eShop.Infrastructure.Services;
 
 public class NotificationService(
     ILocalStorageService storageService, 
-    ILocalStorage localStorage,
+    IStorage localStorage,
     NotificationsStateContainer notificationsStateContainer) : INotificationService
 {
     private readonly ILocalStorageService storageService = storageService;
-    private readonly ILocalStorage localStorage = localStorage;
+    private readonly IStorage localStorage = localStorage;
     private readonly NotificationsStateContainer notificationsStateContainer = notificationsStateContainer;
     private readonly string key = "notifications-count";
 
@@ -20,7 +20,7 @@ public class NotificationService(
         }
         else
         {
-            var count = await localStorage.GetStoreItemsCountAsync();
+            var count = await localStorage.GetAsync<int>(key);
             await storageService.SetItemAsync(key, count);
             return count;
         }

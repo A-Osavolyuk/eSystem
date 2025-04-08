@@ -38,7 +38,6 @@ public static class Extensions
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<IBrandService, BrandSevice>();
-        builder.Services.AddScoped<ILocalStorage, LocalStorage>();
         builder.Services.AddScoped<IUserStorage, UserStorage>();
         builder.Services.AddScoped<IStoreService, StoreService>();
         builder.Services.AddScoped<IReviewService, ReviewService>();
@@ -46,6 +45,7 @@ public static class Extensions
         builder.Services.AddScoped<IFavoritesService, FavoritesService>();
         builder.Services.AddScoped<ISellerService, SellerService>();
         builder.Services.AddScoped<IProfileService, ProfileService>();
+        builder.Services.AddScoped<IStorage, LocalStorage>();
 
         builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddSingleton<InputImagesStateContainer>();

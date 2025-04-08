@@ -6,13 +6,13 @@ namespace eShop.Infrastructure.Account;
 public class ApplicationAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     ISecurityService securityService,
-    ILocalStorage localStorage,
+    IStorage localStorage,
     IUserStorage userStorage) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly ISecurityService securityService = securityService;
-    private readonly ILocalStorage localStorage = localStorage;
+    private readonly IStorage localStorage = localStorage;
     private readonly IUserStorage userStorage = userStorage;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
