@@ -6,7 +6,7 @@ public record class PersonalDataEntity : IAuditable, IIdentifiable<Guid>
     public string FirstName { get; init; } = string.Empty;
     public string LastName { get; init; } = string.Empty;
     public string Gender { get; init; } = string.Empty;
-    public DateTime DateOfBirth { get; init; } = new DateTime(1980, 1, 1);
+    public DateTime DateOfBirth { get; init; } = new(1980, 1, 1);
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
     [JsonIgnore] public Guid UserId { get; init; }

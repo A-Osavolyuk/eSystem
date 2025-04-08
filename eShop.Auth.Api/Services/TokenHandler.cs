@@ -7,7 +7,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     private readonly ISecurityManager securityManager = securityManager;
     private const int AccessTokenExpirationMinutes = 30;
     private readonly JwtOptions options = options.Value;
-    private readonly JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+    private readonly JwtSecurityTokenHandler handler = new();
 
     public async Task<Token> GenerateTokenAsync(AppUser user, List<string> roles, List<string> permissions)
     {

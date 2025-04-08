@@ -10,11 +10,11 @@ public class ProductEntity : IIdentifiable<Guid>, IAuditable
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public Currency Currency { get; set; }
-    public List<string> Images { get; set; } = new List<string>();
+    public List<string> Images { get; set; } = new();
     public Guid BrandId { get; set; }
     public Guid SellerId { get; set; }
-    public BrandEntity Brand { get; set; } = new BrandEntity();
-    public SellerEntity Seller { get; set; } = new SellerEntity();
+    public BrandEntity Brand { get; set; } = new();
+    public SellerEntity Seller { get; set; } = new();
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
     private static string GenerateArticle() => new Random().NextInt64(100_000_000, 999_999_999_999).ToString();
