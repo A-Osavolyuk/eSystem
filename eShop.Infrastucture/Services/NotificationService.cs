@@ -3,52 +3,50 @@
 namespace eShop.Infrastructure.Services;
 
 public class NotificationService(
-    ILocalStorageService storageService, 
     IStorage localStorage,
     NotificationsStateContainer notificationsStateContainer) : INotificationService
 {
-    private readonly ILocalStorageService storageService = storageService;
     private readonly IStorage localStorage = localStorage;
     private readonly NotificationsStateContainer notificationsStateContainer = notificationsStateContainer;
     private readonly string key = "notifications-count";
 
     public async ValueTask<int> GetNotificationsCountAsync()
     {
-        if (await storageService.ContainKeyAsync(key))
+        if (await localStorage.ExistsAsync(key))
         {
-            return await storageService.GetItemAsync<int>(key);
+            return await localStorage.GetAsync<int>(key);
         }
         else
         {
             var count = await localStorage.GetAsync<int>(key);
-            await storageService.SetItemAsync(key, count);
+            await localStorage.SetAsync(key, count);
             return count;
         }
     }
 
-    public async ValueTask SetNotificationsCountAsync(int notificationsCount) => await storageService.SetItemAsync(key, notificationsCount);
+    public async ValueTask SetNotificationsCountAsync(int notificationsCount) => await localStorage.SetAsync(key, notificationsCount);
 
     public async ValueTask IncrementNotificationsCountAsync()
     {
-        if (await storageService.ContainKeyAsync(key))
+        if (await localStorage.ExistsAsync(key))
         {
-            var count = await storageService.GetItemAsync<int>(key);
+            var count = await localStorage.GetAsync<int>(key);
             count++;
-            await storageService.SetItemAsync(key, count);
+            await localStorage.SetAsync(key, count);
             notificationsStateContainer.ChangeNotificationCount();
         }
     }
 
     public async ValueTask DecrementNotificationsCountAsync()
     {
-        if (await storageService.ContainKeyAsync(key))
+        if (await localStorage.ExistsAsync(key))
         {
-            var count = await storageService.GetItemAsync<int>(key);
+            var count = await localStorage.GetAsync<int>(key);
 
             if (count > 0)
             {
                 count--;
-                await storageService.SetItemAsync(key, count);
+                await localStorage.SetAsync(key, count);
                 notificationsStateContainer.ChangeNotificationCount();
             }
         }

@@ -11,23 +11,17 @@ public class LocalStorage(ILocalStorageService localStorage) : IStorage
         return item;
     }
 
-    public async ValueTask UpdateAsync<T>(string key, T value)
+    public async ValueTask<bool> ExistsAsync(string key)
     {
-        if (await localStorage.ContainKeyAsync(key))
-        {
-            await localStorage.SetItemAsync(key, value);
-        }
+        return await localStorage.ContainKeyAsync(key);
     }
 
-    public async ValueTask CreateAsync<T>(string key, T value)
+    public async ValueTask SetAsync<T>(string key, T value)
     {
-        if (!await localStorage.ContainKeyAsync(key))
-        {
-            await localStorage.SetItemAsync(key, value);
-        }
+        await localStorage.SetItemAsync(key, value);
     }
 
-    public async ValueTask DeleteAsync<T>(string key)
+    public async ValueTask RemoveAsync<T>(string key)
     {
         if (await localStorage.ContainKeyAsync(key))
         {
