@@ -5,7 +5,7 @@ namespace eShop.Infrastructure;
 
 public static class Extensions
 {
-    public static IHostApplicationBuilder AddInfrastructureLayer(this IHostApplicationBuilder builder)
+    public static void  AddInfrastructureLayer(this IHostApplicationBuilder builder)
     {
         builder.AddDependencyInjection();
         builder.AddJwtAuthentication();
@@ -13,10 +13,9 @@ public static class Extensions
         builder.Services.AddAuthorization();
         builder.Services.AddBlazoredLocalStorage();
         builder.Services.AddHttpContextAccessor();
-        return builder;
     }
 
-    private static IHostApplicationBuilder AddDependencyInjection(this IHostApplicationBuilder builder)
+    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<AuthenticationStateProvider, ApplicationAuthenticationStateProvider>();
 
@@ -51,8 +50,6 @@ public static class Extensions
         builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddSingleton<InputImagesStateContainer>();
         builder.Services.AddSingleton<NotificationsStateContainer>();
-
-        return builder;
     }
 
 }
