@@ -6,7 +6,7 @@ namespace eShop.Infrastructure.Services;
 
 public class ReviewService(
     IHttpClientService httpClient, 
-    IConfiguration configuration) : Api(configuration, httpClient), IReviewService
+    IConfiguration configuration) : ApiService(configuration, httpClient), IReviewService
 {
 
     public async Task<Response> CreateReviewAsync(CreateReviewRequest request) => await HttpClientService.SendAsync(

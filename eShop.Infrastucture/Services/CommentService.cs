@@ -6,7 +6,7 @@ namespace eShop.Infrastructure.Services;
 
 public class CommentService(
     IHttpClientService httpClientService, 
-    IConfiguration configuration) : Api(configuration, httpClientService), ICommentService
+    IConfiguration configuration) : ApiService(configuration, httpClientService), ICommentService
 {
     public async ValueTask<Response> GetCommentsAsync(Guid productId) => await HttpClientService.SendAsync(
         new Request(

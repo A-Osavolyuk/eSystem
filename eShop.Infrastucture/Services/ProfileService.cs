@@ -6,7 +6,7 @@ namespace eShop.Infrastructure.Services;
 
 public class ProfileService(
     IHttpClientService clientService,
-    IConfiguration configuration) : Api(configuration, clientService), IProfileService
+    IConfiguration configuration) : ApiService(configuration, clientService), IProfileService
 {
     public async ValueTask<Response> GetPhoneNumberAsync(string email) => await HttpClientService.SendAsync(
         new Request(Url: $"{Configuration[Key]}/api/v1/Profile/get-phone-number/{email}",

@@ -6,7 +6,7 @@ namespace eShop.Infrastructure.Services;
 
 public class ProductService(
     IHttpClientService c,
-    IConfiguration a) : Api(a, c), IProductService
+    IConfiguration a) : ApiService(a, c), IProductService
 {
     public async ValueTask<Response> CreateProductAsync(CreateProductRequest request) =>
         await HttpClientService.SendAsync(

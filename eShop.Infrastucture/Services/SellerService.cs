@@ -6,7 +6,7 @@ namespace eShop.Infrastructure.Services;
 
 public class SellerService(
     IHttpClientService httpClient, 
-    IConfiguration configuration) : Api(configuration, httpClient), ISellerService
+    IConfiguration configuration) : ApiService(configuration, httpClient), ISellerService
 {
     public async ValueTask<Response> RegisterSellerAsync(RegisterSellerRequest request) =>
         await HttpClientService.SendAsync(new Request(

@@ -6,7 +6,7 @@ namespace eShop.Infrastructure.Services;
 
 internal class CartService(
     IHttpClientService httpClient,
-    IConfiguration configuration) : Api(configuration, httpClient), ICartService
+    IConfiguration configuration) : ApiService(configuration, httpClient), ICartService
 {
     public async ValueTask<Response> GetCartAsync(Guid userId) => await HttpClientService.SendAsync(
         new Request(

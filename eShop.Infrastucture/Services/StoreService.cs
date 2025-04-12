@@ -5,7 +5,7 @@ namespace eShop.Infrastructure.Services;
 
 class StoreService(
     IConfiguration configuration, 
-    IHttpClientService clientService) : Api(configuration, clientService), IStoreService
+    IHttpClientService clientService) : ApiService(configuration, clientService), IStoreService
 {
     public async ValueTask<Response> GetUserAvatarAsync(string userId) =>
         await HttpClientService.SendAsync(

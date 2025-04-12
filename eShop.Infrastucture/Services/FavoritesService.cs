@@ -6,7 +6,7 @@ namespace eShop.Infrastructure.Services;
 
 public class FavoritesService(
     IHttpClientService httpClient,
-    IConfiguration configuration) : Api(configuration, httpClient), IFavoritesService
+    IConfiguration configuration) : ApiService(configuration, httpClient), IFavoritesService
 {
     public async ValueTask<Response> GetFavoritesAsync(Guid userId) => await HttpClientService.SendAsync(
         new Request(

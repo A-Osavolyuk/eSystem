@@ -6,7 +6,7 @@ namespace eShop.Infrastructure.Services;
 
 public class SecurityService(
     IHttpClientService clientService,
-    IConfiguration configuration) : Api(configuration, clientService), ISecurityService
+    IConfiguration configuration) : ApiService(configuration, clientService), ISecurityService
 {
     public async ValueTask<Response> LoginAsync(LoginRequest request) => await HttpClientService.SendAsync(
         new Request(Url: $"{Configuration[Key]}/api/v1/Security/login",
