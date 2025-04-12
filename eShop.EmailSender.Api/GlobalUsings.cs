@@ -1,6 +1,5 @@
 ﻿// Global using directives
 
-global using eShop.Domain.Common.Api;
 global using eShop.Domain.Messages.Email;
 global using eShop.EmailSender.Api.Extensions;
 global using eShop.EmailSender.Api.Interfaces;

@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Cart;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Cart;
 
 namespace eShop.Infrastructure.Services;
 

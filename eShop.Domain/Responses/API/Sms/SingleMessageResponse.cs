@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Abstraction.Responses;
 
-namespace eShop.Domain.Responses.Api.Sms;
+namespace eShop.Domain.Responses.API.Sms;
 
 public class SingleMessageResponse : ResponseBase
 {

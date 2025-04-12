@@ -1,6 +1,6 @@
-﻿using eShop.Domain.Common.Api;
+﻿using eShop.Domain.Common.API;
 using eShop.Domain.Enums;
-using eShop.Domain.Requests.Api.Comments;
+using eShop.Domain.Requests.API.Comments;
 
 namespace eShop.Comments.Api.Features.Commands;
 

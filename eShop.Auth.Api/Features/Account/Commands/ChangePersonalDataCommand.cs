@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Features.Account.Commands;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Auth;
+
+namespace eShop.Auth.Api.Features.Account.Commands;
 
 internal sealed record ChangePersonalDataCommand(ChangePersonalDataRequest Request)
     : IRequest<Result>;

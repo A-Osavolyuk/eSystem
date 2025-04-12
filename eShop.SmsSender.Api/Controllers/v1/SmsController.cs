@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Sms;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Sms;
 using eShop.SmsSender.Api.Interfaces;
 
 namespace eShop.SmsSender.Api.Controllers.v1;

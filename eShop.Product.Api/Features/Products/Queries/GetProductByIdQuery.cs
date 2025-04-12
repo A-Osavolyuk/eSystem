@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Common.Api;
+﻿using eShop.Domain.Common.API;
 using eShop.Domain.DTOs;
 using eShop.Domain.Interfaces.API;
 using eShop.Product.Api.Entities;

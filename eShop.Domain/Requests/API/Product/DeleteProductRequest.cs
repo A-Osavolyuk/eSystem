@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Product;
+﻿namespace eShop.Domain.Requests.API.Product;
 
 public record DeleteProductRequest()
 {

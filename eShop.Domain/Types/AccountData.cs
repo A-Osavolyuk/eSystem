@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Types;
+﻿using eShop.Domain.Abstraction.Data;
+
+namespace eShop.Domain.Types;
 
 public record AccountData : IIdentifiable<Guid>
 {

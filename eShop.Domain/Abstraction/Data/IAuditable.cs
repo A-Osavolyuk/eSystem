@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Interfaces;
+﻿namespace eShop.Domain.Abstraction.Data;
 
 public interface IAuditable
 {

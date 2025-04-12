@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Telegram;
+﻿namespace eShop.Domain.Requests.API.Telegram;
 
 public class SendMessageRequest
 {

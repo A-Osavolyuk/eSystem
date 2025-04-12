@@ -1,6 +1,6 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Telegram;
-using Response = eShop.Domain.Common.Api.Response;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Telegram;
+using Response = eShop.Domain.Common.API.Response;
 
 namespace eShop.TelegramBot.Api.Controllers.v1;
 

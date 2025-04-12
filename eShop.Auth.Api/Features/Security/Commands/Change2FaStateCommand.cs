@@ -1,4 +1,8 @@
-﻿namespace eShop.Auth.Api.Features.Security.Commands;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
+
+namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record Change2FaStateCommand(Change2FaStateRequest Request)
     : IRequest<Result>;

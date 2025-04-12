@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Auth;
+﻿namespace eShop.Domain.Requests.API.Auth;
 
 public record class ChangeUserNameRequest
 {

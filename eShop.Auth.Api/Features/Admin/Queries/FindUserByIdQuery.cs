@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Features.Admin.Queries;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Responses.API.Admin;
+
+namespace eShop.Auth.Api.Features.Admin.Queries;
 
 internal sealed record FindUserByIdQuery(Guid UserId) : IRequest<Result>;
 

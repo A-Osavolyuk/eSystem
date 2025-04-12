@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Requests.Api.Sms;
-using eShop.Domain.Responses.Api.Sms;
+﻿using eShop.Domain.Requests.API.Sms;
+using eShop.Domain.Responses.API.Sms;
 
 namespace eShop.SmsSender.Api.Interfaces;
 

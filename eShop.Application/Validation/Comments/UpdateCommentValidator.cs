@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Requests.Api.Comments;
+﻿using eShop.Domain.Requests.API.Comments;
 
 namespace eShop.Application.Validation.Comments;
 

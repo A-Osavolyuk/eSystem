@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Features.Admin.Commands;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Admin;
+
+namespace eShop.Auth.Api.Features.Admin.Commands;
 
 internal sealed record CreateUserAccountCommand(CreateUserAccountRequest Request)
     : IRequest<Result>;

@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Security.Queries;
+﻿using eShop.Domain.Common.API;
+
+namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record GetPersonalDataQuery(string Email) : IRequest<Result>;
 

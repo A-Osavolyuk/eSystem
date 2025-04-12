@@ -1,8 +1,8 @@
 ﻿using eShop.Comments.Api.Features.Commands;
 using eShop.Comments.Api.Features.Queries;
-using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Comments;
-using Response = eShop.Domain.Common.Api.Response;
+using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Comments;
+using Response = eShop.Domain.Common.API.Response;
 
 namespace eShop.Comments.Api.Controllers.v1;
 

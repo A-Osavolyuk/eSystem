@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Review;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Review;
 
 namespace eShop.Infrastructure.Services;
 

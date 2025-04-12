@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Requests.Api.Cart;
+﻿using eShop.Domain.Abstraction.Data;
+
+namespace eShop.Domain.Requests.API.Cart;
 
 public record UpdateCartRequest : IIdentifiable<Guid>
 {

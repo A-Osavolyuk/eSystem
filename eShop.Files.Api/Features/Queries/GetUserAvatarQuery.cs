@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Common.Api;
+﻿using eShop.Domain.Common.API;
 using eShop.Domain.Enums;
 using eShop.Files.Api.Interfaces;
 

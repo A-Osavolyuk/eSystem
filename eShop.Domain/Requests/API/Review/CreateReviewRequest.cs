@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Review;
+﻿namespace eShop.Domain.Requests.API.Review;
 
 public class CreateReviewRequest
 {

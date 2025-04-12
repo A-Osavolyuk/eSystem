@@ -1,4 +1,6 @@
-﻿using MassTransit;
+﻿using eShop.Domain.Requests.API.Cart;
+using eShop.Domain.Requests.API.Sms;
+using MassTransit;
 
 namespace eShop.Auth.Api.Extensions;
 

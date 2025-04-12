@@ -1,4 +1,5 @@
-﻿using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
+﻿using eShop.Domain.Abstraction.Data;
+using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
 
 namespace eShop.Domain.Types;
 

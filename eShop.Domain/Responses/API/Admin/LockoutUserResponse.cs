@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Responses.Api.Admin;
+﻿namespace eShop.Domain.Responses.API.Admin;
 
 public class LockoutUserResponse
 {

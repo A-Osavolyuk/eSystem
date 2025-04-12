@@ -1,6 +1,6 @@
 ﻿using eShop.Cart.Api.Entities;
 using eShop.Cart.Api.Mapping;
-using eShop.Domain.Common.Api;
+using eShop.Domain.Common.API;
 using eShop.Domain.Enums;
 
 namespace eShop.Cart.Api.Features.Favorites.Queries;

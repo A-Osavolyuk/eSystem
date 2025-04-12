@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Admin;
+﻿namespace eShop.Domain.Requests.API.Admin;
 
 public record CreateRoleRequest
 {

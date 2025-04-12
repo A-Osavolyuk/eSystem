@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Common.Api;
+﻿using eShop.Domain.Common.API;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace eShop.Application.Filters;

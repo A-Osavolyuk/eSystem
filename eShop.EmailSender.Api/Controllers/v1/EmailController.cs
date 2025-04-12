@@ -1,6 +1,6 @@
-﻿using eShop.Domain.Common.Api;
+﻿using eShop.Domain.Common.API;
 using eShop.EmailSender.Api.Requests;
-using Response = eShop.Domain.Common.Api.Response;
+using Response = eShop.Domain.Common.API.Response;
 
 namespace eShop.EmailSender.Api.Controllers.v1;
 

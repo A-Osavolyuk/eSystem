@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.DTOs;
+﻿using eShop.Domain.Abstraction.Data;
+
+namespace eShop.Domain.DTOs;
 
 public class RoleDto : IIdentifiable<Guid>
 {

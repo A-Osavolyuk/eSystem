@@ -1,3 +1,6 @@
+using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Admin;
+
 namespace eShop.Auth.Api.Features.Admin.Commands;
 
 internal sealed record RemoveUserFromPermissionCommand(RemoveUserFromPermissionRequest Request)

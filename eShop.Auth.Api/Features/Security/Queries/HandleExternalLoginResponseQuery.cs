@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Messages.Email;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 
 namespace eShop.Auth.Api.Features.Security.Queries;

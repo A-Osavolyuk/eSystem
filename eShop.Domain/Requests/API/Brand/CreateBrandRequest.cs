@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Brand;
+﻿namespace eShop.Domain.Requests.API.Brand;
 
 public record CreateBrandRequest
 {

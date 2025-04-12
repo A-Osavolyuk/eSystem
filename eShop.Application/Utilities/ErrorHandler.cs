@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Common.Api;
+﻿using eShop.Domain.Common.API;
 
 namespace eShop.Application.Utilities;
 

@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Requests.Api.Admin;
+﻿using eShop.Domain.Requests.API.Admin;
 
 namespace eShop.Application.Validation.Admin;
 

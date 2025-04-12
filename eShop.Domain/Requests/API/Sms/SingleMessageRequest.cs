@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Sms;
+﻿namespace eShop.Domain.Requests.API.Sms;
 
 public class SingleMessageRequest
 {

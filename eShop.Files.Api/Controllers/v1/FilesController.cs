@@ -1,5 +1,5 @@
 ﻿using eShop.Application.Utilities;
-using eShop.Domain.Common.Api;
+using eShop.Domain.Common.API;
 using eShop.Files.Api.Features.Commands;
 using eShop.Files.Api.Features.Queries;
 using eShop.Files.Api.Interfaces;

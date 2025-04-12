@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Requests.Api.Brand;
+﻿using eShop.Domain.Requests.API.Brand;
 
 namespace eShop.Application.Validation.Brand;
 

@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Requests.Api.Product;
+﻿using eShop.Domain.Requests.API.Product;
 
 namespace eShop.Application.Validation.Products;
 

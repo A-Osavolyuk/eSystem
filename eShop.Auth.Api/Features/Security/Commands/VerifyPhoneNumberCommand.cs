@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Features.Security.Commands;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Auth;
+
+namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record VerifyPhoneNumberCommand(VerifyPhoneNumberRequest Request)
     : IRequest<Result>;

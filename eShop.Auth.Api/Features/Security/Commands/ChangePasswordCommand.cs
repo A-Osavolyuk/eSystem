@@ -1,4 +1,6 @@
-﻿using Error = eShop.Domain.Common.Api.Error;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Auth;
+using Error = eShop.Domain.Common.API.Error;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 

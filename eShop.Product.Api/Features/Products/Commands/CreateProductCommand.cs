@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Product;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Product;
 
 namespace eShop.Product.Api.Features.Products.Commands;
 

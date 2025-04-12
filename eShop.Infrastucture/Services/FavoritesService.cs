@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Favorites;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Favorites;
 
 namespace eShop.Infrastructure.Services;
 

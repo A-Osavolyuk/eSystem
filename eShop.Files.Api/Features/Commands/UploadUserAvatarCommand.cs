@@ -1,6 +1,6 @@
-﻿using eShop.Domain.Common.Api;
+﻿using eShop.Domain.Common.API;
 using eShop.Domain.Enums;
-using eShop.Domain.Responses.Api.Files;
+using eShop.Domain.Responses.API.Files;
 using eShop.Files.Api.Interfaces;
 
 namespace eShop.Files.Api.Features.Commands;

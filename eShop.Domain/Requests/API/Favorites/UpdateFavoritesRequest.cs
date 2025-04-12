@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Requests.Api.Favorites;
+﻿using eShop.Domain.Abstraction.Data;
+
+namespace eShop.Domain.Requests.API.Favorites;
 
 public record UpdateFavoritesRequest : IIdentifiable<Guid>
 {

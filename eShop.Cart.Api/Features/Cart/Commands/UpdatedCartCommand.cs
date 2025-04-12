@@ -1,7 +1,7 @@
 ﻿using eShop.Cart.Api.Entities;
-using eShop.Domain.Common.Api;
+using eShop.Domain.Common.API;
 using eShop.Domain.Enums;
-using eShop.Domain.Requests.Api.Cart;
+using eShop.Domain.Requests.API.Cart;
 
 namespace eShop.Cart.Api.Features.Cart.Commands;
 

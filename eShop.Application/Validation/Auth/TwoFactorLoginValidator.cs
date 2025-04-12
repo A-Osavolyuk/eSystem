@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Requests.Api.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Application.Validation.Auth;
 

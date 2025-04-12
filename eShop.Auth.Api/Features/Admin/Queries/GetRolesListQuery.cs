@@ -1,4 +1,5 @@
-﻿using eShop.Domain.DTOs;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.DTOs;
 
 namespace eShop.Auth.Api.Features.Admin.Queries;
 

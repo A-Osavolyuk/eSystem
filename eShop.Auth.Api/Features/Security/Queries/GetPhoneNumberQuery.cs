@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Features.Security.Queries;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Responses.API.Auth;
+
+namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record GetPhoneNumberQuery(string Email) : IRequest<Result>;
 

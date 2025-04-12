@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Responses.Api.Comments;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Responses.API.Comments;
 
 namespace eShop.Comments.Api.Features.Queries;
 

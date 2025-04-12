@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.DTOs;
-using eShop.Domain.Requests.Api.Brand;
-using eShop.Domain.Requests.Api.Product;
+using eShop.Domain.Requests.API.Brand;
+using eShop.Domain.Requests.API.Product;
 using eShop.Product.Api.Entities;
 
 namespace eShop.Product.Api.Mapping;

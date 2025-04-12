@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Requests.Api.Auth;
-using eShop.Domain.Responses.Api.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
 using UserModel = eShop.Domain.Models.UserModel;
 

@@ -1,8 +1,8 @@
-﻿using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Product;
+﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Product;
 using eShop.Product.Api.Features.Products.Commands;
 using eShop.Product.Api.Features.Products.Queries;
-using Response = eShop.Domain.Common.Api.Response;
+using Response = eShop.Domain.Common.API.Response;
 
 namespace eShop.Product.Api.Controllers.v1;
 

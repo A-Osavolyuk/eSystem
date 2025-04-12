@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Common.Api;
+﻿namespace eShop.Domain.Common.API;
 
 public record Request(
     string Url,

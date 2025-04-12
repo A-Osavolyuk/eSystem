@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Cart;
+﻿namespace eShop.Domain.Requests.API.Cart;
 
 public class CreateCartRequest
 {

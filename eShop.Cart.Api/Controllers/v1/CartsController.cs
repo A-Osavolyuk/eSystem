@@ -1,8 +1,8 @@
 ﻿using eShop.Cart.Api.Features.Cart.Commands;
 using eShop.Cart.Api.Features.Cart.Queries;
-using eShop.Domain.Common.Api;
-using eShop.Domain.Requests.Api.Cart;
-using Response = eShop.Domain.Common.Api.Response;
+using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Cart;
+using Response = eShop.Domain.Common.API.Response;
 
 namespace eShop.Cart.Api.Controllers.v1;
 

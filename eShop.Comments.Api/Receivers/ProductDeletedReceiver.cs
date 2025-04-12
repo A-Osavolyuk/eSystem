@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Requests.Api.Comments;
-using eShop.Domain.Responses.Api.Comments;
+﻿using eShop.Domain.Requests.API.Comments;
+using eShop.Domain.Responses.API.Comments;
 
 namespace eShop.Comments.Api.Receivers;
 

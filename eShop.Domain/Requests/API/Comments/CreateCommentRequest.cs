@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.Api.Comments;
+﻿namespace eShop.Domain.Requests.API.Comments;
 
 public record CreateCommentRequest()
 {
