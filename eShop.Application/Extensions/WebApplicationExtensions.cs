@@ -17,7 +17,7 @@ public static class WebApplicationExtensions
 
     private static async Task EnsureDatabaseAsync(DbContext context)
     {
-        if (!DoesDatabaseExist(context))
+        if (!await DoesDatabaseExistAsync(context))
         {
             var dbCreator = context.GetService<IRelationalDatabaseCreator>();
             var strategy = context.Database.CreateExecutionStrategy();
@@ -34,7 +34,7 @@ public static class WebApplicationExtensions
 
     private static async Task RunMigrationsAsync(DbContext context)
     {
-        if (!IsDatabaseMigrated(context))
+        if (!await IsDatabaseMigratedAsync(context))
         {
             var strategy = context.Database.CreateExecutionStrategy();
             await strategy.ExecuteAsync(async () =>
@@ -46,15 +46,15 @@ public static class WebApplicationExtensions
         }
     }
     
-    private static bool IsDatabaseMigrated(DbContext context)
+    private static async Task<bool> IsDatabaseMigratedAsync(DbContext context)
     {
-        var pendingMigrations = context.Database.GetPendingMigrations();
+        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
         return !pendingMigrations.Any();
     }
     
-    private static bool DoesDatabaseExist(DbContext context)
+    private static async Task<bool> DoesDatabaseExistAsync(DbContext context)
     {
-        var dbExists = context.Database.CanConnect();
+        var dbExists = await context.Database.CanConnectAsync();
         return dbExists;
     }
 }
