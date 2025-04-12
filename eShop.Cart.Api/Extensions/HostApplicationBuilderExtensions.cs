@@ -28,7 +28,6 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddMediatR(x =>
         {
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            x.AddOpenBehavior(typeof(LoggingBehaviour<,>), ServiceLifetime.Transient);
         });
     }
     
