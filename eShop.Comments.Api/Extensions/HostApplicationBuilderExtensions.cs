@@ -6,7 +6,7 @@ namespace eShop.Comments.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static IHostApplicationBuilder AddApiServices(this IHostApplicationBuilder builder)
+    public static void AddApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddLogging();
         builder.AddServiceDefaults();
@@ -24,8 +24,6 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddEndpointsApiExplorer();
 
         builder.Services.AddOpenApi();
-
-        return builder;
     }
 
     private static void AddSqlDb(this IHostApplicationBuilder builder)
