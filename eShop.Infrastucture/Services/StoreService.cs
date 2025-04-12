@@ -1,4 +1,6 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using eShop.Domain.Common.Api;
+
+namespace eShop.Infrastructure.Services;
 
 class StoreService(IConfiguration configuration, IHttpClientService clientService) : IStoreService
 {

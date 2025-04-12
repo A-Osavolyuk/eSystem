@@ -1,6 +1,8 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using eShop.Domain.Common.Api;
 
-public class BrandSevice(
+namespace eShop.Infrastructure.Services;
+
+public class BrandService(
     IHttpClientService clientService,
     IConfiguration configuration) : IBrandService
 {

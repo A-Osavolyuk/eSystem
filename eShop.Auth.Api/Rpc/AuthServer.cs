@@ -1,4 +1,6 @@
-﻿using UserData = eShop.Application.UserData;
+﻿using eShop.Application;
+using Grpc.Core;
+using UserData = eShop.Application.UserData;
 
 namespace eShop.Auth.Api.Rpc;
 

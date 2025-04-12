@@ -1,4 +1,5 @@
-﻿using eShop.Domain.DTOs;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.DTOs;
 using eShop.Domain.Interfaces.API;
 
 namespace eShop.Product.Api.Features.Products.Queries;

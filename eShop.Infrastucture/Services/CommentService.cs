@@ -1,4 +1,7 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Requests.Api.Comments;
+
+namespace eShop.Infrastructure.Services;
 
 public class CommentService(IHttpClientService httpClient, IConfiguration configuration) : ICommentService
 {

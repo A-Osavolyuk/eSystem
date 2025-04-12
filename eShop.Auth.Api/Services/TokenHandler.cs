@@ -1,4 +1,7 @@
-﻿using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.Extensions.Options;
+using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
 
 namespace eShop.Auth.Api.Services;
 

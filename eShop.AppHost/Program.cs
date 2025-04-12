@@ -1,5 +1,3 @@
-using eShop.AppHost.Extensions;
-
 var builder = DistributedApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 

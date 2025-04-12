@@ -1,4 +1,7 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Requests.Api.Review;
+
+namespace eShop.Infrastructure.Services;
 
 public class ReviewService(IHttpClientService httpClient, IConfiguration configuration) : IReviewService
 {

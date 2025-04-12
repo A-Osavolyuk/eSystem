@@ -1,4 +1,6 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using eShop.Domain.Common.Api;
+
+namespace eShop.Infrastructure.Services;
 
 public class HttpClientService(IHttpClientFactory clientFactory, ITokenProvider tokenProvider)
     : IHttpClientService

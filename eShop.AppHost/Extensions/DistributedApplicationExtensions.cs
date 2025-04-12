@@ -1,5 +1,4 @@
 ﻿using eShop.AppHost.Options;
-using Microsoft.Extensions.Configuration;
 
 namespace eShop.AppHost.Extensions;
 

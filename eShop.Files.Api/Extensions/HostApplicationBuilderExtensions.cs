@@ -1,10 +1,7 @@
 ﻿using eShop.Application.Extensions;
-using eShop.Domain.Interfaces;
 using eShop.Domain.Interfaces.API;
 using eShop.Files.Api.Interfaces;
-using eShop.Files.Api.Services;
 using eShop.ServiceDefaults;
-using Interfaces_IStoreService = eShop.Files.Api.Interfaces.IStoreService;
 
 namespace eShop.Files.Api.Extensions;
 

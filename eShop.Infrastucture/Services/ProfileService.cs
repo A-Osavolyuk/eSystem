@@ -1,4 +1,7 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Requests.Api.Auth;
+
+namespace eShop.Infrastructure.Services;
 
 public class ProfileService(
     IHttpClientService clientService,

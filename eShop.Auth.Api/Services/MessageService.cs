@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging;
+﻿using MassTransit;
 
 namespace eShop.Auth.Api.Services;
 

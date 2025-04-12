@@ -1,5 +1,6 @@
 ﻿using eShop.Comments.Api.Entities;
 using eShop.Domain.DTOs;
+using eShop.Domain.Requests.Api.Comments;
 
 namespace eShop.Comments.Api.Mapping;
 

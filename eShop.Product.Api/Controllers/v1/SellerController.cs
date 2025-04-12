@@ -1,4 +1,6 @@
-﻿using eShop.Product.Api.Features.Sellers.Commands;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Requests.Api.Seller;
+using eShop.Product.Api.Features.Sellers.Commands;
 using Response = eShop.Domain.Common.Api.Response;
 
 namespace eShop.Product.Api.Controllers.v1;

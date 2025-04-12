@@ -24,7 +24,7 @@ public static class Extensions
         builder.Services.AddHttpClient();
         builder.Services.AddHttpClient<ISecurityService, SecurityService>();
         builder.Services.AddHttpClient<IProductService, ProductService>();
-        builder.Services.AddHttpClient<IBrandService, BrandSevice>();
+        builder.Services.AddHttpClient<IBrandService, BrandService>();
         builder.Services.AddHttpClient<ICommentService, CommentService>();
         builder.Services.AddHttpClient<IReviewService, ReviewService>();
         builder.Services.AddHttpClient<ICartService, CartService>();
@@ -37,7 +37,7 @@ public static class Extensions
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<IProductService, ProductService>();
-        builder.Services.AddScoped<IBrandService, BrandSevice>();
+        builder.Services.AddScoped<IBrandService, BrandService>();
         builder.Services.AddScoped<IUserStorage, UserStorage>();
         builder.Services.AddScoped<IStoreService, StoreService>();
         builder.Services.AddScoped<IReviewService, ReviewService>();

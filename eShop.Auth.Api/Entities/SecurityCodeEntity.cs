@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Abstraction.Data;
+﻿using eShop.Domain.Interfaces;
 
 namespace eShop.Auth.Api.Entities;
 

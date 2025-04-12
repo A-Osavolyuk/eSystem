@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Enums;
-using eShop.Domain.Exceptions;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Enums;
 using eShop.Files.Api.Interfaces;
 
 namespace eShop.Files.Api.Features.Queries;

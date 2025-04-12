@@ -1,7 +1,4 @@
-﻿using eShop.Comments.Api.Behaviours;
-using eShop.Comments.Api.Data;
-using eShop.Comments.Api.Receivers;
-using eShop.Comments.Api.Services;
+﻿using eShop.Comments.Api.Services;
 using eShop.Domain.Enums;
 using eShop.Domain.Interfaces.API;
 

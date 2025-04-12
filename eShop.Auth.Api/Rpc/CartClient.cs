@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Rpc;
+﻿using eShop.Application;
+using Grpc.Net.Client;
+
+namespace eShop.Auth.Api.Rpc;
 
 public class CartClient
 {

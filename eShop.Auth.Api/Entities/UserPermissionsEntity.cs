@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Entities;
+﻿using eShop.Domain.Interfaces;
+
+namespace eShop.Auth.Api.Entities;
 
 public class UserPermissionsEntity : IAuditable, IIdentifiable<Guid>
 {

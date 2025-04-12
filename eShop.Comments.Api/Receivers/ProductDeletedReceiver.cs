@@ -1,4 +1,5 @@
-﻿using eShop.Comments.Api.Data;
+﻿using eShop.Domain.Requests.Api.Comments;
+using eShop.Domain.Responses.Api.Comments;
 
 namespace eShop.Comments.Api.Receivers;
 

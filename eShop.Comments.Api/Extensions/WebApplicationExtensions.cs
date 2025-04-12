@@ -1,5 +1,4 @@
-﻿using eShop.Comments.Api.Data;
-using Scalar.AspNetCore;
+﻿using Scalar.AspNetCore;
 
 namespace eShop.Comments.Api.Extensions;
 

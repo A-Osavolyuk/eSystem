@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Interfaces.API;
-
-namespace eShop.Auth.Api.Features.Security.Queries;
+﻿namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record Get2FaStateQuery(string Email)
     : IRequest<Result>;

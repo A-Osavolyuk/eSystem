@@ -1,4 +1,4 @@
-﻿using eShop.Domain.DTOs;
+﻿using eShop.Domain.Common.Api;
 
 namespace eShop.Product.Api.Features.Brands.Queries;
 

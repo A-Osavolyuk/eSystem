@@ -1,4 +1,7 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Requests.Api.Cart;
+
+namespace eShop.Infrastructure.Services;
 
 internal class CartService(IHttpClientService httpClient, IConfiguration configuration) : ICartService
 {

@@ -1,4 +1,7 @@
-﻿namespace eShop.Product.Api.Features.Brands.Commands;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Requests.Api.Brand;
+
+namespace eShop.Product.Api.Features.Brands.Commands;
 
 internal sealed record UpdateBrandCommand(UpdateBrandRequest Request) : IRequest<Result>;
 

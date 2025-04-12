@@ -1,4 +1,7 @@
-﻿namespace eShop.Comments.Api.Features.Queries;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Responses.Api.Comments;
+
+namespace eShop.Comments.Api.Features.Queries;
 
 internal sealed record GetCommentsQuery(Guid ProductId) : IRequest<Result>;
 

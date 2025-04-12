@@ -1,4 +1,6 @@
-﻿using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
+﻿using eShop.Domain.Requests.Api.Auth;
+using eShop.Domain.Responses.Api.Auth;
+using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
 using UserModel = eShop.Domain.Models.UserModel;
 
 namespace eShop.Infrastructure.Account;

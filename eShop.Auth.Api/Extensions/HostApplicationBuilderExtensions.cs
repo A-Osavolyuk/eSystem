@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Interfaces.API;
+﻿using MassTransit;
 
 namespace eShop.Auth.Api.Extensions;
 

@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Entities;
+﻿using System.Text.Json.Serialization;
+using eShop.Domain.Interfaces;
+
+namespace eShop.Auth.Api.Entities;
 
 public record class PersonalDataEntity : IAuditable, IIdentifiable<Guid>
 {

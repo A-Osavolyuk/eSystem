@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Interfaces.API;
+﻿using eShop.Domain.DTOs;
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 

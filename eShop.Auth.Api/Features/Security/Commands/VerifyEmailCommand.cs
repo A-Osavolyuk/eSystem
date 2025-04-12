@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Features.Security.Commands;
+﻿using eShop.Application;
+using eShop.Domain.Messages.Email;
+
+namespace eShop.Auth.Api.Features.Security.Commands;
 
 internal sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<Result>;
 

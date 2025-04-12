@@ -1,4 +1,6 @@
-﻿using eShop.Product.Api.Entities;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Requests.Api.Seller;
+using eShop.Product.Api.Entities;
 
 namespace eShop.Product.Api.Features.Sellers.Commands;
 

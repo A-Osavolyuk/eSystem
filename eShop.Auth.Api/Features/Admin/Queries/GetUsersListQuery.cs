@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Admin.Queries;
+﻿using eShop.Domain.DTOs;
+
+namespace eShop.Auth.Api.Features.Admin.Queries;
 
 internal sealed record GetUsersListQuery() : IRequest<Result>;
 

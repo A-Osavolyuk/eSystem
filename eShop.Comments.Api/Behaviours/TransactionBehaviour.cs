@@ -1,6 +1,4 @@
-﻿using eShop.Comments.Api.Data;
-
-namespace eShop.Comments.Api.Behaviours;
+﻿namespace eShop.Comments.Api.Behaviours;
 
 public class TransactionBehaviour<TRequest, TResponse>(
     AppDbContext context,

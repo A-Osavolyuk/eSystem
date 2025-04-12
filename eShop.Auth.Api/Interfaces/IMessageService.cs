@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging;
-
-namespace eShop.Auth.Api.Interfaces;
+﻿namespace eShop.Auth.Api.Interfaces;
 
 public interface IMessageService
 {

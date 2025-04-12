@@ -1,4 +1,7 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using eShop.Domain.Common.Api;
+using eShop.Domain.Requests.Api.Seller;
+
+namespace eShop.Infrastructure.Services;
 
 public class SellerService(IHttpClientService httpClient, IConfiguration configuration) : ISellerService
 {
