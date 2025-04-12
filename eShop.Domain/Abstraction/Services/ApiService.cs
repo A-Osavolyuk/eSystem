@@ -4,15 +4,9 @@ namespace eShop.Domain.Abstraction.Services;
 
 using Microsoft.Extensions.Configuration;
 
-public abstract class ApiService
+public abstract class ApiService(IConfiguration configuration, IHttpClientService httpClientService)
 {
-    protected readonly IConfiguration Configuration;
-    protected readonly IHttpClientService HttpClientService;
+    protected readonly IConfiguration Configuration = configuration;
+    protected readonly IHttpClientService HttpClientService = httpClientService;
     protected const string Key = "Configuration:Services:Proxy:Gateway:Uri";
-
-    protected ApiService(IConfiguration configuration, IHttpClientService httpClientService)
-    {
-        this.Configuration = configuration;
-        this.HttpClientService = httpClientService;
-    }
 }
