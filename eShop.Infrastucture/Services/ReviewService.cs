@@ -1,9 +1,12 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Review;
 
 namespace eShop.Infrastructure.Services;
 
-public class ReviewService(IHttpClientService httpClient, IConfiguration configuration) : IReviewService
+public class ReviewService(
+    IHttpClientService httpClient, 
+    IConfiguration configuration) : IReviewService, IApi
 {
     private readonly IHttpClientService httpClient = httpClient;
     private readonly IConfiguration configuration = configuration;

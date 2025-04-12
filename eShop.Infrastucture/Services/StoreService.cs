@@ -1,8 +1,11 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 
 namespace eShop.Infrastructure.Services;
 
-class StoreService(IConfiguration configuration, IHttpClientService clientService) : IStoreService
+class StoreService(
+    IConfiguration configuration, 
+    IHttpClientService clientService) : IStoreService, IApi
 {
     private readonly IConfiguration configuration = configuration;
     private readonly IHttpClientService clientService = clientService;

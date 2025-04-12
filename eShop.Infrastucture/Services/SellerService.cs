@@ -1,9 +1,12 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Seller;
 
 namespace eShop.Infrastructure.Services;
 
-public class SellerService(IHttpClientService httpClient, IConfiguration configuration) : ISellerService
+public class SellerService(
+    IHttpClientService httpClient, 
+    IConfiguration configuration) : ISellerService, IApi
 {
     private readonly IHttpClientService httpClient = httpClient;
     private readonly IConfiguration configuration = configuration;

@@ -1,11 +1,12 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Product;
 
 namespace eShop.Infrastructure.Services;
 
 public class ProductService(
     IHttpClientService clientService,
-    IConfiguration configuration) : IProductService
+    IConfiguration configuration) : IProductService, IApi
 {
     private readonly IHttpClientService clientService = clientService;
     private readonly IConfiguration configuration = configuration;

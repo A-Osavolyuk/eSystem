@@ -1,9 +1,12 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Comments;
 
 namespace eShop.Infrastructure.Services;
 
-public class CommentService(IHttpClientService httpClient, IConfiguration configuration) : ICommentService
+public class CommentService(
+    IHttpClientService httpClient, 
+    IConfiguration configuration) : ICommentService, IApi
 {
     private readonly IHttpClientService httpClient = httpClient;
     private readonly IConfiguration configuration = configuration;

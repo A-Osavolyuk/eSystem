@@ -1,11 +1,12 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Infrastructure.Services;
 
 public class ProfileService(
     IHttpClientService clientService,
-    IConfiguration configuration) : IProfileService
+    IConfiguration configuration) : IProfileService, IApi
 {
     public async ValueTask<Response> GetPhoneNumberAsync(string email) => await clientService.SendAsync(
         new Request(Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Profile/get-phone-number/{email}",

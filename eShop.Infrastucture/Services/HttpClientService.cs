@@ -2,7 +2,9 @@
 
 namespace eShop.Infrastructure.Services;
 
-public class HttpClientService(IHttpClientFactory clientFactory, ITokenProvider tokenProvider)
+public class HttpClientService(
+    IHttpClientFactory clientFactory, 
+    ITokenProvider tokenProvider)
     : IHttpClientService
 {
     private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");

@@ -1,9 +1,12 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Cart;
 
 namespace eShop.Infrastructure.Services;
 
-internal class CartService(IHttpClientService httpClient, IConfiguration configuration) : ICartService
+internal class CartService(
+    IHttpClientService httpClient, 
+    IConfiguration configuration) : ICartService, IApi
 {
     private readonly IHttpClientService httpClient = httpClient;
     private readonly IConfiguration configuration = configuration;

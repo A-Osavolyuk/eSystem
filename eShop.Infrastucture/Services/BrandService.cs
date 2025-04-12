@@ -1,10 +1,11 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 
 namespace eShop.Infrastructure.Services;
 
 public class BrandService(
     IHttpClientService clientService,
-    IConfiguration configuration) : IBrandService
+    IConfiguration configuration) : IBrandService, IApi
 {
     private readonly IHttpClientService clientService = clientService;
     private readonly IConfiguration configuration = configuration;

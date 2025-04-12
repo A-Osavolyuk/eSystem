@@ -1,11 +1,12 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Abstraction.Services;
+using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Infrastructure.Services;
 
 public class SecurityService(
     IHttpClientService clientService,
-    IConfiguration configuration) : ISecurityService
+    IConfiguration configuration) : ISecurityService, IApi
 {
     private readonly IHttpClientService clientService = clientService;
     private readonly IConfiguration configuration = configuration;
