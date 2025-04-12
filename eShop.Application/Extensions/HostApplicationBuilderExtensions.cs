@@ -113,28 +113,7 @@ public static class HostApplicationBuilderExtensions
     where TService : class
     {
         services.AddHttpClient<TService, TImplementation>();
-        
-        switch (lifetime)
-        {
-            case ServiceLifetime.Scoped:
-            {
-                services.AddScoped<TService, TImplementation>();
-                
-                break;
-            }
-            case ServiceLifetime.Singleton:
-            {
-                services.AddSingleton<TService, TImplementation>();
-                
-                break;
-            }
-            case ServiceLifetime.Transient:
-            default:
-            {
-                services.AddTransient<TService, TImplementation>();
-                
-                break;
-            }
-        }
+        var serviceDescriptor = new ServiceDescriptor(typeof(TService), typeof(TImplementation), lifetime);
+        services.Add(serviceDescriptor);
     }
 }
