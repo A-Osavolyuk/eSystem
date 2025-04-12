@@ -37,6 +37,7 @@ public static class Extensions
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<IBrandService, BrandService>();
         builder.Services.AddScoped<IUserStorage, UserStorage>();
         builder.Services.AddScoped<IStoreService, StoreService>();
