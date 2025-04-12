@@ -1,8 +1,9 @@
-﻿using eShop.Domain.Types;
+﻿using eShop.Domain.Abstraction.Data;
+using eShop.Domain.Types;
 
 namespace eShop.Cart.Api.Entities;
 
-public class CartEntity : IIdentifiable<Guid>, IAuditable
+public class CartEntity : IEntity<Guid>
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]

@@ -1,6 +1,8 @@
-﻿namespace eShop.Comments.Api.Entities;
+﻿using eShop.Domain.Abstraction.Data;
 
-public record class CommentEntity : IIdentifiable<Guid>, IAuditable
+namespace eShop.Comments.Api.Entities;
+
+public record class CommentEntity : IEntity<Guid>
 {
     public Guid Id { get; init; }
     public Guid ProductId { get; set; }

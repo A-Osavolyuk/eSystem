@@ -1,6 +1,8 @@
-﻿namespace eShop.Product.Api.Entities;
+﻿using eShop.Domain.Abstraction.Data;
 
-public class ProductEntity : IIdentifiable<Guid>, IAuditable
+namespace eShop.Product.Api.Entities;
+
+public class ProductEntity : IEntity<Guid>
 {
     public ProductEntity() => Article = GenerateArticle();
     public Guid Id { get; init; } = Guid.CreateVersion7();

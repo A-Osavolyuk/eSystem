@@ -1,8 +1,9 @@
-﻿using eShop.Domain.Types;
+﻿using eShop.Domain.Abstraction.Data;
+using eShop.Domain.Types;
 
 namespace eShop.Cart.Api.Entities;
 
-public class FavoritesEntity : IIdentifiable<Guid>, IAuditable
+public class FavoritesEntity : IEntity<Guid>
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]

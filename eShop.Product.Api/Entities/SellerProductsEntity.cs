@@ -1,7 +1,10 @@
-﻿namespace eShop.Product.Api.Entities;
+﻿using eShop.Domain.Abstraction.Data;
 
-public class SellerProductsEntity : IAuditable
+namespace eShop.Product.Api.Entities;
+
+public class SellerProductsEntity : IEntity<Guid>
 {
+    public Guid Id { get; init; }
     public Guid SellerId { get; set; }
     public Guid ProductId { get; set; }
     public DateTime CreateDate { get; set; }

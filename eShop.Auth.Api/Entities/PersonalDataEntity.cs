@@ -3,7 +3,7 @@ using eShop.Domain.Interfaces;
 
 namespace eShop.Auth.Api.Entities;
 
-public record class PersonalDataEntity : IAuditable, IIdentifiable<Guid>
+public record class PersonalDataEntity : IEntity<Guid>
 {
     public Guid Id { get; init; }
     public string FirstName { get; init; } = string.Empty;

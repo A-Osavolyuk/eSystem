@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Entities;
 
-public class UserPermissionsEntity : IAuditable, IIdentifiable<Guid>
+public class UserPermissionsEntity : IEntity<Guid>
 {
     public Guid Id { get; init; }
     public Guid UserId { get; init; }
