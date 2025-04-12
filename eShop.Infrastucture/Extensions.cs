@@ -22,30 +22,20 @@ public static class Extensions
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddHttpClient();
-        builder.Services.AddHttpClient<ISecurityService, SecurityService>();
-        builder.Services.AddHttpClient<IProductService, ProductService>();
-        builder.Services.AddHttpClient<IBrandService, BrandService>();
-        builder.Services.AddHttpClient<ICommentService, CommentService>();
-        builder.Services.AddHttpClient<IReviewService, ReviewService>();
-        builder.Services.AddHttpClient<ICartService, CartService>();
-        builder.Services.AddHttpClient<IFavoritesService, FavoritesService>();
-        builder.Services.AddHttpClient<IStoreService, StoreService>();
-        builder.Services.AddHttpClient<ISellerService, SellerService>();
-        builder.Services.AddHttpClient<IProfileService, ProfileService>();
+        builder.Services.AddHttpClient<ISecurityService, SecurityService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IProductService, ProductService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IBrandService, BrandService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<ICommentService, CommentService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IReviewService, ReviewService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<ICartService, CartService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IFavoritesService, FavoritesService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IStoreService, StoreService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<ISellerService, SellerService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IProfileService, ProfileService>(ServiceLifetime.Scoped);
 
         builder.Services.AddScoped<IHttpClientService, HttpClientService>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
-        builder.Services.AddScoped<ISecurityService, SecurityService>();
-        builder.Services.AddScoped<IProductService, ProductService>();
-        builder.Services.AddScoped<ICommentService, CommentService>();
-        builder.Services.AddScoped<IBrandService, BrandService>();
         builder.Services.AddScoped<IUserStorage, UserStorage>();
-        builder.Services.AddScoped<IStoreService, StoreService>();
-        builder.Services.AddScoped<IReviewService, ReviewService>();
-        builder.Services.AddScoped<ICartService, CartService>();
-        builder.Services.AddScoped<IFavoritesService, FavoritesService>();
-        builder.Services.AddScoped<ISellerService, SellerService>();
-        builder.Services.AddScoped<IProfileService, ProfileService>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
 
         builder.Services.AddScoped<INotificationService, NotificationService>();

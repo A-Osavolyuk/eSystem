@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using eShop.Application.Middlewares;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Hosting;
@@ -104,5 +105,36 @@ public static class HostApplicationBuilderExtensions
     {
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
+    }
+
+    public static void AddHttpClient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>
+        (this IServiceCollection services, ServiceLifetime lifetime)
+    where TImplementation : class, TService
+    where TService : class
+    {
+        services.AddHttpClient<TService, TImplementation>();
+        
+        switch (lifetime)
+        {
+            case ServiceLifetime.Scoped:
+            {
+                services.AddScoped<TService, TImplementation>();
+                
+                break;
+            }
+            case ServiceLifetime.Singleton:
+            {
+                services.AddSingleton<TService, TImplementation>();
+                
+                break;
+            }
+            case ServiceLifetime.Transient:
+            default:
+            {
+                services.AddTransient<TService, TImplementation>();
+                
+                break;
+            }
+        }
     }
 }
