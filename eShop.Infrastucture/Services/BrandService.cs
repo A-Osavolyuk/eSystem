@@ -4,11 +4,9 @@ using eShop.Domain.Common.API;
 namespace eShop.Infrastructure.Services;
 
 public class BrandService(
-    IHttpClientService clientService,
-    IConfiguration configuration) : IBrandService, IApi
+    IConfiguration configuration, 
+    IHttpClientService httpClientService) : Api(configuration, httpClientService), IBrandService
 {
-    private readonly IHttpClientService clientService = clientService;
-    private readonly IConfiguration configuration = configuration;
-    public async ValueTask<Response> GetBrandsListAsync() => await clientService.SendAsync(
-        new Request(Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Brands", Methods: HttpMethods.Get));
+    public async ValueTask<Response> GetBrandsListAsync() => await HttpClientService.SendAsync(
+        new Request(Url: $"{Configuration[Key]}/api/v1/Brands", Methods: HttpMethods.Get));
 }

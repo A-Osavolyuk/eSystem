@@ -6,27 +6,25 @@ namespace eShop.Infrastructure.Services;
 
 public class ReviewService(
     IHttpClientService httpClient, 
-    IConfiguration configuration) : IReviewService, IApi
+    IConfiguration configuration) : Api(configuration, httpClient), IReviewService
 {
-    private readonly IHttpClientService httpClient = httpClient;
-    private readonly IConfiguration configuration = configuration;
 
-    public async Task<Response> CreateReviewAsync(CreateReviewRequest request) => await httpClient.SendAsync(
+    public async Task<Response> CreateReviewAsync(CreateReviewRequest request) => await HttpClientService.SendAsync(
         new Request(
-            Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Reviews/create-review",
+            Url: $"{Configuration[Key]}/api/v1/Reviews/create-review",
             Methods: HttpMethods.Post, Data: request));
 
-    public async Task<Response> DeleteReviewsWithProductIdAsync(Guid id) => await httpClient.SendAsync(new Request(
+    public async Task<Response> DeleteReviewsWithProductIdAsync(Guid id) => await HttpClientService.SendAsync(new Request(
         Url:
-        $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Reviews/delete-reviews-with-product-id/{id}",
+        $"{Configuration[Key]}/api/v1/Reviews/delete-reviews-with-product-id/{id}",
         Methods: HttpMethods.Delete));
 
-    public async Task<Response> GetReviewListByProductIdAsync(Guid id) => await httpClient.SendAsync(new Request(
-        Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Reviews/get-reviews-by-product-id/{id}",
+    public async Task<Response> GetReviewListByProductIdAsync(Guid id) => await HttpClientService.SendAsync(new Request(
+        Url: $"{Configuration[Key]}/api/v1/Reviews/get-reviews-by-product-id/{id}",
         Methods: HttpMethods.Get));
 
-    public async Task<Response> UpdateReviewAsync(UpdateReviewRequest request) => await httpClient.SendAsync(
+    public async Task<Response> UpdateReviewAsync(UpdateReviewRequest request) => await HttpClientService.SendAsync(
         new Request(
-            Url: $"{configuration["Configuration:Services:Proxy:Gateway:Uri"]}/api/v1/Reviews/update-review",
+            Url: $"{Configuration[Key]}/api/v1/Reviews/update-review",
             Methods: HttpMethods.Put, Data: request));
 }
