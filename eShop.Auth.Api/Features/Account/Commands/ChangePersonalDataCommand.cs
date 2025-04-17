@@ -29,7 +29,7 @@ internal sealed class ChangePersonalDataCommandHandler(
         }
 
         var entity = Mapper.ToPersonalDataEntity(request.Request);
-        var result = await appManager.ProfileManager.ChangePersonalDataAsync(user, entity);
+        var result = await appManager.ProfileManager.UpdateAsync(user, entity, cancellationToken);
 
         if (!result.Succeeded)
         {

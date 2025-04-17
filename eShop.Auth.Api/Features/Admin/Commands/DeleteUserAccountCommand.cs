@@ -39,7 +39,7 @@ internal sealed class DeleteUserAccountCommandHandler(
             });
         }
 
-        var permissionsResult = await appManager.PermissionManager.RemoveFromPermissionsAsync(user);
+        var permissionsResult = await appManager.PermissionManager.RemoveFromPermissionsAsync(user, cancellationToken);
 
         if (!permissionsResult.Succeeded)
         {
@@ -52,7 +52,7 @@ internal sealed class DeleteUserAccountCommandHandler(
             });
         }
 
-        var personalDataResult = await appManager.ProfileManager.RemovePersonalDataAsync(user);
+        var personalDataResult = await appManager.ProfileManager.DeleteAsync(user, cancellationToken);
 
         if (!personalDataResult.Succeeded)
         {

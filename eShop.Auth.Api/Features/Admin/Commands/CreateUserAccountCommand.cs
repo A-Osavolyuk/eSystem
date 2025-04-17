@@ -57,14 +57,14 @@ internal sealed class CreateUserAccountCommandHandler(
             });
         }
 
-        await appManager.ProfileManager.SetPersonalDataAsync(user, new PersonalDataEntity()
+        await appManager.ProfileManager.SetAsync(user, new PersonalDataEntity()
         {
             UserId = userId,
             FirstName = request.Request.FirstName,
             LastName = request.Request.LastName,
             DateOfBirth = request.Request.DateOfBirth,
             Gender = request.Request.Gender
-        });
+        }, cancellationToken);
 
         if (request.Request.Roles.Any())
         {
@@ -116,7 +116,7 @@ internal sealed class CreateUserAccountCommandHandler(
         {
             foreach (var permission in request.Request.Permissions)
             {
-                var permissionExists = await appManager.PermissionManager.ExistsAsync(permission);
+                var permissionExists = await appManager.PermissionManager.ExistsAsync(permission, cancellationToken);
 
                 if (!permissionExists)
                 {
@@ -129,7 +129,7 @@ internal sealed class CreateUserAccountCommandHandler(
                 }
 
                 var permissionResult =
-                    await appManager.PermissionManager.IssuePermissionAsync(user, permission);
+                    await appManager.PermissionManager.IssuePermissionAsync(user, permission, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {
@@ -148,7 +148,7 @@ internal sealed class CreateUserAccountCommandHandler(
             foreach (var permission in defaultPermissions)
             {
                 var permissionResult =
-                    await appManager.PermissionManager.IssuePermissionAsync(user, permission);
+                    await appManager.PermissionManager.IssuePermissionAsync(user, permission, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {

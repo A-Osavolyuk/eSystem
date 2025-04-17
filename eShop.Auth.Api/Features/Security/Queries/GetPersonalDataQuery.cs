@@ -31,7 +31,7 @@ internal sealed class GetPersonalDataQueryHandler(
                 });
             }
 
-            var personalData = await appManager.ProfileManager.FindPersonalDataAsync(user);
+            var personalData = await appManager.ProfileManager.FindAsync(user, cancellationToken);
 
             if (personalData is null)
             {

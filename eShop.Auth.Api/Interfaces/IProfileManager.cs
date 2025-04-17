@@ -2,8 +2,14 @@
 
 public interface IProfileManager
 {
-    public ValueTask<PersonalData?> FindPersonalDataAsync(AppUser user);
-    public ValueTask<IdentityResult> SetPersonalDataAsync(AppUser user, PersonalDataEntity personalData);
-    public ValueTask<IdentityResult> ChangePersonalDataAsync(AppUser user, PersonalDataEntity personalData);
-    public ValueTask<IdentityResult> RemovePersonalDataAsync(AppUser user);
+    public ValueTask<PersonalData?> FindAsync(AppUser user, CancellationToken cancellationToken = default);
+
+    public ValueTask<IdentityResult> SetAsync(AppUser user, PersonalDataEntity personalData,
+        CancellationToken cancellationToken = default);
+
+    public ValueTask<IdentityResult> UpdateAsync(AppUser user, PersonalDataEntity personalData,
+        CancellationToken cancellationToken = default);
+
+    public ValueTask<IdentityResult> DeleteAsync(AppUser user,
+        CancellationToken cancellationToken = default);
 }

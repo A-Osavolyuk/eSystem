@@ -26,7 +26,7 @@ internal sealed class FindUserByIdQueryHandler(
         }
 
         var accountData = Mapper.ToAccountData(user);
-        var personalData = await appManager.ProfileManager.FindPersonalDataAsync(user);
+        var personalData = await appManager.ProfileManager.FindAsync(user, cancellationToken);
         var rolesList = await appManager.UserManager.GetRolesAsync(user);
         var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
 
