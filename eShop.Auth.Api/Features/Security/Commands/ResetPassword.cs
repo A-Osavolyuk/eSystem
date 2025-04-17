@@ -33,7 +33,7 @@ internal sealed class RequestResetPasswordCommandHandler(
         }
 
         var code = await appManager.SecurityManager.GenerateVerificationCodeAsync(user.Email!,
-            VerificationCodeType.ResetPassword);
+            Verification.ResetPassword);
 
         await messageService.SendMessageAsync("password-reset", new ResetPasswordMessage()
         {

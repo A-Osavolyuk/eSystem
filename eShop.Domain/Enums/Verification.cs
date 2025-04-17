@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Enums;
 
-public enum VerificationCodeType
+public enum Verification
 {
     VerifyEmail,
     VerifyPhoneNumber,
