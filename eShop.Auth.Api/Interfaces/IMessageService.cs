@@ -2,6 +2,6 @@
 
 public interface IMessageService
 {
-    public ValueTask SendMessageAsync(string queryName, EmailMessage message);
-    public ValueTask SendMessageAsync(string queryName, SmsMessage message);
+    public ValueTask SendMessageAsync(string queryName, EmailMessage message, CancellationToken cancellationToken = default);
+    public ValueTask SendMessageAsync(string queryName, SmsMessage message, CancellationToken cancellationToken = default);
 }
