@@ -113,19 +113,12 @@ public static class HostApplicationBuilderExtensions
                 };
             });
 
-        builder.Services.AddAuthorization(cfg =>
-        {
-            cfg.AddPolicy("ManageUsersPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission.Admin.ManageUsers")));
-            cfg.AddPolicy("ManageLockoutPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission.Admin.ManageLockout")));
-            cfg.AddPolicy("ManageRolesPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission.Admin.ManageRoles")));
-            cfg.AddPolicy("ManagePermissionsPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission.Admin.ManagePermissions")));
-            cfg.AddPolicy("ManageAccountPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission.Account.ManageAccount")));
-        });
+        builder.Services.AddAuthorizationBuilder()
+            .AddPolicy("ManageUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission.Admin.ManageUsers")))
+            .AddPolicy("ManageLockoutPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission.Admin.ManageLockout")))
+            .AddPolicy("ManageRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission.Admin.ManageRoles")))
+            .AddPolicy("ManagePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission.Admin.ManagePermissions")))
+            .AddPolicy("ManageAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission.Account.ManageAccount")));
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
