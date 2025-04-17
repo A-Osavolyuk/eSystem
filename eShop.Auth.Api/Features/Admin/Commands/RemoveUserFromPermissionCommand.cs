@@ -27,7 +27,7 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
             });
         }
 
-        var permission = await appManager.PermissionManager.FindPermissionAsync(request.Request.PermissionName);
+        var permission = await appManager.PermissionManager.FindByNameAsync(request.Request.PermissionName, cancellationToken);
 
         if (permission is null)
         {
@@ -40,7 +40,7 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
         }
 
         var hasUserPermission =
-            await appManager.PermissionManager.HasPermissionAsync(user, permission.Name);
+            await appManager.PermissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
 
         if (!hasUserPermission)
         {
@@ -49,7 +49,7 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
         else
         {
             var permissionResult =
-                await appManager.PermissionManager.RemoveFromPermissionAsync(user, permission);
+                await appManager.PermissionManager.RemoveFromPermissionAsync(user, permission, cancellationToken);
 
             if (!permissionResult.Succeeded)
             {

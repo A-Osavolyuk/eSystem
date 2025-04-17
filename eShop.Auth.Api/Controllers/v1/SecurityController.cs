@@ -126,7 +126,7 @@ public class SecurityController(SignInManager<AppUser> signInManager, ISender se
         var result = await sender.Send(new RegisterCommand(request));
 
         return result.Match(
-            succ => Ok(new ResponseBuilder().Succeeded().WithMessage(succ.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 

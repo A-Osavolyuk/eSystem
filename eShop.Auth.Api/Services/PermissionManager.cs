@@ -4,23 +4,32 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<PermissionEntity?> FindPermissionAsync(string name)
+    public async ValueTask<PermissionEntity?> FindByNameAsync(string name,
+        CancellationToken cancellationToken = default)
     {
-        var permission = await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == name);
+        var permission = await context.Permissions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Name == name, cancellationToken);
+
         return permission;
     }
 
-    public async ValueTask<List<PermissionEntity>> GetPermissionsAsync()
+    public async ValueTask<List<PermissionEntity>> GetListAsync(CancellationToken cancellationToken = default)
     {
-        var permissions = await context.Permissions.AsNoTracking().ToListAsync();
+        var permissions = await context.Permissions
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
         return permissions;
     }
 
-    public async ValueTask<List<string>> GetUserPermissionsAsync(AppUser user)
+    public async ValueTask<List<string>> GetUserPermissionsAsync(AppUser user,
+        CancellationToken cancellationToken = default)
     {
-        var permissions = await context.UserPermissions.AsNoTracking()
+        var permissions = await context.UserPermissions
+            .AsNoTracking()
             .Where(x => x.UserId == user.Id)
-            .ToListAsync();
+            .ToListAsync(cancellationToken: cancellationToken);
         var result = new List<string>();
 
         if (!permissions.Any())
@@ -30,44 +39,62 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
 
         foreach (var permission in permissions)
         {
-            var permissionName = (await context.Permissions.AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == permission.Id))!.Name;
-            result.Add(permissionName);
+            var permissionName = (await context.Permissions
+                .AsNoTracking()
+                .Where(x => x.Id == permission.Id)
+                .Select(x => x.Name)
+                .SingleOrDefaultAsync(cancellationToken: cancellationToken));
+
+            result.Add(permissionName!);
         }
 
         return result;
     }
 
-    public async ValueTask<IdentityResult> IssuePermissionsAsync(AppUser user, IList<string> permissions)
+    public async ValueTask<IdentityResult> IssuePermissionsAsync(AppUser user, IEnumerable<string> collection,
+        CancellationToken cancellationToken = default)
     {
+        var permissions = collection.ToList();
+
         if (!permissions.Any())
         {
             return IdentityResult.Failed(new IdentityError()
-                { Code = "400", Description = "Cannot add permissions. Empty permission list." });
+            {
+                Code = "400",
+                Description = "Cannot add permissions. Empty permission list."
+            });
         }
 
         foreach (var permission in permissions)
         {
-            var entity = await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == permission);
-            await context.UserPermissions.AddAsync(new() { UserId = user.Id, Id = entity!.Id });
+            var entity = await context.Permissions
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Name == permission, cancellationToken: cancellationToken);
+
+            await context.UserPermissions.AddAsync(new() { UserId = user.Id, Id = entity!.Id }, cancellationToken);
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
         return IdentityResult.Success;
     }
 
-    public async ValueTask<IdentityResult> IssuePermissionAsync(AppUser user, string permission)
+    public async ValueTask<IdentityResult> IssuePermissionAsync(AppUser user, string permission,
+        CancellationToken cancellationToken = default)
     {
-        var entity = await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == permission);
-        await context.UserPermissions.AddAsync(new() { UserId = user.Id, Id = entity!.Id });
-        await context.SaveChangesAsync();
+        var entity = await context.Permissions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Name == permission, cancellationToken: cancellationToken);
+
+        await context.UserPermissions.AddAsync(new() { UserId = user.Id, Id = entity!.Id }, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         return IdentityResult.Success;
     }
 
-    public async ValueTask<IdentityResult> RemoveFromPermissionAsync(AppUser user, PermissionEntity permissionEntity)
+    public async ValueTask<IdentityResult> RemoveFromPermissionAsync(AppUser user, PermissionEntity permissionEntity,
+        CancellationToken cancellationToken = default)
     {
-        var userPermission = await context.UserPermissions.AsNoTracking()
-            .SingleOrDefaultAsync(x => x.UserId == user.Id && x.Id == permissionEntity.Id);
+        var userPermission = await context.UserPermissions
+            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.Id == permissionEntity.Id, cancellationToken: cancellationToken);
 
         if (userPermission is null)
         {
@@ -81,49 +108,49 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         }
 
         context.UserPermissions.Remove(userPermission);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
 
         return IdentityResult.Success;
     }
 
-    public async ValueTask<IdentityResult> RemoveFromPermissionsAsync(AppUser user)
+    public async ValueTask<IdentityResult> RemoveFromPermissionsAsync(AppUser user, CancellationToken cancellationToken = default)
     {
         var userPermissions = await context.UserPermissions
-            .AsNoTracking()
             .Where(x => x.UserId == user.Id)
-            .ToListAsync();
+            .ToListAsync(cancellationToken: cancellationToken);
 
         if (userPermissions.Any())
         {
             context.UserPermissions.RemoveRange(userPermissions);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         return IdentityResult.Success;
     }
 
-    public async ValueTask<bool> ExistsAsync(string name)
+    public async ValueTask<bool> ExistsAsync(string name, CancellationToken cancellationToken = default)
     {
-        return await context.Permissions.AsNoTracking().AnyAsync(x => x.Name == name);
+        return await context.Permissions
+            .AsNoTracking()
+            .AnyAsync(x => x.Name == name, cancellationToken: cancellationToken);
     }
 
-    public async ValueTask<bool> HasPermissionAsync(AppUser user, string name)
+    public async ValueTask<bool> HasPermissionAsync(AppUser user, string name,
+        CancellationToken cancellationToken = default)
     {
-        var permission = await context.Permissions.AsNoTracking().SingleOrDefaultAsync(x => x.Name == name);
+        var permission = await context.Permissions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Name == name, cancellationToken: cancellationToken);
 
         if (permission is null)
         {
             return false;
         }
 
-        var hasUserPermission = await context.UserPermissions.AsNoTracking()
-            .AnyAsync(x => x.UserId == user.Id && x.Id == permission.Id);
+        var hasUserPermission = await context.UserPermissions
+            .AsNoTracking()
+            .AnyAsync(x => x.UserId == user.Id && x.Id == permission.Id, cancellationToken: cancellationToken);
 
-        if (hasUserPermission)
-        {
-            return true;
-        }
-
-        return false;
+        return hasUserPermission;
     }
 }

@@ -55,7 +55,6 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Folder Include="Features\Account\Queries\" />
       <Folder Include="Migrations\" />
     </ItemGroup>
 </Project>

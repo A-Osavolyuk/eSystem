@@ -30,7 +30,7 @@ internal sealed class IssuePermissionCommandHandler(
 
         foreach (var permissionName in request.Request.Permissions)
         {
-            var permission = await appManager.PermissionManager.FindPermissionAsync(permissionName);
+            var permission = await appManager.PermissionManager.FindByNameAsync(permissionName, cancellationToken);
 
             if (permission is null)
             {
@@ -47,11 +47,11 @@ internal sealed class IssuePermissionCommandHandler(
 
         foreach (var permission in permissions)
         {
-            var alreadyHasPermission = await appManager.PermissionManager.HasPermissionAsync(user, permission.Name);
+            var alreadyHasPermission = await appManager.PermissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
 
             if (!alreadyHasPermission)
             {
-                var result = await appManager.PermissionManager.IssuePermissionAsync(user, permission.Name);
+                var result = await appManager.PermissionManager.IssuePermissionAsync(user, permission.Name, cancellationToken);
 
                 if (!result.Succeeded)
                 {

@@ -28,7 +28,7 @@ internal sealed class FindUserByIdQueryHandler(
         var accountData = Mapper.ToAccountData(user);
         var personalData = await appManager.ProfileManager.FindPersonalDataAsync(user);
         var rolesList = await appManager.UserManager.GetRolesAsync(user);
-        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
+        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
 
         if (!rolesList.Any())
         {
@@ -66,7 +66,7 @@ internal sealed class FindUserByIdQueryHandler(
 
         foreach (var permission in permissions)
         {
-            var permissionInfo = await appManager.PermissionManager.FindPermissionAsync(permission);
+            var permissionInfo = await appManager.PermissionManager.FindByNameAsync(permission, cancellationToken);
             if (permissionInfo is null)
             {
                 return Result.Failure(new Error()

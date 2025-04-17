@@ -41,7 +41,7 @@ internal sealed class GetUsersListQueryHandler(
 
             var rolesData = (await appManager.RoleManager.GetRolesDataAsync(rolesList) ?? Array.Empty<RoleData>())
                 .ToList();
-            var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
+            var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
             var roleInfos = rolesData.ToList();
 
             if (!roleInfos.Any())
@@ -58,7 +58,7 @@ internal sealed class GetUsersListQueryHandler(
 
             foreach (var permission in permissions)
             {
-                var permissionInfo = await appManager.PermissionManager.FindPermissionAsync(permission);
+                var permissionInfo = await appManager.PermissionManager.FindByNameAsync(permission, cancellationToken);
 
                 if (permissionInfo is null)
                 {

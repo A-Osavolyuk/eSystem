@@ -2,13 +2,13 @@
 
 internal interface IPermissionManager
 {
-    public ValueTask<bool> ExistsAsync(string name);
-    public ValueTask<bool> HasPermissionAsync(AppUser user, string name);
-    public ValueTask<List<PermissionEntity>> GetPermissionsAsync();
-    public ValueTask<List<string>> GetUserPermissionsAsync(AppUser user);
-    public ValueTask<PermissionEntity?> FindPermissionAsync(string name);
-    public ValueTask<IdentityResult> IssuePermissionsAsync(AppUser user, IList<string> permissions);
-    public ValueTask<IdentityResult> IssuePermissionAsync(AppUser user, string permission);
-    public ValueTask<IdentityResult> RemoveFromPermissionAsync(AppUser user, PermissionEntity permissionEntity);
-    public ValueTask<IdentityResult> RemoveFromPermissionsAsync(AppUser user);
+    public ValueTask<bool> ExistsAsync(string name, CancellationToken cancellationToken = default);
+    public ValueTask<bool> HasPermissionAsync(AppUser user, string name, CancellationToken cancellationToken = default);
+    public ValueTask<List<PermissionEntity>> GetListAsync(CancellationToken cancellationToken = default);
+    public ValueTask<List<string>> GetUserPermissionsAsync(AppUser user, CancellationToken cancellationToken = default);
+    public ValueTask<PermissionEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
+    public ValueTask<IdentityResult> IssuePermissionsAsync(AppUser user, IEnumerable<string> collection, CancellationToken cancellationToken = default);
+    public ValueTask<IdentityResult> IssuePermissionAsync(AppUser user, string permission, CancellationToken cancellationToken = default);
+    public ValueTask<IdentityResult> RemoveFromPermissionAsync(AppUser user, PermissionEntity permissionEntity, CancellationToken cancellationToken = default);
+    public ValueTask<IdentityResult> RemoveFromPermissionsAsync(AppUser user, CancellationToken cancellationToken = default);
 }
