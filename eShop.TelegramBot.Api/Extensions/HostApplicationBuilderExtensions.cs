@@ -1,4 +1,6 @@
-﻿namespace eShop.TelegramBot.Api.Extensions;
+﻿using System.Text.Json;
+
+namespace eShop.TelegramBot.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
@@ -43,7 +45,6 @@ public static class HostApplicationBuilderExtensions
             .RemoveAllLoggers()
             .AddTypedClient<ITelegramBotClient>(client =>
                 new TelegramBotClient(section.Get<BotOptions>()!.Token, client));
-        builder.Services.ConfigureTelegramBotMvc();
         builder.Services.AddSingleton<UpdateHandler>();
     }
 
