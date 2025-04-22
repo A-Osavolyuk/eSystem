@@ -1,23 +1,23 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Responses.API.Admin;
+using eShop.Domain.DTOs;
 
-namespace eShop.Auth.Api.Features.Admin.Queries;
+namespace eShop.Auth.Api.Features.Users.Queries;
 
-internal sealed record FindUserByIdQuery(Guid UserId) : IRequest<Result>;
+internal sealed record FindUserByEmailQuery(string Email) : IRequest<Result>;
 
-internal sealed class FindUserByIdQueryHandler(
-    AppManager appManager) : IRequestHandler<FindUserByIdQuery, Result>
+internal sealed class FindUserByEmailQueryHandler(
+    AppManager appManager) : IRequestHandler<FindUserByEmailQuery, Result>
 {
     private readonly AppManager appManager = appManager;
 
-    public async Task<Result> Handle(FindUserByIdQuery request,
+    public async Task<Result> Handle(FindUserByEmailQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByIdAsync(request.UserId);
+        var user = await appManager.UserManager.FindByEmailAsync(request.Email);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with ID {request.UserId}.");
+            return Results.NotFound($"Cannot find user with email {request.Email}.");
         }
 
         var accountData = Mapper.ToAccountData(user);
@@ -27,18 +27,17 @@ internal sealed class FindUserByIdQueryHandler(
 
         if (!rolesList.Any())
         {
-            return Results.NotFound($"Cannot find roles for user with ID {user.Id}.");
+            return Results.NotFound($"Cannot find roles for user with email {user.Email}.");
         }
 
         var permissionData = new PermissionsData() { Id = user.Id };
-
         foreach (var role in rolesList)
         {
             var roleInfo = await appManager.RoleManager.FindByNameAsync(role);
 
             if (roleInfo is null)
             {
-                return Results.NotFound($"Cannot find role {role}");
+                return Results.NotFound($"Cannot find role {role}.");
             }
 
             permissionData.Roles.Add(new RoleData()
@@ -52,6 +51,7 @@ internal sealed class FindUserByIdQueryHandler(
         foreach (var permission in permissions)
         {
             var permissionInfo = await appManager.PermissionManager.FindByNameAsync(permission, cancellationToken);
+
             if (permissionInfo is null)
             {
                 return Results.NotFound($"Cannot find permission {permission}.");
@@ -64,10 +64,10 @@ internal sealed class FindUserByIdQueryHandler(
             });
         }
 
-        var response = new FindUserResponse()
+        var response = new UserDto()
         {
             AccountData = accountData,
-            PersonalDataEntity = personalData ?? new(),
+            PersonalData = personalData ?? new PersonalData(),
             PermissionsData = permissionData
         };
 

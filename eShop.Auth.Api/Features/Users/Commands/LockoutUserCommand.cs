@@ -2,7 +2,7 @@
 using eShop.Domain.Requests.API.Admin;
 using eShop.Domain.Responses.API.Admin;
 
-namespace eShop.Auth.Api.Features.Admin.Commands;
+namespace eShop.Auth.Api.Features.Users.Commands;
 
 internal sealed record LockoutUserCommand(LockoutUserRequest Request) : IRequest<Result>;
 

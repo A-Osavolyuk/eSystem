@@ -7,8 +7,6 @@ global using eShop.Auth.Api.Data;
 global using eShop.Auth.Api.Entities;
 global using eShop.Auth.Api.Extensions;
 global using eShop.Auth.Api.Features.Account.Commands;
-global using eShop.Auth.Api.Features.Admin.Commands;
-global using eShop.Auth.Api.Features.Admin.Queries;
 global using eShop.Auth.Api.Features.Security.Commands;
 global using eShop.Auth.Api.Features.Security.Queries;
 global using eShop.Auth.Api.HostedServices;

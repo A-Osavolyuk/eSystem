@@ -7,7 +7,7 @@ namespace eShop.Auth.Api.Mapping;
 
 public static class Mapper
 {
-    public static PersonalDataResponse ToPersonalDataResponse(PersonalData entity)
+    public static PersonalDataResponse Map(PersonalData entity)
     {
         return new PersonalDataResponse()
         {

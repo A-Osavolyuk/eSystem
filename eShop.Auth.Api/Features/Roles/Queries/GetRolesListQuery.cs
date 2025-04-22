@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.DTOs;
 
-namespace eShop.Auth.Api.Features.Admin.Queries;
+namespace eShop.Auth.Api.Features.Roles.Queries;
 
 internal sealed record GetRolesListQuery() : IRequest<Result>;
 
