@@ -1,13 +1,13 @@
 ﻿namespace eShop.Auth.Api.HostedServices;
 
-public class HostedCodeValidator(IServiceScopeFactory scopeFactory) : IHostedService, IDisposable
+public class CodeValidator(IServiceScopeFactory scopeFactory) : IHostedService, IDisposable
 {
     private Timer? timer;
     private readonly IServiceScopeFactory scopeFactory = scopeFactory;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        timer = new Timer(async (state) => await ValidateTokensAsync(), null, TimeSpan.FromMinutes(5),
+        timer = new Timer(async s => await ValidateTokensAsync(), null, TimeSpan.FromMinutes(5),
             TimeSpan.FromMinutes(15));
         return Task.CompletedTask;
     }

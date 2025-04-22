@@ -132,8 +132,8 @@ public static class HostApplicationBuilderExtensions
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
-        builder.Services.AddHostedService<HostedTokenValidator>();
-        builder.Services.AddHostedService<HostedCodeValidator>();
+        builder.Services.AddHostedService<TokenValidator>();
+        builder.Services.AddHostedService<CodeValidator>();
 
         builder.Services.AddScoped<AppManager>();
         builder.Services.AddScoped<CartClient>();
