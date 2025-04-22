@@ -22,34 +22,19 @@ internal sealed class LoginCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
         if (!user.EmailConfirmed)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.BadRequest,
-                Message = "Bad request",
-                Details = "The email address is not confirmed."
-            });
+            return Results.BadRequest("The email address is not confirmed.");
         }
 
         var isValidPassword = await appManager.UserManager.CheckPasswordAsync(user, request.Request.Password);
 
         if (!isValidPassword)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.BadRequest,
-                Message = "Bad request",
-                Details = "The password is not valid."
-            });
+            return Results.BadRequest("The password is not valid.");
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
@@ -67,40 +52,38 @@ internal sealed class LoginCommandHandler(
                 HasTwoFactorAuthentication = false
             });
         }
-        else
+
+        if (user.TwoFactorEnabled)
         {
-            if (user.TwoFactorEnabled)
+            var loginCode = await appManager.UserManager.GenerateTwoFactorTokenAsync(user, "Email");
+
+            await messageService.SendMessageAsync("2fa-code", new TwoFactorAuthenticationCodeMessage()
             {
-                var loginCode = await appManager.UserManager.GenerateTwoFactorTokenAsync(user, "Email");
-
-                await messageService.SendMessageAsync("2fa-code", new TwoFactorAuthenticationCodeMessage()
-                {
-                    To = user.Email!,
-                    Subject = "Login with 2FA code",
-                    UserName = user.UserName!,
-                    Code = loginCode
-                });
-
-                return Result.Success(new LoginResponse()
-                {
-                    User = userDto,
-                    Message = "We have sent an email with 2FA code at your email address.",
-                    HasTwoFactorAuthentication = true
-                });
-            }
-
-            var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-            var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
-            var tokens = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
+                To = user.Email!,
+                Subject = "Login with 2FA code",
+                UserName = user.UserName!,
+                Code = loginCode
+            }, cancellationToken);
 
             return Result.Success(new LoginResponse()
             {
                 User = userDto,
-                AccessToken = tokens.AccessToken,
-                RefreshToken = tokens.RefreshToken,
-                Message = "Successfully logged in.",
-                HasTwoFactorAuthentication = false
+                Message = "We have sent an email with 2FA code at your email address.",
+                HasTwoFactorAuthentication = true
             });
         }
+
+        var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
+        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
+        var tokens = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
+
+        return Result.Success(new LoginResponse()
+        {
+            User = userDto,
+            AccessToken = tokens.AccessToken,
+            RefreshToken = tokens.RefreshToken,
+            Message = "Successfully logged in.",
+            HasTwoFactorAuthentication = false
+        });
     }
 }

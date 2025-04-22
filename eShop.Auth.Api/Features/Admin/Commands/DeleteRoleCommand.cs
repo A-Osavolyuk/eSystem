@@ -17,34 +17,19 @@ internal sealed class DeleteRoleCommandHandler(
 
         if (role is null || role.Id != request.Request.Id)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find role with ID {request.Request.Id}."
-            });
+            return Results.NotFound($"Cannot find role with ID {request.Request.Id}.");
         }
 
         if (role.Name != request.Request.Name)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.BadRequest,
-                Message = "Bad request.",
-                Details = "Role name is different."
-            });
+            return Results.BadRequest("Role name is different.");
         }
 
         var result = await appManager.RoleManager.DeleteAsync(role);
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Server error",
-                Details = $"Cannot delete role due to server error: {result.Errors.First()}."
-            });
+            return Results.InternalServerError($"Cannot delete role due to server error: {result.Errors.First()}.");
         }
 
         return Result.Success("Role was successfully deleted.");

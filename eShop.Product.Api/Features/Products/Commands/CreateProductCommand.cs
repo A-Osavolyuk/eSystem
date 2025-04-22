@@ -1,5 +1,6 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Product;
+using Results = eShop.Domain.Common.API.Results;
 
 namespace eShop.Product.Api.Features.Products.Commands;
 
@@ -15,22 +16,12 @@ internal sealed class CreateProductCommandHandler(
     {
         if (!await context.Brands.AsNoTracking().AnyAsync(x => x.Id == request.Request.Brand.Id, cancellationToken))
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find brand with ID {request.Request.Brand.Id}"
-            });
+            return Results.NotFound($"Cannot find brand with ID {request.Request.Brand.Id}");
         }
 
         if (!await context.Sellers.AsNoTracking().AnyAsync(x => x.Id == request.Request.Seller.Id, cancellationToken))
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find seller with ID {request.Request.Seller.Id}"
-            });
+            return Results.NotFound($"Cannot find seller with ID {request.Request.Seller.Id}");
         }
 
         var entity = request.Request.ProductType switch

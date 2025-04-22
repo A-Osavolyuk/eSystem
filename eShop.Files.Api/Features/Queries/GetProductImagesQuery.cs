@@ -17,12 +17,7 @@ internal sealed class GetProductImagesQueryHandler(IStoreService service)
 
         if (!response.Any())
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find product images for product with ID {request.ProductId}."
-            });
+            return Results.NotFound($"Cannot find product images for product with ID {request.ProductId}.");
         }
 
         return Result.Success(response);

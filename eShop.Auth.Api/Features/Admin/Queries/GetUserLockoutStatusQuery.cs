@@ -16,12 +16,7 @@ internal sealed class GetUserLockoutStatusQueryHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Email}.");
         }
 
         var lockoutStatus = await appManager.UserManager.GetLockoutStatusAsync(user);

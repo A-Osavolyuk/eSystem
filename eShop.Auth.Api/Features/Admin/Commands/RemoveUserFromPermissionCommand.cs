@@ -19,24 +19,14 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find user with ID {request.Request.UserId}."
-            });
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
         var permission = await appManager.PermissionManager.FindByNameAsync(request.Request.PermissionName, cancellationToken);
 
         if (permission is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find permission {request.Request.PermissionName}."
-            });
+            return Results.NotFound($"Cannot find permission {request.Request.PermissionName}.");
         }
 
         var hasUserPermission =
@@ -53,13 +43,8 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
 
             if (!permissionResult.Succeeded)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.InternalServerError,
-                    Message = "Server error",
-                    Details = $"Cannot remove user from permission {permission.Name} " +
-                              $"due to server error: {permissionResult.Errors.First().Description}."
-                });
+                return Results.InternalServerError($"Cannot remove user from permission {permission.Name} " +
+                                                   $"due to server error: {permissionResult.Errors.First().Description}.");
             }
 
             return Result.Success("Successfully removed user form permission.");

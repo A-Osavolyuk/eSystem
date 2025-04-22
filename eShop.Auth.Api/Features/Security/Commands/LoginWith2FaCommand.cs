@@ -21,12 +21,7 @@ internal sealed class LoginWith2FaCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find user with email {request.With2FaRequest.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.With2FaRequest.Email}.");
         }
 
         var result =
@@ -34,12 +29,7 @@ internal sealed class LoginWith2FaCommandHandler(
 
         if (!result)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.BadRequest,
-                Message = "Bad request.",
-                Details = $"Invalid two-factor code {request.With2FaRequest.Code}."
-            });
+            return Results.BadRequest($"Invalid two-factor code {request.With2FaRequest.Code}.");
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
@@ -59,9 +49,9 @@ internal sealed class LoginWith2FaCommandHandler(
         }
         else
         {
-            var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-            var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
-            var tokens = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
+            var roles = await appManager.UserManager.GetRolesAsync(user);
+            var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
+            var tokens = await tokenHandler.GenerateTokenAsync(user, roles.ToList(), permissions);
 
             return Result.Success(new LoginResponse()
             {

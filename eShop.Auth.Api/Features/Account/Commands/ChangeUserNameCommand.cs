@@ -22,37 +22,22 @@ internal sealed class ChangeUserNameCommandHandler(
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
         var result = await appManager.UserManager.SetUserNameAsync(user, request.Request.UserName);
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = $"Cannot change username of user with email {request.Request.Email} " +
-                          $"due to error: {result.Errors.First().Description}."
-            });
+            return Results.InternalServerError($"Cannot change username of user with email {request.Request.Email} " +
+                                               $"due to error: {result.Errors.First().Description}.");
         }
 
         user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
         var roles = await appManager.UserManager.GetRolesAsync(user);

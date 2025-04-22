@@ -18,12 +18,7 @@ internal sealed class LockoutUserCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with ID {request.Request.UserId}."
-            });
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
         if (request.Request.Permanent)

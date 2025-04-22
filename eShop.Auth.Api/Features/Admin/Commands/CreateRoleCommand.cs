@@ -24,12 +24,8 @@ internal sealed class CreateRoleCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Server error",
-                Details = $"Cannot create role due to server error: {result.Errors.First().Description}"
-            });
+            return Results.InternalServerError(
+                $"Cannot create role due to server error: {result.Errors.First().Description}");
         }
 
         return Result.Success("Role was successfully created");

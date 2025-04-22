@@ -31,12 +31,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 
         if (email is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.BadRequest,
-                Message = "Invalid email address",
-                Details = "No email address specified in credentials."
-            });
+            return Results.BadRequest("No email address specified in credentials.");
         }
 
         var user = await appManager.UserManager.FindByEmailAsync(email);
@@ -56,7 +51,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             else
             {
                 var roles = await appManager.UserManager.GetRolesAsync(user);
-                var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
+                var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
                 var tokens = await tokenHandler.GenerateTokenAsync(user, roles.ToList(), permissions);
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { tokens!.AccessToken, tokens.RefreshToken, request.ReturnUri });
@@ -77,39 +72,25 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 
             if (!result.Succeeded)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.InternalServerError,
-                    Message = "Server error",
-                    Details = $"Cannot create user account due to server error: {result.Errors.First().Description}"
-                });
+                return Results.InternalServerError(
+                    $"Cannot create user account due to server error: {result.Errors.First().Description}");
             }
 
             var assignDefaultRoleResult = await appManager.UserManager.AddToRoleAsync(user, defaultRole);
 
             if (!assignDefaultRoleResult.Succeeded)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.InternalServerError,
-                    Message = "Server error",
-                    Details = $"Cannot assign role {defaultRole} to user with email {user.Email}" +
-                              $"due to server error: {assignDefaultRoleResult.Errors.First().Description}"
-                });
+                return Results.InternalServerError($"Cannot assign role {defaultRole} to user with email {user.Email}" +
+                                                   $"due to server error: {assignDefaultRoleResult.Errors.First().Description}");
             }
 
             var issuingPermissionsResult =
-                await appManager.PermissionManager.IssueAsync(user, [defaultPermission]);
+                await appManager.PermissionManager.IssueAsync(user, [defaultPermission], cancellationToken);
 
             if (!issuingPermissionsResult.Succeeded)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.InternalServerError,
-                    Message = "Server error",
-                    Details = $"Cannot assign permissions for user with email {user.Email} " +
-                              $"due to server error: {issuingPermissionsResult.Errors.First().Description}"
-                });
+                return Results.InternalServerError($"Cannot assign permissions for user with email {user.Email} " +
+                                                   $"due to server error: {issuingPermissionsResult.Errors.First().Description}");
             }
 
             await messageService.SendMessageAsync("external-provider-registration", new ExternalRegistrationMessage()
@@ -119,11 +100,11 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 TempPassword = tempPassword,
                 UserName = email,
                 ProviderName = request.ExternalLoginInfo!.ProviderDisplayName!
-            });
+            }, cancellationToken);
 
-            var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-            var permissions = (await appManager.PermissionManager.GetUserPermissionsAsync(user)).ToList();
-            var token = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
+            var roles = await appManager.UserManager.GetRolesAsync(user);
+            var permissions = (await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken)).ToList();
+            var token = await tokenHandler.GenerateTokenAsync(user, roles.ToList(), permissions);
             var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                 new { Token = token, ReturnUri = request.ReturnUri });
             return Result.Success(link);

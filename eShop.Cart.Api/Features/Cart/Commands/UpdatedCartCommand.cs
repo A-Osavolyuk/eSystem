@@ -1,6 +1,5 @@
 ﻿using eShop.Cart.Api.Entities;
 using eShop.Domain.Common.API;
-using eShop.Domain.Enums;
 using eShop.Domain.Requests.API.Cart;
 
 namespace eShop.Cart.Api.Features.Cart.Commands;
@@ -22,12 +21,7 @@ internal sealed class UpdatedCartCommandHandler(DbClient client)
 
         if (cart is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find cart with ID {request.Request.Id}."
-            });
+            return Results.NotFound($"Cannot find cart with ID {request.Request.Id}.");
         }
         else
         {

@@ -1,6 +1,7 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Seller;
 using eShop.Product.Api.Entities;
+using Results = eShop.Domain.Common.API.Results;
 
 namespace eShop.Product.Api.Features.Sellers.Commands;
 
@@ -20,24 +21,14 @@ internal sealed class RegisterSellerCommandHandler(
 
         if (!userResponse.IsSucceeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = userResponse.Message
-            });
+            return Results.NotFound(userResponse.Message);
         }
 
         var initiateSellerResponse = await client.InitiateSellerAsync(request.Request.UserId);
 
         if (!initiateSellerResponse.IsSucceeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = initiateSellerResponse.Message
-            });
+            return Results.InternalServerError(initiateSellerResponse.Message);
         }
 
         var entity = new SellerEntity()

@@ -24,12 +24,7 @@ internal sealed class GetPhoneNumberQueryHandler(
 
             if (user is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find user with email {request.Email}."
-                });
+                return Results.NotFound($"Cannot find user with email {request.Email}.");
             }
 
             await cacheService.SetAsync(key, user.PhoneNumber!, TimeSpan.FromHours(6));

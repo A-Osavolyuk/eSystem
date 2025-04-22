@@ -23,24 +23,14 @@ internal sealed class GetPersonalDataQueryHandler(
 
             if (user is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find user with email {request.Email}."
-                });
+                return Results.NotFound($"Cannot find user with email {request.Email}.");
             }
 
             var personalData = await appManager.ProfileManager.FindAsync(user, cancellationToken);
 
             if (personalData is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find or user with email {user.Email} has no personal data."
-                });
+                return Results.NotFound($"Cannot find or user with email {user.Email} has no personal data.");
             }
 
             await cacheService.SetAsync(key, personalData, TimeSpan.FromHours(6));

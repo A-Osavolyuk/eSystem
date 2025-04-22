@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Interfaces;
-
-namespace eShop.Auth.Api.Entities;
+﻿namespace eShop.Auth.Api.Entities;
 
 public class SecurityCodeEntity : IEntity<Guid>, IExpireable
 {

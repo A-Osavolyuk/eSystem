@@ -1,5 +1,4 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Enums;
 using eShop.Domain.Responses.API.Files;
 using eShop.Files.Api.Interfaces;
 
@@ -20,12 +19,7 @@ internal sealed class UploadProductImagesCommandHandler(
 
         if (!list.Any())
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot upload images for product with ID {request.ProductId}."
-            });
+            return Results.InternalServerError($"Cannot upload images for product with ID {request.ProductId}.");
         }
 
         return Result.Success(new UploadProductImagesResponse()

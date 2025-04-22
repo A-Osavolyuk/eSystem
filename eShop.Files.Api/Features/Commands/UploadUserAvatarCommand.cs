@@ -1,5 +1,4 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Enums;
 using eShop.Domain.Responses.API.Files;
 using eShop.Files.Api.Interfaces;
 
@@ -19,12 +18,7 @@ internal sealed class UploadUserAvatarCommandHandler(
 
         if (string.IsNullOrEmpty(response))
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot upload avatar of user with ID {request.UserId}"
-            });
+            return Results.InternalServerError($"Cannot upload avatar of user with ID {request.UserId}");
         }
 
         return Result.Success(new UploadAvatarResponse()

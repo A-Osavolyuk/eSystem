@@ -19,34 +19,20 @@ internal sealed class AssignRoleCommandHandler(
 
         if (role is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = "$Cannot find role with name {request.Request.RoleName}"
-            });
+            return Results.NotFound($"Cannot find role with name {request.Request.RoleName}");
         }
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Details = $"Cannot find user with ID {request.Request.UserId}.",
-                Message = "Not found"
-            });
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
         var result = await appManager.UserManager.AddToRoleAsync(user, role.Name!);
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Message = "Server error",
-                Code = ErrorCode.InternalServerError,
-                Details = $"Cannot assign role due to server error: {result.Errors.First().Description}"
-            });
+            return Results.InternalServerError(
+                $"Cannot assign role due to server error: {result.Errors.First().Description}");
         }
 
         return Result.Success("Role was successfully assigned");

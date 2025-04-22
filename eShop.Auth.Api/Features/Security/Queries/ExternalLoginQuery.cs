@@ -19,12 +19,7 @@ internal sealed class ExternalLoginQueryHandler(
 
         if (!validProvider)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.BadRequest,
-                Message = "Invalid provider",
-                Details = $"Invalid external provider {request.Provider}."
-            });
+            return Results.BadRequest($"Invalid external provider {request.Provider}.");
         }
 
         var handlerUri = UrlGenerator.Action("handle-external-login-response", "Auth",

@@ -18,12 +18,7 @@ internal sealed class IssuePermissionCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"User does not exist."
-            });
+            return Results.NotFound("User does not exist.");
         }
 
         var permissions = new List<PermissionEntity>();
@@ -34,12 +29,7 @@ internal sealed class IssuePermissionCommandHandler(
 
             if (permission is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Permission {permissionName} does not exist."
-                });
+                return Results.NotFound($"Permission {permissionName} does not exist.");
             }
 
             permissions.Add(permission);
@@ -47,7 +37,8 @@ internal sealed class IssuePermissionCommandHandler(
 
         foreach (var permission in permissions)
         {
-            var alreadyHasPermission = await appManager.PermissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
+            var alreadyHasPermission =
+                await appManager.PermissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
 
             if (!alreadyHasPermission)
             {
@@ -55,12 +46,8 @@ internal sealed class IssuePermissionCommandHandler(
 
                 if (!result.Succeeded)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.InternalServerError,
-                        Message = "Server error",
-                        Details = $"Failed on issuing permission with message: {result.Errors.First().Description}"
-                    });
+                    return Results.InternalServerError(
+                        $"Failed on issuing permission with message: {result.Errors.First().Description}");
                 }
             }
         }

@@ -20,12 +20,7 @@ internal sealed class ConfirmResetPasswordCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
         var resetResult =
@@ -34,13 +29,9 @@ internal sealed class ConfirmResetPasswordCommandHandler(
 
         if (!resetResult.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = $"Cannot reset password for user with email {request.Request.Email} " +
-                          $"due to server error: {resetResult.Errors.First().Description}."
-            });
+            return Results.InternalServerError(
+                $"Cannot reset password for user with email {request.Request.Email} " +
+                $"due to server error: {resetResult.Errors.First().Description}.");
         }
 
         return Result.Success("Your password has been successfully reset.");

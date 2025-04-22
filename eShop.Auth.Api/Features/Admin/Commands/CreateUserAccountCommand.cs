@@ -35,12 +35,8 @@ internal sealed class CreateUserAccountCommandHandler(
 
         if (!accountResult.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot create account due to server error: {accountResult.Errors.First().Description}."
-            });
+            return Results.NotFound(
+                $"Cannot create account due to server error: {accountResult.Errors.First().Description}.");
         }
 
         var password = appManager.SecurityManager.GenerateRandomPassword(18);
@@ -48,13 +44,8 @@ internal sealed class CreateUserAccountCommandHandler(
 
         if (!passwordResult.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details =
-                    $"Cannot add password to user account due ti server error: {passwordResult.Errors.First().Description}."
-            });
+            return Results.NotFound(
+                $"Cannot add password to user account due ti server error: {passwordResult.Errors.First().Description}.");
         }
 
         await appManager.ProfileManager.SetAsync(user, new PersonalDataEntity()
@@ -74,25 +65,15 @@ internal sealed class CreateUserAccountCommandHandler(
 
                 if (!roleExists)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.NotFound,
-                        Message = "Not found",
-                        Details = $"Role {role} does not exist."
-                    });
+                    return Results.InternalServerError($"Role {role} does not exist.");
                 }
 
                 var roleResult = await appManager.UserManager.AddToRoleAsync(user, role);
 
                 if (!roleResult.Succeeded)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.InternalServerError,
-                        Message = "Server error",
-                        Details = $"Cannot add user with ID {user.Id} to role {role} " +
-                                  $"due to server error: {roleResult.Errors.First().Description}."
-                    });
+                    return Results.InternalServerError($"Cannot add user with ID {user.Id} to role {role} " +
+                                                       $"due to server error: {roleResult.Errors.First().Description}.");
                 }
             }
         }
@@ -102,13 +83,8 @@ internal sealed class CreateUserAccountCommandHandler(
 
             if (!roleResult.Succeeded)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.InternalServerError,
-                    Message = "Server error",
-                    Details = $"Cannot add user with ID {user.Id} to role {defaultRole} " +
-                              $"due to server error: {roleResult.Errors.First().Description}."
-                });
+                return Results.InternalServerError($"Cannot add user with ID {user.Id} to role {defaultRole} " +
+                                                   $"due to server error: {roleResult.Errors.First().Description}.");
             }
         }
 
@@ -120,12 +96,7 @@ internal sealed class CreateUserAccountCommandHandler(
 
                 if (!permissionExists)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.NotFound,
-                        Message = "Not found",
-                        Details = $"Cannot find permission {permission}."
-                    });
+                    return Results.NotFound($"Cannot find permission {permission}.");
                 }
 
                 var permissionResult =
@@ -133,13 +104,9 @@ internal sealed class CreateUserAccountCommandHandler(
 
                 if (!permissionResult.Succeeded)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.InternalServerError,
-                        Message = "Server error",
-                        Details = $"Cannot issue permission {permission} to user with ID {user.Id} due to " +
-                                  $"server error: {permissionResult.Errors.First().Description}."
-                    });
+                    return Results.InternalServerError(
+                        $"Cannot issue permission {permission} to user with ID {user.Id} due to " +
+                        $"server error: {permissionResult.Errors.First().Description}.");
                 }
             }
         }
@@ -152,13 +119,9 @@ internal sealed class CreateUserAccountCommandHandler(
 
                 if (!permissionResult.Succeeded)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.InternalServerError,
-                        Message = "Server error",
-                        Details = $"Cannot issue permission {permission} to user with ID {user.Id} due to " +
-                                  $"server error: {permissionResult.Errors.First().Description}."
-                    });
+                    return Results.InternalServerError(
+                        $"Cannot issue permission {permission} to user with ID {user.Id} due to " +
+                        $"server error: {permissionResult.Errors.First().Description}.");
                 }
             }
         }

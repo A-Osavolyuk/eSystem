@@ -17,12 +17,7 @@ internal sealed class FindUserByIdQueryHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with ID {request.UserId}."
-            });
+            return Results.NotFound($"Cannot find user with ID {request.UserId}.");
         }
 
         var accountData = Mapper.ToAccountData(user);
@@ -32,12 +27,7 @@ internal sealed class FindUserByIdQueryHandler(
 
         if (!rolesList.Any())
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find roles for user with ID {user.Id}."
-            });
+            return Results.NotFound($"Cannot find roles for user with ID {user.Id}.");
         }
 
         var permissionData = new PermissionsData() { Id = user.Id };
@@ -48,12 +38,7 @@ internal sealed class FindUserByIdQueryHandler(
 
             if (roleInfo is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find role {role}"
-                });
+                return Results.NotFound($"Cannot find role {role}");
             }
 
             permissionData.Roles.Add(new RoleData()
@@ -69,12 +54,7 @@ internal sealed class FindUserByIdQueryHandler(
             var permissionInfo = await appManager.PermissionManager.FindByNameAsync(permission, cancellationToken);
             if (permissionInfo is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find permission {permission}."
-                });
+                return Results.NotFound($"Cannot find permission {permission}.");
             }
 
             permissionData.Permissions.Add(new Permission()

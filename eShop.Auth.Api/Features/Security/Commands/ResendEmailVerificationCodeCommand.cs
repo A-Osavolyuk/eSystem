@@ -20,12 +20,7 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(AppManager manag
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email: {request.Request.Email}"
-            });
+            return Results.NotFound($"Cannot find user with email: {request.Request.Email}");
         }
 
         string code;
@@ -48,7 +43,7 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(AppManager manag
             Code = code,
             Subject = "Email verification",
             UserName = user.UserName!
-        });
+        }, cancellationToken);
 
         return Result.Success("Verification code was successfully resend");
     }

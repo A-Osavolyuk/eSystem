@@ -8,3 +8,4 @@ global using eShop.Files.Api.Services;
 global using FluentValidation;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
+global using Results = eShop.Domain.Common.API.Results;

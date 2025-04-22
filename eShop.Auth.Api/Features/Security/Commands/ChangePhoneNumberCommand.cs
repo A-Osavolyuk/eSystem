@@ -23,12 +23,7 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}."
-            });
+            return Results.NotFound($"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
         }
 
         var destinationSet = new DestinationSet()
@@ -43,13 +38,13 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
         {
             Code = code.Current,
             PhoneNumber = request.Request.NewPhoneNumber
-        });
+        }, cancellationToken);
 
         await messageService.SendMessageAsync("phone-number-verification", new ChangePhoneNumberMessage()
         {
             Code = code.Next,
             PhoneNumber = request.Request.NewPhoneNumber
-        });
+        }, cancellationToken);
 
         return Result.Success("We have sent sms messages to your phone numbers.");
     }

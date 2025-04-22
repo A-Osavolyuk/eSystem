@@ -1,6 +1,5 @@
 ﻿using eShop.Cart.Api.Entities;
 using eShop.Domain.Common.API;
-using eShop.Domain.Enums;
 using eShop.Domain.Requests.API.Favorites;
 
 namespace eShop.Cart.Api.Features.Favorites.Commands;
@@ -22,12 +21,7 @@ internal sealed class UpdateFavoritesCommandHandler(DbClient client)
 
         if (favorites is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find favorites with ID {request.Request.Id}."
-            });
+            return Results.NotFound($"Cannot find favorites with ID {request.Request.Id}.");
         }
 
         var newFavorites = new FavoritesEntity()

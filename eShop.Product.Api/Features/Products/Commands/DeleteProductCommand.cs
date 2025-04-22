@@ -1,5 +1,6 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Product;
+using Results = eShop.Domain.Common.API.Results;
 
 namespace eShop.Product.Api.Features.Products.Commands;
 
@@ -18,12 +19,7 @@ internal sealed class DeleteProductCommandHandler(AppDbContext context)
 
         if (entity is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find product with ID {request.Request.ProductId}"
-            });
+            return Results.NotFound($"Cannot find product with ID {request.Request.ProductId}");
         }
 
         context.Products.Remove(entity);

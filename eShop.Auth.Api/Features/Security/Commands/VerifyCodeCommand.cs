@@ -17,12 +17,7 @@ internal sealed class VerifyCodeCommandHandler(AppManager manager)
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = result.Errors.First().Description
-            });
+            return Results.InternalServerError(result.Errors.First().Description);
         }
 
         return Result.Success("Code was successfully verified");

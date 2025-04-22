@@ -18,12 +18,7 @@ internal sealed record SetPersonalDataCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email: {request.Request.Email}"
-            });
+            return Results.NotFound($"Cannot find user with email: {request.Request.Email}");
         }
 
         var entity = Mapper.ToPersonalDataEntity(request.Request);
@@ -31,12 +26,8 @@ internal sealed record SetPersonalDataCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Server error",
-                Details = $"Failed to setting personal data with message: {result.Errors.First().Description}"
-            });
+            return Results.InternalServerError(
+                $"Failed to setting personal data with message: {result.Errors.First().Description}");
         }
 
         return Result.Success("Personal data was successfully set");

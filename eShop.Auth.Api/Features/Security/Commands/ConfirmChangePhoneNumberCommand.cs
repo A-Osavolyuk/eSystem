@@ -22,12 +22,8 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}."
-            });
+            return Results.InternalServerError(
+                $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
         }
 
         var result =
@@ -36,29 +32,20 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error.",
-                Details = $"Failed on phone number change with message: {result.Errors.First().Description}"
-            });
+            return Results.InternalServerError(
+                $"Failed on phone number change with message: {result.Errors.First().Description}");
         }
 
         user = await appManager.UserManager.FindByPhoneNumberAsync(request.Request.NewPhoneNumber);
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find user with phone number {request.Request.NewPhoneNumber}."
-            });
+            return Results.NotFound($"Cannot find user with phone number {request.Request.NewPhoneNumber}.");
         }
 
-        var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
-        var tokens = await tokenHandler.GenerateTokenAsync(user!, roles, permissions);
+        var roles = await appManager.UserManager.GetRolesAsync(user);
+        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
+        var tokens = await tokenHandler.GenerateTokenAsync(user!, roles.ToList(), permissions);
 
         return Result.Success(new ConfirmChangePhoneNumberResponse()
         {

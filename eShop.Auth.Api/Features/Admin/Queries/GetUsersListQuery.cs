@@ -31,27 +31,16 @@ internal sealed class GetUsersListQueryHandler(
 
             if (!rolesList.Any())
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find roles for user with ID {user.Id}."
-                });
+                return Results.NotFound($"Cannot find roles for user with ID {user.Id}.");
             }
 
-            var rolesData = (await appManager.RoleManager.GetRolesDataAsync(rolesList) ?? Array.Empty<RoleData>())
-                .ToList();
+            var rolesData = await appManager.RoleManager.GetRolesDataAsync(rolesList) ?? [];
             var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
             var roleInfos = rolesData.ToList();
 
             if (!roleInfos.Any())
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = "Cannot find roles data."
-                });
+                return Results.NotFound("Cannot find roles data.");
             }
 
             var permissionsList = new List<Permission>();
@@ -62,12 +51,7 @@ internal sealed class GetUsersListQueryHandler(
 
                 if (permissionInfo is null)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.NotFound,
-                        Message = "Not found",
-                        Details = $"Cannot find permission {permission}."
-                    });
+                    return Results.NotFound($"Cannot find permission {permission}.");
                 }
 
                 permissionsList.Add(new Permission()

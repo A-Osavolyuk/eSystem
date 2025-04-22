@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Enums;
 using eShop.Domain.Requests.API.Comments;
+using Results = eShop.Domain.Common.API.Results;
 
 namespace eShop.Comments.Api.Features.Commands;
 
@@ -20,12 +20,7 @@ internal sealed class UpdateCommentCommandHandler(
 
         if (comment is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find comment with id: {request.Request.CommentId}."
-            });
+            return Results.NotFound($"Cannot find comment with id: {request.Request.CommentId}.");
         }
 
         var newComment = Mapper.Map(request.Request) with { UpdateDate = DateTime.UtcNow };

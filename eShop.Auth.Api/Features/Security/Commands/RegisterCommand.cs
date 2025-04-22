@@ -24,12 +24,7 @@ internal sealed class RegisterCommandHandler(
 
         if (user is not null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = "User already exists"
-            });
+            return Results.NotFound("User already exists");
         }
 
         var newUser = Mapper.ToAppUser(request.Request);
@@ -37,39 +32,26 @@ internal sealed class RegisterCommandHandler(
 
         if (!registrationResult.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = $"Cannot create user due to server error: {registrationResult.Errors.First().Description}"
-            });
+            return Results.InternalServerError(
+                $"Cannot create user due to server error: {registrationResult.Errors.First().Description}");
         }
 
         var assignDefaultRoleResult = await appManager.UserManager.AddToRoleAsync(newUser, defaultRole);
 
         if (!assignDefaultRoleResult.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = $"Cannot assign role {defaultRole} to user with email {newUser.Email} " +
-                          $"due to server errors: {assignDefaultRoleResult.Errors.First().Description}"
-            });
+            return Results.InternalServerError($"Cannot assign role {defaultRole} to user with email {newUser.Email} " +
+                                               $"due to server errors: {assignDefaultRoleResult.Errors.First().Description}");
         }
 
         var issuingPermissionsResult =
-            await appManager.PermissionManager.IssueAsync(newUser, [defaultPermission]);
+            await appManager.PermissionManager.IssueAsync(newUser, [defaultPermission], cancellationToken);
 
         if (!issuingPermissionsResult.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = $"Cannot issue permissions for user with email {request.Request.Email} " +
-                          $"due to server errors: {issuingPermissionsResult.Errors.First().Description}"
-            });
+            return Results.InternalServerError(
+                $"Cannot issue permissions for user with email {request.Request.Email} " +
+                $"due to server errors: {issuingPermissionsResult.Errors.First().Description}");
         }
 
         var code = await appManager.SecurityManager.GenerateVerificationCodeAsync(newUser.Email!,
@@ -81,8 +63,7 @@ internal sealed class RegisterCommandHandler(
             Subject = "Email verification",
             Code = code,
             UserName = newUser.UserName!
-        });
-
+        }, cancellationToken);
 
         return Result.Success($"Your account have been successfully registered. " +
                               $"Now you have to confirm you email address to log in. " +

@@ -23,12 +23,7 @@ internal sealed class RequestChangeEmailCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.CurrentEmail}"
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.CurrentEmail}");
         }
 
         var destination = new DestinationSet()
@@ -46,7 +41,7 @@ internal sealed class RequestChangeEmailCommandHandler(
             Subject = "Email change (step one)",
             UserName = request.Request.CurrentEmail,
             NewEmail = request.Request.NewEmail,
-        });
+        }, cancellationToken);
 
         await messageService.SendMessageAsync("email-verification", new EmailVerificationMessage()
         {
@@ -54,7 +49,7 @@ internal sealed class RequestChangeEmailCommandHandler(
             UserName = request.Request.CurrentEmail,
             Subject = "Email change (step two)",
             To = request.Request.NewEmail,
-        });
+        }, cancellationToken);
 
         return Result.Success("We have sent a letter with instructions to your current and new email addresses");
     }
