@@ -5,20 +5,7 @@ public record FileRequest(
     HttpMethods Methods,
     string Url);
 
-public class FileData
+public class FileData(IReadOnlyList<IBrowserFile> files)
 {
-    public IBrowserFile File { get; init; }
-    public IReadOnlyList<IBrowserFile> Files { get; init; }
-
-    public FileData(IReadOnlyList<IBrowserFile> files)
-    {
-        Files = files;
-        File = null!;
-    }
-
-    public FileData(IBrowserFile file)
-    {
-        File = file;
-        File = null!;
-    }
+    public IReadOnlyList<IBrowserFile> Files { get; init; } = files;
 }
