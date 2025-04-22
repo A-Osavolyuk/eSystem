@@ -35,18 +35,16 @@ internal sealed class LockoutUserCommandHandler(
                 Succeeded = true
             });
         }
-        else
-        {
-            await appManager.UserManager.SetLockoutEnabledAsync(user, true);
-            await appManager.UserManager.SetLockoutEndDateAsync(user, request.Request.LockoutEnd);
 
-            return Result.Success(new LockoutUserResponse()
-            {
-                LockoutEnabled = true,
-                LockoutEnd = request.Request.LockoutEnd,
-                Message = $"User was successfully banned until {request.Request.LockoutEnd}.",
-                Succeeded = true
-            });
-        }
+        await appManager.UserManager.SetLockoutEnabledAsync(user, true);
+        await appManager.UserManager.SetLockoutEndDateAsync(user, request.Request.LockoutEnd);
+
+        return Result.Success(new LockoutUserResponse()
+        {
+            LockoutEnabled = true,
+            LockoutEnd = request.Request.LockoutEnd,
+            Message = $"User was successfully banned until {request.Request.LockoutEnd}.",
+            Succeeded = true
+        });
     }
 }

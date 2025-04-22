@@ -127,25 +127,6 @@ public class ApplicationAuthenticationStateProvider(
             new(ClaimTypes.PhoneNumber, claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)!.Value),
         };
 
-        var roles = claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
-        var permissions = claims.Where(x => x.Type == ClaimTypes.Permission).Select(x => x.Value).ToList();
-
-        if (roles.Any())
-        {
-            foreach (var role in roles)
-            {
-                output.Add(new Claim(ClaimTypes.Role, role));
-            }
-        }
-
-        if (permissions.Any())
-        {
-            foreach (var permission in permissions)
-            {
-                output.Add(new Claim(ClaimTypes.Permission, permission));
-            }
-        }
-
         return output;
     }
 

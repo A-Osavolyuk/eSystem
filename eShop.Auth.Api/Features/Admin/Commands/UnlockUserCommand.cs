@@ -34,9 +34,7 @@ internal sealed class UnlockUserCommandHandler(
 
             return Result.Success("User account was successfully unlocked.");
         }
-        else
-        {
-            return Result.Success("User account was not locked out.");
-        }
+
+        return Result.Success("User account was not locked out.");
     }
 }

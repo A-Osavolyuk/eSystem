@@ -47,19 +47,15 @@ internal sealed class LoginWith2FaCommandHandler(
                 HasTwoFactorAuthentication = false
             });
         }
-        else
-        {
-            var roles = await appManager.UserManager.GetRolesAsync(user);
-            var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
-            var tokens = await tokenHandler.GenerateTokenAsync(user, roles.ToList(), permissions);
 
-            return Result.Success(new LoginResponse()
-            {
-                User = userDto,
-                AccessToken = tokens.AccessToken,
-                RefreshToken = tokens.RefreshToken,
-                Message = "Successfully logged in."
-            });
-        }
+        var tokens = await tokenHandler.GenerateTokenAsync(user);
+
+        return Result.Success(new LoginResponse()
+        {
+            User = userDto,
+            AccessToken = tokens.AccessToken,
+            RefreshToken = tokens.RefreshToken,
+            Message = "Successfully logged in."
+        });
     }
 }

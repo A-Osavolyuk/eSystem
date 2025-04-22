@@ -42,10 +42,8 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
         {
             return Results.NotFound($"Cannot find user with phone number {request.Request.NewPhoneNumber}.");
         }
-
-        var roles = await appManager.UserManager.GetRolesAsync(user);
-        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
-        var tokens = await tokenHandler.GenerateTokenAsync(user!, roles.ToList(), permissions);
+        
+        var tokens = await tokenHandler.GenerateTokenAsync(user);
 
         return Result.Success(new ConfirmChangePhoneNumberResponse()
         {

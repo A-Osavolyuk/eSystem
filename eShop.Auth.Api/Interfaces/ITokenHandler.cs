@@ -2,6 +2,6 @@
 
 internal interface ITokenHandler
 {
-    public Task<Token> GenerateTokenAsync(AppUser user, List<string> roles, List<string> permissions);
+    public Task<Token> GenerateTokenAsync(AppUser user);
     public Task<string> RefreshTokenAsync(AppUser user, string token);
 }

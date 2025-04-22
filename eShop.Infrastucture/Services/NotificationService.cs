@@ -16,12 +16,10 @@ public class NotificationService(
         {
             return await localStorage.GetAsync<int>(Key);
         }
-        else
-        {
-            var count = await localStorage.GetAsync<int>(Key);
-            await localStorage.SetAsync(Key, count);
-            return count;
-        }
+
+        var count = await localStorage.GetAsync<int>(Key);
+        await localStorage.SetAsync(Key, count);
+        return count;
     }
 
     public async ValueTask SetNotificationsCountAsync(int notificationsCount) => await localStorage.SetAsync(Key, notificationsCount);

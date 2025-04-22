@@ -72,10 +72,8 @@ internal sealed class LoginCommandHandler(
                 HasTwoFactorAuthentication = true
             });
         }
-
-        var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
-        var tokens = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
+        
+        var tokens = await tokenHandler.GenerateTokenAsync(user);
 
         return Result.Success(new LoginResponse()
         {

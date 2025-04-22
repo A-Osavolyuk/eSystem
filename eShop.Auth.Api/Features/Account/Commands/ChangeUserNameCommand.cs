@@ -39,10 +39,8 @@ internal sealed class ChangeUserNameCommandHandler(
         {
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
-
-        var roles = await appManager.UserManager.GetRolesAsync(user);
-        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
-        var tokens = await tokenHandler.GenerateTokenAsync(user!, roles.ToList(), permissions);
+        
+        var tokens = await tokenHandler.GenerateTokenAsync(user);
 
         return Result.Success(new ChangeUserNameResponse()
         {

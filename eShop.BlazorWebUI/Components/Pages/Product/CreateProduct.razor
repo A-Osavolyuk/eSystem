@@ -204,11 +204,9 @@
             var data = response.Get<UploadProductImagesResponse>()!;
             return data.Images;
         }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-            return new();
-        }
+
+        Snackbar.Add(response.Message, Severity.Error);
+        return new();
     }
 
     private async Task CreateProductAsync(CreateProductRequest request)

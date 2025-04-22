@@ -12,7 +12,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     private readonly JwtOptions options = options.Value;
     private readonly JwtSecurityTokenHandler handler = new();
 
-    public async Task<Token> GenerateTokenAsync(AppUser user, List<string> roles, List<string> permissions)
+    public async Task<Token> GenerateTokenAsync(AppUser user)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var algorithm = SecurityAlgorithms.HmacSha256Signature;
@@ -21,7 +21,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
 
-        var claims = SetClaims(user, roles, permissions);
+        var claims = SetClaims(user);
         var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
@@ -62,7 +62,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         return token;
     }
 
-    private List<Claim> SetClaims(AppUser user, List<string> roles, List<string> permissions)
+    private List<Claim> SetClaims(AppUser user)
     {
         var claims = new List<Claim>()
         {
@@ -71,22 +71,6 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
             new(ClaimTypes.Id, user.Id.ToString()),
             new(ClaimTypes.PhoneNumber, user.PhoneNumber ?? "")
         };
-
-        if (roles.Any())
-        {
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-        }
-
-        if (permissions.Any())
-        {
-            foreach (var permission in permissions)
-            {
-                claims.Add(new Claim(ClaimTypes.Permission, permission));
-            }
-        }
 
         return claims;
     }
@@ -99,10 +83,8 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
 
             return rawToken;
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     private List<Claim> GetClaimsFromToken(JwtSecurityToken? token)

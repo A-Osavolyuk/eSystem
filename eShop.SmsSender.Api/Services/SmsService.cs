@@ -25,14 +25,12 @@ public class SmsService(IAmazonSimpleNotificationService simpleNotificationServi
                 StatusCode = response.HttpStatusCode
             };
         }
-        else
+
+        return new SingleMessageResponse()
         {
-            return new SingleMessageResponse()
-            {
-                Message = $"Failed to send SMS with code: {response.HttpStatusCode}",
-                IsSucceeded = false,
-                StatusCode = response.HttpStatusCode
-            };
-        }
+            Message = $"Failed to send SMS with code: {response.HttpStatusCode}",
+            IsSucceeded = false,
+            StatusCode = response.HttpStatusCode
+        };
     }
 }

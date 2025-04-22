@@ -39,7 +39,8 @@
         {
             return "Loading...";
         }
-        else if (string.IsNullOrEmpty(Text))
+
+        if (string.IsNullOrEmpty(Text))
         {
             return "None";
         }
@@ -52,7 +53,8 @@
         {
             return Color.Inherit;
         }
-        else if (string.IsNullOrEmpty(Text))
+
+        if (string.IsNullOrEmpty(Text))
         {
             return Color.Error;
         }

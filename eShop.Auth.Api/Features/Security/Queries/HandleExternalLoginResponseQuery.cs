@@ -15,10 +15,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
     IConfiguration configuration,
     IMessageService messageService) : IRequestHandler<HandleExternalLoginResponseQuery, Result>
 {
-    private readonly AppManager appManager = appManager;
-    private readonly ITokenHandler tokenHandler = tokenHandler;
     private readonly IConfiguration configuration = configuration;
-    private readonly IMessageService messageService = messageService;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
     private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
     private readonly string defaultPermission = configuration["Configuration:General:DefaultValues:DefaultPermission"]!;
@@ -50,15 +47,13 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             }
             else
             {
-                var roles = await appManager.UserManager.GetRolesAsync(user);
-                var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
-                var tokens = await tokenHandler.GenerateTokenAsync(user, roles.ToList(), permissions);
+                var tokens = await tokenHandler.GenerateTokenAsync(user);
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { tokens!.AccessToken, tokens.RefreshToken, request.ReturnUri });
                 return Result.Success(link);
             }
         }
-        else
+
         {
             user = new AppUser()
             {
@@ -101,10 +96,8 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 UserName = email,
                 ProviderName = request.ExternalLoginInfo!.ProviderDisplayName!
             }, cancellationToken);
-
-            var roles = await appManager.UserManager.GetRolesAsync(user);
-            var permissions = (await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken)).ToList();
-            var token = await tokenHandler.GenerateTokenAsync(user, roles.ToList(), permissions);
+            
+            var token = await tokenHandler.GenerateTokenAsync(user);
             var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                 new { Token = token, ReturnUri = request.ReturnUri });
             return Result.Success(link);

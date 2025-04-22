@@ -23,22 +23,20 @@ internal sealed class UpdatedCartCommandHandler(DbClient client)
         {
             return Results.NotFound($"Cannot find cart with ID {request.Request.Id}.");
         }
-        else
+
+        var newCart = new CartEntity
         {
-            var newCart = new CartEntity
-            {
-                Id = cart.Id,
-                UserId = cart.UserId,
-                ItemsCount = request.Request.ItemsCount,
-                UpdateDate = DateTime.Now,
-                CreateDate = cart.CreateDate,
-                Items = request.Request.Items
-            };
+            Id = cart.Id,
+            UserId = cart.UserId,
+            ItemsCount = request.Request.ItemsCount,
+            UpdateDate = DateTime.Now,
+            CreateDate = cart.CreateDate,
+            Items = request.Request.Items
+        };
 
-            await cartCollection.ReplaceOneAsync(x => x.Id == request.Request.Id, newCart,
-                cancellationToken: cancellationToken);
+        await cartCollection.ReplaceOneAsync(x => x.Id == request.Request.Id, newCart,
+            cancellationToken: cancellationToken);
 
-            return Result.Success("Cart was successfully updated");
-        }
+        return Result.Success("Cart was successfully updated");
     }
 }

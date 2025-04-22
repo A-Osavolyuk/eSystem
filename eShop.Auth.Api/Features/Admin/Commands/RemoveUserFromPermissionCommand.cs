@@ -36,18 +36,16 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
         {
             return Result.Success("User does not have the permission.");
         }
-        else
+
+        var permissionResult =
+            await appManager.PermissionManager.RemoveFromPermissionAsync(user, permission, cancellationToken);
+
+        if (!permissionResult.Succeeded)
         {
-            var permissionResult =
-                await appManager.PermissionManager.RemoveFromPermissionAsync(user, permission, cancellationToken);
-
-            if (!permissionResult.Succeeded)
-            {
-                return Results.InternalServerError($"Cannot remove user from permission {permission.Name} " +
-                                                   $"due to server error: {permissionResult.Errors.First().Description}.");
-            }
-
-            return Result.Success("Successfully removed user form permission.");
+            return Results.InternalServerError($"Cannot remove user from permission {permission.Name} " +
+                                               $"due to server error: {permissionResult.Errors.First().Description}.");
         }
+
+        return Result.Success("Successfully removed user form permission.");
     }
 }
