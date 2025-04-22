@@ -8,11 +8,9 @@ internal sealed record ChangeUserNameCommand(ChangeUserNameRequest Request)
     : IRequest<Result>;
 
 internal sealed class ChangeUserNameCommandHandler(
-    ITokenHandler tokenHandler,
     AppManager appManager,
     AuthDbContext context) : IRequestHandler<ChangeUserNameCommand, Result>
 {
-    private readonly ITokenHandler tokenHandler = tokenHandler;
     private readonly AppManager appManager = appManager;
     private readonly AuthDbContext context = context;
 
@@ -40,7 +38,7 @@ internal sealed class ChangeUserNameCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
         
-        var tokens = await tokenHandler.GenerateTokenAsync(user);
+        var tokens = await appManager.TokenManager.GenerateAsync(user);
 
         return Result.Success(new ChangeUserNameResponse()
         {

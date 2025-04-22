@@ -8,12 +8,10 @@ internal sealed record ConfirmChangePhoneNumberCommand(ConfirmChangePhoneNumberR
     : IRequest<Result>;
 
 internal sealed class ConfirmChangePhoneNumberCommandHandler(
-    AppManager appManager,
-    ITokenHandler tokenHandler)
+    AppManager appManager)
     : IRequestHandler<ConfirmChangePhoneNumberCommand, Result>
 {
     private readonly AppManager appManager = appManager;
-    private readonly ITokenHandler tokenHandler = tokenHandler;
 
     public async Task<Result> Handle(ConfirmChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
@@ -43,7 +41,7 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
             return Results.NotFound($"Cannot find user with phone number {request.Request.NewPhoneNumber}.");
         }
         
-        var tokens = await tokenHandler.GenerateTokenAsync(user);
+        var tokens = await appManager.TokenManager.GenerateAsync(user);
 
         return Result.Success(new ConfirmChangePhoneNumberResponse()
         {

@@ -9,12 +9,10 @@ internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 internal sealed class LoginCommandHandler(
     AppManager appManager,
-    IMessageService messageService,
-    ITokenHandler tokenHandler) : IRequestHandler<LoginCommand, Result>
+    IMessageService messageService) : IRequestHandler<LoginCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
-    private readonly ITokenHandler tokenHandler = tokenHandler;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
@@ -38,11 +36,11 @@ internal sealed class LoginCommandHandler(
         }
 
         var userDto = new Domain.Types.User(user.Email!, user.UserName!, user.Id);
-        var securityToken = await appManager.SecurityManager.FindTokenAsync(user);
+        var securityToken = await appManager.TokenManager.FindAsync(user);
 
         if (securityToken is not null)
         {
-            var token = await tokenHandler.RefreshTokenAsync(user, securityToken.Token);
+            var token = await appManager.TokenManager.RefreshAsync(user, securityToken.Token);
 
             return Result.Success(new LoginResponse()
             {
@@ -73,7 +71,7 @@ internal sealed class LoginCommandHandler(
             });
         }
         
-        var tokens = await tokenHandler.GenerateTokenAsync(user);
+        var tokens = await appManager.TokenManager.GenerateAsync(user);
 
         return Result.Success(new LoginResponse()
         {

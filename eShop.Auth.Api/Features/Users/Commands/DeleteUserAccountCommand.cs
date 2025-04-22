@@ -46,12 +46,11 @@ internal sealed class DeleteUserAccountCommandHandler(
                 $"Failed on deleting the user account with message: {personalDataResult.Errors.First().Description}");
         }
 
-        var tokenResult = await appManager.SecurityManager.RemoveTokenAsync(user);
+        var tokenResult = await appManager.TokenManager.RemoveAsync(user);
 
         if (!tokenResult.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Failed on deleting the user account with message: {tokenResult.Errors.First().Description}");
+            return tokenResult;
         }
 
         var accountResult = await appManager.UserManager.DeleteAsync(user);

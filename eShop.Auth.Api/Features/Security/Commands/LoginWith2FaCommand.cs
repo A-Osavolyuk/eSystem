@@ -9,11 +9,9 @@ internal sealed record LoginWith2FaCommand(LoginWith2FaRequest With2FaRequest)
     : IRequest<Result>;
 
 internal sealed class LoginWith2FaCommandHandler(
-    AppManager appManager,
-    ITokenHandler tokenHandler) : IRequestHandler<LoginWith2FaCommand, Result>
+    AppManager appManager) : IRequestHandler<LoginWith2FaCommand, Result>
 {
     private readonly AppManager appManager = appManager;
-    private readonly ITokenHandler tokenHandler = tokenHandler;
 
     public async Task<Result> Handle(LoginWith2FaCommand request,
         CancellationToken cancellationToken)
@@ -34,11 +32,11 @@ internal sealed class LoginWith2FaCommandHandler(
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
-        var securityToken = await appManager.SecurityManager.FindTokenAsync(user);
+        var securityToken = await appManager.TokenManager.FindAsync(user);
 
         if (securityToken is not null)
         {
-            var token = await tokenHandler.RefreshTokenAsync(user, securityToken.Token);
+            var token = await appManager.TokenManager.RefreshAsync(user, securityToken.Token);
 
             return Result.Success(new LoginResponse()
             {
@@ -49,7 +47,7 @@ internal sealed class LoginWith2FaCommandHandler(
             });
         }
 
-        var tokens = await tokenHandler.GenerateTokenAsync(user);
+        var tokens = await appManager.TokenManager.GenerateAsync(user);
 
         return Result.Success(new LoginResponse()
         {

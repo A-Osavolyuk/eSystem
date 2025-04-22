@@ -12,7 +12,4 @@ public interface ISecurityManager
     public ValueTask<IdentityResult> ChangePhoneNumberAsync(AppUser user, string newPhoneNumber, CodeSet codeSet);
     public ValueTask<VerificationCodeEntity?> FindCodeAsync(string destination, Verification codeType);
     public ValueTask<IdentityResult> VerifyCodeAsync(string code, string destination, Verification codeType);
-    public ValueTask<SecurityTokenEntity?> FindTokenAsync(AppUser user);
-    public ValueTask<IdentityResult> RemoveTokenAsync(AppUser user);
-    public ValueTask SaveTokenAsync(AppUser user, string token, DateTime tokenExpiration);
 }

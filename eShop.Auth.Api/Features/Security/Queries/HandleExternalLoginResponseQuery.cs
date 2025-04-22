@@ -11,7 +11,6 @@ internal sealed record HandleExternalLoginResponseQuery(
 
 internal sealed class HandleExternalLoginResponseQueryHandler(
     AppManager appManager,
-    ITokenHandler tokenHandler,
     IConfiguration configuration,
     IMessageService messageService) : IRequestHandler<HandleExternalLoginResponseQuery, Result>
 {
@@ -35,11 +34,11 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 
         if (user is not null)
         {
-            var securityToken = await appManager.SecurityManager.FindTokenAsync(user);
+            var securityToken = await appManager.TokenManager.FindAsync(user);
 
             if (securityToken is not null)
             {
-                var token = await tokenHandler.RefreshTokenAsync(user, securityToken.Token);
+                var token = await appManager.TokenManager.RefreshAsync(user, securityToken.Token);
 
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { token, request.ReturnUri });
@@ -47,7 +46,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             }
             else
             {
-                var tokens = await tokenHandler.GenerateTokenAsync(user);
+                var tokens = await appManager.TokenManager.GenerateAsync(user);
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { tokens!.AccessToken, tokens.RefreshToken, request.ReturnUri });
                 return Result.Success(link);
@@ -97,7 +96,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 ProviderName = request.ExternalLoginInfo!.ProviderDisplayName!
             }, cancellationToken);
             
-            var token = await tokenHandler.GenerateTokenAsync(user);
+            var token = await appManager.TokenManager.GenerateAsync(user);
             var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                 new { Token = token, ReturnUri = request.ReturnUri });
             return Result.Success(link);

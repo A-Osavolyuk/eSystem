@@ -145,38 +145,6 @@ internal sealed class SecurityManager(
 
         return IdentityResult.Success;
     }
-    public async ValueTask<SecurityTokenEntity?> FindTokenAsync(AppUser user)
-    {
-        var entity = await context.SecurityTokens
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UserId == user.Id);
-
-        return entity;
-    }
-    public async ValueTask<IdentityResult> RemoveTokenAsync(AppUser user)
-    {
-        var token = await context.SecurityTokens.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == user.Id);
-
-        if (token is null)
-        {
-            return IdentityResult.Failed(new IdentityError() { Code = "404", Description = "Cannot find token" });
-        }
-
-        context.SecurityTokens.Remove(token);
-        await context.SaveChangesAsync();
-
-        return IdentityResult.Success;
-    }
-    public async ValueTask SaveTokenAsync(AppUser user, string token, DateTime validTo)
-    {
-        await context.SecurityTokens.AddAsync(new()
-        {
-            UserId = user.Id, 
-            Token = token,
-            ExpireDate = validTo,
-        });
-        await context.SaveChangesAsync();
-    }
 
     #region Private methods
 
