@@ -123,12 +123,12 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddScoped<ITokenHandler, TokenHandler>();
         builder.Services.AddScoped<IPermissionManager, PermissionManager>();
         builder.Services.AddScoped<ISecurityManager, SecurityManager>();
         builder.Services.AddScoped<IProfileManager, ProfileManager>();
         builder.Services.AddScoped<ICacheService, CacheService>();
         builder.Services.AddScoped<IMessageService, MessageService>();
+        builder.Services.AddScoped<ITokenManager, TokenManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 

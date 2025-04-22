@@ -1,18 +1,59 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using eShop.Domain.Common.API;
 using Microsoft.Extensions.Options;
-using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
 
 namespace eShop.Auth.Api.Services;
 
-internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManager securityManager) : ITokenHandler
+public class TokenManager(
+    AuthDbContext context, 
+    IOptions<JwtOptions> options) : ITokenManager
 {
-    private readonly ISecurityManager securityManager = securityManager;
+    private readonly AuthDbContext context = context;
     private const int AccessTokenExpirationMinutes = 30;
     private readonly JwtOptions options = options.Value;
     private readonly JwtSecurityTokenHandler handler = new();
 
-    public async Task<Token> GenerateTokenAsync(AppUser user)
+    public async ValueTask<SecurityTokenEntity?> FindAsync(AppUser user)
+    {
+        var entity = await context.SecurityTokens
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.UserId == user.Id);
+
+        return entity;
+    }
+
+    public async ValueTask<Result> RemoveAsync(AppUser user)
+    {
+        var token = await context.SecurityTokens.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == user.Id);
+
+        if (token is null)
+        {
+            return Results.NotFound("Token not found");
+        }
+
+        context.SecurityTokens.Remove(token);
+        await context.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> CreateAsync(AppUser user, string token, DateTime tokenExpiration)
+    {
+        var entity = new SecurityTokenEntity()
+        {
+            UserId = user.Id,
+            Token = token,
+            ExpireDate = tokenExpiration,
+        };
+        
+        await context.SecurityTokens.AddAsync(entity);
+        await context.SaveChangesAsync();
+        
+        return Result.Success();
+    }
+    
+    public async Task<Token> GenerateAsync(AppUser user)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var algorithm = SecurityAlgorithms.HmacSha256Signature;
@@ -25,7 +66,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await securityManager.SaveTokenAsync(user, refreshToken, refreshTokenExpiration);
+        await CreateAsync(user, refreshToken, refreshTokenExpiration);
 
         return new Token()
         {
@@ -35,7 +76,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     }
 
 
-    public async Task<string> RefreshTokenAsync(AppUser user, string token)
+    public async Task<string> RefreshAsync(AppUser user, string token)
     {
         var rawToken = DecryptToken(token);
         var claims = GetClaimsFromToken(rawToken);
@@ -45,7 +86,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await securityManager.SaveTokenAsync(user, refreshToken, refreshTokenExpiration);
+        await CreateAsync(user, refreshToken, refreshTokenExpiration);
         
         return refreshToken;
     }
@@ -66,10 +107,10 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     {
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, user.UserName ?? ""),
-            new(ClaimTypes.Email, user.Email ?? ""),
-            new(ClaimTypes.Id, user.Id.ToString()),
-            new(ClaimTypes.PhoneNumber, user.PhoneNumber ?? "")
+            new(ClaimTypes_.UserName, user.UserName ?? ""),
+            new(ClaimTypes_.Email, user.Email ?? ""),
+            new(ClaimTypes_.Id, user.Id.ToString()),
+            new(ClaimTypes_.PhoneNumber, user.PhoneNumber ?? "")
         };
 
         return claims;
@@ -96,20 +137,20 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
 
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, GetClaimValue(token, ClaimTypes.UserName)),
-            new(ClaimTypes.Email, GetClaimValue(token, ClaimTypes.Email)),
-            new(ClaimTypes.Id, GetClaimValue(token, ClaimTypes.Id)),
-            new(ClaimTypes.PhoneNumber, GetClaimValue(token, ClaimTypes.PhoneNumber)),
+            new(ClaimTypes_.UserName, GetClaimValue(token, ClaimTypes_.UserName)),
+            new(ClaimTypes_.Email, GetClaimValue(token, ClaimTypes_.Email)),
+            new(ClaimTypes_.Id, GetClaimValue(token, ClaimTypes_.Id)),
+            new(ClaimTypes_.PhoneNumber, GetClaimValue(token, ClaimTypes_.PhoneNumber)),
         };
 
-        var roles = token.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
-        var permissions = token.Claims.Where(x => x.Type == ClaimTypes.Permission).Select(x => x.Value).ToList();
+        var roles = token.Claims.Where(x => x.Type == ClaimTypes_.Role).Select(x => x.Value).ToList();
+        var permissions = token.Claims.Where(x => x.Type == ClaimTypes_.Permission).Select(x => x.Value).ToList();
 
         if (roles.Any())
         {
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim(ClaimTypes_.Role, role));
             }
         }
 
@@ -117,7 +158,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         {
             foreach (var permission in permissions)
             {
-                claims.Add(new Claim(ClaimTypes.Permission, permission));
+                claims.Add(new Claim(ClaimTypes_.Permission, permission));
             }
         }
 
