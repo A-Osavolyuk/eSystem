@@ -55,9 +55,9 @@ internal sealed class ChangeUserNameCommandHandler(
             });
         }
 
-        var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-        var permissions = (await appManager.PermissionManager.GetUserPermissionsAsync(user)).ToList();
-        var tokens = await tokenHandler.GenerateTokenAsync(user!, roles, permissions);
+        var roles = await appManager.UserManager.GetRolesAsync(user);
+        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
+        var tokens = await tokenHandler.GenerateTokenAsync(user!, roles.ToList(), permissions);
 
         return Result.Success(new ChangeUserNameResponse()
         {
