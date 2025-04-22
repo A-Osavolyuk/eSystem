@@ -92,10 +92,10 @@ public class TokenManager(
     {
         var claims = new List<Claim>()
         {
-            new(ClaimTypes_.UserName, user.UserName ?? ""),
-            new(ClaimTypes_.Email, user.Email ?? ""),
-            new(ClaimTypes_.Id, user.Id.ToString()),
-            new(ClaimTypes_.PhoneNumber, user.PhoneNumber ?? "")
+            new(ClaimTypes.UserName, user.UserName ?? ""),
+            new(ClaimTypes.Email, user.Email ?? ""),
+            new(ClaimTypes.Id, user.Id.ToString()),
+            new(ClaimTypes.PhoneNumber, user.PhoneNumber ?? "")
         };
 
         return claims;
@@ -122,20 +122,20 @@ public class TokenManager(
 
         var claims = new List<Claim>()
         {
-            new(ClaimTypes_.UserName, GetClaimValue(token, ClaimTypes_.UserName)),
-            new(ClaimTypes_.Email, GetClaimValue(token, ClaimTypes_.Email)),
-            new(ClaimTypes_.Id, GetClaimValue(token, ClaimTypes_.Id)),
-            new(ClaimTypes_.PhoneNumber, GetClaimValue(token, ClaimTypes_.PhoneNumber)),
+            new(ClaimTypes.UserName, GetClaimValue(token, ClaimTypes.UserName)),
+            new(ClaimTypes.Email, GetClaimValue(token, ClaimTypes.Email)),
+            new(ClaimTypes.Id, GetClaimValue(token, ClaimTypes.Id)),
+            new(ClaimTypes.PhoneNumber, GetClaimValue(token, ClaimTypes.PhoneNumber)),
         };
 
-        var roles = token.Claims.Where(x => x.Type == ClaimTypes_.Role).Select(x => x.Value).ToList();
-        var permissions = token.Claims.Where(x => x.Type == ClaimTypes_.Permission).Select(x => x.Value).ToList();
+        var roles = token.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
+        var permissions = token.Claims.Where(x => x.Type == ClaimTypes.Permission).Select(x => x.Value).ToList();
 
         if (roles.Any())
         {
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes_.Role, role));
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
         }
 
@@ -143,7 +143,7 @@ public class TokenManager(
         {
             foreach (var permission in permissions)
             {
-                claims.Add(new Claim(ClaimTypes_.Permission, permission));
+                claims.Add(new Claim(ClaimTypes.Permission, permission));
             }
         }
 

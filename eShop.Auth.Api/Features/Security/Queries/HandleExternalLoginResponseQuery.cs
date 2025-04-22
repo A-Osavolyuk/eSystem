@@ -1,6 +1,5 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Messages.Email;
-using ClaimTypes = System.Security.Claims.ClaimTypes;
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 
@@ -23,7 +22,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
         CancellationToken cancellationToken)
     {
         var email = request.ExternalLoginInfo.Principal.Claims
-            .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            .FirstOrDefault(x => x.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
 
         if (email is null)
         {
