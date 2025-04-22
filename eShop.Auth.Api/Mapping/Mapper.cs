@@ -18,7 +18,7 @@ public static class Mapper
         };
     }
 
-    public static PersonalDataEntity ToPersonalDataEntity(ChangePersonalDataRequest request)
+    public static PersonalDataEntity Map(ChangePersonalDataRequest request)
     {
         return new PersonalDataEntity()
         {
@@ -29,7 +29,7 @@ public static class Mapper
         };
     }
 
-    public static PersonalDataEntity ToPersonalDataEntity(SetPersonalDataRequest request)
+    public static PersonalDataEntity Map(SetPersonalDataRequest request)
     {
         return new PersonalDataEntity()
         {
@@ -40,7 +40,7 @@ public static class Mapper
         };
     }
 
-    public static PersonalData ToPersonalData(PersonalDataEntity data)
+    public static PersonalData Map(PersonalDataEntity data)
     {
         return new PersonalData()
         {
@@ -51,7 +51,7 @@ public static class Mapper
         };
     }
 
-    public static AppUser ToAppUser(RegistrationRequest request)
+    public static AppUser Map(RegistrationRequest request)
     {
         return new AppUser()
         {
@@ -62,7 +62,7 @@ public static class Mapper
         };
     }
 
-    public static AccountData ToAccountData(AppUser user)
+    public static AccountData Map(AppUser user)
     {
         return new AccountData()
         {
@@ -77,7 +77,7 @@ public static class Mapper
         };
     }
 
-    public static LockoutStatusResponse ToUserLockoutStatusResponse(LockoutStatus status)
+    public static LockoutStatusResponse Map(LockoutStatus status)
     {
         return new LockoutStatusResponse()
         {

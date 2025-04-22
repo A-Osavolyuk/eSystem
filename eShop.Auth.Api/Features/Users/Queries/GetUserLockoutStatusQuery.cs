@@ -21,6 +21,6 @@ internal sealed class GetUserLockoutStatusQueryHandler(
 
         var lockoutStatus = await appManager.UserManager.GetLockoutStatusAsync(user);
         
-        return Result.Success(Mapper.ToUserLockoutStatusResponse(lockoutStatus));
+        return Result.Success(Mapper.Map(lockoutStatus));
     }
 }

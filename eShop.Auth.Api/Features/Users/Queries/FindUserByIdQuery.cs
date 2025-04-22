@@ -20,7 +20,7 @@ internal sealed class FindUserByIdQueryHandler(
             return Results.NotFound($"Cannot find user with ID {request.UserId}.");
         }
 
-        var accountData = Mapper.ToAccountData(user);
+        var accountData = Mapper.Map(user);
         var personalData = await appManager.ProfileManager.FindAsync(user, cancellationToken);
         var rolesList = await appManager.UserManager.GetRolesAsync(user);
         var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);

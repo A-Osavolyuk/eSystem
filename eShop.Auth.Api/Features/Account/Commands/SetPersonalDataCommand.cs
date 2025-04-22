@@ -21,7 +21,7 @@ internal sealed record SetPersonalDataCommandHandler(
             return Results.NotFound($"Cannot find user with email: {request.Request.Email}");
         }
 
-        var entity = Mapper.ToPersonalDataEntity(request.Request);
+        var entity = Mapper.Map(request.Request);
         var result = await appManager.ProfileManager.SetAsync(user, entity, cancellationToken);
 
         if (!result.Succeeded)
