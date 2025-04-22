@@ -57,7 +57,7 @@ public static class HostApplicationBuilderExtensions
         
         builder.Services.Configure<JwtOptions>(configuration.GetSection("Configuration:Security:Authentication:JWT"));
         
-        builder.Services.AddIdentity<AppUser, AppRole>(options =>
+        builder.Services.AddIdentity<UserEntity, AppRole>(options =>
         {
             options.User.RequireUniqueEmail = true;
             options.SignIn.RequireConfirmedEmail = true;
@@ -129,6 +129,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddScoped<ICacheService, CacheService>();
         builder.Services.AddScoped<IMessageService, MessageService>();
         builder.Services.AddScoped<ITokenManager, TokenManager>();
+        builder.Services.AddScoped<ICodeManager, CodeManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
