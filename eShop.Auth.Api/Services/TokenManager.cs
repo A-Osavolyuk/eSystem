@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using eShop.Domain.Common.API;
 using Microsoft.Extensions.Options;
@@ -35,21 +35,6 @@ public class TokenManager(
         context.SecurityTokens.Remove(token);
         await context.SaveChangesAsync();
 
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> CreateAsync(AppUser user, string token, DateTime tokenExpiration)
-    {
-        var entity = new SecurityTokenEntity()
-        {
-            UserId = user.Id,
-            Token = token,
-            ExpireDate = tokenExpiration,
-        };
-        
-        await context.SecurityTokens.AddAsync(entity);
-        await context.SaveChangesAsync();
-        
         return Result.Success();
     }
     
@@ -169,5 +154,20 @@ public class TokenManager(
     {
         var value = token.Claims.FirstOrDefault(x => x.Type == claimType)!.Value;
         return value;
+    }
+    
+    private async ValueTask<Result> CreateAsync(AppUser user, string token, DateTime tokenExpiration)
+    {
+        var entity = new SecurityTokenEntity()
+        {
+            UserId = user.Id,
+            Token = token,
+            ExpireDate = tokenExpiration,
+        };
+        
+        await context.SecurityTokens.AddAsync(entity);
+        await context.SaveChangesAsync();
+        
+        return Result.Success();
     }
 }
