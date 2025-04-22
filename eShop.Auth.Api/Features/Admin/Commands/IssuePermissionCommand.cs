@@ -51,7 +51,7 @@ internal sealed class IssuePermissionCommandHandler(
 
             if (!alreadyHasPermission)
             {
-                var result = await appManager.PermissionManager.IssuePermissionAsync(user, permission.Name, cancellationToken);
+                var result = await appManager.PermissionManager.IssueAsync(user, permission.Name, cancellationToken);
 
                 if (!result.Succeeded)
                 {

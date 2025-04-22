@@ -99,7 +99,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             }
 
             var issuingPermissionsResult =
-                await appManager.PermissionManager.IssuePermissionsAsync(user, [defaultPermission]);
+                await appManager.PermissionManager.IssueAsync(user, [defaultPermission]);
 
             if (!issuingPermissionsResult.Succeeded)
             {

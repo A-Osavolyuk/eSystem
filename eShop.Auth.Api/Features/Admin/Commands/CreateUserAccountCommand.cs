@@ -129,7 +129,7 @@ internal sealed class CreateUserAccountCommandHandler(
                 }
 
                 var permissionResult =
-                    await appManager.PermissionManager.IssuePermissionAsync(user, permission, cancellationToken);
+                    await appManager.PermissionManager.IssueAsync(user, permission, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {
@@ -148,7 +148,7 @@ internal sealed class CreateUserAccountCommandHandler(
             foreach (var permission in defaultPermissions)
             {
                 var permissionResult =
-                    await appManager.PermissionManager.IssuePermissionAsync(user, permission, cancellationToken);
+                    await appManager.PermissionManager.IssueAsync(user, permission, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {
