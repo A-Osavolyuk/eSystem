@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -9,11 +8,13 @@ internal sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest
 internal sealed class RequestChangeEmailCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<ChangeEmailCommand, Result>
+    IConfiguration configuration,
+    ICodeManager codeManager) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
     private readonly IConfiguration configuration = configuration;
+    private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangeEmailCommand request,
@@ -31,12 +32,13 @@ internal sealed class RequestChangeEmailCommandHandler(
             Current = request.Request.CurrentEmail,
             Next = request.Request.NewEmail
         };
-        var code = await appManager.SecurityManager.GenerateVerificationCodeSetAsync(destination,
-            Verification.ChangeEmail);
+
+        var oldEmailCode = await codeManager.GenerateAsync(user, Verification.OldEmail);
+        var newEmailCode = await codeManager.GenerateAsync(user, Verification.NewEmail);
 
         await messageService.SendMessageAsync("email-change", new ChangeEmailMessage()
         {
-            Code = code.Current,
+            Code = oldEmailCode,
             To = request.Request.CurrentEmail,
             Subject = "Email change (step one)",
             UserName = request.Request.CurrentEmail,
@@ -45,7 +47,7 @@ internal sealed class RequestChangeEmailCommandHandler(
 
         await messageService.SendMessageAsync("email-verification", new EmailVerificationMessage()
         {
-            Code = code.Next,
+            Code = newEmailCode,
             UserName = request.Request.CurrentEmail,
             Subject = "Email change (step two)",
             To = request.Request.NewEmail,

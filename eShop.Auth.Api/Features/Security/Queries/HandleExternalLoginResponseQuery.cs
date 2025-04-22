@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Messages.Email;
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 
@@ -53,7 +52,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
         }
 
         {
-            user = new AppUser()
+            user = new UserEntity()
             {
                 Email = email,
                 UserName = email,

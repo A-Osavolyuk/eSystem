@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Account.Commands;
 

@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Messages.Sms;
+﻿using eShop.Domain.Messages.Sms;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -10,10 +9,12 @@ internal sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request
 internal sealed class RequestChangePhoneNumberCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<ChangePhoneNumberCommand, Result>
+    IConfiguration configuration,
+    ICodeManager codeManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
+    private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
@@ -31,18 +32,19 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
             Current = user.PhoneNumber!,
             Next = request.Request.NewPhoneNumber
         };
-        var code = await appManager.SecurityManager.GenerateVerificationCodeSetAsync(destinationSet,
-            Verification.ChangePhoneNumber);
+        
+        var oldPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.OldPhoneNumber);
+        var newPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.NewPhoneNumber);
 
         await messageService.SendMessageAsync("phone-number-change", new ChangePhoneNumberMessage()
         {
-            Code = code.Current,
+            Code = oldPhoneNumberCode,
             PhoneNumber = request.Request.NewPhoneNumber
         }, cancellationToken);
 
         await messageService.SendMessageAsync("phone-number-verification", new ChangePhoneNumberMessage()
         {
-            Code = code.Next,
+            Code = newPhoneNumberCode,
             PhoneNumber = request.Request.NewPhoneNumber
         }, cancellationToken);
 

@@ -1,5 +1,4 @@
 ﻿using eShop.Application;
-using eShop.Domain.Common.API;
 using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
@@ -30,9 +29,7 @@ internal sealed class VerifyEmailCommandHandler(
 
         if (!confirmResult.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Cannot confirm email address of user with email {request.Request.Email} " +
-                $"due to server error: {confirmResult.Errors.First().Description}.");
+            return confirmResult;
         }
 
         await messageService.SendMessageAsync("email-verified", new EmailVerifiedMessage()

@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -29,9 +28,7 @@ internal sealed class ConfirmResetPasswordCommandHandler(
 
         if (!resetResult.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Cannot reset password for user with email {request.Request.Email} " +
-                $"due to server error: {resetResult.Errors.First().Description}.");
+            return resetResult;
         }
 
         return Result.Success("Your password has been successfully reset.");

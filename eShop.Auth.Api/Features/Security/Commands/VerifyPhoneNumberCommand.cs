@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -27,8 +26,7 @@ internal sealed class VerifyPhoneNumberCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Failed on verifying phone number with message: {result.Errors.First().Description}");
+            return result;
         }
 
         return Result.Success("Phone number was successfully verified");

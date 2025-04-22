@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -10,11 +9,13 @@ internal sealed record RequestResetPasswordCommand(ResetPasswordRequest Request)
 internal sealed class RequestResetPasswordCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<RequestResetPasswordCommand, Result>
+    IConfiguration configuration,
+    ICodeManager codeManager) : IRequestHandler<RequestResetPasswordCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
     private readonly IConfiguration configuration = configuration;
+    private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(RequestResetPasswordCommand request,
@@ -27,8 +28,7 @@ internal sealed class RequestResetPasswordCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var code = await appManager.SecurityManager.GenerateVerificationCodeAsync(user.Email!,
-            Verification.ResetPassword);
+        var code = await codeManager.GenerateAsync(user, Verification.ResetPassword);
 
         await messageService.SendMessageAsync("password-reset", new ResetPasswordMessage()
         {

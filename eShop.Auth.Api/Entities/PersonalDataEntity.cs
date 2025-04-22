@@ -12,5 +12,5 @@ public record class PersonalDataEntity : IEntity<Guid>
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
     [JsonIgnore] public Guid UserId { get; init; }
-    [JsonIgnore] public AppUser? User { get; init; }
+    [JsonIgnore] public UserEntity? User { get; init; }
 }

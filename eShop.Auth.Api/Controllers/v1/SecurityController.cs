@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -8,9 +7,9 @@ namespace eShop.Auth.Api.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Authorize]
-public class SecurityController(SignInManager<AppUser> signInManager, ISender sender) : ControllerBase
+public class SecurityController(SignInManager<UserEntity> signInManager, ISender sender) : ControllerBase
 {
-    private readonly SignInManager<AppUser> signInManager = signInManager;
+    private readonly SignInManager<UserEntity> signInManager = signInManager;
     private readonly ISender sender = sender;
 
     #region Get methods

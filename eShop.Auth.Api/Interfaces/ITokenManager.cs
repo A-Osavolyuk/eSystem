@@ -1,11 +1,9 @@
-﻿using eShop.Domain.Common.API;
-
-namespace eShop.Auth.Api.Interfaces;
+﻿namespace eShop.Auth.Api.Interfaces;
 
 public interface ITokenManager
 {
-    public ValueTask<SecurityTokenEntity?> FindAsync(AppUser user);
-    public ValueTask<Result> RemoveAsync(AppUser user);
-    public Task<Token> GenerateAsync(AppUser user);
-    public Task<string> RefreshAsync(AppUser user, string token);
+    public ValueTask<SecurityTokenEntity?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> RemoveAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
+    public Task<Token> GenerateAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
+    public Task<string> RefreshAsync(UserEntity userEntity, string token, CancellationToken cancellationToken = default);
 }

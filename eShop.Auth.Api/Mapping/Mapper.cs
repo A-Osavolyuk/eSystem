@@ -51,9 +51,9 @@ public static class Mapper
         };
     }
 
-    public static AppUser Map(RegistrationRequest request)
+    public static UserEntity Map(RegistrationRequest request)
     {
-        return new AppUser()
+        return new UserEntity()
         {
             Email = request.Email,
             UserName = request.Email,
@@ -62,18 +62,18 @@ public static class Mapper
         };
     }
 
-    public static AccountData Map(AppUser user)
+    public static AccountData Map(UserEntity userEntity)
     {
         return new AccountData()
         {
-            Id = user.Id,
-            Email = user.Email!,
-            UserName = user.UserName!,
-            PhoneNumber = user.PhoneNumber!,
-            EmailConfirmed = user.EmailConfirmed,
-            LockoutEnabled = user.LockoutEnabled,
-            LockoutEnd = user.LockoutEnd,
-            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+            Id = userEntity.Id,
+            Email = userEntity.Email!,
+            UserName = userEntity.UserName!,
+            PhoneNumber = userEntity.PhoneNumber!,
+            EmailConfirmed = userEntity.EmailConfirmed,
+            LockoutEnabled = userEntity.LockoutEnabled,
+            LockoutEnd = userEntity.LockoutEnd,
+            PhoneNumberConfirmed = userEntity.PhoneNumberConfirmed,
         };
     }
 

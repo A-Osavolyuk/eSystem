@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Admin;
+﻿using eShop.Domain.Requests.API.Admin;
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
@@ -20,7 +19,7 @@ internal sealed class CreateUserAccountCommandHandler(
         CancellationToken cancellationToken)
     {
         var userId = Guid.NewGuid();
-        var user = new AppUser()
+        var user = new UserEntity()
         {
             Id = userId,
             Email = request.Request.Email,

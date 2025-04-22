@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data;
 
-public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<AppUser, AppRole, Guid>(options)
+public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<UserEntity, AppRole, Guid>(options)
 {
     public DbSet<PersonalDataEntity> PersonalData => Set<PersonalDataEntity>();
     public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
@@ -130,8 +130,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : Ide
                 });
         });
 
-        builder.Entity<AppUser>().HasData(
-            new AppUser()
+        builder.Entity<UserEntity>().HasData(
+            new UserEntity()
             {
                 Email = "sasha.osavolll111@gmail.com",
                 NormalizedEmail = "sasha.osavolll111@gmail.com".ToUpper(),
@@ -149,7 +149,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : Ide
         {
             x.HasKey(ur => new { ur.UserId, ur.Id });
 
-            x.HasOne(ur => ur.User)
+            x.HasOne(ur => ur.UserEntity)
                 .WithMany(u => u.Permissions)
                 .HasForeignKey(ur => ur.UserId);
 
@@ -189,7 +189,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : Ide
         {
             x.HasKey(k => k.Id);
             x.Property(t => t.Token).HasColumnType("VARCHAR(MAX)");
-            x.HasOne(t => t.User).WithOne(u => u.AuthenticationToken).HasForeignKey<SecurityTokenEntity>(t => t.UserId);
+            x.HasOne(t => t.UserEntity).WithOne(u => u.AuthenticationToken).HasForeignKey<SecurityTokenEntity>(t => t.UserId);
         });
     }
 }

@@ -4,11 +4,11 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<PersonalData?> FindAsync(AppUser user, CancellationToken cancellationToken = default)
+    public async ValueTask<PersonalData?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
         var data = await context.PersonalData
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
 
         if (data is null)
         {
@@ -19,21 +19,21 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
         return response;
     }
 
-    public async ValueTask<IdentityResult> SetAsync(AppUser user, PersonalDataEntity personalData,
+    public async ValueTask<IdentityResult> SetAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default)
     {
-        personalData = personalData with { UserId = user.Id };
+        personalData = personalData with { UserId = userEntity.Id };
         await context.PersonalData.AddAsync(personalData, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return IdentityResult.Success;
     }
 
-    public async ValueTask<IdentityResult> UpdateAsync(AppUser user, PersonalDataEntity personalData,
+    public async ValueTask<IdentityResult> UpdateAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default)
     {
         var data = await context.PersonalData
-            .FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
 
         if (data is null)
         {
@@ -47,7 +47,7 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
         var newData = new PersonalDataEntity()
         {
             Id = data.Id,
-            UserId = user.Id,
+            UserId = userEntity.Id,
             Gender = personalData.Gender,
             FirstName = personalData.FirstName,
             LastName = personalData.LastName,
@@ -60,11 +60,11 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
         return IdentityResult.Success;
     }
 
-    public async ValueTask<IdentityResult> DeleteAsync(AppUser user,
+    public async ValueTask<IdentityResult> DeleteAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default)
     {
         var data = await context.PersonalData
-            .FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
 
         if (data is null)
         {

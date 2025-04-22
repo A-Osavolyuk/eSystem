@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -9,10 +8,12 @@ internal sealed record RegisterCommand(RegistrationRequest Request) : IRequest<R
 internal sealed class RegisterCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<RegisterCommand, Result>
+    IConfiguration configuration,
+    ICodeManager codeManager) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
+    private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
     private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
     private readonly string defaultPermission = configuration["Configuration:General:DefaultValues:DefaultPermission"]!;
@@ -54,9 +55,8 @@ internal sealed class RegisterCommandHandler(
                 $"due to server errors: {issuingPermissionsResult.Errors.First().Description}");
         }
 
-        var code = await appManager.SecurityManager.GenerateVerificationCodeAsync(newUser.Email!,
-            Verification.VerifyEmail);
-
+        var code = await codeManager.GenerateAsync(user!, Verification.VerifyEmail);
+        
         await messageService.SendMessageAsync("email-verification", new EmailVerificationMessage()
         {
             To = request.Request.Email,

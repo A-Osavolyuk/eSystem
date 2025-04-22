@@ -1,12 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using eShop.Domain.Common.API;
 using Microsoft.Extensions.Options;
 
 namespace eShop.Auth.Api.Services;
 
 public class TokenManager(
-    AuthDbContext context, 
+    AuthDbContext context,
     IOptions<JwtOptions> options) : ITokenManager
 {
     private readonly AuthDbContext context = context;
@@ -14,18 +13,21 @@ public class TokenManager(
     private readonly JwtOptions options = options.Value;
     private readonly JwtSecurityTokenHandler handler = new();
 
-    public async ValueTask<SecurityTokenEntity?> FindAsync(AppUser user)
+    public async ValueTask<SecurityTokenEntity?> FindAsync(UserEntity userEntity,
+        CancellationToken cancellationToken = default)
     {
         var entity = await context.SecurityTokens
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UserId == user.Id);
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
 
         return entity;
     }
 
-    public async ValueTask<Result> RemoveAsync(AppUser user)
+    public async ValueTask<Result> RemoveAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
-        var token = await context.SecurityTokens.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == user.Id);
+        var token = await context.SecurityTokens
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
 
         if (token is null)
         {
@@ -33,12 +35,12 @@ public class TokenManager(
         }
 
         context.SecurityTokens.Remove(token);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
-    
-    public async Task<Token> GenerateAsync(AppUser user)
+
+    public async Task<Token> GenerateAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var algorithm = SecurityAlgorithms.HmacSha256Signature;
@@ -47,11 +49,11 @@ public class TokenManager(
         var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
 
-        var claims = SetClaims(user);
+        var claims = SetClaims(userEntity);
         var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await CreateAsync(user, refreshToken, refreshTokenExpiration);
+        await CreateAsync(userEntity, refreshToken, refreshTokenExpiration);
 
         return new Token()
         {
@@ -61,7 +63,7 @@ public class TokenManager(
     }
 
 
-    public async Task<string> RefreshAsync(AppUser user, string token)
+    public async Task<string> RefreshAsync(UserEntity userEntity, string token, CancellationToken cancellationToken = default)
     {
         var rawToken = DecryptToken(token);
         var claims = GetClaimsFromToken(rawToken);
@@ -71,8 +73,8 @@ public class TokenManager(
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await CreateAsync(user, refreshToken, refreshTokenExpiration);
-        
+        await CreateAsync(userEntity, refreshToken, refreshTokenExpiration, cancellationToken);
+
         return refreshToken;
     }
 
@@ -88,14 +90,14 @@ public class TokenManager(
         return token;
     }
 
-    private List<Claim> SetClaims(AppUser user)
+    private List<Claim> SetClaims(UserEntity userEntity)
     {
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, user.UserName ?? ""),
-            new(ClaimTypes.Email, user.Email ?? ""),
-            new(ClaimTypes.Id, user.Id.ToString()),
-            new(ClaimTypes.PhoneNumber, user.PhoneNumber ?? "")
+            new(ClaimTypes.UserName, userEntity.UserName ?? ""),
+            new(ClaimTypes.Email, userEntity.Email ?? ""),
+            new(ClaimTypes.Id, userEntity.Id.ToString()),
+            new(ClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
         };
 
         return claims;
@@ -155,19 +157,20 @@ public class TokenManager(
         var value = token.Claims.FirstOrDefault(x => x.Type == claimType)!.Value;
         return value;
     }
-    
-    private async ValueTask<Result> CreateAsync(AppUser user, string token, DateTime tokenExpiration)
+
+    private async ValueTask<Result> CreateAsync(UserEntity userEntity, string token, DateTime tokenExpiration,
+        CancellationToken cancellationToken = default)
     {
         var entity = new SecurityTokenEntity()
         {
-            UserId = user.Id,
+            UserId = userEntity.Id,
             Token = token,
             ExpireDate = tokenExpiration,
         };
-        
-        await context.SecurityTokens.AddAsync(entity);
-        await context.SaveChangesAsync();
-        
+
+        await context.SecurityTokens.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
         return Result.Success();
     }
 }
