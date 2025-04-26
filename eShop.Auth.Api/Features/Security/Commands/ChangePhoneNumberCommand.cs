@@ -7,20 +7,20 @@ internal sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request
     : IRequest<Result>;
 
 internal sealed class RequestChangePhoneNumberCommandHandler(
-    AppManager appManager,
     IMessageService messageService,
     IConfiguration configuration,
-    ICodeManager codeManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
+    ICodeManager codeManager,
+    UserManager<UserEntity> userManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber);
+        var user = await userManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber);
 
         if (user is null)
         {
@@ -33,8 +33,8 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
             Next = request.Request.NewPhoneNumber
         };
         
-        var oldPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.OldPhoneNumber);
-        var newPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.NewPhoneNumber);
+        var oldPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.OldPhoneNumber, cancellationToken);
+        var newPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.NewPhoneNumber, cancellationToken);
 
         await messageService.SendMessageAsync("phone-number-change", new ChangePhoneNumberMessage()
         {

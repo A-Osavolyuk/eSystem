@@ -11,6 +11,6 @@ public record class PersonalDataEntity : IEntity<Guid>
     public DateTime DateOfBirth { get; init; } = new(1980, 1, 1);
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
-    [JsonIgnore] public Guid UserId { get; init; }
-    [JsonIgnore] public UserEntity? User { get; init; }
+    public Guid UserId { get; init; }
+    public UserEntity? User { get; init; }
 }

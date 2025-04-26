@@ -3,14 +3,14 @@
 internal sealed record GetPermissionsListQuery() : IRequest<Result>;
 
 internal sealed class GetPermissionsListQueryHandler(
-    AppManager appManager) : IRequestHandler<GetPermissionsListQuery, Result>
+    IPermissionManager permissionManager) : IRequestHandler<GetPermissionsListQuery, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly IPermissionManager permissionManager = permissionManager;
 
     public async Task<Result> Handle(GetPermissionsListQuery request,
         CancellationToken cancellationToken)
     {
-        var permissions = await appManager.PermissionManager.GetListAsync(cancellationToken);
+        var permissions = await permissionManager.GetListAsync(cancellationToken);
 
         return Result.Success(permissions.ToList());
     }

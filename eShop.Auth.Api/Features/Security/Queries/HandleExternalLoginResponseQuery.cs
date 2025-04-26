@@ -8,11 +8,17 @@ internal sealed record HandleExternalLoginResponseQuery(
     string? ReturnUri) : IRequest<Result>;
 
 internal sealed class HandleExternalLoginResponseQueryHandler(
-    AppManager appManager,
+    IPermissionManager permissionManager,
+    ISecurityManager securityManager,
+    ITokenManager tokenManager,
+    UserManager<UserEntity> userManager,
     IConfiguration configuration,
     IMessageService messageService) : IRequestHandler<HandleExternalLoginResponseQuery, Result>
 {
-    private readonly IConfiguration configuration = configuration;
+    private readonly IPermissionManager permissionManager = permissionManager;
+    private readonly ISecurityManager securityManager = securityManager;
+    private readonly ITokenManager tokenManager = tokenManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
     private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
     private readonly string defaultPermission = configuration["Configuration:General:DefaultValues:DefaultPermission"]!;
@@ -28,15 +34,15 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             return Results.BadRequest("No email address specified in credentials.");
         }
 
-        var user = await appManager.UserManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email);
 
         if (user is not null)
         {
-            var securityToken = await appManager.TokenManager.FindAsync(user);
+            var securityToken = await tokenManager.FindAsync(user, cancellationToken);
 
             if (securityToken is not null)
             {
-                var token = await appManager.TokenManager.RefreshAsync(user, securityToken.Token);
+                var token = await tokenManager.RefreshAsync(user, securityToken.Token, cancellationToken);
 
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { token, request.ReturnUri });
@@ -44,7 +50,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             }
             else
             {
-                var tokens = await appManager.TokenManager.GenerateAsync(user);
+                var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { tokens!.AccessToken, tokens.RefreshToken, request.ReturnUri });
                 return Result.Success(link);
@@ -59,8 +65,8 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 EmailConfirmed = true
             };
 
-            var tempPassword = appManager.SecurityManager.GenerateRandomPassword(18);
-            var result = await appManager.UserManager.CreateAsync(user, tempPassword);
+            var tempPassword = securityManager.GenerateRandomPassword(18);
+            var result = await userManager.CreateAsync(user, tempPassword);
 
             if (!result.Succeeded)
             {
@@ -68,7 +74,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                     $"Cannot create user account due to server error: {result.Errors.First().Description}");
             }
 
-            var assignDefaultRoleResult = await appManager.UserManager.AddToRoleAsync(user, defaultRole);
+            var assignDefaultRoleResult = await userManager.AddToRoleAsync(user, defaultRole);
 
             if (!assignDefaultRoleResult.Succeeded)
             {
@@ -77,7 +83,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             }
 
             var issuingPermissionsResult =
-                await appManager.PermissionManager.IssueAsync(user, [defaultPermission], cancellationToken);
+                await permissionManager.IssueAsync(user, [defaultPermission], cancellationToken);
 
             if (!issuingPermissionsResult.Succeeded)
             {
@@ -94,7 +100,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 ProviderName = request.ExternalLoginInfo!.ProviderDisplayName!
             }, cancellationToken);
             
-            var token = await appManager.TokenManager.GenerateAsync(user);
+            var token = await tokenManager.GenerateAsync(user, cancellationToken);
             var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                 new { Token = token, ReturnUri = request.ReturnUri });
             return Result.Success(link);

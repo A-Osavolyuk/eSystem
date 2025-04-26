@@ -7,15 +7,17 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 internal sealed class LoginCommandHandler(
-    AppManager appManager,
+    ITokenManager tokenManager,
+    UserManager<UserEntity> userManager,
     IMessageService messageService) : IRequestHandler<LoginCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly ITokenManager tokenManager = tokenManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
@@ -27,7 +29,7 @@ internal sealed class LoginCommandHandler(
             return Results.BadRequest("The email address is not confirmed.");
         }
 
-        var isValidPassword = await appManager.UserManager.CheckPasswordAsync(user, request.Request.Password);
+        var isValidPassword = await userManager.CheckPasswordAsync(user, request.Request.Password);
 
         if (!isValidPassword)
         {
@@ -35,11 +37,11 @@ internal sealed class LoginCommandHandler(
         }
 
         var userDto = new Domain.Types.User(user.Email!, user.UserName!, user.Id);
-        var securityToken = await appManager.TokenManager.FindAsync(user);
+        var securityToken = await tokenManager.FindAsync(user);
 
         if (securityToken is not null)
         {
-            var token = await appManager.TokenManager.RefreshAsync(user, securityToken.Token);
+            var token = await tokenManager.RefreshAsync(user, securityToken.Token);
 
             return Result.Success(new LoginResponse()
             {
@@ -52,7 +54,7 @@ internal sealed class LoginCommandHandler(
 
         if (user.TwoFactorEnabled)
         {
-            var loginCode = await appManager.UserManager.GenerateTwoFactorTokenAsync(user, "Email");
+            var loginCode = await userManager.GenerateTwoFactorTokenAsync(user, "Email");
 
             await messageService.SendMessageAsync("2fa-code", new TwoFactorAuthenticationCodeMessage()
             {
@@ -70,7 +72,7 @@ internal sealed class LoginCommandHandler(
             });
         }
         
-        var tokens = await appManager.TokenManager.GenerateAsync(user);
+        var tokens = await tokenManager.GenerateAsync(user);
 
         return Result.Success(new LoginResponse()
         {

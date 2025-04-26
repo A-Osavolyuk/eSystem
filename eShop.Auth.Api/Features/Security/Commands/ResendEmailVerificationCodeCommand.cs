@@ -7,19 +7,23 @@ internal sealed record ResendEmailVerificationCodeCommand(ResendEmailVerificatio
     : IRequest<Result>;
 
 internal sealed class ResendEmailVerificationCodeCommandHandler(
-    AppManager manager, 
+    IPermissionManager permissionManager,
+    IProfileManager profileManager,
+    ISecurityManager securityManager,
+    ITokenManager tokenManager,
+    UserManager<UserEntity> userManager,
+    RoleManager<RoleEntity> roleManager,
     IMessageService messageService,
     ICodeManager codeManager)
     : IRequestHandler<ResendEmailVerificationCodeCommand, Result>
 {
-    private readonly AppManager manager = manager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(ResendEmailVerificationCodeCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await manager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
@@ -28,11 +32,11 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(
 
         string code;
 
-        var entity = await codeManager.FindAsync(user, Verification.VerifyEmail);
+        var entity = await codeManager.FindAsync(user, Verification.VerifyEmail, cancellationToken);
 
         if (entity is null || entity.ExpireDate < DateTime.UtcNow)
         {
-            code = await codeManager.GenerateAsync(user, Verification.VerifyEmail);
+            code = await codeManager.GenerateAsync(user, Verification.VerifyEmail, cancellationToken);
         }
         else
         {

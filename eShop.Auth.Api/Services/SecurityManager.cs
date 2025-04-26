@@ -1,11 +1,9 @@
 ﻿namespace eShop.Auth.Api.Services;
 
 internal sealed class SecurityManager(
-    AuthDbContext context,
     UserManager<UserEntity> userManager,
     ICodeManager codeManager) : ISecurityManager
 {
-    private readonly AuthDbContext context = context;
     private readonly UserManager<UserEntity> userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
 

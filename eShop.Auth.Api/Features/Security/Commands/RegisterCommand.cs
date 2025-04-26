@@ -6,12 +6,14 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record RegisterCommand(RegistrationRequest Request) : IRequest<Result>;
 
 internal sealed class RegisterCommandHandler(
-    AppManager appManager,
+    IPermissionManager permissionManager,
+    UserManager<UserEntity> userManager,
     IMessageService messageService,
     IConfiguration configuration,
     ICodeManager codeManager) : IRequestHandler<RegisterCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly IPermissionManager permissionManager = permissionManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
@@ -21,7 +23,7 @@ internal sealed class RegisterCommandHandler(
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email);
 
         if (user is not null)
         {
@@ -29,7 +31,7 @@ internal sealed class RegisterCommandHandler(
         }
 
         var newUser = Mapper.Map(request.Request);
-        var registrationResult = await appManager.UserManager.CreateAsync(newUser, request.Request.Password);
+        var registrationResult = await userManager.CreateAsync(newUser, request.Request.Password);
 
         if (!registrationResult.Succeeded)
         {
@@ -37,7 +39,7 @@ internal sealed class RegisterCommandHandler(
                 $"Cannot create user due to server error: {registrationResult.Errors.First().Description}");
         }
 
-        var assignDefaultRoleResult = await appManager.UserManager.AddToRoleAsync(newUser, defaultRole);
+        var assignDefaultRoleResult = await userManager.AddToRoleAsync(newUser, defaultRole);
 
         if (!assignDefaultRoleResult.Succeeded)
         {
@@ -46,7 +48,7 @@ internal sealed class RegisterCommandHandler(
         }
 
         var issuingPermissionsResult =
-            await appManager.PermissionManager.IssueAsync(newUser, [defaultPermission], cancellationToken);
+            await permissionManager.IssueAsync(newUser, [defaultPermission], cancellationToken);
 
         if (!issuingPermissionsResult.Succeeded)
         {
@@ -55,7 +57,7 @@ internal sealed class RegisterCommandHandler(
                 $"due to server errors: {issuingPermissionsResult.Errors.First().Description}");
         }
 
-        var code = await codeManager.GenerateAsync(user!, Verification.VerifyEmail);
+        var code = await codeManager.GenerateAsync(user!, Verification.VerifyEmail, cancellationToken);
         
         await messageService.SendMessageAsync("email-verification", new EmailVerificationMessage()
         {

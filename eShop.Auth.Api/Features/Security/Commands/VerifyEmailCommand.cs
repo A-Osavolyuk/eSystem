@@ -7,25 +7,27 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<Result>;
 
 internal sealed class VerifyEmailCommandHandler(
-    AppManager appManager,
+    ISecurityManager securityManager,
+    UserManager<UserEntity> userManager,
     IMessageService messageService,
     CartClient client) : IRequestHandler<VerifyEmailCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly ISecurityManager securityManager = securityManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly CartClient client = client;
 
     public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var confirmResult = await appManager.SecurityManager.VerifyEmailAsync(user, request.Request.Code);
+        var confirmResult = await securityManager.VerifyEmailAsync(user, request.Request.Code);
 
         if (!confirmResult.Succeeded)
         {

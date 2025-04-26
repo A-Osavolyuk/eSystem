@@ -4,9 +4,11 @@ using UserData = eShop.Application.UserData;
 
 namespace eShop.Auth.Api.Rpc;
 
-internal sealed class AuthServer(AppManager manager, ILogger<AuthServer> logger) : AuthService.AuthServiceBase
+internal sealed class AuthServer(
+    ILogger<AuthServer> logger,
+    UserManager<UserEntity> userManager) : AuthService.AuthServiceBase
 {
-    private readonly AppManager manager = manager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private const string SellerRole = "Seller";
 
     public override async Task<GetUserResponse> GetUser(GetUserRequest request, ServerCallContext context)
@@ -15,7 +17,7 @@ internal sealed class AuthServer(AppManager manager, ILogger<AuthServer> logger)
         {
             logger.LogInformation("Executing RPC GetUser");
 
-            var user = await manager.UserManager.FindByIdAsync(request.UserId);
+            var user = await userManager.FindByIdAsync(request.UserId);
 
             if (user is null)
             {
@@ -61,7 +63,7 @@ internal sealed class AuthServer(AppManager manager, ILogger<AuthServer> logger)
         try
         {
             logger.LogInformation("Executing RPC InitiateSeller");
-            var user = await manager.UserManager.FindByIdAsync(request.UserId);
+            var user = await userManager.FindByIdAsync(request.UserId);
 
             if (user is null)
             {
@@ -73,7 +75,7 @@ internal sealed class AuthServer(AppManager manager, ILogger<AuthServer> logger)
                 };
             }
 
-            var result = await manager.UserManager.AddToRoleAsync(user, SellerRole);
+            var result = await userManager.AddToRoleAsync(user, SellerRole);
 
             if (!result.Succeeded)
             {

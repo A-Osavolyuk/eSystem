@@ -7,28 +7,27 @@ internal sealed record RequestResetPasswordCommand(ResetPasswordRequest Request)
     : IRequest<Result>;
 
 internal sealed class RequestResetPasswordCommandHandler(
-    AppManager appManager,
+    UserManager<UserEntity> userManager,
     IMessageService messageService,
     IConfiguration configuration,
     ICodeManager codeManager) : IRequestHandler<RequestResetPasswordCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly IMessageService messageService = messageService;
-    private readonly IConfiguration configuration = configuration;
     private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(RequestResetPasswordCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var code = await codeManager.GenerateAsync(user, Verification.ResetPassword);
+        var code = await codeManager.GenerateAsync(user, Verification.ResetPassword, cancellationToken);
 
         await messageService.SendMessageAsync("password-reset", new ResetPasswordMessage()
         {

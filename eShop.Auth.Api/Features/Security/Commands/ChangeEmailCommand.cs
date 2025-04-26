@@ -6,21 +6,20 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<Result>;
 
 internal sealed class RequestChangeEmailCommandHandler(
-    AppManager appManager,
     IMessageService messageService,
     IConfiguration configuration,
-    ICodeManager codeManager) : IRequestHandler<ChangeEmailCommand, Result>
+    ICodeManager codeManager,
+    UserManager<UserEntity> userManager) : IRequestHandler<ChangeEmailCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
-    private readonly IConfiguration configuration = configuration;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangeEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.CurrentEmail);
+        var user = await userManager.FindByEmailAsync(request.Request.CurrentEmail);
 
         if (user is null)
         {
@@ -33,8 +32,8 @@ internal sealed class RequestChangeEmailCommandHandler(
             Next = request.Request.NewEmail
         };
 
-        var oldEmailCode = await codeManager.GenerateAsync(user, Verification.OldEmail);
-        var newEmailCode = await codeManager.GenerateAsync(user, Verification.NewEmail);
+        var oldEmailCode = await codeManager.GenerateAsync(user, Verification.OldEmail, cancellationToken);
+        var newEmailCode = await codeManager.GenerateAsync(user, Verification.NewEmail, cancellationToken);
 
         await messageService.SendMessageAsync("email-change", new ChangeEmailMessage()
         {

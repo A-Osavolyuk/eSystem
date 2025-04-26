@@ -6,16 +6,18 @@ internal sealed record ConfirmResetPasswordCommand(ConfirmResetPasswordRequest R
     : IRequest<Result>;
 
 internal sealed class ConfirmResetPasswordCommandHandler(
-    AppManager appManager,
+    ISecurityManager securityManager,
+    UserManager<UserEntity> userManager,
     ILogger<ConfirmResetPasswordCommandHandler> logger)
     : IRequestHandler<ConfirmResetPasswordCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly ISecurityManager securityManager = securityManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
 
     public async Task<Result> Handle(ConfirmResetPasswordCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
@@ -23,7 +25,7 @@ internal sealed class ConfirmResetPasswordCommandHandler(
         }
 
         var resetResult =
-            await appManager.SecurityManager.ResetPasswordAsync(user, request.Request.Code,
+            await securityManager.ResetPasswordAsync(user, request.Request.Code,
                 request.Request.NewPassword);
 
         if (!resetResult.Succeeded)

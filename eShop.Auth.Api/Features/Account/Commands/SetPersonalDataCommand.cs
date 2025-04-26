@@ -6,14 +6,15 @@ internal sealed record SetPersonalDataCommand(SetPersonalDataRequest Request)
     : IRequest<Result>;
 
 internal sealed record SetPersonalDataCommandHandler(
-    AppManager appManager) : IRequestHandler<SetPersonalDataCommand, Result>
+    IProfileManager profileManager,
+    UserManager<UserEntity> userManager) : IRequestHandler<SetPersonalDataCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
-
+    private readonly IProfileManager profileManager = profileManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     public async Task<Result> Handle(SetPersonalDataCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
@@ -21,7 +22,7 @@ internal sealed record SetPersonalDataCommandHandler(
         }
 
         var entity = Mapper.Map(request.Request);
-        var result = await appManager.ProfileManager.SetAsync(user, entity, cancellationToken);
+        var result = await profileManager.SetAsync(user, entity, cancellationToken);
 
         if (!result.Succeeded)
         {
