@@ -5,18 +5,18 @@ namespace eShop.Auth.Api.Features.Roles.Queries;
 internal sealed record GetRolesListQuery() : IRequest<Result>;
 
 internal sealed class GetRolesListQueryHandler(
-    AppManager appManager) : IRequestHandler<GetRolesListQuery, Result>
+    RoleManager<RoleEntity> roleManager) : IRequestHandler<GetRolesListQuery, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly RoleManager<RoleEntity> roleManager = roleManager;
 
     public async Task<Result> Handle(GetRolesListQuery request,
         CancellationToken cancellationToken)
     {
-        var roles = await appManager.RoleManager.Roles.ToListAsync(cancellationToken);
+        var roles = await roleManager.Roles.ToListAsync(cancellationToken);
         var response = new List<RoleDto>();
         foreach (var role in roles)
         {
-            var memberCount = await appManager.RoleManager.Roles
+            var memberCount = await roleManager.Roles
                 .Where(x => x.Id == role.Id)
                 .CountAsync(cancellationToken: cancellationToken);
 

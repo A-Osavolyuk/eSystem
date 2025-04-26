@@ -12,5 +12,5 @@ public class VerificationCodeEntity : IEntity<Guid>, IExpireable
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
 
-    [JsonIgnore] public UserEntity User { get; set; } = null!;
+    public UserEntity User { get; set; } = null!;
 }

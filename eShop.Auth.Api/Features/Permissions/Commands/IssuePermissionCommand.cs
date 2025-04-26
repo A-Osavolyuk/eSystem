@@ -6,14 +6,16 @@ internal sealed record IssuePermissionCommand(IssuePermissionRequest Request)
     : IRequest<Result>;
 
 internal sealed class IssuePermissionCommandHandler(
-    AppManager appManager) : IRequestHandler<IssuePermissionCommand, Result>
+    IPermissionManager permissionManager,
+    UserManager<UserEntity> userManager) : IRequestHandler<IssuePermissionCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly IPermissionManager permissionManager = permissionManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
 
     public async Task<Result> Handle(IssuePermissionCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByIdAsync(request.Request.UserId);
+        var user = await userManager.FindByIdAsync(request.Request.UserId);
 
         if (user is null)
         {
@@ -24,7 +26,7 @@ internal sealed class IssuePermissionCommandHandler(
 
         foreach (var permissionName in request.Request.Permissions)
         {
-            var permission = await appManager.PermissionManager.FindByNameAsync(permissionName, cancellationToken);
+            var permission = await permissionManager.FindByNameAsync(permissionName, cancellationToken);
 
             if (permission is null)
             {
@@ -37,11 +39,11 @@ internal sealed class IssuePermissionCommandHandler(
         foreach (var permission in permissions)
         {
             var alreadyHasPermission =
-                await appManager.PermissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
+                await permissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
 
             if (!alreadyHasPermission)
             {
-                var result = await appManager.PermissionManager.IssueAsync(user, permission.Name, cancellationToken);
+                var result = await permissionManager.IssueAsync(user, permission.Name, cancellationToken);
 
                 if (!result.Succeeded)
                 {

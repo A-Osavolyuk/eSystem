@@ -6,22 +6,24 @@ internal sealed record RemoveUserFromPermissionCommand(RemoveUserFromPermissionR
     : IRequest<Result>;
 
 internal sealed class RemoveUserFromPermissionCommandHandler(
-    AppManager appManager)
+    IPermissionManager permissionManager,
+    UserManager<UserEntity> userManager)
     : IRequestHandler<RemoveUserFromPermissionCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly IPermissionManager permissionManager = permissionManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
 
     public async Task<Result> Handle(RemoveUserFromPermissionCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByIdAsync(request.Request.UserId);
+        var user = await userManager.FindByIdAsync(request.Request.UserId);
 
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var permission = await appManager.PermissionManager.FindByNameAsync(request.Request.PermissionName, cancellationToken);
+        var permission = await permissionManager.FindByNameAsync(request.Request.PermissionName, cancellationToken);
 
         if (permission is null)
         {
@@ -29,7 +31,7 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
         }
 
         var hasUserPermission =
-            await appManager.PermissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
+            await permissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
 
         if (!hasUserPermission)
         {
@@ -37,7 +39,7 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
         }
 
         var permissionResult =
-            await appManager.PermissionManager.RemoveFromPermissionAsync(user, permission, cancellationToken);
+            await permissionManager.RemoveFromPermissionAsync(user, permission, cancellationToken);
 
         if (!permissionResult.Succeeded)
         {

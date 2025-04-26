@@ -7,15 +7,19 @@ internal sealed record ConfirmChangePhoneNumberCommand(ConfirmChangePhoneNumberR
     : IRequest<Result>;
 
 internal sealed class ConfirmChangePhoneNumberCommandHandler(
-    AppManager appManager)
+    UserManager<UserEntity> userManager,
+    ISecurityManager securityManager,
+    ITokenManager tokenManager)
     : IRequestHandler<ConfirmChangePhoneNumberCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly ISecurityManager securityManager = securityManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly ITokenManager tokenManager = tokenManager;
 
     public async Task<Result> Handle(ConfirmChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber);
+        var user = await userManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber);
 
         if (user is null)
         {
@@ -24,7 +28,7 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
         }
 
         var result =
-            await appManager.SecurityManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber,
+            await securityManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber,
                 request.Request.CodeSet);
 
         if (!result.Succeeded)
@@ -32,14 +36,14 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
             return result;
         }
 
-        user = await appManager.UserManager.FindByPhoneNumberAsync(request.Request.NewPhoneNumber);
+        user = await userManager.FindByPhoneNumberAsync(request.Request.NewPhoneNumber);
 
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with phone number {request.Request.NewPhoneNumber}.");
         }
         
-        var tokens = await appManager.TokenManager.GenerateAsync(user);
+        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
 
         return Result.Success(new ConfirmChangePhoneNumberResponse()
         {

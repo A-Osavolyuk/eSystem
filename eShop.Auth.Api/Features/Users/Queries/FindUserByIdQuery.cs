@@ -5,14 +5,21 @@ namespace eShop.Auth.Api.Features.Users.Queries;
 internal sealed record FindUserByIdQuery(Guid UserId) : IRequest<Result>;
 
 internal sealed class FindUserByIdQueryHandler(
-    AppManager appManager) : IRequestHandler<FindUserByIdQuery, Result>
+    IPermissionManager permissionManager,
+    IProfileManager profileManager,
+    UserManager<UserEntity> userManager,
+    RoleManager<RoleEntity> roleManager) : IRequestHandler<FindUserByIdQuery, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly IPermissionManager permissionManager = permissionManager;
+    private readonly IProfileManager profileManager = profileManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly RoleManager<RoleEntity> roleManager = roleManager;
+
 
     public async Task<Result> Handle(FindUserByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByIdAsync(request.UserId);
+        var user = await userManager.FindByIdAsync(request.UserId);
 
         if (user is null)
         {
@@ -20,9 +27,9 @@ internal sealed class FindUserByIdQueryHandler(
         }
 
         var accountData = Mapper.Map(user);
-        var personalData = await appManager.ProfileManager.FindAsync(user, cancellationToken);
-        var rolesList = await appManager.UserManager.GetRolesAsync(user);
-        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
+        var personalData = await profileManager.FindAsync(user, cancellationToken);
+        var rolesList = await userManager.GetRolesAsync(user);
+        var permissions = await permissionManager.GetUserPermissionsAsync(user, cancellationToken);
 
         if (!rolesList.Any())
         {
@@ -33,7 +40,7 @@ internal sealed class FindUserByIdQueryHandler(
 
         foreach (var role in rolesList)
         {
-            var roleInfo = await appManager.RoleManager.FindByNameAsync(role);
+            var roleInfo = await roleManager.FindByNameAsync(role);
 
             if (roleInfo is null)
             {
@@ -50,7 +57,7 @@ internal sealed class FindUserByIdQueryHandler(
 
         foreach (var permission in permissions)
         {
-            var permissionInfo = await appManager.PermissionManager.FindByNameAsync(permission, cancellationToken);
+            var permissionInfo = await permissionManager.FindByNameAsync(permission, cancellationToken);
             if (permissionInfo is null)
             {
                 return Results.NotFound($"Cannot find permission {permission}.");

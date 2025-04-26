@@ -6,14 +6,12 @@ namespace eShop.Auth.Api.Features.Users.Commands;
 internal sealed record LockoutUserCommand(LockoutUserRequest Request) : IRequest<Result>;
 
 internal sealed class LockoutUserCommandHandler(
-    AppManager appManager) : IRequestHandler<LockoutUserCommand, Result>
+    UserManager<UserEntity> userManager) : IRequestHandler<LockoutUserCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
-
     public async Task<Result> Handle(LockoutUserCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByIdAsync(request.Request.UserId);
+        var user = await userManager.FindByIdAsync(request.Request.UserId);
 
         if (user is null)
         {
@@ -23,8 +21,8 @@ internal sealed class LockoutUserCommandHandler(
         if (request.Request.Permanent)
         {
             var lockoutEndDate = DateTime.UtcNow.AddYears(100);
-            await appManager.UserManager.SetLockoutEnabledAsync(user, true);
-            await appManager.UserManager.SetLockoutEndDateAsync(user, lockoutEndDate);
+            await userManager.SetLockoutEnabledAsync(user, true);
+            await userManager.SetLockoutEndDateAsync(user, lockoutEndDate);
 
             return Result.Success(new LockoutUserResponse()
             {
@@ -35,8 +33,8 @@ internal sealed class LockoutUserCommandHandler(
             });
         }
 
-        await appManager.UserManager.SetLockoutEnabledAsync(user, true);
-        await appManager.UserManager.SetLockoutEndDateAsync(user, request.Request.LockoutEnd);
+        await userManager.SetLockoutEnabledAsync(user, true);
+        await userManager.SetLockoutEndDateAsync(user, request.Request.LockoutEnd);
 
         return Result.Success(new LockoutUserResponse()
         {

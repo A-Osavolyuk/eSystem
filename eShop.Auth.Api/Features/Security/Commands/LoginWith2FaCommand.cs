@@ -8,14 +8,16 @@ internal sealed record LoginWith2FaCommand(LoginWith2FaRequest With2FaRequest)
     : IRequest<Result>;
 
 internal sealed class LoginWith2FaCommandHandler(
-    AppManager appManager) : IRequestHandler<LoginWith2FaCommand, Result>
+    ITokenManager tokenManager,
+    UserManager<UserEntity> userManager) : IRequestHandler<LoginWith2FaCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly ITokenManager tokenManager = tokenManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
 
     public async Task<Result> Handle(LoginWith2FaCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.With2FaRequest.Email);
+        var user = await userManager.FindByEmailAsync(request.With2FaRequest.Email);
 
         if (user is null)
         {
@@ -23,7 +25,7 @@ internal sealed class LoginWith2FaCommandHandler(
         }
 
         var result =
-            await appManager.UserManager.VerifyTwoFactorTokenAsync(user, "Email", request.With2FaRequest.Code);
+            await userManager.VerifyTwoFactorTokenAsync(user, "Email", request.With2FaRequest.Code);
 
         if (!result)
         {
@@ -31,11 +33,11 @@ internal sealed class LoginWith2FaCommandHandler(
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
-        var securityToken = await appManager.TokenManager.FindAsync(user);
+        var securityToken = await tokenManager.FindAsync(user, cancellationToken);
 
         if (securityToken is not null)
         {
-            var token = await appManager.TokenManager.RefreshAsync(user, securityToken.Token);
+            var token = await tokenManager.RefreshAsync(user, securityToken.Token, cancellationToken);
 
             return Result.Success(new LoginResponse()
             {
@@ -46,7 +48,7 @@ internal sealed class LoginWith2FaCommandHandler(
             });
         }
 
-        var tokens = await appManager.TokenManager.GenerateAsync(user);
+        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
 
         return Result.Success(new LoginResponse()
         {

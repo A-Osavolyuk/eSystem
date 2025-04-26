@@ -6,15 +6,15 @@ internal sealed record RemoveUserRolesCommand(RemoveUserRolesRequest Request)
     : IRequest<Result>;
 
 internal sealed class RemoveUserRolesCommandHandler(
-    AppManager appManager)
+    UserManager<UserEntity> userManager)
     : IRequestHandler<RemoveUserRolesCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
 
     public async Task<Result> Handle(RemoveUserRolesCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByIdAsync(request.Request.UserId);
+        var user = await userManager.FindByIdAsync(request.Request.UserId);
 
         if (user is null)
         {
@@ -23,14 +23,14 @@ internal sealed class RemoveUserRolesCommandHandler(
 
         foreach (var role in request.Request.Roles)
         {
-            var isInRole = await appManager.UserManager.IsInRoleAsync(user, role);
+            var isInRole = await userManager.IsInRoleAsync(user, role);
 
             if (!isInRole)
             {
                 return Results.BadRequest($"User with ID {request.Request.UserId} is not in role {role}.");
             }
 
-            var result = await appManager.UserManager.RemoveFromRoleAsync(user, role);
+            var result = await userManager.RemoveFromRoleAsync(user, role);
 
             if (!result.Succeeded)
             {

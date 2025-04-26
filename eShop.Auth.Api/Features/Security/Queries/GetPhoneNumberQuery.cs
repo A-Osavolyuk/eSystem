@@ -5,10 +5,10 @@ namespace eShop.Auth.Api.Features.Security.Queries;
 internal sealed record GetPhoneNumberQuery(string Email) : IRequest<Result>;
 
 internal sealed class GetPhoneNumberQueryHandler(
-    AppManager appManager,
+    UserManager<UserEntity> userManager,
     ICacheService cacheService) : IRequestHandler<GetPhoneNumberQuery, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly ICacheService cacheService = cacheService;
 
     public async Task<Result> Handle(GetPhoneNumberQuery request,
@@ -19,7 +19,7 @@ internal sealed class GetPhoneNumberQueryHandler(
 
         if (string.IsNullOrEmpty(phoneNumber))
         {
-            var user = await appManager.UserManager.FindByEmailAsync(request.Email);
+            var user = await userManager.FindByEmailAsync(request.Email);
 
             if (user is null)
             {

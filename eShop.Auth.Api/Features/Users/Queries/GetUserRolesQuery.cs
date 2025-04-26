@@ -5,21 +5,23 @@ namespace eShop.Auth.Api.Features.Users.Queries;
 internal sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
 
 internal sealed class GetUserRolesQueryHandler(
-    AppManager appManager) : IRequestHandler<GetUserRolesQuery, Result>
+    UserManager<UserEntity> userManager,
+    RoleManager<RoleEntity> roleManager) : IRequestHandler<GetUserRolesQuery, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly RoleManager<RoleEntity> roleManager = roleManager;
 
     public async Task<Result> Handle(GetUserRolesQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByIdAsync(request.Id);
+        var user = await userManager.FindByIdAsync(request.Id);
 
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with ID {request.Id}.");
         }
 
-        var roleList = await appManager.UserManager.GetRolesAsync(user);
+        var roleList = await userManager.GetRolesAsync(user);
 
         if (!roleList.Any())
         {
@@ -30,7 +32,7 @@ internal sealed class GetUserRolesQueryHandler(
 
         foreach (var role in roleList)
         {
-            var roleInfo = await appManager.RoleManager.FindByNameAsync(role);
+            var roleInfo = await roleManager.FindByNameAsync(role);
 
             if (roleInfo is null)
             {

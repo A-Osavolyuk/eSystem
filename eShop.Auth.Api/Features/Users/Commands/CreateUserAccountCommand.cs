@@ -6,12 +6,19 @@ internal sealed record CreateUserAccountCommand(CreateUserAccountRequest Request
     : IRequest<Result>;
 
 internal sealed class CreateUserAccountCommandHandler(
-    AppManager appManager,
+    IPermissionManager permissionManager,
+    IProfileManager profileManager,
+    ISecurityManager securityManager,
+    UserManager<UserEntity> userManager,
+    RoleManager<RoleEntity> roleManager,
     IConfiguration configuration) : IRequestHandler<CreateUserAccountCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly IPermissionManager permissionManager = permissionManager;
+    private readonly IProfileManager profileManager = profileManager;
+    private readonly ISecurityManager securityManager = securityManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly RoleManager<RoleEntity> roleManager = roleManager;
     private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
-
     private readonly List<string> defaultPermissions =
         configuration.GetValue<List<string>>("Configuration:General:DefaultValues:DefaultPermissions")!;
 
@@ -30,7 +37,7 @@ internal sealed class CreateUserAccountCommandHandler(
             LockoutEnabled = false,
         };
 
-        var accountResult = await appManager.UserManager.CreateAsync(user);
+        var accountResult = await userManager.CreateAsync(user);
 
         if (!accountResult.Succeeded)
         {
@@ -38,8 +45,8 @@ internal sealed class CreateUserAccountCommandHandler(
                 $"Cannot create account due to server error: {accountResult.Errors.First().Description}.");
         }
 
-        var password = appManager.SecurityManager.GenerateRandomPassword(18);
-        var passwordResult = await appManager.UserManager.AddPasswordAsync(user, password);
+        var password = securityManager.GenerateRandomPassword(18);
+        var passwordResult = await userManager.AddPasswordAsync(user, password);
 
         if (!passwordResult.Succeeded)
         {
@@ -47,7 +54,7 @@ internal sealed class CreateUserAccountCommandHandler(
                 $"Cannot add password to user account due ti server error: {passwordResult.Errors.First().Description}.");
         }
 
-        await appManager.ProfileManager.SetAsync(user, new PersonalDataEntity()
+        await profileManager.SetAsync(user, new PersonalDataEntity()
         {
             UserId = userId,
             FirstName = request.Request.FirstName,
@@ -60,14 +67,14 @@ internal sealed class CreateUserAccountCommandHandler(
         {
             foreach (var role in request.Request.Roles)
             {
-                var roleExists = await appManager.RoleManager.RoleExistsAsync(role);
+                var roleExists = await roleManager.RoleExistsAsync(role);
 
                 if (!roleExists)
                 {
                     return Results.InternalServerError($"Role {role} does not exist.");
                 }
 
-                var roleResult = await appManager.UserManager.AddToRoleAsync(user, role);
+                var roleResult = await userManager.AddToRoleAsync(user, role);
 
                 if (!roleResult.Succeeded)
                 {
@@ -78,7 +85,7 @@ internal sealed class CreateUserAccountCommandHandler(
         }
         else
         {
-            var roleResult = await appManager.UserManager.AddToRoleAsync(user, defaultRole);
+            var roleResult = await userManager.AddToRoleAsync(user, defaultRole);
 
             if (!roleResult.Succeeded)
             {
@@ -91,7 +98,7 @@ internal sealed class CreateUserAccountCommandHandler(
         {
             foreach (var permission in request.Request.Permissions)
             {
-                var permissionExists = await appManager.PermissionManager.ExistsAsync(permission, cancellationToken);
+                var permissionExists = await permissionManager.ExistsAsync(permission, cancellationToken);
 
                 if (!permissionExists)
                 {
@@ -99,7 +106,7 @@ internal sealed class CreateUserAccountCommandHandler(
                 }
 
                 var permissionResult =
-                    await appManager.PermissionManager.IssueAsync(user, permission, cancellationToken);
+                    await permissionManager.IssueAsync(user, permission, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {
@@ -114,7 +121,7 @@ internal sealed class CreateUserAccountCommandHandler(
             foreach (var permission in defaultPermissions)
             {
                 var permissionResult =
-                    await appManager.PermissionManager.IssueAsync(user, permission, cancellationToken);
+                    await permissionManager.IssueAsync(user, permission, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {

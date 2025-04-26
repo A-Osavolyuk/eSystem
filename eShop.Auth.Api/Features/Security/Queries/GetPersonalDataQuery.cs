@@ -3,10 +3,12 @@
 internal sealed record GetPersonalDataQuery(string Email) : IRequest<Result>;
 
 internal sealed class GetPersonalDataQueryHandler(
-    AppManager appManager,
+    IProfileManager profileManager,
+    UserManager<UserEntity> userManager,
     ICacheService cacheService) : IRequestHandler<GetPersonalDataQuery, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly IProfileManager profileManager = profileManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
     private readonly ICacheService cacheService = cacheService;
 
     public async Task<Result> Handle(GetPersonalDataQuery request,
@@ -17,14 +19,14 @@ internal sealed class GetPersonalDataQueryHandler(
 
         if (data is null)
         {
-            var user = await appManager.UserManager.FindByEmailAsync(request.Email);
+            var user = await userManager.FindByEmailAsync(request.Email);
 
             if (user is null)
             {
                 return Results.NotFound($"Cannot find user with email {request.Email}.");
             }
 
-            var personalData = await appManager.ProfileManager.FindAsync(user, cancellationToken);
+            var personalData = await profileManager.FindAsync(user, cancellationToken);
 
             if (personalData is null)
             {

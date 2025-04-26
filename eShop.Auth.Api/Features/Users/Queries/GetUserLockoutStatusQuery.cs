@@ -3,21 +3,21 @@
 internal sealed record GetUserLockoutStatusQuery(string Email) : IRequest<Result>;
 
 internal sealed class GetUserLockoutStatusQueryHandler(
-    AppManager appManager) : IRequestHandler<GetUserLockoutStatusQuery, Result>
+    UserManager<UserEntity> userManager) : IRequestHandler<GetUserLockoutStatusQuery, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
 
     public async Task<Result> Handle(GetUserLockoutStatusQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with email {request.Email}.");
         }
 
-        var lockoutStatus = await appManager.UserManager.GetLockoutStatusAsync(user);
+        var lockoutStatus = await userManager.GetLockoutStatusAsync(user);
         
         return Result.Success(Mapper.Map(lockoutStatus));
     }

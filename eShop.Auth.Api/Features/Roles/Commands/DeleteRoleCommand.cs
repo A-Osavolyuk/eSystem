@@ -5,14 +5,14 @@ namespace eShop.Auth.Api.Features.Roles.Commands;
 internal sealed record DeleteRoleCommand(DeleteRoleRequest Request) : IRequest<Result>;
 
 internal sealed class DeleteRoleCommandHandler(
-    AppManager appManager) : IRequestHandler<DeleteRoleCommand, Result>
+    RoleManager<RoleEntity> roleManager) : IRequestHandler<DeleteRoleCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly RoleManager<RoleEntity> roleManager = roleManager;
 
     public async Task<Result> Handle(DeleteRoleCommand request,
         CancellationToken cancellationToken)
     {
-        var role = await appManager.RoleManager.FindByIdAsync(request.Request.Id.ToString());
+        var role = await roleManager.FindByIdAsync(request.Request.Id.ToString());
 
         if (role is null || role.Id != request.Request.Id)
         {
@@ -24,7 +24,7 @@ internal sealed class DeleteRoleCommandHandler(
             return Results.BadRequest("Role name is different.");
         }
 
-        var result = await appManager.RoleManager.DeleteAsync(role);
+        var result = await roleManager.DeleteAsync(role);
 
         if (!result.Succeeded)
         {

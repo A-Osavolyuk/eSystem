@@ -7,15 +7,15 @@ internal sealed record Change2FaStateCommand(Change2FaStateRequest Request)
     : IRequest<Result>;
 
 internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
-    AppManager appManager)
+    UserManager<UserEntity> userManager)
     : IRequestHandler<Change2FaStateCommand, Result>
 {
-    private readonly AppManager appManager = appManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
 
     public async Task<Result> Handle(
         Change2FaStateCommand request, CancellationToken cancellationToken)
     {
-        var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
@@ -24,7 +24,7 @@ internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
 
         IdentityResult result = null!;
 
-        result = await appManager.UserManager.SetTwoFactorEnabledAsync(user, !user.TwoFactorEnabled);
+        result = await userManager.SetTwoFactorEnabledAsync(user, !user.TwoFactorEnabled);
 
         if (!result.Succeeded)
         {
