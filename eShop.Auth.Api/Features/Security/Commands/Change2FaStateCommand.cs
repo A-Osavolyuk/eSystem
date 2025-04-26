@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -20,12 +19,7 @@ internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find user with email {request.Request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
         IdentityResult result = null!;
@@ -34,13 +28,8 @@ internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
 
         if (!result.Succeeded)
         {
-            Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot change 2fa state of user with email {request.Request.Email} " +
-                          $"due to server error: {result.Errors.First().Description}."
-            });
+            Results.NotFound($"Cannot change 2fa state of user with email {request.Request.Email} " +
+                             $"due to server error: {result.Errors.First().Description}.");
         }
 
         var state = user.TwoFactorEnabled ? "disabled" : "enabled";

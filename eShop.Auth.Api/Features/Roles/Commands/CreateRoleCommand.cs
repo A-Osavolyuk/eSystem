@@ -1,7 +1,6 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Admin;
+﻿using eShop.Domain.Requests.API.Admin;
 
-namespace eShop.Auth.Api.Features.Admin.Commands;
+namespace eShop.Auth.Api.Features.Roles.Commands;
 
 internal sealed record CreateRoleCommand(CreateRoleRequest Request) : IRequest<Result>;
 
@@ -24,12 +23,8 @@ internal sealed class CreateRoleCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Server error",
-                Details = $"Cannot create role due to server error: {result.Errors.First().Description}"
-            });
+            return Results.InternalServerError(
+                $"Cannot create role due to server error: {result.Errors.First().Description}");
         }
 
         return Result.Success("Role was successfully created");

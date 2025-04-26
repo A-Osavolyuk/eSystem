@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace eShop.TelegramBot.Api.Extensions;
+﻿namespace eShop.TelegramBot.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {

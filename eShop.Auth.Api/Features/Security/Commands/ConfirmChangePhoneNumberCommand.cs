@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -8,12 +7,10 @@ internal sealed record ConfirmChangePhoneNumberCommand(ConfirmChangePhoneNumberR
     : IRequest<Result>;
 
 internal sealed class ConfirmChangePhoneNumberCommandHandler(
-    AppManager appManager,
-    ITokenHandler tokenHandler)
+    AppManager appManager)
     : IRequestHandler<ConfirmChangePhoneNumberCommand, Result>
 {
     private readonly AppManager appManager = appManager;
-    private readonly ITokenHandler tokenHandler = tokenHandler;
 
     public async Task<Result> Handle(ConfirmChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
@@ -22,12 +19,8 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}."
-            });
+            return Results.InternalServerError(
+                $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
         }
 
         var result =
@@ -36,29 +29,17 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error.",
-                Details = $"Failed on phone number change with message: {result.Errors.First().Description}"
-            });
+            return result;
         }
 
         user = await appManager.UserManager.FindByPhoneNumberAsync(request.Request.NewPhoneNumber);
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find user with phone number {request.Request.NewPhoneNumber}."
-            });
+            return Results.NotFound($"Cannot find user with phone number {request.Request.NewPhoneNumber}.");
         }
-
-        var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-        var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
-        var tokens = await tokenHandler.GenerateTokenAsync(user!, roles, permissions);
+        
+        var tokens = await appManager.TokenManager.GenerateAsync(user);
 
         return Result.Success(new ConfirmChangePhoneNumberResponse()
         {

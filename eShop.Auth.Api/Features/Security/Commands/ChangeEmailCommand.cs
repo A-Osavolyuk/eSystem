@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -9,11 +8,13 @@ internal sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest
 internal sealed class RequestChangeEmailCommandHandler(
     AppManager appManager,
     IMessageService messageService,
-    IConfiguration configuration) : IRequestHandler<ChangeEmailCommand, Result>
+    IConfiguration configuration,
+    ICodeManager codeManager) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly AppManager appManager = appManager;
     private readonly IMessageService messageService = messageService;
     private readonly IConfiguration configuration = configuration;
+    private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangeEmailCommand request,
@@ -23,12 +24,7 @@ internal sealed class RequestChangeEmailCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.CurrentEmail}"
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.CurrentEmail}");
         }
 
         var destination = new DestinationSet()
@@ -36,25 +32,26 @@ internal sealed class RequestChangeEmailCommandHandler(
             Current = request.Request.CurrentEmail,
             Next = request.Request.NewEmail
         };
-        var code = await appManager.SecurityManager.GenerateVerificationCodeSetAsync(destination,
-            Verification.ChangeEmail);
+
+        var oldEmailCode = await codeManager.GenerateAsync(user, Verification.OldEmail);
+        var newEmailCode = await codeManager.GenerateAsync(user, Verification.NewEmail);
 
         await messageService.SendMessageAsync("email-change", new ChangeEmailMessage()
         {
-            Code = code.Current,
+            Code = oldEmailCode,
             To = request.Request.CurrentEmail,
             Subject = "Email change (step one)",
             UserName = request.Request.CurrentEmail,
             NewEmail = request.Request.NewEmail,
-        });
+        }, cancellationToken);
 
         await messageService.SendMessageAsync("email-verification", new EmailVerificationMessage()
         {
-            Code = code.Next,
+            Code = newEmailCode,
             UserName = request.Request.CurrentEmail,
             Subject = "Email change (step two)",
             To = request.Request.NewEmail,
-        });
+        }, cancellationToken);
 
         return Result.Success("We have sent a letter with instructions to your current and new email addresses");
     }

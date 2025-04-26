@@ -1,7 +1,6 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Admin;
+﻿using eShop.Domain.Requests.API.Admin;
 
-namespace eShop.Auth.Api.Features.Admin.Commands;
+namespace eShop.Auth.Api.Features.Permissions.Commands;
 
 internal sealed record IssuePermissionCommand(IssuePermissionRequest Request)
     : IRequest<Result>;
@@ -18,12 +17,7 @@ internal sealed class IssuePermissionCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"User does not exist."
-            });
+            return Results.NotFound("User does not exist.");
         }
 
         var permissions = new List<PermissionEntity>();
@@ -34,12 +28,7 @@ internal sealed class IssuePermissionCommandHandler(
 
             if (permission is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Permission {permissionName} does not exist."
-                });
+                return Results.NotFound($"Permission {permissionName} does not exist.");
             }
 
             permissions.Add(permission);
@@ -47,20 +36,17 @@ internal sealed class IssuePermissionCommandHandler(
 
         foreach (var permission in permissions)
         {
-            var alreadyHasPermission = await appManager.PermissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
+            var alreadyHasPermission =
+                await appManager.PermissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
 
             if (!alreadyHasPermission)
             {
-                var result = await appManager.PermissionManager.IssuePermissionAsync(user, permission.Name, cancellationToken);
+                var result = await appManager.PermissionManager.IssueAsync(user, permission.Name, cancellationToken);
 
                 if (!result.Succeeded)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.InternalServerError,
-                        Message = "Server error",
-                        Details = $"Failed on issuing permission with message: {result.Errors.First().Description}"
-                    });
+                    return Results.InternalServerError(
+                        $"Failed on issuing permission with message: {result.Errors.First().Description}");
                 }
             }
         }

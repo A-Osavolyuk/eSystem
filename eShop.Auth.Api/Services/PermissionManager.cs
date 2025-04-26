@@ -51,7 +51,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return result;
     }
 
-    public async ValueTask<IdentityResult> IssuePermissionsAsync(UserEntity userEntity, IEnumerable<string> collection,
+    public async ValueTask<IdentityResult> IssueAsync(UserEntity userEntity, IEnumerable<string> collection,
         CancellationToken cancellationToken = default)
     {
         var permissions = collection.ToList();
@@ -78,7 +78,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return IdentityResult.Success;
     }
 
-    public async ValueTask<IdentityResult> IssuePermissionAsync(UserEntity userEntity, string permission,
+    public async ValueTask<IdentityResult> IssueAsync(UserEntity userEntity, string permission,
         CancellationToken cancellationToken = default)
     {
         var entity = await context.Permissions

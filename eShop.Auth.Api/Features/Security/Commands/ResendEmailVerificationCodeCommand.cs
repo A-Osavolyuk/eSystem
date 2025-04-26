@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -7,11 +6,15 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record ResendEmailVerificationCodeCommand(ResendEmailVerificationCodeRequest Request)
     : IRequest<Result>;
 
-internal sealed class ResendEmailVerificationCodeCommandHandler(AppManager manager, IMessageService messageService)
+internal sealed class ResendEmailVerificationCodeCommandHandler(
+    AppManager manager, 
+    IMessageService messageService,
+    ICodeManager codeManager)
     : IRequestHandler<ResendEmailVerificationCodeCommand, Result>
 {
     private readonly AppManager manager = manager;
     private readonly IMessageService messageService = messageService;
+    private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(ResendEmailVerificationCodeCommand request,
         CancellationToken cancellationToken)
@@ -20,22 +23,16 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(AppManager manag
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email: {request.Request.Email}"
-            });
+            return Results.NotFound($"Cannot find user with email: {request.Request.Email}");
         }
 
         string code;
 
-        var entity = await manager.SecurityManager.FindCodeAsync(user.Email!, Verification.VerifyEmail);
+        var entity = await codeManager.FindAsync(user, Verification.VerifyEmail);
 
         if (entity is null || entity.ExpireDate < DateTime.UtcNow)
         {
-            code = await manager.SecurityManager.GenerateVerificationCodeAsync(user.Email!,
-                Verification.VerifyEmail);
+            code = await codeManager.GenerateAsync(user, Verification.VerifyEmail);
         }
         else
         {
@@ -48,7 +45,7 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(AppManager manag
             Code = code,
             Subject = "Email verification",
             UserName = user.UserName!
-        });
+        }, cancellationToken);
 
         return Result.Success("Verification code was successfully resend");
     }

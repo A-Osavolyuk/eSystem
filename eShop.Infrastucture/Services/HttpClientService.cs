@@ -54,7 +54,7 @@ public class HttpClientService(
         }
     }
 
-    public async ValueTask<Response> SendFilesAsync(FileRequest request, bool withBearer = true)
+    public async ValueTask<Response> SendAsync(FileRequest request, bool withBearer = true)
     {
         try
         {
@@ -64,10 +64,10 @@ public class HttpClientService(
             message.RequestUri = new Uri(request.Url);
             message.Method = request.Methods switch
             {
-                Domain.Enums.HttpMethods.Post => HttpMethod.Post,
-                Domain.Enums.HttpMethods.Put => HttpMethod.Put,
-                Domain.Enums.HttpMethods.Delete => HttpMethod.Delete,
-                Domain.Enums.HttpMethods.Get => HttpMethod.Get,
+                HttpMethods.Post => HttpMethod.Post,
+                HttpMethods.Put => HttpMethod.Put,
+                HttpMethods.Delete => HttpMethod.Delete,
+                HttpMethods.Get => HttpMethod.Get,
                 _ => throw new Exception("Invalid HTTP method"),
             };
 
@@ -87,12 +87,6 @@ public class HttpClientService(
                     fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
                     content.Add(fileContent, "files", file.Name);
                 }
-            }
-            else
-            {
-                var fileContent = new StreamContent(request.Data.File.OpenReadStream());
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(request.Data.File.ContentType);
-                content.Add(fileContent, "file", request.Data.File.Name);
             }
 
             message.Content = content;

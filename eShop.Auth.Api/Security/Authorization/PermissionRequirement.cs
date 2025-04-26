@@ -1,6 +1,4 @@
-﻿using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
-
-namespace eShop.Auth.Api.Security.Authorization;
+﻿namespace eShop.Auth.Api.Security.Authorization;
 
 public class PermissionRequirement(string permissionName) : IAuthorizationRequirement
 {

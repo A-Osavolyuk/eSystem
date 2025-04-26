@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -19,12 +18,7 @@ internal sealed class ConfirmChangeEmailCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.CurrentEmail}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.CurrentEmail}.");
         }
 
         var result =
@@ -32,13 +26,7 @@ internal sealed class ConfirmChangeEmailCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = $"Cannot change email address of user with email {request.Request.CurrentEmail} " +
-                          $"due to server error: {result.Errors.First().Description}."
-            });
+            return result;
         }
 
         return Result.Success("Your email address was successfully changed.");

@@ -1,5 +1,6 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Brand;
+using Results = eShop.Domain.Common.API.Results;
 
 namespace eShop.Product.Api.Features.Brands.Commands;
 
@@ -18,12 +19,7 @@ internal sealed class DeleteBrandCommandHandler(
 
         if (entity is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find brand with ID {request.Request.Id}"
-            });
+            return Results.NotFound($"Cannot find brand with ID {request.Request.Id}");
         }
 
         context.Brands.Remove(entity);

@@ -15,7 +15,7 @@ class StoreService(
 
     public async ValueTask<Response>
         UploadProductImagesAsync(IReadOnlyList<IBrowserFile> files, Guid productId) =>
-        await HttpClientService.SendFilesAsync(
+        await HttpClientService.SendAsync(
             new FileRequest(new FileData(files), HttpMethods.Post,
                 $"{Configuration[Key]}/api/v1/Files/upload-product-images/{productId}"));
 
@@ -26,7 +26,7 @@ class StoreService(
                 HttpMethods.Delete));
 
     public async ValueTask<Response> UploadUserAvatarAsync(string userId, IBrowserFile file) =>
-        await HttpClientService.SendFilesAsync(
-            new FileRequest(new FileData(file), HttpMethods.Post,
+        await HttpClientService.SendAsync(
+            new FileRequest(new FileData([file]), HttpMethods.Post,
                 $"{Configuration[Key]}/api/v1/Files/upload-user-avatar/{userId}"));
 }

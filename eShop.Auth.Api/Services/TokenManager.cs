@@ -1,18 +1,46 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
-using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
 
 namespace eShop.Auth.Api.Services;
 
-internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManager securityManager) : ITokenHandler
+public class TokenManager(
+    AuthDbContext context,
+    IOptions<JwtOptions> options) : ITokenManager
 {
-    private readonly ISecurityManager securityManager = securityManager;
+    private readonly AuthDbContext context = context;
     private const int AccessTokenExpirationMinutes = 30;
     private readonly JwtOptions options = options.Value;
     private readonly JwtSecurityTokenHandler handler = new();
 
-    public async Task<Token> GenerateTokenAsync(UserEntity userEntity, List<string> roles, List<string> permissions)
+    public async ValueTask<SecurityTokenEntity?> FindAsync(UserEntity userEntity,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await context.SecurityTokens
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
+
+        return entity;
+    }
+
+    public async ValueTask<Result> RemoveAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
+    {
+        var token = await context.SecurityTokens
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
+
+        if (token is null)
+        {
+            return Results.NotFound("Token not found");
+        }
+
+        context.SecurityTokens.Remove(token);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async Task<Token> GenerateAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var algorithm = SecurityAlgorithms.HmacSha256Signature;
@@ -21,11 +49,11 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
 
-        var claims = SetClaims(userEntity, roles, permissions);
+        var claims = SetClaims(userEntity);
         var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await securityManager.SaveTokenAsync(userEntity, refreshToken, refreshTokenExpiration);
+        await CreateAsync(userEntity, refreshToken, refreshTokenExpiration);
 
         return new Token()
         {
@@ -35,7 +63,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     }
 
 
-    public async Task<string> RefreshTokenAsync(UserEntity userEntity, string token)
+    public async Task<string> RefreshAsync(UserEntity userEntity, string token, CancellationToken cancellationToken = default)
     {
         var rawToken = DecryptToken(token);
         var claims = GetClaimsFromToken(rawToken);
@@ -45,8 +73,8 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await securityManager.SaveTokenAsync(userEntity, refreshToken, refreshTokenExpiration);
-        
+        await CreateAsync(userEntity, refreshToken, refreshTokenExpiration, cancellationToken);
+
         return refreshToken;
     }
 
@@ -62,7 +90,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         return token;
     }
 
-    private List<Claim> SetClaims(UserEntity userEntity, List<string> roles, List<string> permissions)
+    private List<Claim> SetClaims(UserEntity userEntity)
     {
         var claims = new List<Claim>()
         {
@@ -71,22 +99,6 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
             new(ClaimTypes.Id, userEntity.Id.ToString()),
             new(ClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
         };
-
-        if (roles.Any())
-        {
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-        }
-
-        if (permissions.Any())
-        {
-            foreach (var permission in permissions)
-            {
-                claims.Add(new Claim(ClaimTypes.Permission, permission));
-            }
-        }
 
         return claims;
     }
@@ -99,10 +111,8 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
 
             return rawToken;
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     private List<Claim> GetClaimsFromToken(JwtSecurityToken? token)
@@ -146,5 +156,21 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     {
         var value = token.Claims.FirstOrDefault(x => x.Type == claimType)!.Value;
         return value;
+    }
+
+    private async ValueTask<Result> CreateAsync(UserEntity userEntity, string token, DateTime tokenExpiration,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = new SecurityTokenEntity()
+        {
+            UserId = userEntity.Id,
+            Token = token,
+            ExpireDate = tokenExpiration,
+        };
+
+        await context.SecurityTokens.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
 }

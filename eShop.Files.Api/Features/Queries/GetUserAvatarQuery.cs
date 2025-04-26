@@ -17,12 +17,7 @@ internal sealed class GetUserAvatarQueryHandler(IStoreService service)
 
         if (string.IsNullOrWhiteSpace(response))
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot get avatar of user with ID {request.UserId}"
-            });
+            return Results.NotFound($"Cannot get avatar of user with ID {request.UserId}");
         }
 
         return Result.Success(response);

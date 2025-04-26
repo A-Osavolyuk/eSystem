@@ -1,8 +1,7 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Admin;
+﻿using eShop.Domain.Requests.API.Admin;
 using eShop.Domain.Responses.API.Admin;
 
-namespace eShop.Auth.Api.Features.Admin.Commands;
+namespace eShop.Auth.Api.Features.Users.Commands;
 
 internal sealed record LockoutUserCommand(LockoutUserRequest Request) : IRequest<Result>;
 
@@ -18,12 +17,7 @@ internal sealed class LockoutUserCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with ID {request.Request.UserId}."
-            });
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
         if (request.Request.Permanent)
@@ -40,18 +34,16 @@ internal sealed class LockoutUserCommandHandler(
                 Succeeded = true
             });
         }
-        else
-        {
-            await appManager.UserManager.SetLockoutEnabledAsync(user, true);
-            await appManager.UserManager.SetLockoutEndDateAsync(user, request.Request.LockoutEnd);
 
-            return Result.Success(new LockoutUserResponse()
-            {
-                LockoutEnabled = true,
-                LockoutEnd = request.Request.LockoutEnd,
-                Message = $"User was successfully banned until {request.Request.LockoutEnd}.",
-                Succeeded = true
-            });
-        }
+        await appManager.UserManager.SetLockoutEnabledAsync(user, true);
+        await appManager.UserManager.SetLockoutEndDateAsync(user, request.Request.LockoutEnd);
+
+        return Result.Success(new LockoutUserResponse()
+        {
+            LockoutEnabled = true,
+            LockoutEnd = request.Request.LockoutEnd,
+            Message = $"User was successfully banned until {request.Request.LockoutEnd}.",
+            Succeeded = true
+        });
     }
 }

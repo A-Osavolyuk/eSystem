@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using eShop.Domain.Interfaces;
 
 namespace eShop.Auth.Api.Entities;
 
@@ -12,6 +11,6 @@ public record class PersonalDataEntity : IEntity<Guid>
     public DateTime DateOfBirth { get; init; } = new(1980, 1, 1);
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
-    public Guid UserId { get; init; }
-    public UserEntity? User { get; init; }
+    [JsonIgnore] public Guid UserId { get; init; }
+    [JsonIgnore] public UserEntity? User { get; init; }
 }

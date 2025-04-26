@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data;
 
-internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<UserEntity, RoleEntity, Guid>(options)
+public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<UserEntity, AppRole, Guid>(options)
 {
     public DbSet<PersonalDataEntity> PersonalData => Set<PersonalDataEntity>();
     public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
@@ -41,8 +41,7 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
 
         builder.Entity<IdentityUserRole<string>>(x =>
         {
-            x.HasKey(role => new { role.UserId, role.RoleId });
-            
+            x.HasKey(role => new { UserId = role.UserId, RoleId = role.RoleId });
             x.HasData(
                 new IdentityUserRole<string>()
                 {

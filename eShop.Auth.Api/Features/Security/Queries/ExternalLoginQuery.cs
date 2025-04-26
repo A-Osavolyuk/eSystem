@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Responses.API.Auth;
+﻿using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 
@@ -19,12 +18,7 @@ internal sealed class ExternalLoginQueryHandler(
 
         if (!validProvider)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.BadRequest,
-                Message = "Invalid provider",
-                Details = $"Invalid external provider {request.Provider}."
-            });
+            return Results.BadRequest($"Invalid external provider {request.Provider}.");
         }
 
         var handlerUri = UrlGenerator.Action("handle-external-login-response", "Auth",

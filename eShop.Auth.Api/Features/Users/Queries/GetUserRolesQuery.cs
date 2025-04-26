@@ -1,7 +1,6 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Responses.API.Admin;
+﻿using eShop.Domain.Responses.API.Admin;
 
-namespace eShop.Auth.Api.Features.Admin.Queries;
+namespace eShop.Auth.Api.Features.Users.Queries;
 
 internal sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
 
@@ -17,27 +16,17 @@ internal sealed class GetUserRolesQueryHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with ID {request.Id}."
-            });
+            return Results.NotFound($"Cannot find user with ID {request.Id}.");
         }
 
         var roleList = await appManager.UserManager.GetRolesAsync(user);
 
         if (!roleList.Any())
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find roles for user with ID {request.Id}."
-            });
+            return Results.NotFound($"Cannot find roles for user with ID {request.Id}.");
         }
 
-        var result = new UserRolesResponse() with { UserId = user.Id };
+        var result = new UserRolesResponse { UserId = user.Id };
 
         foreach (var role in roleList)
         {
@@ -45,12 +34,7 @@ internal sealed class GetUserRolesQueryHandler(
 
             if (roleInfo is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find role {role}"
-                });
+                return Results.NotFound($"Cannot find role {role}");
             }
 
             result.Roles.Add(new RoleData()

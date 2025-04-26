@@ -1,7 +1,6 @@
 ﻿using eShop.Cart.Api.Entities;
 using eShop.Cart.Api.Mapping;
 using eShop.Domain.Common.API;
-using eShop.Domain.Enums;
 
 namespace eShop.Cart.Api.Features.Cart.Queries;
 
@@ -18,12 +17,7 @@ internal sealed class GetCartQueryHandler(DbClient client) : IRequestHandler<Get
 
         if (cart is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find cart with user ID {request.UserId}."
-            });
+            return Results.NotFound($"Cannot find cart with user ID {request.UserId}.");
         }
 
         return Result.Success(Mapper.Map(cart));

@@ -57,7 +57,7 @@ public static class HostApplicationBuilderExtensions
         
         builder.Services.Configure<JwtOptions>(configuration.GetSection("Configuration:Security:Authentication:JWT"));
         
-        builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
+        builder.Services.AddIdentity<UserEntity, AppRole>(options =>
         {
             options.User.RequireUniqueEmail = true;
             options.SignIn.RequireConfirmedEmail = true;
@@ -123,17 +123,18 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddScoped<ITokenHandler, TokenHandler>();
         builder.Services.AddScoped<IPermissionManager, PermissionManager>();
         builder.Services.AddScoped<ISecurityManager, SecurityManager>();
         builder.Services.AddScoped<IProfileManager, ProfileManager>();
         builder.Services.AddScoped<ICacheService, CacheService>();
         builder.Services.AddScoped<IMessageService, MessageService>();
+        builder.Services.AddScoped<ITokenManager, TokenManager>();
+        builder.Services.AddScoped<ICodeManager, CodeManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
-        builder.Services.AddHostedService<HostedTokenValidator>();
-        builder.Services.AddHostedService<HostedCodeValidator>();
+        builder.Services.AddHostedService<TokenValidator>();
+        builder.Services.AddHostedService<CodeValidator>();
 
         builder.Services.AddScoped<AppManager>();
         builder.Services.AddScoped<CartClient>();

@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Account.Commands;
@@ -8,11 +7,9 @@ internal sealed record ChangeUserNameCommand(ChangeUserNameRequest Request)
     : IRequest<Result>;
 
 internal sealed class ChangeUserNameCommandHandler(
-    ITokenHandler tokenHandler,
     AppManager appManager,
     AuthDbContext context) : IRequestHandler<ChangeUserNameCommand, Result>
 {
-    private readonly ITokenHandler tokenHandler = tokenHandler;
     private readonly AppManager appManager = appManager;
     private readonly AuthDbContext context = context;
 
@@ -22,42 +19,25 @@ internal sealed class ChangeUserNameCommandHandler(
         var user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
         var result = await appManager.UserManager.SetUserNameAsync(user, request.Request.UserName);
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = $"Cannot change username of user with email {request.Request.Email} " +
-                          $"due to error: {result.Errors.First().Description}."
-            });
+            return Results.InternalServerError($"Cannot change username of user with email {request.Request.Email} " +
+                                               $"due to error: {result.Errors.First().Description}.");
         }
 
         user = await appManager.UserManager.FindByEmailAsync(request.Request.Email);
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
-
-        var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-        var permissions = (await appManager.PermissionManager.GetUserPermissionsAsync(user)).ToList();
-        var tokens = await tokenHandler.GenerateTokenAsync(user!, roles, permissions);
+        
+        var tokens = await appManager.TokenManager.GenerateAsync(user);
 
         return Result.Success(new ChangeUserNameResponse()
         {

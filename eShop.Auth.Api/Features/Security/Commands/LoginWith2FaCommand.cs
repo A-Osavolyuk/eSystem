@@ -1,6 +1,6 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
+using User = eShop.Domain.Types.User;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -8,11 +8,9 @@ internal sealed record LoginWith2FaCommand(LoginWith2FaRequest With2FaRequest)
     : IRequest<Result>;
 
 internal sealed class LoginWith2FaCommandHandler(
-    AppManager appManager,
-    ITokenHandler tokenHandler) : IRequestHandler<LoginWith2FaCommand, Result>
+    AppManager appManager) : IRequestHandler<LoginWith2FaCommand, Result>
 {
     private readonly AppManager appManager = appManager;
-    private readonly ITokenHandler tokenHandler = tokenHandler;
 
     public async Task<Result> Handle(LoginWith2FaCommand request,
         CancellationToken cancellationToken)
@@ -21,12 +19,7 @@ internal sealed class LoginWith2FaCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found.",
-                Details = $"Cannot find user with email {request.With2FaRequest.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.With2FaRequest.Email}.");
         }
 
         var result =
@@ -34,20 +27,15 @@ internal sealed class LoginWith2FaCommandHandler(
 
         if (!result)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.BadRequest,
-                Message = "Bad request.",
-                Details = $"Invalid two-factor code {request.With2FaRequest.Code}."
-            });
+            return Results.BadRequest($"Invalid two-factor code {request.With2FaRequest.Code}.");
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
-        var securityToken = await appManager.SecurityManager.FindTokenAsync(user);
+        var securityToken = await appManager.TokenManager.FindAsync(user);
 
         if (securityToken is not null)
         {
-            var token = await tokenHandler.RefreshTokenAsync(user, securityToken.Token);
+            var token = await appManager.TokenManager.RefreshAsync(user, securityToken.Token);
 
             return Result.Success(new LoginResponse()
             {
@@ -57,19 +45,15 @@ internal sealed class LoginWith2FaCommandHandler(
                 HasTwoFactorAuthentication = false
             });
         }
-        else
-        {
-            var roles = (await appManager.UserManager.GetRolesAsync(user)).ToList();
-            var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user);
-            var tokens = await tokenHandler.GenerateTokenAsync(user, roles, permissions);
 
-            return Result.Success(new LoginResponse()
-            {
-                User = userDto,
-                AccessToken = tokens.AccessToken,
-                RefreshToken = tokens.RefreshToken,
-                Message = "Successfully logged in."
-            });
-        }
+        var tokens = await appManager.TokenManager.GenerateAsync(user);
+
+        return Result.Success(new LoginResponse()
+        {
+            User = userDto,
+            AccessToken = tokens.AccessToken,
+            RefreshToken = tokens.RefreshToken,
+            Message = "Successfully logged in."
+        });
     }
 }

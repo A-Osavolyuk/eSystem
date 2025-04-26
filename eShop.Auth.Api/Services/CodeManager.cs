@@ -1,0 +1,80 @@
+﻿namespace eShop.Auth.Api.Services;
+
+public class CodeManager(AuthDbContext context) : ICodeManager
+{
+    private readonly AuthDbContext context = context;
+
+    public async ValueTask<string> GenerateAsync(UserEntity user, Verification type,
+        CancellationToken cancellationToken = default)
+    {
+        var code = new Random().Next(100000, 999999).ToString();
+
+        await context.Codes.AddAsync(new VerificationCodeEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            Code = code,
+            Type = type,
+            CreateDate = DateTime.UtcNow,
+            ExpireDate = DateTime.UtcNow.AddMinutes(10)
+        }, cancellationToken);
+
+        await context.SaveChangesAsync(cancellationToken);
+        return code;
+    }
+
+    public async ValueTask<VerificationCodeEntity?> FindAsync(UserEntity user, string code,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await context.Codes
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.UserId == user.Id && c.Code == code, cancellationToken: cancellationToken);
+
+        return entity;
+    }
+
+    public async ValueTask<VerificationCodeEntity?> FindAsync(UserEntity user, Verification type,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await context.Codes
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.UserId == user.Id && c.Type == type, cancellationToken: cancellationToken);
+
+        return entity;
+    }
+
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, Verification type,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await context.Codes
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.UserId == user.Id
+                                       && x.Code == code
+                                       && x.Type == type
+                                       && x.ExpireDate < DateTime.UtcNow, cancellationToken: cancellationToken);
+
+        if (entity is null)
+        {
+            return Results.NotFound("Code not found");
+        }
+
+        return Result.Success();
+        ;
+    }
+
+    public Result Validate(VerificationCodeEntity entity)
+    {
+        if (entity.ExpireDate < DateTime.UtcNow)
+        {
+            return Results.BadRequest("Code is expired");
+        }
+
+        return Result.Success();
+    }
+
+    public async ValueTask DeleteAsync(VerificationCodeEntity entity, CancellationToken cancellationToken = default)
+    {
+        context.Codes.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+}

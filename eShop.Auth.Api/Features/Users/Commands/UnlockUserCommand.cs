@@ -1,7 +1,6 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Admin;
+﻿using eShop.Domain.Requests.API.Admin;
 
-namespace eShop.Auth.Api.Features.Admin.Commands;
+namespace eShop.Auth.Api.Features.Users.Commands;
 
 internal sealed record UnlockUserCommand(UnlockUserRequest Request) : IRequest<Result>;
 
@@ -17,12 +16,7 @@ internal sealed class UnlockUserCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with ID {request.Request.UserId}."
-            });
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
         var lockoutStatus = await appManager.UserManager.GetLockoutStatusAsync(user);
@@ -33,20 +27,13 @@ internal sealed class UnlockUserCommandHandler(
 
             if (!result.Succeeded)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.InternalServerError,
-                    Message = "Server error",
-                    Details = $"Cannot unlock user with ID {request.Request.UserId} " +
-                              $"due to server error: {result.Errors.First().Description}."
-                });
+                return Results.InternalServerError($"Cannot unlock user with ID {request.Request.UserId} " +
+                                                   $"due to server error: {result.Errors.First().Description}.");
             }
 
             return Result.Success("User account was successfully unlocked.");
         }
-        else
-        {
-            return Result.Success("User account was not locked out.");
-        }
+
+        return Result.Success("User account was not locked out.");
     }
 }

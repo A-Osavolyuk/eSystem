@@ -1,13 +1,13 @@
 ﻿namespace eShop.Auth.Api.HostedServices;
 
-public class HostedTokenValidator(IServiceScopeFactory scopeFactory) : IHostedService, IDisposable
+public class TokenValidator(IServiceScopeFactory scopeFactory) : IHostedService, IDisposable
 {
     private Timer? timer;
     private readonly IServiceScopeFactory scopeFactory = scopeFactory;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        timer = new Timer(async (state) => await ValidateTokensAsync(), null, TimeSpan.FromMinutes(5),
+        timer = new Timer(async s => await ValidateTokensAsync(), null, TimeSpan.FromMinutes(5),
             TimeSpan.FromHours(12));
         return Task.CompletedTask;
     }

@@ -56,9 +56,9 @@ public class FilesController(
     [EndpointDescription("Uploads user avatar")]
     [ProducesResponseType(200)]
     [HttpPost("upload-user-avatar/{userId:guid}")]
-    public async ValueTask<ActionResult<Response>> UploadUserAvatarAsync(IFormFile file, Guid userId)
+    public async ValueTask<ActionResult<Response>> UploadUserAvatarAsync(IFormFileCollection files, Guid userId)
     {
-        var response = await sender.Send(new UploadUserAvatarCommand(file, userId));
+        var response = await sender.Send(new UploadUserAvatarCommand(files[0], userId));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);

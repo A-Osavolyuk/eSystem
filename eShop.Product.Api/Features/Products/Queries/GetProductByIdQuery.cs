@@ -2,6 +2,7 @@
 using eShop.Domain.DTOs;
 using eShop.Domain.Interfaces.API;
 using eShop.Product.Api.Entities;
+using Results = eShop.Domain.Common.API.Results;
 
 namespace eShop.Product.Api.Features.Products.Queries;
 
@@ -22,12 +23,7 @@ internal sealed class GetProductByIdQueryHandler(AppDbContext context, ICacheSer
         {
             if (request.ProductId == Guid.Empty)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find product with ID, article or name"
-                });
+                return Results.NotFound($"Cannot find product with ID, article or name");
             }
 
             var entity = await context.Products
@@ -38,12 +34,7 @@ internal sealed class GetProductByIdQueryHandler(AppDbContext context, ICacheSer
 
             if (entity is null)
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find product with ID {request.ProductId}"
-                });
+                return Results.NotFound($"Cannot find product with ID {request.ProductId}");
             }
 
             var response = await Map(entity);

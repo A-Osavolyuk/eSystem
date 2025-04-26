@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Common.API;
-
-namespace eShop.Auth.Api.Features.Admin.Queries;
+﻿namespace eShop.Auth.Api.Features.Users.Queries;
 
 internal sealed record GetUserLockoutStatusQuery(string Email) : IRequest<Result>;
 
@@ -16,16 +14,11 @@ internal sealed class GetUserLockoutStatusQueryHandler(
 
         if (user is null)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with email {request.Email}."
-            });
+            return Results.NotFound($"Cannot find user with email {request.Email}.");
         }
 
         var lockoutStatus = await appManager.UserManager.GetLockoutStatusAsync(user);
         
-        return Result.Success(Mapper.ToUserLockoutStatusResponse(lockoutStatus));
+        return Result.Success(Mapper.Map(lockoutStatus));
     }
 }

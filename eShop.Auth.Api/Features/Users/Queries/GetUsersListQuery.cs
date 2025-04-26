@@ -1,7 +1,6 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.DTOs;
+﻿using eShop.Domain.DTOs;
 
-namespace eShop.Auth.Api.Features.Admin.Queries;
+namespace eShop.Auth.Api.Features.Users.Queries;
 
 internal sealed record GetUsersListQuery() : IRequest<Result>;
 
@@ -25,33 +24,22 @@ internal sealed class GetUsersListQueryHandler(
 
         foreach (var user in usersList)
         {
-            var accountData = Mapper.ToAccountData(user);
+            var accountData = Mapper.Map(user);
             var personalData = await appManager.ProfileManager.FindAsync(user, cancellationToken);
             var rolesList = (await appManager.UserManager.GetRolesAsync(user)).ToList();
 
             if (!rolesList.Any())
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = $"Cannot find roles for user with ID {user.Id}."
-                });
+                return Results.NotFound($"Cannot find roles for user with ID {user.Id}.");
             }
 
-            var rolesData = (await appManager.RoleManager.GetRolesDataAsync(rolesList) ?? Array.Empty<RoleData>())
-                .ToList();
+            var rolesData = await appManager.RoleManager.GetRolesDataAsync(rolesList) ?? [];
             var permissions = await appManager.PermissionManager.GetUserPermissionsAsync(user, cancellationToken);
             var roleInfos = rolesData.ToList();
 
             if (!roleInfos.Any())
             {
-                return Result.Failure(new Error()
-                {
-                    Code = ErrorCode.NotFound,
-                    Message = "Not found",
-                    Details = "Cannot find roles data."
-                });
+                return Results.NotFound("Cannot find roles data.");
             }
 
             var permissionsList = new List<Permission>();
@@ -62,12 +50,7 @@ internal sealed class GetUsersListQueryHandler(
 
                 if (permissionInfo is null)
                 {
-                    return Result.Failure(new Error()
-                    {
-                        Code = ErrorCode.NotFound,
-                        Message = "Not found",
-                        Details = $"Cannot find permission {permission}."
-                    });
+                    return Results.NotFound($"Cannot find permission {permission}.");
                 }
 
                 permissionsList.Add(new Permission()
