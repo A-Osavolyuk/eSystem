@@ -12,7 +12,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     private readonly JwtOptions options = options.Value;
     private readonly JwtSecurityTokenHandler handler = new();
 
-    public async Task<Token> GenerateTokenAsync(AppUser user, List<string> roles, List<string> permissions)
+    public async Task<Token> GenerateTokenAsync(UserEntity userEntity, List<string> roles, List<string> permissions)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var algorithm = SecurityAlgorithms.HmacSha256Signature;
@@ -21,11 +21,11 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
 
-        var claims = SetClaims(user, roles, permissions);
+        var claims = SetClaims(userEntity, roles, permissions);
         var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await securityManager.SaveTokenAsync(user, refreshToken, refreshTokenExpiration);
+        await securityManager.SaveTokenAsync(userEntity, refreshToken, refreshTokenExpiration);
 
         return new Token()
         {
@@ -35,7 +35,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
     }
 
 
-    public async Task<string> RefreshTokenAsync(AppUser user, string token)
+    public async Task<string> RefreshTokenAsync(UserEntity userEntity, string token)
     {
         var rawToken = DecryptToken(token);
         var claims = GetClaimsFromToken(rawToken);
@@ -45,7 +45,7 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await securityManager.SaveTokenAsync(user, refreshToken, refreshTokenExpiration);
+        await securityManager.SaveTokenAsync(userEntity, refreshToken, refreshTokenExpiration);
         
         return refreshToken;
     }
@@ -62,14 +62,14 @@ internal sealed class TokenHandler(IOptions<JwtOptions> options, ISecurityManage
         return token;
     }
 
-    private List<Claim> SetClaims(AppUser user, List<string> roles, List<string> permissions)
+    private List<Claim> SetClaims(UserEntity userEntity, List<string> roles, List<string> permissions)
     {
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, user.UserName ?? ""),
-            new(ClaimTypes.Email, user.Email ?? ""),
-            new(ClaimTypes.Id, user.Id.ToString()),
-            new(ClaimTypes.PhoneNumber, user.PhoneNumber ?? "")
+            new(ClaimTypes.UserName, userEntity.UserName ?? ""),
+            new(ClaimTypes.Email, userEntity.Email ?? ""),
+            new(ClaimTypes.Id, userEntity.Id.ToString()),
+            new(ClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
         };
 
         if (roles.Any())

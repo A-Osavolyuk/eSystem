@@ -2,10 +2,10 @@
 
 internal sealed class SecurityManager(
     AuthDbContext context,
-    UserManager<AppUser> userManager) : ISecurityManager
+    UserManager<UserEntity> userManager) : ISecurityManager
 {
     private readonly AuthDbContext context = context;
-    private readonly UserManager<AppUser> userManager = userManager;
+    private readonly UserManager<UserEntity> userManager = userManager;
 
     public string GenerateRandomPassword(int length)
     {
@@ -39,16 +39,16 @@ internal sealed class SecurityManager(
 
         return codeSet;
     }
-    public async ValueTask<IdentityResult> VerifyEmailAsync(AppUser user, string code)
+    public async ValueTask<IdentityResult> VerifyEmailAsync(UserEntity userEntity, string code)
     {
-        var validationResult = await ValidateAndRemoveAsync(code, user.Email!, Verification.VerifyEmail);
+        var validationResult = await ValidateAndRemoveAsync(code, userEntity.Email!, Verification.VerifyEmail);
 
         if (!validationResult.Succeeded)
         {
             return validationResult;
         }
 
-        var result = await userManager.ConfirmEmailAsync(user);
+        var result = await userManager.ConfirmEmailAsync(userEntity);
 
         if (!result.Succeeded)
         {
@@ -57,16 +57,16 @@ internal sealed class SecurityManager(
 
         return IdentityResult.Success;
     }
-    public async ValueTask<IdentityResult> VerifyPhoneNumberAsync(AppUser user, string code)
+    public async ValueTask<IdentityResult> VerifyPhoneNumberAsync(UserEntity userEntity, string code)
     {
-        var validationResult = await ValidateAndRemoveAsync(code, user.Email!, Verification.VerifyPhoneNumber);
+        var validationResult = await ValidateAndRemoveAsync(code, userEntity.Email!, Verification.VerifyPhoneNumber);
 
         if (!validationResult.Succeeded)
         {
             return validationResult;
         }
 
-        var result = await userManager.ConfirmPhoneNumberAsync(user);
+        var result = await userManager.ConfirmPhoneNumberAsync(userEntity);
 
         if (!result.Succeeded)
         {
@@ -75,16 +75,16 @@ internal sealed class SecurityManager(
 
         return IdentityResult.Success;
     }
-    public async ValueTask<IdentityResult> ResetPasswordAsync(AppUser user, string code, string password)
+    public async ValueTask<IdentityResult> ResetPasswordAsync(UserEntity userEntity, string code, string password)
     {
-        var validationResult = await ValidateAndRemoveAsync(code, user.Email!, Verification.VerifyEmail);
+        var validationResult = await ValidateAndRemoveAsync(code, userEntity.Email!, Verification.VerifyEmail);
 
         if (!validationResult.Succeeded)
         {
             return validationResult;
         }
 
-        var result = await userManager.ResetPasswordAsync(user, password);
+        var result = await userManager.ResetPasswordAsync(userEntity, password);
 
         if (!result.Succeeded)
         {
@@ -93,9 +93,9 @@ internal sealed class SecurityManager(
 
         return IdentityResult.Success;
     }
-    public async ValueTask<IdentityResult> ChangeEmailAsync(AppUser user, string newEmail, CodeSet codeSet)
+    public async ValueTask<IdentityResult> ChangeEmailAsync(UserEntity userEntity, string newEmail, CodeSet codeSet)
     {
-        var destinationSet = new DestinationSet() { Current = user.Email!, Next = newEmail };
+        var destinationSet = new DestinationSet() { Current = userEntity.Email!, Next = newEmail };
         var validationResult = await ValidateAndRemoveAsync(codeSet, destinationSet, Verification.ChangeEmail);
 
         if (!validationResult.Succeeded)
@@ -103,12 +103,12 @@ internal sealed class SecurityManager(
             return validationResult;
         }
 
-        var result = await userManager.ChangeEmailAsync(user, newEmail);
+        var result = await userManager.ChangeEmailAsync(userEntity, newEmail);
         return result;
     }
-    public async ValueTask<IdentityResult> ChangePhoneNumberAsync(AppUser user, string newPhoneNumber, CodeSet codeSet)
+    public async ValueTask<IdentityResult> ChangePhoneNumberAsync(UserEntity userEntity, string newPhoneNumber, CodeSet codeSet)
     {
-        var destinationSet = new DestinationSet() { Current = user.PhoneNumber!, Next = newPhoneNumber };
+        var destinationSet = new DestinationSet() { Current = userEntity.PhoneNumber!, Next = newPhoneNumber };
         var validationResult =
             await ValidateAndRemoveAsync(codeSet, destinationSet, Verification.ChangePhoneNumber);
 
@@ -117,7 +117,7 @@ internal sealed class SecurityManager(
             return validationResult;
         }
 
-        var result = await userManager.ChangePhoneNumberAsync(user, newPhoneNumber);
+        var result = await userManager.ChangePhoneNumberAsync(userEntity, newPhoneNumber);
         return result;
     }
     public async ValueTask<VerificationCodeEntity?> FindCodeAsync(string destination, Verification codeType)
@@ -145,17 +145,17 @@ internal sealed class SecurityManager(
 
         return IdentityResult.Success;
     }
-    public async ValueTask<SecurityTokenEntity?> FindTokenAsync(AppUser user)
+    public async ValueTask<SecurityTokenEntity?> FindTokenAsync(UserEntity userEntity)
     {
         var entity = await context.SecurityTokens
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UserId == user.Id);
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
 
         return entity;
     }
-    public async ValueTask<IdentityResult> RemoveTokenAsync(AppUser user)
+    public async ValueTask<IdentityResult> RemoveTokenAsync(UserEntity userEntity)
     {
-        var token = await context.SecurityTokens.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == user.Id);
+        var token = await context.SecurityTokens.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
 
         if (token is null)
         {
@@ -167,11 +167,11 @@ internal sealed class SecurityManager(
 
         return IdentityResult.Success;
     }
-    public async ValueTask SaveTokenAsync(AppUser user, string token, DateTime validTo)
+    public async ValueTask SaveTokenAsync(UserEntity userEntity, string token, DateTime validTo)
     {
         await context.SecurityTokens.AddAsync(new()
         {
-            UserId = user.Id, 
+            UserId = userEntity.Id, 
             Token = token,
             ExpireDate = validTo,
         });

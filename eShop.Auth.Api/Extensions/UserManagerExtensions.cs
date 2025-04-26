@@ -2,41 +2,41 @@
 
 public static class UserManagerExtensions
 {
-    public static async Task<AppUser?> FindByIdAsync(this UserManager<AppUser> userManager, Guid id)
+    public static async Task<UserEntity?> FindByIdAsync(this UserManager<UserEntity> userManager, Guid id)
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         return user;
     }
 
-    public static async Task<AppUser?> FindByPhoneNumberAsync(this UserManager<AppUser> userManager, string phoneNumber)
+    public static async Task<UserEntity?> FindByPhoneNumberAsync(this UserManager<UserEntity> userManager, string phoneNumber)
     {
         var user = await userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
         return user;
     }
 
-    public static async Task<LockoutStatus> GetLockoutStatusAsync(this UserManager<AppUser> userManager, AppUser user)
+    public static async Task<LockoutStatus> GetLockoutStatusAsync(this UserManager<UserEntity> userManager, UserEntity userEntity)
     {
-        var lockoutEnabled = await userManager.GetLockoutEnabledAsync(user);
-        var lockoutEnd = await userManager.GetLockoutEndDateAsync(user);
+        var lockoutEnabled = await userManager.GetLockoutEnabledAsync(userEntity);
+        var lockoutEnd = await userManager.GetLockoutEndDateAsync(userEntity);
 
         return new LockoutStatus() { LockoutEnabled = lockoutEnabled, LockoutEnd = lockoutEnd };
     }
 
-    public static async Task<IdentityResult> UnlockUserAsync(this UserManager<AppUser> userManager, AppUser user)
+    public static async Task<IdentityResult> UnlockUserAsync(this UserManager<UserEntity> userManager, UserEntity userEntity)
     {
-        var lockoutEnabled = await userManager.SetLockoutEnabledAsync(user, false);
-        var lockoutEnd = await userManager.SetLockoutEndDateAsync(user, new DateTime(1980, 1, 1));
+        var lockoutEnabled = await userManager.SetLockoutEnabledAsync(userEntity, false);
+        var lockoutEnd = await userManager.SetLockoutEndDateAsync(userEntity, new DateTime(1980, 1, 1));
 
         return IdentityResult.Success;
     }
 
-    public static async Task<IdentityResult> RemoveFromRolesAsync(this UserManager<AppUser> userManager, AppUser user)
+    public static async Task<IdentityResult> RemoveFromRolesAsync(this UserManager<UserEntity> userManager, UserEntity userEntity)
     {
-        var roles = await userManager.GetRolesAsync(user);
+        var roles = await userManager.GetRolesAsync(userEntity);
 
         if (roles.Any())
         {
-            var result = await userManager.RemoveFromRolesAsync(user, roles);
+            var result = await userManager.RemoveFromRolesAsync(userEntity, roles);
 
             if (!result.Succeeded)
             {
@@ -47,42 +47,42 @@ public static class UserManagerExtensions
         return IdentityResult.Success;
     }
 
-    public static async Task<IdentityResult> ResetPasswordAsync(this UserManager<AppUser> userManager, AppUser user,
+    public static async Task<IdentityResult> ResetPasswordAsync(this UserManager<UserEntity> userManager, UserEntity userEntity,
         string password)
     {
-        var token = await userManager.GeneratePasswordResetTokenAsync(user);
-        var result = await userManager.ResetPasswordAsync(user, token, password);
+        var token = await userManager.GeneratePasswordResetTokenAsync(userEntity);
+        var result = await userManager.ResetPasswordAsync(userEntity, token, password);
         return result;
     }
 
-    public static async Task<IdentityResult> ConfirmEmailAsync(this UserManager<AppUser> userManager, AppUser user)
+    public static async Task<IdentityResult> ConfirmEmailAsync(this UserManager<UserEntity> userManager, UserEntity userEntity)
     {
-        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-        var result = await userManager.ConfirmEmailAsync(user, token);
+        var token = await userManager.GenerateEmailConfirmationTokenAsync(userEntity);
+        var result = await userManager.ConfirmEmailAsync(userEntity, token);
         return result;
     }
 
-    public static async Task<IdentityResult> ConfirmPhoneNumberAsync(this UserManager<AppUser> userManager,
-        AppUser user)
+    public static async Task<IdentityResult> ConfirmPhoneNumberAsync(this UserManager<UserEntity> userManager,
+        UserEntity userEntity)
     {
-        user.PhoneNumberConfirmed = true;
-        await userManager.UpdateAsync(user);
+        userEntity.PhoneNumberConfirmed = true;
+        await userManager.UpdateAsync(userEntity);
         return IdentityResult.Success;
     }
 
-    public static async Task<IdentityResult> ChangeEmailAsync(this UserManager<AppUser> userManager, AppUser user,
+    public static async Task<IdentityResult> ChangeEmailAsync(this UserManager<UserEntity> userManager, UserEntity userEntity,
         string newEmail)
     {
-        var token = await userManager.GenerateChangeEmailTokenAsync(user, newEmail);
-        var result = await userManager.ChangeEmailAsync(user, newEmail, token);
+        var token = await userManager.GenerateChangeEmailTokenAsync(userEntity, newEmail);
+        var result = await userManager.ChangeEmailAsync(userEntity, newEmail, token);
         return result;
     }
 
-    public static async Task<IdentityResult> ChangePhoneNumberAsync(this UserManager<AppUser> userManager, AppUser user,
+    public static async Task<IdentityResult> ChangePhoneNumberAsync(this UserManager<UserEntity> userManager, UserEntity userEntity,
         string newPhoneNumber)
     {
-        var token = await userManager.GenerateChangePhoneNumberTokenAsync(user, newPhoneNumber);
-        var result = await userManager.ChangePhoneNumberAsync(user, newPhoneNumber, token);
+        var token = await userManager.GenerateChangePhoneNumberTokenAsync(userEntity, newPhoneNumber);
+        var result = await userManager.ChangePhoneNumberAsync(userEntity, newPhoneNumber, token);
         return result;
     }
 }

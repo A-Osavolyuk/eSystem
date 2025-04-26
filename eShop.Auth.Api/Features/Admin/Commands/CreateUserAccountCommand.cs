@@ -20,7 +20,7 @@ internal sealed class CreateUserAccountCommandHandler(
         CancellationToken cancellationToken)
     {
         var userId = Guid.NewGuid();
-        var user = new AppUser()
+        var user = new UserEntity()
         {
             Id = userId,
             Email = request.Request.Email,

@@ -3,12 +3,12 @@
 internal interface IPermissionManager
 {
     public ValueTask<bool> ExistsAsync(string name, CancellationToken cancellationToken = default);
-    public ValueTask<bool> HasPermissionAsync(AppUser user, string name, CancellationToken cancellationToken = default);
+    public ValueTask<bool> HasPermissionAsync(UserEntity userEntity, string name, CancellationToken cancellationToken = default);
     public ValueTask<List<PermissionEntity>> GetListAsync(CancellationToken cancellationToken = default);
-    public ValueTask<List<string>> GetUserPermissionsAsync(AppUser user, CancellationToken cancellationToken = default);
+    public ValueTask<List<string>> GetUserPermissionsAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
     public ValueTask<PermissionEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
-    public ValueTask<IdentityResult> IssuePermissionsAsync(AppUser user, IEnumerable<string> collection, CancellationToken cancellationToken = default);
-    public ValueTask<IdentityResult> IssuePermissionAsync(AppUser user, string permission, CancellationToken cancellationToken = default);
-    public ValueTask<IdentityResult> RemoveFromPermissionAsync(AppUser user, PermissionEntity permissionEntity, CancellationToken cancellationToken = default);
-    public ValueTask<IdentityResult> RemoveFromPermissionsAsync(AppUser user, CancellationToken cancellationToken = default);
+    public ValueTask<IdentityResult> IssuePermissionsAsync(UserEntity userEntity, IEnumerable<string> collection, CancellationToken cancellationToken = default);
+    public ValueTask<IdentityResult> IssuePermissionAsync(UserEntity userEntity, string permission, CancellationToken cancellationToken = default);
+    public ValueTask<IdentityResult> RemoveFromPermissionAsync(UserEntity userEntity, PermissionEntity permissionEntity, CancellationToken cancellationToken = default);
+    public ValueTask<IdentityResult> RemoveFromPermissionsAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
 }

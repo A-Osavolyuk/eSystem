@@ -65,7 +65,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
         }
         else
         {
-            user = new AppUser()
+            user = new UserEntity()
             {
                 Email = email,
                 UserName = email,

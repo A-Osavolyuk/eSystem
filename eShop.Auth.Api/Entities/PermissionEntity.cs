@@ -10,5 +10,5 @@ public class PermissionEntity : IEntity<Guid>
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
     
-    [JsonIgnore] public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;
+    public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;
 }

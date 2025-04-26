@@ -8,9 +8,9 @@ namespace eShop.Auth.Api.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Authorize]
-public class SecurityController(SignInManager<AppUser> signInManager, ISender sender) : ControllerBase
+public class SecurityController(SignInManager<UserEntity> signInManager, ISender sender) : ControllerBase
 {
-    private readonly SignInManager<AppUser> signInManager = signInManager;
+    private readonly SignInManager<UserEntity> signInManager = signInManager;
     private readonly ISender sender = sender;
 
     #region Get methods

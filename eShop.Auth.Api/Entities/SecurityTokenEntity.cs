@@ -10,5 +10,5 @@ public class SecurityTokenEntity : IEntity<Guid>, IExpireable
     public DateTime ExpireDate { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
-    public AppUser User { get; init; } = null!;
+    public UserEntity UserEntity { get; init; } = null!;
 }

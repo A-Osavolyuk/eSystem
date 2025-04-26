@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data;
 
-internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<AppUser, AppRole, Guid>(options)
+internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : IdentityDbContext<UserEntity, RoleEntity, Guid>(options)
 {
     public DbSet<PersonalDataEntity> PersonalData => Set<PersonalDataEntity>();
     public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
@@ -41,7 +41,8 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
 
         builder.Entity<IdentityUserRole<string>>(x =>
         {
-            x.HasKey(role => new { UserId = role.UserId, RoleId = role.RoleId });
+            x.HasKey(role => new { role.UserId, role.RoleId });
+            
             x.HasData(
                 new IdentityUserRole<string>()
                 {
@@ -130,8 +131,8 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
                 });
         });
 
-        builder.Entity<AppUser>().HasData(
-            new AppUser()
+        builder.Entity<UserEntity>().HasData(
+            new UserEntity()
             {
                 Email = "sasha.osavolll111@gmail.com",
                 NormalizedEmail = "sasha.osavolll111@gmail.com".ToUpper(),
@@ -149,7 +150,7 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
         {
             x.HasKey(ur => new { ur.UserId, ur.Id });
 
-            x.HasOne(ur => ur.User)
+            x.HasOne(ur => ur.UserEntity)
                 .WithMany(u => u.Permissions)
                 .HasForeignKey(ur => ur.UserId);
 
@@ -189,7 +190,7 @@ internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : I
         {
             x.HasKey(k => k.Id);
             x.Property(t => t.Token).HasColumnType("VARCHAR(MAX)");
-            x.HasOne(t => t.User).WithOne(u => u.AuthenticationToken).HasForeignKey<SecurityTokenEntity>(t => t.UserId);
+            x.HasOne(t => t.UserEntity).WithOne(u => u.AuthenticationToken).HasForeignKey<SecurityTokenEntity>(t => t.UserId);
         });
     }
 }

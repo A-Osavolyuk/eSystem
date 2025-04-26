@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class AppRole : IdentityRole<Guid>
+public class RoleEntity : IdentityRole<Guid>
 {
     
 }
