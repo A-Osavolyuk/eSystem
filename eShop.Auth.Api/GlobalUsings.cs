@@ -1,5 +1,4 @@
 ﻿global using System.Text;
-global using eShop.Application.Behaviours;
 global using eShop.Application.Extensions;
 global using eShop.Application.Filters;
 global using eShop.Application.Utilities;

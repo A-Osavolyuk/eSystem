@@ -1,10 +1,8 @@
 ﻿global using eShop.Application;
-global using eShop.Application.Behaviours;
 global using eShop.Application.Extensions;
 global using eShop.Application.Filters;
 global using eShop.Application.Utilities;
 global using eShop.Domain.Enums;
-global using eShop.Domain.Interfaces;
 global using eShop.Product.Api.Behaviours;
 global using eShop.Product.Api.Data;
 global using eShop.Product.Api.Extensions;

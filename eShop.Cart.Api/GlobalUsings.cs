@@ -1,13 +1,9 @@
 ﻿global using eShop.Application;
-global using eShop.Application.Behaviours;
 global using eShop.Application.Extensions;
-global using eShop.Application.Middlewares;
 global using eShop.Application.Utilities;
 global using eShop.Cart.Api.Data;
 global using eShop.Cart.Api.Extensions;
 global using eShop.Cart.Api.Rpc;
-global using eShop.Domain.Exceptions;
-global using eShop.Domain.Interfaces;
 global using eShop.ServiceDefaults;
 global using Grpc.Core;
 global using MassTransit;
