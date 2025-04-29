@@ -11,6 +11,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddJwtAuthentication();
         builder.AddVersioning();
         builder.AddDependencyInjection();
+        builder.AddMongoDb();
         builder.AddMessageBus();
         builder.AddValidation();
         builder.AddServiceDefaults();
@@ -33,11 +34,13 @@ public static class HostApplicationBuilderExtensions
     
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.Configure<MongoDbSettings>(
-            builder.Configuration.GetSection("Configuration:Storage:Databases:NoSQL:Mongo"));
-
         builder.Services.AddScoped<ICacheService, CacheService>();
-
+    }
+    
+    private static void AddMongoDb(this IHostApplicationBuilder builder)
+    {
+        var section = builder.Configuration.GetSection("Configuration:Storage:Databases:NoSQL:Mongo");
+        builder.Services.Configure<MongoDbSettings>(section);
         builder.Services.AddSingleton<DbClient>();
     }
 

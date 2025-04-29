@@ -17,7 +17,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddRedisCache();
         builder.AddCors();
         builder.AddMediatR();
-        builder.AddSqlDb();
+        builder.AddMsSqlDb();
         builder.AddGrpc();
         builder.AddLogging();
         builder.AddExceptionHandler();
@@ -42,7 +42,7 @@ public static class HostApplicationBuilderExtensions
         });
     }
 
-    private static void AddSqlDb(this IHostApplicationBuilder builder)
+    private static void AddMsSqlDb(this IHostApplicationBuilder builder)
     {
         var connectionString = builder.Configuration.GetConnectionString(SqlDb.SqlServer);
         builder.Services.AddDbContext<AuthDbContext>(cfg =>

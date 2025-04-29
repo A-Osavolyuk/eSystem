@@ -16,7 +16,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddValidation();
         builder.AddRedisCache();
         builder.AddMediatR();
-        builder.AddSqlDb();
+        builder.AddMsSqlDb();
         builder.AddCors();
         builder.AddExceptionHandler();
         
@@ -25,7 +25,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddOpenApi();
     }
 
-    private static void AddSqlDb(this IHostApplicationBuilder builder)
+    private static void AddMsSqlDb(this IHostApplicationBuilder builder)
     {
         var connectionString = builder.Configuration.GetConnectionString(SqlDb.SqlServer);
         builder.Services.AddDbContext<AppDbContext>(cfg =>
