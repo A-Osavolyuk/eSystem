@@ -4,8 +4,6 @@ namespace eShop.Files.Api.Services;
 
 internal sealed class StoreService(IConfiguration configuration) : IStoreService
 {
-    private readonly IConfiguration configuration = configuration;
-
     private readonly string avatarContainer = configuration["Configuration:Storage:Azure:Containers:AvatarContainer"]!;
 
     private readonly string productContainer =
@@ -13,85 +11,72 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
 
     private readonly string connectionString = configuration["Configuration:Storage:Azure:ConnectionString"]!;
 
-    public async ValueTask<List<string>> GetProductImagesAsync(Guid productId)
+    public ValueTask<List<string>> GetManyAsync(string prefix)
+    {
+        var container = GetContainerClient(productContainer);
+        var files = container.GetBlobs(prefix: prefix);
+
+        if (files is null || !files.Any())
+        {
+            return ValueTask.FromResult(new List<string>());
+        }
+        
+        var uris = files.Select(x => x.Name).ToList();
+        return ValueTask.FromResult(uris);
+    }
+
+    public async ValueTask<List<string>> UploadRangeAsync(IEnumerable<IFormFile> files, string key)
     {
         var uriList = new List<string>();
-        var blobContainerClient = GetContainerClient(productContainer);
+        var blobs = files.ToImmutableList();
 
-        for (int i = 0; true; i++)
+        for (var i = 0; i < blobs.Count; i++)
         {
-            var blobClient = blobContainerClient.GetBlobClient($"{productId}_{i}");
+            var container = GetContainerClient(productContainer);
+            var client = container.GetBlobClient($"{key}_{i}");
+            await using var stream = blobs[i].OpenReadStream();
+            await client.UploadAsync(stream, true);
 
-            if (await blobClient.ExistsAsync())
-            {
-                uriList.Add(blobClient.Uri.ToString());
-            }
-            else
-            {
-                break;
-            }
+            uriList.Add(client.Uri.ToString());
         }
 
         return uriList;
     }
 
-    public async ValueTask<List<string>> UploadProductImagesAsync(IReadOnlyCollection<IFormFile> files, Guid productId)
+    public async ValueTask<string> UploadAsync(IFormFile file, string key)
     {
-        var uriList = new List<string>();
-        var images = files.ToImmutableList();
+        var container = GetContainerClient(productContainer);
+        var client = container.GetBlobClient($"{key}");
 
-        for (var i = 0; i < images.Count(); i++)
-        {
-            var blobContainerClient = GetContainerClient(productContainer);
-            var blobClient = blobContainerClient.GetBlobClient($"{productId}_{i}");
-            await using (var stream = images[i].OpenReadStream())
-            {
-                await blobClient.UploadAsync(stream, true);
-            }
-
-            uriList.Add(blobClient.Uri.ToString());
-        }
-
-        return uriList;
-    }
-
-    public async ValueTask DeleteProductImagesAsync(Guid productId)
-    {
-        var blobContainerClient = GetContainerClient(productContainer);
-        for (int i = 0; true; i++)
-        {
-            var blobClient = blobContainerClient.GetBlobClient($"{productId}_{i}");
-
-            if (await blobClient.ExistsAsync())
-                await blobClient.DeleteAsync();
-            else
-                break;
-        }
-    }
-
-    public async ValueTask<string> UploadUserAvatarAsync(IFormFile file, Guid userId)
-    {
-        var blobContainerClient = GetContainerClient(avatarContainer);
-        var blobClient = blobContainerClient.GetBlobClient($"avatar_{userId}");
         await using var stream = file.OpenReadStream();
-        await blobClient.UploadAsync(stream);
-        return blobClient.Uri.ToString();
+        await client.UploadAsync(stream, true);
+
+        var uri = client.Uri.ToString();
+
+        return uri;
     }
 
-    public async ValueTask DeleteUserAvatarAsync(Guid userId)
+    public async ValueTask DeleteAsync(string prefix)
     {
-        var blobContainerClient = GetContainerClient(avatarContainer);
-        var blobClient = blobContainerClient.GetBlobClient($"avatar_{userId}");
-        if (await blobClient.ExistsAsync())
+        var container = GetContainerClient(productContainer);
+        var files = container.GetBlobs(prefix: prefix);
+
+        if (files is not null)
         {
-            await blobClient.DeleteAsync();
+            foreach (var file in files)
+            {
+                if (file is not null)
+                {
+                    await container.DeleteBlobAsync(file.Name);
+                }
+            }
         }
     }
 
-    public ValueTask<string> GetUserAvatarAsync(Guid userId)
+    public ValueTask<string> GetAsync(string key)
     {
         var blobContainerClient = GetContainerClient(avatarContainer);
-        var blobClient = blobContainerClient.GetBlobClient($"avatar_{userId}");
+        var blobClient = blobContainerClient.GetBlobClient(key);
         return ValueTask.FromResult(blobClient.Uri.ToString());
     }
 

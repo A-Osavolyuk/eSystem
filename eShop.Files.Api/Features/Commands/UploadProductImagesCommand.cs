@@ -15,9 +15,10 @@ internal sealed class UploadProductImagesCommandHandler(
     public async Task<Result> Handle(UploadProductImagesCommand request,
         CancellationToken cancellationToken)
     {
-        var list = await service.UploadProductImagesAsync(request.Files, request.ProductId);
+        var key = request.ProductId.ToString();
+        var list = await service.UploadRangeAsync(request.Files, key);
 
-        if (!list.Any())
+        if (list.Count == 0)
         {
             return Results.InternalServerError($"Cannot upload images for product with ID {request.ProductId}.");
         }

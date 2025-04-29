@@ -2,10 +2,9 @@
 
 public interface IStoreService
 {
-    public ValueTask<List<string>> GetProductImagesAsync(Guid productId);
-    public ValueTask<List<string>> UploadProductImagesAsync(IReadOnlyCollection<IFormFile> files, Guid productId);
-    public ValueTask DeleteProductImagesAsync(Guid productId);
-    public ValueTask<string> UploadUserAvatarAsync(IFormFile file, Guid userId);
-    public ValueTask DeleteUserAvatarAsync(Guid userId);
-    public ValueTask<string> GetUserAvatarAsync(Guid userId);
+    public ValueTask<string> GetAsync(string key);
+    public ValueTask<List<string>> GetManyAsync(string prefix);
+    public ValueTask<List<string>> UploadRangeAsync(IEnumerable<IFormFile> files, string key);
+    public ValueTask<string> UploadAsync(IFormFile file, string key);
+    public ValueTask DeleteAsync(string prefix);
 }

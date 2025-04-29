@@ -13,9 +13,10 @@ internal sealed class GetProductImagesQueryHandler(IStoreService service)
 
     public async Task<Result> Handle(GetProductImagesQuery request, CancellationToken cancellationToken)
     {
-        var response = await service.GetProductImagesAsync(request.ProductId);
+        var prefix = request.ProductId.ToString();
+        var response = await service.GetManyAsync(prefix);
 
-        if (!response.Any())
+        if (response.Count == 0)
         {
             return Results.NotFound($"Cannot find product images for product with ID {request.ProductId}.");
         }

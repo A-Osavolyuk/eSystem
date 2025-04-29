@@ -13,7 +13,8 @@ internal sealed class GetUserAvatarQueryHandler(IStoreService service)
 
     public async Task<Result> Handle(GetUserAvatarQuery request, CancellationToken cancellationToken)
     {
-        var response = await service.GetUserAvatarAsync(request.UserId);
+        var key = request.UserId.ToString();
+        var response = await service.GetAsync(key);
 
         if (string.IsNullOrWhiteSpace(response))
         {
