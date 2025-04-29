@@ -59,17 +59,6 @@ public class CodeManager(AuthDbContext context) : ICodeManager
         }
 
         return Result.Success();
-        ;
-    }
-
-    public Result Validate(VerificationCodeEntity entity)
-    {
-        if (entity.ExpireDate < DateTime.UtcNow)
-        {
-            return Results.BadRequest("Code is expired");
-        }
-
-        return Result.Success();
     }
 
     public async ValueTask DeleteAsync(VerificationCodeEntity entity, CancellationToken cancellationToken = default)

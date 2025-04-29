@@ -114,11 +114,9 @@ internal sealed class SecurityManager(
             return Results.NotFound("Code not found");
         }
 
-        var validationResult = codeManager.Validate(entity);
-
-        if (!validationResult.Succeeded)
+        if (entity.ExpireDate < DateTime.UtcNow)
         {
-            return validationResult;
+            return Results.BadRequest("Code is expired");
         }
 
         await codeManager.DeleteAsync(entity);
