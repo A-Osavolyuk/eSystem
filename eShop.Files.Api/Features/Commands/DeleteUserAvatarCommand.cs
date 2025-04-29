@@ -13,7 +13,7 @@ internal sealed class DeleteUserAvatarCommandHandler(
     public async Task<Result> Handle(DeleteUserAvatarCommand request,
         CancellationToken cancellationToken)
     {
-        await service.DeleteAsync(request.UserId.ToString());
+        await service.DeleteAsync(request.UserId.ToString(), Container.Avatar);
 
         return Result.Success("User avatar was deleted successfully");
     }

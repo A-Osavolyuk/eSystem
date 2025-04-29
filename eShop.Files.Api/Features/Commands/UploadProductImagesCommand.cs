@@ -16,7 +16,7 @@ internal sealed class UploadProductImagesCommandHandler(
         CancellationToken cancellationToken)
     {
         var key = request.ProductId.ToString();
-        var list = await service.UploadRangeAsync(request.Files, key);
+        var list = await service.UploadRangeAsync(request.Files, key, Container.Product);
 
         if (list.Count == 0)
         {

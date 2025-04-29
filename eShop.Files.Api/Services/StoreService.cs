@@ -5,16 +5,13 @@ namespace eShop.Files.Api.Services;
 internal sealed class StoreService(IConfiguration configuration) : IStoreService
 {
     private readonly string avatarContainer = configuration["Configuration:Storage:Azure:Containers:AvatarContainer"]!;
-
-    private readonly string productContainer =
-        configuration["Configuration:Storage:Azure:Containers:ProductContainer"]!;
-
+    private readonly string productContainer = configuration["Configuration:Storage:Azure:Containers:ProductContainer"]!;
     private readonly string connectionString = configuration["Configuration:Storage:Azure:ConnectionString"]!;
 
-    public ValueTask<List<string>> GetManyAsync(string prefix)
+    public ValueTask<List<string>> GetManyAsync(string prefix, Container container)
     {
-        var container = GetContainerClient(productContainer);
-        var files = container.GetBlobs(prefix: prefix);
+        var containerClient = GetContainerClient(container);
+        var files = containerClient.GetBlobs(prefix: prefix);
 
         if (files is null || !files.Any())
         {
@@ -25,15 +22,15 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
         return ValueTask.FromResult(uris);
     }
 
-    public async ValueTask<List<string>> UploadRangeAsync(IEnumerable<IFormFile> files, string key)
+    public async ValueTask<List<string>> UploadRangeAsync(IEnumerable<IFormFile> files, string key, Container container)
     {
         var uriList = new List<string>();
         var blobs = files.ToImmutableList();
 
         for (var i = 0; i < blobs.Count; i++)
         {
-            var container = GetContainerClient(productContainer);
-            var client = container.GetBlobClient($"{key}_{i}");
+            var containerClient = GetContainerClient(container);
+            var client = containerClient.GetBlobClient($"{key}_{i}");
             await using var stream = blobs[i].OpenReadStream();
             await client.UploadAsync(stream, true);
 
@@ -43,10 +40,10 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
         return uriList;
     }
 
-    public async ValueTask<string> UploadAsync(IFormFile file, string key)
+    public async ValueTask<string> UploadAsync(IFormFile file, string key, Container container)
     {
-        var container = GetContainerClient(productContainer);
-        var client = container.GetBlobClient($"{key}");
+        var containerClient = GetContainerClient(container);
+        var client = containerClient.GetBlobClient($"{key}");
 
         await using var stream = file.OpenReadStream();
         await client.UploadAsync(stream, true);
@@ -56,10 +53,10 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
         return uri;
     }
 
-    public async ValueTask DeleteAsync(string prefix)
+    public async ValueTask DeleteAsync(string prefix, Container container)
     {
-        var container = GetContainerClient(productContainer);
-        var files = container.GetBlobs(prefix: prefix);
+        var containerClient = GetContainerClient(container);
+        var files = containerClient.GetBlobs(prefix: prefix);
 
         if (files is not null)
         {
@@ -67,21 +64,28 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
             {
                 if (file is not null)
                 {
-                    await container.DeleteBlobAsync(file.Name);
+                    await containerClient.DeleteBlobAsync(file.Name);
                 }
             }
         }
     }
 
-    public ValueTask<string> GetAsync(string key)
+    public ValueTask<string> GetAsync(string key, Container container)
     {
-        var blobContainerClient = GetContainerClient(avatarContainer);
-        var blobClient = blobContainerClient.GetBlobClient(key);
+        var containerClient = GetContainerClient(container);
+        var blobClient = containerClient.GetBlobClient(key);
         return ValueTask.FromResult(blobClient.Uri.ToString());
     }
 
-    private BlobContainerClient GetContainerClient(string containerName)
+    private BlobContainerClient GetContainerClient(Container container)
     {
+        var containerName = container switch
+        {
+            Container.Avatar => avatarContainer,
+            Container.Product => productContainer,
+            _ => throw new ArgumentOutOfRangeException(nameof(container), container, null)
+        };
+        
         var blobServiceClient = new BlobServiceClient(connectionString);
         return blobServiceClient.GetBlobContainerClient(containerName);
     }

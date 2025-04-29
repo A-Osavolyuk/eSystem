@@ -14,7 +14,7 @@ internal sealed class GetUserAvatarQueryHandler(IStoreService service)
     public async Task<Result> Handle(GetUserAvatarQuery request, CancellationToken cancellationToken)
     {
         var key = request.UserId.ToString();
-        var response = await service.GetAsync(key);
+        var response = await service.GetAsync(key, Container.Avatar);
 
         if (string.IsNullOrWhiteSpace(response))
         {

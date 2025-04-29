@@ -15,7 +15,7 @@ internal sealed class UploadUserAvatarCommandHandler(
         CancellationToken cancellationToken)
     {
         var key = $"avatar_{request.UserId}";
-        var response = await service.UploadAsync(request.File, key);
+        var response = await service.UploadAsync(request.File, key, Container.Avatar);
 
         if (string.IsNullOrEmpty(response))
         {

@@ -13,7 +13,7 @@ internal sealed class DeleteProductImagesCommandHandler(IStoreService service)
     public async Task<Result> Handle(DeleteProductImagesCommand request,
         CancellationToken cancellationToken)
     {
-        await service.DeleteAsync(request.ProductId.ToString());
+        await service.DeleteAsync(request.ProductId.ToString(), Container.Product);
 
         return Result.Success("Product images were deleted successfully.");
     }
