@@ -56,17 +56,10 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
     public async ValueTask DeleteAsync(string prefix, Container container)
     {
         var containerClient = GetContainerClient(container);
-        var files = containerClient.GetBlobs(prefix: prefix);
-
-        if (files is not null)
+        await foreach (var blobItem in containerClient.GetBlobsAsync(prefix: prefix))
         {
-            foreach (var file in files)
-            {
-                if (file is not null)
-                {
-                    await containerClient.DeleteBlobAsync(file.Name);
-                }
-            }
+            var blobClient = containerClient.GetBlobClient(blobItem.Name);
+            await blobClient.DeleteIfExistsAsync();
         }
     }
 
