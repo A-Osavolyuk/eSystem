@@ -26,7 +26,6 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         return result.Match(
             s => Ok(new ResponseBuilder()
                 .Succeeded()
-                .WithMessage(s.Message)
                 .WithResult(s)
                 .Build()),
             ErrorHandler.Handle);
@@ -95,7 +94,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new VerifyCodeCommand(request));
 
         return result.Match(
-            succ => Ok(new ResponseBuilder().Succeeded().WithMessage(succ.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 
@@ -110,7 +109,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new ResendEmailVerificationCodeCommand(request));
 
         return result.Match(
-            succ => Ok(new ResponseBuilder().Succeeded().WithMessage(succ.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 
@@ -140,15 +139,15 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new LoginCommand(request));
 
         return result.Match(
-            succ => Ok(new ResponseBuilder().Succeeded().WithResult(succ).WithMessage(succ.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Request reset password")]
-    [EndpointDescription("Requests reset password")]
+    [EndpointSummary("Reset password")]
+    [EndpointDescription("Request password reset")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("request-reset-password")]
+    [HttpPost("reset-password")]
     public async ValueTask<ActionResult<Response>> ResetPasswordRequest(ResetPasswordRequest request)
     {
         var result = await sender.Send(new RequestResetPasswordCommand(request));
@@ -200,7 +199,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
             await sender.Send(new LoginWith2FaCommand(with2FaRequest));
 
         return result.Match(
-            succ => Ok(new ResponseBuilder().Succeeded().WithResult(succ).WithMessage(succ.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 
@@ -208,7 +207,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
     [EndpointDescription("Confirms an email change")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "ManageAccountPolicy")]
-    [HttpPost("confirm-change-email")]
+    [HttpPost("confirm-email")]
     public async ValueTask<ActionResult<Response>> ConfirmChangeEmail(
         [FromBody] ConfirmChangeEmailRequest request)
     {
@@ -223,7 +222,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
     [EndpointDescription("Confirm a phone number change")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "ManageAccountPolicy")]
-    [HttpPost("confirm-change-phone-number")]
+    [HttpPost("confirm-phone-number")]
     public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumber(
         [FromBody] ConfirmChangePhoneNumberRequest request)
     {
@@ -238,11 +237,11 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
 
     #region Put methods
 
-    [EndpointSummary("Confirm reset password")]
+    [EndpointSummary("Confirm password")]
     [EndpointDescription("Confirm password reset")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPut("confirm-reset-password")]
+    [HttpPut("confirm-password")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmResetPassword(
         [FromBody] ConfirmResetPasswordRequest confirmPasswordResetRequest)

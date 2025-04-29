@@ -30,13 +30,13 @@ public class SecurityService(
     public async ValueTask<Response> RequestResetPasswordAsync(ResetPasswordRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
-                Url: $"{Configuration[Key]}/api/v1/Security/request-reset-password",
+                Url: $"{Configuration[Key]}/api/v1/Security/reset-password",
                 Methods: HttpMethods.Post, Data: request));
 
     public async ValueTask<Response> ConfirmResetPasswordAsync(ConfirmResetPasswordRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
-                Url: $"{Configuration[Key]}/api/v1/Security/confirm-reset-password",
+                Url: $"{Configuration[Key]}/api/v1/Security/confirm-password",
                 Methods: HttpMethods.Put, Data: request));
 
     public async ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request) => await HttpClientService.SendAsync(
@@ -57,13 +57,13 @@ public class SecurityService(
     public async ValueTask<Response> RequestChangeEmailAsync(ChangeEmailRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
-                Url: $"{Configuration[Key]}/api/v1/Security/request-change-email",
+                Url: $"{Configuration[Key]}/api/v1/Security/change-email",
                 Methods: HttpMethods.Put, Data: request));
 
     public async ValueTask<Response> ConfirmChangeEmailAsync(ConfirmChangeEmailRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
-                Url: $"{Configuration[Key]}/api/v1/Security/confirm-change-email",
+                Url: $"{Configuration[Key]}/api/v1/Security/confirm-email",
                 Methods: HttpMethods.Post, Data: request));
 
     public async ValueTask<Response> ChangePasswordAsync(ChangePasswordRequest request) =>
@@ -87,13 +87,13 @@ public class SecurityService(
     public async ValueTask<Response> RequestChangePhoneNumberAsync(ChangePhoneNumberRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
-                Url: $"{Configuration[Key]}/api/v1/Security/request-change-phone-number",
+                Url: $"{Configuration[Key]}/api/v1/Security/change-phone-number",
                 Methods: HttpMethods.Put, Data: request));
 
     public async ValueTask<Response> ConfirmChangePhoneNumberAsync(ConfirmChangePhoneNumberRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
-                Url: $"{Configuration[Key]}/api/v1/Security/confirm-change-phone-number",
+                Url: $"{Configuration[Key]}/api/v1/Security/confirm-phone-number",
                 Methods: HttpMethods.Post, Data: request));
     
 }
