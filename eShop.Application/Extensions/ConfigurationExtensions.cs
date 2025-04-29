@@ -25,7 +25,7 @@ public static class ConfigurationExtensions
 
     public static string GetConnectionString(this IConfiguration configuration, SqlDb type)
     {
-        const string path = "Configuration:Storage:Database:SQL:";
+        const string path = "Configuration:Storage:Databases:SQL:";
         var section = type switch
         {
             SqlDb.SqlServer => "MSSQL",
@@ -44,7 +44,7 @@ public static class ConfigurationExtensions
     
     public static string GetConnectionString(this IConfiguration configuration, NoSqlDb type)
     {
-        const string path = "Configuration:Storage:Database:SQL:";
+        const string path = "Configuration:Storage:Databases:SQL:";
         var section = type switch
         {
             NoSqlDb.Mongo => "Mongo",
