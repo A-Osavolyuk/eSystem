@@ -8,7 +8,7 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
     private readonly string productContainer = configuration["Configuration:Storage:Azure:Containers:ProductContainer"]!;
     private readonly string connectionString = configuration["Configuration:Storage:Azure:ConnectionString"]!;
 
-    public ValueTask<List<string>> GetManyAsync(string prefix, Container container)
+    public ValueTask<List<string>> FindManyAsync(string prefix, Container container)
     {
         var containerClient = GetContainerClient(container);
         var files = containerClient.GetBlobs(prefix: prefix);
@@ -26,13 +26,16 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
     {
         var uriList = new List<string>();
         var blobs = files.ToImmutableList();
+        var containerClient = GetContainerClient(container);
 
-        for (var i = 0; i < blobs.Count; i++)
+        var index = 0;
+
+        foreach (var file in blobs)
         {
-            var containerClient = GetContainerClient(container);
-            var client = containerClient.GetBlobClient($"{key}_{i}");
-            await using var stream = blobs[i].OpenReadStream();
+            var client = containerClient.GetBlobClient($"{key}_{index}");
+            await using var stream = blobs[index].OpenReadStream();
             await client.UploadAsync(stream, true);
+            index++;
 
             uriList.Add(client.Uri.ToString());
         }
@@ -63,7 +66,7 @@ internal sealed class StoreService(IConfiguration configuration) : IStoreService
         }
     }
 
-    public ValueTask<string> GetAsync(string key, Container container)
+    public ValueTask<string> FindAsync(string key, Container container)
     {
         var containerClient = GetContainerClient(container);
         var blobClient = containerClient.GetBlobClient(key);

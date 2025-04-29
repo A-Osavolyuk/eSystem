@@ -14,7 +14,7 @@ internal sealed class GetProductImagesQueryHandler(IStoreService service)
     public async Task<Result> Handle(GetProductImagesQuery request, CancellationToken cancellationToken)
     {
         var prefix = request.ProductId.ToString();
-        var response = await service.GetManyAsync(prefix, Container.Product);
+        var response = await service.FindManyAsync(prefix, Container.Product);
 
         if (response.Count == 0)
         {
