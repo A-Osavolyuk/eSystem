@@ -12,6 +12,11 @@ public static class HostApplicationBuilderExtensions
         builder.AddMessageBus();
         builder.AddCors();
         builder.AddExceptionHandler();
+        builder.AddDependencyInjection();
+    }
+
+    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
+    {
         builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Configuration:Services:SMTP"));
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddOptions();
