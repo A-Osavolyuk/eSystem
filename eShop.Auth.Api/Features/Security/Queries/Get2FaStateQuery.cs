@@ -30,7 +30,6 @@ internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
             await cacheService.SetAsync(key, state, TimeSpan.FromHours(6));
         }
         
-        return Result.Success(state.Enabled ? "Two factor authentication state is enabled."
-            : "Two factor authentication state is disabled.");
+        return Result.Success(state);
     }
 }
