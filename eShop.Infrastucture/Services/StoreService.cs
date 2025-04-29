@@ -11,22 +11,22 @@ class StoreService(
         await HttpClientService.SendAsync(
             new Request(
                 $"{Configuration[Key]}/api/v1/Files/get-user-avatar/{userId}",
-                HttpMethods.Get));
+                HttpMethod.Get));
 
     public async ValueTask<Response>
         UploadProductImagesAsync(IReadOnlyList<IBrowserFile> files, Guid productId) =>
         await HttpClientService.SendAsync(
-            new FileRequest(new FileData(files), HttpMethods.Post,
+            new FileRequest(new FileData(files), HttpMethod.Post,
                 $"{Configuration[Key]}/api/v1/Files/upload-product-images/{productId}"));
 
     public async ValueTask<Response> RemoveUserAvatarAsync(string userId) =>
         await HttpClientService.SendAsync(
             new Request(
                 $"{Configuration[Key]}/api/v1/Files/remove-user-avatar/{userId}",
-                HttpMethods.Delete));
+                HttpMethod.Delete));
 
     public async ValueTask<Response> UploadUserAvatarAsync(string userId, IBrowserFile file) =>
         await HttpClientService.SendAsync(
-            new FileRequest(new FileData([file]), HttpMethods.Post,
+            new FileRequest(new FileData([file]), HttpMethod.Post,
                 $"{Configuration[Key]}/api/v1/Files/upload-user-avatar/{userId}"));
 }

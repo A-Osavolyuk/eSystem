@@ -12,19 +12,19 @@ public class ReviewService(
     public async Task<Response> CreateReviewAsync(CreateReviewRequest request) => await HttpClientService.SendAsync(
         new Request(
             Url: $"{Configuration[Key]}/api/v1/Reviews/create-review",
-            Methods: HttpMethods.Post, Data: request));
+            Method: HttpMethod.Post, Data: request));
 
     public async Task<Response> DeleteReviewsWithProductIdAsync(Guid id) => await HttpClientService.SendAsync(new Request(
         Url:
         $"{Configuration[Key]}/api/v1/Reviews/delete-reviews-with-product-id/{id}",
-        Methods: HttpMethods.Delete));
+        Method: HttpMethod.Delete));
 
     public async Task<Response> GetReviewListByProductIdAsync(Guid id) => await HttpClientService.SendAsync(new Request(
         Url: $"{Configuration[Key]}/api/v1/Reviews/get-reviews-by-product-id/{id}",
-        Methods: HttpMethods.Get));
+        Method: HttpMethod.Get));
 
     public async Task<Response> UpdateReviewAsync(UpdateReviewRequest request) => await HttpClientService.SendAsync(
         new Request(
             Url: $"{Configuration[Key]}/api/v1/Reviews/update-review",
-            Methods: HttpMethods.Put, Data: request));
+            Method: HttpMethod.Put, Data: request));
 }

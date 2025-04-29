@@ -2,7 +2,7 @@
 
 public record FileRequest(
     FileData Data,
-    HttpMethods Methods,
+    HttpMethod Method,
     string Url);
 
 public class FileData(IReadOnlyList<IBrowserFile> files)

@@ -8,5 +8,5 @@ public class BrandService(
     IHttpClientService httpClientService) : ApiService(configuration, httpClientService), IBrandService
 {
     public async ValueTask<Response> GetBrandsListAsync() => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/Brands", Methods: HttpMethods.Get));
+        new Request(Url: $"{Configuration[Key]}/api/v1/Brands", Method: HttpMethod.Get));
 }

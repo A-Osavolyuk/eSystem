@@ -2,5 +2,5 @@
 
 public record Request(
     string Url,
-    HttpMethods Methods,
+    HttpMethod Method,
     object? Data = null!);

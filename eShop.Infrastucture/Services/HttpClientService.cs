@@ -30,18 +30,9 @@ public class HttpClientService(
                 message.Content = new StringContent(JsonConvert.SerializeObject(request.Data),
                     Encoding.UTF8, "application/json");
 
-            HttpResponseMessage httpResponse = null!;
+            message.Method = request.Method;
 
-            message.Method = request.Methods switch
-            {
-                HttpMethods.Post => HttpMethod.Post,
-                HttpMethods.Delete => HttpMethod.Delete,
-                HttpMethods.Put => HttpMethod.Put,
-                HttpMethods.Patch => HttpMethod.Patch,
-                _ => HttpMethod.Get,
-            };
-
-            httpResponse = await httpClient.SendAsync(message);
+            var httpResponse = await httpClient.SendAsync(message);
 
             return await HandleStatusCode(httpResponse);
         }
@@ -62,14 +53,7 @@ public class HttpClientService(
 
             message.Headers.Add("Accept", "multipart/form-data");
             message.RequestUri = new Uri(request.Url);
-            message.Method = request.Methods switch
-            {
-                HttpMethods.Post => HttpMethod.Post,
-                HttpMethods.Put => HttpMethod.Put,
-                HttpMethods.Delete => HttpMethod.Delete,
-                HttpMethods.Get => HttpMethod.Get,
-                _ => throw new Exception("Invalid HTTP method"),
-            };
+            message.Method = request.Method;
 
             if (withBearer)
             {

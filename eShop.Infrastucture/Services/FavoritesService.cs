@@ -11,11 +11,11 @@ public class FavoritesService(
     public async ValueTask<Response> GetFavoritesAsync(Guid userId) => await HttpClientService.SendAsync(
         new Request(
             Url: $"{Configuration[Key]}/api/v1/Favorites/get-favorites/{userId}",
-            Methods: HttpMethods.Get));
+            Method: HttpMethod.Get));
 
     public async ValueTask<Response> UpdateFavoritesAsync(UpdateFavoritesRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
                 Url: $"{Configuration[Key]}/api/v1/Favorites/update-favorites",
-                Methods: HttpMethods.Put, Data: request));
+                Method: HttpMethod.Put, Data: request));
 }

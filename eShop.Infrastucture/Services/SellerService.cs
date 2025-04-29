@@ -11,6 +11,6 @@ public class SellerService(
     public async ValueTask<Response> RegisterSellerAsync(RegisterSellerRequest request) =>
         await HttpClientService.SendAsync(new Request(
             Url: $"{Configuration[Key]}/api/v1/Seller/register-seller",
-            Methods: HttpMethods.Post,
+            Method: HttpMethod.Post,
             Data: request));
 }

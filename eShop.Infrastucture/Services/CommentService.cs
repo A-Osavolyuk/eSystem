@@ -11,20 +11,20 @@ public class CommentService(
     public async ValueTask<Response> GetCommentsAsync(Guid productId) => await HttpClientService.SendAsync(
         new Request(
             Url: $"{Configuration[Key]}/api/v1/Comments/get-comments/{productId}", 
-            Methods: HttpMethods.Get));
+            Method: HttpMethod.Get));
 
     public async ValueTask<Response> CreateCommentAsync(CreateCommentRequest request) =>
         await HttpClientService.SendAsync(new Request(
             Url: $"{Configuration[Key]}/api/v1/Comments/create-comment", 
-            Methods: HttpMethods.Post, Data: request));
+            Method: HttpMethod.Post, Data: request));
 
     public async ValueTask<Response> UpdateCommentAsync(UpdateCommentRequest request) =>
         await HttpClientService.SendAsync(new Request(
             Url: $"{Configuration[Key]}/api/v1/Comments/update-comment", 
-            Methods: HttpMethods.Put, Data: request));
+            Method: HttpMethod.Put, Data: request));
 
     public async ValueTask<Response> DeleteCommentAsync(DeleteCommentsRequest request) =>
         await HttpClientService.SendAsync(new Request(
             Url: $"{Configuration[Key]}/api/v1/Comments/delete-comment", 
-            Methods: HttpMethods.Delete, Data: request));
+            Method: HttpMethod.Delete, Data: request));
 }
