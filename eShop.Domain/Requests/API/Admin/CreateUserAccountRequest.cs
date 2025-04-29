@@ -11,6 +11,6 @@ public record CreateUserAccountRequest
     public string Gender { get; set; } = string.Empty;
     public DateTime DateOfBirth { get; set; } = new(1980, 1, 1);
 
-    public List<string> Roles { get; set; } = new();
-    public List<string> Permissions { get; set; } = new();
+    public List<string> Roles { get; set; } = [];
+    public List<string> Permissions { get; set; } = [];
 }

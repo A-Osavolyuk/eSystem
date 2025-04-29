@@ -9,7 +9,7 @@ public class TwoFactorLoginValidator : Validator<LoginWith2FaRequest>
         var result = await ValidateAsync(ValidationContext<LoginWith2FaRequest>
             .CreateWithOptions((LoginWith2FaRequest)model, x => x.IncludeProperties(propertyName)));
         if (result.IsValid)
-            return Array.Empty<string>();
+            return [];
         return result.Errors.Select(e => e.ErrorMessage);
     };
     

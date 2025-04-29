@@ -3,5 +3,5 @@
 public record RemoveUserRolesRequest
 {
     public Guid UserId { get; set; }
-    public List<string> Roles { get; set; } = new();
+    public List<string> Roles { get; set; } = [];
 }

@@ -6,6 +6,6 @@ public record CreateCommentRequest()
     public Guid UserId { get; set; }
     public string Username { get; set; } = string.Empty;
     public string CommentText { get; set; } = string.Empty;
-    public List<string> Images { get; set; } =  new();
+    public List<string> Images { get; set; } = [];
     public int Rating { get; set; }
 };

@@ -6,5 +6,5 @@ public class FavoritesDto : IIdentifiable<Guid>
 {
     public Guid Id { get; init; }
     public int Count { get; set; }
-    public List<FavoritesItem> Items { get; set; } = new();
+    public List<FavoritesItem> Items { get; set; } = [];
 }

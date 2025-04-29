@@ -42,7 +42,7 @@ else
 @code {
     [Parameter] public ProductDto? Model { get; set; }
 
-    private List<CommentModel> commentsList = new();
+    private List<CommentModel> commentsList = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

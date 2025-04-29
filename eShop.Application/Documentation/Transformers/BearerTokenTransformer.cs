@@ -28,7 +28,7 @@ public class BearerTokenTransformer : IOpenApiDocumentTransformer
                         Id = JwtBearerDefaults.AuthenticationScheme
                     }
                 },
-                Array.Empty<string>()
+                []
             }
         });
 

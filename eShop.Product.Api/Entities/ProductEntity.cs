@@ -12,7 +12,7 @@ public class ProductEntity : IEntity<Guid>
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public Currency Currency { get; set; }
-    public List<string> Images { get; set; } = new();
+    public List<string> Images { get; set; } = [];
     public Guid BrandId { get; set; }
     public Guid SellerId { get; set; }
     public BrandEntity Brand { get; set; } = new();

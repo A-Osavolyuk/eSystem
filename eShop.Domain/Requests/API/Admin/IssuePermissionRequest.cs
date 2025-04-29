@@ -3,5 +3,5 @@
 public record IssuePermissionRequest
 {
     public Guid UserId { get; set; }
-    public HashSet<string> Permissions { get; set; } = new();
+    public HashSet<string> Permissions { get; set; } = [];
 }

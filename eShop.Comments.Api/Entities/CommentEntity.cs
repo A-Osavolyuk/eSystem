@@ -11,7 +11,7 @@ public record CommentEntity : IEntity<Guid>
     public string Username { get; set; } = string.Empty;
 
     public string CommentText { get; set; } = string.Empty;
-    public List<string> Images { get; set; } = new();
+    public List<string> Images { get; set; } = [];
     public int Rating { get; set; }
 
     public DateTime CreateDate { get; set; }

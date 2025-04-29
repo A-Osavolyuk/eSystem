@@ -9,7 +9,7 @@ public class RegistrationValidator : Validator<RegistrationRequest>
         var result = await ValidateAsync(ValidationContext<RegistrationRequest>
             .CreateWithOptions((RegistrationRequest)model, x => x.IncludeProperties(propertyName)));
         if (result.IsValid)
-            return Array.Empty<string>();
+            return [];
         return result.Errors.Select(e => e.ErrorMessage);
     };
     public RegistrationValidator()

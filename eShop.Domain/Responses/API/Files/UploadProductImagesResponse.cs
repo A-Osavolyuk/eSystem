@@ -4,5 +4,5 @@ namespace eShop.Domain.Responses.API.Files;
 
 public class UploadProductImagesResponse : ResponseBase
 {
-    public List<string> Images { get; set; } = new();
+    public List<string> Images { get; set; } = [];
 }

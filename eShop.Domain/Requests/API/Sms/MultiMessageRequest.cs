@@ -3,6 +3,6 @@
 public class MultiMessageRequest
 {
     public string Message { get; set; } = string.Empty;
-    public List<string> PhoneNumbers { get; set; } = new();
+    public List<string> PhoneNumbers { get; set; } = [];
 }
 

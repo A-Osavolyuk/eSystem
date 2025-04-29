@@ -10,7 +10,7 @@ public class CreateProductValidator : Validator<CreateProductRequest>
         var result = await ValidateAsync(ValidationContext<CreateProductRequest>
             .CreateWithOptions((CreateProductRequest)model, x => x.IncludeProperties(propertyName)));
         if (result.IsValid)
-            return Array.Empty<string>();
+            return [];
         return result.Errors.Select(e => e.ErrorMessage);
     };
     public CreateProductValidator()

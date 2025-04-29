@@ -35,7 +35,7 @@ public static class WebApplicationExtensions
             Id = Guid.NewGuid(),
             UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
             ItemsCount = 0,
-            Items = new List<CartItem>(),
+            Items = [],
             UpdateDate = DateTime.UtcNow,
             CreateDate = DateTime.UtcNow
         });
@@ -45,7 +45,7 @@ public static class WebApplicationExtensions
             Id = Guid.NewGuid(),
             UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
             ItemsCount = 0,
-            Items = new List<FavoritesItem>(),
+            Items = [],
             UpdateDate = DateTime.UtcNow,
             CreateDate = DateTime.UtcNow
         });

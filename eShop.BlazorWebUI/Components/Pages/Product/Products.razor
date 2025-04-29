@@ -39,7 +39,7 @@
 </AuthorizeView>
 
 @code {
-    private List<ProductDto> ProductsList { get; set; } = new();
+    private List<ProductDto> ProductsList { get; set; } = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

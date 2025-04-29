@@ -11,7 +11,7 @@ public record ProductDto : IIdentifiable<Guid>
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public Currency Currency { get; set; }
-    public List<string> Images { get; set; } = new();
+    public List<string> Images { get; set; } = [];
     public BrandDto Brand { get; set; } = new();
     public SellerDto Seller { get; set; } = new();
 }

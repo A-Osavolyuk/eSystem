@@ -10,7 +10,7 @@ public class FavoritesEntity : IEntity<Guid>
     public Guid Id { get; init; }
     [BsonRepresentation(BsonType.String)] public Guid UserId { get; init; }
     public int ItemsCount { get; init; }
-    public List<FavoritesItem> Items { get; init; } = new();
+    public List<FavoritesItem> Items { get; init; } = [];
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
 }

@@ -77,7 +77,7 @@
 </MudStack>
 
 @code {
-    private List<string> Images { get; set; } = new();
+    private List<string> Images { get; set; } = [];
     private IReadOnlyList<IBrowserFile> Files { get; set; } = default!;
     private string CurrentImage { get; set; } = string.Empty;
 

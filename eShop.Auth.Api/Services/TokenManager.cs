@@ -119,7 +119,7 @@ public class TokenManager(
     {
         if (token is null)
         {
-            return new List<Claim>();
+            return [];
         }
 
         var claims = new List<Claim>()

@@ -9,7 +9,7 @@ public abstract class Validator<T> : AbstractValidator<T>
         var result = await ValidateAsync(ValidationContext<T>
             .CreateWithOptions((T)model, x => x.IncludeProperties(propertyName)));
         if (result.IsValid)
-            return Array.Empty<string>();
+            return [];
         return result.Errors.Select(e => e.ErrorMessage);
     };
 }
