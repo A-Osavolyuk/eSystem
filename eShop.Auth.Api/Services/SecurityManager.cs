@@ -33,12 +33,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ConfirmEmailAsync(userEntity);
 
-        if (!result.Succeeded)
-        {
-            return Results.InternalServerError(result.Errors.First().Description);
-        }
-
-        return Result.Success();
+        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
     }
 
     public async ValueTask<Result> VerifyPhoneNumberAsync(UserEntity userEntity, string code)
@@ -52,12 +47,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ConfirmPhoneNumberAsync(userEntity);
 
-        if (!result.Succeeded)
-        {
-            return Results.InternalServerError(result.Errors.First().Description);
-        }
-
-        return Result.Success();
+        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
     }
 
     public async ValueTask<Result> ResetPasswordAsync(UserEntity userEntity, string code, string password)
@@ -71,12 +61,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ResetPasswordAsync(userEntity, password);
 
-        if (!result.Succeeded)
-        {
-            return Results.InternalServerError(result.Errors.First().Description);
-        }
-
-        return Result.Success();
+        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
     }
 
     public async ValueTask<Result> ChangeEmailAsync(UserEntity userEntity, string newEmail, CodeSet codeSet)
@@ -96,12 +81,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ChangeEmailAsync(userEntity, newEmail);
         
-        if (!result.Succeeded)
-        {
-            return Results.InternalServerError(result.Errors.First().Description);
-        }
-
-        return Result.Success();
+        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
     }
 
     public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity userEntity, string newPhoneNumber,
@@ -122,12 +102,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ChangePhoneNumberAsync(userEntity, newPhoneNumber);
         
-        if (!result.Succeeded)
-        {
-            return Results.InternalServerError(result.Errors.First().Description);
-        }
-
-        return Result.Success();
+        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
     }
 
     private async Task<Result> ValidateAndRemoveAsync(UserEntity user, string code)
