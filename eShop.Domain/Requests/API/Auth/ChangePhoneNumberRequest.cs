@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Requests.API.Auth;
 
-public record class ChangePhoneNumberRequest
+public record ChangePhoneNumberRequest
 {
     public string CurrentPhoneNumber { get; set; } = string.Empty;
     public string NewPhoneNumber { get; set; } = string.Empty;

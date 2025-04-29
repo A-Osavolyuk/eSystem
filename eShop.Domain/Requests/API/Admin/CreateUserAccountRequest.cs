@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Requests.API.Admin;
 
-public record class CreateUserAccountRequest
+public record CreateUserAccountRequest
 {
     public string Email { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;

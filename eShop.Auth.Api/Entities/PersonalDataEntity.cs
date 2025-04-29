@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Entities;
 
-public record class PersonalDataEntity : IEntity<Guid>
+public record PersonalDataEntity : IEntity<Guid>
 {
     public Guid Id { get; init; }
     public string FirstName { get; init; } = string.Empty;

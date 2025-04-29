@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Requests.API.Review;
 
-public record class UpdateReviewRequest
+public record UpdateReviewRequest
 {
     public Guid ReviewId { get; set; }
     public Guid ProductId { get; set; }

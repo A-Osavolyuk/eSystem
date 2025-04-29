@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Requests.API.Auth;
 
-public record class RegistrationRequest
+public record RegistrationRequest
 {
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;

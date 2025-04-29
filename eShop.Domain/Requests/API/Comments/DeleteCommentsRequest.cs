@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Requests.API.Comments;
 
-public record class DeleteCommentsRequest
+public record DeleteCommentsRequest
 {
     public Guid ProductId { get; set; }
 }

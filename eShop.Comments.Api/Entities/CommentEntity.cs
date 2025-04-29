@@ -2,7 +2,7 @@
 
 namespace eShop.Comments.Api.Entities;
 
-public record class CommentEntity : IEntity<Guid>
+public record CommentEntity : IEntity<Guid>
 {
     public Guid Id { get; init; }
     public Guid ProductId { get; set; }

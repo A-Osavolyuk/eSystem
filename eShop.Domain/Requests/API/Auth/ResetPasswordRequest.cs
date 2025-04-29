@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Requests.API.Auth;
 
-public record class ResetPasswordRequest
+public record ResetPasswordRequest
 {
     public string Email { get; set; } = string.Empty;
 }

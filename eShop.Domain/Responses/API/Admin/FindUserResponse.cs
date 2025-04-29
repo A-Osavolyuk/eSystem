@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Responses.API.Admin;
 
-public record class FindUserResponse
+public record FindUserResponse
 {
     public AccountData AccountData { get; set; } = null!;
     public PersonalData PersonalDataEntity { get; set; } = null!;
