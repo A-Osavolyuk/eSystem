@@ -23,14 +23,8 @@ internal sealed class ConfirmChangeEmailCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.CurrentEmail}.");
         }
 
-        var result =
-            await securityManager.ChangeEmailAsync(user, request.Request.NewEmail, request.Request.CodeSet);
+        var result = await securityManager.ChangeEmailAsync(user, request.Request.NewEmail, request.Request.CodeSet);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-
-        return Result.Success("Your email address was successfully changed.");
+        return !result.Succeeded ? result : Result.Success("Your email address was successfully changed.");
     }
 }

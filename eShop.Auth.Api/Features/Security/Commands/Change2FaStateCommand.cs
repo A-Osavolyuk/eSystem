@@ -22,9 +22,7 @@ internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        IdentityResult result = null!;
-
-        result = await userManager.SetTwoFactorEnabledAsync(user, !user.TwoFactorEnabled);
+        var result = await userManager.SetTwoFactorEnabledAsync(user, !user.TwoFactorEnabled);
 
         if (!result.Succeeded)
         {

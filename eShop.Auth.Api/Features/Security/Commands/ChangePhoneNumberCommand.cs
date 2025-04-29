@@ -26,12 +26,6 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
         {
             return Results.NotFound($"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
         }
-
-        var destinationSet = new DestinationSet()
-        {
-            Current = user.PhoneNumber!,
-            Next = request.Request.NewPhoneNumber
-        };
         
         var oldPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.Old, cancellationToken);
         var newPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.New, cancellationToken);

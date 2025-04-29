@@ -20,15 +20,13 @@ internal sealed class ChangePasswordCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var isCorrectPassword =
-            await userManager.CheckPasswordAsync(user, request.Request.OldPassword);
+        var isCorrectPassword = await userManager.CheckPasswordAsync(user, request.Request.OldPassword);
         if (!isCorrectPassword)
         {
             return Results.BadRequest($"Wrong password.");
         }
 
-        var result = await userManager.ChangePasswordAsync(user, request.Request.OldPassword,
-            request.Request.NewPassword);
+        var result = await userManager.ChangePasswordAsync(user, request.Request.OldPassword, request.Request.NewPassword);
         if (!result.Succeeded)
         {
             return Results.InternalServerError(

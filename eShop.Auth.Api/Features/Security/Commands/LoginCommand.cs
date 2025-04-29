@@ -36,12 +36,12 @@ internal sealed class LoginCommandHandler(
             return Results.BadRequest("The password is not valid.");
         }
 
-        var userDto = new Domain.Types.User(user.Email!, user.UserName!, user.Id);
-        var securityToken = await tokenManager.FindAsync(user);
+        var userDto = new User(user.Email!, user.UserName!, user.Id);
+        var securityToken = await tokenManager.FindAsync(user, cancellationToken);
 
         if (securityToken is not null)
         {
-            var token = await tokenManager.RefreshAsync(user, securityToken.Token);
+            var token = await tokenManager.RefreshAsync(user, securityToken.Token, cancellationToken);
 
             return Result.Success(new LoginResponse()
             {
@@ -72,7 +72,7 @@ internal sealed class LoginCommandHandler(
             });
         }
         
-        var tokens = await tokenManager.GenerateAsync(user);
+        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
 
         return Result.Success(new LoginResponse()
         {

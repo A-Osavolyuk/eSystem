@@ -24,15 +24,8 @@ internal sealed class ConfirmResetPasswordCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var resetResult =
-            await securityManager.ResetPasswordAsync(user, request.Request.Code,
-                request.Request.NewPassword);
+        var resetResult = await securityManager.ResetPasswordAsync(user, request.Request.Code, request.Request.NewPassword);
 
-        if (!resetResult.Succeeded)
-        {
-            return resetResult;
-        }
-
-        return Result.Success("Your password has been successfully reset.");
+        return !resetResult.Succeeded ? resetResult : Result.Success("Your password has been successfully reset.");
     }
 }

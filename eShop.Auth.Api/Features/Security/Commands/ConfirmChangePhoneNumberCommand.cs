@@ -27,9 +27,7 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
                 $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
         }
 
-        var result =
-            await securityManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber,
-                request.Request.CodeSet);
+        var result = await securityManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber, request.Request.CodeSet);
 
         if (!result.Succeeded)
         {

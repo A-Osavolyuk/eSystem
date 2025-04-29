@@ -15,7 +15,7 @@ internal sealed class GetExternalProvidersQueryHandler(
     public async Task<Result> Handle(GetExternalProvidersQuery request,
         CancellationToken cancellationToken)
     {
-        var key = "external-providers";
+        const string key = "external-providers";
         var result = await cacheService.GetAsync<IEnumerable<ExternalProviderDto>>(key);
 
         if (result is null)
