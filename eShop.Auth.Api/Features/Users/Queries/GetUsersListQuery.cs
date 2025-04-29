@@ -41,9 +41,8 @@ internal sealed class GetUsersListQueryHandler(
 
             var rolesData = await roleManager.GetRolesDataAsync(rolesList) ?? [];
             var permissions = await permissionManager.GetUserPermissionsAsync(user, cancellationToken);
-            var roleInfos = rolesData.ToList();
 
-            if (!roleInfos.Any())
+            if (!rolesData.Any())
             {
                 return Results.NotFound("Cannot find roles data.");
             }
@@ -68,7 +67,7 @@ internal sealed class GetUsersListQueryHandler(
 
             var permissionData = new PermissionsData()
             {
-                Roles = roleInfos.ToList(),
+                Roles = rolesData,
                 Permissions = permissionsList
             };
 
