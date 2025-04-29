@@ -27,7 +27,7 @@ internal sealed class VerifyEmailCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var confirmResult = await securityManager.VerifyEmailAsync(user, request.Request.Code);
+        var confirmResult = await securityManager.ConfirmEmailAsync(user, request.Request.Code);
 
         if (!confirmResult.Succeeded)
         {

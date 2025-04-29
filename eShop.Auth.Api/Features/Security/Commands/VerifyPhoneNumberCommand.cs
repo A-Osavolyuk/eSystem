@@ -22,7 +22,7 @@ internal sealed class VerifyPhoneNumberCommandHandler(
             return Results.NotFound($"Cannot find user with phone number ${request.Request.PhoneNumber}");
         }
 
-        var result = await securityManager.VerifyPhoneNumberAsync(user, request.Request.Code);
+        var result = await securityManager.ConfirmPhoneNumberAsync(user, request.Request.Code);
 
         if (!result.Succeeded)
         {

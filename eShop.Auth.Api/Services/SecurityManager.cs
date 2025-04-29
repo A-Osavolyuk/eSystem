@@ -22,7 +22,7 @@ internal sealed class SecurityManager(
         return sb.ToString();
     }
 
-    public async ValueTask<Result> VerifyEmailAsync(UserEntity userEntity, string code)
+    public async ValueTask<Result> ConfirmEmailAsync(UserEntity userEntity, string code)
     {
         var validationResult = await ValidateAndRemoveAsync(userEntity, code);
 
@@ -36,7 +36,7 @@ internal sealed class SecurityManager(
         return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
     }
 
-    public async ValueTask<Result> VerifyPhoneNumberAsync(UserEntity userEntity, string code)
+    public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity userEntity, string code)
     {
         var validationResult = await ValidateAndRemoveAsync(userEntity, code);
 
