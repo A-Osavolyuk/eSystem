@@ -33,8 +33,8 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
             Next = request.Request.NewPhoneNumber
         };
         
-        var oldPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.OldPhoneNumber, cancellationToken);
-        var newPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.NewPhoneNumber, cancellationToken);
+        var oldPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.Old, cancellationToken);
+        var newPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.New, cancellationToken);
 
         await messageService.SendMessageAsync("phone-number-change", new ChangePhoneNumberMessage()
         {

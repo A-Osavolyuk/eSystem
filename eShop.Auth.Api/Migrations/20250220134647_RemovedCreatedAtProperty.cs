@@ -23,7 +23,7 @@ namespace eShop.Auth.Api.Migrations
             migrationBuilder.RenameColumn(
                 name: "VerificationCodeType",
                 table: "Codes",
-                newName: "CodeType");
+                newName: "Type");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
@@ -47,7 +47,7 @@ namespace eShop.Auth.Api.Migrations
                 keyValue: new Guid("cf9568ee-c96b-4d39-ad63-d39f989b8b22"));
 
             migrationBuilder.RenameColumn(
-                name: "CodeType",
+                name: "Type",
                 table: "Codes",
                 newName: "VerificationCodeType");
 

@@ -550,7 +550,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
-                    b.Property<int>("CodeType")
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")

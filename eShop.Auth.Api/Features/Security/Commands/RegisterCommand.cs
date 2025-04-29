@@ -57,7 +57,7 @@ internal sealed class RegisterCommandHandler(
                 $"due to server errors: {issuingPermissionsResult.Errors.First().Description}");
         }
 
-        var code = await codeManager.GenerateAsync(user!, Verification.VerifyEmail, cancellationToken);
+        var code = await codeManager.GenerateAsync(user!, Verification.Verify, cancellationToken);
         
         await messageService.SendMessageAsync("email-verification", new EmailVerificationMessage()
         {

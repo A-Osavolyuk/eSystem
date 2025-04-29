@@ -2,11 +2,8 @@
 
 public enum Verification
 {
-    VerifyEmail,
-    VerifyPhoneNumber,
-    OldEmail,
-    NewEmail,
-    OldPhoneNumber,
-    NewPhoneNumber,
-    ResetPassword
+    Old,
+    New,
+    Verify,
+    Reset
 }
