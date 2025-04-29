@@ -7,7 +7,7 @@ public class EmailVerifiedConsumer(IEmailService emailService) : IConsumer<Email
     public async Task Consume(ConsumeContext<EmailVerifiedMessage> context)
     {
         var htmlBody = GetEmailBody(context.Message.To);
-        var messageOptions = Mapper.ToMessageOptions(context.Message);
+        var messageOptions = Mapper.Map(context.Message);
         await emailService.SendMessageAsync(htmlBody, messageOptions);
     }
 

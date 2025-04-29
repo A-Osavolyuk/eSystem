@@ -4,7 +4,7 @@ namespace eShop.EmailSender.Api.Mapping;
 
 public static class Mapper
 {
-    public static MessageOptions ToMessageOptions(EmailMessage email)
+    public static MessageOptions Map(EmailMessage email)
     {
         return new MessageOptions()
         {
