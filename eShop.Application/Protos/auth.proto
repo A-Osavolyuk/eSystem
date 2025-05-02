@@ -1,7 +1,5 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "eShop.Application";
-
 package auth;
 
 service AuthService {

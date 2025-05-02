@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Rpc;
+﻿using Auth;
+
+namespace eShop.Product.Api.Rpc;
 
 public class AuthClient
 {

@@ -1,4 +1,5 @@
-﻿using eShop.Cart.Api.Entities;
+﻿using Cart;
+using eShop.Cart.Api.Entities;
 
 namespace eShop.Cart.Api.Rpc;
 
