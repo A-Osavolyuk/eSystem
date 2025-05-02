@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace eShop.Auth.Api.Migrations
 {
     /// <inheritdoc />
@@ -18,6 +16,8 @@ namespace eShop.Auth.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -32,8 +32,8 @@ namespace eShop.Auth.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -55,38 +55,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Codes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SentTo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
-                    VerificationCodeType = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Codes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "IdentityRole",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IdentityRole", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "IdentityUserRole<string>",
                 columns: table => new
                 {
@@ -104,8 +72,8 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -219,6 +187,29 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Codes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Codes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Codes_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PersonalData",
                 columns: table => new
                 {
@@ -227,8 +218,8 @@ namespace eShop.Auth.Api.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -249,7 +240,9 @@ namespace eShop.Auth.Api.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Token = table.Column<string>(type: "VARCHAR(MAX)", nullable: false),
-                    ExpiredAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -268,8 +261,8 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -286,64 +279,6 @@ namespace eShop.Auth.Api.Migrations
                         principalTable: "Permissions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreateDate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdateDate", "UserName" },
-                values: new object[] { new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"), 0, "f4602504-ac63-4ce1-9186-206b42609859", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "sasha.osavolll111@gmail.com", true, false, null, "SASHA.OSAVOLLL111@GMAIL.COM", "SASHA.OSAVOLLL111@GMAIL.COM", "AQAAAAIAAYagAAAAEHeZ7iJce/rkJIBOAFdarWHCG1NUYQ1y67q5EyVGG9ttMlkXR2wxOMAQRsg+HtNtCg==", "380686100242", true, null, false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "sasha.osavolll111@gmail.com" });
-
-            migrationBuilder.InsertData(
-                table: "IdentityRole",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "26bb7907-e254-41d4-96f0-8afb7deccae4", null, "Seller", "SELLER" },
-                    { "270910a1-d582-4ce0-8b23-c8141d720064", null, "User", "USER" },
-                    { "e6d15d97-b803-435a-9dc2-a7c45c08a1af", null, "Admin", "ADMIN" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "IdentityUserRole<string>",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[,]
-                {
-                    { "26bb7907-e254-41d4-96f0-8afb7deccae4", "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3" },
-                    { "270910a1-d582-4ce0-8b23-c8141d720064", "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3" },
-                    { "e6d15d97-b803-435a-9dc2-a7c45c08a1af", "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Permissions",
-                columns: new[] { "Id", "CreateDate", "Name", "UpdateDate" },
-                values: new object[,]
-                {
-                    { new Guid("25af1455-d0b8-4be3-b6ff-9cf393d59258"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Product.Delete", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("349898ee-1f26-4877-86ca-0960361b5e3e"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Admin.ManageUsers", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("3c38ecbf-a14c-4d46-9eab-6b297cca124d"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Product.View", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("5034df8e-c656-4f85-b197-7afff97ecad0"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Product.Edit", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("74e0644b-6f9d-4964-a9a6-341a7834cc0e"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Admin.ManageLockout", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("a1216fa3-66dd-4a6d-8616-48a7b9900649"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Product.Create", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("dba6e723-ac0f-42a3-91fd-e40bdb08e26b"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Account.ManageAccount", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("df258394-6290-43b8-abc9-d52aba8ff6e6"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Admin.ManagePermissions", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("e14d7bcf-0ab4-4168-b2b5-ff0894782097"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Permission.Admin.ManageRoles", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PersonalData",
-                columns: new[] { "Id", "CreateDate", "DateOfBirth", "FirstName", "Gender", "LastName", "UpdateDate", "UserId" },
-                values: new object[] { new Guid("ea247d99-e92a-45ce-a8d7-0a294005a728"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2004, 2, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "Alexander", "Male", "Osavolyuk", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3") });
-
-            migrationBuilder.InsertData(
-                table: "UserPermissions",
-                columns: new[] { "Id", "UserId", "CreateDate", "UpdateDate" },
-                values: new object[,]
-                {
-                    { new Guid("349898ee-1f26-4877-86ca-0960361b5e3e"), new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("74e0644b-6f9d-4964-a9a6-341a7834cc0e"), new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("dba6e723-ac0f-42a3-91fd-e40bdb08e26b"), new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("df258394-6290-43b8-abc9-d52aba8ff6e6"), new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("e14d7bcf-0ab4-4168-b2b5-ff0894782097"), new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -386,6 +321,11 @@ namespace eShop.Auth.Api.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Codes_UserId",
+                table: "Codes",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersonalData_UserId",
                 table: "PersonalData",
                 column: "UserId",
@@ -423,9 +363,6 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Codes");
-
-            migrationBuilder.DropTable(
-                name: "IdentityRole");
 
             migrationBuilder.DropTable(
                 name: "IdentityUserRole<string>");

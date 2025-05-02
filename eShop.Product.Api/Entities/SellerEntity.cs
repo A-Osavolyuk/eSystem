@@ -10,6 +10,6 @@ public class SellerEntity : IEntity<Guid>
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Article { get; set; } = string.Empty;
-    public DateTime CreateDate { get; set; }
-    public DateTime UpdateDate { get; set; }
+    public DateTime? CreateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
 }

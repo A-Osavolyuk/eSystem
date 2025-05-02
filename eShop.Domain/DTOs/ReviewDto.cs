@@ -11,6 +11,6 @@ public class ReviewDto : IAuditable, IIdentifiable<Guid>
     public string Text { get; set; } = string.Empty;
     public int Rating { get; set; }
     public List<CommentDto> Comments { get; set; } = [];
-    public DateTime CreateDate { get; set; }
-    public DateTime UpdateDate { get; set; }
+    public DateTime? CreateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
 }

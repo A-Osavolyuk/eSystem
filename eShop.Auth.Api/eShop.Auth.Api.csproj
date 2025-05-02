@@ -53,8 +53,4 @@
             <GrpcCSharpNamespace>eShop.Auth.Api</GrpcCSharpNamespace>
         </Protobuf>
     </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
 </Project>

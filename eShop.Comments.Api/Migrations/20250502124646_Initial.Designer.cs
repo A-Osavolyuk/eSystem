@@ -12,7 +12,7 @@ using eShop.Comments.Api.Data;
 namespace eShop.Comments.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250219085352_Initial")]
+    [Migration("20250502124646_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace eShop.Comments.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -35,7 +35,7 @@ namespace eShop.Comments.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.PrimitiveCollection<string>("Images")
@@ -48,7 +48,7 @@ namespace eShop.Comments.Api.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")

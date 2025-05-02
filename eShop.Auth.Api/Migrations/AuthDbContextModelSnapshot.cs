@@ -22,45 +22,6 @@ namespace eShop.Auth.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("IdentityRole");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "e6d15d97-b803-435a-9dc2-a7c45c08a1af",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "270910a1-d582-4ce0-8b23-c8141d720064",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "26bb7907-e254-41d4-96f0-8afb7deccae4",
-                            Name = "Seller",
-                            NormalizedName = "SELLER"
-                        });
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -156,23 +117,6 @@ namespace eShop.Auth.Api.Migrations
                     b.HasKey("UserId", "RoleId");
 
                     b.ToTable("IdentityUserRole<string>");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
-                            RoleId = "e6d15d97-b803-435a-9dc2-a7c45c08a1af"
-                        },
-                        new
-                        {
-                            UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
-                            RoleId = "270910a1-d582-4ce0-8b23-c8141d720064"
-                        },
-                        new
-                        {
-                            UserId = "abb9d2ed-c3d2-4df9-ba88-eab018b95bc3",
-                            RoleId = "26bb7907-e254-41d4-96f0-8afb7deccae4"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -200,84 +144,19 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.ToTable("Permissions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("dba6e723-ac0f-42a3-91fd-e40bdb08e26b"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Account.ManageAccount",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("349898ee-1f26-4877-86ca-0960361b5e3e"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Admin.ManageUsers",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("74e0644b-6f9d-4964-a9a6-341a7834cc0e"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Admin.ManageLockout",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("e14d7bcf-0ab4-4168-b2b5-ff0894782097"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Admin.ManageRoles",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("df258394-6290-43b8-abc9-d52aba8ff6e6"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Admin.ManagePermissions",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("3c38ecbf-a14c-4d46-9eab-6b297cca124d"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Product.View",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("5034df8e-c656-4f85-b197-7afff97ecad0"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Product.Edit",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("25af1455-d0b8-4be3-b6ff-9cf393d59258"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Product.Delete",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("a1216fa3-66dd-4a6d-8616-48a7b9900649"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Permission.Product.Create",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
@@ -286,7 +165,7 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -304,7 +183,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
@@ -316,19 +195,6 @@ namespace eShop.Auth.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("PersonalData");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("682b5578-c6fa-4b25-9ff0-ae3f3bb5cab2"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfBirth = new DateTime(2004, 2, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FirstName = "Alexander",
-                            Gender = "Male",
-                            LastName = "Osavolyuk",
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UserId = new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3")
-                        });
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.RoleEntity", b =>
@@ -341,7 +207,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -352,7 +218,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -371,7 +237,7 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpireDate")
@@ -381,7 +247,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(MAX)");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
@@ -408,7 +274,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -447,7 +313,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
@@ -465,26 +331,6 @@ namespace eShop.Auth.Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "3e6a6ed2-f20d-44ce-bb53-57abc09d4325",
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "sasha.osavolll111@gmail.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "SASHA.OSAVOLLL111@GMAIL.COM",
-                            NormalizedUserName = "SASHA.OSAVOLLL111@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHeZ7iJce/rkJIBOAFdarWHCG1NUYQ1y67q5EyVGG9ttMlkXR2wxOMAQRsg+HtNtCg==",
-                            PhoneNumber = "380686100242",
-                            PhoneNumberConfirmed = true,
-                            TwoFactorEnabled = false,
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UserName = "sasha.osavolll111@gmail.com"
-                        });
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>
@@ -495,10 +341,10 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("UserId", "Id");
@@ -506,43 +352,6 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("Id");
 
                     b.ToTable("UserPermissions");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
-                            Id = new Guid("349898ee-1f26-4877-86ca-0960361b5e3e"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            UserId = new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
-                            Id = new Guid("74e0644b-6f9d-4964-a9a6-341a7834cc0e"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            UserId = new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
-                            Id = new Guid("e14d7bcf-0ab4-4168-b2b5-ff0894782097"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            UserId = new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
-                            Id = new Guid("df258394-6290-43b8-abc9-d52aba8ff6e6"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            UserId = new Guid("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
-                            Id = new Guid("dba6e723-ac0f-42a3-91fd-e40bdb08e26b"),
-                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationCodeEntity", b =>
@@ -556,7 +365,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpireDate")
@@ -565,7 +374,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")

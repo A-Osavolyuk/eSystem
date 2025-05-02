@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.DTOs;
 
-public class CommentDto : IAuditable, IIdentifiable<Guid>
+public class CommentDto
 {
     public Guid Id { get; init; }
     public Guid UserId { get; set; }
@@ -10,6 +10,6 @@ public class CommentDto : IAuditable, IIdentifiable<Guid>
     public string Text { get; set; } = string.Empty;
     public List<string> Images { get; set; } = [];
     public int Rating { get; set; }
-    public DateTime CreateDate { get; set; }
-    public DateTime UpdateDate { get; set; }
+    public DateTime? CreateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
 }
