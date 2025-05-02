@@ -1,4 +1,5 @@
-﻿using eShop.Application;
+﻿using Cart;
+using eShop.Application;
 using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 

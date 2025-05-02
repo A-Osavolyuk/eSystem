@@ -4,14 +4,6 @@ namespace eShop.Application.Validation.Auth;
 
 public class RegistrationValidator : Validator<RegistrationRequest>
 {
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result = await ValidateAsync(ValidationContext<RegistrationRequest>
-            .CreateWithOptions((RegistrationRequest)model, x => x.IncludeProperties(propertyName)));
-        if (result.IsValid)
-            return [];
-        return result.Errors.Select(e => e.ErrorMessage);
-    };
     public RegistrationValidator()
     {
         RuleFor(p => p.Email)

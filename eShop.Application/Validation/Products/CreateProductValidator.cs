@@ -4,15 +4,6 @@ namespace eShop.Application.Validation.Products;
 
 public class CreateProductValidator : Validator<CreateProductRequest>
 {
-    
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result = await ValidateAsync(ValidationContext<CreateProductRequest>
-            .CreateWithOptions((CreateProductRequest)model, x => x.IncludeProperties(propertyName)));
-        if (result.IsValid)
-            return [];
-        return result.Errors.Select(e => e.ErrorMessage);
-    };
     public CreateProductValidator()
     {
         RuleFor(x => x.Name)
