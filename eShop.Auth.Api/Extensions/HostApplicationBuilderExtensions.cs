@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Cart;
+﻿using eShop.Auth.Api.Data.Seed;
+using eShop.Domain.Requests.API.Cart;
 using eShop.Domain.Requests.API.Sms;
 using MassTransit;
 
@@ -48,6 +49,11 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddDbContext<AuthDbContext>(cfg =>
         {
             cfg.UseSqlServer(connectionString);
+            cfg.UseAsyncSeeding(async (ctx, isStoreOperation, ct) =>
+            {
+                var context = (ctx as AuthDbContext)!;
+                await context.SeedAsync(ctx, isStoreOperation, ct);
+            });
         });
     }
 
