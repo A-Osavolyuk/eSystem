@@ -2,9 +2,11 @@
 
 public class UserEntity : IdentityUser<Guid>, IEntity
 {
-    public PersonalDataEntity? PersonalData { get; init; }
-    public SecurityTokenEntity? AuthenticationToken { get; init; }
-    public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;
+    public Guid PersonalDataId { get; init; }
+    
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
+    
+    public PersonalDataEntity? PersonalData { get; init; }
+    public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
 }

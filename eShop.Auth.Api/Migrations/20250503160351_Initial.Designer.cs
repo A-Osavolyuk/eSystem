@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250503122135_Initial")]
+    [Migration("20250503160351_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -78,8 +78,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("PersonalData");
                 });
@@ -248,6 +247,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("PersonalDataId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -276,6 +278,9 @@ namespace eShop.Auth.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("PersonalDataId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -410,8 +415,8 @@ namespace eShop.Auth.Api.Migrations
             modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithOne("PersonalData")
-                        .HasForeignKey("eShop.Auth.Api.Entities.PersonalDataEntity", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -430,7 +435,7 @@ namespace eShop.Auth.Api.Migrations
             modelBuilder.Entity("eShop.Auth.Api.Entities.SecurityTokenEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "UserEntity")
-                        .WithOne("AuthenticationToken")
+                        .WithOne()
                         .HasForeignKey("eShop.Auth.Api.Entities.SecurityTokenEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -445,6 +450,17 @@ namespace eShop.Auth.Api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.PersonalDataEntity", "PersonalData")
+                        .WithOne()
+                        .HasForeignKey("eShop.Auth.Api.Entities.UserEntity", "PersonalDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PersonalData");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserLoginEntity", b =>
@@ -517,11 +533,7 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
-                    b.Navigation("AuthenticationToken");
-
                     b.Navigation("Permissions");
-
-                    b.Navigation("PersonalData");
                 });
 #pragma warning restore 612, 618
         }

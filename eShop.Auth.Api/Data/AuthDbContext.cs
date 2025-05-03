@@ -21,6 +21,13 @@ public sealed class AuthDbContext(
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<UserEntity>(entity =>
+        {
+            entity.HasOne(p => p.PersonalData)
+                .WithOne()
+                .HasForeignKey<UserEntity>(p => p.PersonalDataId);
+        });
+        
         builder.Entity<VerificationCodeEntity>(e =>
         {
             e.HasKey(x => x.Id);
@@ -30,9 +37,6 @@ public sealed class AuthDbContext(
         builder.Entity<PersonalDataEntity>(x =>
         {
             x.HasKey(p => p.Id);
-            x.HasOne(p => p.User)
-                .WithOne(u => u.PersonalData)
-                .HasForeignKey<PersonalDataEntity>(p => p.UserId);
         });
 
         builder.Entity<PermissionEntity>(x =>
@@ -56,9 +60,11 @@ public sealed class AuthDbContext(
         builder.Entity<SecurityTokenEntity>(x =>
         {
             x.HasKey(k => k.Id);
+            
             x.Property(t => t.Token).HasColumnType("VARCHAR(MAX)");
+            
             x.HasOne(t => t.UserEntity)
-                .WithOne(u => u.AuthenticationToken)
+                .WithOne()
                 .HasForeignKey<SecurityTokenEntity>(t => t.UserId);
         });
     }
