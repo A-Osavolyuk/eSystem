@@ -107,7 +107,7 @@
 
         if (result.Success)
         {
-            var data = JsonConvert.DeserializeObject<LoginResponse>(result.Result!.ToString()!);
+            var data = result.Get<LoginResponse>()!;
 
             if (data!.HasTwoFactorAuthentication)
             {

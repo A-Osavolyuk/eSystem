@@ -136,17 +136,6 @@
         notificationsCount = await NotificationService.GetNotificationsCountAsync();
     }
 
-    private string GetPageTitle()
-    {
-        var builder = new StringBuilder(NavigationManager.Uri);
-        builder.Replace(NavigationManager.BaseUri, string.Empty);
-        var title = builder.ToString().Split('/').Last();
-        var formatedTitle = new StringBuilder(title);
-        formatedTitle.Replace(title[0], char.ToUpper(title[0]), 0, 1);
-        formatedTitle.Replace("-", " ");
-        return formatedTitle.ToString();
-    }
-
     private async Task GetAvatarAsync()
     {
         var user = (await UserStore.GetUserAsync())!;
