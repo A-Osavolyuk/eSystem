@@ -41,12 +41,13 @@ internal sealed class LoginCommandHandler(
 
         if (securityToken is not null)
         {
-            var token = await tokenManager.RefreshAsync(user, securityToken.Token, cancellationToken);
+            var token = await tokenManager.RefreshAsync(user, securityToken, cancellationToken);
 
             return Result.Success(new LoginResponse()
             {
                 User = userDto,
-                RefreshToken = token,
+                RefreshToken = token.RefreshToken,
+                AccessToken = token.AccessToken,
                 Message = "Successfully logged in.",
                 HasTwoFactorAuthentication = false
             });

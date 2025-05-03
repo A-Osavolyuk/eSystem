@@ -7,8 +7,7 @@ internal sealed record ConfirmResetPasswordCommand(ConfirmResetPasswordRequest R
 
 internal sealed class ConfirmResetPasswordCommandHandler(
     ISecurityManager securityManager,
-    UserManager<UserEntity> userManager,
-    ILogger<ConfirmResetPasswordCommandHandler> logger)
+    UserManager<UserEntity> userManager)
     : IRequestHandler<ConfirmResetPasswordCommand, Result>
 {
     private readonly ISecurityManager securityManager = securityManager;

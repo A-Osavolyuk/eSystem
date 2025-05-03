@@ -7,12 +7,7 @@ internal sealed record ResendEmailVerificationCodeCommand(ResendEmailVerificatio
     : IRequest<Result>;
 
 internal sealed class ResendEmailVerificationCodeCommandHandler(
-    IPermissionManager permissionManager,
-    IProfileManager profileManager,
-    ISecurityManager securityManager,
-    ITokenManager tokenManager,
     UserManager<UserEntity> userManager,
-    RoleManager<RoleEntity> roleManager,
     IMessageService messageService,
     ICodeManager codeManager)
     : IRequestHandler<ResendEmailVerificationCodeCommand, Result>
