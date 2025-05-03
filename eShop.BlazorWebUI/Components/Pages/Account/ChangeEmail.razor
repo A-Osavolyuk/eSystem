@@ -28,12 +28,12 @@
         if (result.Success)
         {
             await (AuthenticationState as ApplicationAuthenticationStateProvider)!.LogOutAsync();
-            Snackbar.Add(result.Message, MudBlazor.Severity.Success);
+            Snackbar.Add(result.Message, Severity.Success);
             NavigationManager.NavigateTo("/account/login");
         }
         else
         {
-            Snackbar.Add(result.Message, MudBlazor.Severity.Error);
+            Snackbar.Add(result.Message, Severity.Error);
             NavigationManager.NavigateTo("/profile");
         }
     }

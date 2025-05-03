@@ -110,19 +110,19 @@
 
             if (data!.HasTwoFactorAuthentication)
             {
-                Snackbar.Add(result.Message, MudBlazor.Severity.Success);
+                Snackbar.Add(result.Message, Severity.Success);
                 NavigationManager.NavigateTo($"/account/login-2fa/{LoginRequest.Email}");
             }
             else
             {
                 await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
                 NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
-                Snackbar.Add(result.Message, MudBlazor.Severity.Success);
+                Snackbar.Add(result.Message, Severity.Success);
                 LoginRequest = new();
             }
         }
         else
-            Snackbar.Add(result.Message, MudBlazor.Severity.Error);
+            Snackbar.Add(result.Message, Severity.Error);
     }
 
     private void ExternalLogin(string providerName)

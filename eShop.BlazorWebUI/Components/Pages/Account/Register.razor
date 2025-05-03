@@ -54,11 +54,11 @@
 
         if (result.Success)
         {
-            Snackbar.Add(result.Message, MudBlazor.Severity.Success);
+            Snackbar.Add(result.Message, Severity.Success);
             NavigationManager.NavigateTo("/account/verify-email");
         }
         else
-            Snackbar.Add(result.Message, MudBlazor.Severity.Error);
+            Snackbar.Add(result.Message, Severity.Error);
 
         RegistrationRequest = new();
     }

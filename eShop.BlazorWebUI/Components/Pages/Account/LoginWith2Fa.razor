@@ -61,10 +61,10 @@
             var data = JsonConvert.DeserializeObject<LoginResponse>(result.Result!.ToString()!);
             await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
             NavigationManager.NavigateTo("/products");
-            Snackbar.Add(result.Message, MudBlazor.Severity.Success);
+            Snackbar.Add(result.Message, Severity.Success);
         }
         else
-            Snackbar.Add(result.Message, MudBlazor.Severity.Error);
+            Snackbar.Add(result.Message, Severity.Error);
     }
 
 }

@@ -14,6 +14,6 @@
         await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.LoginAsync(AccessToken, RefreshToken);
         NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "/products" : ReturnUri));
 
-        Snackbar.Add("Successfully logged in.", MudBlazor.Severity.Success);
+        Snackbar.Add("Successfully logged in.", Severity.Success);
     }
 }
