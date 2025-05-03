@@ -4,11 +4,13 @@ namespace eShop.Infrastructure.Services;
 
 public class HttpClientService(
     IHttpClientFactory clientFactory, 
-    ITokenProvider tokenProvider)
+    ITokenProvider tokenProvider,
+    AuthenticationStore authenticationStore)
     : IHttpClientService
 {
     private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");
     private readonly ITokenProvider tokenProvider = tokenProvider;
+    private readonly AuthenticationStore authenticationStore = authenticationStore;
 
     public async ValueTask<Response> SendAsync(Request request, bool withBearer = true)
     {
@@ -20,7 +22,7 @@ public class HttpClientService(
 
             if (withBearer)
             {
-                var token = AuthenticationHandler.Token;
+                var token = authenticationStore.Token;
                 message.Headers.Add("Authorization", $"Bearer {token}");
             }
 
@@ -57,7 +59,7 @@ public class HttpClientService(
 
             if (withBearer)
             {
-                var token = AuthenticationHandler.Token;
+                var token = authenticationStore.Token;
                 message.Headers.Add("Authorization", $"Bearer {token}");
             }
 

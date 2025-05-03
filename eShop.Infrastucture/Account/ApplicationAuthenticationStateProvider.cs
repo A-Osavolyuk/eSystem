@@ -9,24 +9,26 @@ public class ApplicationAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     ISecurityService securityService,
     IStorage localStorage,
-    IUserStorage userStorage) : AuthenticationStateProvider
+    IUserStorage userStorage,
+    AuthenticationStore authenticationStore) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly ISecurityService securityService = securityService;
     private readonly IStorage localStorage = localStorage;
     private readonly IUserStorage userStorage = userStorage;
+    private readonly AuthenticationStore authenticationStore = authenticationStore;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         try
         {
-            if (string.IsNullOrEmpty(AuthenticationHandler.Token))
+            if (string.IsNullOrEmpty(authenticationStore.Token))
             {
                 return await Task.FromResult(anonymous);
             }
 
-            var token = DecryptToken(AuthenticationHandler.Token);
+            var token = DecryptToken(authenticationStore.Token);
 
             if (token is null || !token.Claims.Any())
             {
@@ -64,11 +66,11 @@ public class ApplicationAuthenticationStateProvider(
 
         if (string.IsNullOrEmpty(token))
         {
-            AuthenticationHandler.Token = string.Empty;
+            authenticationStore.Token = string.Empty;
         }
         else
         {
-            AuthenticationHandler.Token = token;
+            authenticationStore.Token = token;
             await tokenProvider.SetTokenAsync(token);
 
             var rawToken = DecryptToken(token)!;
@@ -86,11 +88,11 @@ public class ApplicationAuthenticationStateProvider(
 
         if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
         {
-            AuthenticationHandler.Token = string.Empty;
+            authenticationStore.Token = string.Empty;
         }
         else
         {
-            AuthenticationHandler.Token = refreshToken;
+            authenticationStore.Token = refreshToken;
             await tokenProvider.SetTokenAsync(refreshToken);
 
             var rawToken = DecryptToken(accessToken)!;
@@ -182,7 +184,7 @@ public class ApplicationAuthenticationStateProvider(
 
                     if (claims.Any())
                     {
-                        AuthenticationHandler.Token = newToken;
+                        authenticationStore.Token = newToken;
                         return await Task.FromResult(
                             new AuthenticationState(new ClaimsPrincipal(
                                 new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme))));

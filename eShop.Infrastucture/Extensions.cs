@@ -18,6 +18,7 @@ public static class Extensions
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<AuthenticationStateProvider, ApplicationAuthenticationStateProvider>();
+        builder.Services.AddScoped<AuthenticationStore>();
 
         builder.Services.AddHttpContextAccessor();
 
