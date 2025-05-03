@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250503160351_Initial")]
+    [Migration("20250503172733_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -73,12 +73,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("PersonalData");
                 });
@@ -410,17 +405,6 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Codes");
-                });
-
-            modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.RoleClaimEntity", b =>

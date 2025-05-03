@@ -70,12 +70,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("PersonalData");
                 });
@@ -407,17 +402,6 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Codes");
-                });
-
-            modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.RoleClaimEntity", b =>
