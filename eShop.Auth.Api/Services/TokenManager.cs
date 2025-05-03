@@ -17,7 +17,6 @@ public class TokenManager(
         CancellationToken cancellationToken = default)
     {
         var entity = await context.SecurityTokens
-            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
 
         return entity;
@@ -63,19 +62,30 @@ public class TokenManager(
     }
 
 
-    public async Task<string> RefreshAsync(UserEntity userEntity, string token, CancellationToken cancellationToken = default)
+    public async Task<Token> RefreshAsync(UserEntity userEntity, SecurityTokenEntity tokenEntity, CancellationToken cancellationToken = default)
     {
-        var rawToken = DecryptToken(token);
+        var rawToken = DecryptToken(tokenEntity.Token);
         var claims = GetClaimsFromToken(rawToken);
         var key = Encoding.UTF8.GetBytes(options.Key);
         var algorithm = SecurityAlgorithms.HmacSha256Signature;
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
+        
+        var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
+        
+        var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await CreateAsync(userEntity, refreshToken, refreshTokenExpiration, cancellationToken);
+        tokenEntity.ExpireDate = refreshTokenExpiration;
+        tokenEntity.Token = refreshToken;
+        
+        await UpdateAsync(tokenEntity, cancellationToken);
 
-        return refreshToken;
+        return new Token()
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
+        };
     }
 
     private string WriteToken(List<Claim> claims, SigningCredentials signingCredentials, DateTime expiration)
@@ -169,6 +179,15 @@ public class TokenManager(
         };
 
         await context.SecurityTokens.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+    
+    private async ValueTask<Result> UpdateAsync(SecurityTokenEntity tokenEntity,
+        CancellationToken cancellationToken = default)
+    {
+        context.SecurityTokens.Update(tokenEntity);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

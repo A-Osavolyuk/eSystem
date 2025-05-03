@@ -4,7 +4,7 @@ public class SecurityTokenEntity : IEntity<Guid>, IExpireable
 {
     public Guid Id { get; init; }
     public Guid UserId { get; init; }
-    public string Token { get; init; } = string.Empty;
+    public string Token { get; set; } = string.Empty;
     
     public DateTime ExpireDate { get; set; }
     public DateTime? CreateDate { get; set; }
