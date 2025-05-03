@@ -20,7 +20,7 @@ public class ProfileController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetPersonalDataQuery(email));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -34,7 +34,7 @@ public class ProfileController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetPhoneNumberQuery(email));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -51,7 +51,7 @@ public class ProfileController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message)
-                .WithResult(s).Build()),
+                .WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -69,7 +69,7 @@ public class ProfileController(ISender sender) : ControllerBase
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded()
                 .WithMessage("Personal data was successfully changed.")
-                .WithResult(s).Build()),
+                .WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 }

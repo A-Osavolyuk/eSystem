@@ -26,7 +26,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new FindUserByEmailQuery(email));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -40,7 +40,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new FindUserByIdQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -54,7 +54,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUsersListQuery());
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -68,7 +68,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetRolesListQuery());
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -82,7 +82,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserRolesQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -96,7 +96,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserLockoutStatusQuery(email));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -110,7 +110,7 @@ public class AdminController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetPermissionsListQuery());
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 

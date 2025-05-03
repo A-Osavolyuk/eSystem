@@ -26,7 +26,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         return result.Match(
             s => Ok(new ResponseBuilder()
                 .Succeeded()
-                .WithResult(s)
+                .WithResult(s.Value!)
                 .Build()),
             ErrorHandler.Handle);
     }
@@ -43,7 +43,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         return result.Match(
             s =>
             {
-                var response = s.Value as ExternalLoginResponse;
+                var response = s.Value! as ExternalLoginResponse;
                 return Challenge(response!.AuthenticationProperties, response.Provider);
             },
             ErrorHandler.Handle);
@@ -62,7 +62,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new HandleExternalLoginResponseQuery(info!, remoteError, returnUri));
 
         return result.Match(
-            s => Redirect(Convert.ToString(s.Value)!),
+            s => Redirect(Convert.ToString(s.Value!)!),
             ErrorHandler.Handle);
     }
 
@@ -76,7 +76,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new GetExternalProvidersQuery());
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -139,7 +139,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new LoginCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 
@@ -183,7 +183,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new Change2FaStateCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 
@@ -199,7 +199,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
             await sender.Send(new LoginWith2FaCommand(with2FaRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 
@@ -229,7 +229,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new ConfirmChangePhoneNumberCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -265,7 +265,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new ChangeEmailCommand(changeEmailRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -281,7 +281,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new ChangePhoneNumberCommand(changePhoneNumberRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
@@ -297,7 +297,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new ChangePasswordCommand(changePasswordRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 
