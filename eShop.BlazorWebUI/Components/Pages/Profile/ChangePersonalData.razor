@@ -25,7 +25,6 @@
                         <MudItem xs="12">
                             <EditForm Context="formcontext" Model="request" FormName="change-personal-data-form"
                                       OnValidSubmit="OnValidSubmit">
-                                <FluentValidationValidator Validator="Validator"/>
                                 <MudTextField Immediate Clearable Counter="32" MaxLength="32"
                                               For="@(() => request.FirstName)" Label="First name"
                                               @bind-Value="request.FirstName" Variant="Variant.Outlined"/>

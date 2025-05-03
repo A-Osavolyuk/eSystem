@@ -1,6 +1,5 @@
 ﻿@page "/profile/change-username"
-@using eShop.Domain.Requests.API.Auth
-@using eShop.Domain.Responses.API.Auth
+
 @inherits PageBase
 
 @inject ISecurityService AuthService
@@ -25,7 +24,6 @@
                     <MudGrid Justify="Justify.Center">
                         <MudItem xs="12">
                             <EditForm Context="formcontext" Model="request" FormName="change-username-form" OnValidSubmit="OnValidSubmit">
-                                <FluentValidationValidator Validator="Validator" />
                                 <MudTextField Immediate Clearable Counter="18" MaxLength="18" For="@(() => request.UserName)" Label="Username" @bind-Value="request.UserName" Variant="Variant.Outlined" />
                                 <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Success" EndIcon="@Icons.Material.Filled.Save">Save changes</MudButton>
                             </EditForm>

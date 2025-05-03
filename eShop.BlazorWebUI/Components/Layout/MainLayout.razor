@@ -1,6 +1,4 @@
-﻿@using Severity = MudBlazor.Severity
-
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 @implements IDisposable
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -144,7 +142,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        NotificationsStateContainer.OnNotificationsChanged += NotificationCountChanged;
+        NotificationsStateContainer.OnNotificationsChanged +=  NotificationCountChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

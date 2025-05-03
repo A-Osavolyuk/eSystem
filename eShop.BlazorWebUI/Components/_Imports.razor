@@ -9,6 +9,7 @@
 @using eShop.Application.Validation.Products
 @using eShop.BlazorWebUI
 @using eShop.BlazorWebUI.Components
+@using eShop.BlazorWebUI.Components.Common
 @using eShop.BlazorWebUI.Components.Layout
 @using eShop.BlazorWebUI.Components.Shared
 @using eShop.BlazorWebUI.Components.Shared.Comments
@@ -17,10 +18,15 @@
 @using eShop.Domain.DTOs
 @using eShop.Domain.Enums
 @using eShop.Domain.Interfaces
+@using eShop.Domain.Responses.API.Comments
 @using eShop.Domain.Interfaces.Client
 @using eShop.Domain.Models
+@using eShop.Domain.Requests.API.Auth
 @using eShop.Domain.Responses
+@using eShop.Domain.Responses.API.Auth
+@using eShop.Domain.Responses.API.Files
 @using eShop.Domain.Types
+@using eShop.Domain.Requests.API.Seller
 @using eShop.Infrastructure.Account
 @using eShop.Infrastructure.State
 @using FluentValidation
@@ -37,3 +43,4 @@
 @using MudExtensions
 @using Newtonsoft.Json
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Severity = MudBlazor.Severity

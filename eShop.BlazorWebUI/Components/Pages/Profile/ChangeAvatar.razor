@@ -1,6 +1,5 @@
 ﻿@page "/profile/change-avatar"
-@using eShop.Domain.Responses.API.Files
-@using Severity = MudBlazor.Severity
+
 @inherits PageBase
 
 @inject IStoreService StoreService
@@ -48,12 +47,12 @@
                             </MudFileUpload>
                         </MudItem>
                         <MudItem xs="4" Style="margin-top:6px">
-                            <MudButton FullWidth ButtonType="ButtonType.Button" Disabled="@(browserFile is null ? true : false)" Color="Color.Success" Variant="Variant.Filled" OnClick="UploadClick" StartIcon="@Icons.Material.Filled.Upload">
+                            <MudButton FullWidth ButtonType="ButtonType.Button" Disabled="@(browserFile is null)" Color="Color.Success" Variant="Variant.Filled" OnClick="UploadClick" StartIcon="@Icons.Material.Filled.Upload">
                                 Upload file
                             </MudButton>
                         </MudItem>
                         <MudItem xs="4" Style="margin-top:6px">
-                            <MudButton FullWidth ButtonType="ButtonType.Button" Disabled="@(browserFile is null ? true : false)" Color="Color.Error" Variant="Variant.Filled" OnClick="ClearClick" StartIcon="@Icons.Material.Filled.Clear">
+                            <MudButton FullWidth ButtonType="ButtonType.Button" Disabled="@(browserFile is null)" Color="Color.Error" Variant="Variant.Filled" OnClick="ClearClick" StartIcon="@Icons.Material.Filled.Clear">
                                 Clear
                             </MudButton>
                         </MudItem>
