@@ -13,7 +13,6 @@ public class PersonalDataSeed : Seed<PersonalDataEntity, Guid>
                 LastName = "Osavolyuk",
                 Gender = "Male",
                 DateOfBirth = new DateTime(2004, 2, 11),
-                UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3")
             }
         ];
     }

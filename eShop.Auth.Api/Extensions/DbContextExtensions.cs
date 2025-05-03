@@ -9,6 +9,14 @@ public static class DbContextExtensions
     {
         var context = (ctx as AuthDbContext)!;
 
+        if (!await context.PersonalData.AnyAsync(cancellationToken))
+        {
+            var seed = new PersonalDataSeed();
+
+            await context.PersonalData.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        
         if (!await context.Users.AnyAsync(cancellationToken))
         {
             var seed = new UserSeed();
@@ -30,14 +38,6 @@ public static class DbContextExtensions
             var seed = new RoleSeed();
 
             await context.Roles.AddRangeAsync(seed.Get(), cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-                
-        if (!await context.PersonalData.AnyAsync(cancellationToken))
-        {
-            var seed = new PersonalDataSeed();
-
-            await context.PersonalData.AddRangeAsync(seed.Get(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
                 

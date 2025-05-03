@@ -2,7 +2,7 @@
 
 public class UserEntity : IdentityUser<Guid>, IEntity
 {
-    public Guid PersonalDataId { get; init; }
+    public Guid PersonalDataId { get; set; }
     
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }

@@ -56,7 +56,6 @@ internal sealed class CreateUserAccountCommandHandler(
 
         await profileManager.SetAsync(user, new PersonalDataEntity()
         {
-            UserId = userId,
             FirstName = request.Request.FirstName,
             LastName = request.Request.LastName,
             DateOfBirth = request.Request.DateOfBirth,

@@ -8,7 +8,7 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
     {
         var data = await context.PersonalData
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == userEntity.PersonalDataId, cancellationToken: cancellationToken);
 
         if (data is null)
         {
@@ -22,7 +22,7 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
     public async ValueTask<IdentityResult> SetAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default)
     {
-        personalData = personalData with { UserId = userEntity.Id };
+        userEntity.PersonalDataId = personalData.Id;
         await context.PersonalData.AddAsync(personalData, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -33,7 +33,7 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
         CancellationToken cancellationToken = default)
     {
         var data = await context.PersonalData
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == userEntity.PersonalDataId, cancellationToken: cancellationToken);
 
         if (data is null)
         {
@@ -47,7 +47,6 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
         var newData = new PersonalDataEntity()
         {
             Id = data.Id,
-            UserId = userEntity.Id,
             Gender = personalData.Gender,
             FirstName = personalData.FirstName,
             LastName = personalData.LastName,
@@ -64,7 +63,7 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
         CancellationToken cancellationToken = default)
     {
         var data = await context.PersonalData
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == userEntity.PersonalDataId, cancellationToken: cancellationToken);
 
         if (data is null)
         {
