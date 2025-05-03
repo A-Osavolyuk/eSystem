@@ -20,17 +20,31 @@
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
             <MudForm @ref="form" Model="LoginRequest" Validation="Validator.ValidateValue">
-                <MudTextField @bind-Value="LoginRequest.Email" For="(() => LoginRequest.Email)"
-                              InputType="InputType.Email" Label="Email" Immediate Variant="Variant.Outlined"/>
-                <MudPasswordField PasswordMode="true" @bind-Value="LoginRequest.Password"
-                                  For="(() => LoginRequest.Password)"
-                                  Label="Password" Immediate Variant="Variant.Outlined"/>
+                <MudTextField
+                    @bind-Value="LoginRequest.Email"
+                    For="(() => LoginRequest.Email)"
+                    InputType="InputType.Email"
+                    Label="Email"
+                    Immediate
+                    Variant="Variant.Outlined"/>
+                <MudPasswordField
+                    PasswordMode="true"
+                    @bind-Value="LoginRequest.Password"
+                    For="(() => LoginRequest.Password)"
+                    Label="Password"
+                    Immediate
+                    Variant="Variant.Outlined"/>
 
-                <MudLoadingButton LoadingAdornment="Adornment.End" ButtonType="ButtonType.Button"
-                                  OnClick="async () => await LoginClick()"
-                                  StartIcon="@Icons.Material.Filled.Login" 
-                                  Disabled="@(string.IsNullOrEmpty(LoginRequest.Password) || string.IsNullOrEmpty(LoginRequest.Email))"
-                                  Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" FullWidth>
+                <MudLoadingButton
+                    LoadingAdornment="Adornment.End" 
+                    ButtonType="ButtonType.Button"
+                    OnClick="async () => await OnSubmitAsync()"
+                    StartIcon="@Icons.Material.Filled.Login"
+                    Disabled="@(string.IsNullOrEmpty(LoginRequest.Password) || string.IsNullOrEmpty(LoginRequest.Email))"
+                    Variant="Variant.Filled" 
+                    Color="Color.Primary" 
+                    Class="mt-3"
+                    FullWidth="true">
                     Log In
                 </MudLoadingButton>
             </MudForm>
@@ -38,30 +52,46 @@
         <MudPaper Outlined Class="mt-3 pa-3">
             <MudGrid Spacing="1">
                 <MudItem xs="6">
-                    <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Custom.Brands.Google"
-                               Variant="Variant.Filled" OnClick="@(() => ExternalLogin("Google"))"
-                               Color="Color.Primary" FullWidth>
+                    <MudButton 
+                        ButtonType="ButtonType.Button" 
+                        StartIcon="@Icons.Custom.Brands.Google"
+                        Variant="Variant.Filled" 
+                        OnClick="@(() => ExternalLogin("Google"))"
+                        Color="Color.Primary" 
+                        FullWidth="true">
                         Google
                     </MudButton>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Custom.Brands.Facebook"
-                               Variant="Variant.Filled" OnClick="@(() => ExternalLogin("Facebook"))"
-                               Color="Color.Primary" FullWidth>
+                    <MudButton 
+                        ButtonType="ButtonType.Button" 
+                        StartIcon="@Icons.Custom.Brands.Facebook"
+                        Variant="Variant.Filled" 
+                        OnClick="@(() => ExternalLogin("Facebook"))"
+                        Color="Color.Primary" 
+                        FullWidth="true">
                         Facebook
                     </MudButton>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Custom.Brands.Microsoft"
-                               Variant="Variant.Filled" OnClick="@(() => ExternalLogin("Microsoft"))"
-                               Color="Color.Primary" FullWidth>
+                    <MudButton 
+                        ButtonType="ButtonType.Button" 
+                        StartIcon="@Icons.Custom.Brands.Microsoft"
+                        Variant="Variant.Filled" 
+                        OnClick="@(() => ExternalLogin("Microsoft"))"
+                        Color="Color.Primary" 
+                        FullWidth="true">
                         Microsoft
                     </MudButton>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Custom.Brands.Twitter"
-                               Variant="Variant.Filled" OnClick="@(() => ExternalLogin("Twitter"))"
-                               Color="Color.Primary" FullWidth>
+                    <MudButton 
+                        ButtonType="ButtonType.Button" 
+                        StartIcon="@Icons.Custom.Brands.Twitter"
+                        Variant="Variant.Filled" 
+                        OnClick="@(() => ExternalLogin("Twitter"))"
+                        Color="Color.Primary" 
+                        FullWidth="true">
                         Twitter
                     </MudButton>
                 </MudItem>
@@ -100,7 +130,7 @@
         }
     }
 
-    private async Task LoginClick()
+    private async Task OnSubmitAsync()
     {
         var result = await SecurityService.LoginAsync(LoginRequest);
 

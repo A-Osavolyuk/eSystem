@@ -18,21 +18,28 @@
         <MudPaper Outlined Class="pa-3">
             <MudForm Model="With2FaRequest">
                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1" Style="width: 50ch; margin: auto">
-                    Your account has enabled 2-FA (Two-factor authentication). 
+                    Your account has enabled 2-FA (Two-factor authentication).
                     To verify a log in attempt, please enter the 6-digit code from the letter we
                     sent you to: <strong>@Email</strong>
                 </MudText>
                 <MudGrid Justify="Justify.Center" Spacing="1">
                     <MudItem xs="7">
                         <br>
-                        <MudCodeInput Count="6" Margin="Margin.Normal" @bind-Value="With2FaRequest.Code"
-                                      Variant="Variant.Outlined"/>
+                        <MudCodeInput
+                            Count="6"
+                            Margin="Margin.Normal"
+                            @bind-Value="With2FaRequest.Code"
+                            Variant="Variant.Outlined"/>
                     </MudItem>
                     <MudItem xs="12">
-                        <MudLoadingButton ButtonType="ButtonType.Button" Disabled="With2FaRequest.Code.Length <= 5"
-                                          StartIcon="@Icons.Material.Filled.Login"
-                                          OnClick="async () => await OnVerifySubmit()"
-                                          Variant="Variant.Filled" Color="Color.Primary" FullWidth>
+                        <MudLoadingButton
+                            ButtonType="ButtonType.Button"
+                            Disabled="With2FaRequest.Code.Length <= 5"
+                            StartIcon="@Icons.Material.Filled.Login"
+                            OnClick="async () => await OnVerifySubmit()"
+                            Variant="Variant.Filled" 
+                            Color="Color.Primary" 
+                            FullWidth>
                             Verify
                         </MudLoadingButton>
                     </MudItem>
@@ -58,8 +65,8 @@
 
         if (result.Success)
         {
-            var data = JsonConvert.DeserializeObject<LoginResponse>(result.Result!.ToString()!);
-            await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
+            var response = result.Get<LoginResponse>()!;
+            await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.LoginAsync(response!.AccessToken, response.RefreshToken);
             NavigationManager.NavigateTo("/products");
             Snackbar.Add(result.Message, Severity.Success);
         }

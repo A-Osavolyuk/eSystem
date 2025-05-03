@@ -22,22 +22,32 @@
                 </MudItem>
 
                 <MudItem xs="12" Style="display: flex; justify-content: center">
-                    <MudText Typo="Typo.caption" Align="Align.Center">
+                    <MudText
+                        Typo="Typo.caption"
+                        Align="Align.Center">
                         We have sent code to email: <strong>@Email</strong>
                     </MudText>
                 </MudItem>
 
                 <MudItem xs="12" sm="8" Style="margin: 15px 0"
                          Class="d-flex flex-column gap-8 align-center justify-center">
-                    <MudCodeInput Variant="Variant.Outlined" Spacing="2" Margin="Margin.None" Count="6"
-                                  @bind-Value="VerifyEmailRequest.Code"/>
+                    <MudCodeInput
+                        Variant="Variant.Outlined"
+                        Spacing="2"
+                        Margin="Margin.None"
+                        Count="6"
+                        @bind-Value="VerifyEmailRequest.Code"/>
                 </MudItem>
 
                 <MudItem xs="8">
-                    <MudButton ButtonType="ButtonType.Button"
-                               Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" FullWidth
-                               Disabled="@(VerifyEmailRequest.Code.Length <= 5)"
-                               OnClick="async () => await VerifyEmailAsync()">
+                    <MudButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        Class="mt-3"
+                        FullWidth
+                        Disabled="@(VerifyEmailRequest.Code.Length <= 5)"
+                        OnClick="async () => await VerifyEmailAsync()">
                         Verify
                     </MudButton>
                 </MudItem>
@@ -55,7 +65,9 @@
 
 @code {
     [SupplyParameterFromForm] private VerifyEmailRequest VerifyEmailRequest { get; set; } = new();
-    [SupplyParameterFromQuery(Name = "email")] private string Email { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "email")]
+    private string Email { get; set; } = string.Empty;
 
     private async Task VerifyEmailAsync()
     {
@@ -73,7 +85,7 @@
 
     private async Task ResendCodeAsync()
     {
-        var response = await SecurityService.ResendVerificationCodeAsync(new () { Email = Email });
+        var response = await SecurityService.ResendVerificationCodeAsync(new() { Email = Email });
 
         if (response.Success)
         {

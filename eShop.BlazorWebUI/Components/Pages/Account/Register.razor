@@ -16,20 +16,39 @@
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
             <MudForm Model="RegistrationRequest" @ref="form" Validation="Validator.ValidateValue">
-                <MudTextField @bind-Value="RegistrationRequest.Email" For="(() => RegistrationRequest.Email)"
-                              InputType="InputType.Email" Label="Email" Immediate Variant="Variant.Outlined"/>
-                <MudPasswordField PasswordMode="true" @bind-Value="RegistrationRequest.Password"
-                                  For="(() => RegistrationRequest.Password)"
-                                  Label="Password" InputType="InputType.Password" Immediate Variant="Variant.Outlined"/>
-                <MudPasswordField PasswordMode="true" @bind-Value="RegistrationRequest.ConfirmPassword"
-                                  For="(() => RegistrationRequest.ConfirmPassword)"
-                                  Label="Confirm Password" InputType="InputType.Password" Immediate
-                                  Variant="Variant.Outlined"/>
+                <MudTextField
+                    @bind-Value="RegistrationRequest.Email"
+                    For="(() => RegistrationRequest.Email)"
+                    InputType="InputType.Email"
+                    Label="Email"
+                    Immediate
+                    Variant="Variant.Outlined"/>
+                <MudPasswordField
+                    PasswordMode="true"
+                    @bind-Value="RegistrationRequest.Password"
+                    For="(() => RegistrationRequest.Password)"
+                    Label="Password"
+                    InputType="InputType.Password"
+                    Immediate
+                    Variant="Variant.Outlined"/>
+                <MudPasswordField
+                    PasswordMode="true"
+                    @bind-Value="RegistrationRequest.ConfirmPassword"
+                    For="(() => RegistrationRequest.ConfirmPassword)"
+                    Label="Confirm Password"
+                    InputType="InputType.Password"
+                    Immediate
+                    Variant="Variant.Outlined"/>
 
-                <MudLoadingButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.AppRegistration"
-                                  Disabled="form.IsValid"
-                                  Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" FullWidth
-                                  OnClick="async () => await RegisterUserAsync()">
+                <MudLoadingButton
+                    ButtonType="ButtonType.Button"
+                    StartIcon="@Icons.Material.Filled.AppRegistration"
+                    Disabled="form.IsValid"
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    Class="mt-3"
+                    FullWidth
+                    OnClick="async () => await RegisterUserAsync()">
                     Register
                 </MudLoadingButton>
 
@@ -58,7 +77,9 @@
             NavigationManager.NavigateTo("/account/verify-email");
         }
         else
+        {
             Snackbar.Add(result.Message, Severity.Error);
+        }
 
         RegistrationRequest = new();
     }
