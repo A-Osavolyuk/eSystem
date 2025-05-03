@@ -49,7 +49,7 @@
                         {
                             <MudAvatar>
                                 <MudImage Alt="avatar"
-                                          Src="@(string.IsNullOrEmpty(avatarUri) ? Configuration["DefaultAvatar"]! : avatarUri)"/>
+                                          Src="@(Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!)"/>
                             </MudAvatar>
                         }
                         else
@@ -58,7 +58,7 @@
                                       Color="Color.Secondary">
                                 <MudAvatar>
                                     <MudImage Alt="avatar"
-                                              Src="@(string.IsNullOrEmpty(avatarUri) ? Configuration["DefaultAvatar"]! : avatarUri)"/>
+                                              Src="@(Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!)"/>
                                 </MudAvatar>
                             </MudBadge>
                         }
@@ -108,7 +108,6 @@
     [CascadingParameter] Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
     private bool drawerOpen = true;
-    private string avatarUri = string.Empty;
     private int notificationsCount = 0;
 
     void DrawerToggle()
@@ -134,13 +133,6 @@
         }
         
         notificationsCount = await NotificationService.GetNotificationsCountAsync();
-    }
-
-    private async Task GetAvatarAsync()
-    {
-        var user = (await UserStore.GetUserAsync())!;
-
-        avatarUri = Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!;
     }
 
     private async Task LogoutClick()
