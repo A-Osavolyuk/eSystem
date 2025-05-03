@@ -19,26 +19,41 @@
 
 <MudLayout Style="height:100vh">
     <MudAppBar Style="height:70px;" Class="align-content-center" Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-                       OnClick="@((e) => DrawerToggle())"/>
-        <MudText Align="Align.Center" Typo="Typo.h5" Class="ml-3 cursor-pointer"
-                 @onclick="@(() => NavigationManager.NavigateTo("/products"))">eShop
+        <MudIconButton
+            Icon="@Icons.Material.Filled.Menu"
+            Color="Color.Inherit"
+            Edge="Edge.Start"
+            OnClick="@((e) => DrawerToggle())"/>
+        <MudText
+            Align="Align.Center"
+            Typo="Typo.h5"
+            Class="ml-3 cursor-pointer"
+            @onclick="@(() => NavigationManager.NavigateTo("/products"))">
+            eShop
         </MudText>
         <MudSpacer/>
         <AuthorizeView>
             <NotAuthorized>
-                <MudButton StartIcon="@Icons.Material.Filled.Login"
-                           Color="Color.Primary" Href="/account/login">
+                <MudButton
+                    StartIcon="@Icons.Material.Filled.Login"
+                    Color="Color.Primary"
+                    Href="/account/login">
                     Log In
                 </MudButton>
-                <MudButton StartIcon="@Icons.Material.Filled.AppRegistration"
-                           Color="Color.Primary" Href="/account/register" Class="ml-3">
+                <MudButton
+                    StartIcon="@Icons.Material.Filled.AppRegistration"
+                    Color="Color.Primary"
+                    Href="/account/register"
+                    Class="ml-3">
                     Register
                 </MudButton>
             </NotAuthorized>
             <Authorized>
-                <MudMenu Style="margin-top:6px" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.BottomLeft"
-                         ActivationEvent="MouseEvent.LeftClick">
+                <MudMenu
+                    Style="margin-top:6px"
+                    AnchorOrigin="Origin.BottomCenter"
+                    TransformOrigin="Origin.BottomLeft"
+                    ActivationEvent="MouseEvent.LeftClick">
                     <ActivatorContent>
                         @if (notificationsCount == 0)
                         {
@@ -49,7 +64,9 @@
                         }
                         else
                         {
-                            <MudBadge Style="margin-top:6px" Max="99" @bind-content="notificationsCount" Overlap
+                            <MudBadge Style="margin-top:6px"
+                                      Max="99" @bind-content="notificationsCount"
+                                      Overlap="true"
                                       Color="Color.Secondary">
                                 <MudAvatar>
                                     <MudImage Alt="avatar"
@@ -60,27 +77,35 @@
                     </ActivatorContent>
                     <ChildContent>
                         <MudMenuItem>
-                            <MudButton StartIcon="@Icons.Material.Filled.ShoppingCart" Color="Color.Primary"
-                                       OnClick="@(() => RedirectTo("/cart"))">
+                            <MudButton
+                                StartIcon="@Icons.Material.Filled.ShoppingCart"
+                                Color="Color.Primary"
+                                OnClick="@(() => RedirectTo("/cart"))">
                                 Your Cart
                             </MudButton>
                         </MudMenuItem>
                         <MudMenuItem>
-                            <MudButton StartIcon="@Icons.Material.Filled.ManageAccounts" Color="Color.Primary"
-                                       OnClick="@(() => RedirectTo("/profile"))">
+                            <MudButton
+                                StartIcon="@Icons.Material.Filled.ManageAccounts"
+                                Color="Color.Primary"
+                                OnClick="@(() => RedirectTo("/profile"))">
                                 Profile
                             </MudButton>
                         </MudMenuItem>
                         <MudMenuItem>
-                            <MudButton StartIcon="@Icons.Material.Filled.Settings" Color="Color.Primary"
-                                       OnClick="@(() => RedirectTo("/setting"))">
+                            <MudButton
+                                StartIcon="@Icons.Material.Filled.Settings"
+                                Color="Color.Primary"
+                                OnClick="@(() => RedirectTo("/setting"))">
                                 Settings
                             </MudButton>
                         </MudMenuItem>
                         <MudDivider/>
                         <MudMenuItem>
-                            <MudButton StartIcon="@Icons.Material.Filled.Logout" Color="Color.Primary"
-                                       OnClick="LogoutClick">
+                            <MudButton
+                                StartIcon="@Icons.Material.Filled.Logout"
+                                Color="Color.Primary"
+                                OnClick="async () => await LogoutClick()">
                                 Log Out
                             </MudButton>
                         </MudMenuItem>
@@ -89,11 +114,18 @@
             </Authorized>
         </AuthorizeView>
     </MudAppBar>
-    <MudDrawer Style="top:70px" @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+    <MudDrawer
+        Style="top:70px"
+        @bind-Open="drawerOpen"
+        ClipMode="DrawerClipMode.Always"
+        Elevation="2">
         <NavMenu/>
     </MudDrawer>
     <MudMainContent Style="height:100%">
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="py-5 position-relative" Style="height:100%">
+        <MudContainer
+            MaxWidth="MaxWidth.ExtraLarge"
+            Class="py-5 position-relative"
+            Style="height:100%">
             @Body
         </MudContainer>
     </MudMainContent>
@@ -120,7 +152,7 @@
         if (firstRender)
         {
             var state = await AuthenticationStateTask!;
-            
+
             if (state.User.Identity is null || !state.User.Identity!.IsAuthenticated)
             {
                 var token = await TokenProvider.GetTokenAsync();
@@ -131,7 +163,7 @@
                 }
             }
         }
-        
+
         notificationsCount = await NotificationService.GetNotificationsCountAsync();
     }
 
