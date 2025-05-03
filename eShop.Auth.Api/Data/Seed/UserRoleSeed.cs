@@ -2,7 +2,7 @@
 
 public class UserRoleSeed : Seed<UserRoleEntity>
 {
-    protected override List<UserRoleEntity> Get()
+    public override List<UserRoleEntity> Get()
     {
         return [
             new ()

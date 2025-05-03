@@ -4,7 +4,7 @@ namespace eShop.Auth.Api.Data.Seed;
 
 public class RoleSeed : Seed<RoleEntity>
 {
-    protected override List<RoleEntity> Get()
+    public override List<RoleEntity> Get()
     {
         return
         [

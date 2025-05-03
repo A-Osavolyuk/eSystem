@@ -2,7 +2,7 @@
 
 public class PersonalDataSeed : Seed<PersonalDataEntity, Guid>
 {
-    protected override List<PersonalDataEntity> Get()
+    public override List<PersonalDataEntity> Get()
     {
         return
         [

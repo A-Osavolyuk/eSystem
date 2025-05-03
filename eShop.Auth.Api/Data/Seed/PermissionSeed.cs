@@ -2,7 +2,7 @@
 
 public class PermissionSeed : Seed<PermissionEntity, Guid>
 {
-    protected override List<PermissionEntity> Get()
+    public override List<PermissionEntity> Get()
     {
         return
         [

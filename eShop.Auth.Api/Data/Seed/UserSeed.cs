@@ -2,7 +2,7 @@
 
 public class UserSeed : Seed<UserEntity>
 {
-    protected override List<UserEntity> Get()
+    public override List<UserEntity> Get()
     {
         return
         [

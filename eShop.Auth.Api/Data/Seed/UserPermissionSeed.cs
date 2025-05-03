@@ -2,7 +2,7 @@
 
 public class UserPermissionSeed : Seed<UserPermissionsEntity, Guid>
 {
-    protected override List<UserPermissionsEntity> Get()
+    public override List<UserPermissionsEntity> Get()
     {
         return
         [
