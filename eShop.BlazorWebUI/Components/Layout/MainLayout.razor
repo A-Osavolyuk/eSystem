@@ -1,21 +1,16 @@
-﻿using eShop.Application.Mapping
-@inherits LayoutComponentBase
+﻿@using Severity = MudBlazor.Severity
 
+@inherits LayoutComponentBase
 @implements IDisposable
 
-@inject ITokenProvider TokenProvider
-@inject IStorage LocalStorage
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NotificationsStateContainer NotificationsStateContainer
-@inject INotificationService NotificationService
-@inject ISnackbar Snackbar
-@inject IStoreService StoreService
-@inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationState
+@inject NavigationManager NavigationManager
+@inject INotificationService NotificationService
+@inject ITokenProvider TokenProvider
 @inject IConfiguration Configuration
-@inject IUserStorage UserStore
-
-@using Severity = MudBlazor.Severity
+@inject ISnackbar Snackbar
 
 <MudThemeProvider IsDarkMode/>
 <MudDialogProvider/>
@@ -125,10 +120,15 @@
         if (firstRender)
         {
             var state = await AuthenticationStateTask!;
+            
             if (state.User.Identity is null || !state.User.Identity!.IsAuthenticated)
             {
                 var token = await TokenProvider.GetTokenAsync();
-                await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.UpdateAuthenticationStateAsync(token);
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.UpdateAuthenticationStateAsync(token);
+                }
             }
         }
         
