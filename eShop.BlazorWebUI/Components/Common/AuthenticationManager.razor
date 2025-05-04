@@ -4,7 +4,7 @@
     {
         var builder = new StringBuilder(NavigationManager.Uri);
         var returnUri = builder.Replace(NavigationManager.BaseUri, "/").ToString();
-        var uri = string.Format("/Error?code={0}&returnUri={1}", 401, returnUri);
+        var uri = $"/Error?code={401}&returnUri={returnUri}";
         NavigationManager.NavigateTo(uri);
     }
 }

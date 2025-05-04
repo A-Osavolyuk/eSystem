@@ -1,0 +1,52 @@
+﻿@inherits LayoutComponentBase
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject ITokenProvider TokenProvider
+
+<MudThemeProvider IsDarkMode/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<MudPopoverProvider/>
+
+<MudLayout>
+    <MudAppBar Class="align-content-center" Elevation="1">
+        <MudText
+            Align="Align.Center"
+            Typo="Typo.h5"
+            Class="ml-3 cursor-pointer"
+            @onclick="@(() => NavigationManager.NavigateTo("/products"))">
+            eShop
+        </MudText>
+        <MudSpacer/>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer
+            MaxWidth="MaxWidth.ExtraLarge"
+            Class="py-5 position-relative">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    [CascadingParameter] Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var state = await AuthenticationStateTask!;
+
+            if (state.User.Identity is null || !state.User.Identity!.IsAuthenticated)
+            {
+                var token = await TokenProvider.GetTokenAsync();
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.UpdateAuthenticationStateAsync(token);
+                }
+            }
+        }
+    }
+}

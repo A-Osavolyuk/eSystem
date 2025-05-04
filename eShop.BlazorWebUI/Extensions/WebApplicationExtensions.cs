@@ -13,10 +13,11 @@ public static class WebApplicationExtensions
         }
 
         app.UseStaticFiles();
+        app.MapStaticAssets();
         app.UseHttpsRedirection();
 
-        app.UseAuthentication();
         app.UseRouting();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.UseAntiforgery();
         app.UseStatusCodePagesWithRedirects("/Error?code={0}");

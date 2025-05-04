@@ -15,8 +15,8 @@
 <MudSnackbarProvider/>
 <MudPopoverProvider/>
 
-<MudLayout Style="height:100vh">
-    <MudAppBar Style="height:70px;" Class="align-content-center" Elevation="1">
+<MudLayout>
+    <MudAppBar Class="align-content-center" Elevation="1">
         <MudIconButton
             Icon="@Icons.Material.Filled.Menu"
             Color="Color.Inherit"
@@ -48,7 +48,6 @@
             </NotAuthorized>
             <Authorized>
                 <MudMenu
-                    Style="margin-top:6px"
                     AnchorOrigin="Origin.BottomCenter"
                     TransformOrigin="Origin.BottomLeft"
                     ActivationEvent="MouseEvent.LeftClick">
@@ -78,7 +77,7 @@
                             <MudButton
                                 StartIcon="@Icons.Material.Filled.ShoppingCart"
                                 Color="Color.Primary"
-                                OnClick="@(() => RedirectTo("/cart"))">
+                                Href="/cart">
                                 Your Cart
                             </MudButton>
                         </MudMenuItem>
@@ -86,7 +85,7 @@
                             <MudButton
                                 StartIcon="@Icons.Material.Filled.ManageAccounts"
                                 Color="Color.Primary"
-                                OnClick="@(() => RedirectTo("/profile"))">
+                                Href="/profile">
                                 Profile
                             </MudButton>
                         </MudMenuItem>
@@ -94,7 +93,7 @@
                             <MudButton
                                 StartIcon="@Icons.Material.Filled.Settings"
                                 Color="Color.Primary"
-                                OnClick="@(() => RedirectTo("/setting"))">
+                                Href="/setting">
                                 Settings
                             </MudButton>
                         </MudMenuItem>
@@ -113,17 +112,15 @@
         </AuthorizeView>
     </MudAppBar>
     <MudDrawer
-        Style="top:70px"
         @bind-Open="drawerOpen"
         ClipMode="DrawerClipMode.Always"
         Elevation="2">
         <NavMenu/>
     </MudDrawer>
-    <MudMainContent Style="height:100%">
+    <MudMainContent>
         <MudContainer
             MaxWidth="MaxWidth.ExtraLarge"
-            Class="py-5 position-relative"
-            Style="height:100%">
+            Class="py-5 position-relative">
             @Body
         </MudContainer>
     </MudMainContent>

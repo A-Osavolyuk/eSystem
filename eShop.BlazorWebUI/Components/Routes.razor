@@ -1,9 +1,13 @@
-﻿<Router AppAssembly="@typeof(Program).Assembly">
+﻿@rendermode InteractiveServer
+
+<Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
-        <RediractionManager Uri="/Error?code=404"/>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <RediractionManager Uri="/Error?code=404"/>
+        </LayoutView>
     </NotFound>
 </Router>

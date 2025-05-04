@@ -120,16 +120,6 @@
 
     private MudForm form = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        var user = await UserStorage.GetUserAsync();
-
-        if (user is not null)
-        {
-            NavigationManager.NavigateTo("products");
-        }
-    }
-
     private async Task OnSubmitAsync()
     {
         var result = await SecurityService.LoginAsync(LoginRequest);
