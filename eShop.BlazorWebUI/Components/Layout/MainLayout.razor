@@ -158,7 +158,7 @@
                 }
             }
         }
-
+        
         notificationsCount = await NotificationService.GetNotificationsCountAsync();
     }
 
@@ -167,12 +167,6 @@
         await (AuthenticationState as ApplicationAuthenticationStateProvider)!.LogOutAsync();
         Snackbar.Add("Successfully logged out.", Severity.Success);
         NavigationManager.NavigateTo("/account/login");
-    }
-
-    private void RedirectTo(string link)
-    {
-        NavigationManager.NavigateTo(link);
-        StateHasChanged();
     }
 
     private async Task NotificationCountChanged()

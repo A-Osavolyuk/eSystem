@@ -11,6 +11,11 @@
 
 <MudLayout>
     <MudAppBar Class="align-content-center" Elevation="1">
+        <MudIconButton
+            Icon="@Icons.Material.Filled.Menu"
+            Color="Color.Inherit"
+            Edge="Edge.Start"
+            OnClick="@((e) => DrawerToggle())"/>
         <MudText
             Align="Align.Center"
             Typo="Typo.h5"
@@ -18,8 +23,13 @@
             @onclick="@(() => NavigationManager.NavigateTo("/products"))">
             eShop
         </MudText>
-        <MudSpacer/>
     </MudAppBar>
+    <MudDrawer
+        @bind-Open="drawerOpen"
+        ClipMode="DrawerClipMode.Always"
+        Elevation="2">
+        <NavMenu/>
+    </MudDrawer>
     <MudMainContent>
         <MudContainer
             MaxWidth="MaxWidth.ExtraLarge"
@@ -32,6 +42,13 @@
 @code {
     [CascadingParameter] Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
+    private bool drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        drawerOpen = !drawerOpen;
+    }
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
