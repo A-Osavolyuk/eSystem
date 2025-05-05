@@ -5,7 +5,7 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
-@inject JwtAuthenticationStateProvider AuthenticationStateProvider
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject LoginValidator Validator
 @inject ITokenProvider TokenProvider
 @inject IConfiguration Configuration
@@ -118,6 +118,7 @@
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
 
     private MudForm form = new();
+
     private async Task OnSubmitAsync()
     {
         var request = Mapper.Map(Model);
@@ -134,8 +135,8 @@
             }
             else
             {
-                await AuthenticationStateProvider.LoginAsync(data!.AccessToken, data.RefreshToken);
-                NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri), true);
+                await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
+                NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
                 Snackbar.Add(result.Message, Severity.Success);
                 Model = new();
             }

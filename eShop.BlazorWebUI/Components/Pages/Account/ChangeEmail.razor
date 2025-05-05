@@ -4,7 +4,7 @@
 
 @inject ISecurityService SecurityService
 @inject NavigationManager NavigationManager
-@inject JwtAuthenticationStateProvider AuthenticationState
+@inject AuthenticationStateProvider AuthenticationState
 @inject ITokenProvider TokenProvider
 @inject ISnackbar Snackbar
 
@@ -26,7 +26,7 @@
 
         if (result.Success)
         {
-            await AuthenticationState.LogOutAsync();
+            await (AuthenticationState as JwtAuthenticationStateProvider)!.LogOutAsync();
             Snackbar.Add(result.Message, Severity.Success);
             NavigationManager.NavigateTo("/account/login");
         }
