@@ -2,18 +2,20 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
 
-namespace eShop.Infrastructure.Account;
+namespace eShop.Infrastructure.Security;
 
 public class JwtAuthenticationHandler(
     IOptionsMonitor<JwtAuthenticationOptions> options,
     ILoggerFactory logger,
+    ITokenProvider tokenProvider,
     UrlEncoder encoder,
-    ITokenProvider tokenProvider)
+    TokenHandler tokenHandler)
     : AuthenticationHandler<JwtAuthenticationOptions>(options, logger, encoder)
 {
     private readonly ITokenProvider tokenProvider = tokenProvider;
+    private readonly TokenHandler tokenHandler = tokenHandler;
+
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         try
@@ -25,8 +27,8 @@ public class JwtAuthenticationHandler(
                 return AuthenticateResult.NoResult();
             }
 
-            var rawToken = tokenProvider.ReadToken(token)!;
-            var claims = tokenProvider.ReadClaims(rawToken);
+            var rawToken = tokenHandler.ReadToken(token)!;
+            var claims = tokenHandler.ReadClaims(rawToken);
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, JwtBearerDefaults.AuthenticationScheme);

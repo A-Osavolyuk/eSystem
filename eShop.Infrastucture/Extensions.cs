@@ -1,6 +1,8 @@
-﻿using eShop.Infrastructure.State;
+﻿using eShop.Infrastructure.Security;
+using eShop.Infrastructure.State;
 using eShop.Infrastructure.Storage;
 using Microsoft.IdentityModel.Tokens;
+using TokenHandler = eShop.Infrastructure.Security.TokenHandler;
 
 namespace eShop.Infrastructure;
 
@@ -50,6 +52,7 @@ public static class Extensions
                 JwtBearerDefaults.AuthenticationScheme, options => { });
         
         builder.Services.AddCascadingAuthenticationState();
+        builder.Services.AddScoped<TokenHandler>();
         builder.Services.AddScoped<JwtAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
     }

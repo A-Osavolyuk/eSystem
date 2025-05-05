@@ -9,7 +9,6 @@ global using Blazored.LocalStorage;
 global using eShop.Application.Extensions;
 global using eShop.Domain.Interfaces.Client;
 global using eShop.Domain.Types;
-global using eShop.Infrastructure.Account;
 global using eShop.Infrastructure.Services;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Components.Authorization;

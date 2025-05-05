@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Common.API;
+using eShop.Infrastructure.Security;
 
 namespace eShop.Infrastructure.Services;
 

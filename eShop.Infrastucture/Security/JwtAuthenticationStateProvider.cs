@@ -1,19 +1,16 @@
-﻿using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
-using ClaimTypes = eShop.Domain.Common.Security.ClaimTypes;
-using UserModel = eShop.Domain.Models.UserModel;
-
-namespace eShop.Infrastructure.Account;
+﻿namespace eShop.Infrastructure.Security;
 
 public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage localStorage,
-    IUserStorage userStorage) : AuthenticationStateProvider
+    IUserStorage userStorage,
+    TokenHandler tokenHandler) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage localStorage = localStorage;
     private readonly IUserStorage userStorage = userStorage;
+    private readonly TokenHandler tokenHandler = tokenHandler;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
@@ -25,21 +22,21 @@ public class JwtAuthenticationStateProvider(
                 return await UnauthorizeAsync();
             }
 
-            var rowToken = tokenProvider.ReadToken(token);
+            var rowToken = tokenHandler.ReadToken(token);
 
             if (rowToken is null || !rowToken.Claims.Any())
             {
                 return await UnauthorizeAsync();
             }
 
-            var valid = tokenProvider.IsValid(rowToken);
+            var valid = tokenHandler.IsValid(rowToken);
 
             if (!valid)
             {
                 return await LogOutAsync();
             }
 
-            var claims = tokenProvider.ReadClaims(rowToken);
+            var claims = tokenHandler.ReadClaims(rowToken);
 
             if (claims.Count == 0)
             {
@@ -64,8 +61,8 @@ public class JwtAuthenticationStateProvider(
         {
             await tokenProvider.SetTokenAsync(refreshToken);
 
-            var rawToken = tokenProvider.ReadToken(accessToken)!;
-            var claims = tokenProvider.ReadClaims(rawToken);
+            var rawToken = tokenHandler.ReadToken(accessToken)!;
+            var claims = tokenHandler.ReadClaims(rawToken);
             claimsPrincipal = new(new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme));
         }
 
