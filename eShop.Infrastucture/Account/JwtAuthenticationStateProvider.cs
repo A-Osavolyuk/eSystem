@@ -7,17 +7,13 @@ namespace eShop.Infrastructure.Account;
 
 public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
-    ISecurityService securityService,
     IStorage localStorage,
-    IUserStorage userStorage,
-    JwtAuthenticationHandler jwtAuthenticationHandler) : AuthenticationStateProvider
+    IUserStorage userStorage) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
-    private readonly ISecurityService securityService = securityService;
     private readonly IStorage localStorage = localStorage;
     private readonly IUserStorage userStorage = userStorage;
-    private readonly JwtAuthenticationHandler jwtAuthenticationHandler = jwtAuthenticationHandler;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
@@ -26,29 +22,28 @@ public class JwtAuthenticationStateProvider(
             var token = await tokenProvider.GetTokenAsync();
             if (string.IsNullOrEmpty(token))
             {
-                return await Task.FromResult(anonymous);
+                return await UnauthorizeAsync();
             }
 
             var rowToken = tokenProvider.ReadToken(token);
 
             if (rowToken is null || !rowToken.Claims.Any())
             {
-                return await Task.FromResult(anonymous);
+                return await UnauthorizeAsync();
             }
 
             var valid = tokenProvider.IsValid(rowToken);
 
             if (!valid)
             {
-                await LogOutAsync();
-                return await Task.FromResult(anonymous);
+                return await LogOutAsync();
             }
 
             var claims = tokenProvider.ReadClaims(rowToken);
 
             if (claims.Count == 0)
             {
-                return await Task.FromResult(anonymous);
+                return await UnauthorizeAsync();
             }
 
             return await Task.FromResult(
@@ -57,24 +52,8 @@ public class JwtAuthenticationStateProvider(
         }
         catch (Exception)
         {
-            return await Task.FromResult(anonymous);
+            return await UnauthorizeAsync();
         }
-    }
-
-    public async Task UpdateAuthenticationStateAsync(string token)
-    {
-        var claimsPrincipal = new ClaimsPrincipal();
-
-        if (!string.IsNullOrEmpty(token))
-        {
-            await tokenProvider.SetTokenAsync(token);
-
-            var rawToken = tokenProvider.ReadToken(token)!;
-            var claims = tokenProvider.ReadClaims(rawToken);
-            claimsPrincipal = new(new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme));
-        }
-
-        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
     }
 
     public async Task LoginAsync(string accessToken, string refreshToken)
@@ -89,15 +68,28 @@ public class JwtAuthenticationStateProvider(
             var claims = tokenProvider.ReadClaims(rawToken);
             claimsPrincipal = new(new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme));
         }
-        
+
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
     }
 
-    public async Task LogOutAsync()
+    public async Task<AuthenticationState> LogOutAsync()
     {
-        await tokenProvider.ClearAsync();
+        await tokenProvider.RemoveAsync();
         await localStorage.ClearAsync();
         await userStorage.ClearAsync();
-        await UpdateAuthenticationStateAsync(string.Empty);
+        return await UnauthorizeAsync();
+    }
+
+    private async Task<AuthenticationState> UnauthorizeAsync()
+    {
+        try
+        {
+            NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
+            return await Task.FromResult(anonymous);
+        }
+        catch (Exception e)
+        {
+            return await Task.FromResult(anonymous);
+        }
     }
 }
