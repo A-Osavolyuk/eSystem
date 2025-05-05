@@ -1,5 +1,4 @@
 ﻿using eShop.Application.Extensions;
-using FluentValidation;
 using MudBlazor.Services;
 using MudExtensions.Services;
 

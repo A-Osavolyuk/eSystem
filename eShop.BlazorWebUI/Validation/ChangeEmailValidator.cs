@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Application.Validation.Auth;
+namespace eShop.BlazorWebUI.Validation;
 
 public class ChangeEmailValidator : Validator<ChangeEmailRequest>
 {

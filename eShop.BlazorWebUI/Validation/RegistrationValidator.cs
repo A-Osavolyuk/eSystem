@@ -1,6 +1,4 @@
 ﻿using eShop.BlazorWebUI.Models;
-using eShop.Domain.Abstraction.Validation;
-using FluentValidation;
 
 namespace eShop.BlazorWebUI.Validation;
 

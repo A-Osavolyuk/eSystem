@@ -1,12 +1,17 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.BlazorWebUI.Models;
+using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Application.Validation.Auth;
+namespace eShop.BlazorWebUI.Validation;
 
-public class ResetPasswordValidator : Validator<ConfirmResetPasswordRequest>
+public class ChangePasswordValidator : Validator<ChangePasswordModel>
 {
-    public ResetPasswordValidator()
+    public ChangePasswordValidator()
     {
+        RuleFor(p => p.OldPassword)
+            .NotEmpty().WithMessage("You must enter your old password.");
+
         RuleFor(p => p.NewPassword)
+            .NotEqual(x => x.OldPassword).WithMessage("New Password cannot be the same with old one.")
             .NotEmpty().WithMessage("New Password is must.")
             .MinimumLength(8).WithMessage("New Password must be at least 8 characters long.")
             .MaximumLength(32).WithMessage("New Password cannot be longer then 32 characters.")

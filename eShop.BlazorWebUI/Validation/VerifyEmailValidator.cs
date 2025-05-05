@@ -1,8 +1,9 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.BlazorWebUI.Models;
+using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Application.Validation.Auth;
+namespace eShop.BlazorWebUI.Validation;
 
-public class VerifyEmailValidator : Validator<VerifyEmailRequest>
+public class VerifyEmailValidator : Validator<VerifyEmailModel>
 {
     public VerifyEmailValidator()
     {

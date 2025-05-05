@@ -1,8 +1,9 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.BlazorWebUI.Models;
+using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Application.Validation.Auth;
+namespace eShop.BlazorWebUI.Validation;
 
-public class ForgotPasswordValidator : Validator<ForgotPasswordRequest>
+public class ForgotPasswordValidator : Validator<ForgotPasswordModel>
 {
     public ForgotPasswordValidator()
     {
