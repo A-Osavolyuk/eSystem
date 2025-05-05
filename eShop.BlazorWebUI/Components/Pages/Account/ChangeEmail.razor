@@ -27,7 +27,7 @@
 
         if (result.Success)
         {
-            await (AuthenticationState as ApplicationAuthenticationStateProvider)!.LogOutAsync();
+            await (AuthenticationState as JwtAuthenticationStateProvider)!.LogOutAsync();
             Snackbar.Add(result.Message, Severity.Success);
             NavigationManager.NavigateTo("/account/login");
         }

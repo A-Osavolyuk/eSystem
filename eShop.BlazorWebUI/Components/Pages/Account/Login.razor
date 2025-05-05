@@ -135,7 +135,7 @@
             }
             else
             {
-                await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
+                await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
                 NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
                 Snackbar.Add(result.Message, Severity.Success);
                 LoginRequest = new();

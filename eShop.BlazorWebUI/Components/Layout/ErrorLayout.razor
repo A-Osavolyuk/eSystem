@@ -1,8 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
-@inject ITokenProvider TokenProvider
 
 <MudThemeProvider IsDarkMode/>
 <MudDialogProvider/>
@@ -40,30 +38,10 @@
 </MudLayout>
 
 @code {
-    [CascadingParameter] Task<AuthenticationState>? AuthenticationStateTask { get; set; }
-
     private bool drawerOpen = true;
 
     void DrawerToggle()
     {
         drawerOpen = !drawerOpen;
-    }
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var state = await AuthenticationStateTask!;
-
-            if (state.User.Identity is null || !state.User.Identity!.IsAuthenticated)
-            {
-                var token = await TokenProvider.GetTokenAsync();
-
-                if (!string.IsNullOrEmpty(token))
-                {
-                    await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.UpdateAuthenticationStateAsync(token);
-                }
-            }
-        }
     }
 }

@@ -1,12 +1,10 @@
 ﻿@inherits LayoutComponentBase
 @implements IDisposable
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NotificationsStateContainer NotificationsStateContainer
 @inject AuthenticationStateProvider AuthenticationState
 @inject NavigationManager NavigationManager
 @inject INotificationService NotificationService
-@inject ITokenProvider TokenProvider
 @inject IConfiguration Configuration
 @inject ISnackbar Snackbar
 
@@ -127,8 +125,6 @@
 </MudLayout>
 
 @code {
-    [CascadingParameter] Task<AuthenticationState>? AuthenticationStateTask { get; set; }
-
     private bool drawerOpen = true;
     private int notificationsCount = 0;
 
@@ -142,29 +138,9 @@
         NotificationsStateContainer.OnNotificationsChanged +=  NotificationCountChanged;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var state = await AuthenticationStateTask!;
-
-            if (state.User.Identity is null || !state.User.Identity!.IsAuthenticated)
-            {
-                var token = await TokenProvider.GetTokenAsync();
-
-                if (!string.IsNullOrEmpty(token))
-                {
-                    await (AuthenticationStateProvider as ApplicationAuthenticationStateProvider)!.UpdateAuthenticationStateAsync(token);
-                }
-            }
-        }
-        
-        notificationsCount = await NotificationService.GetNotificationsCountAsync();
-    }
-
     private async Task LogoutClick()
     {
-        await (AuthenticationState as ApplicationAuthenticationStateProvider)!.LogOutAsync();
+        await (AuthenticationState as JwtAuthenticationStateProvider)!.LogOutAsync();
         Snackbar.Add("Successfully logged out.", Severity.Success);
         NavigationManager.NavigateTo("/account/login");
     }
