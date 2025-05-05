@@ -1,4 +1,5 @@
 ﻿@page "/account/register"
+@using eShop.BlazorWebUI.Validation
 @using eShop.Domain.Requests.API.Auth
 @inherits PageBase
 
@@ -15,26 +16,26 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm Model="RegistrationRequest" @ref="form" Validation="Validator.ValidateValue">
+            <MudForm Model="Model" @ref="form" Validation="Validator.ValidateValue">
                 <MudTextField
-                    @bind-Value="RegistrationRequest.Email"
-                    For="(() => RegistrationRequest.Email)"
+                    @bind-Value="Model.Email"
+                    For="(() => Model.Email)"
                     InputType="InputType.Email"
                     Label="Email"
                     Immediate
                     Variant="Variant.Outlined"/>
                 <MudPasswordField
                     PasswordMode="true"
-                    @bind-Value="RegistrationRequest.Password"
-                    For="(() => RegistrationRequest.Password)"
+                    @bind-Value="Model.Password"
+                    For="(() => Model.Password)"
                     Label="Password"
                     InputType="InputType.Password"
                     Immediate
                     Variant="Variant.Outlined"/>
                 <MudPasswordField
                     PasswordMode="true"
-                    @bind-Value="RegistrationRequest.ConfirmPassword"
-                    For="(() => RegistrationRequest.ConfirmPassword)"
+                    @bind-Value="Model.ConfirmPassword"
+                    For="(() => Model.ConfirmPassword)"
                     Label="Confirm Password"
                     InputType="InputType.Password"
                     Immediate
@@ -63,13 +64,14 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromForm] private RegistrationRequest RegistrationRequest { get; set; } = new();
+    [SupplyParameterFromForm] private RegisterModel Model { get; set; } = new();
 
     private MudForm form = new();
 
     private async Task RegisterUserAsync()
     {
-        var result = await SecurityService.RegisterAsync(RegistrationRequest);
+        var request = Mapper.Map(Model);
+        var result = await SecurityService.RegisterAsync(request);
 
         if (result.Success)
         {
@@ -81,7 +83,7 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
 
-        RegistrationRequest = new();
+        Model = new();
     }
 
 

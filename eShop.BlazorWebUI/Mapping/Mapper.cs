@@ -22,4 +22,14 @@ public static class Mapper
             Code = source.Code
         };
     }
+
+    public static RegistrationRequest Map(RegisterModel source)
+    {
+        return new RegistrationRequest()
+        {
+            Email = source.Email,
+            Password = source.Password,
+            ConfirmPassword = source.ConfirmPassword
+        };
+    }
 }
