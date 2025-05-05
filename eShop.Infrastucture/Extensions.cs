@@ -48,24 +48,6 @@ public static class Extensions
         builder.Services.AddAuthentication()
             .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(
                 JwtBearerDefaults.AuthenticationScheme, options => { });
-            // .AddJwtBearer(options =>
-            // {
-            //     const string audiencePath = "Configuration:Security:Authentication:JWT:Audience";
-            //     const string issuerPath = "Configuration:Security:Authentication:JWT:Issuer";
-            //     const string keyPath = "Configuration:Security:Authentication:JWT:Key";
-            //
-            //     options.TokenValidationParameters = new TokenValidationParameters()
-            //     {
-            //         ValidateAudience = true,
-            //         ValidateIssuer = true,
-            //         ValidateLifetime = true,
-            //         ValidateIssuerSigningKey = true,
-            //         ValidAudience = builder.Configuration[audiencePath],
-            //         ValidIssuer = builder.Configuration[issuerPath],
-            //         IssuerSigningKey = new SymmetricSecurityKey(
-            //             Encoding.UTF8.GetBytes(builder.Configuration[keyPath]!))
-            //     };
-            // });
         
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<JwtAuthenticationStateProvider>();
