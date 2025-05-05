@@ -2,15 +2,12 @@
 
 namespace eShop.Auth.Api.Validation;
 
-public class LoginValidator : Validator<LoginRequest>
+public class ForgotPasswordValidator : Validator<ForgotPasswordRequest>
 {
-    public LoginValidator()
+    public ForgotPasswordValidator()
     {
         RuleFor(p => p.Email)
             .NotEmpty().WithMessage("Email is must.")
             .EmailAddress().WithMessage("Invalid format of email address.");
-
-        RuleFor(p => p.Password)
-            .NotEmpty().WithMessage("Password is must.");
     }
 }

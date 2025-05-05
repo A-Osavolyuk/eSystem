@@ -1,7 +1,6 @@
 ﻿using eShop.Auth.Api.Data.Seed;
 using eShop.Domain.Requests.API.Cart;
 using eShop.Domain.Requests.API.Sms;
-using FluentValidation;
 using MassTransit;
 
 namespace eShop.Auth.Api.Extensions;

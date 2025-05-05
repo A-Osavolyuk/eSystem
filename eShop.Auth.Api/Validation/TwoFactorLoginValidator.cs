@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Validation;
-using eShop.Domain.Requests.API.Auth;
-using FluentValidation;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Validation;
 
