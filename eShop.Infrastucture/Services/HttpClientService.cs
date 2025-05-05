@@ -5,12 +5,12 @@ namespace eShop.Infrastructure.Services;
 public class HttpClientService(
     IHttpClientFactory clientFactory, 
     ITokenProvider tokenProvider,
-    AuthenticationStore authenticationStore)
+    JwtAuthenticationHandler jwtAuthenticationHandler)
     : IHttpClientService
 {
     private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");
     private readonly ITokenProvider tokenProvider = tokenProvider;
-    private readonly AuthenticationStore authenticationStore = authenticationStore;
+    private readonly JwtAuthenticationHandler jwtAuthenticationHandler = jwtAuthenticationHandler;
 
     public async ValueTask<Response> SendAsync(Request request, bool withBearer = true)
     {
@@ -22,7 +22,7 @@ public class HttpClientService(
 
             if (withBearer)
             {
-                var token = authenticationStore.Token;
+                var token = await tokenProvider.GetTokenAsync();
                 message.Headers.Add("Authorization", $"Bearer {token}");
             }
 
@@ -59,7 +59,7 @@ public class HttpClientService(
 
             if (withBearer)
             {
-                var token = authenticationStore.Token;
+                var token = await tokenProvider.GetTokenAsync();
                 message.Headers.Add("Authorization", $"Bearer {token}");
             }
 

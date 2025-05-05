@@ -1,5 +1,6 @@
 ﻿using eShop.Infrastructure.State;
 using eShop.Infrastructure.Storage;
+using Microsoft.IdentityModel.Tokens;
 
 namespace eShop.Infrastructure;
 
@@ -9,17 +10,14 @@ public static class Extensions
     {
         builder.AddDependencyInjection();
         builder.AddJwtAuthentication();
-
-        builder.Services.AddAuthorization();
+        builder.AddValidation();
+        
         builder.Services.AddBlazoredLocalStorage();
         builder.Services.AddHttpContextAccessor();
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddScoped<AuthenticationStateProvider, ApplicationAuthenticationStateProvider>();
-        builder.Services.AddScoped<AuthenticationStore>();
-
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddHttpClient();
@@ -38,10 +36,41 @@ public static class Extensions
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
         builder.Services.AddScoped<IUserStorage, UserStorage>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
+        builder.Services.AddScoped<ICookieManager, CookieManager>();
 
         builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddSingleton<InputImagesStateContainer>();
         builder.Services.AddSingleton<NotificationsStateContainer>();
+    }
+    
+    private static void AddJwtAuthentication(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddAuthorization();
+        builder.Services.AddAuthentication()
+            .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(
+                JwtBearerDefaults.AuthenticationScheme, options => { });
+            // .AddJwtBearer(options =>
+            // {
+            //     const string audiencePath = "Configuration:Security:Authentication:JWT:Audience";
+            //     const string issuerPath = "Configuration:Security:Authentication:JWT:Issuer";
+            //     const string keyPath = "Configuration:Security:Authentication:JWT:Key";
+            //
+            //     options.TokenValidationParameters = new TokenValidationParameters()
+            //     {
+            //         ValidateAudience = true,
+            //         ValidateIssuer = true,
+            //         ValidateLifetime = true,
+            //         ValidateIssuerSigningKey = true,
+            //         ValidAudience = builder.Configuration[audiencePath],
+            //         ValidIssuer = builder.Configuration[issuerPath],
+            //         IssuerSigningKey = new SymmetricSecurityKey(
+            //             Encoding.UTF8.GetBytes(builder.Configuration[keyPath]!))
+            //     };
+            // });
+        
+        builder.Services.AddCascadingAuthenticationState();
+        builder.Services.AddScoped<JwtAuthenticationStateProvider>();
+        builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
     }
 
 }

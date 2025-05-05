@@ -9,11 +9,9 @@ public static class HostApplicationBuilderExtensions
     public static void AddAppServices(this IHostApplicationBuilder builder)
     {
         builder.AddServiceDefaults();
-        builder.AddValidation();
         builder.AddInfrastructureLayer();
         
         builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
-        builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddMudExtensions();
         builder.Services.AddMudServices(config =>
         {
