@@ -6,11 +6,10 @@ namespace eShop.Infrastructure;
 
 public static class Extensions
 {
-    public static void  AddInfrastructureLayer(this IHostApplicationBuilder builder)
+    public static void AddInfrastructureLayer(this IHostApplicationBuilder builder)
     {
         builder.AddDependencyInjection();
         builder.AddJwtAuthentication();
-        builder.AddValidation();
         
         builder.Services.AddBlazoredLocalStorage();
         builder.Services.AddHttpContextAccessor();

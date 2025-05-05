@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Extensions;
+using FluentValidation;
 using MudBlazor.Services;
 using MudExtensions.Services;
 
@@ -10,6 +11,7 @@ public static class HostApplicationBuilderExtensions
     {
         builder.AddServiceDefaults();
         builder.AddInfrastructureLayer();
+        builder.AddValidation();
         
         builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
         builder.Services.AddMudExtensions();
@@ -28,5 +30,10 @@ public static class HostApplicationBuilderExtensions
 
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
+    }
+
+    private static void AddValidation(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
 }
