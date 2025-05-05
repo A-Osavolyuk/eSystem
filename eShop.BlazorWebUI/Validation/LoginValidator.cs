@@ -1,8 +1,10 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.BlazorWebUI.Models;
+using eShop.Domain.Abstraction.Validation;
+using FluentValidation;
 
-namespace eShop.Application.Validation.Auth;
+namespace eShop.BlazorWebUI.Validation;
 
-public class LoginValidator : Validator<LoginRequest>
+public class LoginValidator : Validator<LoginModel>
 {
     public LoginValidator()
     {

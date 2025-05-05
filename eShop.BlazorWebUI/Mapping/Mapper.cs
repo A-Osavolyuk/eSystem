@@ -1,0 +1,16 @@
+﻿using eShop.BlazorWebUI.Models;
+using eShop.Domain.Requests.API.Auth;
+
+namespace eShop.BlazorWebUI.Mapping;
+
+public static class Mapper
+{
+    public static LoginRequest Map(LoginModel source)
+    {
+        return new LoginRequest()
+        {
+            Email = source.Email,
+            Password = source.Password
+        };
+    }
+}

@@ -1,6 +1,7 @@
 ﻿using eShop.Auth.Api.Data.Seed;
 using eShop.Domain.Requests.API.Cart;
 using eShop.Domain.Requests.API.Sms;
+using FluentValidation;
 using MassTransit;
 
 namespace eShop.Auth.Api.Extensions;
@@ -10,8 +11,8 @@ public static class HostApplicationBuilderExtensions
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddVersioning();
-        builder.AddValidation();
         builder.AddMessageBus();
+        builder.AddValidation();
         builder.AddServiceDefaults();
         builder.AddIdentity();
         builder.AddDependencyInjection();
@@ -25,6 +26,11 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApi();
+    }
+
+    private static void AddValidation(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)

@@ -1,7 +1,6 @@
 ﻿@page "/account/login"
 
-@using eShop.Domain.Requests.API.Auth
-@using eShop.Domain.Responses.API.Auth
+@using LoginValidator = eShop.BlazorWebUI.Validation.LoginValidator
 @inherits PageBase
 
 @inject ISecurityService SecurityService
@@ -19,18 +18,18 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm @ref="form" Model="LoginRequest" Validation="Validator.ValidateValue">
+            <MudForm @ref="form" Model="model" Validation="Validator.ValidateValue">
                 <MudTextField
-                    @bind-Value="LoginRequest.Email"
-                    For="(() => LoginRequest.Email)"
+                    @bind-Value="model.Email"
+                    For="(() => model.Email)"
                     InputType="InputType.Email"
                     Label="Email"
                     Immediate
                     Variant="Variant.Outlined"/>
                 <MudPasswordField
                     PasswordMode="true"
-                    @bind-Value="LoginRequest.Password"
-                    For="(() => LoginRequest.Password)"
+                    @bind-Value="model.Password"
+                    For="(() => model.Password)"
                     Label="Password"
                     Immediate
                     Variant="Variant.Outlined"/>
@@ -40,7 +39,7 @@
                     ButtonType="ButtonType.Button"
                     OnClick="async () => await OnSubmitAsync()"
                     StartIcon="@Icons.Material.Filled.Login"
-                    Disabled="@(string.IsNullOrEmpty(LoginRequest.Password) || string.IsNullOrEmpty(LoginRequest.Email))"
+                    Disabled="@(string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.Email))"
                     Variant="Variant.Filled" 
                     Color="Color.Primary" 
                     Class="mt-3"
@@ -113,16 +112,16 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromForm] private LoginRequest LoginRequest { get; set; } = new();
-
     [SupplyParameterFromQuery(Name = "returnUri")]
     public string ReturnUri { get; set; } = string.Empty;
 
     private MudForm form = new();
+    private LoginModel model = new();
 
     private async Task OnSubmitAsync()
     {
-        var result = await SecurityService.LoginAsync(LoginRequest);
+        var request = Mapper.Map(model);
+        var result = await SecurityService.LoginAsync(request);
 
         if (result.Success)
         {
@@ -131,14 +130,14 @@
             if (data!.HasTwoFactorAuthentication)
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/login-2fa/{LoginRequest.Email}");
+                NavigationManager.NavigateTo($"/account/login-2fa/{model.Email}");
             }
             else
             {
                 await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
                 NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
                 Snackbar.Add(result.Message, Severity.Success);
-                LoginRequest = new();
+                model = new();
             }
         }
         else
