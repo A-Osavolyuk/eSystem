@@ -19,6 +19,6 @@ public class CookieManager(IJSRuntime jsRuntime) : ICookieManager
 
     public async Task RemoveAsync(string key)
     {
-        await jsRuntime.InvokeVoidAsync("removeCookie", key);
+        await jsRuntime.InvokeVoidAsync("deleteCookie", key);
     }
 }

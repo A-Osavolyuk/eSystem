@@ -2,7 +2,7 @@
 @using eShop.Infrastructure.Security
 
 @inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject JwtAuthenticationStateProvider AuthenticationStateProvider
 @inject ISnackbar Snackbar
 
 @code {
@@ -12,7 +12,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(AccessToken, RefreshToken);
+        await AuthenticationStateProvider.LoginAsync(AccessToken, RefreshToken);
         NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "/products" : ReturnUri));
 
         Snackbar.Add("Successfully logged in.", Severity.Success);

@@ -5,8 +5,9 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject JwtAuthenticationStateProvider AuthenticationStateProvider
 @inject LoginValidator Validator
+@inject ITokenProvider TokenProvider
 @inject IConfiguration Configuration
 
 <Title Text="Login"/>
@@ -133,8 +134,8 @@
             }
             else
             {
-                await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
-                NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
+                await AuthenticationStateProvider.LoginAsync(data!.AccessToken, data.RefreshToken);
+                NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri), true);
                 Snackbar.Add(result.Message, Severity.Success);
                 Model = new();
             }
