@@ -8,22 +8,20 @@
 @inject ISnackbar Snackbar
 
 @code {
-    private ConfirmChangeEmailRequest Request { get; set; } = new();
-
     [SupplyParameterFromQuery(Name = "currentEmail")] public string CurrentEmail { get; set; } = string.Empty;
     [SupplyParameterFromQuery(Name = "newEmail")] public string NewEmail { get; set; } = string.Empty;
     [SupplyParameterFromQuery(Name = "token")] public string Token { get; set; } = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Request = new()
+        var request = new ConfirmChangeEmailRequest()
         {
             CurrentEmail = CurrentEmail,
             NewEmail = NewEmail,
             CodeSet = new CodeSet()
         };
 
-        var result = await SecurityService.ConfirmChangeEmailAsync(Request);
+        var result = await SecurityService.ConfirmChangeEmailAsync(request);
 
         if (result.Success)
         {
