@@ -1,6 +1,8 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Abstraction.Validation;
+using eShop.Domain.Requests.API.Auth;
+using FluentValidation;
 
-namespace eShop.Application.Validation.Auth;
+namespace eShop.Auth.Api.Validation;
 
 public class TwoFactorLoginValidator : Validator<LoginWith2FaRequest>
 {

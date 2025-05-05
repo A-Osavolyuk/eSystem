@@ -18,18 +18,18 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm @ref="form" Model="model" Validation="Validator.ValidateValue">
+            <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
                 <MudTextField
-                    @bind-Value="model.Email"
-                    For="(() => model.Email)"
+                    @bind-Value="Model.Email"
+                    For="(() => Model.Email)"
                     InputType="InputType.Email"
                     Label="Email"
                     Immediate
                     Variant="Variant.Outlined"/>
                 <MudPasswordField
                     PasswordMode="true"
-                    @bind-Value="model.Password"
-                    For="(() => model.Password)"
+                    @bind-Value="Model.Password"
+                    For="(() => Model.Password)"
                     Label="Password"
                     Immediate
                     Variant="Variant.Outlined"/>
@@ -39,7 +39,7 @@
                     ButtonType="ButtonType.Button"
                     OnClick="async () => await OnSubmitAsync()"
                     StartIcon="@Icons.Material.Filled.Login"
-                    Disabled="@(string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.Email))"
+                    Disabled="@(string.IsNullOrEmpty(Model.Password) || string.IsNullOrEmpty(Model.Email))"
                     Variant="Variant.Filled" 
                     Color="Color.Primary" 
                     Class="mt-3"
@@ -112,15 +112,13 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "returnUri")]
-    public string ReturnUri { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "returnUri")] public string ReturnUri { get; set; } = string.Empty;
+    [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
 
     private MudForm form = new();
-    private LoginModel model = new();
-
     private async Task OnSubmitAsync()
     {
-        var request = Mapper.Map(model);
+        var request = Mapper.Map(Model);
         var result = await SecurityService.LoginAsync(request);
 
         if (result.Success)
@@ -130,14 +128,14 @@
             if (data!.HasTwoFactorAuthentication)
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/login-2fa/{model.Email}");
+                NavigationManager.NavigateTo($"/account/login-2fa/{Model.Email}");
             }
             else
             {
                 await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
                 NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
                 Snackbar.Add(result.Message, Severity.Success);
-                model = new();
+                Model = new();
             }
         }
         else

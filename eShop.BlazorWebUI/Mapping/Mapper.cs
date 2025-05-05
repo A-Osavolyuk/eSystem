@@ -13,4 +13,13 @@ public static class Mapper
             Password = source.Password
         };
     }
+    
+    public static LoginWith2FaRequest Map(TwoFactorLoginModel source)
+    {
+        return new LoginWith2FaRequest()
+        {
+            Email = source.Email,
+            Code = source.Code
+        };
+    }
 }

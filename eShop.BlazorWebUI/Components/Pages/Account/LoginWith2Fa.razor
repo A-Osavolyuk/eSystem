@@ -16,7 +16,7 @@
             <MudText Align="Align.Center" Typo="Typo.h4">Two-factor verification</MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm Model="With2FaRequest">
+            <MudForm Model="Model">
                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1" Style="width: 50ch; margin: auto">
                     Your account has enabled 2-FA (Two-factor authentication).
                     To verify a log in attempt, please enter the 6-digit code from the letter we
@@ -28,13 +28,13 @@
                         <MudCodeInput
                             Count="6"
                             Margin="Margin.Normal"
-                            @bind-Value="With2FaRequest.Code"
+                            @bind-Value="Model.Code"
                             Variant="Variant.Outlined"/>
                     </MudItem>
                     <MudItem xs="12">
                         <MudLoadingButton
                             ButtonType="ButtonType.Button"
-                            Disabled="With2FaRequest.Code.Length <= 5"
+                            Disabled="Model.Code.Length <= 5"
                             StartIcon="@Icons.Material.Filled.Login"
                             OnClick="async () => await OnVerifySubmit()"
                             Variant="Variant.Filled" 
@@ -57,11 +57,13 @@
 
 @code {
     [Parameter] public string Email { get; set; } = string.Empty;
-    private LoginWith2FaRequest With2FaRequest { get; set; } = new();
+    [SupplyParameterFromForm] private TwoFactorLoginModel Model { get; set; } = new();
 
     private async Task OnVerifySubmit()
     {
-        var result = await SecurityService.LoginWithTwoFactorAuthenticationAsync(With2FaRequest with { Email = Email });
+        var request = Mapper.Map(Model);
+        request.Email = Email;
+        var result = await SecurityService.LoginWithTwoFactorAuthenticationAsync(request);
 
         if (result.Success)
         {
