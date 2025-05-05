@@ -13,7 +13,7 @@ public class TokenProvider(ICookieManager cookieManager) : ITokenProvider
         return token;
     }
 
-    public async ValueTask ClearAsync()
+    public async ValueTask RemoveAsync()
     {
         await cookieManager.RemoveAsync(Key);
     }
