@@ -32,4 +32,13 @@ public static class Mapper
             ConfirmPassword = source.ConfirmPassword
         };
     }
+
+    public static VerifyEmailRequest Map(VerifyEmailModel source)
+    {
+        return new VerifyEmailRequest()
+        {
+            Email = source.Email,
+            Code = source.Code
+        };
+    }
 }
