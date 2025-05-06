@@ -34,6 +34,17 @@ public sealed class AuthDbContext(
             e.Property(x => x.Code).HasMaxLength(6);
         });
 
+        builder.Entity<UserRoleEntity>(entity =>
+        {
+            entity.HasOne(x => x.Role)
+                .WithMany(x => x.Roles)
+                .HasForeignKey(x => x.RoleId);
+            
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.Roles)
+                .HasForeignKey(x => x.UserId);
+        });
+
         builder.Entity<PersonalDataEntity>(x =>
         {
             x.HasKey(p => p.Id);
@@ -48,11 +59,11 @@ public sealed class AuthDbContext(
         {
             x.HasKey(ur => new { ur.UserId, ur.Id });
 
-            x.HasOne(ur => ur.UserEntity)
+            x.HasOne(ur => ur.User)
                 .WithMany(u => u.Permissions)
                 .HasForeignKey(ur => ur.UserId);
 
-            x.HasOne(ur => ur.PermissionEntity)
+            x.HasOne(ur => ur.Permission)
                 .WithMany(r => r.Permissions)
                 .HasForeignKey(ur => ur.Id);
         });
