@@ -6,12 +6,15 @@ namespace eShop.Auth.Api.Services;
 
 public class TokenManager(
     AuthDbContext context,
+    IRoleManager roleManager,
+    IPermissionManager permissionManager,
     IOptions<JwtOptions> options) : ITokenManager
 {
     private readonly AuthDbContext context = context;
-    private const int AccessTokenExpirationMinutes = 30;
+    private readonly IRoleManager roleManager = roleManager;
+    private readonly IPermissionManager permissionManager = permissionManager;
     private readonly JwtOptions options = options.Value;
-    private readonly JwtSecurityTokenHandler handler = new();
+    private const int AccessTokenExpirationMinutes = 30;
     private const string Algorithm = SecurityAlgorithms.HmacSha256Signature;
 
     public async ValueTask<SecurityTokenEntity?> FindAsync(UserEntity userEntity,
@@ -44,8 +47,8 @@ public class TokenManager(
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
-        var claims = SetClaims(userEntity);
-        
+        var claims = await GetClaimsAsync(userEntity);
+
         var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
 
@@ -62,22 +65,22 @@ public class TokenManager(
     }
 
 
-    public async Task<Token> RefreshAsync(UserEntity userEntity, SecurityTokenEntity tokenEntity, CancellationToken cancellationToken = default)
+    public async Task<Token> RefreshAsync(UserEntity userEntity, SecurityTokenEntity tokenEntity,
+        CancellationToken cancellationToken = default)
     {
-        var rawToken = ReadToken(tokenEntity.Token);
-        var claims = ReadClaims(rawToken);
         var key = Encoding.UTF8.GetBytes(options.Key);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
-        
+        var claims = await GetClaimsAsync(userEntity);
+
         var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
-        
+
         var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
         tokenEntity.ExpireDate = refreshTokenExpiration;
         tokenEntity.Token = refreshToken;
-        
+
         await UpdateAsync(tokenEntity, cancellationToken);
 
         return new Token()
@@ -95,11 +98,14 @@ public class TokenManager(
             claims: claims,
             expires: expiration,
             signingCredentials: signingCredentials);
+        
+        var handler = new JwtSecurityTokenHandler();
         var token = handler.WriteToken(securityToken);
+        
         return token;
     }
 
-    private List<Claim> SetClaims(UserEntity userEntity)
+    private async Task<List<Claim>> GetClaimsAsync(UserEntity userEntity)
     {
         var claims = new List<Claim>()
         {
@@ -108,40 +114,12 @@ public class TokenManager(
             new(ClaimTypes.Id, userEntity.Id.ToString()),
             new(ClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
         };
-
-        return claims;
-    }
-
-    private JwtSecurityToken? ReadToken(string token)
-    {
-        if (string.IsNullOrEmpty(token) || !handler.CanReadToken(token))
-        {
-            return null;
-        }
         
-        var rawToken = handler.ReadJwtToken(token);
-
-        return rawToken;
-
-    }
-
-    private List<Claim> ReadClaims(JwtSecurityToken? token)
-    {
-        if (token is null)
-        {
-            return [];
-        }
-
-        var claims = new List<Claim>()
-        {
-            new(ClaimTypes.Id, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Id)!.Value),
-            new(ClaimTypes.Email, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value),
-            new(ClaimTypes.UserName, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserName)!.Value),
-            new(ClaimTypes.PhoneNumber, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)!.Value),
-        };
-
-        claims.AddRange(token.Claims.Where(x => x.Type == ClaimTypes.Role));
-        claims.AddRange(token.Claims.Where(x => x.Type == ClaimTypes.Permission));
+        var roles = await roleManager.GetAllAsync(userEntity);
+        var permissions = await permissionManager.GetAllAsync(userEntity);
+        
+        claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x.Name!)));;
+        claims.AddRange(permissions.Select(x => new Claim(ClaimTypes.Permission, x.Name!)));;
 
         return claims;
     }
@@ -161,7 +139,7 @@ public class TokenManager(
 
         return Result.Success();
     }
-    
+
     private async ValueTask<Result> UpdateAsync(SecurityTokenEntity tokenEntity,
         CancellationToken cancellationToken = default)
     {

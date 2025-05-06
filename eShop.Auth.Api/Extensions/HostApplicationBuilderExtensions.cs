@@ -141,6 +141,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddScoped<IMessageService, MessageService>();
         builder.Services.AddScoped<ITokenManager, TokenManager>();
         builder.Services.AddScoped<ICodeManager, CodeManager>();
+        builder.Services.AddScoped<IRoleManager, RoleManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 

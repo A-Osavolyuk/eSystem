@@ -10,7 +10,7 @@ internal sealed class GetPermissionsListQueryHandler(
     public async Task<Result> Handle(GetPermissionsListQuery request,
         CancellationToken cancellationToken)
     {
-        var permissions = await permissionManager.GetListAsync(cancellationToken);
+        var permissions = await permissionManager.GetAllAsync(cancellationToken);
 
         return Result.Success(permissions.ToList());
     }
