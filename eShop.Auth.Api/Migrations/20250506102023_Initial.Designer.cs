@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250503172733_Initial")]
+    [Migration("20250506102023_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -458,36 +458,40 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.PermissionEntity", "PermissionEntity")
+                    b.HasOne("eShop.Auth.Api.Entities.PermissionEntity", "Permission")
                         .WithMany("Permissions")
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "UserEntity")
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
                         .WithMany("Permissions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PermissionEntity");
+                    b.Navigation("Permission");
 
-                    b.Navigation("UserEntity");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserRoleEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.RoleEntity", null)
-                        .WithMany()
+                    b.HasOne("eShop.Auth.Api.Entities.RoleEntity", "Role")
+                        .WithMany("Roles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", null)
-                        .WithMany()
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany("Roles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserTokenEntity", b =>
@@ -515,9 +519,16 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Permissions");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.RoleEntity", b =>
+                {
+                    b.Navigation("Roles");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
                     b.Navigation("Permissions");
+
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }
