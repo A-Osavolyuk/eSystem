@@ -239,7 +239,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PersonalDataId")
+                    b.Property<Guid?>("PersonalDataId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PhoneNumber")
@@ -272,7 +272,8 @@ namespace eShop.Auth.Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("PersonalDataId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[PersonalDataId] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -437,9 +438,7 @@ namespace eShop.Auth.Api.Migrations
                 {
                     b.HasOne("eShop.Auth.Api.Entities.PersonalDataEntity", "PersonalData")
                         .WithOne()
-                        .HasForeignKey("eShop.Auth.Api.Entities.UserEntity", "PersonalDataId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("eShop.Auth.Api.Entities.UserEntity", "PersonalDataId");
 
                     b.Navigation("PersonalData");
                 });

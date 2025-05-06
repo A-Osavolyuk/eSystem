@@ -13,7 +13,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await (AuthenticationState as JwtAuthenticationStateProvider)!.LoginAsync(AccessToken, RefreshToken);
-        NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "/products" : ReturnUri));
+        NavigationManager.NavigateTo(("/products"));
 
         Snackbar.Add("Successfully logged in.", Severity.Success);
     }

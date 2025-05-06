@@ -25,7 +25,8 @@ public sealed class AuthDbContext(
         {
             entity.HasOne(p => p.PersonalData)
                 .WithOne()
-                .HasForeignKey<UserEntity>(p => p.PersonalDataId);
+                .HasForeignKey<UserEntity>(p => p.PersonalDataId)
+                .IsRequired(false);
         });
         
         builder.Entity<VerificationCodeEntity>(e =>

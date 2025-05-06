@@ -86,7 +86,7 @@ namespace eShop.Auth.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PersonalDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PersonalDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -111,8 +111,7 @@ namespace eShop.Auth.Api.Migrations
                         name: "FK_AspNetUsers_PersonalData_PersonalDataId",
                         column: x => x.PersonalDataId,
                         principalTable: "PersonalData",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -315,7 +314,8 @@ namespace eShop.Auth.Api.Migrations
                 name: "IX_AspNetUsers_PersonalDataId",
                 table: "AspNetUsers",
                 column: "PersonalDataId",
-                unique: true);
+                unique: true,
+                filter: "[PersonalDataId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",

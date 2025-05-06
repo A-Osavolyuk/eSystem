@@ -19,7 +19,7 @@ internal sealed class SecurityManager(
             sb.Append(validChars[randomIndex]);
         }
 
-        return sb.ToString();
+        return "0" + sb.ToString();
     }
 
     public async ValueTask<Result> ConfirmEmailAsync(UserEntity userEntity, string code)

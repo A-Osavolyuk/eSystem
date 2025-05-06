@@ -62,7 +62,7 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
         var result = await sender.Send(new HandleExternalLoginResponseQuery(info!, remoteError, returnUri));
 
         return result.Match(
-            s => Redirect(Convert.ToString(s.Value!)!),
+            s => Redirect(Convert.ToString(s.Message!)!),
             ErrorHandler.Handle);
     }
 
