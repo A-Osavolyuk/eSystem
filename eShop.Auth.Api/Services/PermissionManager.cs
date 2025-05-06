@@ -13,6 +13,14 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return permission;
     }
 
+    public async ValueTask<PermissionEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var permission = await context.Permissions
+            .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        return permission;
+    }
+
     public async ValueTask<List<PermissionEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var permissions = await context.Permissions
@@ -21,7 +29,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return permissions;
     }
 
-    public async ValueTask<List<PermissionEntity>> GetAllAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<List<PermissionEntity>> GetByUserAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var permissions = await context.UserPermissions
             .Where(x => x.UserId == user.Id)
@@ -30,33 +38,6 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
             .ToListAsync(cancellationToken);
 
         return permissions;
-    }
-
-    public async ValueTask<List<string>> GetUserPermissionsAsync(UserEntity userEntity,
-        CancellationToken cancellationToken = default)
-    {
-        var permissions = await context.UserPermissions
-            .Where(x => x.UserId == userEntity.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
-        var result = new List<string>();
-
-        if (!permissions.Any())
-        {
-            return result;
-        }
-
-        foreach (var permission in permissions)
-        {
-            var permissionName = (await context.Permissions
-                .AsNoTracking()
-                .Where(x => x.Id == permission.Id)
-                .Select(x => x.Name)
-                .SingleOrDefaultAsync(cancellationToken: cancellationToken));
-
-            result.Add(permissionName!);
-        }
-
-        return result;
     }
 
     public async ValueTask<IdentityResult> IssueAsync(UserEntity userEntity, IEnumerable<string> collection,

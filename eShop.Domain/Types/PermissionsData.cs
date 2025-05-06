@@ -8,5 +8,5 @@ public record PermissionsData : IIdentifiable<Guid>
     [JsonIgnore]
     public Guid Id { get; init; }
     public List<RoleDto> Roles { get; set; } = [];
-    public List<Permission> Permissions { get; set; } = [];
+    public List<PermissionDto> Permissions { get; set; } = [];
 }

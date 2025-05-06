@@ -33,30 +33,12 @@ internal sealed class GetUsersListQueryHandler(
             var accountData = Mapper.Map(user);
             var personalData = await profileManager.FindAsync(user, cancellationToken);
             var roles = await roleManager.GetByUserAsync(user, cancellationToken);
-            var permissions = await permissionManager.GetUserPermissionsAsync(user, cancellationToken);
+            var permissions = await permissionManager.GetByUserAsync(user, cancellationToken);
             
-            var permissionsList = new List<Permission>();
-
-            foreach (var permission in permissions)
-            {
-                var permissionInfo = await permissionManager.FindByNameAsync(permission, cancellationToken);
-
-                if (permissionInfo is null)
-                {
-                    return Results.NotFound($"Cannot find permission {permission}.");
-                }
-
-                permissionsList.Add(new Permission()
-                {
-                    Id = permissionInfo.Id,
-                    Name = permissionInfo.Name,
-                });
-            }
-
             var permissionData = new PermissionsData()
             {
                 Roles = roles.Select(Mapper.Map).ToList(),
-                Permissions = permissionsList
+                Permissions = permissions.Select(Mapper.Map).ToList()
             };
 
             users.Add(new UserDto()

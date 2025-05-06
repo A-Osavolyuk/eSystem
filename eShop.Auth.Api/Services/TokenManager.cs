@@ -116,7 +116,7 @@ public class TokenManager(
         };
         
         var roles = await roleManager.GetByUserAsync(userEntity);
-        var permissions = await permissionManager.GetAllAsync(userEntity);
+        var permissions = await permissionManager.GetByUserAsync(userEntity);
         
         claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x.Name!)));;
         claims.AddRange(permissions.Select(x => new Claim(ClaimTypes.Permission, x.Name!)));;

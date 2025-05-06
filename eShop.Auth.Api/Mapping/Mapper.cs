@@ -109,4 +109,13 @@ public static class Mapper
             NormalizedName = source.NormalizedName ?? string.Empty
         };
     }
+    
+    public static PermissionDto Map(PermissionEntity source)
+    {
+        return new PermissionDto()
+        {
+            Id = source.Id,
+            Name = source.Name
+        };
+    }
 }
