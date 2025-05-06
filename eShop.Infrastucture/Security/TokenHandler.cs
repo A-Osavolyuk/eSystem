@@ -19,17 +19,18 @@ public class TokenHandler
 
     public List<Claim> ReadClaims(JwtSecurityToken token)
     {
-        var claims = token.Claims.ToList();
-
-        var output = new List<Claim>()
+        var claims = new List<Claim>()
         {
-            new(ClaimTypes.Id, claims.FirstOrDefault(x => x.Type == ClaimTypes.Id)!.Value),
-            new(ClaimTypes.UserName, claims.FirstOrDefault(x => x.Type == ClaimTypes.UserName)!.Value),
-            new(ClaimTypes.Email, claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value),
-            new(ClaimTypes.PhoneNumber, claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)!.Value),
+            new(ClaimTypes.Id, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Id)!.Value),
+            new(ClaimTypes.Email, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value),
+            new(ClaimTypes.UserName, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserName)!.Value),
+            new(ClaimTypes.PhoneNumber, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)!.Value),
         };
 
-        return output;
+        claims.AddRange(token.Claims.Where(x => x.Type == ClaimTypes.Role));
+        claims.AddRange(token.Claims.Where(x => x.Type == ClaimTypes.Permission));
+
+        return claims;
     }
 
     public bool IsValid(JwtSecurityToken token)

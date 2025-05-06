@@ -12,6 +12,7 @@ public class TokenManager(
     private const int AccessTokenExpirationMinutes = 30;
     private readonly JwtOptions options = options.Value;
     private readonly JwtSecurityTokenHandler handler = new();
+    private const string Algorithm = SecurityAlgorithms.HmacSha256Signature;
 
     public async ValueTask<SecurityTokenEntity?> FindAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default)
@@ -42,17 +43,16 @@ public class TokenManager(
     public async Task<Token> GenerateAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
-        var algorithm = SecurityAlgorithms.HmacSha256Signature;
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
-
+        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
+        var claims = SetClaims(userEntity);
+        
         var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
 
-        var claims = SetClaims(userEntity);
         var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
         var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
 
-        await CreateAsync(userEntity, refreshToken, refreshTokenExpiration);
+        await CreateAsync(userEntity, refreshToken, refreshTokenExpiration, cancellationToken);
 
         return new Token()
         {
@@ -64,11 +64,10 @@ public class TokenManager(
 
     public async Task<Token> RefreshAsync(UserEntity userEntity, SecurityTokenEntity tokenEntity, CancellationToken cancellationToken = default)
     {
-        var rawToken = DecryptToken(tokenEntity.Token);
-        var claims = GetClaimsFromToken(rawToken);
+        var rawToken = ReadToken(tokenEntity.Token);
+        var claims = ReadClaims(rawToken);
         var key = Encoding.UTF8.GetBytes(options.Key);
-        var algorithm = SecurityAlgorithms.HmacSha256Signature;
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
+        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
         
         var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
         var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
@@ -104,8 +103,8 @@ public class TokenManager(
     {
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, userEntity.UserName ?? ""),
-            new(ClaimTypes.Email, userEntity.Email ?? ""),
+            new(ClaimTypes.UserName, userEntity.UserName!),
+            new(ClaimTypes.Email, userEntity.Email!),
             new(ClaimTypes.Id, userEntity.Id.ToString()),
             new(ClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
         };
@@ -113,19 +112,20 @@ public class TokenManager(
         return claims;
     }
 
-    private JwtSecurityToken? DecryptToken(string token)
+    private JwtSecurityToken? ReadToken(string token)
     {
-        if (!string.IsNullOrEmpty(token) && handler.CanReadToken(token))
+        if (string.IsNullOrEmpty(token) || !handler.CanReadToken(token))
         {
-            var rawToken = handler.ReadJwtToken(token);
-
-            return rawToken;
+            return null;
         }
+        
+        var rawToken = handler.ReadJwtToken(token);
 
-        return null;
+        return rawToken;
+
     }
 
-    private List<Claim> GetClaimsFromToken(JwtSecurityToken? token)
+    private List<Claim> ReadClaims(JwtSecurityToken? token)
     {
         if (token is null)
         {
@@ -134,38 +134,16 @@ public class TokenManager(
 
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, GetClaimValue(token, ClaimTypes.UserName)),
-            new(ClaimTypes.Email, GetClaimValue(token, ClaimTypes.Email)),
-            new(ClaimTypes.Id, GetClaimValue(token, ClaimTypes.Id)),
-            new(ClaimTypes.PhoneNumber, GetClaimValue(token, ClaimTypes.PhoneNumber)),
+            new(ClaimTypes.Id, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Id)!.Value),
+            new(ClaimTypes.Email, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value),
+            new(ClaimTypes.UserName, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserName)!.Value),
+            new(ClaimTypes.PhoneNumber, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)!.Value),
         };
 
-        var roles = token.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
-        var permissions = token.Claims.Where(x => x.Type == ClaimTypes.Permission).Select(x => x.Value).ToList();
-
-        if (roles.Any())
-        {
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-        }
-
-        if (permissions.Any())
-        {
-            foreach (var permission in permissions)
-            {
-                claims.Add(new Claim(ClaimTypes.Permission, permission));
-            }
-        }
+        claims.AddRange(token.Claims.Where(x => x.Type == ClaimTypes.Role));
+        claims.AddRange(token.Claims.Where(x => x.Type == ClaimTypes.Permission));
 
         return claims;
-    }
-
-    private string GetClaimValue(JwtSecurityToken token, string claimType)
-    {
-        var value = token.Claims.FirstOrDefault(x => x.Type == claimType)!.Value;
-        return value;
     }
 
     private async ValueTask<Result> CreateAsync(UserEntity userEntity, string token, DateTime tokenExpiration,
