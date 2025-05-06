@@ -223,10 +223,10 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointDescription("Deletes role")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "ManageRolesPolicy")]
-    [HttpDelete("delete-role")]
-    public async ValueTask<ActionResult<Response>> DeleteRoleAsync([FromBody] DeleteRoleRequest request)
+    [HttpDelete("delete-role/{id:guid}")]
+    public async ValueTask<ActionResult<Response>> DeleteRoleAsync(Guid id)
     {
-        var result = await sender.Send(new DeleteRoleCommand(request));
+        var result = await sender.Send(new DeleteRoleCommand(id));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);

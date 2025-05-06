@@ -8,12 +8,12 @@ internal sealed class FindUserByIdQueryHandler(
     IPermissionManager permissionManager,
     IProfileManager profileManager,
     UserManager<UserEntity> userManager,
-    RoleManager<RoleEntity> roleManager) : IRequestHandler<FindUserByIdQuery, Result>
+    IRoleManager roleManager) : IRequestHandler<FindUserByIdQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly UserManager<UserEntity> userManager = userManager;
-    private readonly RoleManager<RoleEntity> roleManager = roleManager;
+    private readonly IRoleManager roleManager = roleManager;
 
 
     public async Task<Result> Handle(FindUserByIdQuery request,
@@ -28,32 +28,17 @@ internal sealed class FindUserByIdQueryHandler(
 
         var accountData = Mapper.Map(user);
         var personalData = await profileManager.FindAsync(user, cancellationToken);
-        var rolesList = await userManager.GetRolesAsync(user);
+        var roles = await roleManager.GetByUserAsync(user, cancellationToken);
         var permissions = await permissionManager.GetUserPermissionsAsync(user, cancellationToken);
 
-        if (!rolesList.Any())
+        if (!roles.Any())
         {
             return Results.NotFound($"Cannot find roles for user with ID {user.Id}.");
         }
 
         var permissionData = new PermissionsData() { Id = user.Id };
 
-        foreach (var role in rolesList)
-        {
-            var roleInfo = await roleManager.FindByNameAsync(role);
-
-            if (roleInfo is null)
-            {
-                return Results.NotFound($"Cannot find role {role}");
-            }
-
-            permissionData.Roles.Add(new RoleData()
-            {
-                Id = roleInfo.Id,
-                Name = roleInfo.Name!,
-                NormalizedName = roleInfo.NormalizedName!
-            });
-        }
+        permissionData.Roles.AddRange(roles.Select(Mapper.Map).ToList());
 
         foreach (var permission in permissions)
         {

@@ -6,12 +6,12 @@ internal sealed record FindUserByEmailQuery(string Email) : IRequest<Result>;
 
 internal sealed class FindUserByEmailQueryHandler(
     UserManager<UserEntity> userManager,
-    RoleManager<RoleEntity> roleManager,
+    IRoleManager roleManager,
     IProfileManager profileManager,
     IPermissionManager permissionManager) : IRequestHandler<FindUserByEmailQuery, Result>
 {
     private readonly UserManager<UserEntity> userManager = userManager;
-    private readonly RoleManager<RoleEntity> roleManager = roleManager;
+    private readonly IRoleManager roleManager = roleManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly IPermissionManager permissionManager = permissionManager;
 
@@ -27,32 +27,18 @@ internal sealed class FindUserByEmailQueryHandler(
 
         var accountData = Mapper.Map(user);
         var personalData = await profileManager.FindAsync(user, cancellationToken);
-        var rolesList = await userManager.GetRolesAsync(user);
+        var roles = await roleManager.GetByUserAsync(user, cancellationToken);
         var permissions = await permissionManager.GetUserPermissionsAsync(user, cancellationToken);
 
-        if (!rolesList.Any())
+        if (!roles.Any())
         {
             return Results.NotFound($"Cannot find roles for user with email {user.Email}.");
         }
 
         var permissionData = new PermissionsData() { Id = user.Id };
-        foreach (var role in rolesList)
-        {
-            var roleInfo = await roleManager.FindByNameAsync(role);
 
-            if (roleInfo is null)
-            {
-                return Results.NotFound($"Cannot find role {role}.");
-            }
-
-            permissionData.Roles.Add(new RoleData()
-            {
-                Id = roleInfo.Id,
-                Name = roleInfo.Name!,
-                NormalizedName = roleInfo.NormalizedName!
-            });
-        }
-
+        permissionData.Roles.AddRange(roles.Select(Mapper.Map).ToList());
+        
         foreach (var permission in permissions)
         {
             var permissionInfo = await permissionManager.FindByNameAsync(permission, cancellationToken);

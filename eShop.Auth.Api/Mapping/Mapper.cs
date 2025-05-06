@@ -1,4 +1,6 @@
-﻿using eShop.Domain.Requests.API.Account;
+﻿using eShop.Domain.DTOs;
+using eShop.Domain.Requests.API.Account;
+using eShop.Domain.Requests.API.Admin;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Admin;
 using eShop.Domain.Responses.API.Auth;
@@ -83,6 +85,28 @@ public static class Mapper
         {
             LockoutEnd = status.LockoutEnd,
             LockoutEnabled = status.LockoutEnabled
+        };
+    }
+
+    public static RoleEntity Map(CreateRoleRequest source)
+    {
+        return new RoleEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            Name = source.Name,
+            NormalizedName = source.Name.ToUpper(),
+            CreateDate = DateTime.UtcNow,
+            UpdateDate = null
+        };
+    }
+
+    public static RoleDto Map(RoleEntity source)
+    {
+        return new RoleDto()
+        {
+            Id = source.Id,
+            Name = source.Name ?? string.Empty,
+            NormalizedName = source.NormalizedName ?? string.Empty
         };
     }
 }

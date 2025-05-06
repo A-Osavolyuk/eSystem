@@ -6,10 +6,10 @@ internal sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
 
 internal sealed class GetUserRolesQueryHandler(
     UserManager<UserEntity> userManager,
-    RoleManager<RoleEntity> roleManager) : IRequestHandler<GetUserRolesQuery, Result>
+    IRoleManager roleManager) : IRequestHandler<GetUserRolesQuery, Result>
 {
     private readonly UserManager<UserEntity> userManager = userManager;
-    private readonly RoleManager<RoleEntity> roleManager = roleManager;
+    private readonly IRoleManager roleManager = roleManager;
 
     public async Task<Result> Handle(GetUserRolesQuery request,
         CancellationToken cancellationToken)
@@ -21,31 +21,18 @@ internal sealed class GetUserRolesQueryHandler(
             return Results.NotFound($"Cannot find user with ID {request.Id}.");
         }
 
-        var roleList = await userManager.GetRolesAsync(user);
+        var roles = await roleManager.GetByUserAsync(user, cancellationToken);
 
-        if (!roleList.Any())
+        if (!roles.Any())
         {
             return Results.NotFound($"Cannot find roles for user with ID {request.Id}.");
         }
 
-        var result = new UserRolesResponse { UserId = user.Id };
-
-        foreach (var role in roleList)
+        var result = new UserRolesResponse
         {
-            var roleInfo = await roleManager.FindByNameAsync(role);
-
-            if (roleInfo is null)
-            {
-                return Results.NotFound($"Cannot find role {role}");
-            }
-
-            result.Roles.Add(new RoleData()
-            {
-                Id = roleInfo.Id,
-                Name = roleInfo.Name!,
-                NormalizedName = roleInfo.NormalizedName!
-            });
-        }
+            UserId = user.Id, 
+            Roles = roles.Select(Mapper.Map).ToList()
+        };
 
         return Result.Success(result);
     }

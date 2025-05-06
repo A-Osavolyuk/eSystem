@@ -8,12 +8,12 @@ internal sealed class GetUsersListQueryHandler(
     IPermissionManager permissionManager,
     IProfileManager profileManager,
     UserManager<UserEntity> userManager,
-    RoleManager<RoleEntity> roleManager) : IRequestHandler<GetUsersListQuery, Result>
+    IRoleManager roleManager) : IRequestHandler<GetUsersListQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly UserManager<UserEntity> userManager = userManager;
-    private readonly RoleManager<RoleEntity> roleManager = roleManager;
+    private readonly IRoleManager roleManager = roleManager;
 
     public async Task<Result> Handle(GetUsersListQuery request,
         CancellationToken cancellationToken)
@@ -32,21 +32,9 @@ internal sealed class GetUsersListQueryHandler(
         {
             var accountData = Mapper.Map(user);
             var personalData = await profileManager.FindAsync(user, cancellationToken);
-            var rolesList = (await userManager.GetRolesAsync(user)).ToList();
-
-            if (!rolesList.Any())
-            {
-                return Results.NotFound($"Cannot find roles for user with ID {user.Id}.");
-            }
-
-            var rolesData = await roleManager.GetRolesDataAsync(rolesList) ?? [];
+            var roles = await roleManager.GetByUserAsync(user, cancellationToken);
             var permissions = await permissionManager.GetUserPermissionsAsync(user, cancellationToken);
-
-            if (!rolesData.Any())
-            {
-                return Results.NotFound("Cannot find roles data.");
-            }
-
+            
             var permissionsList = new List<Permission>();
 
             foreach (var permission in permissions)
@@ -67,7 +55,7 @@ internal sealed class GetUsersListQueryHandler(
 
             var permissionData = new PermissionsData()
             {
-                Roles = rolesData,
+                Roles = roles.Select(Mapper.Map).ToList(),
                 Permissions = permissionsList
             };
 

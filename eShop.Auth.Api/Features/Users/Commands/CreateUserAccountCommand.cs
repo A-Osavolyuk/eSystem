@@ -10,14 +10,14 @@ internal sealed class CreateUserAccountCommandHandler(
     IProfileManager profileManager,
     ISecurityManager securityManager,
     UserManager<UserEntity> userManager,
-    RoleManager<RoleEntity> roleManager,
+    IRoleManager roleManager,
     IConfiguration configuration) : IRequestHandler<CreateUserAccountCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly ISecurityManager securityManager = securityManager;
     private readonly UserManager<UserEntity> userManager = userManager;
-    private readonly RoleManager<RoleEntity> roleManager = roleManager;
+    private readonly IRoleManager roleManager = roleManager;
     private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
     private readonly List<string> defaultPermissions =
         configuration.GetValue<List<string>>("Configuration:General:DefaultValues:DefaultPermissions")!;
@@ -66,7 +66,7 @@ internal sealed class CreateUserAccountCommandHandler(
         {
             foreach (var role in request.Request.Roles)
             {
-                var roleExists = await roleManager.RoleExistsAsync(role);
+                var roleExists = await roleManager.ExistsAsync(role, cancellationToken);
 
                 if (!roleExists)
                 {

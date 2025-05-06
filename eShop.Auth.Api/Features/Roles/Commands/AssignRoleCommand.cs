@@ -7,15 +7,15 @@ internal sealed record AssignRoleCommand(AssignRoleRequest Request) : IRequest<R
 internal sealed class AssignRoleCommandHandler(
     ILogger<AssignRoleCommandHandler> logger,
     UserManager<UserEntity> userManager,
-    RoleManager<RoleEntity> roleManager) : IRequestHandler<AssignRoleCommand, Result>
+    IRoleManager roleManager) : IRequestHandler<AssignRoleCommand, Result>
 {
     private readonly ILogger<AssignRoleCommandHandler> logger = logger;
     private readonly UserManager<UserEntity> userManager = userManager;
-    private readonly RoleManager<RoleEntity> roleManager = roleManager;
+    private readonly IRoleManager roleManager = roleManager;
 
     public async Task<Result> Handle(AssignRoleCommand request, CancellationToken cancellationToken)
     {
-        var role = await roleManager.FindByNameAsync(request.Request.RoleName);
+        var role = await roleManager.FindByNameAsync(request.Request.RoleName, cancellationToken);
         var user = await userManager.FindByIdAsync(request.Request.UserId.ToString());
 
         if (role is null)

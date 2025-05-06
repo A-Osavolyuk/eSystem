@@ -115,7 +115,7 @@ public class TokenManager(
             new(ClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
         };
         
-        var roles = await roleManager.GetAllAsync(userEntity);
+        var roles = await roleManager.GetByUserAsync(userEntity);
         var permissions = await permissionManager.GetAllAsync(userEntity);
         
         claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x.Name!)));;
