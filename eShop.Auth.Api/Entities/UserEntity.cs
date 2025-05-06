@@ -9,4 +9,5 @@ public class UserEntity : IdentityUser<Guid>, IEntity
     
     public PersonalDataEntity? PersonalData { get; init; }
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
+    public ICollection<UserRoleEntity> Roles { get; init; } = null!;
 }

@@ -7,7 +7,7 @@ public class UserPermissionsEntity : IEntity<Guid>
 
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
-    
-    public UserEntity? UserEntity { get; init; }
-    public PermissionEntity? PermissionEntity { get; init; }
+
+    public UserEntity User { get; set; } = null!;
+    public PermissionEntity Permission { get; set; } = null!;
 }

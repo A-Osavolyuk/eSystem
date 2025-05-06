@@ -4,4 +4,6 @@ public class RoleEntity : IdentityRole<Guid>, IEntity
 {
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
+    
+    public ICollection<UserRoleEntity> Roles { get; set; } = null!;
 }
