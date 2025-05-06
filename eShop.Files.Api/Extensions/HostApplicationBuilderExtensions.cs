@@ -18,10 +18,9 @@ public static class HostApplicationBuilderExtensions
         builder.AddMediatR();
         builder.AddCors();
         builder.AddExceptionHandler();
+        builder.AddDocumentation();
         builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarker));
-        builder.Services.AddOpenApi();
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)

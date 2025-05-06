@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using eShop.Application.Documentation.Transformers;
 using eShop.Application.Middlewares;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +13,15 @@ public static class HostApplicationBuilderExtensions
     public static void AddValidation(this IHostApplicationBuilder builder)
     {
         builder.Services.AddValidatorsFromAssemblyContaining(typeof(HostApplicationBuilderExtensions));
+    }
+
+    public static void AddDocumentation(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer<BearerTokenTransformer>();
+        });
     }
 
     public static void AddVersioning(this IHostApplicationBuilder builder)

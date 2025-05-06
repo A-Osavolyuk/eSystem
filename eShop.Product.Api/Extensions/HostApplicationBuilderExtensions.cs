@@ -19,10 +19,9 @@ public static class HostApplicationBuilderExtensions
         builder.AddMsSqlDb();
         builder.AddCors();
         builder.AddExceptionHandler();
+        builder.AddDocumentation();
         
         builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddOpenApi();
     }
 
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)

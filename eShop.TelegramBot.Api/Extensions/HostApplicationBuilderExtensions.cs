@@ -15,10 +15,8 @@ public static class HostApplicationBuilderExtensions
         builder.AddCors();
         builder.AddExceptionHandler();
         builder.AddTelegramBot();
-        
+        builder.AddDocumentation();
         builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddOpenApi();
 
         return builder;
     }

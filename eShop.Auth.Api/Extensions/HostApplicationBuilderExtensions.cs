@@ -22,9 +22,8 @@ public static class HostApplicationBuilderExtensions
         builder.AddGrpc();
         builder.AddLogging();
         builder.AddExceptionHandler();
+        builder.AddDocumentation();
         builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddOpenApi();
     }
 
     private static void AddValidation(this IHostApplicationBuilder builder)

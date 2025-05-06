@@ -17,22 +17,8 @@ public static class HostApplicationBuilderExtensions
         builder.AddMediatR();
         builder.AddCors();
         builder.AddExceptionHandler();
-        
+        builder.AddDocumentation();
         builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        
-        builder.Services.AddOpenApi(options =>
-        {
-            options.AddDocumentTransformer<BearerTokenTransformer>();
-            options.AddDocumentTransformer((document, context, cancellationToken) =>
-            {
-                document.Info.Title = "SMS sender API";
-                document.Info.Version = "1.0.0";
-                document.Info.Description = "This API contains methods for sending SMS messages";
-
-                return Task.CompletedTask;
-            });
-        });
 
         return builder;
     }

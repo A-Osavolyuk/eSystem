@@ -13,6 +13,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddCors();
         builder.AddExceptionHandler();
         builder.AddDependencyInjection();
+        builder.AddDocumentation();
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
