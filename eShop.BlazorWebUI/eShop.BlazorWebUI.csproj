@@ -24,4 +24,21 @@
 		<ProjectReference Include="..\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Components\Shared\Comments\Comment.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Shared\Comments\Comments.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Product\ClothingProperties.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Product\CreateProduct.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Product\ImagesInput.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Product\ImagesPreviewDialog.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Product\ProductDetails.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Product\Products.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Product\ShoesProperties.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Shared\Products\Product.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Shared\Products\ProductImagesPreview.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Shared\Products\ProductSideBar.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Shared\Products\PropertyText.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Shared\Products\PropsAndDescription.razor" />
+	</ItemGroup>
+
 </Project>
