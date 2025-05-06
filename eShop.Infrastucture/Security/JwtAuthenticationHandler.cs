@@ -8,12 +8,10 @@ namespace eShop.Infrastructure.Security;
 public class JwtAuthenticationHandler(
     IOptionsMonitor<JwtAuthenticationOptions> options,
     ILoggerFactory logger,
-    ITokenProvider tokenProvider,
     UrlEncoder encoder,
     TokenHandler tokenHandler)
     : AuthenticationHandler<JwtAuthenticationOptions>(options, logger, encoder)
 {
-    private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly TokenHandler tokenHandler = tokenHandler;
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -43,7 +41,7 @@ public class JwtAuthenticationHandler(
 
     protected override Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        Response.Redirect("/account/login");
+        Response.Redirect("/error?code=401");
         return Task.CompletedTask;
     }
 
