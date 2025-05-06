@@ -8,16 +8,25 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         CancellationToken cancellationToken = default)
     {
         var permission = await context.Permissions
-            .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Name == name, cancellationToken);
 
         return permission;
     }
 
-    public async ValueTask<List<PermissionEntity>> GetListAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<List<PermissionEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var permissions = await context.Permissions
-            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return permissions;
+    }
+
+    public async ValueTask<List<PermissionEntity>> GetAllAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        var permissions = await context.UserPermissions
+            .Where(x => x.UserId == user.Id)
+            .Include(x => x.Permission)
+            .Select(x => x.Permission)
             .ToListAsync(cancellationToken);
 
         return permissions;
@@ -27,7 +36,6 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         CancellationToken cancellationToken = default)
     {
         var permissions = await context.UserPermissions
-            .AsNoTracking()
             .Where(x => x.UserId == userEntity.Id)
             .ToListAsync(cancellationToken: cancellationToken);
         var result = new List<string>();

@@ -1,10 +1,11 @@
 ﻿namespace eShop.Auth.Api.Interfaces;
 
-internal interface IPermissionManager
+public interface IPermissionManager
 {
     public ValueTask<bool> ExistsAsync(string name, CancellationToken cancellationToken = default);
     public ValueTask<bool> HasPermissionAsync(UserEntity userEntity, string name, CancellationToken cancellationToken = default);
-    public ValueTask<List<PermissionEntity>> GetListAsync(CancellationToken cancellationToken = default);
+    public ValueTask<List<PermissionEntity>> GetAllAsync(CancellationToken cancellationToken = default);
+    public ValueTask<List<PermissionEntity>> GetAllAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<List<string>> GetUserPermissionsAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
     public ValueTask<PermissionEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
     public ValueTask<IdentityResult> IssueAsync(UserEntity userEntity, IEnumerable<string> collection, CancellationToken cancellationToken = default);
