@@ -5,9 +5,11 @@ namespace eShop.Auth.Api.Features.Users.Commands;
 internal sealed record UnlockUserCommand(UnlockUserRequest Request) : IRequest<Result>;
 
 internal sealed class UnlockUserCommandHandler(
-    IUserManager userManager) : IRequestHandler<UnlockUserCommand, Result>
+    IUserManager userManager,
+    ILockoutManager lockoutManager) : IRequestHandler<UnlockUserCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly ILockoutManager lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(UnlockUserCommand request,
         CancellationToken cancellationToken)
@@ -19,11 +21,11 @@ internal sealed class UnlockUserCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var lockoutStatus = await userManager.GetLockoutStatusAsync(user, cancellationToken);
+        var lockoutStatus = await lockoutManager.GetStatusAsync(user, cancellationToken);
 
         if (lockoutStatus.LockoutEnabled)
         {
-            var result = await userManager.DisableLockoutAsync(user, cancellationToken);
+            var result = await lockoutManager.DisableAsync(user, cancellationToken);
 
             if (!result.Succeeded)
             {

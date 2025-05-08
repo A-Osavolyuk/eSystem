@@ -37,18 +37,6 @@ public class UserManager(AuthDbContext context) : IUserManager
         return user;
     }
 
-    public async ValueTask<LockoutStatus> GetLockoutStatusAsync(UserEntity user,
-        CancellationToken cancellationToken = default)
-    {
-        var status = new LockoutStatus()
-        {
-            LockoutEnabled = user.LockoutEnabled,
-            LockoutEnd = user.LockoutEnd
-        };
-        
-        return await Task.FromResult(status);
-    }
-
     public async ValueTask<bool> IsInRoleAsync(UserEntity user, string roleName,
         CancellationToken cancellationToken = default)
     {
@@ -146,39 +134,6 @@ public class UserManager(AuthDbContext context) : IUserManager
     {
         user.UserName = userName;
         user.NormalizedUserName = userName.ToUpper();
-        user.UpdateDate = DateTime.UtcNow;
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> EnableLockoutAsync(UserEntity user, DateTimeOffset endDate, CancellationToken cancellationToken = default)
-    {
-        user.LockoutEnabled = true;
-        user.UpdateDate = DateTime.UtcNow;
-        user.LockoutEnd = endDate;
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> DisableLockoutAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        user.LockoutEnabled = false;
-        user.UpdateDate = DateTime.UtcNow;
-        user.LockoutEnd = null;
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> SetLockoutEndDateAsync(UserEntity user, DateTimeOffset endDate,
-        CancellationToken cancellationToken = default)
-    {
-        user.LockoutEnd = endDate;
         user.UpdateDate = DateTime.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);

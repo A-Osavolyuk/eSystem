@@ -20,12 +20,6 @@ public interface IUserManager
     public ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangePasswordAsync(UserEntity user, string currentPassword, string newPassword, CancellationToken cancellationToken = default);
     
-    //Lockout methods
-    public ValueTask<LockoutStatus> GetLockoutStatusAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<Result> EnableLockoutAsync(UserEntity user, DateTimeOffset endDate, CancellationToken cancellationToken = default);
-    public ValueTask<Result> DisableLockoutAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<Result> SetLockoutEndDateAsync(UserEntity user, DateTimeOffset endDate, CancellationToken cancellationToken = default);
-    
     //Role methods
     public ValueTask<bool> IsInRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
     public ValueTask<Result> AddToRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
