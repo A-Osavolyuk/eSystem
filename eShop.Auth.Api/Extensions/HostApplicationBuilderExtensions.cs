@@ -66,12 +66,6 @@ public static class HostApplicationBuilderExtensions
         var configuration = builder.Configuration;
         
         builder.Services.Configure<JwtOptions>(configuration.GetSection("Configuration:Security:Authentication:JWT"));
-        
-        builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
-        {
-            options.User.RequireUniqueEmail = true;
-            options.SignIn.RequireConfirmedEmail = true;
-        }).AddDefaultTokenProviders().AddEntityFrameworkStores<AuthDbContext>();
 
         builder.Services.AddAuthentication(options =>
             {
