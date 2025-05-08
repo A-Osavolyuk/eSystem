@@ -13,7 +13,7 @@ internal sealed class ExternalLoginQueryHandler(
     public async Task<Result> Handle(ExternalLoginQuery request,
         CancellationToken cancellationToken)
     {
-        List<string> providers = ["Google", "Microsoft", "Twitter", "Facebook"];
+        var providers = await signInManager.GetExternalAuthenticationSchemasAsync(cancellationToken);
         var validProvider = providers.Any(x => x == request.Provider);
 
         if (!validProvider)

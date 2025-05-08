@@ -7,6 +7,6 @@ public interface ISignInManager
 {
     public ValueTask<ClaimsPrincipal> AuthenticateAsync(HttpContext context, string scheme,
         CancellationToken cancellationToken = default);
-    
+    public ValueTask<List<string>> GetExternalAuthenticationSchemasAsync(CancellationToken cancellationToken = default);
     public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl);
 }

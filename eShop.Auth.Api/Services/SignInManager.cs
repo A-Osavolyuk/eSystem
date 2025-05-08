@@ -3,13 +3,25 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Auth.Api.Services;
 
-public class SignInManager : ISignInManager
+public class SignInManager(IAuthenticationSchemeProvider schemeProvider) : ISignInManager
 {
+    private readonly IAuthenticationSchemeProvider schemeProvider = schemeProvider;
+
     public async ValueTask<ClaimsPrincipal> AuthenticateAsync(HttpContext context, string scheme, CancellationToken cancellationToken = default)
     {
         var result = await context.AuthenticateAsync(scheme);
         var principal = result?.Principal!;
         return principal;
+    }
+
+    public async ValueTask<List<string>> GetExternalAuthenticationSchemasAsync(CancellationToken cancellationToken = default)
+    {
+        var schemes = await schemeProvider.GetAllSchemesAsync();
+        var result = schemes
+            .Where(s => !string.IsNullOrEmpty(s.DisplayName))
+            .Select(x => x.Name).ToList();
+        
+        return result;
     }
 
     public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl)
