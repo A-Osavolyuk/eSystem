@@ -9,10 +9,12 @@ internal sealed record LoginWith2FaCommand(LoginWith2FaRequest Request)
 
 internal sealed class LoginWith2FaCommandHandler(
     ITokenManager tokenManager,
-    IUserManager userManager) : IRequestHandler<LoginWith2FaCommand, Result>
+    IUserManager userManager,
+    ITwoFactorManager twoFactorManager) : IRequestHandler<LoginWith2FaCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(LoginWith2FaCommand request,
         CancellationToken cancellationToken)
@@ -24,7 +26,7 @@ internal sealed class LoginWith2FaCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var result = await userManager.VerifyTwoFactorTokenAsync(user, "Email", request.Request.Code);
+        var result = await twoFactorManager.VerifyTokenAsync(user, "Email", request.Request.Code, cancellationToken);
 
         if (!result)
         {

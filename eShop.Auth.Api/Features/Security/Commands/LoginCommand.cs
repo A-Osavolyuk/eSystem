@@ -9,11 +9,13 @@ internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 internal sealed class LoginCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
-    IMessageService messageService) : IRequestHandler<LoginCommand, Result>
+    IMessageService messageService,
+    ITwoFactorManager twoFactorManager) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
@@ -55,7 +57,7 @@ internal sealed class LoginCommandHandler(
 
         if (user.TwoFactorEnabled)
         {
-            var loginCode = await userManager.GenerateTwoFactorTokenAsync(user, "Email", cancellationToken);
+            var loginCode = await twoFactorManager.GenerateTokenAsync(user, "Email", cancellationToken);
 
             await messageService.SendMessageAsync("2fa-code", new TwoFactorAuthenticationCodeMessage()
             {

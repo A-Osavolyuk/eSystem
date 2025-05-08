@@ -7,10 +7,12 @@ internal sealed record Change2FaStateCommand(Change2FaStateRequest Request)
     : IRequest<Result>;
 
 internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
-    IUserManager userManager)
+    IUserManager userManager,
+    ITwoFactorManager twoFactorManager)
     : IRequestHandler<Change2FaStateCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(
         Change2FaStateCommand request, CancellationToken cancellationToken)
@@ -22,7 +24,7 @@ internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var result = await userManager.SetTwoFactorEnabledAsync(user, cancellationToken);
+        var result = await twoFactorManager.EnableAsync(user, cancellationToken);
 
         if (!result.Succeeded)
         {

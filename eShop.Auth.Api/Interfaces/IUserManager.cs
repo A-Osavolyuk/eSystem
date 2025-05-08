@@ -27,9 +27,4 @@ public interface IUserManager
     public ValueTask<Result> RemoveFromRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
     public ValueTask<Result> RemoveFromRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
     public ValueTask<Result> RemoveFromRolesAsync(UserEntity user, CancellationToken cancellationToken = default);
-    
-    //TwoFactor methods
-    public ValueTask<Result> SetTwoFactorEnabledAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<string> GenerateTwoFactorTokenAsync(UserEntity user, string provider, CancellationToken cancellationToken = default);
-    public ValueTask<bool> VerifyTwoFactorTokenAsync(UserEntity user, string provider, string token, CancellationToken cancellationToken = default);
 }

@@ -141,17 +141,6 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> SetTwoFactorEnabledAsync(UserEntity user,
-        CancellationToken cancellationToken = default)
-    {
-        user.TwoFactorEnabled = true;
-        user.UpdateDate = DateTime.UtcNow;
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
     public async ValueTask<Result> AddToRoleAsync(UserEntity user, string roleName,
         CancellationToken cancellationToken = default)
     {
@@ -283,17 +272,5 @@ public class UserManager(AuthDbContext context) : IUserManager
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
-    }
-
-    public async ValueTask<string> GenerateTwoFactorTokenAsync(UserEntity user, string provider,
-        CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async ValueTask<bool> VerifyTwoFactorTokenAsync(UserEntity user, string provider, string token,
-        CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
     }
 }
