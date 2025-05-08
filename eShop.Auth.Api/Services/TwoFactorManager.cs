@@ -1,8 +1,11 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.Common.Security;
+
+namespace eShop.Auth.Api.Services;
 
 public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
+    private const int ExpirationMinutes = 30;
 
     public async ValueTask<List<ProviderEntity>> GetProvidersAsync(CancellationToken cancellationToken = default)
     {
@@ -31,20 +34,109 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return Result.Success();
     }
     
-    public async ValueTask<string> GenerateTokenAsync(UserEntity user, Provider provider,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<QrCode> GenerateQrCodeAsync(UserEntity user, string secret, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var url = UrlGenerator.Totp("eShop", user.Email, secret);
+        var qr = new QrCode() { Url = url };
+        return await Task.FromResult(qr);
     }
 
-    public async ValueTask<string> GenerateQrAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<string> GenerateTokenAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var randomCode = new Random().Next(0, 999999).ToString();
+        var token = randomCode.PadLeft(6, '0');
+
+        var entity = new LoginTokenEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            ProviderId = provider.Id,
+            UserId = user.Id,
+            Token = token,
+            ExpireDate = DateTime.UtcNow.AddMinutes(ExpirationMinutes),
+            CreateDate = DateTime.UtcNow,
+            UpdateDate = null,
+        };
+
+        await context.LoginTokens.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return token;
     }
 
-    public async ValueTask<bool> VerifyTokenAsync(UserEntity user, Provider provider, string token,
+    public async ValueTask<Result> VerifyTokenAsync(UserEntity user, string token,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var entity = await context.LoginTokens
+            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.Token == token, cancellationToken);
+
+        if (entity is null)
+        {
+            return Results.NotFound("Not found token");
+        }
+        
+        if(entity.ExpireDate < DateTime.UtcNow)
+        {
+            return Results.BadRequest("Token expired");
+        }
+        
+        context.LoginTokens.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> SubscribeAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default)
+    {
+        var userProvider = new UserProviderEntity()
+        {
+            UserId = user.Id,
+            ProviderId = provider.Id,
+            CreateDate = DateTime.UtcNow,
+            UpdateDate = null
+        };
+
+        if (provider.Name == Providers.Authenticator)
+        {
+            var secret = SecurityHandler.GenerateSecret();
+
+            var userSecret = new UserSecretEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                Secret = secret,
+                CreateDate = DateTime.UtcNow,
+                UpdateDate = null
+            };
+            
+            await context.UserSecret.AddAsync(userSecret, cancellationToken);
+        }
+        
+        await context.UserProvider.AddAsync(userProvider, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> UnsubscribeAsync(UserEntity user, ProviderEntity provider,
+        CancellationToken cancellationToken = default)
+    {
+        var userProvider = await context.UserProvider
+            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.ProviderId == provider.Id, cancellationToken);
+
+        if (userProvider is null)
+        {
+            return Results.NotFound("Not found user provider");
+        }
+
+        if (provider.Name == Providers.Authenticator)
+        {
+            var userSecret = await context.UserSecret.FirstAsync(x => x.UserId == user.Id, cancellationToken);
+            context.UserSecret.Remove(userSecret);
+        }
+        
+        context.UserProvider.Remove(userProvider);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
     }
 }
