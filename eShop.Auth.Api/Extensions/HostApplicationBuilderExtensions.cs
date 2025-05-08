@@ -2,6 +2,7 @@
 using eShop.Domain.Requests.API.Cart;
 using eShop.Domain.Requests.API.Sms;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eShop.Auth.Api.Extensions;
 
@@ -69,13 +70,24 @@ public static class HostApplicationBuilderExtensions
 
         builder.Services.AddAuthentication(options =>
             {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie("External", options =>
+            {
+                options.Cookie.Name = "Authentication.External";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             })
             .AddGoogle(options =>
             {
                 var settings = configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Google");
                 
+                options.SignInScheme = "External";
                 options.ClientId = settings.ClientId ?? "";
                 options.ClientSecret = settings.ClientSecret ?? "";
                 options.SaveTokens = settings.SaveTokens;

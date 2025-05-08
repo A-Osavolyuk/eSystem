@@ -1,9 +1,11 @@
-﻿using eShop.Domain.Messages.Email;
+﻿using System.Security.Claims;
+using eShop.Domain.Messages.Email;
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record HandleExternalLoginResponseQuery(
-    ExternalLoginInfo ExternalLoginInfo,
+    ClaimsPrincipal Principal,
+    string ProviderName,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
 
@@ -26,7 +28,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
     public async Task<Result> Handle(HandleExternalLoginResponseQuery request,
         CancellationToken cancellationToken)
     {
-        var email = request.ExternalLoginInfo.Principal.Claims
+        var email = request.Principal.Claims
             .FirstOrDefault(x => x.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
 
         if (email is null)
@@ -92,10 +94,10 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             await messageService.SendMessageAsync("external-provider-registration", new ExternalRegistrationMessage()
             {
                 To = email,
-                Subject = $"Account registered with {request.ExternalLoginInfo!.ProviderDisplayName}",
+                Subject = $"Account registered with {request.ProviderName}",
                 TempPassword = tempPassword,
                 UserName = email,
-                ProviderName = request.ExternalLoginInfo!.ProviderDisplayName!
+                ProviderName = request.ProviderName!
             }, cancellationToken);
             
             var token = await tokenManager.GenerateAsync(user, cancellationToken);

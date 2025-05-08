@@ -17,16 +17,17 @@ internal sealed class ExternalLoginQueryHandler() : IRequestHandler<ExternalLogi
         {
             return Results.BadRequest($"Invalid external provider {request.Provider}.");
         }
-
-        var handlerUri = UrlGenerator.Action("handle-external-login-response", "Security",
-            new { ReturnUri = request.ReturnUri ?? "/" });
+        
+        var handlerUri = UrlGenerator.Action("handle-external-login-response", "Security", new { ReturnUri = request.ReturnUri ?? "/" });
+        
         
         var properties = new AuthenticationProperties
         {
-            RedirectUri = request.ReturnUri,
+            RedirectUri = handlerUri,
             Items =
             {
-                ["LoginProvider"] = request.Provider
+                ["LoginProvider"] = request.Provider,
+                ["XsrfId"] = Guid.NewGuid().ToString(),
             }
         };
 

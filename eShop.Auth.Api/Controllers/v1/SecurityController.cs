@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using System.Security.Claims;
+using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 using Microsoft.AspNetCore.Authentication;
 
@@ -57,16 +58,14 @@ public class SecurityController(ISender sender) : ControllerBase
     public async ValueTask<ActionResult<Response>> HandleExternalLoginResponse(string? remoteError = null,
         string? returnUri = null)
     {
-        var auth = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
-        var items = auth?.Properties?.Items;
+        var auth = await HttpContext.AuthenticateAsync("External");
+        var externalUser = auth.Principal!;
+        var provider = auth.Properties?.Items[".AuthScheme"]!;
         
-        // var info = await signInManager.GetExternalLoginInfoAsync();
-        //
-        // var result = await sender.Send(new HandleExternalLoginResponseQuery(info!, remoteError, returnUri));
-        //
-        // return result.Match(
-        //     s => Redirect(Convert.ToString(s.Message!)!),
-        //     ErrorHandler.Handle);
+        var result = await sender.Send(new HandleExternalLoginResponseQuery(externalUser!, provider, remoteError, returnUri));
+        return result.Match(
+            s => Redirect(Convert.ToString(s.Message!)!),
+            ErrorHandler.Handle);
 
         return Ok();
     }

@@ -13,8 +13,10 @@ public static class WebApplicationBuilder
             await app.ConfigureDatabaseAsync<AuthDbContext>();
         }
 
+        app.UseRouting();
         app.UseHttpsRedirection();
         app.UseCors();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
         app.MapGrpcService<AuthServer>();
