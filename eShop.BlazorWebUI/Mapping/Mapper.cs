@@ -19,7 +19,7 @@ public static class Mapper
         return new LoginWith2FaRequest()
         {
             Email = source.Email,
-            Code = source.Code
+            Token = source.Code
         };
     }
 

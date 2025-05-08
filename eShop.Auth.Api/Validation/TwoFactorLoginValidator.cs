@@ -6,7 +6,7 @@ public class TwoFactorLoginValidator : Validator<LoginWith2FaRequest>
 {
     public TwoFactorLoginValidator()
     {
-        RuleFor(x => x.Code)
+        RuleFor(x => x.Token)
             .NotEmpty().WithMessage("Code cannot be empty.")
             .Length(6).WithMessage("Must contain 6 characters.");
     }
