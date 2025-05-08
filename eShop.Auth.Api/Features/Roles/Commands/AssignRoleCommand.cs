@@ -6,17 +6,17 @@ internal sealed record AssignRoleCommand(AssignRoleRequest Request) : IRequest<R
 
 internal sealed class AssignRoleCommandHandler(
     ILogger<AssignRoleCommandHandler> logger,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<AssignRoleCommand, Result>
 {
     private readonly ILogger<AssignRoleCommandHandler> logger = logger;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
     public async Task<Result> Handle(AssignRoleCommand request, CancellationToken cancellationToken)
     {
         var role = await roleManager.FindByNameAsync(request.Request.RoleName, cancellationToken);
-        var user = await userManager.FindByIdAsync(request.Request.UserId.ToString());
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (role is null)
         {
@@ -28,12 +28,11 @@ internal sealed class AssignRoleCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var result = await userManager.AddToRoleAsync(user, role.Name!);
+        var result = await userManager.AddToRoleAsync(user, role.Name!, cancellationToken);
 
         if (!result.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Cannot assign role due to server error: {result.Errors.First().Description}");
+            return result;
         }
 
         return Result.Success("Role was successfully assigned");

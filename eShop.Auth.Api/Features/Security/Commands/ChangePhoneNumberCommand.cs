@@ -10,17 +10,17 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
     IMessageService messageService,
     IConfiguration configuration,
     ICodeManager codeManager,
-    UserManager<UserEntity> userManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
+    IUserManager userManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber);
+        var user = await userManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber, cancellationToken);
 
         if (user is null)
         {

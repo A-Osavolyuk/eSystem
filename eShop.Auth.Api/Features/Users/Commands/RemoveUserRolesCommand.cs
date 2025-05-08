@@ -6,15 +6,15 @@ internal sealed record RemoveUserRolesCommand(RemoveUserRolesRequest Request)
     : IRequest<Result>;
 
 internal sealed class RemoveUserRolesCommandHandler(
-    UserManager<UserEntity> userManager)
+    IUserManager userManager)
     : IRequestHandler<RemoveUserRolesCommand, Result>
 {
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(RemoveUserRolesCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
@@ -23,19 +23,18 @@ internal sealed class RemoveUserRolesCommandHandler(
 
         foreach (var role in request.Request.Roles)
         {
-            var isInRole = await userManager.IsInRoleAsync(user, role);
+            var isInRole = await userManager.IsInRoleAsync(user, role, cancellationToken);
 
             if (!isInRole)
             {
                 return Results.BadRequest($"User with ID {request.Request.UserId} is not in role {role}.");
             }
 
-            var result = await userManager.RemoveFromRoleAsync(user, role);
+            var result = await userManager.RemoveFromRoleAsync(user, role, cancellationToken);
 
             if (!result.Succeeded)
             {
-                return Results.InternalServerError($"Cannot remove role from user with ID {request.Request.UserId} " +
-                                                   $"due to server error: {result.Errors.First().Description}.");
+                return result;
             }
         }
 

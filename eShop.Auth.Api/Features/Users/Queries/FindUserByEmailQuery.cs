@@ -5,12 +5,12 @@ namespace eShop.Auth.Api.Features.Users.Queries;
 internal sealed record FindUserByEmailQuery(string Email) : IRequest<Result>;
 
 internal sealed class FindUserByEmailQueryHandler(
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IRoleManager roleManager,
     IProfileManager profileManager,
     IPermissionManager permissionManager) : IRequestHandler<FindUserByEmailQuery, Result>
 {
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly IPermissionManager permissionManager = permissionManager;
@@ -18,7 +18,7 @@ internal sealed class FindUserByEmailQueryHandler(
     public async Task<Result> Handle(FindUserByEmailQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByEmailAsync(request.Email, cancellationToken);
 
         if (user is null)
         {

@@ -6,17 +6,17 @@ internal sealed record ConfirmChangeEmailCommand(ConfirmChangeEmailRequest Reque
     : IRequest<Result>;
 
 internal sealed class ConfirmChangeEmailCommandHandler(
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     ISecurityManager securityManager)
     : IRequestHandler<ConfirmChangeEmailCommand, Result>
 {
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly ISecurityManager securityManager = securityManager;
 
     public async Task<Result> Handle(ConfirmChangeEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.CurrentEmail);
+        var user = await userManager.FindByEmailAsync(request.Request.CurrentEmail, cancellationToken);
 
         if (user is null)
         {

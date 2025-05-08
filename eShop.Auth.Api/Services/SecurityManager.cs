@@ -1,10 +1,10 @@
 ﻿namespace eShop.Auth.Api.Services;
 
 internal sealed class SecurityManager(
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     ICodeManager codeManager) : ISecurityManager
 {
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
 
     public string GenerateRandomPassword(int length)
@@ -33,7 +33,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ConfirmEmailAsync(userEntity);
 
-        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
+        return !result.Succeeded ? result : Result.Success();
     }
 
     public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity userEntity, string code)
@@ -47,7 +47,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ConfirmPhoneNumberAsync(userEntity);
 
-        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
+        return !result.Succeeded ? result : Result.Success();
     }
 
     public async ValueTask<Result> ResetPasswordAsync(UserEntity userEntity, string code, string password)
@@ -61,7 +61,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ResetPasswordAsync(userEntity, password);
 
-        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
+        return !result.Succeeded ? result : Result.Success();
     }
 
     public async ValueTask<Result> ChangeEmailAsync(UserEntity userEntity, string newEmail, CodeSet codeSet)
@@ -81,7 +81,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ChangeEmailAsync(userEntity, newEmail);
         
-        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
+        return !result.Succeeded ? result : Result.Success();
     }
 
     public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity userEntity, string newPhoneNumber,
@@ -102,7 +102,7 @@ internal sealed class SecurityManager(
 
         var result = await userManager.ChangePhoneNumberAsync(userEntity, newPhoneNumber);
         
-        return !result.Succeeded ? Results.InternalServerError(result.Errors.First().Description) : Result.Success();
+        return !result.Succeeded ? result : Result.Success();
     }
 
     private async Task<Result> ValidateAndRemoveAsync(UserEntity user, string code)

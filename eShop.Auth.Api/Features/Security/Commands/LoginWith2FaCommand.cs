@@ -9,15 +9,15 @@ internal sealed record LoginWith2FaCommand(LoginWith2FaRequest Request)
 
 internal sealed class LoginWith2FaCommandHandler(
     ITokenManager tokenManager,
-    UserManager<UserEntity> userManager) : IRequestHandler<LoginWith2FaCommand, Result>
+    IUserManager userManager) : IRequestHandler<LoginWith2FaCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(LoginWith2FaCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is null)
         {

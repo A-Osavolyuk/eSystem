@@ -9,14 +9,14 @@ internal sealed class CreateUserAccountCommandHandler(
     IPermissionManager permissionManager,
     IProfileManager profileManager,
     ISecurityManager securityManager,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IRoleManager roleManager,
     IConfiguration configuration) : IRequestHandler<CreateUserAccountCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly ISecurityManager securityManager = securityManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
     private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
     private readonly List<string> defaultPermissions =
@@ -37,21 +37,19 @@ internal sealed class CreateUserAccountCommandHandler(
             LockoutEnabled = false,
         };
 
-        var accountResult = await userManager.CreateAsync(user);
+        var accountResult = await userManager.CreateAsync(user, cancellationToken);
 
         if (!accountResult.Succeeded)
         {
-            return Results.NotFound(
-                $"Cannot create account due to server error: {accountResult.Errors.First().Description}.");
+            return accountResult;
         }
 
         var password = securityManager.GenerateRandomPassword(18);
-        var passwordResult = await userManager.AddPasswordAsync(user, password);
+        var passwordResult = await userManager.AddPasswordAsync(user, password, cancellationToken);
 
         if (!passwordResult.Succeeded)
         {
-            return Results.NotFound(
-                $"Cannot add password to user account due ti server error: {passwordResult.Errors.First().Description}.");
+            return passwordResult;
         }
 
         await profileManager.SetAsync(user, new PersonalDataEntity()
@@ -73,23 +71,21 @@ internal sealed class CreateUserAccountCommandHandler(
                     return Results.InternalServerError($"Role {role} does not exist.");
                 }
 
-                var roleResult = await userManager.AddToRoleAsync(user, role);
+                var roleResult = await userManager.AddToRoleAsync(user, role, cancellationToken);
 
                 if (!roleResult.Succeeded)
                 {
-                    return Results.InternalServerError($"Cannot add user with ID {user.Id} to role {role} " +
-                                                       $"due to server error: {roleResult.Errors.First().Description}.");
+                    return roleResult;
                 }
             }
         }
         else
         {
-            var roleResult = await userManager.AddToRoleAsync(user, defaultRole);
+            var roleResult = await userManager.AddToRoleAsync(user, defaultRole, cancellationToken);
 
             if (!roleResult.Succeeded)
             {
-                return Results.InternalServerError($"Cannot add user with ID {user.Id} to role {defaultRole} " +
-                                                   $"due to server error: {roleResult.Errors.First().Description}.");
+                return roleResult;
             }
         }
 

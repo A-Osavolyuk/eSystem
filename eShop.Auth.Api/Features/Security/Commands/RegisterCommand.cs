@@ -7,13 +7,13 @@ internal sealed record RegisterCommand(RegistrationRequest Request) : IRequest<R
 
 internal sealed class RegisterCommandHandler(
     IPermissionManager permissionManager,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IMessageService messageService,
     IConfiguration configuration,
     ICodeManager codeManager) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
@@ -23,7 +23,7 @@ internal sealed class RegisterCommandHandler(
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is not null)
         {
@@ -31,20 +31,18 @@ internal sealed class RegisterCommandHandler(
         }
 
         var newUser = Mapper.Map(request.Request);
-        var registrationResult = await userManager.CreateAsync(newUser, request.Request.Password);
+        var registrationResult = await userManager.CreateAsync(newUser, request.Request.Password, cancellationToken);
 
         if (!registrationResult.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Cannot create user due to server error: {registrationResult.Errors.First().Description}");
+            return registrationResult;
         }
 
-        var assignDefaultRoleResult = await userManager.AddToRoleAsync(newUser, defaultRole);
+        var assignDefaultRoleResult = await userManager.AddToRoleAsync(newUser, defaultRole, cancellationToken);
 
         if (!assignDefaultRoleResult.Succeeded)
         {
-            return Results.InternalServerError($"Cannot assign role {defaultRole} to user with email {newUser.Email} " +
-                                               $"due to server errors: {assignDefaultRoleResult.Errors.First().Description}");
+            return assignDefaultRoleResult;
         }
 
         var issuingPermissionsResult =

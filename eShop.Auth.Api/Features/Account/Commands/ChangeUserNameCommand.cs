@@ -9,17 +9,17 @@ internal sealed record ChangeUserNameCommand(ChangeUserNameRequest Request)
 
 internal sealed class ChangeUserNameCommandHandler(
     AuthDbContext context,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     ITokenManager tokenManager) : IRequestHandler<ChangeUserNameCommand, Result>
 {
     private readonly AuthDbContext context = context;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
 
     public async Task<Result> Handle(ChangeUserNameCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
         if (user is null)
         {
             return Result.Failure(new Error()
@@ -30,20 +30,14 @@ internal sealed class ChangeUserNameCommandHandler(
             });
         }
 
-        var result = await userManager.SetUserNameAsync(user, request.Request.UserName);
+        var result = await userManager.SetUserNameAsync(user, request.Request.UserName, cancellationToken);
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Internal server error",
-                Details = $"Cannot change username of user with email {request.Request.Email} " +
-                          $"due to error: {result.Errors.First().Description}."
-            });
+            return result;
         }
 
-        user = await userManager.FindByEmailAsync(request.Request.Email);
+        user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is null)
         {

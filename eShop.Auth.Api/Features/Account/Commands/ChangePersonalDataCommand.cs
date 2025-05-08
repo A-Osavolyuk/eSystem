@@ -8,17 +8,17 @@ internal sealed record ChangePersonalDataCommand(ChangePersonalDataRequest Reque
 
 internal sealed class ChangePersonalDataCommandHandler(
     AuthDbContext context,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IProfileManager profileManager) : IRequestHandler<ChangePersonalDataCommand, Result>
 {
     private readonly AuthDbContext context = context;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly IProfileManager profileManager = profileManager;
 
     public async Task<Result> Handle(ChangePersonalDataCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is null)
         {

@@ -7,14 +7,14 @@ internal sealed record SetPersonalDataCommand(SetPersonalDataRequest Request)
 
 internal sealed record SetPersonalDataCommandHandler(
     IProfileManager profileManager,
-    UserManager<UserEntity> userManager) : IRequestHandler<SetPersonalDataCommand, Result>
+    IUserManager userManager) : IRequestHandler<SetPersonalDataCommand, Result>
 {
     private readonly IProfileManager profileManager = profileManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     public async Task<Result> Handle(SetPersonalDataCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is null)
         {

@@ -7,27 +7,26 @@ internal sealed record Change2FaStateCommand(Change2FaStateRequest Request)
     : IRequest<Result>;
 
 internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
-    UserManager<UserEntity> userManager)
+    IUserManager userManager)
     : IRequestHandler<Change2FaStateCommand, Result>
 {
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(
         Change2FaStateCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var result = await userManager.SetTwoFactorEnabledAsync(user, !user.TwoFactorEnabled);
+        var result = await userManager.SetTwoFactorEnabledAsync(user, cancellationToken);
 
         if (!result.Succeeded)
         {
-            Results.NotFound($"Cannot change 2fa state of user with email {request.Request.Email} " +
-                             $"due to server error: {result.Errors.First().Description}.");
+            return result;
         }
 
         var state = user.TwoFactorEnabled ? "disabled" : "enabled";

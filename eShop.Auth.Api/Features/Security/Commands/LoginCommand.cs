@@ -8,16 +8,16 @@ internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 internal sealed class LoginCommandHandler(
     ITokenManager tokenManager,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IMessageService messageService) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is null)
         {
@@ -29,7 +29,7 @@ internal sealed class LoginCommandHandler(
             return Results.BadRequest("The email address is not confirmed.");
         }
 
-        var isValidPassword = await userManager.CheckPasswordAsync(user, request.Request.Password);
+        var isValidPassword = await userManager.CheckPasswordAsync(user, request.Request.Password, cancellationToken);
 
         if (!isValidPassword)
         {
@@ -55,7 +55,7 @@ internal sealed class LoginCommandHandler(
 
         if (user.TwoFactorEnabled)
         {
-            var loginCode = await userManager.GenerateTwoFactorTokenAsync(user, "Email");
+            var loginCode = await userManager.GenerateTwoFactorTokenAsync(user, "Email", cancellationToken);
 
             await messageService.SendMessageAsync("2fa-code", new TwoFactorAuthenticationCodeMessage()
             {

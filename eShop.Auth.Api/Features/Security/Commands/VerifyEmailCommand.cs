@@ -9,19 +9,19 @@ internal sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest
 
 internal sealed class VerifyEmailCommandHandler(
     ISecurityManager securityManager,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IMessageService messageService,
     CartClient client) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly ISecurityManager securityManager = securityManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly CartClient client = client;
 
     public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is null)
         {

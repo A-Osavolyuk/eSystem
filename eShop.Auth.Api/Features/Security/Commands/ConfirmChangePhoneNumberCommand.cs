@@ -7,19 +7,19 @@ internal sealed record ConfirmChangePhoneNumberCommand(ConfirmChangePhoneNumberR
     : IRequest<Result>;
 
 internal sealed class ConfirmChangePhoneNumberCommandHandler(
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     ISecurityManager securityManager,
     ITokenManager tokenManager)
     : IRequestHandler<ConfirmChangePhoneNumberCommand, Result>
 {
     private readonly ISecurityManager securityManager = securityManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
 
     public async Task<Result> Handle(ConfirmChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber);
+        var user = await userManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber, cancellationToken);
 
         if (user is null)
         {
@@ -34,7 +34,7 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
             return result;
         }
 
-        user = await userManager.FindByPhoneNumberAsync(request.Request.NewPhoneNumber);
+        user = await userManager.FindByPhoneNumberAsync(request.Request.NewPhoneNumber, cancellationToken);
 
         if (user is null)
         {

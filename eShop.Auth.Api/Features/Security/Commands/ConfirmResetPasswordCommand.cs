@@ -7,16 +7,16 @@ internal sealed record ConfirmResetPasswordCommand(ConfirmResetPasswordRequest R
 
 internal sealed class ConfirmResetPasswordCommandHandler(
     ISecurityManager securityManager,
-    UserManager<UserEntity> userManager)
+    IUserManager userManager)
     : IRequestHandler<ConfirmResetPasswordCommand, Result>
 {
     private readonly ISecurityManager securityManager = securityManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(ConfirmResetPasswordCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email);
+        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         if (user is null)
         {

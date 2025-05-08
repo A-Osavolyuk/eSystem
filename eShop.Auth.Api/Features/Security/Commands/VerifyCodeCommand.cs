@@ -5,16 +5,16 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record VerifyCodeCommand(VerifyCodeRequest Request) : IRequest<Result>;
 
 internal sealed class VerifyCodeCommandHandler(
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     ICodeManager codeManager)
     : IRequestHandler<VerifyCodeCommand, Result>
 {
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {

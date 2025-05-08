@@ -17,7 +17,7 @@ public class UserEntity : IEntity<Guid>
     public bool LockoutEnabled { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
     
-    public DateTime? LockoutEnd { get; set; }
+    public DateTimeOffset? LockoutEnd { get; set; }
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
     

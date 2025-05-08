@@ -5,28 +5,28 @@ namespace eShop.Auth.Api.Features.Users.Commands;
 internal sealed record RemoveUserRoleCommand(RemoveUserRoleRequest Request) : IRequest<Result>;
 
 internal sealed class RemoveUserRoleCommandHandler(
-    UserManager<UserEntity> userManager) : IRequestHandler<RemoveUserRoleCommand, Result>
+    IUserManager userManager) : IRequestHandler<RemoveUserRoleCommand, Result>
 {
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(RemoveUserRoleCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var isInRole = await userManager.IsInRoleAsync(user, request.Request.Role);
+        var isInRole = await userManager.IsInRoleAsync(user, request.Request.Role, cancellationToken);
 
         if (!isInRole)
         {
             return Results.NotFound($"User with ID {user.Id} not in role {request.Request.Role}");
         }
 
-        var result = await userManager.RemoveFromRoleAsync(user, request.Request.Role);
+        var result = await userManager.RemoveFromRoleAsync(user, request.Request.Role, cancellationToken);
 
         if (!result.Succeeded)
         {

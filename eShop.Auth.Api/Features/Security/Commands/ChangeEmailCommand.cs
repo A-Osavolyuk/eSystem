@@ -9,17 +9,17 @@ internal sealed class RequestChangeEmailCommandHandler(
     IMessageService messageService,
     IConfiguration configuration,
     ICodeManager codeManager,
-    UserManager<UserEntity> userManager) : IRequestHandler<ChangeEmailCommand, Result>
+    IUserManager userManager) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly IMessageService messageService = messageService;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangeEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.CurrentEmail);
+        var user = await userManager.FindByEmailAsync(request.Request.CurrentEmail, cancellationToken);
 
         if (user is null)
         {

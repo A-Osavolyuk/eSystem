@@ -7,15 +7,15 @@ internal sealed record VerifyPhoneNumberCommand(VerifyPhoneNumberRequest Request
 
 internal sealed class VerifyPhoneNumberCommandHandler(
     ISecurityManager securityManager,
-    UserManager<UserEntity> userManager) : IRequestHandler<VerifyPhoneNumberCommand, Result>
+    IUserManager userManager) : IRequestHandler<VerifyPhoneNumberCommand, Result>
 {
     private readonly ISecurityManager securityManager = securityManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(VerifyPhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByPhoneNumberAsync(request.Request.PhoneNumber);
+        var user = await userManager.FindByPhoneNumberAsync(request.Request.PhoneNumber, cancellationToken);
 
         if (user is null)
         {

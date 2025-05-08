@@ -7,16 +7,16 @@ internal sealed record RemoveUserFromPermissionCommand(RemoveUserFromPermissionR
 
 internal sealed class RemoveUserFromPermissionCommandHandler(
     IPermissionManager permissionManager,
-    UserManager<UserEntity> userManager)
+    IUserManager userManager)
     : IRequestHandler<RemoveUserFromPermissionCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(RemoveUserFromPermissionCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {

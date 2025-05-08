@@ -7,19 +7,18 @@ internal sealed record GetUsersListQuery() : IRequest<Result>;
 internal sealed class GetUsersListQueryHandler(
     IPermissionManager permissionManager,
     IProfileManager profileManager,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<GetUsersListQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
     public async Task<Result> Handle(GetUsersListQuery request,
         CancellationToken cancellationToken)
     {
-        var usersList = await userManager.Users.AsNoTracking()
-            .ToListAsync(cancellationToken: cancellationToken);
+        var usersList = await userManager.GetAllAsync(cancellationToken);
 
         if (!usersList.Any())
         {
