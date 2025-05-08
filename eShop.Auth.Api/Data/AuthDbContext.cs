@@ -1,21 +1,16 @@
 ﻿namespace eShop.Auth.Api.Data;
 
 public sealed class AuthDbContext(
-    DbContextOptions<AuthDbContext> options) : IdentityDbContext<
-        UserEntity, 
-        RoleEntity, 
-        Guid, 
-        UserClaimEntity, 
-        UserRoleEntity, 
-        UserLoginEntity, 
-        RoleClaimEntity,
-        UserTokenEntity>(options)
+    DbContextOptions<AuthDbContext> options) : DbContext(options)
 {
-    public DbSet<PersonalDataEntity> PersonalData => Set<PersonalDataEntity>();
-    public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
-    public DbSet<UserPermissionsEntity> UserPermissions => Set<UserPermissionsEntity>();
-    public DbSet<SecurityTokenEntity> SecurityTokens => Set<SecurityTokenEntity>();
-    public DbSet<VerificationCodeEntity> Codes => Set<VerificationCodeEntity>();
+    public DbSet<UserEntity> Users { get; set; }
+    public DbSet<RoleEntity> Roles { get; set; }
+    public DbSet<UserRoleEntity> UserRoles { get; set; }
+    public DbSet<PersonalDataEntity> PersonalData { get; set; }
+    public DbSet<PermissionEntity> Permissions { get; set; }
+    public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
+    public DbSet<SecurityTokenEntity> SecurityTokens { get; set; }
+    public DbSet<VerificationCodeEntity> Codes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
