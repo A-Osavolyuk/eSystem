@@ -3,7 +3,13 @@
 public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
-    
+
+    public async ValueTask<List<ProviderEntity>> GetProvidersAsync(CancellationToken cancellationToken = default)
+    {
+        var providers = await context.Providers.ToListAsync(cancellationToken);
+        return providers;
+    }
+
     public async ValueTask<Result> EnableAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
