@@ -1,8 +1,6 @@
-﻿using System.Security.Claims;
-using eShop.Auth.Api.Security.Defaults;
+﻿using eShop.Auth.Api.Security.Defaults;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
-using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Auth.Api.Controllers.v1;
 
