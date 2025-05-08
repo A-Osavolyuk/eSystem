@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data.Seed;
 
-public class UserRoleSeed : Seed<UserRoleEntity>
+public class UserRoleSeed : Seed<UserRoleEntity, Guid>
 {
     public override List<UserRoleEntity> Get()
     {

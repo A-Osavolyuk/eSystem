@@ -1,9 +1,23 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class UserEntity : IdentityUser<Guid>, IEntity
+public class UserEntity : IEntity<Guid>
 {
+    public Guid Id { get; init; }
     public Guid? PersonalDataId { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string NormalizedEmail { get; set; } = string.Empty;
+
+    public string UserName { get; set; } = string.Empty;
+    public string NormalizedUserName { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public bool PhoneNumberConfirmed { get; set; }
+    public bool EmailConfirmed { get; set; }
+    public bool AccountConfirmed { get; set; }
+    public bool TwoFactorEnabled { get; set; }
+    public bool LockoutEnabled { get; set; }
+    public string PasswordHash { get; set; } = string.Empty;
     
+    public DateTime? LockoutEnd { get; set; }
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
     

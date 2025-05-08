@@ -1,10 +1,16 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class UserRoleEntity : IdentityUserRole<Guid>, IEntity
+public class UserRoleEntity : IEntity<Guid>
 {
+    public Guid Id { get; init; }
+
+    public Guid UserId { get; set; }
+    public Guid RoleId { get; set; }
+    
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
 
     public UserEntity User { get; set; } = null!;
     public RoleEntity Role { get; set; } = null!;
+
 }
