@@ -17,6 +17,14 @@ public static class DbContextExtensions
             await context.SaveChangesAsync(cancellationToken);
         }
         
+        if (!await context.Providers.AnyAsync(cancellationToken))
+        {
+            var seed = new ProviderSeed();
+
+            await context.Providers.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        
         if (!await context.Users.AnyAsync(cancellationToken))
         {
             var seed = new UserSeed();
