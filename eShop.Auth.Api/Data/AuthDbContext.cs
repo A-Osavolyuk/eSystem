@@ -12,6 +12,9 @@ public sealed class AuthDbContext(
     public DbSet<SecurityTokenEntity> SecurityTokens { get; set; }
     public DbSet<VerificationCodeEntity> Codes { get; set; }
     public DbSet<ProviderEntity> Providers { get; set; }
+    public DbSet<LoginTokenEntity> LoginTokens { get; set; }
+    public DbSet<UserSecretEntity> UserSecret { get; set; }
+    public DbSet<UserProviderEntity> UserProvider { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -79,6 +82,41 @@ public sealed class AuthDbContext(
         builder.Entity<ProviderEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+        });
+
+        builder.Entity<LoginTokenEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.User)
+                .WithOne()
+                .HasForeignKey<LoginTokenEntity>(x => x.UserId);
+
+            entity.HasOne(x => x.Provider)
+                .WithOne()
+                .HasForeignKey<LoginTokenEntity>(x => x.ProviderId);
+        });
+        
+        builder.Entity<UserSecretEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.User)
+                .WithOne()
+                .HasForeignKey<LoginTokenEntity>(x => x.UserId);
+        });
+
+        builder.Entity<UserProviderEntity>(entity =>
+        {
+            entity.HasKey(x => new { x.UserId, x.ProviderId });
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
+
+            entity.HasOne(x => x.Provider)
+                .WithMany()
+                .HasForeignKey(x => x.ProviderId);
         });
     }
 }
