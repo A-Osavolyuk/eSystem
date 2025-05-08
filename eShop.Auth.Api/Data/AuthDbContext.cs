@@ -1,7 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data;
 
-public sealed class AuthDbContext(
-    DbContextOptions<AuthDbContext> options) : DbContext(options)
+public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<RoleEntity> Roles { get; set; }
@@ -42,6 +41,7 @@ public sealed class AuthDbContext(
 
         builder.Entity<UserRoleEntity>(entity =>
         {
+            entity.HasKey(x => new { x.UserId, x.RoleId });
             entity.HasOne(x => x.Role)
                 .WithMany(x => x.Roles)
                 .HasForeignKey(x => x.RoleId);
@@ -103,7 +103,7 @@ public sealed class AuthDbContext(
 
             entity.HasOne(x => x.User)
                 .WithOne()
-                .HasForeignKey<LoginTokenEntity>(x => x.UserId);
+                .HasForeignKey<UserSecretEntity>(x => x.UserId);
         });
 
         builder.Entity<UserProviderEntity>(entity =>
