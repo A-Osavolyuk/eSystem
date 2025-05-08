@@ -5,7 +5,6 @@ namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record HandleExternalLoginResponseQuery(
     ClaimsPrincipal Principal,
-    string ProviderName,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
 
@@ -91,13 +90,15 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                                                    $"due to server error: {issuingPermissionsResult.Errors.First().Description}");
             }
 
+            var provider = request.Principal.Identity!.AuthenticationType!;
+            
             await messageService.SendMessageAsync("external-provider-registration", new ExternalRegistrationMessage()
             {
                 To = email,
-                Subject = $"Account registered with {request.ProviderName}",
+                Subject = $"Account registered with {provider}",
                 TempPassword = tempPassword,
                 UserName = email,
-                ProviderName = request.ProviderName!
+                ProviderName = provider!
             }, cancellationToken);
             
             var token = await tokenManager.GenerateAsync(user, cancellationToken);

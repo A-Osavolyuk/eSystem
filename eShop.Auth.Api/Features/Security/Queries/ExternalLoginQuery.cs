@@ -5,8 +5,11 @@ namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record ExternalLoginQuery(string Provider, string? ReturnUri) : IRequest<Result>;
 
-internal sealed class ExternalLoginQueryHandler() : IRequestHandler<ExternalLoginQuery, Result>
+internal sealed class ExternalLoginQueryHandler(
+    ISignInManager signInManager) : IRequestHandler<ExternalLoginQuery, Result>
 {
+    private readonly ISignInManager signInManager = signInManager;
+
     public async Task<Result> Handle(ExternalLoginQuery request,
         CancellationToken cancellationToken)
     {
@@ -17,24 +20,18 @@ internal sealed class ExternalLoginQueryHandler() : IRequestHandler<ExternalLogi
         {
             return Results.BadRequest($"Invalid external provider {request.Provider}.");
         }
-        
-        var handlerUri = UrlGenerator.Action("handle-external-login-response", "Security", new { ReturnUri = request.ReturnUri ?? "/" });
-        
-        
-        var properties = new AuthenticationProperties
-        {
-            RedirectUri = handlerUri,
-            Items =
-            {
-                ["LoginProvider"] = request.Provider,
-                ["XsrfId"] = Guid.NewGuid().ToString(),
-            }
-        };
 
-        return Result.Success(new ExternalLoginResponse()
+        var redirectUrl = UrlGenerator.Action("handle-external-login-response", "Security",
+            new { ReturnUri = request.ReturnUri ?? "/" });
+        
+        var properties = signInManager.ConfigureExternalAuthenticationProperties(request.Provider, redirectUrl);
+        
+        var result = Result.Success(new ExternalLoginResponse()
         {
             Provider = request.Provider,
             AuthenticationProperties = properties
         });
+        
+        return await Task.FromResult(result);
     }
 }

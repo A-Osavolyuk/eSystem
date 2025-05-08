@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Data.Seed;
+﻿using eShop.Auth.Api.Security.Defaults;
 using eShop.Domain.Requests.API.Cart;
 using eShop.Domain.Requests.API.Sms;
 using MassTransit;
@@ -72,11 +72,11 @@ public static class HostApplicationBuilderExtensions
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie("External", options =>
+            .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme, options =>
             {
                 options.Cookie.Name = "Authentication.External";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
@@ -87,7 +87,6 @@ public static class HostApplicationBuilderExtensions
             {
                 var settings = configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Google");
                 
-                options.SignInScheme = "External";
                 options.ClientId = settings.ClientId ?? "";
                 options.ClientSecret = settings.ClientSecret ?? "";
                 options.SaveTokens = settings.SaveTokens;
@@ -150,6 +149,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddScoped<IUserManager, UserManager>();
         builder.Services.AddScoped<ILockoutManager, LockoutManager>();
         builder.Services.AddScoped<ITwoFactorManager, TwoFactorManager>();
+        builder.Services.AddScoped<ISignInManager, SignInManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 

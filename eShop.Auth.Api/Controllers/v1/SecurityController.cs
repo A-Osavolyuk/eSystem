@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using eShop.Auth.Api.Security.Defaults;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 using Microsoft.AspNetCore.Authentication;
@@ -9,9 +10,10 @@ namespace eShop.Auth.Api.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Authorize]
-public class SecurityController(ISender sender) : ControllerBase
+public class SecurityController(ISender sender, ISignInManager signInManager) : ControllerBase
 {
     private readonly ISender sender = sender;
+    private readonly ISignInManager signInManager = signInManager;
 
     #region Get methods
 
@@ -58,16 +60,10 @@ public class SecurityController(ISender sender) : ControllerBase
     public async ValueTask<ActionResult<Response>> HandleExternalLoginResponse(string? remoteError = null,
         string? returnUri = null)
     {
-        var auth = await HttpContext.AuthenticateAsync("External");
-        var externalUser = auth.Principal!;
-        var provider = auth.Properties?.Items[".AuthScheme"]!;
+        var principal = await signInManager.AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
         
-        var result = await sender.Send(new HandleExternalLoginResponseQuery(externalUser!, provider, remoteError, returnUri));
-        return result.Match(
-            s => Redirect(Convert.ToString(s.Message!)!),
-            ErrorHandler.Handle);
-
-        return Ok();
+        var result = await sender.Send(new HandleExternalLoginResponseQuery(principal, remoteError, returnUri));
+        return result.Match(s => Redirect(Convert.ToString(s.Message!)!), ErrorHandler.Handle);
     }
 
     #endregion
