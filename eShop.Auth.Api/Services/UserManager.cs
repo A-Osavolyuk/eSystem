@@ -308,16 +308,14 @@ public class UserManager(AuthDbContext context) : IUserManager
 
     public async ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default)
     {
-        var passwordHash = PasswordHandler.HashPassword(password);
-        return await Task.FromResult(user.PasswordHash == passwordHash);
+        var result = PasswordHandler.VerifyPassword(password, user.PasswordHash);
+        return await Task.FromResult(result);
     }
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user, string currentPassword, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var currentPasswordHash = PasswordHandler.HashPassword(currentPassword);
-
-        if (currentPasswordHash != user.PasswordHash)
+        if (PasswordHandler.VerifyPassword(currentPassword, user.PasswordHash))
         {
             return Results.BadRequest("Incorrect password");
         }
