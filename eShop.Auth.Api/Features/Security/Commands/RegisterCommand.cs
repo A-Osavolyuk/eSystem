@@ -54,6 +54,8 @@ internal sealed class RegisterCommandHandler(
                 $"Cannot issue permissions for user with email {request.Request.Email} " +
                 $"due to server errors: {issuingPermissionsResult.Errors.First().Description}");
         }
+        
+        user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         var code = await codeManager.GenerateAsync(user!, Verification.Verify, cancellationToken);
         

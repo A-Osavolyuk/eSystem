@@ -1,5 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
+using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Auth.Api.Controllers.v1;
 
@@ -7,9 +8,8 @@ namespace eShop.Auth.Api.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Authorize]
-public class SecurityController(SignInManager<UserEntity> signInManager, ISender sender) : ControllerBase
+public class SecurityController(ISender sender) : ControllerBase
 {
-    private readonly SignInManager<UserEntity> signInManager = signInManager;
     private readonly ISender sender = sender;
 
     #region Get methods
@@ -57,27 +57,18 @@ public class SecurityController(SignInManager<UserEntity> signInManager, ISender
     public async ValueTask<ActionResult<Response>> HandleExternalLoginResponse(string? remoteError = null,
         string? returnUri = null)
     {
-        var info = await signInManager.GetExternalLoginInfoAsync();
+        var auth = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+        var items = auth?.Properties?.Items;
+        
+        // var info = await signInManager.GetExternalLoginInfoAsync();
+        //
+        // var result = await sender.Send(new HandleExternalLoginResponseQuery(info!, remoteError, returnUri));
+        //
+        // return result.Match(
+        //     s => Redirect(Convert.ToString(s.Message!)!),
+        //     ErrorHandler.Handle);
 
-        var result = await sender.Send(new HandleExternalLoginResponseQuery(info!, remoteError, returnUri));
-
-        return result.Match(
-            s => Redirect(Convert.ToString(s.Message!)!),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Get external login providers")]
-    [EndpointDescription("Gets external login providers")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpGet("get-external-providers")]
-    public async ValueTask<ActionResult<Response>> GetExternalProvidersList()
-    {
-        var result = await sender.Send(new GetExternalProvidersQuery());
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
+        return Ok();
     }
 
     #endregion

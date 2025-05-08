@@ -4,11 +4,11 @@ internal sealed record Get2FaStateQuery(string Email)
     : IRequest<Result>;
 
 internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     ICacheService cacheService)
     : IRequestHandler<Get2FaStateQuery, Result>
 {
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly ICacheService cacheService = cacheService;
 
     public async Task<Result> Handle(
@@ -19,7 +19,7 @@ internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
 
         if (state is null)
         {
-            var user = await userManager.FindByEmailAsync(request.Email);
+            var user = await userManager.FindByEmailAsync(request.Email, cancellationToken);
 
             if (user is null)
             {

@@ -1,20 +1,17 @@
 ﻿using eShop.Domain.Responses.API.Auth;
+using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record ExternalLoginQuery(string Provider, string? ReturnUri) : IRequest<Result>;
 
-internal sealed class ExternalLoginQueryHandler(
-    SignInManager<UserEntity> signInManager) : IRequestHandler<ExternalLoginQuery, Result>
+internal sealed class ExternalLoginQueryHandler() : IRequestHandler<ExternalLoginQuery, Result>
 {
-    private readonly SignInManager<UserEntity> signInManager = signInManager;
-
     public async Task<Result> Handle(ExternalLoginQuery request,
         CancellationToken cancellationToken)
     {
-        var providers = await signInManager.GetExternalAuthenticationSchemesAsync();
-
-        var validProvider = providers.Any(x => x.DisplayName == request.Provider);
+        List<string> providers = ["Google", "Microsoft", "Twitter", "Facebook"];
+        var validProvider = providers.Any(x => x == request.Provider);
 
         if (!validProvider)
         {
@@ -23,8 +20,15 @@ internal sealed class ExternalLoginQueryHandler(
 
         var handlerUri = UrlGenerator.Action("handle-external-login-response", "Security",
             new { ReturnUri = request.ReturnUri ?? "/" });
-        var properties =
-            signInManager.ConfigureExternalAuthenticationProperties(request.Provider, handlerUri);
+        
+        var properties = new AuthenticationProperties
+        {
+            RedirectUri = request.ReturnUri,
+            Items =
+            {
+                ["LoginProvider"] = request.Provider
+            }
+        };
 
         return Result.Success(new ExternalLoginResponse()
         {

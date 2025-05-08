@@ -11,14 +11,14 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
     IPermissionManager permissionManager,
     ISecurityManager securityManager,
     ITokenManager tokenManager,
-    UserManager<UserEntity> userManager,
+    IUserManager userManager,
     IConfiguration configuration,
     IMessageService messageService) : IRequestHandler<HandleExternalLoginResponseQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly ISecurityManager securityManager = securityManager;
     private readonly ITokenManager tokenManager = tokenManager;
-    private readonly UserManager<UserEntity> userManager = userManager;
+    private readonly IUserManager userManager = userManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
     private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
     private readonly string defaultPermission = configuration["Configuration:General:DefaultValues:DefaultPermission"]!;
@@ -34,7 +34,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             return Results.BadRequest("No email address specified in credentials.");
         }
 
-        var user = await userManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email, cancellationToken);
 
         if (user is not null)
         {
@@ -66,20 +66,18 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             };
 
             var tempPassword = securityManager.GenerateRandomPassword(18);
-            var result = await userManager.CreateAsync(user, tempPassword);
+            var result = await userManager.CreateAsync(user, tempPassword, cancellationToken);
 
             if (!result.Succeeded)
             {
-                return Results.InternalServerError(
-                    $"Cannot create user account due to server error: {result.Errors.First().Description}");
+                return result;
             }
 
-            var assignDefaultRoleResult = await userManager.AddToRoleAsync(user, defaultRole);
+            var assignDefaultRoleResult = await userManager.AddToRoleAsync(user, defaultRole, cancellationToken);
 
             if (!assignDefaultRoleResult.Succeeded)
             {
-                return Results.InternalServerError($"Cannot assign role {defaultRole} to user with email {user.Email}" +
-                                                   $"due to server error: {assignDefaultRoleResult.Errors.First().Description}");
+                return assignDefaultRoleResult;
             }
 
             var issuingPermissionsResult =
