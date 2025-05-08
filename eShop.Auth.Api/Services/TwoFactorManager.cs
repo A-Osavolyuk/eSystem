@@ -31,6 +31,11 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         throw new NotImplementedException();
     }
 
+    public async ValueTask<string> GenerateQrAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async ValueTask<bool> VerifyTokenAsync(UserEntity user, string provider, string token,
         CancellationToken cancellationToken = default)
     {
