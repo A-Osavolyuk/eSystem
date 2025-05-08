@@ -23,7 +23,7 @@ internal sealed class UnlockUserCommandHandler(
 
         if (lockoutStatus.LockoutEnabled)
         {
-            var result = await userManager.UnlockUserAsync(user, cancellationToken);
+            var result = await userManager.DisableLockoutAsync(user, cancellationToken);
 
             if (!result.Succeeded)
             {

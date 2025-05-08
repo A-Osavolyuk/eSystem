@@ -153,11 +153,22 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> SetLockoutEnabledAsync(UserEntity user, bool state,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> EnableLockoutAsync(UserEntity user, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        user.LockoutEnabled = state;
+        user.LockoutEnabled = true;
         user.UpdateDate = DateTime.UtcNow;
+        user.LockoutEnd = endDate;
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> DisableLockoutAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        user.LockoutEnabled = false;
+        user.UpdateDate = DateTime.UtcNow;
+        user.LockoutEnd = null;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -290,17 +301,6 @@ public class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         context.Users.Remove(user);
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> UnlockUserAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        user.LockoutEnabled = false;
-        user.LockoutEnd = null;
-        user.UpdateDate = DateTime.UtcNow;
-        context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();

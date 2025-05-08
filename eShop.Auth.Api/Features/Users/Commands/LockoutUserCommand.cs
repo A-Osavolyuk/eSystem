@@ -21,8 +21,7 @@ internal sealed class LockoutUserCommandHandler(
         if (request.Request.Permanent)
         {
             var lockoutEndDate = DateTime.UtcNow.AddYears(100);
-            await userManager.SetLockoutEnabledAsync(user, true, cancellationToken);
-            await userManager.SetLockoutEndDateAsync(user, lockoutEndDate, cancellationToken);
+            await userManager.EnableLockoutAsync(user, lockoutEndDate, cancellationToken);
 
             return Result.Success(new LockoutUserResponse()
             {
@@ -33,7 +32,7 @@ internal sealed class LockoutUserCommandHandler(
             });
         }
 
-        await userManager.SetLockoutEnabledAsync(user, true, cancellationToken);
+        await userManager.EnableLockoutAsync(user, request.Request.LockoutEnd, cancellationToken);
         await userManager.SetLockoutEndDateAsync(user, request.Request.LockoutEnd, cancellationToken);
 
         return Result.Success(new LockoutUserResponse()
