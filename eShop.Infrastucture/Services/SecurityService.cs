@@ -48,11 +48,11 @@ public class SecurityService(
             Method: HttpMethod.Get));
 
     public async ValueTask<Response>
-        LoginWithTwoFactorAuthenticationAsync(LoginWith2FaRequest with2FaRequest) =>
+        LoginWithTwoFactorAuthenticationAsync(TwoFactorLoginRequest request) =>
         await HttpClientService.SendAsync(new Request(
             Url: $"{Configuration[Key]}/api/v1/Security/2fa-login",
             Method: HttpMethod.Post,
-            Data: with2FaRequest));
+            Data: request));
 
     public async ValueTask<Response> RequestChangeEmailAsync(ChangeEmailRequest request) =>
         await HttpClientService.SendAsync(

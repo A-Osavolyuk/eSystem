@@ -92,7 +92,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 
             var provider = request.Principal.Identity!.AuthenticationType!;
             
-            await messageService.SendMessageAsync("external-provider-registration", new ExternalRegistrationMessage()
+            await messageService.SendMessageAsync("email:external-provider-registration", new ExternalRegistrationMessage()
             {
                 To = email,
                 Subject = $"Account registered with {provider}",

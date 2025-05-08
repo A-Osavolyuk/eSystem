@@ -29,7 +29,7 @@ internal sealed class RequestResetPasswordCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, Verification.Reset, cancellationToken);
 
-        await messageService.SendMessageAsync("password-reset", new ResetPasswordMessage()
+        await messageService.SendMessageAsync("email:password-reset", new ResetPasswordMessage()
         {
             To = request.Request.Email,
             Subject = "Password reset",

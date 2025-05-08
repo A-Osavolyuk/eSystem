@@ -4,7 +4,7 @@ using User = eShop.Domain.Types.User;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record LoginWith2FaCommand(LoginWith2FaRequest Request)
+internal sealed record LoginWith2FaCommand(TwoFactorLoginRequest Request)
     : IRequest<Result>;
 
 internal sealed class LoginWith2FaCommandHandler(

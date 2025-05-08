@@ -30,13 +30,13 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
         var oldPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.Old, cancellationToken);
         var newPhoneNumberCode = await codeManager.GenerateAsync(user, Verification.New, cancellationToken);
 
-        await messageService.SendMessageAsync("change-phone-number", new ChangePhoneNumberMessage()
+        await messageService.SendMessageAsync("sms:change-phone-number", new ChangePhoneNumberMessage()
         {
             Code = oldPhoneNumberCode,
             PhoneNumber = request.Request.NewPhoneNumber
         }, cancellationToken);
 
-        await messageService.SendMessageAsync("verify-phone-number", new ChangePhoneNumberMessage()
+        await messageService.SendMessageAsync("sms:verify-phone-number", new ChangePhoneNumberMessage()
         {
             Code = newPhoneNumberCode,
             PhoneNumber = request.Request.NewPhoneNumber

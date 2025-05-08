@@ -177,10 +177,10 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [AllowAnonymous]
     [HttpPost("2fa-login")]
     public async ValueTask<ActionResult<Response>> LoginWithTwoFactorAuthenticationCode(
-        [FromBody] LoginWith2FaRequest with2FaRequest)
+        [FromBody] TwoFactorLoginRequest request)
     {
         var result =
-            await sender.Send(new LoginWith2FaCommand(with2FaRequest));
+            await sender.Send(new LoginWith2FaCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),

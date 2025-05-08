@@ -54,10 +54,8 @@ public static class HostApplicationBuilderExtensions
                     h.Password(password);
                 });
 
-                cfg.ReceiveEndpoint("verify-phone-number",
-                    e => e.ConfigureConsumer<VerifyPhoneNumberConsumer>(context));
-                cfg.ReceiveEndpoint("change-phone-number",
-                    e => e.ConfigureConsumer<ChangePhoneNumberConsumer>(context));
+                cfg.ReceiveEndpoint("sms:verify-phone-number", e => e.ConfigureConsumer<VerifyPhoneNumberConsumer>(context));
+                cfg.ReceiveEndpoint("sms:change-phone-number", e => e.ConfigureConsumer<ChangePhoneNumberConsumer>(context));
             });
 
             x.AddConsumer<VerifyPhoneNumberConsumer>();

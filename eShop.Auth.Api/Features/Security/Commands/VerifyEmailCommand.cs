@@ -35,7 +35,7 @@ internal sealed class VerifyEmailCommandHandler(
             return confirmResult;
         }
 
-        await messageService.SendMessageAsync("email-verified", new EmailVerifiedMessage()
+        await messageService.SendMessageAsync("email:email-verified", new EmailVerifiedMessage()
         {
             To = request.Request.Email,
             Subject = "Email verified",

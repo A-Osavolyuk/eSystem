@@ -14,9 +14,9 @@ public static class Mapper
         };
     }
     
-    public static LoginWith2FaRequest Map(TwoFactorLoginModel source)
+    public static TwoFactorLoginRequest Map(TwoFactorLoginModel source)
     {
-        return new LoginWith2FaRequest()
+        return new TwoFactorLoginRequest()
         {
             Email = source.Email,
             Token = source.Code

@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Validation;
 
-public class TwoFactorLoginValidator : Validator<LoginWith2FaRequest>
+public class TwoFactorLoginValidator : Validator<TwoFactorLoginRequest>
 {
     public TwoFactorLoginValidator()
     {
