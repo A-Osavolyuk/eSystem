@@ -25,7 +25,7 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return Result.Success();
     }
     
-    public async ValueTask<string> GenerateTokenAsync(UserEntity user, string provider,
+    public async ValueTask<string> GenerateTokenAsync(UserEntity user, Provider provider,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
@@ -36,7 +36,7 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         throw new NotImplementedException();
     }
 
-    public async ValueTask<bool> VerifyTokenAsync(UserEntity user, string provider, string token,
+    public async ValueTask<bool> VerifyTokenAsync(UserEntity user, Provider provider, string token,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();

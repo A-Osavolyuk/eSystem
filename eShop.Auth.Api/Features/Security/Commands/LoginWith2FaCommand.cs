@@ -26,7 +26,7 @@ internal sealed class LoginWith2FaCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var result = await twoFactorManager.VerifyTokenAsync(user, "Email", request.Request.Code, cancellationToken);
+        var result = await twoFactorManager.VerifyTokenAsync(user, Provider.Email, request.Request.Code, cancellationToken);
 
         if (!result)
         {

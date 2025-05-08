@@ -57,7 +57,7 @@ internal sealed class LoginCommandHandler(
 
         if (user.TwoFactorEnabled)
         {
-            var loginCode = await twoFactorManager.GenerateTokenAsync(user, "Email", cancellationToken);
+            var loginCode = await twoFactorManager.GenerateTokenAsync(user, Provider.Email, cancellationToken);
 
             await messageService.SendMessageAsync("2fa-code", new TwoFactorAuthenticationCodeMessage()
             {
