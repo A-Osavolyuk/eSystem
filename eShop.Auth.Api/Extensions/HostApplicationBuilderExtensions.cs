@@ -137,6 +137,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddScoped<IRoleManager, RoleManager>();
         builder.Services.AddScoped<IUserManager, UserManager>();
         builder.Services.AddScoped<ILockoutManager, LockoutManager>();
+        builder.Services.AddScoped<ITwoFactorManager, TwoFactorManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
