@@ -57,20 +57,9 @@ internal sealed class LoginCommandHandler(
 
         if (user.TwoFactorEnabled)
         {
-            var loginCode = await twoFactorManager.GenerateTokenAsync(user, Provider.Email, cancellationToken);
-
-            await messageService.SendMessageAsync("2fa-code", new TwoFactorAuthenticationCodeMessage()
-            {
-                To = user.Email!,
-                Subject = "Login with 2FA code",
-                UserName = user.UserName!,
-                Code = loginCode
-            }, cancellationToken);
-
             return Result.Success(new LoginResponse()
             {
                 User = userDto,
-                Message = "We have sent an email with 2FA code at your email address.",
                 HasTwoFactorAuthentication = true
             });
         }

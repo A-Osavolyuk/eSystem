@@ -26,11 +26,11 @@ internal sealed class LoginWith2FaCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var result = await twoFactorManager.VerifyTokenAsync(user, Provider.Email, request.Request.Code, cancellationToken);
+        var result = await twoFactorManager.VerifyTokenAsync(user, request.Request.Token, cancellationToken);
 
-        if (!result)
+        if (!result.Succeeded)
         {
-            return Results.BadRequest($"Invalid two-factor code {request.Request.Code}.");
+            return Results.BadRequest($"Invalid two-factor token {request.Request.Token}.");
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
