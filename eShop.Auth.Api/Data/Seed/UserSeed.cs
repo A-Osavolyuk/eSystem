@@ -14,7 +14,7 @@ public class UserSeed : Seed<UserEntity, Guid>
                 NormalizedEmail = "sasha.osavolll111@gmail.com".ToUpper(),
                 UserName = "sasha.osavolll111@gmail.com",
                 NormalizedUserName = "sasha.osavolll111@gmail.com".ToUpper(),
-                PasswordHash = "AQAAAAIAAYagAAAAEHeZ7iJce/rkJIBOAFdarWHCG1NUYQ1y67q5EyVGG9ttMlkXR2wxOMAQRsg+HtNtCg==",
+                PasswordHash = "ARAnAAAl1FoQrHhNWGK51c8k0FFv1BuyOTZvNXrRWI7EVVDW5ScOzlWykcg+O8MKwnwzJEs=",
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 TwoFactorEnabled = false,
