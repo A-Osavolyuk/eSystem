@@ -7,9 +7,7 @@ public interface ITwoFactorManager
     public ValueTask<ProviderEntity?> GetProviderAsync(string providerName, CancellationToken cancellationToken = default);
     public ValueTask<Result> EnableAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> DisableAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<string> GenerateTokenAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default);
     public ValueTask<QrCode> GenerateQrCodeAsync(UserEntity user, string secret, CancellationToken cancellationToken = default);
-    public ValueTask<Result> VerifyTokenAsync(UserEntity user, ProviderEntity provider, string token, CancellationToken cancellationToken = default);
     public ValueTask<Result> SubscribeAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default);
     public ValueTask<Result> UnsubscribeAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default);
 }

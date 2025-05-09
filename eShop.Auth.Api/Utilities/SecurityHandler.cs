@@ -4,13 +4,6 @@ namespace eShop.Auth.Api.Utilities;
 
 public static class SecurityHandler
 {
-    public static string GenerateToken()
-    {
-        var randomCode = new Random().Next(0, 999999).ToString();
-        var token = randomCode.PadLeft(6, '0');
-        return token;
-    }
-
     public static QrCode GenerateQrCode(string email, string secret, string issuer)
     {
 
@@ -19,13 +12,5 @@ public static class SecurityHandler
         var qrCode = new QrCode() { Url = url };
         
         return qrCode;
-    }
-
-    public static bool VerifyAuthenticatorToken(string secret, string token)
-    {
-        var secretBytes = Base32Encoding.ToBytes(secret);
-        var totp = new Totp(secretBytes);
-        
-        return totp.VerifyTotp(token, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
     }
 }

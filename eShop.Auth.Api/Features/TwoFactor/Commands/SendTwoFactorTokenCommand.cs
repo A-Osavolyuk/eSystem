@@ -10,10 +10,12 @@ public record SendTwoFactorTokenCommand(SendTwoFactorTokenRequest Request) : IRe
 public class SendTwoFactorTokenCommandHandler(
     IUserManager userManager,
     ITwoFactorManager twoFactorManager,
+    ILoginTokenManager loginTokenManager,
     IMessageService messageService) : IRequestHandler<SendTwoFactorTokenCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
+    private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
 
     public async Task<Result> Handle(SendTwoFactorTokenCommand request, CancellationToken cancellationToken)
     {
@@ -31,7 +33,7 @@ public class SendTwoFactorTokenCommandHandler(
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         }
         
-        var token = await twoFactorManager.GenerateTokenAsync(user, provider, cancellationToken);
+        var token = await loginTokenManager.GenerateAsync(user, provider, cancellationToken);
         var deliveryType = string.Empty;
 
         switch (provider.Name)
