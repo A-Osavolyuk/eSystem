@@ -12,13 +12,13 @@ public class TwoFactorController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
     
-    [EndpointSummary("Get two-factor state")]
-    [EndpointDescription("Get two-factor state")]
+    [EndpointSummary("Get two-factor providers")]
+    [EndpointDescription("Get two-factor providers")]
     [ProducesResponseType(200)]
-    [HttpGet("get-2fa-state/{email}")]
-    public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(string email)
+    [HttpGet("get-providers")]
+    public async ValueTask<ActionResult<Response>> GetTwoFactorProvidersState()
     {
-        var result = await sender.Send(new GetTwoFactorStateQuery(email));
+        var result = await sender.Send(new GetProvidersQuery());
 
         return result.Match(
             s => Ok(new ResponseBuilder()
@@ -28,11 +28,27 @@ public class TwoFactorController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Get two-factor providers")]
-    [EndpointDescription("Get two-factor providers")]
+    [EndpointSummary("Get user two-factor providers")]
+    [EndpointDescription("Get user two-factor providers")]
     [ProducesResponseType(200)]
-    [HttpGet("get-providers/{email}")]
-    public async ValueTask<ActionResult<Response>> GetTwoFactorProvidersState(string email)
+    [HttpGet("get-user-providers/{email}")]
+    public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(string email)
+    {
+        var result = await sender.Send(new GetUserProvidersQuery(email));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Get two-factor state")]
+    [EndpointDescription("Get two-factor state")]
+    [ProducesResponseType(200)]
+    [HttpGet("get-2fa-state/{email}")]
+    public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(string email)
     {
         var result = await sender.Send(new GetTwoFactorStateQuery(email));
 
