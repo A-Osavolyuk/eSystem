@@ -118,4 +118,13 @@ public static class Mapper
             Name = source.Name
         };
     }
+
+    public static ProviderDto Map(ProviderEntity source)
+    {
+        return new ProviderDto()
+        {
+            Id = source.Id,
+            Name = source.Name
+        };
+    } 
 }
