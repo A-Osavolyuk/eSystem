@@ -56,10 +56,12 @@ public static class HostApplicationBuilderExtensions
 
                 cfg.ReceiveEndpoint("sms:verify-phone-number", e => e.ConfigureConsumer<VerifyPhoneNumberConsumer>(context));
                 cfg.ReceiveEndpoint("sms:change-phone-number", e => e.ConfigureConsumer<ChangePhoneNumberConsumer>(context));
+                cfg.ReceiveEndpoint("sms:two-factor-token", e => e.ConfigureConsumer<TwoFactorTokenConsumer>(context));
             });
 
             x.AddConsumer<VerifyPhoneNumberConsumer>();
             x.AddConsumer<ChangePhoneNumberConsumer>();
+            x.AddConsumer<TwoFactorTokenConsumer>();
         });
     }
 }

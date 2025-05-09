@@ -1,4 +1,4 @@
-﻿namespace eShop.EmailSender.Api.Receivers;
+﻿namespace eShop.EmailSender.Api.Consumers;
 
 public class ChangeEmailConsumer(IEmailService emailService)
     : IConsumer<ChangeEmailMessage>

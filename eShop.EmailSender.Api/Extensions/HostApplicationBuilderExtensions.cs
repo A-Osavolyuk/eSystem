@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Extensions;
+using eShop.EmailSender.Api.Consumers;
 using eShop.EmailSender.Api.Services;
 
 namespace eShop.EmailSender.Api.Extensions;
@@ -43,7 +44,7 @@ public static class HostApplicationBuilderExtensions
                 cfg.ReceiveEndpoint("email:email-change", e => e.ConfigureConsumer<ChangeEmailConsumer>(context));
                 cfg.ReceiveEndpoint("email:email-verification", e => e.ConfigureConsumer<VerifyEmailConsumer>(context));
                 cfg.ReceiveEndpoint("email:email-verified", e => e.ConfigureConsumer<EmailVerifiedConsumer>(context));
-                cfg.ReceiveEndpoint("email:two-factor", e => e.ConfigureConsumer<TwoFactorAuthenticationCodeConsumer>(context));
+                cfg.ReceiveEndpoint("email:two-factor-token", e => e.ConfigureConsumer<TwoFactorTokenConsumer>(context));
                 cfg.ReceiveEndpoint("email:external-provider-registration",
                     e => e.ConfigureConsumer<ExternalLoginConsumer>(context));
             });
@@ -52,7 +53,7 @@ public static class HostApplicationBuilderExtensions
             x.AddConsumer<ResetPasswordConsumer>();
             x.AddConsumer<ChangeEmailConsumer>();
             x.AddConsumer<EmailVerifiedConsumer>();
-            x.AddConsumer<TwoFactorAuthenticationCodeConsumer>();
+            x.AddConsumer<TwoFactorTokenConsumer>();
             x.AddConsumer<ExternalLoginConsumer>();
         });
     }

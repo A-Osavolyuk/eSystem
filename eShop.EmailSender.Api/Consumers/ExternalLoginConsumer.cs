@@ -1,4 +1,4 @@
-﻿namespace eShop.EmailSender.Api.Receivers;
+﻿namespace eShop.EmailSender.Api.Consumers;
 
 public class ExternalLoginConsumer(IEmailService emailService) : IConsumer<ExternalRegistrationMessage>
 {

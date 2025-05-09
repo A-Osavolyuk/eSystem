@@ -1,13 +1,13 @@
-﻿namespace eShop.EmailSender.Api.Receivers;
+﻿namespace eShop.EmailSender.Api.Consumers;
 
-public class TwoFactorAuthenticationCodeConsumer(IEmailService emailService)
-    : IConsumer<TwoFactorAuthenticationCodeMessage>
+public class TwoFactorTokenConsumer(IEmailService emailService)
+    : IConsumer<TwoFactorTokenEmailMessage>
 {
     private readonly IEmailService emailService = emailService;
 
-    public async Task Consume(ConsumeContext<TwoFactorAuthenticationCodeMessage> context)
+    public async Task Consume(ConsumeContext<TwoFactorTokenEmailMessage> context)
     {
-        var htmlBody = GetEmailBody(context.Message.To, context.Message.Code);
+        var htmlBody = GetEmailBody(context.Message.To, context.Message.Token);
         var messageOptions = Mapper.Map(context.Message);
         await emailService.SendMessageAsync(htmlBody, messageOptions);
     }
