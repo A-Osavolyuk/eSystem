@@ -70,7 +70,7 @@ public class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var passwordHash = PasswordHandler.HashPassword(newPassword);
+        var passwordHash = PasswordHasher.HashPassword(newPassword);
 
         user.PasswordHash = passwordHash;
         user.UpdateDate = DateTime.UtcNow;
@@ -117,7 +117,7 @@ public class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<Result> CreateAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {
-        var passwordHash = PasswordHandler.HashPassword(password);
+        var passwordHash = PasswordHasher.HashPassword(password);
 
         user.PasswordHash = passwordHash;
         user.NormalizedEmail = user.Email.ToUpper();
@@ -184,7 +184,7 @@ public class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<Result> AddPasswordAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {
-        var passwordHash = PasswordHandler.HashPassword(password);
+        var passwordHash = PasswordHasher.HashPassword(password);
 
         user.PasswordHash = passwordHash;
         user.UpdateDate = DateTime.UtcNow;
@@ -252,19 +252,19 @@ public class UserManager(AuthDbContext context) : IUserManager
 
     public async ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default)
     {
-        var result = PasswordHandler.VerifyPassword(password, user.PasswordHash);
+        var result = PasswordHasher.VerifyPassword(password, user.PasswordHash);
         return await Task.FromResult(result);
     }
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user, string currentPassword, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        if (PasswordHandler.VerifyPassword(currentPassword, user.PasswordHash))
+        if (PasswordHasher.VerifyPassword(currentPassword, user.PasswordHash))
         {
             return Results.BadRequest("Incorrect password");
         }
         
-        var newPasswordHash = PasswordHandler.HashPassword(newPassword);
+        var newPasswordHash = PasswordHasher.HashPassword(newPassword);
         
         user.PasswordHash = newPasswordHash;
         user.UpdateDate = DateTime.UtcNow;
