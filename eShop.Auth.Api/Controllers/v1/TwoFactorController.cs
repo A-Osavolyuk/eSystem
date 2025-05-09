@@ -1,4 +1,6 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Auth.Api.Features.TwoFactor.Commands;
+using eShop.Auth.Api.Features.TwoFactor.Queries;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
 
@@ -16,7 +18,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [HttpGet("get-2fa-state/{email}")]
     public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(string email)
     {
-        var result = await sender.Send(new Get2FaStateQuery(email));
+        var result = await sender.Send(new GetTwoFactorStateQuery(email));
 
         return result.Match(
             s => Ok(new ResponseBuilder()
@@ -32,7 +34,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [HttpGet("get-providers/{email}")]
     public async ValueTask<ActionResult<Response>> GetTwoFactorProvidersState(string email)
     {
-        var result = await sender.Send(new Get2FaStateQuery(email));
+        var result = await sender.Send(new GetTwoFactorStateQuery(email));
 
         return result.Match(
             s => Ok(new ResponseBuilder()

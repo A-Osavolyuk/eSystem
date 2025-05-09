@@ -1,18 +1,18 @@
-﻿namespace eShop.Auth.Api.Features.Security.Queries;
+﻿namespace eShop.Auth.Api.Features.TwoFactor.Queries;
 
-internal sealed record Get2FaStateQuery(string Email)
+internal sealed record GetTwoFactorStateQuery(string Email)
     : IRequest<Result>;
 
 internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
     IUserManager userManager,
     ICacheService cacheService)
-    : IRequestHandler<Get2FaStateQuery, Result>
+    : IRequestHandler<GetTwoFactorStateQuery, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICacheService cacheService = cacheService;
 
     public async Task<Result> Handle(
-        Get2FaStateQuery request, CancellationToken cancellationToken)
+        GetTwoFactorStateQuery request, CancellationToken cancellationToken)
     {
         var key = $"2fa-stata-{request.Email}";
         var state = await cacheService.GetAsync<TwoFactorAuthenticationState>(key);
