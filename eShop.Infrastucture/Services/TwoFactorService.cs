@@ -9,33 +9,33 @@ public class TwoFactorService(
     IConfiguration configuration) : ApiService(configuration, client), ITwoFactorService
 {
     public async ValueTask<Response> GetProvidersAsync() => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/Security/get-providers",
+        new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/get-providers",
             Method: HttpMethod.Get));
 
     public async ValueTask<Response> GetProvidersAsync(string email) => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/Security/get-user-providers/{email}",
+        new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/get-user-providers/{email}",
             Method: HttpMethod.Get));
     
     
     public async ValueTask<Response> GetTwoFactorStateAsync(string email) => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/Security/get-2fa-state/{email}",
+        new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/get-2fa-state/{email}",
             Method: HttpMethod.Get));
     
     public async ValueTask<Response>
         LoginWithTwoFactorAuthenticationAsync(TwoFactorLoginRequest request) =>
         await HttpClientService.SendAsync(new Request(
-            Url: $"{Configuration[Key]}/api/v1/Security/2fa-login",
+            Url: $"{Configuration[Key]}/api/v1/TwoFactor/2fa-login",
             Method: HttpMethod.Post,
             Data: request));
 
     public async ValueTask<Response> SendTwoFactorTokenAsync(SendTwoFactorTokenRequest request) =>
         await HttpClientService.SendAsync(new Request(
-            Url: $"{Configuration[Key]}/api/v1/Security/send-token",
+            Url: $"{Configuration[Key]}/api/v1/TwoFactor/send-token",
             Method: HttpMethod.Post,
             Data: request));
 
     public async ValueTask<Response> ChangeTwoFactorAuthenticationStateAsync(
         ChangeTwoFactorStateRequest request) => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/Security/change-2fa-state",
+        new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/change-2fa-state",
             Method: HttpMethod.Post, Data: request));
 }
