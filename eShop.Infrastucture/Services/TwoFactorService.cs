@@ -17,25 +17,19 @@ public class TwoFactorService(
             Method: HttpMethod.Get));
     
     
-    public async ValueTask<Response> GetTwoFactorStateAsync(string email) => await HttpClientService.SendAsync(
+    public async ValueTask<Response> GetStateAsync(string email) => await HttpClientService.SendAsync(
         new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/get-2fa-state/{email}",
             Method: HttpMethod.Get));
     
-    public async ValueTask<Response>
-        LoginWithTwoFactorAuthenticationAsync(TwoFactorLoginRequest request) =>
-        await HttpClientService.SendAsync(new Request(
-            Url: $"{Configuration[Key]}/api/v1/TwoFactor/2fa-login",
-            Method: HttpMethod.Post,
-            Data: request));
+    public async ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request) => 
+        await HttpClientService.SendAsync(new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/2fa-login", 
+            Method: HttpMethod.Post, Data: request));
 
     public async ValueTask<Response> SendTwoFactorTokenAsync(SendTwoFactorTokenRequest request) =>
-        await HttpClientService.SendAsync(new Request(
-            Url: $"{Configuration[Key]}/api/v1/TwoFactor/send-token",
-            Method: HttpMethod.Post,
-            Data: request));
+        await HttpClientService.SendAsync(new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/send-token",
+            Method: HttpMethod.Post, Data: request));
 
-    public async ValueTask<Response> ChangeTwoFactorAuthenticationStateAsync(
-        ChangeTwoFactorStateRequest request) => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/change-2fa-state",
+    public async ValueTask<Response> ChangeStateAsync(ChangeTwoFactorStateRequest request) => 
+        await HttpClientService.SendAsync(new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/change-2fa-state",
             Method: HttpMethod.Post, Data: request));
 }
