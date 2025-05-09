@@ -13,6 +13,17 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return providers;
     }
 
+    public async ValueTask<List<ProviderEntity>> GetProvidersAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        var providers = await context.UserProvider
+            .Where(x => x.UserId == user.Id)
+            .Include(x => x.Provider)
+            .Select(x => x.Provider)
+            .ToListAsync(cancellationToken);
+        
+        return providers;
+    }
+
     public async ValueTask<ProviderEntity?> GetProviderAsync(string providerName, CancellationToken cancellationToken = default)
     {
         var provider = await context.Providers.FirstOrDefaultAsync(x => x.Name == providerName, cancellationToken);
