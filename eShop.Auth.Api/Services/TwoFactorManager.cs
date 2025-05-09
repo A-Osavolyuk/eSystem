@@ -3,9 +3,12 @@ using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
-public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
+public class TwoFactorManager(
+    AuthDbContext context,
+    ISecretManager secretManager) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
+    private readonly ISecretManager secretManager = secretManager;
     private const int ExpirationMinutes = 30;
 
     public async ValueTask<List<ProviderEntity>> GetProvidersAsync(CancellationToken cancellationToken = default)
@@ -102,7 +105,7 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     {
         if (provider.Name == Providers.Authenticator)
         {
-            var userSecret = await context.UserSecret.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
+            var userSecret = await secretManager.FindAsync(user, cancellationToken);
 
             if (userSecret is null)
             {
@@ -145,18 +148,7 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 
         if (provider.Name == Providers.Authenticator)
         {
-            var secret = SecurityHandler.GenerateSecret();
-
-            var userSecret = new UserSecretEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                UserId = user.Id,
-                Secret = secret,
-                CreateDate = DateTime.UtcNow,
-                UpdateDate = null
-            };
-
-            await context.UserSecret.AddAsync(userSecret, cancellationToken);
+            await secretManager.GenerateAsync(user, cancellationToken);
         }
 
         await context.UserProvider.AddAsync(userProvider, cancellationToken);
@@ -178,8 +170,7 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 
         if (provider.Name == Providers.Authenticator)
         {
-            var userSecret = await context.UserSecret.FirstAsync(x => x.UserId == user.Id, cancellationToken);
-            context.UserSecret.Remove(userSecret);
+            await secretManager.DeleteAsync(user, cancellationToken);
         }
 
         context.UserProvider.Remove(userProvider);
