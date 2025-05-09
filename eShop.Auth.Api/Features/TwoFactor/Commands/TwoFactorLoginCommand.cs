@@ -4,19 +4,19 @@ using User = eShop.Domain.Types.User;
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
-internal sealed record LoginWith2FaCommand(TwoFactorLoginRequest Request)
+internal sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
     : IRequest<Result>;
 
 internal sealed class LoginWith2FaCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<LoginWith2FaCommand, Result>
+    ITwoFactorManager twoFactorManager) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
 
-    public async Task<Result> Handle(LoginWith2FaCommand request,
+    public async Task<Result> Handle(TwoFactorLoginCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);

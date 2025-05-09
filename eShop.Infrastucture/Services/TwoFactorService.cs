@@ -16,7 +16,7 @@ public class TwoFactorService(
             Data: request));
     
     public async ValueTask<Response> ChangeTwoFactorAuthenticationStateAsync(
-        Change2FaStateRequest request) => await HttpClientService.SendAsync(
+        ChangeTwoFactorStateRequest request) => await HttpClientService.SendAsync(
         new Request(Url: $"{Configuration[Key]}/api/v1/Security/change-2fa-state",
             Method: HttpMethod.Post, Data: request));
 

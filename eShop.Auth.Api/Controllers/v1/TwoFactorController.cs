@@ -53,7 +53,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
         [FromBody] TwoFactorLoginRequest request)
     {
         var result =
-            await sender.Send(new LoginWith2FaCommand(request));
+            await sender.Send(new TwoFactorLoginCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
@@ -66,9 +66,9 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize(Policy = "ManageAccountPolicy")]
     [HttpPost("change-2fa-state")]
     public async ValueTask<ActionResult<Response>> ChangeTwoFactorAuthentication(
-        [FromBody] Change2FaStateRequest request)
+        [FromBody] ChangeTwoFactorStateRequest request)
     {
-        var result = await sender.Send(new Change2FaStateCommand(request));
+        var result = await sender.Send(new ChangeTwoFactorStateCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
