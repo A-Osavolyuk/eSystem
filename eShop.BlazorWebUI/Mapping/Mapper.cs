@@ -41,4 +41,13 @@ public static class Mapper
             Code = source.Code
         };
     }
+
+    public static SendTwoFactorTokenRequest Map(SendTwoFactorTokenModel source)
+    {
+        return new SendTwoFactorTokenRequest()
+        {
+            Email = source.Email,
+            Provider = source.Provider
+        };
+    }
 }

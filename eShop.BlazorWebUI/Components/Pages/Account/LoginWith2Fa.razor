@@ -1,5 +1,7 @@
 ﻿@page "/account/login-2fa/{Email}"
 
+@using eShop.Domain.Common.Security
+@using Size = MudBlazor.Size
 @using eShop.Infrastructure.Security
 
 @inherits PageBase
@@ -13,39 +15,118 @@
 <MudGrid Justify="Justify.Center">
     <MudItem xs="4" Style="margin-top: 150px">
         <MudPaper Style="margin-bottom: 10px;" Outlined Class="pa-3">
-            <MudText Align="Align.Center" Typo="Typo.h4">Two-factor verification</MudText>
+            <MudText Align="Align.Center" Typo="Typo.h4">Two-factor authentication</MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm Model="Model">
-                <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1" Style="width: 50ch; margin: auto">
-                    Your account has enabled 2-FA (Two-factor authentication).
-                    To verify a log in attempt, please enter the 6-digit code from the letter we
-                    sent you to: <strong>@Email</strong>
-                </MudText>
-                <MudGrid Justify="Justify.Center" Spacing="1">
-                    <MudItem xs="7">
-                        <br>
-                        <MudCodeInput
-                            Count="6"
-                            Margin="Margin.Normal"
-                            @bind-Value="Model.Code"
-                            Variant="Variant.Outlined"/>
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudLoadingButton
-                            ButtonType="ButtonType.Button"
-                            Disabled="Model.Code.Length <= 5"
-                            StartIcon="@Icons.Material.Filled.Login"
-                            OnClick="async () => await OnVerifySubmit()"
-                            Variant="Variant.Filled" 
-                            Color="Color.Primary" 
-                            FullWidth>
-                            Verify
-                        </MudLoadingButton>
-                    </MudItem>
-
-                </MudGrid>
-            </MudForm>
+            <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                                HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                                ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Info" Title="Send code">
+                    <ChildContent>
+                        <MudForm Model="SendTwoFactorTokenModel">
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudSelect
+                                        Variant="Variant.Outlined"
+                                        Label="Providers"
+                                        @bind-Value="SendTwoFactorTokenModel.Provider"
+                                        For="() => SendTwoFactorTokenModel.Provider"
+                                        Immediate="true"
+                                        Clearable="true"
+                                        Required="true"
+                                        RequiredError="Select a provider">
+                                        @foreach (var provider in providers)
+                                        {
+                                            <MudSelectItem Value="@provider.Name">@provider.Name</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudLoadingButton
+                                        ButtonType="ButtonType.Button"
+                                        StartIcon="@Icons.Material.Filled.NavigateNext"
+                                        OnClick="async () => await OnSendTokenAsync()"
+                                        Variant="Variant.Filled"
+                                        Color="Color.Primary"
+                                        FullWidth>
+                                        Send
+                                    </MudLoadingButton>
+                                </MudItem>
+                            </MudGrid>
+                        </MudForm>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Code verification" Order="2">
+                    <ChildContent>
+                        <MudForm Model="TwoFactorLoginModel">
+                            @switch (SendTwoFactorTokenModel.Provider)
+                            {
+                                case Providers.Email:
+                                {
+                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1" Style="width: 50ch; margin: auto">
+                                        Your account has enabled 2-FA (Two-factor authentication).
+                                        To verify a log in attempt, please enter the 6-digit code from the letter we
+                                        sent you to your email address
+                                    </MudText>
+                                    break;
+                                }
+                                case Providers.Sms:
+                                {
+                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1" Style="width: 50ch; margin: auto">
+                                        Your account has enabled 2-FA (Two-factor authentication).
+                                        To verify a log in attempt, please enter the 6-digit code from the SMS we
+                                        sent you to your phone number
+                                    </MudText>
+                                    break;
+                                }
+                                case Providers.Authenticator:
+                                {
+                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1" Style="width: 50ch; margin: auto">
+                                        Your account has enabled 2-FA (Two-factor authentication).
+                                        To verify a log in attempt, please enter the 6-digit code from the authentication app
+                                        (like Microsoft Authentication, Google Authenticator, etc.)
+                                    </MudText>
+                                    break;
+                                }
+                            }
+                            <MudGrid Justify="Justify.Center" Spacing="1">
+                                <MudItem xs="7">
+                                    <br>
+                                    <MudCodeInput
+                                        Count="6"
+                                        Margin="Margin.Normal"
+                                        @bind-Value="TwoFactorLoginModel.Code"
+                                        Variant="Variant.Outlined"/>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudLoadingButton
+                                        ButtonType="ButtonType.Button"
+                                        Disabled="TwoFactorLoginModel.Code.Length <= 5"
+                                        StartIcon="@Icons.Material.Filled.Login"
+                                        OnClick="async () => await OnVerifyTokenAsync()"
+                                        Variant="Variant.Filled"
+                                        Color="Color.Primary"
+                                        FullWidth>
+                                        Verify
+                                    </MudLoadingButton>
+                                </MudItem>
+                            </MudGrid>
+                        </MudForm>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Result Step" IsResultStep="true">
+                    <ChildContent>
+                        <div class="d-flex flex-column align-center justify-center" style="height: 200px">
+                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
+                                           Variant="Variant.Filled" Color="Color.Success"/>
+                            <MudText Style="width: 55ch; margin: auto">
+                                You successfully logged in with two-factor authentication.
+                                You will be automatically redirected to main page in 5 seconds
+                            </MudText>
+                        </div>
+                    </ChildContent>
+                </MudStepExtended>
+            </MudStepperExtended>
         </MudPaper>
         <MudPaper Outlined Class="pa-3" Style="margin-top: 10px">
             <MudText Align="Align.Center">More about 2-fa you can read
@@ -56,24 +137,78 @@
 </MudGrid>
 
 @code {
+    [SupplyParameterFromForm] private SendTwoFactorTokenModel SendTwoFactorTokenModel { get; set; } = new();
+    [SupplyParameterFromForm] private TwoFactorLoginModel TwoFactorLoginModel { get; set; } = new();
     [Parameter] public string Email { get; set; } = string.Empty;
-    [SupplyParameterFromForm] private TwoFactorLoginModel Model { get; set; } = new();
 
-    private async Task OnVerifySubmit()
+    private MudStepperExtended stepper = new();
+    private List<ProviderDto> providers = [];
+
+    protected override async Task OnInitializedAsync()
     {
-        var request = Mapper.Map(Model);
-        request.Email = Email;
+        await LoadProvidersAsync();
+
+        SendTwoFactorTokenModel.Email = Email;
+        TwoFactorLoginModel.Email = Email;
+    }
+
+    private async Task LoadProvidersAsync()
+    {
+        var result = await TwoFactorService.GetProvidersAsync(Email);
+
+        if (result.Success)
+        {
+            providers = result.Get<List<ProviderDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnSendTokenAsync()
+    {
+        if (SendTwoFactorTokenModel.Provider == Providers.Authenticator)
+        {
+            await StepNextAsync();
+        }
+        else
+        {
+            var request = Mapper.Map(SendTwoFactorTokenModel);
+            var result = await TwoFactorService.SendTwoFactorTokenAsync(request);
+
+            if (result.Success)
+            {
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task OnVerifyTokenAsync()
+    {
+        var request = Mapper.Map(TwoFactorLoginModel);
         var result = await TwoFactorService.LoginWithTwoFactorAuthenticationAsync(request);
 
         if (result.Success)
         {
             var response = result.Get<LoginResponse>()!;
+            await Task.Delay(TimeSpan.FromMicroseconds(5));
             await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(response!.AccessToken, response.RefreshToken);
             NavigationManager.NavigateTo("/products");
             Snackbar.Add(result.Message, Severity.Success);
         }
         else
             Snackbar.Add(result.Message, Severity.Error);
+    }
+    
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
     }
 
 }
