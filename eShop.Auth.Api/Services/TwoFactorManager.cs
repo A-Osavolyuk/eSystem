@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Common.Security;
+using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
@@ -53,9 +54,12 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     
     public async ValueTask<QrCode> GenerateQrCodeAsync(UserEntity user, string secret, CancellationToken cancellationToken = default)
     {
-        var url = UrlGenerator.Totp("eShop", user.Email, secret);
-        var qr = new QrCode() { Url = url };
-        return await Task.FromResult(qr);
+        const string issuer = "eShop";
+        var otpUri = new OtpUri(OtpType.Totp, secret, user.Email, issuer);
+        var url = otpUri.ToString();
+        var qrCode = new QrCode() { Url = url };
+        
+        return await Task.FromResult(qrCode);
     }
 
     public async ValueTask<string> GenerateTokenAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default)

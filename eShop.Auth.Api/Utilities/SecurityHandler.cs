@@ -6,12 +6,10 @@ public static class SecurityHandler
 {
     public static string GenerateSecret()
     {
-        var randomGuid = Guid.NewGuid();
-        var bytes = randomGuid.ToByteArray();
-        var totp = new Totp(bytes);
-        var secret = totp.ComputeTotp();
+        var secretKey = KeyGeneration.GenerateRandomKey(20);
+        var base32Secret = Base32Encoding.ToString(secretKey);
 
-        return secret;
+        return base32Secret;
     }
 }
 

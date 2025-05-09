@@ -10,7 +10,7 @@ public static class UrlGenerator
 
         var props = values.GetType().GetProperties();
 
-        for (int i = 0; i < props.Length; i++)
+        for (var i = 0; i < props.Length; i++)
         {
             if (i == props.Length - 1)
                 query.Append($"{props[i].Name}={props[i].GetValue(values)}");
@@ -29,7 +29,7 @@ public static class UrlGenerator
 
         var props = values.GetType().GetProperties();
 
-        for (int i = 0; i < props.Length; i++)
+        for (var i = 0; i < props.Length; i++)
         {
             if (i == props.Length - 1)
                 query.Append($"{props[i].Name}={props[i].GetValue(values)}");
