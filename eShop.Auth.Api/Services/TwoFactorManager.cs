@@ -84,9 +84,23 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return token;
     }
 
-    public async ValueTask<Result> VerifyTokenAsync(UserEntity user, string token,
+    public async ValueTask<Result> VerifyTokenAsync(UserEntity user, ProviderEntity provider, string token, 
         CancellationToken cancellationToken = default)
     {
+        if (provider.Name == Providers.Authenticator)
+        {
+            var userSecret = await context.UserSecret.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
+
+            if (userSecret is null)
+            {
+                return Results.NotFound("Not found user secret");
+            }
+
+            var isTokenValid = SecurityHandler.ValidateAuthenticatorToken(userSecret.Secret, token);
+
+            return !isTokenValid ? Results.BadRequest("Invalid token") : Result.Success();
+        }
+        
         var entity = await context.LoginTokens
             .FirstOrDefaultAsync(x => x.UserId == user.Id && x.Token == token, cancellationToken);
 

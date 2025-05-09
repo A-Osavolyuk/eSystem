@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Common.Security;
+using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 using User = eShop.Domain.Types.User;
 
@@ -26,7 +27,15 @@ internal sealed class LoginWith2FaCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var result = await twoFactorManager.VerifyTokenAsync(user, request.Request.Token, cancellationToken);
+        var provider = await twoFactorManager.GetProviderAsync(request.Request.Provider, cancellationToken);
+
+        if (provider is null)
+        {
+            return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
+        }
+
+        var token = request.Request.Token;
+        var result = await twoFactorManager.VerifyTokenAsync(user, provider, token, cancellationToken);
 
         if (!result.Succeeded)
         {
@@ -38,13 +47,13 @@ internal sealed class LoginWith2FaCommandHandler(
 
         if (securityToken is not null)
         {
-            var token = await tokenManager.RefreshAsync(user, securityToken, cancellationToken);
+            var accessToken = await tokenManager.RefreshAsync(user, securityToken, cancellationToken);
 
             return Result.Success(new LoginResponse()
             {
                 User = userDto,
-                RefreshToken = token.RefreshToken,
-                AccessToken = token.AccessToken,
+                RefreshToken = accessToken.RefreshToken,
+                AccessToken = accessToken.AccessToken,
                 Message = "Successfully logged in.",
                 HasTwoFactorAuthentication = false
             });

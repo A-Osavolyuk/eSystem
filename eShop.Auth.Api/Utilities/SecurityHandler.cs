@@ -11,5 +11,12 @@ public static class SecurityHandler
 
         return base32Secret;
     }
-}
 
+    public static bool ValidateAuthenticatorToken(string secret, string token)
+    {
+        var secretBytes = Base32Encoding.ToBytes(secret);
+        var totp = new Totp(secretBytes);
+        
+        return totp.VerifyTotp(token, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
+    }
+}
