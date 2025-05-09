@@ -18,11 +18,11 @@ public class TwoFactorService(
     
     
     public async ValueTask<Response> GetStateAsync(string email) => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/get-2fa-state/{email}",
+        new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/get-state/{email}",
             Method: HttpMethod.Get));
     
     public async ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request) => 
-        await HttpClientService.SendAsync(new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/2fa-login", 
+        await HttpClientService.SendAsync(new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/login", 
             Method: HttpMethod.Post, Data: request));
 
     public async ValueTask<Response> SendTwoFactorTokenAsync(SendTwoFactorTokenRequest request) =>
@@ -30,6 +30,6 @@ public class TwoFactorService(
             Method: HttpMethod.Post, Data: request));
 
     public async ValueTask<Response> ChangeStateAsync(ChangeTwoFactorStateRequest request) => 
-        await HttpClientService.SendAsync(new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/change-2fa-state",
+        await HttpClientService.SendAsync(new Request(Url: $"{Configuration[Key]}/api/v1/TwoFactor/change-state",
             Method: HttpMethod.Post, Data: request));
 }
