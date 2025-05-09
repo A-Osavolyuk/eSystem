@@ -14,18 +14,20 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return providers;
     }
 
-    public async ValueTask<List<ProviderEntity>> GetProvidersAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<List<ProviderEntity>> GetProvidersAsync(UserEntity user,
+        CancellationToken cancellationToken = default)
     {
         var providers = await context.UserProvider
             .Where(x => x.UserId == user.Id)
             .Include(x => x.Provider)
             .Select(x => x.Provider)
             .ToListAsync(cancellationToken);
-        
+
         return providers;
     }
 
-    public async ValueTask<ProviderEntity?> GetProviderAsync(string providerName, CancellationToken cancellationToken = default)
+    public async ValueTask<ProviderEntity?> GetProviderAsync(string providerName,
+        CancellationToken cancellationToken = default)
     {
         var provider = await context.Providers.FirstOrDefaultAsync(x => x.Name == providerName, cancellationToken);
         return provider;
@@ -51,30 +53,32 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 
         return Result.Success();
     }
-    
-    public async ValueTask<QrCode> GenerateQrCodeAsync(UserEntity user, string secret, CancellationToken cancellationToken = default)
+
+    public async ValueTask<QrCode> GenerateQrCodeAsync(UserEntity user, string secret,
+        CancellationToken cancellationToken = default)
     {
         const string issuer = "eShop";
-        var otpUri = new OtpUri(OtpType.Totp, secret, user.Email, issuer);
-        var url = otpUri.ToString();
-        var qrCode = new QrCode() { Url = url };
-        
+        var qrCode = SecurityHandler.GenerateQrCode(user.Email, secret, issuer);
+
         return await Task.FromResult(qrCode);
     }
 
-    public async ValueTask<string> GenerateTokenAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default)
+    public async ValueTask<string> GenerateTokenAsync(UserEntity user, ProviderEntity provider,
+        CancellationToken cancellationToken = default)
     {
-        var existingToken = await context.LoginTokens
-            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
-            .FirstOrDefaultAsync(cancellationToken);
+        var existingToken = await FindAsync(user, provider, cancellationToken);
 
         if (existingToken is not null)
         {
-            return existingToken.Token;
+            if (existingToken.ExpireDate < DateTime.UtcNow)
+            {
+                return existingToken.Token;
+            }
+
+            await DeleteAsync(existingToken, cancellationToken);
         }
-        
-        var randomCode = new Random().Next(0, 999999).ToString();
-        var token = randomCode.PadLeft(6, '0');
+
+        var token = SecurityHandler.GenerateToken();
 
         var entity = new LoginTokenEntity()
         {
@@ -93,7 +97,7 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return token;
     }
 
-    public async ValueTask<Result> VerifyTokenAsync(UserEntity user, ProviderEntity provider, string token, 
+    public async ValueTask<Result> VerifyTokenAsync(UserEntity user, ProviderEntity provider, string token,
         CancellationToken cancellationToken = default)
     {
         if (provider.Name == Providers.Authenticator)
@@ -105,11 +109,11 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
                 return Results.NotFound("Not found user secret");
             }
 
-            var isTokenValid = SecurityHandler.ValidateAuthenticatorToken(userSecret.Secret, token);
+            var isTokenVerified = SecurityHandler.VerifyAuthenticatorToken(userSecret.Secret, token);
 
-            return !isTokenValid ? Results.BadRequest("Invalid token") : Result.Success();
+            return !isTokenVerified ? Results.BadRequest("Invalid token") : Result.Success();
         }
-        
+
         var entity = await context.LoginTokens
             .FirstOrDefaultAsync(x => x.UserId == user.Id && x.Token == token, cancellationToken);
 
@@ -117,19 +121,19 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         {
             return Results.NotFound("Not found token");
         }
-        
-        if(entity.ExpireDate < DateTime.UtcNow)
+
+        if (entity.ExpireDate < DateTime.UtcNow)
         {
             return Results.BadRequest("Token expired");
         }
-        
-        context.LoginTokens.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
-        
+
+        await DeleteAsync(entity, cancellationToken);
+
         return Result.Success();
     }
 
-    public async ValueTask<Result> SubscribeAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> SubscribeAsync(UserEntity user, ProviderEntity provider,
+        CancellationToken cancellationToken = default)
     {
         var userProvider = new UserProviderEntity()
         {
@@ -151,13 +155,13 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
                 CreateDate = DateTime.UtcNow,
                 UpdateDate = null
             };
-            
+
             await context.UserSecret.AddAsync(userSecret, cancellationToken);
         }
-        
+
         await context.UserProvider.AddAsync(userProvider, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
@@ -177,10 +181,26 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
             var userSecret = await context.UserSecret.FirstAsync(x => x.UserId == user.Id, cancellationToken);
             context.UserSecret.Remove(userSecret);
         }
-        
+
         context.UserProvider.Remove(userProvider);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
+    }
+
+    private async ValueTask<LoginTokenEntity?> FindAsync(UserEntity user, ProviderEntity provider,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await context.LoginTokens
+            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return entity;
+    }
+
+    private async ValueTask DeleteAsync(LoginTokenEntity entity, CancellationToken cancellationToken = default)
+    {
+        context.LoginTokens.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }
