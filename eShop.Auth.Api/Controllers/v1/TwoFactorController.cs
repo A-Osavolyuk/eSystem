@@ -89,6 +89,20 @@ public class TwoFactorController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Send two-factor token")]
+    [EndpointDescription("Send two-factor token")]
+    [ProducesResponseType(200)]
+    [HttpPost("send-token")]
+    public async ValueTask<ActionResult<Response>> SendTokenAsync(
+        [FromBody] SendTwoFactorTokenRequest request)
+    {
+        var result = await sender.Send(new SendTwoFactorTokenCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Subscribe provider")]
     [EndpointDescription("Subscribe provider")]
     [ProducesResponseType(200)]
