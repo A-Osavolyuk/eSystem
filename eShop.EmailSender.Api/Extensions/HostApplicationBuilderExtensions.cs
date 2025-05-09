@@ -48,9 +48,9 @@ public static class HostApplicationBuilderExtensions
                     e => e.ConfigureConsumer<ExternalLoginConsumer>(context));
             });
 
+            x.AddConsumer<VerifyEmailConsumer>();
             x.AddConsumer<ResetPasswordConsumer>();
             x.AddConsumer<ChangeEmailConsumer>();
-            x.AddConsumer<VerifyEmailConsumer>();
             x.AddConsumer<EmailVerifiedConsumer>();
             x.AddConsumer<TwoFactorAuthenticationCodeConsumer>();
             x.AddConsumer<ExternalLoginConsumer>();

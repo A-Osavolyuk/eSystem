@@ -10,13 +10,11 @@ internal sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest
 internal sealed class VerifyEmailCommandHandler(
     ISecurityManager securityManager,
     IUserManager userManager,
-    IMessageService messageService,
-    CartClient client) : IRequestHandler<VerifyEmailCommand, Result>
+    IMessageService messageService) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly ISecurityManager securityManager = securityManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
-    private readonly CartClient client = client;
 
     public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken)
@@ -41,13 +39,6 @@ internal sealed class VerifyEmailCommandHandler(
             Subject = "Email verified",
             UserName = user.UserName!
         }, cancellationToken);
-
-        var response = await client.InitiateUserAsync(new InitiateUserRequest() { UserId = user.Id.ToString() });
-
-        if (!response.IsSucceeded)
-        {
-            return Results.InternalServerError(response.Message);
-        }
 
         return Result.Success("Your email address was successfully confirmed.");
     }
