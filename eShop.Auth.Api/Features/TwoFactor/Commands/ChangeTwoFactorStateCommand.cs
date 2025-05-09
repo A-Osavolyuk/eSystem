@@ -24,19 +24,25 @@ internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var result = await twoFactorManager.EnableAsync(user, cancellationToken);
-
-        if (!result.Succeeded)
+        if (user.TwoFactorEnabled)
         {
-            return result;
+            await twoFactorManager.DisableAsync(user, cancellationToken);
+            
+            return Result.Success(new ChangeTwoFactorStateResponse()
+            {
+                Message = $"Two factor authentication was successfully disabled.",
+                TwoFactorAuthenticationState = false
+            });
         }
-
-        var state = user.TwoFactorEnabled ? "disabled" : "enabled";
-
-        return Result.Success(new ChangeTwoFactorStateResponse()
+        else
         {
-            Message = $"Two factor authentication was successfully {state}.",
-            TwoFactorAuthenticationState = user.TwoFactorEnabled,
-        });
+            await twoFactorManager.EnableAsync(user, cancellationToken);
+            
+            return Result.Success(new ChangeTwoFactorStateResponse()
+            {
+                Message = $"Two factor authentication was successfully enabled.",
+                TwoFactorAuthenticationState = true,
+            });
+        }
     }
 }
