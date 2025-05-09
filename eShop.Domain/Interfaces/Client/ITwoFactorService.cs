@@ -7,8 +7,8 @@ public interface ITwoFactorService
 {
     public ValueTask<Response> GetProvidersAsync();
     public ValueTask<Response> GetProvidersAsync(string email);
-    public ValueTask<Response> GetTwoFactorStateAsync(string email);
-    public ValueTask<Response> ChangeTwoFactorAuthenticationStateAsync(ChangeTwoFactorStateRequest request);
-    public ValueTask<Response> LoginWithTwoFactorAuthenticationAsync(TwoFactorLoginRequest request);
+    public ValueTask<Response> GetStateAsync(string email);
+    public ValueTask<Response> ChangeStateAsync(ChangeTwoFactorStateRequest request);
+    public ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request);
     public ValueTask<Response> SendTwoFactorTokenAsync(SendTwoFactorTokenRequest request);
 }

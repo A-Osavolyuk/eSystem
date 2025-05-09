@@ -198,7 +198,7 @@
 
         request.Provider = SendTwoFactorTokenModel.Provider;
         
-        var result = await TwoFactorService.LoginWithTwoFactorAuthenticationAsync(request);
+        var result = await TwoFactorService.TwoFactorLoginAsync(request);
 
         if (result.Success)
         {
