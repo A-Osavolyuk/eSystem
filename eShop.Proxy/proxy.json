@@ -20,6 +20,12 @@
           "Path": "api/v1/Profile/{**catch-all}"
         }
       },
+      "two-factor-route": {
+        "ClusterID": "security-cluster",
+        "Match": {
+          "Path": "api/v1/TwoFactor/{**catch-all}"
+        }
+      },
       "cart-route": {
         "ClusterID": "cart-cluster",
         "Match": {
