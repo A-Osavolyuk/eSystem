@@ -47,7 +47,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Get two-factor state")]
     [EndpointDescription("Get two-factor state")]
     [ProducesResponseType(200)]
-    [HttpGet("get-2fa-state/{email}")]
+    [HttpGet("get-state/{email}")]
     public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(string email)
     {
         var result = await sender.Send(new GetTwoFactorStateQuery(email));
@@ -63,7 +63,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Login two-factor")]
     [EndpointDescription("Login with two-factor")]
     [ProducesResponseType(200)]
-    [HttpPost("2fa-login")]
+    [HttpPost("login")]
     public async ValueTask<ActionResult<Response>> LoginWithTwoFactorAuthenticationCode(
         [FromBody] TwoFactorLoginRequest request)
     {
@@ -78,7 +78,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Change two-factor state")]
     [EndpointDescription("Changes two-factor state")]
     [ProducesResponseType(200)]
-    [HttpPost("change-2fa-state")]
+    [HttpPost("change-state")]
     public async ValueTask<ActionResult<Response>> ChangeTwoFactorAuthentication(
         [FromBody] ChangeTwoFactorStateRequest request)
     {
