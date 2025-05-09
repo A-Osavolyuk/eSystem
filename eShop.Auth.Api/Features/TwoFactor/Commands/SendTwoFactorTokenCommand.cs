@@ -1,8 +1,6 @@
-﻿using eShop.Domain.Common.Security;
-using eShop.Domain.Messages.Email;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
 public record SendTwoFactorTokenCommand(SendTwoFactorTokenRequest Request) : IRequest<Result>;
 
