@@ -26,7 +26,7 @@ public class SendTwoFactorTokenCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var provider = await twoFactorManager.GetProviderAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorManager.FindProviderAsync(request.Request.Provider, cancellationToken);
 
         if (provider is null)
         {

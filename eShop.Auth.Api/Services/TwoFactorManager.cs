@@ -29,7 +29,7 @@ public class TwoFactorManager(
         return providers;
     }
 
-    public async ValueTask<ProviderEntity?> GetProviderAsync(string providerName,
+    public async ValueTask<ProviderEntity?> FindProviderAsync(string providerName,
         CancellationToken cancellationToken = default)
     {
         var provider = await context.Providers.FirstOrDefaultAsync(x => x.Name == providerName, cancellationToken);
