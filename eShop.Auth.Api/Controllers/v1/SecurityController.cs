@@ -15,23 +15,6 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
 
     #region Get methods
 
-    [EndpointSummary("Get 2FA state")]
-    [EndpointDescription("Get 2FA state")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
-    [HttpGet("get-2fa-state/{email}")]
-    public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(string email)
-    {
-        var result = await sender.Send(new Get2FaStateQuery(email));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder()
-                .Succeeded()
-                .WithResult(s.Value!)
-                .Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("External login")]
     [EndpointDescription("External login")]
     [ProducesResponseType(200)]
@@ -153,37 +136,6 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Change 2FA state")]
-    [EndpointDescription("Changes 2FA state")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
-    [HttpPost("change-2fa-state")]
-    public async ValueTask<ActionResult<Response>> ChangeTwoFactorAuthentication(
-        [FromBody] Change2FaStateRequest request)
-    {
-        var result = await sender.Send(new Change2FaStateCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Login 2FA")]
-    [EndpointDescription("Login with 2FA")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpPost("2fa-login")]
-    public async ValueTask<ActionResult<Response>> LoginWithTwoFactorAuthenticationCode(
-        [FromBody] TwoFactorLoginRequest request)
-    {
-        var result =
-            await sender.Send(new LoginWith2FaCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 
