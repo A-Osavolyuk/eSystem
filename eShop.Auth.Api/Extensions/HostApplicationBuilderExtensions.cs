@@ -152,6 +152,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddScoped<ISignInManager, SignInManager>();
         builder.Services.AddScoped<ISecretManager, SecretManager>();
         builder.Services.AddScoped<ILoginTokenManager, LoginTokenManager>();
+        builder.Services.AddScoped<IProviderManager, ProviderManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 

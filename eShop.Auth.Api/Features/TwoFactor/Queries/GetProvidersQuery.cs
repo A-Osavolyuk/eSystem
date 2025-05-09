@@ -2,13 +2,13 @@
 
 public record GetProvidersQuery() : IRequest<Result>;
 
-public class GetProvidersQueryHandler(
-    ITwoFactorManager twoFactorManager) : IRequestHandler<GetProvidersQuery, Result>
+public class GetProvidersQueryHandler(IProviderManager providerManager) : IRequestHandler<GetProvidersQuery, Result>
 {
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
+    private readonly IProviderManager providerManager = providerManager;
+
     public async Task<Result> Handle(GetProvidersQuery request, CancellationToken cancellationToken)
     {
-        var providers = await twoFactorManager.GetProvidersAsync(cancellationToken);
+        var providers = await providerManager.GetProvidersAsync(cancellationToken);
         var result = providers.Select(Mapper.Map).ToList();
         return Result.Success(result);
     }

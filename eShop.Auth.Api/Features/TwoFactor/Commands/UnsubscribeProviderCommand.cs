@@ -6,11 +6,11 @@ public record UnsubscribeProviderCommand(UnsubscribeProviderRequest Request) : I
 
 public class UnsubscribeProviderCommandHandler(
     IUserManager userManager,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<UnsubscribeProviderCommand, Result>
+    IProviderManager providerManager) : IRequestHandler<UnsubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
-    
+    private readonly IProviderManager providerManager = providerManager;
+
     public async Task<Result> Handle(UnsubscribeProviderCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
@@ -20,14 +20,14 @@ public class UnsubscribeProviderCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
         
-        var provider = await twoFactorManager.FindProviderAsync(request.Request.Provider, cancellationToken);
+        var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);
         
         if (provider is null)
         {
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         }
         
-        var result = await twoFactorManager.UnsubscribeAsync(user, provider, cancellationToken);
+        var result = await providerManager.UnsubscribeAsync(user, provider, cancellationToken);
         return result;
     }
 }

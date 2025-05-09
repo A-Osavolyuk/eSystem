@@ -9,13 +9,14 @@ public record SendTwoFactorTokenCommand(SendTwoFactorTokenRequest Request) : IRe
 
 public class SendTwoFactorTokenCommandHandler(
     IUserManager userManager,
-    ITwoFactorManager twoFactorManager,
     ILoginTokenManager loginTokenManager,
+    IProviderManager providerManager,
     IMessageService messageService) : IRequestHandler<SendTwoFactorTokenCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
+    private readonly IMessageService messageService = messageService;
+    private readonly IProviderManager providerManager = providerManager;
 
     public async Task<Result> Handle(SendTwoFactorTokenCommand request, CancellationToken cancellationToken)
     {
@@ -26,7 +27,7 @@ public class SendTwoFactorTokenCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var provider = await twoFactorManager.FindProviderAsync(request.Request.Provider, cancellationToken);
+        var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);
 
         if (provider is null)
         {

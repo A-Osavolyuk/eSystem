@@ -6,10 +6,10 @@ public record SubscribeProviderCommand(SubscribeProviderRequest Request) : IRequ
 
 public class SubscribeProviderCommandHandler(
     IUserManager userManager,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<SubscribeProviderCommand, Result>
+    IProviderManager providerManager) : IRequestHandler<SubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
+    private readonly IProviderManager providerManager = providerManager;
 
     public async Task<Result> Handle(SubscribeProviderCommand request, CancellationToken cancellationToken)
     {
@@ -20,14 +20,14 @@ public class SubscribeProviderCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
         
-        var provider = await twoFactorManager.FindProviderAsync(request.Request.Provider, cancellationToken);
+        var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);
 
         if (provider is null)
         {
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         }
         
-        var result = await twoFactorManager.SubscribeAsync(user, provider, cancellationToken);
+        var result = await providerManager.SubscribeAsync(user, provider, cancellationToken);
 
         return result;
     }

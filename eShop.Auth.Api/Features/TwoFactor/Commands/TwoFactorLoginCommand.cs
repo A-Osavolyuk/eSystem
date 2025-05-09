@@ -12,12 +12,12 @@ internal sealed class LoginWith2FaCommandHandler(
     ISecurityTokenManager securityTokenManager,
     IUserManager userManager,
     ILoginTokenManager loginTokenManager,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<TwoFactorLoginCommand, Result>
+    IProviderManager providerManager) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
     private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
+    private readonly IProviderManager providerManager = providerManager;
 
     public async Task<Result> Handle(TwoFactorLoginCommand request,
         CancellationToken cancellationToken)
@@ -29,7 +29,7 @@ internal sealed class LoginWith2FaCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var provider = await twoFactorManager.FindProviderAsync(request.Request.Provider, cancellationToken);
+        var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);
 
         if (provider is null)
         {
