@@ -1,12 +1,11 @@
 ﻿@page "/account/login-2fa/{Email}"
 
-@using eShop.Domain.Requests.API.Auth
 @using eShop.Infrastructure.Security
-@using eShop.Domain.Responses.API.Auth
 
 @inherits PageBase
 
 @inject ISecurityService SecurityService
+@inject ITwoFactorService TwoFactorService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Title Text="Login with 2FA"/>
@@ -64,7 +63,7 @@
     {
         var request = Mapper.Map(Model);
         request.Email = Email;
-        var result = await SecurityService.LoginWithTwoFactorAuthenticationAsync(request);
+        var result = await TwoFactorService.LoginWithTwoFactorAuthenticationAsync(request);
 
         if (result.Success)
         {

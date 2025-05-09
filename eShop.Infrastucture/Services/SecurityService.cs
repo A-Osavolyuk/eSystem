@@ -47,13 +47,6 @@ public class SecurityService(
         new Request(Url: $"{Configuration[Key]}/api/v1/Security/get-external-providers",
             Method: HttpMethod.Get));
 
-    public async ValueTask<Response>
-        LoginWithTwoFactorAuthenticationAsync(TwoFactorLoginRequest request) =>
-        await HttpClientService.SendAsync(new Request(
-            Url: $"{Configuration[Key]}/api/v1/Security/2fa-login",
-            Method: HttpMethod.Post,
-            Data: request));
-
     public async ValueTask<Response> RequestChangeEmailAsync(ChangeEmailRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
@@ -70,15 +63,6 @@ public class SecurityService(
         await HttpClientService.SendAsync(
             new Request(Url: $"{Configuration[Key]}/api/v1/Security/change-password",
                 Method: HttpMethod.Put, Data: request));
-
-    public async ValueTask<Response> ChangeTwoFactorAuthenticationStateAsync(
-        Change2FaStateRequest request) => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/Security/change-2fa-state",
-            Method: HttpMethod.Post, Data: request));
-
-    public async ValueTask<Response> GetTwoFactorStateAsync(string email) => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/Security/get-2fa-state/{email}",
-            Method: HttpMethod.Get));
 
     public async ValueTask<Response> RefreshToken(RefreshTokenRequest request) => await HttpClientService.SendAsync(
         new Request(Url: $"{Configuration[Key]}/api/v1/Security/refresh-token",
