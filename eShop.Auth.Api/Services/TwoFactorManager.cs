@@ -64,6 +64,15 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 
     public async ValueTask<string> GenerateTokenAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default)
     {
+        var existingToken = await context.LoginTokens
+            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (existingToken is not null)
+        {
+            return existingToken.Token;
+        }
+        
         var randomCode = new Random().Next(0, 999999).ToString();
         var token = randomCode.PadLeft(6, '0');
 
