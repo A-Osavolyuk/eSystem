@@ -143,7 +143,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddScoped<IProfileManager, ProfileManager>();
         builder.Services.AddScoped<ICacheService, CacheService>();
         builder.Services.AddScoped<IMessageService, MessageService>();
-        builder.Services.AddScoped<ITokenManager, TokenManager>();
+        builder.Services.AddScoped<ISecurityTokenManager, SecurityTokenManager>();
         builder.Services.AddScoped<ICodeManager, CodeManager>();
         builder.Services.AddScoped<IRoleManager, RoleManager>();
         builder.Services.AddScoped<IUserManager, UserManager>();

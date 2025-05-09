@@ -11,8 +11,25 @@ public static class SecurityHandler
 
         return base32Secret;
     }
+    
+    public static string GenerateToken()
+    {
+        var randomCode = new Random().Next(0, 999999).ToString();
+        var token = randomCode.PadLeft(6, '0');
+        return token;
+    }
 
-    public static bool ValidateAuthenticatorToken(string secret, string token)
+    public static QrCode GenerateQrCode(string email, string secret, string issuer)
+    {
+
+        var otpUri = new OtpUri(OtpType.Totp, secret, email, issuer);
+        var url = otpUri.ToString();
+        var qrCode = new QrCode() { Url = url };
+        
+        return qrCode;
+    }
+
+    public static bool VerifyAuthenticatorToken(string secret, string token)
     {
         var secretBytes = Base32Encoding.ToBytes(secret);
         var totp = new Totp(secretBytes);

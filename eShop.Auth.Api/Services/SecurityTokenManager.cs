@@ -1,14 +1,15 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
+using SecurityToken = eShop.Domain.Types.SecurityToken;
 
 namespace eShop.Auth.Api.Services;
 
-public class TokenManager(
+public class SecurityTokenManager(
     AuthDbContext context,
     IRoleManager roleManager,
     IPermissionManager permissionManager,
-    IOptions<JwtOptions> options) : ITokenManager
+    IOptions<JwtOptions> options) : ISecurityTokenManager
 {
     private readonly AuthDbContext context = context;
     private readonly IRoleManager roleManager = roleManager;
@@ -43,7 +44,7 @@ public class TokenManager(
         return Result.Success();
     }
 
-    public async Task<Token> GenerateAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
+    public async Task<SecurityToken> GenerateAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
@@ -57,7 +58,7 @@ public class TokenManager(
 
         await CreateAsync(userEntity, refreshToken, refreshTokenExpiration, cancellationToken);
 
-        return new Token()
+        return new SecurityToken()
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
@@ -65,7 +66,7 @@ public class TokenManager(
     }
 
 
-    public async Task<Token> RefreshAsync(UserEntity userEntity, SecurityTokenEntity tokenEntity,
+    public async Task<SecurityToken> RefreshAsync(UserEntity userEntity, SecurityTokenEntity tokenEntity,
         CancellationToken cancellationToken = default)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
@@ -83,7 +84,7 @@ public class TokenManager(
 
         await UpdateAsync(tokenEntity, cancellationToken);
 
-        return new Token()
+        return new SecurityToken()
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken

@@ -8,12 +8,12 @@ internal sealed record DeleteUserAccountCommand(DeleteUserAccountRequest Request
 internal sealed class DeleteUserAccountCommandHandler(
     IPermissionManager permissionManager,
     IProfileManager profileManager,
-    ITokenManager tokenManager,
+    ISecurityTokenManager securityTokenManager,
     IUserManager userManager) : IRequestHandler<DeleteUserAccountCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
-    private readonly ITokenManager tokenManager = tokenManager;
+    private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
     private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(DeleteUserAccountCommand request,
@@ -50,7 +50,7 @@ internal sealed class DeleteUserAccountCommandHandler(
                 $"Failed on deleting the user account with message: {personalDataResult.Errors.First().Description}");
         }
 
-        var tokenResult = await tokenManager.RemoveAsync(user, cancellationToken);
+        var tokenResult = await securityTokenManager.RemoveAsync(user, cancellationToken);
 
         if (!tokenResult.Succeeded)
         {

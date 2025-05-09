@@ -9,11 +9,11 @@ internal sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
     : IRequest<Result>;
 
 internal sealed class LoginWith2FaCommandHandler(
-    ITokenManager tokenManager,
+    ISecurityTokenManager securityTokenManager,
     IUserManager userManager,
     ITwoFactorManager twoFactorManager) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
-    private readonly ITokenManager tokenManager = tokenManager;
+    private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
 
@@ -43,11 +43,11 @@ internal sealed class LoginWith2FaCommandHandler(
         }
 
         var userDto = new User(user.Email!, user.UserName!, user.Id);
-        var securityToken = await tokenManager.FindAsync(user, cancellationToken);
+        var securityToken = await securityTokenManager.FindAsync(user, cancellationToken);
 
         if (securityToken is not null)
         {
-            var accessToken = await tokenManager.RefreshAsync(user, securityToken, cancellationToken);
+            var accessToken = await securityTokenManager.RefreshAsync(user, securityToken, cancellationToken);
 
             return Result.Success(new LoginResponse()
             {
@@ -59,7 +59,7 @@ internal sealed class LoginWith2FaCommandHandler(
             });
         }
 
-        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
+        var tokens = await securityTokenManager.GenerateAsync(user, cancellationToken);
 
         return Result.Success(new LoginResponse()
         {
