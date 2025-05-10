@@ -157,6 +157,11 @@
     {
         await LoadProvidersAsync();
 
+        if (providers.Count == 1)
+        {
+            SendTwoFactorTokenModel.Provider = providers.First().Name;
+        }
+
         SendTwoFactorTokenModel.Email = Email;
         TwoFactorLoginModel.Email = Email;
     }
