@@ -21,6 +21,14 @@
                         <MudForm Model="SendTwoFactorTokenModel">
                             <MudGrid>
                                 <MudItem xs="12">
+                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
+                                             Style="width: 50ch; margin: auto">
+                                        Your account has enabled 2-FA (Two-factor authentication).
+                                        To verify a log in attempt, please select the provider and click the send button.
+                                        You will receive a 6-digit code from the selected provider.
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="12">
                                     <MudSelect
                                         Variant="Variant.Outlined"
                                         Label="Providers"
@@ -65,9 +73,9 @@
                             {
                                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                          Style="width: 50ch; margin: auto">
-                                    Your account has enabled 2-FA (Two-factor authentication).
-                                    To verify a log in attempt, please enter the 6-digit code from the letter we
-                                    sent you to your email address
+                                    Now enter the 6-digit code we sent to your email address.
+                                    If you don't receive the code, check your spam folder.
+                                    If you still don't receive the code, click the send button again.
                                 </MudText>
                                 break;
                             }
@@ -75,9 +83,9 @@
                             {
                                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                          Style="width: 50ch; margin: auto">
-                                    Your account has enabled 2-FA (Two-factor authentication).
-                                    To verify a log in attempt, please enter the 6-digit code from the SMS we
-                                    sent you to your phone number
+                                    Now enter the 6-digit code we sent to your mobile phone.
+                                    If you don't receive the code, check your spam folder.
+                                    If you still don't receive the code, click the send button again.
                                 </MudText>
                                 break;
                             }
@@ -85,10 +93,7 @@
                             {
                                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                          Style="width: 50ch; margin: auto">
-                                    Your account has enabled 2-FA (Two-factor authentication).
-                                    To verify a log in attempt, please enter the 6-digit code from the authentication
-                                    app
-                                    (like Microsoft Authentication, Google Authenticator, etc.)
+                                    Now enter the 6-digit code we sent to your authenticator app.
                                 </MudText>
                                 break;
                             }
