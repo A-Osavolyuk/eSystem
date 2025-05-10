@@ -33,8 +33,18 @@ public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         CancellationToken cancellationToken = default)
     {
         const string issuer = "eShop";
-        var qrCode = SecurityHandler.GenerateQrCode(user.Email, secret, issuer);
+        var qrCode = GenerateQrCode(user.Email, secret, issuer);
 
         return await Task.FromResult(qrCode);
+    }
+    
+    private QrCode GenerateQrCode(string email, string secret, string issuer)
+    {
+
+        var otpUri = new OtpUri(OtpType.Totp, secret, email, issuer);
+        var url = otpUri.ToString();
+        var qrCode = new QrCode() { Url = url };
+        
+        return qrCode;
     }
 }

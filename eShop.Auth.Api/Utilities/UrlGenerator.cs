@@ -39,9 +39,4 @@ public static class UrlGenerator
 
         return query.ToString();
     }
-    
-    public static string Totp(string issuer, string email, string secret)
-    {
-        return $"otpauth://totp/{issuer}:{email}?secret={secret}&issuer={issuer}";
-    }
 }
