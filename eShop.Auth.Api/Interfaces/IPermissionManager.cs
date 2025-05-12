@@ -9,8 +9,8 @@ public interface IPermissionManager
     public ValueTask<List<PermissionEntity>> GetByUserAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<PermissionEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
     public ValueTask<PermissionEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    public ValueTask<Result> IssueAsync(UserEntity user, List<PermissionEntity> collection, CancellationToken cancellationToken = default);
-    public ValueTask<Result> IssueAsync(UserEntity user, PermissionEntity permission, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RemoveAsync(UserEntity userEntity, PermissionEntity permissionEntity, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RemoveAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> GrantAsync(UserEntity user, List<PermissionEntity> collection, CancellationToken cancellationToken = default);
+    public ValueTask<Result> GrantAsync(UserEntity user, PermissionEntity permission, CancellationToken cancellationToken = default);
+    public ValueTask<Result> RevokeAsync(UserEntity userEntity, PermissionEntity permissionEntity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> RevokeAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
 }

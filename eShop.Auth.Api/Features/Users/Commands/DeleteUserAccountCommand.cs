@@ -33,7 +33,7 @@ internal sealed class DeleteUserAccountCommandHandler(
             return rolesResult;
         }
 
-        var permissionsResult = await permissionManager.RemoveAsync(user, cancellationToken);
+        var permissionsResult = await permissionManager.RevokeAsync(user, cancellationToken);
 
         if (!permissionsResult.Succeeded)
         {

@@ -39,7 +39,7 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
         }
 
         var permissionResult =
-            await permissionManager.RemoveAsync(user, permission, cancellationToken);
+            await permissionManager.RevokeAsync(user, permission, cancellationToken);
 
         if (!permissionResult.Succeeded)
         {

@@ -100,7 +100,7 @@ internal sealed class CreateUserAccountCommandHandler(
                     return Results.NotFound($"Cannot find permission {permission}.");
                 }
 
-                var permissionResult = await permissionManager.IssueAsync(user, entity, cancellationToken);
+                var permissionResult = await permissionManager.GrantAsync(user, entity, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {
@@ -119,7 +119,7 @@ internal sealed class CreateUserAccountCommandHandler(
                     return Results.NotFound($"Cannot find permission {permission}.");
                 }
                 
-                var permissionResult = await permissionManager.IssueAsync(user, entity, cancellationToken);
+                var permissionResult = await permissionManager.GrantAsync(user, entity, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {

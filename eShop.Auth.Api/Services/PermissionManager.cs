@@ -41,7 +41,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return permissions;
     }
 
-    public async ValueTask<Result> IssueAsync(UserEntity user, List<PermissionEntity> collection,
+    public async ValueTask<Result> GrantAsync(UserEntity user, List<PermissionEntity> collection,
         CancellationToken cancellationToken = default)
     {
         var permissions = collection.ToList();
@@ -63,7 +63,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return Result.Success();
     }
 
-    public async ValueTask<Result> IssueAsync(UserEntity user, PermissionEntity permission,
+    public async ValueTask<Result> GrantAsync(UserEntity user, PermissionEntity permission,
         CancellationToken cancellationToken = default)
     {
         var entity = new UserPermissionsEntity() { UserId = user.Id, PermissionId = permission!.Id };
@@ -72,7 +72,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return Result.Success();
     }
 
-    public async ValueTask<Result> RemoveAsync(UserEntity userEntity,
+    public async ValueTask<Result> RevokeAsync(UserEntity userEntity,
         PermissionEntity permissionEntity,
         CancellationToken cancellationToken = default)
     {
@@ -91,7 +91,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return Result.Success();
     }
 
-    public async ValueTask<Result> RemoveAsync(UserEntity userEntity,
+    public async ValueTask<Result> RevokeAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default)
     {
         var userPermissions = await context.UserPermissions

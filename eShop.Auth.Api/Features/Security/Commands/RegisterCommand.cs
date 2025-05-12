@@ -52,7 +52,7 @@ internal sealed class RegisterCommandHandler(
             return Results.NotFound($"Cannot find permission with name {defaultPermission}");       
         }
         
-        var issuingPermissionsResult = await permissionManager.IssueAsync(newUser, permission, cancellationToken);
+        var issuingPermissionsResult = await permissionManager.GrantAsync(newUser, permission, cancellationToken);
 
         if (!issuingPermissionsResult.Succeeded)
         {

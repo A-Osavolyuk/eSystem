@@ -88,7 +88,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 return Results.NotFound($"Cannot find permission with name {defaultPermission}");       
             }
 
-            var issuingPermissionsResult = await permissionManager.IssueAsync(user, permission, cancellationToken);
+            var issuingPermissionsResult = await permissionManager.GrantAsync(user, permission, cancellationToken);
 
             if (!issuingPermissionsResult.Succeeded)
             {
