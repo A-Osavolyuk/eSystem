@@ -18,7 +18,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserSecretEntity> UserSecret { get; set; }
     public DbSet<UserProviderEntity> UserProvider { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
-    public DbSet<RolePermission> RolePermissions { get; set; }
+    public DbSet<RolePermissionEntity> RolePermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -139,7 +139,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => x.Id);
         });
 
-        builder.Entity<RolePermission>(entity =>
+        builder.Entity<RolePermissionEntity>(entity =>
         {
             entity.HasKey(x => new { x.RoleId, x.PermissionId });
             

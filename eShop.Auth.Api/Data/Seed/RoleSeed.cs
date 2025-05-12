@@ -19,12 +19,6 @@ public class RoleSeed : Seed<RoleEntity, Guid>
                 Name = "User",
                 NormalizedName = "USER",
                 Id = Guid.Parse("270910a1-d582-4ce0-8b23-c8141d720064")
-            },
-            new ()
-            {
-                Name = "Seller",
-                NormalizedName = "SELLER",
-                Id = Guid.Parse("26bb7907-e254-41d4-96f0-8afb7deccae4")
             }
         ];
     }

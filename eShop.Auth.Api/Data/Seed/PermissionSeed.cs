@@ -6,15 +6,66 @@ public class PermissionSeed : Seed<PermissionEntity, Guid>
     {
         return
         [
-            new () { Id = Guid.Parse("dba6e723-ac0f-42a3-91fd-e40bdb08e26b"), Name = "Permission.Account.ManageAccount" },
-            new () { Id = Guid.Parse("349898ee-1f26-4877-86ca-0960361b5e3e"), Name = "Permission.Admin.ManageUsers" },
-            new () { Id = Guid.Parse("74e0644b-6f9d-4964-a9a6-341a7834cc0e"), Name = "Permission.Admin.ManageLockout" },
-            new () { Id = Guid.Parse("e14d7bcf-0ab4-4168-b2b5-ff0894782097"), Name = "Permission.Admin.ManageRoles" },
-            new () { Id = Guid.Parse("df258394-6290-43b8-abc9-d52aba8ff6e6"), Name = "Permission.Admin.ManagePermissions" },
-            new () { Id = Guid.Parse("3c38ecbf-a14c-4d46-9eab-6b297cca124d"), Name = "Permission.Product.View" },
-            new () { Id = Guid.Parse("5034df8e-c656-4f85-b197-7afff97ecad0"), Name = "Permission.Product.Edit" },
-            new () { Id = Guid.Parse("25af1455-d0b8-4be3-b6ff-9cf393d59258"), Name = "Permission.Product.Delete" },
-            new () { Id = Guid.Parse("a1216fa3-66dd-4a6d-8616-48a7b9900649"), Name = "Permission.Product.Create" }
+            new()
+            {
+                Id = Guid.Parse("b2c8c2b7-0c88-47cd-9870-1638c1b022c3"),
+                ResourceId = Guid.Parse("1a06eabb-3354-4b03-be52-ab42743eaa97"), 
+                Name = "account:read"
+            },
+            new()
+            {
+                Id = Guid.Parse("afac8991-f6f4-42d3-a842-d5fa79959451"),
+                ResourceId = Guid.Parse("1a06eabb-3354-4b03-be52-ab42743eaa97"), 
+                Name = "account:create"
+            },
+            new()
+            {
+                Id = Guid.Parse("c8e5b8ff-2ab6-45f9-a731-0f5e9a129e77"),
+                ResourceId = Guid.Parse("1a06eabb-3354-4b03-be52-ab42743eaa97"), 
+                Name = "account:update"
+            },
+            new()
+            {
+                Id = Guid.Parse("510a5b4c-ff4f-428d-a913-34e7a49ed19b"),
+                ResourceId = Guid.Parse("1a06eabb-3354-4b03-be52-ab42743eaa97"), 
+                Name = "account:delete"
+            },
+            new()
+            {
+                Id = Guid.Parse("e61e3480-4e63-4f42-bb3f-9744415036cb"),
+                ResourceId = Guid.Parse("1a06eabb-3354-4b03-be52-ab42743eaa97"), 
+                Name = "account:all"
+            },
+            new()
+            {
+                Id = Guid.Parse("65b45022-3073-497f-9950-1fa2cfb8c212"),
+                ResourceId = Guid.Parse("70969390-c949-4426-b3c1-7fd86580b62e"), 
+                Name = "admin:read"
+            },
+            new()
+            {
+                Id = Guid.Parse("4a68513a-b7ad-46ff-b5f3-f8d0c9de2411"),
+                ResourceId = Guid.Parse("70969390-c949-4426-b3c1-7fd86580b62e"), 
+                Name = "admin:create"
+            },
+            new()
+            {
+                Id = Guid.Parse("6e3f3ff1-bd34-4b4e-b415-6f04227bfb57"),
+                ResourceId = Guid.Parse("70969390-c949-4426-b3c1-7fd86580b62e"), 
+                Name = "admin:update"
+            },
+            new()
+            {
+                Id = Guid.Parse("f31c56b5-ec0d-4191-8f9f-5450511b3786"),
+                ResourceId = Guid.Parse("70969390-c949-4426-b3c1-7fd86580b62e"), 
+                Name = "admin:delete"
+            },
+            new()
+            {
+                Id = Guid.Parse("a4e12251-2d6d-4b0d-9053-2d56fcd8ac9b"),
+                ResourceId = Guid.Parse("70969390-c949-4426-b3c1-7fd86580b62e"), 
+                Name = "admin:all"
+            }
         ];
     }
 }
