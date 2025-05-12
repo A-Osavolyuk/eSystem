@@ -32,6 +32,14 @@ public static class DbContextExtensions
             await context.Users.AddRangeAsync(seed.Get(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
+        
+        if (!await context.Resources.AnyAsync(cancellationToken))
+        {
+            var seed = new ResourceSeed();
+
+            await context.Resources.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
 
         if (!await context.Permissions.AnyAsync(cancellationToken))
         {
@@ -62,6 +70,14 @@ public static class DbContextExtensions
             var seed = new UserPermissionSeed();
 
             await context.UserPermissions.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        
+        if (!await context.RolePermissions.AnyAsync(cancellationToken))
+        {
+            var seed = new RolePermissionSeed();
+
+            await context.RolePermissions.AddRangeAsync(seed.Get(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
     }}
