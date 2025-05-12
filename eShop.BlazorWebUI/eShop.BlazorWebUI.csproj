@@ -39,6 +39,8 @@
 	  <_ContentIncludedByDefault Remove="Components\Shared\Products\ProductSideBar.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Shared\Products\PropertyText.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Shared\Products\PropsAndDescription.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Seller\RegisterSeller.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Seller\SellerDetails.razor" />
 	</ItemGroup>
 
 </Project>
