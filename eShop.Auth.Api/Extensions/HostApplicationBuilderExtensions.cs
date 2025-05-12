@@ -129,11 +129,18 @@ public static class HostApplicationBuilderExtensions
             });
 
         builder.Services.AddAuthorizationBuilder()
-            .AddPolicy("ManageUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("admin:all")))
-            .AddPolicy("ManageLockoutPolicy", policy => policy.Requirements.Add(new PermissionRequirement("admin:all")))
-            .AddPolicy("ManageRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("admin:all")))
-            .AddPolicy("ManagePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("admin:all")))
-            .AddPolicy("ManageAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("admin:all")));
+            .AddPolicy("ManageUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Admin:All")))
+            .AddPolicy("ManageLockoutPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Admin:All")))
+            .AddPolicy("ManageRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Admin:All")))
+            .AddPolicy("ManagePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Admin:All")))
+            .AddPolicy("ManageAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:All")))
+            
+            .AddPolicy("RemoveUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Remove")))
+            .AddPolicy("InviteUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Invite")))
+            .AddPolicy("AssignRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Assign")))
+            .AddPolicy("UnassignRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Unassign")))
+            .AddPolicy("GrantPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Grant")))
+            .AddPolicy("RevokePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Revoke")));
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
