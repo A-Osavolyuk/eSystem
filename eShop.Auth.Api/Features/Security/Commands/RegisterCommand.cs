@@ -45,14 +45,18 @@ internal sealed class RegisterCommandHandler(
             return assignDefaultRoleResult;
         }
 
-        var issuingPermissionsResult =
-            await permissionManager.IssueAsync(newUser, [defaultPermission], cancellationToken);
+        var permission = await permissionManager.FindByNameAsync(defaultPermission, cancellationToken);
+
+        if (permission is null)
+        {
+            return Results.NotFound($"Cannot find permission with name {defaultPermission}");       
+        }
+        
+        var issuingPermissionsResult = await permissionManager.IssueAsync(newUser, permission, cancellationToken);
 
         if (!issuingPermissionsResult.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Cannot issue permissions for user with email {request.Request.Email} " +
-                $"due to server errors: {issuingPermissionsResult.Errors.First().Description}");
+            return issuingPermissionsResult;
         }
         
         user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);

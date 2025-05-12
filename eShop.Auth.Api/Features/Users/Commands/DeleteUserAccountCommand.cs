@@ -33,13 +33,11 @@ internal sealed class DeleteUserAccountCommandHandler(
             return rolesResult;
         }
 
-        var permissionsResult = await permissionManager.RemoveFromPermissionsAsync(user, cancellationToken);
+        var permissionsResult = await permissionManager.RemoveAsync(user, cancellationToken);
 
         if (!permissionsResult.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Cannot remove permissions from user with ID {request.Request.UserId} " +
-                $"due to server error: {permissionsResult.Errors.First().Description}");
+            return permissionsResult;
         }
 
         var personalDataResult = await profileManager.DeleteAsync(user, cancellationToken);

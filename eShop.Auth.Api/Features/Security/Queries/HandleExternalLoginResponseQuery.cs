@@ -80,14 +80,19 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             {
                 return assignDefaultRoleResult;
             }
+            
+            var permission = await permissionManager.FindByNameAsync(defaultPermission, cancellationToken);
 
-            var issuingPermissionsResult =
-                await permissionManager.IssueAsync(user, [defaultPermission], cancellationToken);
+            if (permission is null)
+            {
+                return Results.NotFound($"Cannot find permission with name {defaultPermission}");       
+            }
+
+            var issuingPermissionsResult = await permissionManager.IssueAsync(user, permission, cancellationToken);
 
             if (!issuingPermissionsResult.Succeeded)
             {
-                return Results.InternalServerError($"Cannot assign permissions for user with email {user.Email} " +
-                                                   $"due to server error: {issuingPermissionsResult.Errors.First().Description}");
+                return issuingPermissionsResult;
             }
 
             var provider = request.Principal.Identity!.AuthenticationType!;

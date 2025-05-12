@@ -29,7 +29,8 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return permissions;
     }
 
-    public async ValueTask<List<PermissionEntity>> GetByUserAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<List<PermissionEntity>> GetByUserAsync(UserEntity user,
+        CancellationToken cancellationToken = default)
     {
         var permissions = await context.UserPermissions
             .Where(x => x.UserId == user.Id)
@@ -40,69 +41,58 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         return permissions;
     }
 
-    public async ValueTask<IdentityResult> IssueAsync(UserEntity userEntity, IEnumerable<string> collection,
+    public async ValueTask<Result> IssueAsync(UserEntity user, List<PermissionEntity> collection,
         CancellationToken cancellationToken = default)
     {
         var permissions = collection.ToList();
 
         if (!permissions.Any())
         {
-            return IdentityResult.Failed(new IdentityError()
+            return Results.NotFound("Cannot add permissions. Empty permission list.");
+        }
+
+        var entities = permissions.Select(x =>
+            new UserPermissionsEntity()
             {
-                Code = "400",
-                Description = "Cannot add permissions. Empty permission list."
+                UserId = user.Id,
+                PermissionId = x.Id
             });
-        }
 
-        foreach (var permission in permissions)
-        {
-            var entity = await context.Permissions
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Name == permission, cancellationToken: cancellationToken);
-
-            await context.UserPermissions.AddAsync(new() { UserId = userEntity.Id, PermissionId = entity!.Id }, cancellationToken);
-        }
-
+        await context.UserPermissions.AddRangeAsync(entities, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        return IdentityResult.Success;
+        return Result.Success();
     }
 
-    public async ValueTask<IdentityResult> IssueAsync(UserEntity userEntity, string permission,
+    public async ValueTask<Result> IssueAsync(UserEntity user, PermissionEntity permission,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.Permissions
-            .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Name == permission, cancellationToken: cancellationToken);
-
-        await context.UserPermissions.AddAsync(new() { UserId = userEntity.Id, PermissionId = entity!.Id }, cancellationToken);
+        var entity = new UserPermissionsEntity() { UserId = user.Id, PermissionId = permission!.Id };
+        await context.UserPermissions.AddAsync( entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        return IdentityResult.Success;
+        return Result.Success();
     }
 
-    public async ValueTask<IdentityResult> RemoveFromPermissionAsync(UserEntity userEntity, PermissionEntity permissionEntity,
+    public async ValueTask<Result> RemoveAsync(UserEntity userEntity,
+        PermissionEntity permissionEntity,
         CancellationToken cancellationToken = default)
     {
         var userPermission = await context.UserPermissions
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id && x.PermissionId == permissionEntity.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id && x.PermissionId == permissionEntity.Id,
+                cancellationToken: cancellationToken);
 
         if (userPermission is null)
         {
-            return IdentityResult.Failed(
-                new IdentityError()
-                {
-                    Code = "404",
-                    Description = string.Format("Cannot find permission {0} for user with ID {1}",
-                        permissionEntity.Name, userEntity.Id)
-                });
+            return Results.NotFound($"Cannot find permission {permissionEntity.Name} for user with ID {userEntity.Id}");
         }
 
         context.UserPermissions.Remove(userPermission);
         await context.SaveChangesAsync(cancellationToken);
 
-        return IdentityResult.Success;
+        return Result.Success();
     }
 
-    public async ValueTask<IdentityResult> RemoveFromPermissionsAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> RemoveAsync(UserEntity userEntity,
+        CancellationToken cancellationToken = default)
     {
         var userPermissions = await context.UserPermissions
             .Where(x => x.UserId == userEntity.Id)
@@ -114,7 +104,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
             await context.SaveChangesAsync(cancellationToken);
         }
 
-        return IdentityResult.Success;
+        return Result.Success();
     }
 
     public async ValueTask<bool> ExistsAsync(string name, CancellationToken cancellationToken = default)
@@ -124,7 +114,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
             .AnyAsync(x => x.Name == name, cancellationToken: cancellationToken);
     }
 
-    public async ValueTask<bool> HasPermissionAsync(UserEntity userEntity, string name,
+    public async ValueTask<bool> HasAsync(UserEntity userEntity, string name,
         CancellationToken cancellationToken = default)
     {
         var permission = await context.Permissions
@@ -138,7 +128,8 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
 
         var hasUserPermission = await context.UserPermissions
             .AsNoTracking()
-            .AnyAsync(x => x.UserId == userEntity.Id && x.PermissionId == permission.Id, cancellationToken: cancellationToken);
+            .AnyAsync(x => x.UserId == userEntity.Id && x.PermissionId == permission.Id,
+                cancellationToken: cancellationToken);
 
         return hasUserPermission;
     }

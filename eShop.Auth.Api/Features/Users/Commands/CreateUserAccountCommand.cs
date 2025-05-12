@@ -93,21 +93,18 @@ internal sealed class CreateUserAccountCommandHandler(
         {
             foreach (var permission in request.Request.Permissions)
             {
-                var permissionExists = await permissionManager.ExistsAsync(permission, cancellationToken);
+                var entity = await permissionManager.FindByNameAsync(permission, cancellationToken);
 
-                if (!permissionExists)
+                if (entity is null)
                 {
                     return Results.NotFound($"Cannot find permission {permission}.");
                 }
 
-                var permissionResult =
-                    await permissionManager.IssueAsync(user, permission, cancellationToken);
+                var permissionResult = await permissionManager.IssueAsync(user, entity, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {
-                    return Results.InternalServerError(
-                        $"Cannot issue permission {permission} to user with ID {user.Id} due to " +
-                        $"server error: {permissionResult.Errors.First().Description}.");
+                    return permissionResult;
                 }
             }
         }
@@ -115,14 +112,18 @@ internal sealed class CreateUserAccountCommandHandler(
         {
             foreach (var permission in defaultPermissions)
             {
-                var permissionResult =
-                    await permissionManager.IssueAsync(user, permission, cancellationToken);
+                var entity = await permissionManager.FindByNameAsync(permission, cancellationToken);
+
+                if (entity is null)
+                {
+                    return Results.NotFound($"Cannot find permission {permission}.");
+                }
+                
+                var permissionResult = await permissionManager.IssueAsync(user, entity, cancellationToken);
 
                 if (!permissionResult.Succeeded)
                 {
-                    return Results.InternalServerError(
-                        $"Cannot issue permission {permission} to user with ID {user.Id} due to " +
-                        $"server error: {permissionResult.Errors.First().Description}.");
+                    return permissionResult;
                 }
             }
         }

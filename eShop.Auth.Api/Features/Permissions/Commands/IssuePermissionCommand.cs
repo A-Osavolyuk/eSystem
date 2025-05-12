@@ -38,17 +38,15 @@ internal sealed class IssuePermissionCommandHandler(
 
         foreach (var permission in permissions)
         {
-            var alreadyHasPermission =
-                await permissionManager.HasPermissionAsync(user, permission.Name, cancellationToken);
+            var hasPermission = await permissionManager.HasAsync(user, permission.Name, cancellationToken);
 
-            if (!alreadyHasPermission)
+            if (!hasPermission)
             {
-                var result = await permissionManager.IssueAsync(user, permission.Name, cancellationToken);
+                var result = await permissionManager.IssueAsync(user, permission, cancellationToken);
 
                 if (!result.Succeeded)
                 {
-                    return Results.InternalServerError(
-                        $"Failed on issuing permission with message: {result.Errors.First().Description}");
+                    return result;
                 }
             }
         }
