@@ -26,7 +26,7 @@ internal sealed class RequestChangeEmailCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.CurrentEmail}");
         }
 
-        var oldEmailCode = await codeManager.GenerateAsync(user, Verification.Old, cancellationToken);
+        var oldEmailCode = await codeManager.GenerateAsync(user, Verification.Current, cancellationToken);
         var newEmailCode = await codeManager.GenerateAsync(user, Verification.New, cancellationToken);
 
         await messageService.SendMessageAsync("email:email-change", new ChangeEmailMessage()
