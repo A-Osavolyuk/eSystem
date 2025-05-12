@@ -29,9 +29,39 @@ public enum ActionType
     /// Represents the action of permanently removing data.
     /// </summary>
     Delete = 4,
+    
+    /// <summary>
+    /// Represents the action of assigning a role, task, or responsibility to a user or resource.
+    /// </summary>
+    Assign = 20,
+
+    /// <summary>
+    /// Represents the action of removing an assigned role, task, or responsibility.
+    /// </summary>
+    Unassign = 21,
+
+    /// <summary>
+    /// Represents the action of granting access or permissions to a user or role.
+    /// </summary>
+    Grant = 22,
+
+    /// <summary>
+    /// Represents the action of revoking access or permissions from a user or role.
+    /// </summary>
+    Revoke = 23,
+
+    /// <summary>
+    /// Represents the action of inviting a user to the system or a specific resource.
+    /// </summary>
+    Invite = 24,
+
+    /// <summary>
+    /// Represents the action of removing a user from the system or a specific group.
+    /// </summary>
+    Remove = 25,
 
     /// <summary>
     /// Represents full access to all actions.
     /// </summary>
-    All = 5
+    All = 100
 }
