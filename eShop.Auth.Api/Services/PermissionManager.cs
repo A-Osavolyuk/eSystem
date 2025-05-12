@@ -60,7 +60,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Name == permission, cancellationToken: cancellationToken);
 
-            await context.UserPermissions.AddAsync(new() { UserId = userEntity.Id, Id = entity!.Id }, cancellationToken);
+            await context.UserPermissions.AddAsync(new() { UserId = userEntity.Id, PermissionId = entity!.Id }, cancellationToken);
         }
 
         await context.SaveChangesAsync(cancellationToken);
@@ -74,7 +74,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Name == permission, cancellationToken: cancellationToken);
 
-        await context.UserPermissions.AddAsync(new() { UserId = userEntity.Id, Id = entity!.Id }, cancellationToken);
+        await context.UserPermissions.AddAsync(new() { UserId = userEntity.Id, PermissionId = entity!.Id }, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return IdentityResult.Success;
     }
@@ -83,7 +83,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
         CancellationToken cancellationToken = default)
     {
         var userPermission = await context.UserPermissions
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id && x.Id == permissionEntity.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id && x.PermissionId == permissionEntity.Id, cancellationToken: cancellationToken);
 
         if (userPermission is null)
         {
@@ -138,7 +138,7 @@ internal sealed class PermissionManager(AuthDbContext context) : IPermissionMana
 
         var hasUserPermission = await context.UserPermissions
             .AsNoTracking()
-            .AnyAsync(x => x.UserId == userEntity.Id && x.Id == permission.Id, cancellationToken: cancellationToken);
+            .AnyAsync(x => x.UserId == userEntity.Id && x.PermissionId == permission.Id, cancellationToken: cancellationToken);
 
         return hasUserPermission;
     }

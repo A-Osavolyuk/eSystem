@@ -1,13 +1,13 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class UserPermissionsEntity : IEntity
+public class RolePermission : IEntity
 {
-    public Guid PermissionId { get; init; }
-    public Guid UserId { get; init; }
-
+    public Guid PermissionId { get; set; }
+    public Guid RoleId { get; set; }
+    
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
 
-    public UserEntity User { get; set; } = null!;
     public PermissionEntity Permission { get; set; } = null!;
+    public RoleEntity Role { get; set; } = null!;
 }

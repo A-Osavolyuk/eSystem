@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Data;
+﻿using eShop.Auth.Api.Enums;
+using OpenTelemetry.Resources;
+
+namespace eShop.Auth.Api.Data;
 
 public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {
@@ -14,6 +17,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<LoginTokenEntity> LoginTokens { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
     public DbSet<UserProviderEntity> UserProvider { get; set; }
+    public DbSet<ResourceEntity> Resources { get; set; }
+    public DbSet<RolePermission> RolePermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -51,21 +56,31 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(x => x.UserId);
         });
 
-        builder.Entity<PersonalDataEntity>(x => { x.HasKey(p => p.Id); });
+        builder.Entity<PersonalDataEntity>(entity => { entity.HasKey(p => p.Id); });
 
-        builder.Entity<PermissionEntity>(x => { x.HasKey(p => p.Id); });
+        builder.Entity<PermissionEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            
+            entity.HasOne<ResourceEntity>(x => x.Resource)
+                .WithMany()
+                .HasForeignKey(x => x.ResourceId);
+
+            entity.Property(x => x.Action)
+                .HasConversion(value => value.ToString(), x => Enum.Parse<ActionType>(x));
+        });
 
         builder.Entity<UserPermissionsEntity>(entity =>
         {
-            entity.HasKey(ur => new { ur.UserId, ur.Id });
+            entity.HasKey(ur => new { ur.UserId, Id = ur.PermissionId });
 
             entity.HasOne(ur => ur.User)
                 .WithMany(u => u.Permissions)
                 .HasForeignKey(ur => ur.UserId);
 
             entity.HasOne(ur => ur.Permission)
-                .WithMany(r => r.Permissions)
-                .HasForeignKey(ur => ur.Id);
+                .WithMany()
+                .HasForeignKey(ur => ur.PermissionId);
         });
 
         builder.Entity<SecurityTokenEntity>(entity =>
@@ -117,6 +132,24 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.Provider)
                 .WithMany()
                 .HasForeignKey(x => x.ProviderId);
+        });
+        
+        builder.Entity<ResourceEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+        });
+
+        builder.Entity<RolePermission>(entity =>
+        {
+            entity.HasKey(x => new { x.RoleId, x.PermissionId });
+            
+            entity.HasOne(x => x.Role)
+                .WithMany()
+                .HasForeignKey(x => x.RoleId);
+
+            entity.HasOne(x => x.Permission)
+                .WithMany()
+                .HasForeignKey(x => x.PermissionId);
         });
     }
 }
