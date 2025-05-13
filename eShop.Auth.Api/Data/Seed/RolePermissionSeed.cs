@@ -7,7 +7,6 @@ public class RolePermissionSeed : Seed<RolePermissionEntity>
         return
         [
             // Admin access
-            new() { RoleId = Guid.Parse("e6d15d97-b803-435a-9dc2-a7c45c08a1af"), PermissionId = Guid.Parse("a4e12251-2d6d-4b0d-9053-2d56fcd8ac9b") },
             new() { RoleId = Guid.Parse("e6d15d97-b803-435a-9dc2-a7c45c08a1af"), PermissionId = Guid.Parse("e61e3480-4e63-4f42-bb3f-9744415036cb") },
             
             // User access

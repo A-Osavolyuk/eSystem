@@ -13,7 +13,7 @@ public class ProfileController(ISender sender) : ControllerBase
     [EndpointSummary("Get personal data")]
     [EndpointDescription("Gets personal data")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "ReadAccountPolicy")]
     [HttpGet("get-personal-data/{email}")]
     public async ValueTask<ActionResult<Response>> GetPersonalData(string email)
     {
@@ -27,7 +27,7 @@ public class ProfileController(ISender sender) : ControllerBase
     [EndpointSummary("Get phone number")]
     [EndpointDescription("Gets a phone number")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "ReadAccountPolicy")]
     [HttpGet("get-phone-number/{email}")]
     public async ValueTask<ActionResult<Response>> GetPhoneNumber(string email)
     {
@@ -41,7 +41,7 @@ public class ProfileController(ISender sender) : ControllerBase
     [EndpointSummary("Change username")]
     [EndpointDescription("Changes username")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPatch("change-user-name")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangeUserName(
@@ -58,7 +58,7 @@ public class ProfileController(ISender sender) : ControllerBase
     [EndpointSummary("Change personal data")]
     [EndpointDescription("Changes personal data")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPut("change-personal-data")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangePersonalData(

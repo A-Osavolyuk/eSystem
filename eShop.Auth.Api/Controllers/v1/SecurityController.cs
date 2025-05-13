@@ -142,7 +142,7 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [EndpointSummary("Confirm change email")]
     [EndpointDescription("Confirms an email change")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("confirm-email")]
     public async ValueTask<ActionResult<Response>> ConfirmChangeEmail(
         [FromBody] ConfirmChangeEmailRequest request)
@@ -157,7 +157,7 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [EndpointSummary("Confirm change phone number")]
     [EndpointDescription("Confirm a phone number change")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("confirm-phone-number")]
     public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumber(
         [FromBody] ConfirmChangePhoneNumberRequest request)
@@ -192,7 +192,7 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [EndpointSummary("Request change email")]
     [EndpointDescription("Request an email change")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPut("request-change-email")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangeEmail(
@@ -208,7 +208,7 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [EndpointSummary("Request change phone number")]
     [EndpointDescription("Request a phone number change")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPut("request-change-phone-number")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangePhoneNumber(
@@ -224,7 +224,7 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [EndpointSummary("Change password")]
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageAccountPolicy")]
+    [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPut("change-password")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangePassword(

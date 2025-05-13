@@ -15,13 +15,6 @@ public class ResourceSeed : Seed<ResourceEntity, Guid>
             },
             new ResourceEntity()
             {
-                Id = Guid.Parse("70969390-c949-4426-b3c1-7fd86580b62e"),
-                Name = "Admin",
-                CreateDate = null,
-                UpdateDate = null
-            },
-            new ResourceEntity()
-            {
                 Id = Guid.Parse("e3fef8c4-0105-419a-b889-66b9f1036e8c"),
                 Name = "User",
                 CreateDate = null,

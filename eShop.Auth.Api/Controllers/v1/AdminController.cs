@@ -19,7 +19,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Find user by email")]
     [EndpointDescription("Finds user by email")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageUsersPolicy")]
+    [Authorize(Policy = "ReadUsersPolicy")]
     [HttpGet("find-user-by-email/{email}")]
     public async ValueTask<ActionResult<Response>> FindUserByEmailAsync(string email)
     {
@@ -33,7 +33,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Find user by id")]
     [EndpointDescription("Finds user by id")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageUsersPolicy")]
+    [Authorize(Policy = "ReadUsersPolicy")]
     [HttpGet("find-user-by-id/{id:guid}")]
     public async ValueTask<ActionResult<Response>> FindUserByIdAsync(Guid id)
     {
@@ -47,7 +47,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Get all users")]
     [EndpointDescription("Gets all users")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageUsersPolicy")]
+    [Authorize(Policy = "ReadUsersPolicy")]
     [HttpGet("get-all-users")]
     public async ValueTask<ActionResult<Response>> GetAllUsersAsync()
     {
@@ -61,7 +61,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Get roles")]
     [EndpointDescription("Gets all roles")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageRolesPolicy")]
+    [Authorize(Policy = "ReadRolesPolicy")]
     [HttpGet("get-roles")]
     public async ValueTask<ActionResult<Response>> GetRolesListAsync()
     {
@@ -75,7 +75,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Get user roles")]
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageRolesPolicy")]
+    [Authorize(Policy = "ReadRolesPolicy")]
     [HttpGet("get-user-roles/{id:guid}")]
     public async ValueTask<ActionResult<Response>> GetUserRolesAsync(Guid id)
     {
@@ -89,7 +89,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Get lockout status")]
     [EndpointDescription("Gets lockout status")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageLockoutPolicy")]
+    [Authorize(Policy = "ReadUsersPolicy")]
     [HttpGet("get-lockout-status/{email}")]
     public async ValueTask<ActionResult<Response>> GetRolesListAsync(string email)
     {
@@ -103,7 +103,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Get permissions")]
     [EndpointDescription("Gets all permissions")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManagePermissionsPolicy")]
+    [Authorize(Policy = "ReadPermissionsPolicy")]
     [HttpGet("get-permissions")]
     public async ValueTask<ActionResult<Response>> GetPermissionsListAsync()
     {
@@ -117,7 +117,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Assign role")]
     [EndpointDescription("Assigns role to user")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageRolesPolicy")]
+    [Authorize(Policy = "AssignRolesPolicy")]
     [HttpPost("assign-role")]
     public async ValueTask<ActionResult<Response>> AssignRoleAsync([FromBody] AssignRoleRequest request)
     {
@@ -130,7 +130,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Issue permissions")]
     [EndpointDescription("Issue permission to user")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManagePermissionsPolicy")]
+    [Authorize(Policy = "GrantPermissionsPolicy")]
     [HttpPost("issue-permissions")]
     public async ValueTask<ActionResult<Response>> IssuePermissionsAsync([FromBody] IssuePermissionRequest request)
     {
@@ -143,7 +143,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Create role")]
     [EndpointDescription("Creates a role")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageRolesPolicy")]
+    [Authorize(Policy = "CreateRolesPolicy")]
     [HttpPost("create-role")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> CreateRoleAsync([FromBody] CreateRoleRequest request)
@@ -157,7 +157,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Create user account")]
     [EndpointDescription("Create a user account")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageUsersPolicy")]
+    [Authorize(Policy = "CreateUserPolicy")]
     [HttpPost("create-user-account")]
     public async ValueTask<ActionResult<Response>> CreateUserAccount([FromBody] CreateUserAccountRequest request)
     {
@@ -170,7 +170,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Lockout user")]
     [EndpointDescription("Lockouts user")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageLockoutPolicy")]
+    [Authorize(Policy = "UpdateUserPolicy")]
     [HttpPost("lockout-user")]
     public async ValueTask<ActionResult<Response>> LockoutUserAsync([FromBody] LockoutUserRequest request)
     {
@@ -183,7 +183,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Unlock user")]
     [EndpointDescription("Unlocks user")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageLockoutPolicy")]
+    [Authorize(Policy = "UpdateUserPolicy")]
     [HttpPost("unlock-user")]
     public async ValueTask<ActionResult<Response>> UnlockUserAsync([FromBody] UnlockUserRequest request)
     {
@@ -196,7 +196,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Remove user roles")]
     [EndpointDescription("Removes user roles")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageRolesPolicy")]
+    [Authorize(Policy = "UnassignRolesPolicy")]
     [HttpDelete("remove-user-roles")]
     public async ValueTask<ActionResult<Response>> RemoveUserRolesAsync([FromBody] RemoveUserRolesRequest request)
     {
@@ -209,7 +209,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Remove user role")]
     [EndpointDescription("Removes user role")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageRolesPolicy")]
+    [Authorize(Policy = "UnassignRolesPolicy")]
     [HttpDelete("remove-user-role")]
     public async ValueTask<ActionResult<Response>> RemoveUserRoleAsync([FromBody] RemoveUserRoleRequest request)
     {
@@ -222,7 +222,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Delete role")]
     [EndpointDescription("Deletes role")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageRolesPolicy")]
+    [Authorize(Policy = "DeleteRolesPolicy")]
     [HttpDelete("delete-role/{id:guid}")]
     public async ValueTask<ActionResult<Response>> DeleteRoleAsync(Guid id)
     {
@@ -235,7 +235,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Release user from permission")]
     [EndpointDescription("Releases user from permission")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManagePermissionsPolicy")]
+    [Authorize(Policy = "RevokePermissionPolicy")]
     [HttpDelete("delete-user-from-permission")]
     public async ValueTask<ActionResult<Response>> DeleteUserFromPermissionAsync(
         [FromBody] RemoveUserFromPermissionRequest request)
@@ -249,7 +249,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointSummary("Delete user account")]
     [EndpointDescription("Deletes user account")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ManageUsersPolicy")]
+    [Authorize(Policy = "DeleteUsersPolicy")]
     [HttpDelete("delete-user-account")]
     public async ValueTask<ActionResult<Response>> DeleteUserAccountAsync([FromBody] DeleteUserAccountRequest request)
     {

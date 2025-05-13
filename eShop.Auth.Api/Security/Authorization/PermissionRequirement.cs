@@ -11,8 +11,7 @@ public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
         PermissionRequirement requirement)
     {
         if (context.User.HasClaim(c => c.Type == ClaimTypes.Permission && c.Value == requirement.PermissionName) 
-            || (context.User.HasClaim(c => c is { Type: ClaimTypes.Permission, Value: "Admin:All" })
-                && context.User.IsInRole("Admin")))
+            || context.User.IsInRole("Admin"))
         {
             context.Succeed(requirement);
         }
