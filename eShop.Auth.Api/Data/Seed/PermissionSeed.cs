@@ -92,6 +92,13 @@ public class PermissionSeed : Seed<PermissionEntity, Guid>
                 Name = "Role:Update",
                 Action = ActionType.Update
             },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ResourceId = Guid.Parse("fe216bfd-65af-404a-b30e-60465fca02ee"), 
+                Name = "Role:All",
+                Action = ActionType.All
+            },
 
             #endregion
 
@@ -139,6 +146,13 @@ public class PermissionSeed : Seed<PermissionEntity, Guid>
                 Name = "Permission:Update",
                 Action = ActionType.Update
             },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ResourceId = Guid.Parse("b8c49fab-8e40-431d-8edc-3a2e17eeb2e6"), 
+                Name = "Permission:All",
+                Action = ActionType.All
+            },
 
             #endregion
 
@@ -171,6 +185,13 @@ public class PermissionSeed : Seed<PermissionEntity, Guid>
                 ResourceId = Guid.Parse("e3fef8c4-0105-419a-b889-66b9f1036e8c"), 
                 Name = "User:Delete",
                 Action = ActionType.Delete
+            },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ResourceId = Guid.Parse("e3fef8c4-0105-419a-b889-66b9f1036e8c"), 
+                Name = "User:All",
+                Action = ActionType.All
             }
 
             #endregion
