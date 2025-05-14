@@ -1,7 +1,6 @@
 ﻿using eShop.Domain.Common.Security;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
-using User = eShop.Domain.Types.User;
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
@@ -43,8 +42,7 @@ internal sealed class LoginWith2FaCommandHandler(
         {
             return Results.BadRequest($"Invalid two-factor token {request.Request.Token}.");
         }
-
-        var userDto = new User(user.Email!, user.UserName!, user.Id);
+        
         var securityToken = await securityTokenManager.FindAsync(user, cancellationToken);
 
         if (securityToken is not null)
@@ -53,7 +51,6 @@ internal sealed class LoginWith2FaCommandHandler(
 
             return Result.Success(new LoginResponse()
             {
-                User = userDto,
                 RefreshToken = accessToken.RefreshToken,
                 AccessToken = accessToken.AccessToken,
                 Message = "Successfully logged in.",
@@ -65,7 +62,6 @@ internal sealed class LoginWith2FaCommandHandler(
 
         return Result.Success(new LoginResponse()
         {
-            User = userDto,
             AccessToken = tokens.AccessToken,
             RefreshToken = tokens.RefreshToken,
             Message = "Successfully logged in."

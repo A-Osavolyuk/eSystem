@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.DTOs;
+using UserDto = eShop.Domain.DTOs.UserDto;
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 

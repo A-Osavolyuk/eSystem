@@ -38,13 +38,10 @@ internal sealed class LoginCommandHandler(
             return Results.BadRequest("The password is not valid.");
         }
         
-        var userDto = new User(user.Email!, user.UserName!, user.Id);
-        
         if (user.TwoFactorEnabled)
         {
             return Result.Success(new LoginResponse()
             {
-                User = userDto,
                 HasTwoFactorAuthentication = true
             });
         }
@@ -57,7 +54,6 @@ internal sealed class LoginCommandHandler(
 
             return Result.Success(new LoginResponse()
             {
-                User = userDto,
                 RefreshToken = token.RefreshToken,
                 AccessToken = token.AccessToken,
                 Message = "Successfully logged in.",
@@ -69,7 +65,6 @@ internal sealed class LoginCommandHandler(
 
         return Result.Success(new LoginResponse()
         {
-            User = userDto,
             AccessToken = tokens.AccessToken,
             RefreshToken = tokens.RefreshToken,
             Message = "Successfully logged in.",
