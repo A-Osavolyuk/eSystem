@@ -1,0 +1,64 @@
+﻿@using Size = MudBlazor.Size
+
+@inject AuthenticationStateProvider AuthenticationState
+@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+@inject ISnackbar Snackbar
+
+<MudAvatar @onclick="DrawerToggle">
+    <MudImage Alt="avatar"
+              Src="@(Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!)"/>
+</MudAvatar>
+<MudDrawer Class="py-3"
+           @bind-Open="isDrawerOpen"
+           ClipMode="DrawerClipMode.Never"
+           Overlay="true"
+           Anchor="Anchor.End"
+           Variant="DrawerVariant.Temporary"
+           Width="300px"
+           Elevation="2">
+    <MudDrawerHeader Class="w-100">
+        <MudStack Class="w-100">
+            <MudStack Row="true" Justify="Justify.Center">
+                <MudAvatar Size="Size.Large">
+                    <MudImage Alt="avatar"
+                              Src="@(Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!)"/>
+                </MudAvatar>
+            </MudStack>
+            <MudText Inline="true" Align="Align.Center">
+                Username
+            </MudText>
+            <MudDivider/>
+        </MudStack>
+    </MudDrawerHeader>
+    <MudNavMenu Class="px-3">
+        <MudNavLink Href="/account/profile" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AccountBox">Profile</MudNavLink>
+        <MudNavLink Href="/account/orders" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ShoppingCart">Orders</MudNavLink>
+        <MudNavLink Href="/account/orders-history" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.History">Order History</MudNavLink>
+        <MudNavLink Href="/account/setting" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
+        <MudDivider />
+        <MudNavLink
+            Class="mt-2"
+            Match="NavLinkMatch.All"
+            OnClick="@(async () => await LogoutClick())"
+            Icon="@Icons.Material.Filled.Logout">
+            Logout
+        </MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+
+@code {
+    private bool isDrawerOpen = false;
+
+    void DrawerToggle()
+    {
+        isDrawerOpen = !isDrawerOpen;
+    }
+    
+    private async Task LogoutClick()
+    {
+        await (AuthenticationState as JwtAuthenticationStateProvider)!.LogOutAsync();
+        Snackbar.Add("Successfully logged out.", Severity.Success);
+        NavigationManager.NavigateTo("/account/login");
+    }
+}

@@ -1,5 +1,5 @@
-﻿@inherits LayoutComponentBase
-@implements IDisposable
+﻿@using Size = MudBlazor.Size
+@inherits LayoutComponentBase
 
 @inject NotificationsStateContainer NotificationsStateContainer
 @inject AuthenticationStateProvider AuthenticationState
@@ -45,56 +45,12 @@
                 </MudButton>
             </NotAuthorized>
             <Authorized>
-                <MudMenu
-                    AnchorOrigin="Origin.BottomCenter"
-                    TransformOrigin="Origin.BottomLeft"
-                    ActivationEvent="MouseEvent.LeftClick">
-                    <ActivatorContent>
-                        @if (notificationsCount == 0)
-                        {
-                            <MudAvatar>
-                                <MudImage Alt="avatar"
-                                          Src="@(Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!)"/>
-                            </MudAvatar>
-                        }
-                        else
-                        {
-                            <MudBadge Style="margin-top:6px"
-                                      Max="99" @bind-content="notificationsCount"
-                                      Overlap="true"
-                                      Color="Color.Secondary">
-                                <MudAvatar>
-                                    <MudImage Alt="avatar"
-                                              Src="@(Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!)"/>
-                                </MudAvatar>
-                            </MudBadge>
-                        }
-                    </ActivatorContent>
-                    <ChildContent>
-                        <MudMenuItem>
-                            <MudButton
-                                StartIcon="@Icons.Material.Filled.ManageAccounts"
-                                Color="Color.Primary"
-                                Href="/profile">
-                                Profile
-                            </MudButton>
-                        </MudMenuItem>
-                        <MudDivider/>
-                        <MudMenuItem>
-                            <MudButton
-                                StartIcon="@Icons.Material.Filled.Logout"
-                                Color="Color.Primary"
-                                OnClick="async () => await LogoutClick()">
-                                Log Out
-                            </MudButton>
-                        </MudMenuItem>
-                    </ChildContent>
-                </MudMenu>
+                <AccountMenu/>
             </Authorized>
         </AuthorizeView>
     </MudAppBar>
     <MudDrawer
-        @bind-Open="drawerOpen"
+        @bind-Open="isDrawerOpen"
         ClipMode="DrawerClipMode.Always"
         Elevation="2">
         <NavigationMenu/>
@@ -109,35 +65,10 @@
 </MudLayout>
 
 @code {
-    private bool drawerOpen = true;
-    private int notificationsCount = 0;
+    private bool isDrawerOpen = true;
 
     void DrawerToggle()
     {
-        drawerOpen = !drawerOpen;
+        isDrawerOpen = !isDrawerOpen;
     }
-
-    protected override async Task OnInitializedAsync()
-    {
-        NotificationsStateContainer.OnNotificationsChanged +=  NotificationCountChanged;
-    }
-
-    private async Task LogoutClick()
-    {
-        await (AuthenticationState as JwtAuthenticationStateProvider)!.LogOutAsync();
-        Snackbar.Add("Successfully logged out.", Severity.Success);
-        NavigationManager.NavigateTo("/account/login");
-    }
-
-    private async Task NotificationCountChanged()
-    {
-        notificationsCount = await NotificationService.GetNotificationsCountAsync();
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NotificationsStateContainer.OnNotificationsChanged -= NotificationCountChanged;
-    }
-
 }
