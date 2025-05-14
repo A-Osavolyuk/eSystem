@@ -6,8 +6,7 @@
 @inject ISnackbar Snackbar
 
 <MudAvatar @onclick="DrawerToggle">
-    <MudImage Alt="avatar"
-              Src="@(Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!)"/>
+    A
 </MudAvatar>
 <MudDrawer Class="py-3"
            @bind-Open="isDrawerOpen"
@@ -21,8 +20,7 @@
         <MudStack Class="w-100">
             <MudStack Row="true" Justify="Justify.Center">
                 <MudAvatar Size="Size.Large">
-                    <MudImage Alt="avatar"
-                              Src="@(Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!)"/>
+                    A
                 </MudAvatar>
             </MudStack>
             <MudText Inline="true" Align="Align.Center">
