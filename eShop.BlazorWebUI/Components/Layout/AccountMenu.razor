@@ -2,11 +2,15 @@
 
 @inject AuthenticationStateProvider AuthenticationState
 @inject NavigationManager NavigationManager
-@inject IConfiguration Configuration
+@inject IUserStorage UserStorage
 @inject ISnackbar Snackbar
+@inject IConfiguration Configuration
 
 <MudAvatar @onclick="DrawerToggle">
-    A
+    <MudImage
+        Src="/images/no-avatar.png"
+        Alt="Avatar"
+        FallbackSrc="/images/no-avatar.png"/>
 </MudAvatar>
 <MudDrawer Class="py-3"
            @bind-Open="isDrawerOpen"
@@ -20,21 +24,43 @@
         <MudStack Class="w-100">
             <MudStack Row="true" Justify="Justify.Center">
                 <MudAvatar Size="Size.Large">
-                    A
+                    <MudImage
+                        Src="/images/no-avatar.png"
+                        Alt="Avatar"
+                        FallbackSrc="/images/no-avatar.png"/>
+
                 </MudAvatar>
             </MudStack>
-            <MudText Inline="true" Align="Align.Center">
-                Username
-            </MudText>
+            <MudText Inline="true" Align="Align.Center"> @GetUserName() </MudText>
             <MudDivider/>
         </MudStack>
     </MudDrawerHeader>
     <MudNavMenu Class="px-3">
-        <MudNavLink Href="/account/profile" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AccountBox">Profile</MudNavLink>
-        <MudNavLink Href="/account/orders" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ShoppingCart">Orders</MudNavLink>
-        <MudNavLink Href="/account/orders-history" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.History">Order History</MudNavLink>
-        <MudNavLink Href="/account/setting" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
-        <MudDivider />
+        <MudNavLink
+            Href="/account/profile"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.AccountBox">
+            Profile
+        </MudNavLink>
+        <MudNavLink
+            Href="/account/orders"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.ShoppingCart">
+            Orders
+        </MudNavLink>
+        <MudNavLink
+            Href="/account/orders-history"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.History">
+            Order History
+        </MudNavLink>
+        <MudNavLink
+            Href="/account/setting"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Settings">
+            Settings
+        </MudNavLink>
+        <MudDivider/>
         <MudNavLink
             Class="mt-2"
             Match="NavLinkMatch.All"
@@ -47,16 +73,39 @@
 
 @code {
     private bool isDrawerOpen = false;
+    private User user = new();
 
-    void DrawerToggle()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        isDrawerOpen = !isDrawerOpen;
+        if (firstRender)
+        {
+            await LoadUserAsync();
+        }
     }
-    
+
     private async Task LogoutClick()
     {
         await (AuthenticationState as JwtAuthenticationStateProvider)!.LogOutAsync();
         Snackbar.Add("Successfully logged out.", Severity.Success);
         NavigationManager.NavigateTo("/account/login");
     }
+
+    private async Task LoadUserAsync()
+    {
+        var data = await UserStorage.GetAsync();
+
+        if (data is not null)
+        {
+            user = data;
+        }
+    }
+
+    private string GetDefaultAvatar()
+    {
+        var uri = Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!.ToString();
+        return uri;
+    }
+
+    private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
+    private string GetUserName() => string.IsNullOrEmpty(user.UserName) ? string.Empty : user.UserName;
 }
