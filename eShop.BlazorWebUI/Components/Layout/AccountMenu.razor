@@ -35,12 +35,18 @@
             <MudDivider/>
         </MudStack>
     </MudDrawerHeader>
-    <MudNavMenu Class="px-3">
+    <MudNavMenu Color="Color.Primary" Class="px-3">
         <MudNavLink
             Href="/account/profile"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.AccountBox">
             Profile
+        </MudNavLink>
+        <MudNavLink
+            Href="/account/security"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Security">
+            Security
         </MudNavLink>
         <MudNavLink
             Href="/account/orders"
