@@ -57,7 +57,7 @@ public static class HostApplicationBuilderExtensions
             cfg.UseAsyncSeeding(async (ctx, isStoreOperation, ct) =>
             {
                 var context = (ctx as AuthDbContext)!;
-                await context.SeedAsync(ctx, isStoreOperation, ct);
+                await context.SeedAsync(isStoreOperation, ct);
             });
         });
     }
@@ -129,7 +129,7 @@ public static class HostApplicationBuilderExtensions
             });
 
         builder.Services.AddAuthorizationBuilder()
-            .AddPolicy("DeleteAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Delete")))
+            .AddPolicy("DeleteAccountPolicy", policy => { policy.Requirements.Add(new PermissionRequirement("Account:Delete")); })
             .AddPolicy("CreateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Create")))
             .AddPolicy("UpdateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Update")))
             .AddPolicy("ReadAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Read")))

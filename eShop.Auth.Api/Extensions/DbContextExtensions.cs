@@ -4,11 +4,9 @@ namespace eShop.Auth.Api.Extensions;
 
 public static class DbContextExtensions
 {
-    public static async Task SeedAsync(this AuthDbContext dbContext, DbContext ctx, bool isStoreOperation = false,
+    public static async Task SeedAsync(this AuthDbContext context, bool isStoreOperation = false,
         CancellationToken cancellationToken = default)
     {
-        var context = (ctx as AuthDbContext)!;
-
         if (!await context.PersonalData.AnyAsync(cancellationToken))
         {
             var seed = new PersonalDataSeed();
