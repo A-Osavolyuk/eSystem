@@ -1,15 +1,11 @@
-﻿using UserModel = eShop.Domain.Models.UserModel;
+﻿using System.Security.Claims;
+using User = eShop.Domain.Models.User;
 
 namespace eShop.Domain.Interfaces.Client;
 
 public interface IUserStorage
 {
-    public ValueTask<string?> GetUserNameAsync();
-    public ValueTask<Guid> GetUserIdAsync();
-    public ValueTask<string?> GetEmailAsync();
-    public ValueTask<string?> GetPhoneNumberAsync();
-    public ValueTask<UserModel?> GetUserAsync();
-    public ValueTask<AccountData?> GetAccountDataAsync();
-    public ValueTask SetUserAsync(UserModel model);
+    public ValueTask SaveAsync(List<Claim> claims);
+    public ValueTask<User?> GetAsync();
     public ValueTask ClearAsync();
 }
