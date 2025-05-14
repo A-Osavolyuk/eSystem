@@ -42,6 +42,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Code).HasMaxLength(6);
+            
+            entity.Property(x => x.Type)
+                .HasConversion(value => value.ToString(), x => Enum.Parse<Verification>(x));
         });
 
         builder.Entity<UserRoleEntity>(entity =>
