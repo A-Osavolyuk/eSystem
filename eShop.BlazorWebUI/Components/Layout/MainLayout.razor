@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@using eShop.Infrastructure.Security
 @implements IDisposable
 
 @inject NotificationsStateContainer NotificationsStateContainer
@@ -74,26 +73,10 @@
                     <ChildContent>
                         <MudMenuItem>
                             <MudButton
-                                StartIcon="@Icons.Material.Filled.ShoppingCart"
-                                Color="Color.Primary"
-                                Href="/cart">
-                                Your Cart
-                            </MudButton>
-                        </MudMenuItem>
-                        <MudMenuItem>
-                            <MudButton
                                 StartIcon="@Icons.Material.Filled.ManageAccounts"
                                 Color="Color.Primary"
                                 Href="/profile">
                                 Profile
-                            </MudButton>
-                        </MudMenuItem>
-                        <MudMenuItem>
-                            <MudButton
-                                StartIcon="@Icons.Material.Filled.Settings"
-                                Color="Color.Primary"
-                                Href="/setting">
-                                Settings
                             </MudButton>
                         </MudMenuItem>
                         <MudDivider/>
