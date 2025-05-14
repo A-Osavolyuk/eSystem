@@ -43,6 +43,7 @@ public class JwtAuthenticationStateProvider(
                 return await UnauthorizeAsync();
             }
 
+            await userStorage.SaveAsync(claims);
             return await Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(
                     new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme))));
