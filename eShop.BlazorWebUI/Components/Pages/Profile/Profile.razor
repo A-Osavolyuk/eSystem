@@ -1,12 +1,157 @@
 ﻿@page "/account/profile"
+@using System.Globalization
+
+@inject IUserStorage UserStorage
 
 @attribute [Authorize]
 
 <Title Text="Profile"></Title>
 
 <MudGrid Justify="Justify.Center">
-    <MudItem></MudItem>
+    <MudItem xs="8">
+        <MudGrid>
+            <MudItem xs="3">
+                <MudPaper Outlined="true" Class="pa-5">
+                    <MudStack Class="w-100">
+                        <MudImage
+                            Class="w-100 h-auto rounded-lg"
+                            Alt="Avatar"
+                            Src="/images/no-avatar.png"
+                            FallbackSrc="/images/no-avatar.png"/>
+
+                        <MudButton
+                            FullWidth="true"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            ButtonType="ButtonType.Button">
+                            Change avatar
+                        </MudButton>
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="9">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudPaper Outlined="true" Class="pa-5">
+                            <MudGrid Spacing="3">
+                                <MudItem xs="12">
+                                    <MudText Class="mb-2" Typo="Typo.h6">
+                                        Account information
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudText>
+                                        User name
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="9">
+                                    <MudText>
+                                        @model.Username
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudDivider/>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudText>
+                                        Email address
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="9">
+                                    <MudText>
+                                        @model.Email
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudDivider/>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudText>
+                                        Phone number
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="9">
+                                    <MudText>
+                                        @model.PhoneNumber
+                                    </MudText>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudPaper Outlined="true" Class="pa-5">
+                            <MudGrid Spacing="3">
+                                <MudItem xs="12">
+                                    <MudText Class="mb-2" Typo="Typo.h6">
+                                        Personal information
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudText>
+                                        Full name
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="9">
+                                    <MudText>
+                                        @model.FullName
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudDivider/>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudText>
+                                        Birth date
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="9">
+                                    <MudText>
+                                        @model.BirthDate
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudDivider/>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudText>
+                                        Gender
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="9">
+                                    <MudText>
+                                        @model.Gender
+                                    </MudText>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
 </MudGrid>
+
 @code {
-    
+    private ProfileModel model = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var user = await UserStorage.GetAsync();
+
+            if (user is not null)
+            {
+                model.BirthDate = new DateTime(2004, 02, 11).ToString("D", new CultureInfo("en-GB"));
+                model.Gender = "Male";
+                model.FullName = "Alexander Osavolyuk";
+                model.Username = user.UserName;
+                model.Email = user.Email;
+                model.PhoneNumber = "+ 38 (068)-610-0242";
+            }
+            
+            StateHasChanged();
+        }
+    }
+
 }

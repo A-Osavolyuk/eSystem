@@ -387,5 +387,19 @@
       <jdbc-url>jdbc:redis://jvGeNWtWwEvYPp6qhqXZZ0@localhost:53655</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="redis" uuid="3c9249c6-8d79-476e-94ed-1120d1705cd5">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://jvGeNWtWwEvYPp6qhqXZZ0@localhost:61171</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="mssql" uuid="d8fc85aa-c5e0-4e95-8dfa-3dd532227058">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,61136;User ID=sa;Password=atpDWGvDb4jR5pE7rT59c7;TrustServerCertificate=true</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
