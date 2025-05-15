@@ -1,8 +1,10 @@
-﻿namespace eShop.Auth.Api.Interfaces;
+﻿using eShop.Domain.DTOs;
+
+namespace eShop.Auth.Api.Interfaces;
 
 public interface IProfileManager
 {
-    public ValueTask<PersonalData?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
+    public ValueTask<PersonalDataDto?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
 
     public ValueTask<IdentityResult> SetAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default);

@@ -2,7 +2,7 @@
 
 public record FindUserResponse
 {
-    public AccountData AccountData { get; set; } = null!;
-    public PersonalData PersonalDataEntity { get; set; } = null!;
-    public PermissionsData PermissionsData {  get; set; } = null!; 
+    public AccountDataDto AccountDataDto { get; set; } = null!;
+    public PersonalDataDto PersonalDataDtoEntity { get; set; } = null!;
+    public PermissionsDataDto PermissionsDataDto {  get; set; } = null!; 
 }

@@ -1,10 +1,12 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.DTOs;
+
+namespace eShop.Auth.Api.Services;
 
 internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<PersonalData?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
+    public async ValueTask<PersonalDataDto?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
         var data = await context.PersonalData
             .AsNoTracking()

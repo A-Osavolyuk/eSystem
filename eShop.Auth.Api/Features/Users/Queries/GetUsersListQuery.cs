@@ -35,7 +35,7 @@ internal sealed class GetUsersListQueryHandler(
             var roles = await roleManager.GetByUserAsync(user, cancellationToken);
             var permissions = await permissionManager.GetByUserAsync(user, cancellationToken);
             
-            var permissionData = new PermissionsData()
+            var permissionData = new PermissionsDataDto()
             {
                 Roles = roles.Select(Mapper.Map).ToList(),
                 Permissions = permissions.Select(Mapper.Map).ToList()
@@ -43,9 +43,9 @@ internal sealed class GetUsersListQueryHandler(
 
             users.Add(new UserDto()
             {
-                PermissionsData = permissionData,
-                PersonalData = personalData ?? new(),
-                AccountData = accountData
+                PermissionsDataDto = permissionData,
+                PersonalDataDto = personalData ?? new(),
+                AccountDataDto = accountData
             });
         }
 

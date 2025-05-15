@@ -9,7 +9,7 @@ namespace eShop.Auth.Api.Mapping;
 
 public static class Mapper
 {
-    public static PersonalDataResponse Map(PersonalData entity)
+    public static PersonalDataResponse Map(PersonalDataDto entity)
     {
         return new PersonalDataResponse()
         {
@@ -42,9 +42,9 @@ public static class Mapper
         };
     }
 
-    public static PersonalData Map(PersonalDataEntity data)
+    public static PersonalDataDto Map(PersonalDataEntity data)
     {
-        return new PersonalData()
+        return new PersonalDataDto()
         {
             FirstName = data.FirstName,
             LastName = data.LastName,
@@ -64,9 +64,9 @@ public static class Mapper
         };
     }
 
-    public static AccountData Map(UserEntity userEntity)
+    public static AccountDataDto Map(UserEntity userEntity)
     {
-        return new AccountData()
+        return new AccountDataDto()
         {
             Id = userEntity.Id,
             Email = userEntity.Email!,

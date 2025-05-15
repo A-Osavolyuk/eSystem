@@ -2,7 +2,7 @@
 
 public class UserDto
 {
-    public AccountData AccountData { get; set; } = null!;
-    public PersonalData PersonalData { get; set; } = null!;
-    public PermissionsData PermissionsData { get; set; } = null!;
+    public AccountDataDto AccountDataDto { get; set; } = null!;
+    public PersonalDataDto PersonalDataDto { get; set; } = null!;
+    public PermissionsDataDto PermissionsDataDto { get; set; } = null!;
 }

@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Security.Queries;
+﻿using eShop.Domain.DTOs;
+
+namespace eShop.Auth.Api.Features.Security.Queries;
 
 internal sealed record GetPersonalDataQuery(string Email) : IRequest<Result>;
 
@@ -15,7 +17,7 @@ internal sealed class GetPersonalDataQueryHandler(
         CancellationToken cancellationToken)
     {
         var key = $"personal-data-{request.Email}";
-        var data = await cacheService.GetAsync<PersonalData>(key);
+        var data = await cacheService.GetAsync<PersonalDataDto>(key);
 
         if (data is null)
         {

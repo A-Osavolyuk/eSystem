@@ -36,16 +36,16 @@ internal sealed class FindUserByEmailQueryHandler(
             return Results.NotFound($"Cannot find roles for user with email {user.Email}.");
         }
 
-        var permissionData = new PermissionsData() { Id = user.Id };
+        var permissionData = new PermissionsDataDto() { Id = user.Id };
 
         permissionData.Roles.AddRange(roles.Select(Mapper.Map).ToList());
         permissionData.Permissions.AddRange(permissions.Select(Mapper.Map).ToList());
 
         var response = new UserDto()
         {
-            AccountData = accountData,
-            PersonalData = personalData ?? new PersonalData(),
-            PermissionsData = permissionData
+            AccountDataDto = accountData,
+            PersonalDataDto = personalData ?? new PersonalDataDto(),
+            PermissionsDataDto = permissionData
         };
 
         return Result.Success(response);

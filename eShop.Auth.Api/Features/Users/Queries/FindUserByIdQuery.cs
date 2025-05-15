@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Responses.API.Admin;
+﻿using eShop.Domain.DTOs;
+using eShop.Domain.Responses.API.Admin;
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 
@@ -36,16 +37,16 @@ internal sealed class FindUserByIdQueryHandler(
             return Results.NotFound($"Cannot find roles for user with ID {user.Id}.");
         }
 
-        var permissionData = new PermissionsData() { Id = user.Id };
+        var permissionData = new PermissionsDataDto() { Id = user.Id };
 
         permissionData.Roles.AddRange(roles.Select(Mapper.Map).ToList());
         permissionData.Permissions.AddRange(permissions.Select(Mapper.Map).ToList());
 
         var response = new FindUserResponse()
         {
-            AccountData = accountData,
-            PersonalDataEntity = personalData ?? new(),
-            PermissionsData = permissionData
+            AccountDataDto = accountData,
+            PersonalDataDtoEntity = personalData ?? new(),
+            PermissionsDataDto = permissionData
         };
 
         return Result.Success(response);

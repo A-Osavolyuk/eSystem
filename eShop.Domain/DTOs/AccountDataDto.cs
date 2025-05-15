@@ -1,8 +1,8 @@
 ﻿using eShop.Domain.Abstraction.Data;
 
-namespace eShop.Domain.Types;
+namespace eShop.Domain.DTOs;
 
-public record AccountData : IIdentifiable<Guid>
+public record AccountDataDto : IIdentifiable<Guid>
 {
     public Guid Id { get; init; }
     public string Email { get; set; } = string.Empty;
