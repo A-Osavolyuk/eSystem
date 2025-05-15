@@ -46,7 +46,7 @@
                                 </MudItem>
                                 <MudItem xs="9">
                                     <MudText>
-                                        @model.Username
+                                        @model.UserName
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="12">
@@ -72,7 +72,7 @@
                                 </MudItem>
                                 <MudItem xs="9">
                                     <MudText>
-                                        @model.PhoneNumber
+                                        @(string.IsNullOrEmpty(model.PhoneNumber) ? "-" : model.PhoneNumber)
                                     </MudText>
                                 </MudItem>
                             </MudGrid>
@@ -86,42 +86,45 @@
                                         Personal information
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="3">
-                                    <MudText>
-                                        Full name
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="9">
-                                    <MudText>
-                                        @model.FullName
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudDivider/>
-                                </MudItem>
-                                <MudItem xs="3">
-                                    <MudText>
-                                        Birth date
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="9">
-                                    <MudText>
-                                        @model.BirthDate
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudDivider/>
-                                </MudItem>
-                                <MudItem xs="3">
-                                    <MudText>
-                                        Gender
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="9">
-                                    <MudText>
-                                        @model.Gender
-                                    </MudText>
-                                </MudItem>
+                                @if (model.HasPersonalData)
+                                {
+                                    <MudItem xs="3">
+                                        <MudText>
+                                            Full name
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText>
+                                            @model.FullName
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                    <MudItem xs="3">
+                                        <MudText>
+                                            Birth date
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText>
+                                            @model.BirthDate
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                    <MudItem xs="3">
+                                        <MudText>
+                                            Gender
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText>
+                                            @model.Gender
+                                        </MudText>
+                                    </MudItem>
+                                }
                             </MudGrid>
                         </MudPaper>
                     </MudItem>
@@ -142,12 +145,7 @@
 
             if (user is not null)
             {
-                model.BirthDate = new DateTime(2004, 02, 11).ToString("D", new CultureInfo("en-GB"));
-                model.Gender = "Male";
-                model.FullName = "Alexander Osavolyuk";
-                model.Username = user.UserName;
-                model.Email = user.Email;
-                model.PhoneNumber = "+ 38 (068)-610-0242";
+                model = Mapper.Map(user);
             }
             
             StateHasChanged();

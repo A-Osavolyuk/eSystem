@@ -18,7 +18,7 @@ public class UserStorage(ILocalStorageService localStorage) : IUserStorage
                 Id = Guid.Parse(claims.First(x => x.Type == ClaimTypes.Id).Value),
                 Email = claims.First(x => x.Type == ClaimTypes.Email).Value,
                 UserName = claims.First(x => x.Type == ClaimTypes.UserName).Value,
-                PhoneNumber = claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)?.Value ?? string.Empty
+                PhoneNumber = claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)?.Value ?? null
             };
         
             await localStorage.SetItemAsync(UserKey, user);

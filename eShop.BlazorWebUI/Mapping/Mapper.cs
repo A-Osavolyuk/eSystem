@@ -1,4 +1,6 @@
-﻿using eShop.BlazorWebUI.Models;
+﻿using System.Globalization;
+using eShop.BlazorWebUI.Models;
+using eShop.Domain.Models;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.BlazorWebUI.Mapping;
@@ -48,6 +50,20 @@ public static class Mapper
         {
             Email = source.Email,
             Provider = source.Provider
+        };
+    }
+    
+    public static ProfileModel Map(UserModel source)
+    {
+        return new ProfileModel()
+        {
+            UserName = source.UserName,
+            Email = source.Email,
+            PhoneNumber = source.PhoneNumber ?? "-",
+            HasPersonalData = source.HasPersonalData,
+            BirthDate = source.PersonalData?.BirthDate?.ToString("D", new CultureInfo("en-GB")) ?? string.Empty,
+            FullName = source.PersonalData?.FullName ?? string.Empty,
+            Gender = source.PersonalData?.Gender ?? string.Empty,
         };
     }
 }
