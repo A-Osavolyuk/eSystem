@@ -79,7 +79,7 @@
 
 @code {
     private bool isDrawerOpen = false;
-    private User user = new();
+    private UserModel userModel = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -102,7 +102,7 @@
 
         if (data is not null)
         {
-            user = data;
+            userModel = data;
         }
     }
 
@@ -113,5 +113,5 @@
     }
 
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
-    private string GetUserName() => string.IsNullOrEmpty(user.UserName) ? string.Empty : user.UserName;
+    private string GetUserName() => string.IsNullOrEmpty(userModel.UserName) ? string.Empty : userModel.UserName;
 }

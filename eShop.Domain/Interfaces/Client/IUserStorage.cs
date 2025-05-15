@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
-using User = eShop.Domain.Models.User;
+using eShop.Domain.Models;
 
 namespace eShop.Domain.Interfaces.Client;
 
 public interface IUserStorage
 {
     public ValueTask SaveAsync(List<Claim> claims);
-    public ValueTask<User?> GetAsync();
+    public ValueTask<UserModel?> GetAsync();
     public ValueTask ClearAsync();
 }
