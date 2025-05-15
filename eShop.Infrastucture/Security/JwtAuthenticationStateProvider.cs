@@ -42,8 +42,7 @@ public class JwtAuthenticationStateProvider(
             {
                 return await UnauthorizeAsync();
             }
-
-            await userStorage.SaveAsync(claims);
+            
             return await Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(
                     new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme))));
@@ -65,6 +64,8 @@ public class JwtAuthenticationStateProvider(
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = tokenHandler.ReadClaims(rawToken);
             claimsPrincipal = new(new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme));
+            
+            await userStorage.SaveAsync(claims);
         }
 
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
