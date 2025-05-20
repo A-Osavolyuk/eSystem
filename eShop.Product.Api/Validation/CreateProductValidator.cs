@@ -1,10 +1,10 @@
 ﻿using eShop.Domain.Requests.API.Product;
 
-namespace eShop.Application.Validation.Products;
+namespace eShop.Product.Api.Validation;
 
-public class UpdateProductValidator : Validator<UpdateProductRequest>
+public class CreateProductValidator : Validator<CreateProductRequest>
 {
-    public UpdateProductValidator()
+    public CreateProductValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required")
@@ -44,15 +44,32 @@ public class UpdateProductValidator : Validator<UpdateProductRequest>
             .When(x => x?.Brand is not null);
         
         RuleFor(x => x.Size)
-            .Must(x => !x.Contains(Size.None) && x.Any())
-            .When(x => x.ProductType is ProductTypes.Shoes or ProductTypes.Clothing);
+            .Must(x => !x.Contains(Size.None)).WithMessage("Size is required")
+            .When(x => x.ProductType is ProductTypes.Shoes or ProductTypes.Clothing)
+            .Must(x => x.Any()).WithMessage("Size is required")
+            .When(x => x.ProductType switch
+            {
+                ProductTypes.Shoes => true,
+                ProductTypes.Clothing => true,
+                _ or ProductTypes.None => false,
+            });
         
         RuleFor(x => x.Color)
             .NotEqual(ProductColor.None).WithMessage("Choose product color")
-            .When(x => x.ProductType is ProductTypes.Shoes or ProductTypes.Clothing);
+            .When(x => x.ProductType switch
+            {
+                ProductTypes.Shoes => true,
+                ProductTypes.Clothing => true,
+                _ or ProductTypes.None => false,
+            });
         
         RuleFor(x => x.ProductAudience)
             .NotEqual(ProductAudience.None).WithMessage("Choose product audience")
-            .When(x => x.ProductType is ProductTypes.Shoes or ProductTypes.Clothing);
+            .When(x => x.ProductType switch
+            {
+                ProductTypes.Shoes => true,
+                ProductTypes.Clothing => true,
+                _ or ProductTypes.None => false,
+            });
     }
 }

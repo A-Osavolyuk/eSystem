@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Data;
-
-namespace eShop.Comments.Api.Entities;
+﻿namespace eShop.Comments.Api.Entities;
 
 public record CommentEntity : IEntity<Guid>
 {

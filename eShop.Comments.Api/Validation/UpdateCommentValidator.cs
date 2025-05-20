@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Comments;
 
-namespace eShop.Application.Validation.Comments;
+namespace eShop.Comments.Api.Validation;
 
 public class UpdateCommentValidator : Validator<UpdateCommentRequest>
 {

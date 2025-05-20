@@ -2,6 +2,7 @@
 global using eShop.Application.Extensions;
 global using eShop.Application.Filters;
 global using eShop.Application.Utilities;
+global using eShop.Domain.Abstraction.Validation;
 global using eShop.Domain.Enums;
 global using eShop.Product.Api.Behaviours;
 global using eShop.Product.Api.Data;
@@ -9,6 +10,7 @@ global using eShop.Product.Api.Extensions;
 global using eShop.Product.Api.Mapping;
 global using eShop.Product.Api.Rpc;
 global using eShop.ServiceDefaults;
+global using FluentValidation;
 global using Grpc.Net.Client;
 global using MassTransit;
 global using MediatR;

@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Brand;
 
-namespace eShop.Application.Validation.Brand;
+namespace eShop.Product.Api.Validation;
 
 public class CreateBrandRequestValidator : Validator<CreateBrandRequest>
 {

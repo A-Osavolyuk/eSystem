@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Admin;
 
-namespace eShop.Application.Validation.Admin;
+namespace eShop.Auth.Api.Validation;
 
 public class CreateRoleValidator : Validator<CreateRoleRequest>
 {
