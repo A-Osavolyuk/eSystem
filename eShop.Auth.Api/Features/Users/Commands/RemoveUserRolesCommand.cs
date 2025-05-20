@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record RemoveUserRolesCommand(RemoveUserRolesRequest Request)
+internal sealed record RemoveUserRolesCommand(UnassignRolesRequest Request)
     : IRequest<Result>;
 
 internal sealed class RemoveUserRolesCommandHandler(

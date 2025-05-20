@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Features.Permissions.Commands;
 
-internal sealed record IssuePermissionCommand(IssuePermissionRequest Request)
+internal sealed record IssuePermissionCommand(GrantPermissionRequest Request)
     : IRequest<Result>;
 
 internal sealed class IssuePermissionCommandHandler(

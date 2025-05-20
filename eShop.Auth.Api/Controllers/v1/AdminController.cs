@@ -132,7 +132,7 @@ public class AdminController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "GrantPermissionsPolicy")]
     [HttpPost("issue-permissions")]
-    public async ValueTask<ActionResult<Response>> IssuePermissionsAsync([FromBody] IssuePermissionRequest request)
+    public async ValueTask<ActionResult<Response>> IssuePermissionsAsync([FromBody] GrantPermissionRequest request)
     {
         var result = await sender.Send(new IssuePermissionCommand(request));
         return result.Match(
@@ -198,7 +198,7 @@ public class AdminController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UnassignRolesPolicy")]
     [HttpDelete("remove-user-roles")]
-    public async ValueTask<ActionResult<Response>> RemoveUserRolesAsync([FromBody] RemoveUserRolesRequest request)
+    public async ValueTask<ActionResult<Response>> RemoveUserRolesAsync([FromBody] UnassignRolesRequest request)
     {
         var result = await sender.Send(new RemoveUserRolesCommand(request));
         return result.Match(
@@ -211,7 +211,7 @@ public class AdminController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UnassignRolesPolicy")]
     [HttpDelete("remove-user-role")]
-    public async ValueTask<ActionResult<Response>> RemoveUserRoleAsync([FromBody] RemoveUserRoleRequest request)
+    public async ValueTask<ActionResult<Response>> RemoveUserRoleAsync([FromBody] UnassignRoleRequest request)
     {
         var result = await sender.Send(new RemoveUserRoleCommand(request));
         return result.Match(
@@ -238,7 +238,7 @@ public class AdminController(ISender sender) : ControllerBase
     [Authorize(Policy = "RevokePermissionPolicy")]
     [HttpDelete("delete-user-from-permission")]
     public async ValueTask<ActionResult<Response>> DeleteUserFromPermissionAsync(
-        [FromBody] RemoveUserFromPermissionRequest request)
+        [FromBody] RevokePermissionRequest request)
     {
         var result = await sender.Send(new RemoveUserFromPermissionCommand(request));
         return result.Match(
