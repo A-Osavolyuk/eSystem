@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Features.Permissions.Commands;
-using eShop.Auth.Api.Features.Permissions.Queries;
+﻿using eShop.Auth.Api.Features.Permissions.Queries;
 using eShop.Auth.Api.Features.Roles.Commands;
 using eShop.Auth.Api.Features.Roles.Queries;
 using eShop.Auth.Api.Features.Users.Commands;
@@ -200,20 +199,7 @@ public class AdminController(ISender sender) : ControllerBase
     [HttpDelete("remove-user-roles")]
     public async ValueTask<ActionResult<Response>> RemoveUserRolesAsync([FromBody] UnassignRolesRequest request)
     {
-        var result = await sender.Send(new RemoveUserRolesCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Remove user role")]
-    [EndpointDescription("Removes user role")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "UnassignRolesPolicy")]
-    [HttpDelete("remove-user-role")]
-    public async ValueTask<ActionResult<Response>> RemoveUserRoleAsync([FromBody] UnassignRoleRequest request)
-    {
-        var result = await sender.Send(new RemoveUserRoleCommand(request));
+        var result = await sender.Send(new UnassignRolesCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
@@ -240,7 +226,7 @@ public class AdminController(ISender sender) : ControllerBase
     public async ValueTask<ActionResult<Response>> DeleteUserFromPermissionAsync(
         [FromBody] RevokePermissionRequest request)
     {
-        var result = await sender.Send(new RemoveUserFromPermissionCommand(request));
+        var result = await sender.Send(new RevokePermissionCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);

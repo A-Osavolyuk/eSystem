@@ -2,16 +2,16 @@
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record RemoveUserRolesCommand(UnassignRolesRequest Request)
+internal sealed record UnassignRolesCommand(UnassignRolesRequest Request)
     : IRequest<Result>;
 
 internal sealed class RemoveUserRolesCommandHandler(
     IUserManager userManager)
-    : IRequestHandler<RemoveUserRolesCommand, Result>
+    : IRequestHandler<UnassignRolesCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
 
-    public async Task<Result> Handle(RemoveUserRolesCommand request,
+    public async Task<Result> Handle(UnassignRolesCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);

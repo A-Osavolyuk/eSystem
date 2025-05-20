@@ -2,18 +2,18 @@ using eShop.Domain.Requests.API.Admin;
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record RemoveUserFromPermissionCommand(RevokePermissionRequest Request)
+internal sealed record RevokePermissionCommand(RevokePermissionRequest Request)
     : IRequest<Result>;
 
 internal sealed class RemoveUserFromPermissionCommandHandler(
     IPermissionManager permissionManager,
     IUserManager userManager)
-    : IRequestHandler<RemoveUserFromPermissionCommand, Result>
+    : IRequestHandler<RevokePermissionCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
 
-    public async Task<Result> Handle(RemoveUserFromPermissionCommand request,
+    public async Task<Result> Handle(RevokePermissionCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);

@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Admin;
 
-namespace eShop.Auth.Api.Features.Permissions.Commands;
+namespace eShop.Auth.Api.Features.Users.Commands;
 
 internal sealed record IssuePermissionCommand(GrantPermissionRequest Request)
     : IRequest<Result>;

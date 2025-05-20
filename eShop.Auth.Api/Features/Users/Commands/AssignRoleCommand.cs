@@ -1,15 +1,13 @@
 ﻿using eShop.Domain.Requests.API.Admin;
 
-namespace eShop.Auth.Api.Features.Roles.Commands;
+namespace eShop.Auth.Api.Features.Users.Commands;
 
 internal sealed record AssignRoleCommand(AssignRoleRequest Request) : IRequest<Result>;
 
 internal sealed class AssignRoleCommandHandler(
-    ILogger<AssignRoleCommandHandler> logger,
     IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<AssignRoleCommand, Result>
 {
-    private readonly ILogger<AssignRoleCommandHandler> logger = logger;
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
