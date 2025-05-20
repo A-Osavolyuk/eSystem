@@ -126,14 +126,14 @@ public class AdminController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Issue permissions")]
-    [EndpointDescription("Issue permission to user")]
+    [EndpointSummary("Grant permissions")]
+    [EndpointDescription("Grant permission")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "GrantPermissionsPolicy")]
-    [HttpPost("issue-permissions")]
-    public async ValueTask<ActionResult<Response>> IssuePermissionsAsync([FromBody] GrantPermissionRequest request)
+    [HttpPost("grant-permissions")]
+    public async ValueTask<ActionResult<Response>> GrantPermissionsAsync([FromBody] GrantPermissionRequest request)
     {
-        var result = await sender.Send(new IssuePermissionCommand(request));
+        var result = await sender.Send(new GrantPermissionCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
@@ -192,12 +192,12 @@ public class AdminController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Remove user roles")]
-    [EndpointDescription("Removes user roles")]
+    [EndpointSummary("Unassign roles")]
+    [EndpointDescription("Unassign roles")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UnassignRolesPolicy")]
-    [HttpDelete("remove-user-roles")]
-    public async ValueTask<ActionResult<Response>> RemoveUserRolesAsync([FromBody] UnassignRolesRequest request)
+    [HttpDelete("unassign-roles")]
+    public async ValueTask<ActionResult<Response>> UnassignRolesAsync([FromBody] UnassignRolesRequest request)
     {
         var result = await sender.Send(new UnassignRolesCommand(request));
         return result.Match(
@@ -218,12 +218,12 @@ public class AdminController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Release user from permission")]
-    [EndpointDescription("Releases user from permission")]
+    [EndpointSummary("Revoke permission")]
+    [EndpointDescription("Revoke permission")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "RevokePermissionPolicy")]
-    [HttpDelete("delete-user-from-permission")]
-    public async ValueTask<ActionResult<Response>> DeleteUserFromPermissionAsync(
+    [HttpDelete("revoke-permission")]
+    public async ValueTask<ActionResult<Response>> RevokePermissionAsync(
         [FromBody] RevokePermissionRequest request)
     {
         var result = await sender.Send(new RevokePermissionCommand(request));

@@ -2,17 +2,17 @@
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record IssuePermissionCommand(GrantPermissionRequest Request)
+internal sealed record GrantPermissionCommand(GrantPermissionRequest Request)
     : IRequest<Result>;
 
 internal sealed class IssuePermissionCommandHandler(
     IPermissionManager permissionManager,
-    IUserManager userManager) : IRequestHandler<IssuePermissionCommand, Result>
+    IUserManager userManager) : IRequestHandler<GrantPermissionCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
 
-    public async Task<Result> Handle(IssuePermissionCommand request,
+    public async Task<Result> Handle(GrantPermissionCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
