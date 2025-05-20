@@ -23,6 +23,16 @@ public class GlobalExceptionHandler(
                     .WithMessage(failedValidationException.Message)
                     .Build(), cancellationToken);
         }
+        else
+        {
+            logger.LogInformation("Handled global exception");
+            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await httpContext.Response.WriteAsJsonAsync(
+                new ResponseBuilder()
+                    .Failed()
+                    .WithMessage(exception.Message)
+                    .Build(), cancellationToken);
+        }
         
         return true;
     }
