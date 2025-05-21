@@ -59,7 +59,13 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(x => x.UserId);
         });
 
-        builder.Entity<PersonalDataEntity>(entity => { entity.HasKey(p => p.Id); });
+        builder.Entity<PersonalDataEntity>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            
+            entity.Property(x => x.Gender)
+                .HasConversion(value => value.ToString(), x => Enum.Parse<Gender>(x));
+        });
 
         builder.Entity<PermissionEntity>(entity =>
         {

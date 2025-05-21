@@ -17,9 +17,7 @@ public class PersonalDataValidator : Validator<ChangePersonalDataRequest>
             .MaximumLength(32).WithMessage("Last Name length must be less then 23 letters.");
 
         RuleFor(x => x.Gender)
-            .NotEmpty().WithMessage("Gender is must!")
-            .MinimumLength(3).WithMessage("Gender must length be longer then 3 letters.")
-            .MaximumLength(32).WithMessage("Gender must length be less then 32 letters.");
+            .NotEmpty().WithMessage("Gender is must!");
 
         RuleFor(x => x.DateOfBirth)
             .LessThan(DateTime.Now).WithMessage("You cannot choose today`s date.");

@@ -2,7 +2,7 @@
 
 public enum Gender
 {
+    Unspecified,
     Male,
     Female,
-    Unspecified,
 }
