@@ -8,11 +8,9 @@ internal sealed record ChangeUserNameCommand(ChangeUserNameRequest Request)
     : IRequest<Result>;
 
 internal sealed class ChangeUserNameCommandHandler(
-    AuthDbContext context,
     IUserManager userManager,
     ISecurityTokenManager securityTokenManager) : IRequestHandler<ChangeUserNameCommand, Result>
 {
-    private readonly AuthDbContext context = context;
     private readonly IUserManager userManager = userManager;
     private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
 

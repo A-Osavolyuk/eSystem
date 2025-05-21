@@ -8,14 +8,10 @@ internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 internal sealed class LoginCommandHandler(
     ISecurityTokenManager securityTokenManager,
-    IUserManager userManager,
-    IMessageService messageService,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<LoginCommand, Result>
+    IUserManager userManager) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
     private readonly IUserManager userManager = userManager;
-    private readonly IMessageService messageService = messageService;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
