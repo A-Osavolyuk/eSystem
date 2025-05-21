@@ -37,15 +37,6 @@ public class UserManager(AuthDbContext context) : IUserManager
         return user;
     }
 
-    public async ValueTask<bool> IsInRoleAsync(UserEntity user, string roleName,
-        CancellationToken cancellationToken = default)
-    {
-        var isInRole = await context.UserRoles
-            .AnyAsync(x => x.UserId == user.Id && x.Role.Name == roleName, cancellationToken: cancellationToken);
-
-        return isInRole;
-    }
-
     public async ValueTask<Result> ConfirmEmailAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         user.EmailConfirmed = true;
@@ -141,46 +132,6 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> AssignRoleAsync(UserEntity user, string roleName,
-        CancellationToken cancellationToken = default)
-    {
-        var role = await context.Roles.FirstOrDefaultAsync(x => x.Name == roleName || x.NormalizedName == roleName,
-            cancellationToken);
-
-        if (role is null)
-        {
-            return Results.NotFound("Role not found");
-        }
-
-        var userRole = new UserRoleEntity()
-        {
-            UserId = user.Id,
-            RoleId = role.Id,
-            CreateDate = DateTime.UtcNow
-        };
-
-        await context.UserRoles.AddAsync(userRole, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> AssignRoleAsync(UserEntity user, RoleEntity role,
-        CancellationToken cancellationToken = default)
-    {
-        var userRole = new UserRoleEntity()
-        {
-            UserId = user.Id,
-            RoleId = role.Id,
-            CreateDate = DateTime.UtcNow
-        };
-
-        await context.UserRoles.AddAsync(userRole, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
     public async ValueTask<Result> AddPasswordAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {
@@ -191,54 +142,6 @@ public class UserManager(AuthDbContext context) : IUserManager
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> UnassignRoleAsync(UserEntity user, string roleName,
-        CancellationToken cancellationToken = default)
-    {
-        var role = await context.UserRoles
-            .FirstOrDefaultAsync(x => x.UserId == user.Id
-                                      && (x.Role.Name == roleName || x.Role.NormalizedName == roleName),
-                cancellationToken);
-
-        if (role is null)
-        {
-            return Results.NotFound("User not in role");
-        }
-
-        context.UserRoles.Remove(role);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> UnassignRoleAsync(UserEntity user, RoleEntity role,
-        CancellationToken cancellationToken = default)
-    {
-        var userRole = await context.UserRoles
-            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.RoleId == role.Id, cancellationToken);
-        
-        if (userRole is null)
-        {
-            return Results.NotFound("User not in role");
-        }
-        
-        context.UserRoles.Remove(userRole);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> UnassignRolesAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        var userRoles = await context.UserRoles
-            .Where(x => x.UserId == user.Id)
-            .ToListAsync(cancellationToken);
-        
-        context.UserRoles.RemoveRange(userRoles);
-        await context.SaveChangesAsync(cancellationToken);
-        
         return Result.Success();
     }
 

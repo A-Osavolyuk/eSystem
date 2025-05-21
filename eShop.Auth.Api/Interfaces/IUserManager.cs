@@ -19,12 +19,4 @@ public interface IUserManager
     public ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangePasswordAsync(UserEntity user, string currentPassword, string newPassword, CancellationToken cancellationToken = default);
-    
-    //Role methods
-    public ValueTask<bool> IsInRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> AssignRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> AssignRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
-    public ValueTask<Result> UnassignRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> UnassignRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
-    public ValueTask<Result> UnassignRolesAsync(UserEntity user, CancellationToken cancellationToken = default);
 }
