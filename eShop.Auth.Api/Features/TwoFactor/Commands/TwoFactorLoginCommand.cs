@@ -42,21 +42,6 @@ internal sealed class LoginWith2FaCommandHandler(
         {
             return Results.BadRequest($"Invalid two-factor token {request.Request.Token}.");
         }
-        
-        var securityToken = await securityTokenManager.FindAsync(user, cancellationToken);
-
-        if (securityToken is not null)
-        {
-            var accessToken = await securityTokenManager.RefreshAsync(user, securityToken, cancellationToken);
-
-            return Result.Success(new LoginResponse()
-            {
-                RefreshToken = accessToken.RefreshToken,
-                AccessToken = accessToken.AccessToken,
-                Message = "Successfully logged in.",
-                HasTwoFactorAuthentication = false
-            });
-        }
 
         var tokens = await securityTokenManager.GenerateAsync(user, cancellationToken);
 

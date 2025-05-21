@@ -46,21 +46,6 @@ internal sealed class LoginCommandHandler(
             });
         }
         
-        var securityToken = await securityTokenManager.FindAsync(user, cancellationToken);
-
-        if (securityToken is not null)
-        {
-            var token = await securityTokenManager.RefreshAsync(user, securityToken, cancellationToken);
-
-            return Result.Success(new LoginResponse()
-            {
-                RefreshToken = token.RefreshToken,
-                AccessToken = token.AccessToken,
-                Message = "Successfully logged in.",
-                HasTwoFactorAuthentication = false
-            });
-        }
-        
         var tokens = await securityTokenManager.GenerateAsync(user, cancellationToken);
 
         return Result.Success(new LoginResponse()

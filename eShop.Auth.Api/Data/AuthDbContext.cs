@@ -11,7 +11,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PersonalDataEntity> PersonalData { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
-    public DbSet<SecurityTokenEntity> SecurityTokens { get; set; }
+    public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<VerificationCodeEntity> Codes { get; set; }
     public DbSet<ProviderEntity> Providers { get; set; }
     public DbSet<LoginTokenEntity> LoginTokens { get; set; }
@@ -92,7 +92,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(ur => ur.PermissionId);
         });
 
-        builder.Entity<SecurityTokenEntity>(entity =>
+        builder.Entity<RefreshTokenEntity>(entity =>
         {
             entity.HasKey(k => k.Id);
 
@@ -100,7 +100,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
 
             entity.HasOne(t => t.UserEntity)
                 .WithOne()
-                .HasForeignKey<SecurityTokenEntity>(t => t.UserId);
+                .HasForeignKey<RefreshTokenEntity>(t => t.UserId);
         });
 
         builder.Entity<ProviderEntity>(entity =>

@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using eShop.Auth.Api.Enums;
 using Microsoft.Extensions.Options;
 using SecurityToken = eShop.Domain.Types.SecurityToken;
 
@@ -18,10 +19,10 @@ public class SecurityTokenManager(
     private const int AccessTokenExpirationMinutes = 30;
     private const string Algorithm = SecurityAlgorithms.HmacSha256Signature;
 
-    public async ValueTask<SecurityTokenEntity?> FindAsync(UserEntity userEntity,
+    public async ValueTask<RefreshTokenEntity?> FindAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.SecurityTokens
+        var entity = await context.RefreshTokens
             .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
 
         return entity;
@@ -29,7 +30,7 @@ public class SecurityTokenManager(
 
     public async ValueTask<Result> RemoveAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
-        var token = await context.SecurityTokens
+        var token = await context.RefreshTokens
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
 
@@ -38,7 +39,7 @@ public class SecurityTokenManager(
             return Results.NotFound("Token not found");
         }
 
-        context.SecurityTokens.Remove(token);
+        context.RefreshTokens.Remove(token);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -48,15 +49,9 @@ public class SecurityTokenManager(
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
-        var claims = await GetClaimsAsync(userEntity);
-
-        var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
-        var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
-
-        var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
-        var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
-
-        await CreateAsync(userEntity, refreshToken, refreshTokenExpiration, cancellationToken);
+        
+        var accessToken = await GenerateTokenAsync(signingCredentials, userEntity, TokenType.Access);
+        var refreshToken = await GenerateTokenAsync(signingCredentials, userEntity, TokenType.Refresh);
 
         return new SecurityToken()
         {
@@ -65,43 +60,65 @@ public class SecurityTokenManager(
         };
     }
 
-
-    public async Task<SecurityToken> RefreshAsync(UserEntity userEntity, SecurityTokenEntity tokenEntity,
-        CancellationToken cancellationToken = default)
+    private async Task<string> GenerateTokenAsync(SigningCredentials signingCredentials, UserEntity user, TokenType type)
     {
-        var key = Encoding.UTF8.GetBytes(options.Key);
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
-        var claims = await GetClaimsAsync(userEntity);
-
-        var accessTokenExpiration = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
-        var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(options.ExpirationDays);
-
-        var accessToken = WriteToken(claims, signingCredentials, accessTokenExpiration);
-        var refreshToken = WriteToken(claims, signingCredentials, refreshTokenExpiration);
-
-        tokenEntity.ExpireDate = refreshTokenExpiration;
-        tokenEntity.Token = refreshToken;
-
-        await UpdateAsync(tokenEntity, cancellationToken);
-
-        return new SecurityToken()
+        var expirationDate = type switch
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
+            TokenType.Access => DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes),
+            TokenType.Refresh => DateTime.UtcNow.AddDays(options.ExpirationDays),
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
-    }
 
-    private string WriteToken(List<Claim> claims, SigningCredentials signingCredentials, DateTime expiration)
-    {
+        var claims = await GetClaimsAsync(user);
+        var jti = Guid.NewGuid();
+        var jtiClaim = new Claim(JwtRegisteredClaimNames.Jti, jti.ToString());
+        
         var securityToken = new JwtSecurityToken(
             audience: options.Audience,
             issuer: options.Issuer,
-            claims: claims,
-            expires: expiration,
+            claims: [..claims, jtiClaim],
+            expires: expirationDate,
             signingCredentials: signingCredentials);
-        
+
         var handler = new JwtSecurityTokenHandler();
         var token = handler.WriteToken(securityToken);
+
+        if (type is TokenType.Refresh)
+        {
+            var entity = await context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.Id);
+
+            if (entity is null)
+            {
+                entity = new RefreshTokenEntity()
+                {
+                    Id = jti,
+                    UserId = user.Id,
+                    Token = token,
+                    ExpireDate = expirationDate,
+                    CreateDate = DateTime.UtcNow,
+                    UpdateDate = null
+                };
+
+                await context.RefreshTokens.AddAsync(entity);
+            }
+            else
+            {
+                var newEntity = new RefreshTokenEntity()
+                {
+                    Id = jti,
+                    UserId = user.Id,
+                    Token = token,
+                    ExpireDate = expirationDate,
+                    CreateDate = DateTime.UtcNow,
+                    UpdateDate = null
+                };
+                
+                context.RefreshTokens.Remove(entity);
+                await context.RefreshTokens.AddAsync(newEntity);
+            }
+
+            await context.SaveChangesAsync();
+        }
         
         return token;
     }
@@ -123,30 +140,5 @@ public class SecurityTokenManager(
         claims.AddRange(permissions.Select(x => new Claim(ClaimTypes.Permission, x.Name!)));;
 
         return claims;
-    }
-
-    private async ValueTask<Result> CreateAsync(UserEntity userEntity, string token, DateTime tokenExpiration,
-        CancellationToken cancellationToken = default)
-    {
-        var entity = new SecurityTokenEntity()
-        {
-            UserId = userEntity.Id,
-            Token = token,
-            ExpireDate = tokenExpiration,
-        };
-
-        await context.SecurityTokens.AddAsync(entity, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    private async ValueTask<Result> UpdateAsync(SecurityTokenEntity tokenEntity,
-        CancellationToken cancellationToken = default)
-    {
-        context.SecurityTokens.Update(tokenEntity);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
     }
 }
