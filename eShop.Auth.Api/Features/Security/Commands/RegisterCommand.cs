@@ -10,15 +10,15 @@ internal sealed class RegisterCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
     IConfiguration configuration,
-    ICodeManager codeManager) : IRequestHandler<RegisterCommand, Result>
+    ICodeManager codeManager,
+    IRoleManager roleManager) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
+    private readonly IRoleManager roleManager = roleManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
-    private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
-    private readonly string defaultPermission = configuration["Configuration:General:DefaultValues:DefaultPermission"]!;
 
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
@@ -38,25 +38,27 @@ internal sealed class RegisterCommandHandler(
             return registrationResult;
         }
 
-        var assignDefaultRoleResult = await userManager.AssignRoleAsync(newUser, defaultRole, cancellationToken);
+        var role = await roleManager.FindByNameAsync("User", cancellationToken);
 
-        if (!assignDefaultRoleResult.Succeeded)
+        if (role is null)
         {
-            return assignDefaultRoleResult;
+            return Results.NotFound("Cannot find role with name User");
+        }
+            
+        var assignRoleResult = await roleManager.AssignRoleAsync(newUser, role, cancellationToken);
+
+        if (!assignRoleResult.Succeeded)
+        {
+            return assignRoleResult;
         }
 
-        var permission = await permissionManager.FindByNameAsync(defaultPermission, cancellationToken);
+        var permissions = role.Permissions.Select(x => x.Permission).ToList();
+            
+        var grantPermissionsResult = await permissionManager.GrantAsync(newUser, permissions, cancellationToken);
 
-        if (permission is null)
+        if (!grantPermissionsResult.Succeeded)
         {
-            return Results.NotFound($"Cannot find permission with name {defaultPermission}");       
-        }
-        
-        var issuingPermissionsResult = await permissionManager.GrantAsync(newUser, permission, cancellationToken);
-
-        if (!issuingPermissionsResult.Succeeded)
-        {
-            return issuingPermissionsResult;
+            return grantPermissionsResult;
         }
         
         user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);

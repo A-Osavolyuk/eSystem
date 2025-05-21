@@ -26,7 +26,7 @@ internal sealed class AssignRoleCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var result = await userManager.AssignRoleAsync(user, role.Name!, cancellationToken);
+        var result = await roleManager.AssignRoleAsync(user, role.Name!, cancellationToken);
 
         if (!result.Succeeded)
         {

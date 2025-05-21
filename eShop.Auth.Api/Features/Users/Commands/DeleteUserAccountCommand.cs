@@ -9,11 +9,13 @@ internal sealed class DeleteUserAccountCommandHandler(
     IPermissionManager permissionManager,
     IProfileManager profileManager,
     ISecurityTokenManager securityTokenManager,
+    IRoleManager roleManager,
     IUserManager userManager) : IRequestHandler<DeleteUserAccountCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
+    private readonly IRoleManager roleManager = roleManager;
     private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(DeleteUserAccountCommand request,
@@ -26,7 +28,7 @@ internal sealed class DeleteUserAccountCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
 
-        var rolesResult = await userManager.UnassignRolesAsync(user, cancellationToken);
+        var rolesResult = await roleManager.UnassignRolesAsync(user, cancellationToken);
 
         if (!rolesResult.Succeeded)
         {

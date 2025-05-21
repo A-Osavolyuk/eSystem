@@ -82,7 +82,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 return Results.NotFound("Cannot find role with name User");
             }
             
-            var assignRoleResult = await userManager.AssignRoleAsync(user, role, cancellationToken);
+            var assignRoleResult = await roleManager.AssignRoleAsync(user, role, cancellationToken);
 
             if (!assignRoleResult.Succeeded)
             {
