@@ -6,32 +6,26 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<PersonalDataDto?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
+    public async ValueTask<PersonalDataEntity?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
-        var data = await context.PersonalData
+        var entity = await context.PersonalData
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == userEntity.PersonalDataId, cancellationToken: cancellationToken);
 
-        if (data is null)
-        {
-            return null;
-        }
-
-        var response = Mapper.Map(data);
-        return response;
+        return entity;
     }
 
-    public async ValueTask<IdentityResult> SetAsync(UserEntity userEntity, PersonalDataEntity personalData,
+    public async ValueTask<Result> SetAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default)
     {
         userEntity.PersonalDataId = personalData.Id;
         await context.PersonalData.AddAsync(personalData, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return IdentityResult.Success;
+        return Result.Success();
     }
 
-    public async ValueTask<IdentityResult> UpdateAsync(UserEntity userEntity, PersonalDataEntity personalData,
+    public async ValueTask<Result> UpdateAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default)
     {
         var data = await context.PersonalData
@@ -39,11 +33,7 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
 
         if (data is null)
         {
-            return IdentityResult.Failed(new IdentityError()
-            {
-                Code = "404",
-                Description = "User didn't set personal data yet"
-            });
+            return Results.NotFound("Cannot find personal data");
         }
 
         var newData = new PersonalDataEntity()
@@ -58,10 +48,10 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
         context.PersonalData.Update(newData);
         await context.SaveChangesAsync(cancellationToken);
 
-        return IdentityResult.Success;
+        return Result.Success();
     }
 
-    public async ValueTask<IdentityResult> DeleteAsync(UserEntity userEntity,
+    public async ValueTask<Result> DeleteAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default)
     {
         var data = await context.PersonalData
@@ -69,13 +59,12 @@ internal sealed class ProfileManager(AuthDbContext context) : IProfileManager
 
         if (data is null)
         {
-            return IdentityResult.Failed(
-                new IdentityError() { Code = "404", Description = "Cannot find personal data" });
+            return Results.NotFound("Cannot find personal data");
         }
 
         context.PersonalData.Remove(data);
         await context.SaveChangesAsync(cancellationToken);
 
-        return IdentityResult.Success;
+        return Result.Success();
     }
 }

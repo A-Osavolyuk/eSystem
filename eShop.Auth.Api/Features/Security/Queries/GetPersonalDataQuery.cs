@@ -40,6 +40,6 @@ internal sealed class GetPersonalDataQueryHandler(
             return Result.Success(Mapper.Map(personalData));
         }
 
-        return Result.Success(Mapper.Map(data));
+        return Result.Success(data);
     }
 }

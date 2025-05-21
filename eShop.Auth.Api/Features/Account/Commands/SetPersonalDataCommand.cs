@@ -26,8 +26,7 @@ internal sealed record SetPersonalDataCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Failed to setting personal data with message: {result.Errors.First().Description}");
+            return result;
         }
 
         return Result.Success("Personal data was successfully set");

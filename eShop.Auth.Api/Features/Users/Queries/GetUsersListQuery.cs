@@ -44,7 +44,7 @@ internal sealed class GetUsersListQueryHandler(
             users.Add(new UserDto()
             {
                 PermissionsDataDto = permissionData,
-                PersonalDataDto = personalData ?? new(),
+                PersonalDataDto = new(),
                 AccountDataDto = accountData
             });
         }

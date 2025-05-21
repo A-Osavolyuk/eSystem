@@ -7,11 +7,9 @@ internal sealed record ChangePersonalDataCommand(ChangePersonalDataRequest Reque
     : IRequest<Result>;
 
 internal sealed class ChangePersonalDataCommandHandler(
-    AuthDbContext context,
     IUserManager userManager,
     IProfileManager profileManager) : IRequestHandler<ChangePersonalDataCommand, Result>
 {
-    private readonly AuthDbContext context = context;
     private readonly IUserManager userManager = userManager;
     private readonly IProfileManager profileManager = profileManager;
 
@@ -35,12 +33,7 @@ internal sealed class ChangePersonalDataCommandHandler(
 
         if (!result.Succeeded)
         {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.InternalServerError,
-                Message = "Server error",
-                Details = $"Failed on changing personal data with message: {result.Errors.First().Description}"
-            });
+            return result;
         }
 
         return Result.Success("Personal data was successfully updated");

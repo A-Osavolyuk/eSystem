@@ -46,8 +46,7 @@ internal sealed class DeleteUserAccountCommandHandler(
 
         if (!personalDataResult.Succeeded)
         {
-            return Results.InternalServerError(
-                $"Failed on deleting the user account with message: {personalDataResult.Errors.First().Description}");
+            return personalDataResult;
         }
 
         var tokenResult = await securityTokenManager.RemoveAsync(user, cancellationToken);

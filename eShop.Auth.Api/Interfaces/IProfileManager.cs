@@ -4,14 +4,14 @@ namespace eShop.Auth.Api.Interfaces;
 
 public interface IProfileManager
 {
-    public ValueTask<PersonalDataDto?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
+    public ValueTask<PersonalDataEntity?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
 
-    public ValueTask<IdentityResult> SetAsync(UserEntity userEntity, PersonalDataEntity personalData,
+    public ValueTask<Result> SetAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default);
 
-    public ValueTask<IdentityResult> UpdateAsync(UserEntity userEntity, PersonalDataEntity personalData,
+    public ValueTask<Result> UpdateAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default);
 
-    public ValueTask<IdentityResult> DeleteAsync(UserEntity userEntity,
+    public ValueTask<Result> DeleteAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default);
 }

@@ -42,10 +42,12 @@ internal sealed class FindUserByIdQueryHandler(
         permissionData.Roles.AddRange(roles.Select(Mapper.Map).ToList());
         permissionData.Permissions.AddRange(permissions.Select(Mapper.Map).ToList());
 
+        //TODO: Load user data
+        
         var response = new FindUserResponse()
         {
             AccountDataDto = accountData,
-            PersonalDataDtoEntity = personalData ?? new(),
+            PersonalDataDtoEntity = new(),
             PermissionsDataDto = permissionData
         };
 

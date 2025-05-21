@@ -41,10 +41,12 @@ internal sealed class FindUserByEmailQueryHandler(
         permissionData.Roles.AddRange(roles.Select(Mapper.Map).ToList());
         permissionData.Permissions.AddRange(permissions.Select(Mapper.Map).ToList());
 
+        //TODO: Load user data
+        
         var response = new UserDto()
         {
             AccountDataDto = accountData,
-            PersonalDataDto = personalData ?? new PersonalDataDto(),
+            PersonalDataDto = new PersonalDataDto(),
             PermissionsDataDto = permissionData
         };
 
