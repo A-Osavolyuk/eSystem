@@ -147,7 +147,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => new { x.RoleId, x.PermissionId });
             
             entity.HasOne(x => x.Role)
-                .WithMany()
+                .WithMany(x => x.Permissions)
                 .HasForeignKey(x => x.RoleId);
 
             entity.HasOne(x => x.Permission)

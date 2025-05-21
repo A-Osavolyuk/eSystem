@@ -28,13 +28,23 @@ public class RoleManager(AuthDbContext context) : IRoleManager
 
     public async ValueTask<RoleEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        var role = await context.Roles.FirstOrDefaultAsync(x => x.Name == name, cancellationToken);
+        var role = await context.Roles
+            .Where(x => x.Name == name)
+            .Include(x => x.Permissions)
+            .ThenInclude(x => x.Permission)
+            .FirstOrDefaultAsync(cancellationToken);
+        
         return role;
     }
     
     public async ValueTask<RoleEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var role = await context.Roles.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var role = await context.Roles            
+            .Where(x => x.Id == id)
+            .Include(x => x.Permissions)
+            .ThenInclude(x => x.Permission)
+            .FirstOrDefaultAsync(cancellationToken);
+        
         return role;
     }
 

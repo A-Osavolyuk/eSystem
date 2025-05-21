@@ -9,4 +9,5 @@ public class RoleEntity : IEntity<Guid>
     public DateTime? UpdateDate { get; set; }
     
     public ICollection<UserRoleEntity> Roles { get; set; } = null!;
+    public ICollection<RolePermissionEntity> Permissions { get; set; } = null!;
 }
