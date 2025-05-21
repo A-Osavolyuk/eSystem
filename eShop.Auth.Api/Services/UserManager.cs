@@ -141,7 +141,7 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddToRoleAsync(UserEntity user, string roleName,
+    public async ValueTask<Result> AssignRoleAsync(UserEntity user, string roleName,
         CancellationToken cancellationToken = default)
     {
         var role = await context.Roles.FirstOrDefaultAsync(x => x.Name == roleName || x.NormalizedName == roleName,
@@ -165,7 +165,7 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddToRoleAsync(UserEntity user, RoleEntity role,
+    public async ValueTask<Result> AssignRoleAsync(UserEntity user, RoleEntity role,
         CancellationToken cancellationToken = default)
     {
         var userRole = new UserRoleEntity()
@@ -194,7 +194,7 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> RemoveFromRoleAsync(UserEntity user, string roleName,
+    public async ValueTask<Result> UnassignRoleAsync(UserEntity user, string roleName,
         CancellationToken cancellationToken = default)
     {
         var role = await context.UserRoles
@@ -213,7 +213,7 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> RemoveFromRoleAsync(UserEntity user, RoleEntity role,
+    public async ValueTask<Result> UnassignRoleAsync(UserEntity user, RoleEntity role,
         CancellationToken cancellationToken = default)
     {
         var userRole = await context.UserRoles
@@ -230,7 +230,7 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> RemoveFromRolesAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> UnassignRolesAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var userRoles = await context.UserRoles
             .Where(x => x.UserId == user.Id)

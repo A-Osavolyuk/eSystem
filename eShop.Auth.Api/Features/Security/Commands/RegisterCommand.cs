@@ -38,7 +38,7 @@ internal sealed class RegisterCommandHandler(
             return registrationResult;
         }
 
-        var assignDefaultRoleResult = await userManager.AddToRoleAsync(newUser, defaultRole, cancellationToken);
+        var assignDefaultRoleResult = await userManager.AssignRoleAsync(newUser, defaultRole, cancellationToken);
 
         if (!assignDefaultRoleResult.Succeeded)
         {

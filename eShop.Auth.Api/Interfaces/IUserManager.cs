@@ -22,9 +22,9 @@ public interface IUserManager
     
     //Role methods
     public ValueTask<bool> IsInRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> AddToRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> AddToRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RemoveFromRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RemoveFromRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RemoveFromRolesAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> AssignRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
+    public ValueTask<Result> AssignRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UnassignRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UnassignRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UnassignRolesAsync(UserEntity user, CancellationToken cancellationToken = default);
 }

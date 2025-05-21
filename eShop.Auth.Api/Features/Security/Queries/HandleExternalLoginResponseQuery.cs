@@ -14,15 +14,16 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
     ISecurityTokenManager securityTokenManager,
     IUserManager userManager,
     IConfiguration configuration,
-    IMessageService messageService) : IRequestHandler<HandleExternalLoginResponseQuery, Result>
+    IMessageService messageService,
+    IRoleManager roleManager) : IRequestHandler<HandleExternalLoginResponseQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly ISecurityManager securityManager = securityManager;
     private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
     private readonly IUserManager userManager = userManager;
+    private readonly IMessageService messageService = messageService;
+    private readonly IRoleManager roleManager = roleManager;
     private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
-    private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
-    private readonly string defaultPermission = configuration["Configuration:General:DefaultValues:DefaultPermission"]!;
 
     public async Task<Result> Handle(HandleExternalLoginResponseQuery request,
         CancellationToken cancellationToken)
@@ -57,7 +58,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 return Result.Success(link);
             }
         }
-
+        
         {
             user = new UserEntity()
             {
@@ -73,26 +74,28 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             {
                 return result;
             }
+            
+            var role = await roleManager.FindByNameAsync("User", cancellationToken);
 
-            var assignDefaultRoleResult = await userManager.AddToRoleAsync(user, defaultRole, cancellationToken);
-
-            if (!assignDefaultRoleResult.Succeeded)
+            if (role is null)
             {
-                return assignDefaultRoleResult;
+                return Results.NotFound("Cannot find role with name User");
             }
             
-            var permission = await permissionManager.FindByNameAsync(defaultPermission, cancellationToken);
+            var assignRoleResult = await userManager.AssignRoleAsync(user, role, cancellationToken);
 
-            if (permission is null)
+            if (!assignRoleResult.Succeeded)
             {
-                return Results.NotFound($"Cannot find permission with name {defaultPermission}");       
+                return assignRoleResult;
             }
 
-            var issuingPermissionsResult = await permissionManager.GrantAsync(user, permission, cancellationToken);
+            var permissions = role.Permissions.Select(x => x.Permission).ToList();
+            
+            var grantPermissionsResult = await permissionManager.GrantAsync(user, permissions, cancellationToken);
 
-            if (!issuingPermissionsResult.Succeeded)
+            if (!grantPermissionsResult.Succeeded)
             {
-                return issuingPermissionsResult;
+                return grantPermissionsResult;
             }
 
             var provider = request.Principal.Identity!.AuthenticationType!;
