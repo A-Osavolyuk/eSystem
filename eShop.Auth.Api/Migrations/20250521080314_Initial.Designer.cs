@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250512114723_Initial")]
+    [Migration("20250521080314_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -414,8 +414,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTime>("ExpireDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
@@ -469,7 +470,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("eShop.Auth.Api.Entities.RoleEntity", "Role")
-                        .WithMany()
+                        .WithMany("Permissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -580,6 +581,8 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.RoleEntity", b =>
                 {
+                    b.Navigation("Permissions");
+
                     b.Navigation("Roles");
                 });
 
