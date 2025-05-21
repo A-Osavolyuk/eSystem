@@ -173,9 +173,6 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddScoped<IProviderManager, ProviderManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-
-        builder.Services.AddHostedService<TokenValidator>();
-        builder.Services.AddHostedService<CodeValidator>();
         
         builder.Services.AddScoped<CartClient>();
     }

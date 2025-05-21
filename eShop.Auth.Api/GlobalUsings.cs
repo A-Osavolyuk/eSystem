@@ -8,7 +8,6 @@ global using eShop.Auth.Api.Extensions;
 global using eShop.Auth.Api.Features.Account.Commands;
 global using eShop.Auth.Api.Features.Security.Commands;
 global using eShop.Auth.Api.Features.Security.Queries;
-global using eShop.Auth.Api.HostedServices;
 global using eShop.Auth.Api.Interfaces;
 global using eShop.Auth.Api.Mapping;
 global using eShop.Auth.Api.Options;
