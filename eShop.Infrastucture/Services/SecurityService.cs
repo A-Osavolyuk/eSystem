@@ -51,7 +51,7 @@ public class SecurityService(
     
     public async ValueTask<Response> RefreshTokenAsync(RefreshTokenRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/refresh-token", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { ValidateToken = true, WithBearer = true });
+        new HttpOptions { ValidateToken = false, WithBearer = true });
     
     public async ValueTask<Response> RequestChangePhoneNumberAsync(ChangePhoneNumberRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/change-phone-number", Method = HttpMethod.Put, Data = request },
