@@ -43,10 +43,6 @@ public class SecurityService(
         new Request(Url: $"{Configuration[Key]}/api/v1/Security/verify-email",
             Method: HttpMethod.Post, Data: request));
 
-    public async ValueTask<Response> GetExternalProvidersAsync() => await HttpClientService.SendAsync(
-        new Request(Url: $"{Configuration[Key]}/api/v1/Security/get-external-providers",
-            Method: HttpMethod.Get));
-
     public async ValueTask<Response> RequestChangeEmailAsync(ChangeEmailRequest request) =>
         await HttpClientService.SendAsync(
             new Request(
@@ -64,7 +60,7 @@ public class SecurityService(
             new Request(Url: $"{Configuration[Key]}/api/v1/Security/change-password",
                 Method: HttpMethod.Put, Data: request));
 
-    public async ValueTask<Response> RefreshToken(RefreshTokenRequest request) => await HttpClientService.SendAsync(
+    public async ValueTask<Response> RefreshTokenAsync(RefreshTokenRequest request) => await HttpClientService.SendAsync(
         new Request(Url: $"{Configuration[Key]}/api/v1/Security/refresh-token",
             Method: HttpMethod.Post, Data: request));
 
