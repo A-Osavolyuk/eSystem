@@ -34,7 +34,7 @@ public static class Extensions
         builder.Services.AddHttpClient<IProfileService, ProfileService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<ITwoFactorService, TwoFactorService>(ServiceLifetime.Scoped);
 
-        builder.Services.AddScoped<IHttpClientService, HttpClientService>();
+        builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
         builder.Services.AddScoped<IUserStorage, UserStorage>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
