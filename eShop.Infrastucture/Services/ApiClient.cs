@@ -1,19 +1,21 @@
 ﻿using eShop.Domain.Common.API;
+using eShop.Domain.Options;
 using eShop.Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Infrastructure.Services;
 
-public class HttpClientService(
+public class ApiClient(
     IHttpClientFactory clientFactory, 
     ITokenProvider tokenProvider,
-    JwtAuthenticationHandler jwtAuthenticationHandler)
-    : IHttpClientService
+    TokenHandler tokenHandler)
+    : IApiClient
 {
     private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");
     private readonly ITokenProvider tokenProvider = tokenProvider;
-    private readonly JwtAuthenticationHandler jwtAuthenticationHandler = jwtAuthenticationHandler;
+    private readonly TokenHandler tokenHandler = tokenHandler;
 
-    public async ValueTask<Response> SendAsync(Request request, bool withBearer = true)
+    public async ValueTask<Response> SendAsync(HttpRequest httpRequest, HttpOptions options)
     {
         try
         {
@@ -21,19 +23,23 @@ public class HttpClientService(
 
             message.Headers.Add("Accept", "application/json");
 
-            if (withBearer)
+            if (options.WithBearer)
             {
                 var token = await tokenProvider.GetTokenAsync();
-                message.Headers.Add("Authorization", $"Bearer {token}");
+
+                if (tokenHandler.Validate(token))
+                {
+                    message.Headers.Add("Authorization", $"Bearer {token}");
+                }
             }
 
-            message.RequestUri = new Uri(request.Url);
+            message.RequestUri = new Uri(httpRequest.Url);
 
-            if (request.Data is not null)
-                message.Content = new StringContent(JsonConvert.SerializeObject(request.Data),
+            if (httpRequest.Data is not null)
+                message.Content = new StringContent(JsonConvert.SerializeObject(httpRequest.Data),
                     Encoding.UTF8, "application/json");
 
-            message.Method = request.Method;
+            message.Method = httpRequest.Method;
 
             var httpResponse = await httpClient.SendAsync(message);
 
@@ -48,7 +54,7 @@ public class HttpClientService(
         }
     }
 
-    public async ValueTask<Response> SendAsync(FileRequest request, bool withBearer = true)
+    public async ValueTask<Response> SendAsync(FileRequest request, HttpOptions options)
     {
         try
         {
@@ -58,7 +64,7 @@ public class HttpClientService(
             message.RequestUri = new Uri(request.Url);
             message.Method = request.Method;
 
-            if (withBearer)
+            if (options.WithBearer)
             {
                 var token = await tokenProvider.GetTokenAsync();
                 message.Headers.Add("Authorization", $"Bearer {token}");

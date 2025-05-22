@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Common.API;
 
-public record Request(
+public record HttpRequest(
     string Url,
     HttpMethod Method,
     object? Data = null!);
