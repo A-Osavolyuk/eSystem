@@ -168,6 +168,20 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Refresh token")]
+    [EndpointDescription("Refresh token")]
+    [ProducesResponseType(200)]
+    [Authorize]
+    [HttpPost("refresh-token")]
+    public async ValueTask<ActionResult<Response>> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
+    {
+        var result = await sender.Send(new RefreshTokenCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
 
     #endregion
 
