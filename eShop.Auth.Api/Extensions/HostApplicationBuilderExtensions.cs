@@ -173,16 +173,12 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddScoped<IProviderManager, ProviderManager>();
 
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-        
-        builder.Services.AddScoped<CartClient>();
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)
     {
         builder.Services.AddMassTransit(x =>
         {
-            x.AddRequestClient<SingleMessageRequest>();
-            x.AddRequestClient<CreateCartRequest>();
             x.UsingRabbitMq((context, cfg) =>
             {
                 var uri = builder.Configuration["Configuration:Services:MessageBus:RabbitMq:HostUri"]!;
