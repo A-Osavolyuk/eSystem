@@ -9,6 +9,6 @@ public class BrandService(
     IApiClient apiClient) : ApiService(configuration, apiClient), IBrandService
 {
     public async ValueTask<Response> GetBrandsListAsync() => await ApiClient.SendAsync(
-        new HttpRequest(Url: $"{Configuration[Key]}/api/v1/Brands", Method: HttpMethod.Get),
-        new HttpOptions() { WithBearer = true, ValidateToken = true });
+        new HttpRequest { Url = $"{Gateway}/api/v1/Brands", Method = HttpMethod.Get },
+        new HttpOptions { WithBearer = true, ValidateToken = true });
 }

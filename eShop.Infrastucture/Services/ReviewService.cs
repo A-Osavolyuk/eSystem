@@ -10,25 +10,19 @@ public class ReviewService(
     IConfiguration configuration) : ApiService(configuration, httpClient), IReviewService
 {
     public async Task<Response> CreateReviewAsync(CreateReviewRequest request) => await ApiClient.SendAsync(
-        new HttpRequest(
-            Url: $"{Configuration[Key]}/api/v1/Reviews/create-review",
-            Method: HttpMethod.Post, Data: request),
-        new HttpOptions() { ValidateToken = true, WithBearer = true });
+        new HttpRequest { Url = $"{Gateway}/api/v1/Reviews/create-review", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { ValidateToken = true, WithBearer = true });
 
-    public async Task<Response> DeleteReviewsWithProductIdAsync(Guid id) => await ApiClient.SendAsync(new HttpRequest(
-            Url:
-            $"{Configuration[Key]}/api/v1/Reviews/delete-reviews-with-product-id/{id}",
-            Method: HttpMethod.Delete),
-        new HttpOptions() { ValidateToken = true, WithBearer = true });
+    public async Task<Response> DeleteReviewsWithProductIdAsync(Guid id) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Reviews/delete-reviews-with-product-id/{id}", Method = HttpMethod.Delete },
+        new HttpOptions { ValidateToken = true, WithBearer = true });
 
-    public async Task<Response> GetReviewListByProductIdAsync(Guid id) => await ApiClient.SendAsync(new HttpRequest(
-            Url: $"{Configuration[Key]}/api/v1/Reviews/get-reviews-by-product-id/{id}",
-            Method: HttpMethod.Get),
-        new HttpOptions() { ValidateToken = true, WithBearer = true });
+    public async Task<Response> GetReviewListByProductIdAsync(Guid id) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Reviews/get-reviews-by-product-id/{id}", Method = HttpMethod.Get },
+        new HttpOptions { ValidateToken = true, WithBearer = true });
 
     public async Task<Response> UpdateReviewAsync(UpdateReviewRequest request) => await ApiClient.SendAsync(
-        new HttpRequest(
-            Url: $"{Configuration[Key]}/api/v1/Reviews/update-review",
-            Method: HttpMethod.Put, Data: request),
-        new HttpOptions() { ValidateToken = true, WithBearer = true });
+        new HttpRequest { Url = $"{Gateway}/api/v1/Reviews/update-review", Method = HttpMethod.Put, Data = request },
+        new HttpOptions { ValidateToken = true, WithBearer = true });
+
 }

@@ -10,14 +10,12 @@ internal class CartService(
     IConfiguration configuration) : ApiService(configuration, httpClient), ICartService
 {
     public async ValueTask<Response> GetCartAsync(Guid userId) => await ApiClient.SendAsync(
-        new HttpRequest(
-            Url: $"{Configuration[Key]}/api/v1/Carts/get-cart/{userId}",
-            Method: HttpMethod.Get),
-        new HttpOptions() { ValidateToken = true, WithBearer = true });
+        new HttpRequest { Url = $"{Gateway}/api/v1/Carts/get-cart/{userId}", Method = HttpMethod.Get },
+        new HttpOptions { ValidateToken = true, WithBearer = true });
 
     public async ValueTask<Response> UpdateCartAsync(UpdateCartRequest request) => await ApiClient.SendAsync(
-        new HttpRequest(
-            Url: $"{Configuration[Key]}/api/v1/Carts/update-cart",
-            Method: HttpMethod.Put, Data: request),
-        new HttpOptions() { ValidateToken = true, WithBearer = true });
+        new HttpRequest { Url = $"{Gateway}/api/v1/Carts/update-cart", Method = HttpMethod.Put, Data = request },
+        new HttpOptions { ValidateToken = true, WithBearer = true });
+
+
 }

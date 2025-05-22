@@ -1,9 +1,11 @@
 ﻿namespace eShop.Domain.Common.API;
 
-public record FileRequest(
-    FileData Data,
-    HttpMethod Method,
-    string Url);
+public class FileRequest
+{
+    public required FileData Data { get; set; }
+    public required HttpMethod Method { get; set; }
+    public required string Url { get; set; }
+}
 
 public class FileData(IReadOnlyList<IBrowserFile> files)
 {

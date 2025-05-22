@@ -10,15 +10,11 @@ public class FavoritesService(
     IConfiguration configuration) : ApiService(configuration, httpClient), IFavoritesService
 {
     public async ValueTask<Response> GetFavoritesAsync(Guid userId) => await ApiClient.SendAsync(
-        new HttpRequest(
-            Url: $"{Configuration[Key]}/api/v1/Favorites/get-favorites/{userId}",
-            Method: HttpMethod.Get),
-        new HttpOptions() { ValidateToken = true, WithBearer = true });
+        new HttpRequest { Url = $"{Gateway}/api/v1/Favorites/get-favorites/{userId}", Method = HttpMethod.Get },
+        new HttpOptions { ValidateToken = true, WithBearer = true });
 
-    public async ValueTask<Response> UpdateFavoritesAsync(UpdateFavoritesRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest(
-                Url: $"{Configuration[Key]}/api/v1/Favorites/update-favorites",
-                Method: HttpMethod.Put, Data: request),
-            new HttpOptions() { ValidateToken = true, WithBearer = true });
+    public async ValueTask<Response> UpdateFavoritesAsync(UpdateFavoritesRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Favorites/update-favorites", Method = HttpMethod.Put, Data = request },
+        new HttpOptions { ValidateToken = true, WithBearer = true });
+
 }

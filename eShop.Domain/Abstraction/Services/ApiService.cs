@@ -6,7 +6,8 @@ using Microsoft.Extensions.Configuration;
 
 public abstract class ApiService(IConfiguration configuration, IApiClient apiClient)
 {
-    protected readonly IConfiguration Configuration = configuration;
-    protected readonly IApiClient ApiClient = apiClient;
-    protected const string Key = "Configuration:Services:Proxy:Gateway:Uri";
+    protected IApiClient ApiClient { get; } = apiClient;
+    protected string Gateway { get; } = configuration[Key]!;
+    private IConfiguration configuration = configuration;
+    private const string Key = "Configuration:Services:Proxy:Gateway:Uri";
 }
