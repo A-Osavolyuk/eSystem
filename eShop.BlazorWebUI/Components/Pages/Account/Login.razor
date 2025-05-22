@@ -1,11 +1,12 @@
 ﻿@page "/account/login"
 
 @using eShop.Infrastructure.Security
+@using AuthenticationManager = eShop.Infrastructure.Security.AuthenticationManager
 @using LoginValidator = eShop.BlazorWebUI.Validation.LoginValidator
 @inherits PageBase
 
 @inject ISecurityService SecurityService
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthenticationManager AuthenticationManager
 @inject LoginValidator Validator
 @inject IConfiguration Configuration
 
@@ -134,7 +135,7 @@
             }
             else
             {
-                await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(data!.AccessToken, data.RefreshToken);
+                await AuthenticationManager.LogInAsync(data!.AccessToken, data.RefreshToken);
                 NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
                 Snackbar.Add(result.Message, Severity.Success);
                 Model = new();

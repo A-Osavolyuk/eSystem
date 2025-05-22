@@ -5,7 +5,7 @@
 @inherits PageBase
 
 @inject ITwoFactorService TwoFactorService
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthenticationManager AuthenticationManager
 
 <Title Text="Login with 2FA"/>
 
@@ -214,7 +214,7 @@
         {
             var response = result.Get<LoginResponse>()!;
             await Task.Delay(TimeSpan.FromMicroseconds(5));
-            await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(response!.AccessToken, response.RefreshToken);
+            await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
             NavigationManager.NavigateTo("/products");
             Snackbar.Add(result.Message, Severity.Success);
         }
