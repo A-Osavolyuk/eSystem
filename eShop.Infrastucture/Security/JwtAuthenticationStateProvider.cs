@@ -17,9 +17,17 @@ public class JwtAuthenticationStateProvider(
         try
         {
             var token = await tokenProvider.GetTokenAsync();
+            
             if (string.IsNullOrEmpty(token))
             {
                 return await UnauthorizeAsync();
+            }
+            
+            var valid = tokenHandler.Validate(token);
+
+            if (!valid)
+            {
+                return await LogOutAsync();
             }
 
             var rowToken = tokenHandler.ReadToken(token);
@@ -27,13 +35,6 @@ public class JwtAuthenticationStateProvider(
             if (rowToken is null || !rowToken.Claims.Any())
             {
                 return await UnauthorizeAsync();
-            }
-
-            var valid = tokenHandler.IsValid(rowToken);
-
-            if (!valid)
-            {
-                return await LogOutAsync();
             }
 
             var claims = tokenHandler.ReadClaims(rowToken);

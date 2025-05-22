@@ -32,8 +32,27 @@ public class TokenHandler
 
         return claims;
     }
+    
+    public bool Validate(string token)
+    {
+        if (string.IsNullOrEmpty(token))
+        {
+            return false;
+        }
+        
+        var rowToken = ReadToken(token);
+        
+        if (rowToken is null || !rowToken.Claims.Any())
+        {
+            return false;
+        }
+        
+        var valid = Validate(rowToken);
 
-    public bool IsValid(JwtSecurityToken token)
+        return valid;
+    }
+    
+    private bool Validate(JwtSecurityToken token)
     {
         var expValue = token.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp)!.Value;
         var expMilliseconds = Convert.ToInt64(expValue);
