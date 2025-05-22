@@ -27,7 +27,20 @@ public class ApiClient(
             {
                 var token = await tokenProvider.GetTokenAsync();
 
-                if (tokenHandler.Validate(token))
+                if (options.ValidateToken)
+                {
+                    var valid = tokenHandler.Validate(token);
+
+                    if (valid)
+                    {
+                        message.Headers.Add("Authorization", $"Bearer {token}");
+                    }
+                    else
+                    {
+                        //TODO: refresh token on invalid
+                    }
+                }
+                else
                 {
                     message.Headers.Add("Authorization", $"Bearer {token}");
                 }
