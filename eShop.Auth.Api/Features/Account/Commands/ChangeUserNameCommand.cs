@@ -47,13 +47,14 @@ internal sealed class ChangeUserNameCommandHandler(
             });
         }
         
-        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
+        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
         return Result.Success(new ChangeUserNameResponse()
         {
             Message = "Your user name was successfully changed.",
-            AccessToken = tokens.AccessToken,
-            RefreshToken = tokens.RefreshToken,
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
         });
     }
 }

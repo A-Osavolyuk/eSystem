@@ -42,12 +42,12 @@ internal sealed class LoginCommandHandler(
             });
         }
         
-        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
-
+        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
         return Result.Success(new LoginResponse()
         {
-            AccessToken = tokens.AccessToken,
-            RefreshToken = tokens.RefreshToken,
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
             Message = "Successfully logged in.",
             HasTwoFactorAuthentication = false
         });

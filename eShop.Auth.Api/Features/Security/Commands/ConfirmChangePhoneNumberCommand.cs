@@ -41,13 +41,14 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
             return Results.NotFound($"Cannot find user with phone number {request.Request.NewPhoneNumber}.");
         }
         
-        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
+        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
         return Result.Success(new ConfirmChangePhoneNumberResponse()
         {
             Message = "Your phone number was successfully changed.",
-            AccessToken = tokens.AccessToken,
-            RefreshToken = tokens.RefreshToken,
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
         });
     }
 }

@@ -1,6 +1,4 @@
-﻿using eShop.Auth.Api.Enums;
-
-namespace eShop.Auth.Api.Data.Seed;
+﻿namespace eShop.Auth.Api.Data.Seed;
 
 public class PermissionSeed : Seed<PermissionEntity, Guid>
 {

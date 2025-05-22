@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using eShop.Auth.Api.Enums;
 
 namespace eShop.Auth.Api.Entities;
 

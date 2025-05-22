@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Enums;
-using OpenTelemetry.Resources;
+﻿using OpenTelemetry.Resources;
 
 namespace eShop.Auth.Api.Data;
 

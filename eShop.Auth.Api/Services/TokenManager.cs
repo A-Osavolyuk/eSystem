@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using eShop.Auth.Api.Enums;
 using Microsoft.Extensions.Options;
 using SecurityToken = eShop.Domain.Types.SecurityToken;
 
@@ -66,19 +65,14 @@ public class TokenManager(
         return Result.Success();
     }
 
-    public async Task<SecurityToken> GenerateAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
+    public async Task<string> GenerateAsync(UserEntity userEntity, TokenType type, CancellationToken cancellationToken = default)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
         
-        var accessToken = await GenerateTokenAsync(signingCredentials, userEntity, TokenType.Access);
-        var refreshToken = await GenerateTokenAsync(signingCredentials, userEntity, TokenType.Refresh);
+        var token = await GenerateTokenAsync(signingCredentials, userEntity, type);
 
-        return new SecurityToken()
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        };
+        return token;
     }
 
     private async Task<string> GenerateTokenAsync(SigningCredentials signingCredentials, UserEntity user, TokenType type)

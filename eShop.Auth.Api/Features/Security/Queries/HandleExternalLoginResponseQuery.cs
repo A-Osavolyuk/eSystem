@@ -44,17 +44,20 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 
             if (securityToken is not null)
             {
-                var token = await tokenManager.GenerateAsync(user, cancellationToken);
+                var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+                var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
-                    new { token.AccessToken, token.RefreshToken, request.ReturnUri });
+                    new { accessToken, refreshToken, request.ReturnUri });
                 return Result.Success(link);
             }
             else
             {
-                var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
+                var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+                var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+                
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
-                    new { tokens!.AccessToken, tokens.RefreshToken, request.ReturnUri });
+                    new { accessToken, refreshToken, request.ReturnUri });
                 return Result.Success(link);
             }
         }
@@ -109,9 +112,11 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 ProviderName = provider!
             }, cancellationToken);
             
-            var token = await tokenManager.GenerateAsync(user, cancellationToken);
+            var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+            var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+            
             var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
-                new { Token = token, ReturnUri = request.ReturnUri });
+                new { AccessToken = accessToken, RefreshToken = refreshToken, ReturnUri = request.ReturnUri });
             return Result.Success(link);
         }
     }
