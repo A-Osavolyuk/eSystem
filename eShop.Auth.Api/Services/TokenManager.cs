@@ -45,6 +45,27 @@ public class TokenManager(
         return Result.Success();
     }
 
+    public async ValueTask<Result> VerifyAsync(UserEntity userEntity, string refreshToken, CancellationToken cancellationToken = default)
+    {
+        var entity = await context.RefreshTokens
+            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id && x.Token == refreshToken, cancellationToken: cancellationToken);
+        
+        if (entity is null)
+        {
+            return Results.NotFound("Token not found");
+        }
+
+        if (entity.ExpireDate < DateTime.UtcNow)
+        {
+            return Results.BadRequest("Token already expired");
+        }
+        
+        context.RefreshTokens.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
     public async Task<SecurityToken> GenerateAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
         var key = Encoding.UTF8.GetBytes(options.Key);
