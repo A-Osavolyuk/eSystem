@@ -8,12 +8,12 @@ internal sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
     : IRequest<Result>;
 
 internal sealed class LoginWith2FaCommandHandler(
-    ISecurityTokenManager securityTokenManager,
+    ITokenManager tokenManager,
     IUserManager userManager,
     ILoginTokenManager loginTokenManager,
     IProviderManager providerManager) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
-    private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
+    private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
     private readonly IProviderManager providerManager = providerManager;
@@ -43,7 +43,7 @@ internal sealed class LoginWith2FaCommandHandler(
             return Results.BadRequest($"Invalid two-factor token {request.Request.Token}.");
         }
 
-        var tokens = await securityTokenManager.GenerateAsync(user, cancellationToken);
+        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
 
         return Result.Success(new LoginResponse()
         {

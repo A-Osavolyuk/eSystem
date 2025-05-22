@@ -7,10 +7,10 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 internal sealed class LoginCommandHandler(
-    ISecurityTokenManager securityTokenManager,
+    ITokenManager tokenManager,
     IUserManager userManager) : IRequestHandler<LoginCommand, Result>
 {
-    private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
+    private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ internal sealed class LoginCommandHandler(
             });
         }
         
-        var tokens = await securityTokenManager.GenerateAsync(user, cancellationToken);
+        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
 
         return Result.Success(new LoginResponse()
         {

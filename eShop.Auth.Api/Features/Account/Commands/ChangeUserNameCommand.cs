@@ -9,10 +9,10 @@ internal sealed record ChangeUserNameCommand(ChangeUserNameRequest Request)
 
 internal sealed class ChangeUserNameCommandHandler(
     IUserManager userManager,
-    ISecurityTokenManager securityTokenManager) : IRequestHandler<ChangeUserNameCommand, Result>
+    ITokenManager tokenManager) : IRequestHandler<ChangeUserNameCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
+    private readonly ITokenManager tokenManager = tokenManager;
 
     public async Task<Result> Handle(ChangeUserNameCommand request,
         CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ internal sealed class ChangeUserNameCommandHandler(
             });
         }
         
-        var tokens = await securityTokenManager.GenerateAsync(user, cancellationToken);
+        var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
 
         return Result.Success(new ChangeUserNameResponse()
         {

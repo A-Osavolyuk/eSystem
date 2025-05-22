@@ -11,7 +11,7 @@ internal sealed record HandleExternalLoginResponseQuery(
 internal sealed class HandleExternalLoginResponseQueryHandler(
     IPermissionManager permissionManager,
     ISecurityManager securityManager,
-    ISecurityTokenManager securityTokenManager,
+    ITokenManager tokenManager,
     IUserManager userManager,
     IConfiguration configuration,
     IMessageService messageService,
@@ -19,7 +19,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly ISecurityManager securityManager = securityManager;
-    private readonly ISecurityTokenManager securityTokenManager = securityTokenManager;
+    private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly IRoleManager roleManager = roleManager;
@@ -40,11 +40,11 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
 
         if (user is not null)
         {
-            var securityToken = await securityTokenManager.FindAsync(user, cancellationToken);
+            var securityToken = await tokenManager.FindAsync(user, cancellationToken);
 
             if (securityToken is not null)
             {
-                var token = await securityTokenManager.GenerateAsync(user, cancellationToken);
+                var token = await tokenManager.GenerateAsync(user, cancellationToken);
 
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { token.AccessToken, token.RefreshToken, request.ReturnUri });
@@ -52,7 +52,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             }
             else
             {
-                var tokens = await securityTokenManager.GenerateAsync(user, cancellationToken);
+                var tokens = await tokenManager.GenerateAsync(user, cancellationToken);
                 var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                     new { tokens!.AccessToken, tokens.RefreshToken, request.ReturnUri });
                 return Result.Success(link);
@@ -109,7 +109,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
                 ProviderName = provider!
             }, cancellationToken);
             
-            var token = await securityTokenManager.GenerateAsync(user, cancellationToken);
+            var token = await tokenManager.GenerateAsync(user, cancellationToken);
             var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
                 new { Token = token, ReturnUri = request.ReturnUri });
             return Result.Success(link);

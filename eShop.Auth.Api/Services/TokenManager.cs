@@ -6,11 +6,11 @@ using SecurityToken = eShop.Domain.Types.SecurityToken;
 
 namespace eShop.Auth.Api.Services;
 
-public class SecurityTokenManager(
+public class TokenManager(
     AuthDbContext context,
     IRoleManager roleManager,
     IPermissionManager permissionManager,
-    IOptions<JwtOptions> options) : ISecurityTokenManager
+    IOptions<JwtOptions> options) : ITokenManager
 {
     private readonly AuthDbContext context = context;
     private readonly IRoleManager roleManager = roleManager;
