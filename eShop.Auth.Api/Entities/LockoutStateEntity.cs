@@ -3,6 +3,7 @@
 public class LockoutStateEntity : IEntity<Guid>
 {
     public Guid Id { get; init; }
+    public Guid UserId { get; set; }
     
     public LockoutReason Reason { get; set; }
     public string? Description { get; set; }
@@ -14,4 +15,6 @@ public class LockoutStateEntity : IEntity<Guid>
     
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
+
+    public UserEntity User { get; set; } = null!;
 }

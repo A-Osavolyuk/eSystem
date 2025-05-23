@@ -100,8 +100,10 @@ public class UserManager(AuthDbContext context) : IUserManager
         var lockoutState = new LockoutStateEntity()
         {
             Id = Guid.CreateVersion7(),
+            UserId = user.Id,
             Reason = LockoutReason.None,
-            Enabled = false
+            Enabled = false,
+            CreateDate = DateTime.UtcNow,
         };
         
         var passwordHash = PasswordHasher.HashPassword(password);

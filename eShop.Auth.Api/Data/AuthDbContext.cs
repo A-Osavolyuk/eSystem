@@ -39,10 +39,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithOne()
                 .HasForeignKey<UserEntity>(p => p.PersonalDataId)
                 .IsRequired(false);
-
-            entity.HasOne(p => p.LockoutState)
-                .WithOne()
-                .HasForeignKey<UserEntity>(x => x.LockoutStateId);
         });
         
         builder.Entity<RoleEntity>(entity =>
@@ -187,6 +183,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<LockoutStateEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            
+            entity.HasOne(p => p.User)
+                .WithOne()
+                .HasForeignKey<LockoutStateEntity>(x => x.UserId);
 
             entity.Property(x => x.Description).HasMaxLength(3000);
             entity.Property(x => x.Reason)

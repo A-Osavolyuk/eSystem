@@ -4,7 +4,6 @@ public class UserEntity : IEntity<Guid>
 {
     public Guid Id { get; init; }
     public Guid? PersonalDataId { get; set; }
-    public Guid LockoutStateId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string NormalizedEmail { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;
@@ -19,7 +18,6 @@ public class UserEntity : IEntity<Guid>
     public DateTime? UpdateDate { get; set; }
     
     public PersonalDataEntity? PersonalData { get; init; }
-    public LockoutStateEntity LockoutState { get; init; } = null!;
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
 }
