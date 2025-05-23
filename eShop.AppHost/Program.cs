@@ -36,6 +36,7 @@ var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegr
 
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WaitForReference(authDb)
+    .WaitForReference(rabbitMq)
     .WaitFor(emailService)
     .WaitFor(smsService)
     .WaitFor(telegramService)

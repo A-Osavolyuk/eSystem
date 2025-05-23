@@ -47,15 +47,8 @@ public static class HostApplicationBuilderExtensions
         {
             x.UsingRabbitMq((context, cfg) =>
             {
-                var uri = builder.Configuration["Configuration:Services:MessageBus:RabbitMq:HostUri"]!;
-                var username = builder.Configuration["Configuration:Services:MessageBus:RabbitMq:UserName"]!;
-                var password = builder.Configuration["Configuration:Services:MessageBus:RabbitMq:Password"]!;
-
-                cfg.Host(new Uri(uri), h =>
-                {
-                    h.Username(username);
-                    h.Password(password);
-                });
+                var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
+                cfg.Host(connectionString);
             });
         });
     }
