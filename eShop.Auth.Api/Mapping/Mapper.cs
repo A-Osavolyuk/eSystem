@@ -73,8 +73,6 @@ public static class Mapper
             UserName = userEntity.UserName!,
             PhoneNumber = userEntity.PhoneNumber!,
             EmailConfirmed = userEntity.EmailConfirmed,
-            LockoutEnabled = userEntity.LockoutEnabled,
-            LockoutEnd = userEntity.LockoutEnd,
             PhoneNumberConfirmed = userEntity.PhoneNumberConfirmed,
         };
     }

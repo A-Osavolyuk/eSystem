@@ -85,20 +85,6 @@ public class AdminController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Get lockout status")]
-    [EndpointDescription("Gets lockout status")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "ReadUsersPolicy")]
-    [HttpGet("get-lockout-status/{email}")]
-    public async ValueTask<ActionResult<Response>> GetRolesListAsync(string email)
-    {
-        var result = await sender.Send(new GetUserLockoutStatusQuery(email));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Get permissions")]
     [EndpointDescription("Gets all permissions")]
     [ProducesResponseType(200)]
@@ -161,32 +147,6 @@ public class AdminController(ISender sender) : ControllerBase
     public async ValueTask<ActionResult<Response>> CreateUserAccount([FromBody] CreateUserAccountRequest request)
     {
         var result = await sender.Send(new CreateUserAccountCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Lockout user")]
-    [EndpointDescription("Lockouts user")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "UpdateUserPolicy")]
-    [HttpPost("lockout-user")]
-    public async ValueTask<ActionResult<Response>> LockoutUserAsync([FromBody] LockoutUserRequest request)
-    {
-        var result = await sender.Send(new LockoutUserCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Unlock user")]
-    [EndpointDescription("Unlocks user")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "UpdateUserPolicy")]
-    [HttpPost("unlock-user")]
-    public async ValueTask<ActionResult<Response>> UnlockUserAsync([FromBody] UnlockUserRequest request)
-    {
-        var result = await sender.Send(new UnlockUserCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);

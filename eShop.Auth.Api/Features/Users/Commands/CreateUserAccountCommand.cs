@@ -34,8 +34,9 @@ internal sealed class CreateUserAccountCommandHandler(
             PhoneNumber = request.Request.PhoneNumber,
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
-            LockoutEnabled = false,
         };
+        
+        //TODO: create lockout state entity
 
         var accountResult = await userManager.CreateAsync(user, cancellationToken);
 
