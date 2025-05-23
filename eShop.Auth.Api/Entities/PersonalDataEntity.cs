@@ -10,6 +10,6 @@ public record PersonalDataEntity : IEntity<Guid>
     public Gender Gender { get; init; } = Gender.Unspecified;
     public DateTime DateOfBirth { get; init; } = new(1980, 1, 1);
     
-    public DateTime? CreateDate { get; set; }
-    public DateTime? UpdateDate { get; set; }
+    public DateTimeOffset? CreateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
 }

@@ -9,8 +9,8 @@ public class PermissionEntity : IEntity<Guid>
     public Guid ResourceId { get; set; }
     public ActionType Action { get; set; }
     
-    public DateTime? CreateDate { get; set; }
-    public DateTime? UpdateDate { get; set; }
+    public DateTimeOffset? CreateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
     
     public ResourceEntity Resource { get; init; } = null!;
 }

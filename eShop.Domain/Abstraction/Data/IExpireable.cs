@@ -2,5 +2,5 @@
 
 public interface IExpireable
 {
-    public DateTime ExpireDate { get; set; }
+    public DateTimeOffset ExpireDate { get; set; }
 }

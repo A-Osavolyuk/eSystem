@@ -14,8 +14,8 @@ public class UserEntity : IEntity<Guid>
     public bool AccountConfirmed { get; set; }
     public bool TwoFactorEnabled { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
-    public DateTime? CreateDate { get; set; }
-    public DateTime? UpdateDate { get; set; }
+    public DateTimeOffset? CreateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
     
     public PersonalDataEntity? PersonalData { get; init; }
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;

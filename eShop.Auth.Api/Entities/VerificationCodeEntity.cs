@@ -10,9 +10,9 @@ public class VerificationCodeEntity : IEntity<Guid>, IExpireable
     public string Code { get; init; } = string.Empty;
     public Verification Type { get; init; }
     
-    public DateTime ExpireDate { get; set; } = DateTime.UtcNow.AddMinutes(10);
-    public DateTime? CreateDate { get; set; }
-    public DateTime? UpdateDate { get; set; }
+    public DateTimeOffset ExpireDate { get; set; } = DateTime.UtcNow.AddMinutes(10);
+    public DateTimeOffset? CreateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
     
 
     public UserEntity? User { get; init; }

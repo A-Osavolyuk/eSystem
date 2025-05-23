@@ -13,8 +13,8 @@ public class LockoutStateEntity : IEntity<Guid>
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
     
-    public DateTime? CreateDate { get; set; }
-    public DateTime? UpdateDate { get; set; }
+    public DateTimeOffset? CreateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
 
     public UserEntity User { get; set; } = null!;
 }

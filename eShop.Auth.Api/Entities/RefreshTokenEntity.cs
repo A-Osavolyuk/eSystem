@@ -6,9 +6,9 @@ public class RefreshTokenEntity : IEntity<Guid>, IExpireable
     public Guid UserId { get; init; }
     public string Token { get; set; } = string.Empty;
     
-    public DateTime ExpireDate { get; set; }
-    public DateTime? CreateDate { get; set; }
-    public DateTime? UpdateDate { get; set; }
+    public DateTimeOffset ExpireDate { get; set; }
+    public DateTimeOffset? CreateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
     
     public UserEntity UserEntity { get; init; } = null!;
 }

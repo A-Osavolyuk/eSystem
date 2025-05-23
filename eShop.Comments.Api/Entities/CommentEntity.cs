@@ -12,6 +12,6 @@ public record CommentEntity : IEntity<Guid>
     public List<string> Images { get; set; } = [];
     public int Rating { get; set; }
 
-    public DateTime? CreateDate { get; set; }
-    public DateTime? UpdateDate { get; set; }
+    public DateTimeOffset? CreateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
 }
