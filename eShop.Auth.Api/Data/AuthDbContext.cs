@@ -18,7 +18,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserProviderEntity> UserProvider { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
-    public DbSet<LockoutEntity> Lockout { get; set; }
+    public DbSet<LockoutStateEntity> LockoutState { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -39,11 +39,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithOne()
                 .HasForeignKey<UserEntity>(p => p.PersonalDataId)
                 .IsRequired(false);
-            
-            entity.HasOne(p => p.Lockout)
+
+            entity.HasOne(p => p.LockoutState)
                 .WithOne()
-                .HasForeignKey<UserEntity>(x => x.LockoutId)
-                .IsRequired(false);
+                .HasForeignKey<UserEntity>(x => x.LockoutStateId);
         });
         
         builder.Entity<RoleEntity>(entity =>
@@ -185,7 +184,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(x => x.PermissionId);
         });
 
-        builder.Entity<LockoutEntity>(entity =>
+        builder.Entity<LockoutStateEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
 

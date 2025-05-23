@@ -1,0 +1,17 @@
+﻿namespace eShop.Auth.Api.Entities;
+
+public class LockoutStateEntity : IEntity<Guid>
+{
+    public Guid Id { get; init; }
+    
+    public LockoutReason Reason { get; set; }
+    public string? Description { get; set; }
+    public bool Enabled { get; set; }
+    public bool IsActive => Enabled && EndDate > DateTimeOffset.UtcNow;
+    
+    public DateTimeOffset? StartDate { get; set; }
+    public DateTimeOffset? EndDate { get; set; }
+    
+    public DateTime? CreateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
+}
