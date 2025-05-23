@@ -1,7 +1,5 @@
 ﻿namespace eShop.Infrastructure.Services;
 
-using ClaimTypes = Domain.Common.Security.ClaimTypes;
-
 public class TokenProvider(ICookieManager cookieManager) : ITokenProvider
 {
     private readonly ICookieManager cookieManager = cookieManager;

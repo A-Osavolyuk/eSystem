@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using eShop.Domain.Common.Security;
 using Microsoft.Extensions.Options;
 using SecurityToken = eShop.Domain.Types.SecurityToken;
 
@@ -142,17 +143,17 @@ public class TokenManager(
     {
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.UserName, userEntity.UserName!),
-            new(ClaimTypes.Email, userEntity.Email!),
-            new(ClaimTypes.Id, userEntity.Id.ToString()),
-            new(ClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
+            new(AppClaimTypes.UserName, userEntity.UserName!),
+            new(AppClaimTypes.Email, userEntity.Email!),
+            new(AppClaimTypes.Id, userEntity.Id.ToString()),
+            new(AppClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
         };
         
         var roles = await roleManager.GetByUserAsync(userEntity);
         var permissions = await permissionManager.GetByUserAsync(userEntity);
         
-        claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x.Name!)));;
-        claims.AddRange(permissions.Select(x => new Claim(ClaimTypes.Permission, x.Name!)));;
+        claims.AddRange(roles.Select(x => new Claim(AppClaimTypes.Role, x.Name!)));;
+        claims.AddRange(permissions.Select(x => new Claim(AppClaimTypes.Permission, x.Name!)));;
 
         return claims;
     }

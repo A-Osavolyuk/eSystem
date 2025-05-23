@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Common.Security;
 
-public static class ClaimTypes
+public static class AppClaimTypes
 {
     public const string Id = "id";
     public const string Email = "email";

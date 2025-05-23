@@ -1,6 +1,6 @@
-﻿namespace eShop.Infrastructure.Security;
+﻿using eShop.Domain.Common.Security;
 
-using ClaimTypes = Domain.Common.Security.ClaimTypes;
+namespace eShop.Infrastructure.Security;
 
 public class TokenHandler
 {
@@ -21,14 +21,14 @@ public class TokenHandler
     {
         var claims = new List<Claim>()
         {
-            new(ClaimTypes.Id, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Id)!.Value),
-            new(ClaimTypes.Email, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value),
-            new(ClaimTypes.UserName, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserName)!.Value),
-            new(ClaimTypes.PhoneNumber, token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PhoneNumber)!.Value),
+            new(AppClaimTypes.Id, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Id)!.Value),
+            new(AppClaimTypes.Email, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Email)!.Value),
+            new(AppClaimTypes.UserName, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.UserName)!.Value),
+            new(AppClaimTypes.PhoneNumber, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.PhoneNumber)!.Value),
         };
 
-        claims.AddRange(token.Claims.Where(x => x.Type == ClaimTypes.Role));
-        claims.AddRange(token.Claims.Where(x => x.Type == ClaimTypes.Permission));
+        claims.AddRange(token.Claims.Where(x => x.Type == AppClaimTypes.Role));
+        claims.AddRange(token.Claims.Where(x => x.Type == AppClaimTypes.Permission));
 
         return claims;
     }
