@@ -7,11 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Aspire.RabbitMQ.Client" Version="9.3.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
         <PackageReference Include="Azure.Storage.Files.Shares" Version="12.22.0" />
         <PackageReference Include="Azure.Storage.Queues" Version="12.22.0" />
         <PackageReference Include="Microsoft.Extensions.Azure" Version="1.11.0" />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.2.7" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.4.2" />
     </ItemGroup>
 
     <ItemGroup>
