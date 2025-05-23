@@ -11,7 +11,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddJwtAuthentication();
         builder.AddLogging();
         builder.AddReverseProxy();
-        builder.AddDocumentation();
         builder.AddCors();
         builder.Configuration.AddJsonFile("proxy.json", optional: false, reloadOnChange: true);
     }
