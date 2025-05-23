@@ -73,24 +73,6 @@ public static class HostApplicationBuilderExtensions
             };
         });
     }
-
-    public static void AddRedisCache(this IHostApplicationBuilder builder)
-    {
-        const string connectionStringPath = "Configuration:Services:Cache:Redis:ConnectionString";
-        const string instanceNamePath = "Configuration:Services:Cache:Redis:InstanceName";
-        
-        var connectionString = builder.Configuration[connectionStringPath]!;
-        var instanceName = builder.Configuration[instanceNamePath]!;
-        
-        builder.Services.AddSingleton<IConnectionMultiplexer>(sp => 
-                ConnectionMultiplexer.Connect(connectionString));
-        
-        builder.Services.AddStackExchangeRedisCache(cfg =>
-        {
-            cfg.Configuration = connectionString;
-            cfg.InstanceName = instanceName;
-        });
-    }
     
     public static void AddLogging(this IHostApplicationBuilder builder)
     {

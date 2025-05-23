@@ -27,6 +27,11 @@ public static class HostApplicationBuilderExtensions
     {
         builder.AddSqlServerDbContext<AppDbContext>("product-db");
     }
+    
+    private static void AddRedisCache(this IHostApplicationBuilder builder)
+    {
+        builder.AddRedisClient("redis");
+    }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)
     {

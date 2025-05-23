@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Aspire.MongoDB.Driver" Version="9.3.0" />
+        <PackageReference Include="Aspire.StackExchange.Redis" Version="9.3.0" />
         <PackageReference Include="MailChimp.Net.V3" Version="5.7.0" />
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1"/>
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.4.1" />

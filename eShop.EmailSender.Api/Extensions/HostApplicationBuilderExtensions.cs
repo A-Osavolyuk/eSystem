@@ -14,6 +14,12 @@ public static class HostApplicationBuilderExtensions
         builder.AddExceptionHandler();
         builder.AddDependencyInjection();
         builder.AddDocumentation();
+        builder.AddRedisCache();
+    }
+    
+    private static void AddRedisCache(this IHostApplicationBuilder builder)
+    {
+        builder.AddRedisClient("redis");
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)

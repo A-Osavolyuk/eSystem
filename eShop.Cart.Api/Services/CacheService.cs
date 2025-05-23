@@ -1,30 +1,22 @@
 ﻿using eShop.Domain.Interfaces.API;
+using StackExchange.Redis;
 
 namespace eShop.Cart.Api.Services;
 
-public class CacheService(IDistributedCache cache) : ICacheService
+public class CacheService(IConnectionMultiplexer redis) : ICacheService
 {
-    private readonly IDistributedCache cache = cache;
+    private readonly IDatabase database = redis.GetDatabase();
 
     public async ValueTask<bool> IsKeyExistsAsync(string key)
     {
-        var data = await cache.GetStringAsync(key);
-
-        return data is null;
+        return await database.KeyExistsAsync(key);
     }
 
     public async ValueTask<T?> GetAsync<T>(string key)
     {
-        var data = await cache.GetStringAsync(key);
+        var data = await database.StringGetAsync(key);
 
-        if (data is null)
-        {
-            return default(T);
-        }
-
-        await cache.RefreshAsync(key);
-
-        var result = JsonConvert.DeserializeObject<T>(data);
+        var result = JsonConvert.DeserializeObject<T>(data!);
 
         return result;
     }
@@ -33,11 +25,8 @@ public class CacheService(IDistributedCache cache) : ICacheService
     {
         var json = JsonConvert.SerializeObject(value);
 
-        await cache.SetStringAsync(key, json, new DistributedCacheEntryOptions()
-        {
-            AbsoluteExpirationRelativeToNow = expirationTime
-        });
+        await database.StringSetAsync(key, json, expirationTime);
     }
 
-    public async ValueTask RemoveAsync(string key) => await cache.RemoveAsync(key);
+    public async ValueTask RemoveAsync(string key) => await database.KeyDeleteAsync(key);
 }
