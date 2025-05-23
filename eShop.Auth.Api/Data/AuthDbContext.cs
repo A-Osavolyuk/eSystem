@@ -189,7 +189,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.Reason).HasMaxLength(3000);
+            entity.Property(x => x.Description).HasMaxLength(3000);
+            entity.Property(x => x.Reason)
+                .HasConversion(value => value.ToString(), x => Enum.Parse<LockoutReason>(x));;
         });
     }
 }
