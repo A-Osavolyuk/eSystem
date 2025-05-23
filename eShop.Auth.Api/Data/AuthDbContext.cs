@@ -18,6 +18,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserProviderEntity> UserProvider { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
+    public DbSet<LockoutEntity> Lockout { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -26,15 +27,30 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<UserEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Email).HasMaxLength(64);
+            entity.Property(x => x.NormalizedEmail).HasMaxLength(64);
+            entity.Property(x => x.UserName).HasMaxLength(64);
+            entity.Property(x => x.NormalizedUserName).HasMaxLength(64);
+            entity.Property(x => x.PhoneNumber).HasMaxLength(17);
+            entity.Property(x => x.PasswordHash).HasMaxLength(1000);
+            
             entity.HasOne(p => p.PersonalData)
                 .WithOne()
                 .HasForeignKey<UserEntity>(p => p.PersonalDataId)
+                .IsRequired(false);
+            
+            entity.HasOne(p => p.Lockout)
+                .WithOne()
+                .HasForeignKey<UserEntity>(x => x.LockoutId)
                 .IsRequired(false);
         });
         
         builder.Entity<RoleEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(64);
+            entity.Property(x => x.NormalizedName).HasMaxLength(64);
         });
 
         builder.Entity<VerificationCodeEntity>(entity =>
@@ -70,6 +86,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             
+            entity.Property(x => x.Name).HasMaxLength(64);
+            
             entity.HasOne<ResourceEntity>(x => x.Resource)
                 .WithMany()
                 .HasForeignKey(x => x.ResourceId);
@@ -100,16 +118,21 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(t => t.UserEntity)
                 .WithOne()
                 .HasForeignKey<RefreshTokenEntity>(t => t.UserId);
+            
+            entity.Property(x => x.Token).HasColumnType("NVARCHAR(MAX)");
         });
 
         builder.Entity<ProviderEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(64);
         });
 
         builder.Entity<LoginTokenEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            
+            entity.Property(x => x.Token).HasColumnType("NVARCHAR(MAX)");
 
             entity.HasOne(x => x.User)
                 .WithOne()
@@ -123,6 +146,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<UserSecretEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Secret).HasMaxLength(64);
 
             entity.HasOne(x => x.User)
                 .WithOne()
@@ -145,6 +169,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<ResourceEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(64);
         });
 
         builder.Entity<RolePermissionEntity>(entity =>
@@ -158,6 +183,13 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.Permission)
                 .WithMany()
                 .HasForeignKey(x => x.PermissionId);
+        });
+
+        builder.Entity<LockoutEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Reason).HasMaxLength(3000);
         });
     }
 }
