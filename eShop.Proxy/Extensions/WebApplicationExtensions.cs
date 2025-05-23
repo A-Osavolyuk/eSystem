@@ -10,6 +10,7 @@ public static class WebApplicationExtensions
         app.MapOpenApi();
         app.MapScalarApiReference();
         app.MapDefaultEndpoints();
+        app.UseCors();
         app.MapReverseProxy(proxyPipeline =>
         {
             proxyPipeline.UseAuthorization();

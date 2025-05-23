@@ -12,6 +12,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddReverseProxy();
         builder.AddDocumentation();
+        builder.AddCors();
         builder.Configuration.AddJsonFile("proxy.json", optional: false, reloadOnChange: true);
     }
 

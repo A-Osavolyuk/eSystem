@@ -11,7 +11,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddLogging();
         builder.AddMessageBus();
-        builder.AddCors();
         builder.AddExceptionHandler();
         builder.AddDependencyInjection();
         builder.AddDocumentation();

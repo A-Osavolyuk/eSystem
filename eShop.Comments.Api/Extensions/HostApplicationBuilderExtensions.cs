@@ -17,7 +17,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddMessageBus();
         builder.AddRedisCache();
         builder.AddMediatR();
-        builder.AddCors();
         builder.AddExceptionHandler();
         builder.AddMsSqlDb();
         builder.AddDocumentation();

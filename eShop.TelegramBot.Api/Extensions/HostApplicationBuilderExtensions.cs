@@ -12,7 +12,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddDependencyInjection();
         builder.AddMessageBus();
         builder.AddMediatR();
-        builder.AddCors();
         builder.AddExceptionHandler();
         builder.AddTelegramBot();
         builder.AddDocumentation();

@@ -8,7 +8,6 @@ public static class WebApplicationBuilder
         app.UseHttpsRedirection();
         app.UseExceptionHandler();
         app.MapOpenApi();
-        app.UseCors();
         app.MapScalarApiReference();
     }
 }
