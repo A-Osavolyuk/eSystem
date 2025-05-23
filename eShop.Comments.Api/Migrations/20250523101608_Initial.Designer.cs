@@ -12,7 +12,7 @@ using eShop.Comments.Api.Data;
 namespace eShop.Comments.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250502124646_Initial")]
+    [Migration("20250523101608_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -35,8 +35,8 @@ namespace eShop.Comments.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CreateDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.PrimitiveCollection<string>("Images")
                         .IsRequired()
@@ -48,8 +48,8 @@ namespace eShop.Comments.Api.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
