@@ -35,22 +35,13 @@ internal sealed class CreateUserAccountCommandHandler(
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
         };
-        
-        //TODO: create lockout state entity
 
-        var accountResult = await userManager.CreateAsync(user, cancellationToken);
+        var password = securityManager.GenerateRandomPassword(18);
+        var accountResult = await userManager.CreateAsync(user, password, cancellationToken);
 
         if (!accountResult.Succeeded)
         {
             return accountResult;
-        }
-
-        var password = securityManager.GenerateRandomPassword(18);
-        var passwordResult = await userManager.AddPasswordAsync(user, password, cancellationToken);
-
-        if (!passwordResult.Succeeded)
-        {
-            return passwordResult;
         }
 
         await profileManager.SetAsync(user, new PersonalDataEntity()

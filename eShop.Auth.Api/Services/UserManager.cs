@@ -94,27 +94,25 @@ public class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        user.NormalizedEmail = user.Email.ToUpper();
-        user.NormalizedUserName = user.UserName.ToUpper();
-        user.CreateDate = DateTime.UtcNow;
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
     public async ValueTask<Result> CreateAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {
+        var lockoutState = new LockoutStateEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            Reason = LockoutReason.None,
+            Enabled = false
+        };
+        
         var passwordHash = PasswordHasher.HashPassword(password);
 
         user.PasswordHash = passwordHash;
         user.NormalizedEmail = user.Email.ToUpper();
         user.NormalizedUserName = user.UserName.ToUpper();
         user.CreateDate = DateTime.UtcNow;
-        context.Users.Update(user);
+        
+        await context.Users.AddAsync(user, cancellationToken);
+        await context.LockoutState.AddAsync(lockoutState, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -125,19 +123,6 @@ public class UserManager(AuthDbContext context) : IUserManager
     {
         user.UserName = userName;
         user.NormalizedUserName = userName.ToUpper();
-        user.UpdateDate = DateTime.UtcNow;
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> AddPasswordAsync(UserEntity user, string password,
-        CancellationToken cancellationToken = default)
-    {
-        var passwordHash = PasswordHasher.HashPassword(password);
-
-        user.PasswordHash = passwordHash;
         user.UpdateDate = DateTime.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
