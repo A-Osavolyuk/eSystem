@@ -25,11 +25,7 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration.GetConnectionString(SqlDb.SqlServer);
-        builder.Services.AddDbContext<AppDbContext>(cfg =>
-        {
-            cfg.UseSqlServer(connectionString);
-        });
+        builder.AddSqlServerDbContext<AppDbContext>("product-db");
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)

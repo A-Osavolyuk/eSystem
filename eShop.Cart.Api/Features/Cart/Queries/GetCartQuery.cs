@@ -6,9 +6,9 @@ namespace eShop.Cart.Api.Features.Cart.Queries;
 
 internal sealed record GetCartQuery(Guid UserId) : IRequest<Result>;
 
-internal sealed class GetCartQueryHandler(DbClient client) : IRequestHandler<GetCartQuery, Result>
+internal sealed class GetCartQueryHandler(IMongoDatabase client) : IRequestHandler<GetCartQuery, Result>
 {
-    private readonly DbClient client = client;
+    private readonly IMongoDatabase client = client;
 
     public async Task<Result> Handle(GetCartQuery request, CancellationToken cancellationToken)
     {

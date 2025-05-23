@@ -38,9 +38,7 @@ public static class HostApplicationBuilderExtensions
     
     private static void AddMongoDb(this IHostApplicationBuilder builder)
     {
-        var section = builder.Configuration.GetSection("Configuration:Storage:Databases:NoSQL:Mongo");
-        builder.Services.Configure<MongoDbSettings>(section);
-        builder.Services.AddSingleton<DbClient>();
+        builder.AddMongoDBClient("cart-db");
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)

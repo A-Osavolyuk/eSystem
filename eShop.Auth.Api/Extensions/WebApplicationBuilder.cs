@@ -15,7 +15,6 @@ public static class WebApplicationBuilder
 
         app.UseRouting();
         app.UseHttpsRedirection();
-        //app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

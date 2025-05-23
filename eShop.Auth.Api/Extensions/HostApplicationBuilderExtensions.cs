@@ -17,7 +17,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddIdentity();
         builder.AddDependencyInjection();
         builder.AddRedisCache();
-        //builder.AddCors();
         builder.AddMediatR();
         builder.AddMsSqlDb();
         builder.AddGrpc();
@@ -34,38 +33,31 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddMediatR(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddMediatR(x =>
-        {
-            x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-        });
+        builder.Services.AddMediatR(x => { x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>(); });
     }
 
     private static void AddGrpc(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddGrpc(options =>
-        {
-            options.EnableDetailedErrors = true; 
-        });
+        builder.Services.AddGrpc(options => { options.EnableDetailedErrors = true; });
     }
 
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration.GetConnectionString(SqlDb.SqlServer);
-        builder.Services.AddDbContext<AuthDbContext>(cfg =>
-        {
-            cfg.UseSqlServer(connectionString);
-            cfg.UseAsyncSeeding(async (ctx, isStoreOperation, ct) =>
+        builder.AddSqlServerDbContext<AuthDbContext>("auth-db",
+            configureDbContextOptions: cfg =>
             {
-                var context = (ctx as AuthDbContext)!;
-                await context.SeedAsync(isStoreOperation, ct);
+                cfg.UseAsyncSeeding(async (ctx, isStoreOperation, ct) =>
+                {
+                    var context = (ctx as AuthDbContext)!;
+                    await context.SeedAsync(isStoreOperation, ct);
+                });
             });
-        });
     }
 
     private static void AddIdentity(this IHostApplicationBuilder builder)
     {
         var configuration = builder.Configuration;
-        
+
         builder.Services.Configure<JwtOptions>(configuration.GetSection("Configuration:Security:Authentication:JWT"));
 
         builder.Services.AddAuthentication(options =>
@@ -85,8 +77,9 @@ public static class HostApplicationBuilderExtensions
             })
             .AddGoogle(options =>
             {
-                var settings = configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Google");
-                
+                var settings =
+                    configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Google");
+
                 options.ClientId = settings.ClientId ?? "";
                 options.ClientSecret = settings.ClientSecret ?? "";
                 options.SaveTokens = settings.SaveTokens;
@@ -94,8 +87,9 @@ public static class HostApplicationBuilderExtensions
             })
             .AddFacebook(options =>
             {
-                var settings = configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Facebook");
-                
+                var settings =
+                    configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Facebook");
+
                 options.ClientId = settings.ClientId ?? "";
                 options.ClientSecret = settings.ClientSecret ?? "";
                 options.SaveTokens = settings.SaveTokens;
@@ -103,8 +97,9 @@ public static class HostApplicationBuilderExtensions
             })
             .AddMicrosoftAccount(options =>
             {
-                var settings = configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Microsoft");
-                
+                var settings =
+                    configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Microsoft");
+
                 options.ClientId = settings.ClientId ?? "";
                 options.ClientSecret = settings.ClientSecret ?? "";
                 options.SaveTokens = settings.SaveTokens;
@@ -115,7 +110,7 @@ public static class HostApplicationBuilderExtensions
                 var settings = configuration.Get<JwtOptions>("Configuration:Security:Authentication:JWT");
                 var encodedKey = Encoding.UTF8.GetBytes(settings.Key);
                 var symmetricSecurityKey = new SymmetricSecurityKey(encodedKey);
-                
+
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateAudience = true,
@@ -129,29 +124,37 @@ public static class HostApplicationBuilderExtensions
             });
 
         builder.Services.AddAuthorizationBuilder()
-            .AddPolicy("DeleteAccountPolicy", policy => { policy.Requirements.Add(new PermissionRequirement("Account:Delete")); })
-            .AddPolicy("CreateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Create")))
-            .AddPolicy("UpdateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Update")))
-            .AddPolicy("ReadAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Read")))
-            
+            .AddPolicy("DeleteAccountPolicy",
+                policy => { policy.Requirements.Add(new PermissionRequirement("Account:Delete")); })
+            .AddPolicy("CreateAccountPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Account:Create")))
+            .AddPolicy("UpdateAccountPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Account:Update")))
+            .AddPolicy("ReadAccountPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Account:Read")))
             .AddPolicy("DeleteUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Delete")))
             .AddPolicy("CreateUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Create")))
             .AddPolicy("UpdateUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Update")))
             .AddPolicy("ReadUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Read")))
-            
             .AddPolicy("DeleteRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Delete")))
             .AddPolicy("CreateRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Create")))
             .AddPolicy("UpdateRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Update")))
             .AddPolicy("ReadRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Read")))
             .AddPolicy("AssignRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Assign")))
-            .AddPolicy("UnassignRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Unassign")))
-            
-            .AddPolicy("DeletePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Delete")))
-            .AddPolicy("CreatePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Create")))
-            .AddPolicy("UpdatePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Update")))
-            .AddPolicy("ReadPermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Read")))
-            .AddPolicy("GrantPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Grant")))
-            .AddPolicy("RevokePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Revoke")));
+            .AddPolicy("UnassignRolePolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Role:Unassign")))
+            .AddPolicy("DeletePermissionsPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Delete")))
+            .AddPolicy("CreatePermissionsPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Create")))
+            .AddPolicy("UpdatePermissionsPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Update")))
+            .AddPolicy("ReadPermissionsPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Read")))
+            .AddPolicy("GrantPermissionPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Grant")))
+            .AddPolicy("RevokePermissionPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Revoke")));
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)

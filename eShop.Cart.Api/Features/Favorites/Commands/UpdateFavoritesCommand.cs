@@ -7,10 +7,10 @@ namespace eShop.Cart.Api.Features.Favorites.Commands;
 internal sealed record UpdateFavoritesCommand(UpdateFavoritesRequest Request)
     : IRequest<Result>;
 
-internal sealed class UpdateFavoritesCommandHandler(DbClient client)
+internal sealed class UpdateFavoritesCommandHandler(IMongoDatabase client)
     : IRequestHandler<UpdateFavoritesCommand, Result>
 {
-    private readonly DbClient client = client;
+    private readonly IMongoDatabase client = client;
 
     public async Task<Result> Handle(UpdateFavoritesCommand request,
         CancellationToken cancellationToken)

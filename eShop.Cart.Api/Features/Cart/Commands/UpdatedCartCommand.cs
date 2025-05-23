@@ -6,10 +6,10 @@ namespace eShop.Cart.Api.Features.Cart.Commands;
 
 internal sealed record UpdatedCartCommand(UpdateCartRequest Request) : IRequest<Result>;
 
-internal sealed class UpdatedCartCommandHandler(DbClient client)
+internal sealed class UpdatedCartCommandHandler(IMongoDatabase client)
     : IRequestHandler<UpdatedCartCommand, Result>
 {
-    private readonly DbClient client = client;
+    private readonly IMongoDatabase client = client;
 
     public async Task<Result> Handle(UpdatedCartCommand request,
         CancellationToken cancellationToken)

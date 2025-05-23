@@ -1,5 +1,4 @@
-﻿global using eShop.Application;
-global using eShop.Application.Extensions;
+﻿global using eShop.Application.Extensions;
 global using eShop.Application.Filters;
 global using eShop.Application.Utilities;
 global using eShop.Domain.Abstraction.Validation;

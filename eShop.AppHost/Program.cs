@@ -17,7 +17,7 @@ var mongo = builder.AddMongoDb()
 
 var cartDb = mongo.AddDatabase("cart-db", "CartDB");
 var authDb = sqlServer.AddDatabase("auth-db", "AuthDB");
-var reviewsDb = sqlServer.AddDatabase("reviews-db", "ReviewsDB");
+var commentsDb = sqlServer.AddDatabase("comment-db", "CommentsDB");
 var productDb = sqlServer.AddDatabase("product-db", "ProductDB");
 
 var rabbitMq = builder.AddRabbitMq()
@@ -35,34 +35,37 @@ var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegr
     .WaitForReference(rabbitMq);
 
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
-    .WaitForReference(sqlServer)
-    .WaitForReference(emailService)
-    .WaitForReference(smsService)
-    .WaitForReference(telegramService)
+    .WaitForReference(authDb)
+    .WaitFor(emailService)
+    .WaitFor(smsService)
+    .WaitFor(telegramService)
     .WaitForReference(redisCache);
 
 var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
-    .WaitForReference(authApi);
+    .WaitFor(authApi)
+    .WaitForReference(productDb);
 
 var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("reviews-api")
-    .WaitForReference(authApi);
+    .WaitFor(authApi)
+    .WaitForReference(commentsDb);
 
 var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
-    .WaitForReference(authApi);
+    .WaitFor(authApi)
+    .WaitForReference(cartDb);
 
 var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
-    .WaitForReference(authApi);
+    .WaitFor(authApi);
 
 var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
 
 var blazorClient = builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
-    .WaitForReference(gateway)
-    .WaitForReference(authApi);
+    .WaitFor(gateway)
+    .WaitFor(authApi);
 
 var angularClient = builder.AddNpmApp("angular-webui",
         "../eShop.AngularWebUI")
-    .WaitForReference(gateway)
-    .WaitForReference(authApi)
+    .WaitFor(gateway)
+    .WaitFor(authApi)
     .WithHttpEndpoint(port: 40502, targetPort: 4200, env: "PORT")
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();

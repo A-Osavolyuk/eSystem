@@ -6,10 +6,10 @@ namespace eShop.Cart.Api.Features.Favorites.Queries;
 
 internal sealed record GetFavoritesQuery(Guid UserId) : IRequest<Result>;
 
-internal sealed class GetFavoritesQueryHandler(DbClient client)
+internal sealed class GetFavoritesQueryHandler(IMongoDatabase client)
     : IRequestHandler<GetFavoritesQuery, Result>
 {
-    private readonly DbClient client = client;
+    private readonly IMongoDatabase client = client;
 
     public async Task<Result> Handle(GetFavoritesQuery request, CancellationToken cancellationToken)
     {

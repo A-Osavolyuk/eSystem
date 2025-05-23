@@ -12,7 +12,6 @@ public static class WebApplicationExtensions
         {
             app.MapOpenApi();
             app.MapScalarApiReference();
-            await app.SeedDataAsync();
         }
 
         app.UseHttpsRedirection();
@@ -20,33 +19,5 @@ public static class WebApplicationExtensions
         app.MapControllers();
         app.UseExceptionHandler();
         app.MapGrpcService<CartServer>();
-    }
-
-    private static async Task SeedDataAsync(this WebApplication app)
-    {
-        using var scope = app.Services.CreateScope();
-        var client = scope.ServiceProvider.GetRequiredService<DbClient>();
-        var cartCollection = client.GetCollection<CartEntity>("Carts");
-        var favoritesCollection = client.GetCollection<FavoritesEntity>("Favorites");
-
-        await cartCollection.InsertOneAsync(new CartEntity()
-        {
-            Id = Guid.NewGuid(),
-            UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
-            ItemsCount = 0,
-            Items = [],
-            UpdateDate = DateTime.UtcNow,
-            CreateDate = DateTime.UtcNow
-        });
-
-        await favoritesCollection.InsertOneAsync(new FavoritesEntity()
-        {
-            Id = Guid.NewGuid(),
-            UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
-            ItemsCount = 0,
-            Items = [],
-            UpdateDate = DateTime.UtcNow,
-            CreateDate = DateTime.UtcNow
-        });
     }
 }
