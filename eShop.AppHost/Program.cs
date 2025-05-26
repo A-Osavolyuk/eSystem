@@ -26,13 +26,16 @@ var rabbitMq = builder.AddRabbitMq()
     .WithDataVolume();
 
 var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
-    .WithReference(rabbitMq);
+    .WithReference(rabbitMq)
+    .WaitForReference(redisCache);
 
 var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-service-api")
-    .WaitForReference(rabbitMq);
+    .WaitForReference(rabbitMq)
+    .WaitForReference(redisCache);
 
 var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegram-service-api")
-    .WaitForReference(rabbitMq);
+    .WaitForReference(rabbitMq)
+    .WaitForReference(redisCache);
 
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WaitForReference(authDb)
@@ -45,21 +48,25 @@ var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
 var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
     .WaitFor(authApi)
     .WaitForReference(rabbitMq)
+    .WaitForReference(redisCache)
     .WaitForReference(productDb);
 
 var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("reviews-api")
     .WaitFor(authApi)
     .WaitForReference(commentsDb)
+    .WaitForReference(redisCache)
     .WaitForReference(rabbitMq);
 
 var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
     .WaitFor(authApi)
     .WaitForReference(rabbitMq)
+    .WaitForReference(redisCache)
     .WaitForReference(cartDb);
 
 var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
     .WaitFor(authApi)
-    .WaitForReference(rabbitMq);
+    .WaitForReference(rabbitMq)
+    .WaitForReference(redisCache);
 
 var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
 
