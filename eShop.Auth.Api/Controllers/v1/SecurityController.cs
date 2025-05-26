@@ -19,7 +19,7 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [EndpointDescription("External login")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpGet("external-login/{provider}")]
+    [HttpGet("oauth-login/{provider}")]
     public async ValueTask<ActionResult<Response>> ExternalLogin(string provider, string? returnUri = null)
     {
         var result = await sender.Send(new ExternalLoginQuery(provider, returnUri));
@@ -37,7 +37,7 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [EndpointDescription("Handles external login response")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpGet("handle-external-login-response")]
+    [HttpGet("handle-oauth-login")]
     public async ValueTask<ActionResult<Response>> HandleExternalLoginResponse(string? remoteError = null,
         string? returnUri = null)
     {
