@@ -14,7 +14,7 @@ public class SignInManager(IAuthenticationSchemeProvider schemeProvider) : ISign
         return principal;
     }
 
-    public async ValueTask<List<string>> GetExternalAuthenticationSchemasAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<List<string>> GetOAuthSchemasAsync(CancellationToken cancellationToken = default)
     {
         var schemes = await schemeProvider.GetAllSchemesAsync();
         var result = schemes
@@ -24,7 +24,7 @@ public class SignInManager(IAuthenticationSchemeProvider schemeProvider) : ISign
         return result;
     }
 
-    public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUri)
+    public AuthenticationProperties ConfigureOAuthProperties(string provider, string redirectUri)
     {
         var properties = new AuthenticationProperties
         {

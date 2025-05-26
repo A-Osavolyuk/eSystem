@@ -22,12 +22,12 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     [HttpGet("oauth-login/{provider}")]
     public async ValueTask<ActionResult<Response>> ExternalLogin(string provider, string? returnUri = null)
     {
-        var result = await sender.Send(new ExternalLoginQuery(provider, returnUri));
+        var result = await sender.Send(new OAuthLoginQuery(provider, returnUri));
 
         return result.Match(
             s =>
             {
-                var response = s.Value! as ExternalLoginResponse;
+                var response = s.Value! as OAuthLoginResponse;
                 return Challenge(response!.AuthenticationProperties, response.Provider);
             },
             ErrorHandler.Handle);
@@ -43,7 +43,7 @@ public class SecurityController(ISender sender, ISignInManager signInManager) : 
     {
         var principal = await signInManager.AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
         
-        var result = await sender.Send(new HandleExternalLoginResponseQuery(principal, remoteError, returnUri));
+        var result = await sender.Send(new HandleOAuthLoginQuery(principal, remoteError, returnUri));
         return result.Match(s => Redirect(Convert.ToString(s.Message!)!), ErrorHandler.Handle);
     }
 

@@ -3,19 +3,19 @@ using eShop.Domain.Messages.Email;
 
 namespace eShop.Auth.Api.Features.Security.Queries;
 
-internal sealed record HandleExternalLoginResponseQuery(
+internal sealed record HandleOAuthLoginQuery(
     ClaimsPrincipal Principal,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
 
-internal sealed class HandleExternalLoginResponseQueryHandler(
+internal sealed class HandleOAuthLoginQueryHandler(
     IPermissionManager permissionManager,
     ISecurityManager securityManager,
     ITokenManager tokenManager,
     IUserManager userManager,
     IConfiguration configuration,
     IMessageService messageService,
-    IRoleManager roleManager) : IRequestHandler<HandleExternalLoginResponseQuery, Result>
+    IRoleManager roleManager) : IRequestHandler<HandleOAuthLoginQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly ISecurityManager securityManager = securityManager;
@@ -24,11 +24,11 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
     private readonly IMessageService messageService = messageService;
     private readonly IRoleManager roleManager = roleManager;
 
-    public async Task<Result> Handle(HandleExternalLoginResponseQuery request,
+    public async Task<Result> Handle(HandleOAuthLoginQuery request,
         CancellationToken cancellationToken)
     {
         var email = request.Principal.Claims
-            .FirstOrDefault(x => x.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
+            .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
         if (email is null)
         {

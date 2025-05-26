@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Responses.API.Auth;
 
-public class ExternalLoginResponse
+public class OAuthLoginResponse
 {
     public AuthenticationProperties AuthenticationProperties { get; set; } = null!;
     public string Provider { get; set; } = string.Empty;
