@@ -12,7 +12,6 @@ global using eShop.Auth.Api.Features.Security.Queries;
 global using eShop.Auth.Api.Interfaces;
 global using eShop.Auth.Api.Mapping;
 global using eShop.Auth.Api.Options;
-global using eShop.Auth.Api.Rpc;
 global using eShop.Auth.Api.Security.Authorization;
 global using eShop.Auth.Api.Services;
 global using eShop.Auth.Api.Utilities;

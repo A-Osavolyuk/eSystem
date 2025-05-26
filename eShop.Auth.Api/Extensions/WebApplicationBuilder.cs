@@ -18,7 +18,6 @@ public static class WebApplicationBuilder
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.MapGrpcService<AuthServer>();
         app.UseExceptionHandler();
     }
 }

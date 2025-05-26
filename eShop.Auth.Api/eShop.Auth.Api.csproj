@@ -45,13 +45,4 @@
         <ProjectReference Include="..\eShop.Domain\eShop.Domain.csproj"/>
         <ProjectReference Include="..\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj"/>
     </ItemGroup>
-    
-    <ItemGroup>
-        <Protobuf Include="..\eShop.Application\Protos\cart.proto" GrpcServices="Client">
-            <GrpcCSharpNamespace>eShop.Auth.Api</GrpcCSharpNamespace>
-        </Protobuf>
-        <Protobuf Include="..\eShop.Application\Protos\auth.proto" GrpcServices="Server">
-            <GrpcCSharpNamespace>eShop.Auth.Api</GrpcCSharpNamespace>
-        </Protobuf>
-    </ItemGroup>
 </Project>
