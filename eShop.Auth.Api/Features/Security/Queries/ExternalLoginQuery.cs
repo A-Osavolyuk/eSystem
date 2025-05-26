@@ -21,10 +21,10 @@ internal sealed class ExternalLoginQueryHandler(
             return Results.BadRequest($"Invalid external provider {request.Provider}.");
         }
 
-        var redirectUrl = UrlGenerator.Action("handle-external-login-response", "Security",
+        var redirectUri = UrlGenerator.Action("handle-external-login-response", "Security",
             new { ReturnUri = request.ReturnUri ?? "/" });
         
-        var properties = signInManager.ConfigureExternalAuthenticationProperties(request.Provider, redirectUrl);
+        var properties = signInManager.ConfigureExternalAuthenticationProperties(request.Provider, redirectUri );;
         
         var result = Result.Success(new ExternalLoginResponse()
         {

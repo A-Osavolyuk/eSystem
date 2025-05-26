@@ -2,9 +2,9 @@
 
 public static class UrlGenerator
 {
-    public static string ActionLink(string action, string hostUri, object values)
+    public static string ActionLink(string uri, object values)
     {
-        var query = new StringBuilder(hostUri).Append(action);
+        var query = new StringBuilder(uri);
 
         query.Append("?");
 

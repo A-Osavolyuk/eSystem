@@ -23,7 +23,6 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly IRoleManager roleManager = roleManager;
-    private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(HandleExternalLoginResponseQuery request,
         CancellationToken cancellationToken)
@@ -46,18 +45,16 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             {
                 var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
                 var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
-
-                var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
-                    new { accessToken, refreshToken, request.ReturnUri });
+                var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken});
+                
                 return Result.Success(link);
             }
             else
             {
                 var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
                 var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+                var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken });
                 
-                var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
-                    new { accessToken, refreshToken, request.ReturnUri });
                 return Result.Success(link);
             }
         }
@@ -65,6 +62,7 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
         {
             user = new UserEntity()
             {
+                Id = Guid.CreateVersion7(),
                 Email = email,
                 UserName = email,
                 EmailConfirmed = true
@@ -114,9 +112,8 @@ internal sealed class HandleExternalLoginResponseQueryHandler(
             
             var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
             var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+            var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken });
             
-            var link = UrlGenerator.ActionLink("/account/confirm-external-login", frontendUri,
-                new { AccessToken = accessToken, RefreshToken = refreshToken, ReturnUri = request.ReturnUri });
             return Result.Success(link);
         }
     }

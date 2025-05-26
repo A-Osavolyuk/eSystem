@@ -24,12 +24,15 @@ public class SignInManager(IAuthenticationSchemeProvider schemeProvider) : ISign
         return result;
     }
 
-    public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl)
+    public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUri)
     {
         var properties = new AuthenticationProperties
         {
-            RedirectUri = redirectUrl,
-            Items = { ["LoginProvider"] = provider }
+            RedirectUri = redirectUri,
+            Items =
+            {
+                ["LoginProvider"] = provider,
+            }
         };
         
         return properties;
