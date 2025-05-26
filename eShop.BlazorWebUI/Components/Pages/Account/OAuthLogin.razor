@@ -1,6 +1,4 @@
-﻿@page "/account/confirm-external-login/"
-@using eShop.Infrastructure.Security
-
+﻿@page "/account/oauth-login/"
 @inject NavigationManager NavigationManager
 @inject AuthenticationManager AuthenticationManager
 @inject ISnackbar Snackbar
@@ -8,7 +6,6 @@
 @code {
     [SupplyParameterFromQuery(Name = "accessToken")] public string AccessToken { get; set; } = string.Empty;
     [SupplyParameterFromQuery(Name = "refreshToken")] public string RefreshToken { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "returnUri")] public string ReturnUri { get; set; } = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

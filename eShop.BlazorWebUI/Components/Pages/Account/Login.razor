@@ -131,7 +131,7 @@
             if (data!.HasTwoFactorAuthentication)
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/login-2fa/{Model.Email}");
+                NavigationManager.NavigateTo($"/account/two-factor-login/{Model.Email}");
             }
             else
             {
