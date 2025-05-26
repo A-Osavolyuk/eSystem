@@ -44,18 +44,22 @@ var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
 
 var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
     .WaitFor(authApi)
+    .WaitForReference(rabbitMq)
     .WaitForReference(productDb);
 
 var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("reviews-api")
     .WaitFor(authApi)
-    .WaitForReference(commentsDb);
+    .WaitForReference(commentsDb)
+    .WaitForReference(rabbitMq);
 
 var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
     .WaitFor(authApi)
+    .WaitForReference(rabbitMq)
     .WaitForReference(cartDb);
 
 var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
-    .WaitFor(authApi);
+    .WaitFor(authApi)
+    .WaitForReference(rabbitMq);
 
 var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
 
