@@ -15,11 +15,11 @@ public class LockoutController(ISender sender) : ControllerBase
     [EndpointSummary("Get lockout state")]
     [EndpointDescription("Get lockout state")]
     [ProducesResponseType(200)]
-    [HttpGet("get-state/{email}")]
+    [HttpGet("get-state/{id:guid}")]
     [Authorize(Policy = "ReadUsersPolicy")]
-    public async ValueTask<ActionResult<Response>> GetStateAsync(string email)
+    public async ValueTask<ActionResult<Response>> GetStateAsync(Guid id)
     {
-        var result = await sender.Send(new GetLockoutStateQuery(email));
+        var result = await sender.Send(new GetLockoutStateQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
