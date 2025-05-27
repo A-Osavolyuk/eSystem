@@ -32,6 +32,12 @@
           "Path": "api/v1/Lockout/{**catch-all}"
         }
       },
+      "oauth-route": {
+        "ClusterID": "security-cluster",
+        "Match": {
+          "Path": "api/v1/OAuth/{**catch-all}"
+        }
+      },
       "cart-route": {
         "ClusterID": "cart-cluster",
         "Match": {
