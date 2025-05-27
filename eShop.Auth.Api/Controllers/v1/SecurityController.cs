@@ -148,7 +148,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Confirm password reset")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPut("confirm-password")]
+    [HttpPost("confirm-password")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmResetPassword(
         [FromBody] ConfirmResetPasswordRequest confirmPasswordResetRequest)
@@ -164,7 +164,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Request an email change")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPut("request-change-email")]
+    [HttpPost("request-change-email")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangeEmail(
         [FromBody] ChangeEmailRequest changeEmailRequest)
@@ -180,7 +180,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Request a phone number change")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPut("request-change-phone-number")]
+    [HttpPost("request-change-phone-number")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangePhoneNumber(
         [FromBody] ChangePhoneNumberRequest changePhoneNumberRequest)
@@ -196,7 +196,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPut("change-password")]
+    [HttpPost("change-password")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangePassword(
         [FromBody] ChangePasswordRequest changePasswordRequest)

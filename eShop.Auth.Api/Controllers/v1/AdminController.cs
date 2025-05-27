@@ -15,48 +15,6 @@ public class AdminController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
 
-    [EndpointSummary("Find user by email")]
-    [EndpointDescription("Finds user by email")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "ReadUsersPolicy")]
-    [HttpGet("find-user-by-email/{email}")]
-    public async ValueTask<ActionResult<Response>> FindUserByEmailAsync(string email)
-    {
-        var result = await sender.Send(new FindUserByEmailQuery(email));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Find user by id")]
-    [EndpointDescription("Finds user by id")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "ReadUsersPolicy")]
-    [HttpGet("find-user-by-id/{id:guid}")]
-    public async ValueTask<ActionResult<Response>> FindUserByIdAsync(Guid id)
-    {
-        var result = await sender.Send(new FindUserByIdQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Get all users")]
-    [EndpointDescription("Gets all users")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "ReadUsersPolicy")]
-    [HttpGet("users")]
-    public async ValueTask<ActionResult<Response>> GetAllUsersAsync()
-    {
-        var result = await sender.Send(new GetUsersQuery());
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Get roles")]
     [EndpointDescription("Gets all roles")]
     [ProducesResponseType(200)]
@@ -139,19 +97,6 @@ public class AdminController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Create user account")]
-    [EndpointDescription("Create a user account")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "CreateUserPolicy")]
-    [HttpPost("create")]
-    public async ValueTask<ActionResult<Response>> CreateUserAccount([FromBody] CreateUserAccountRequest request)
-    {
-        var result = await sender.Send(new CreateUserAccountCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Unassign roles")]
     [EndpointDescription("Unassign roles")]
     [ProducesResponseType(200)]
@@ -187,19 +132,6 @@ public class AdminController(ISender sender) : ControllerBase
         [FromBody] RevokePermissionRequest request)
     {
         var result = await sender.Send(new RevokePermissionCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Delete user account")]
-    [EndpointDescription("Deletes user account")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "DeleteUsersPolicy")]
-    [HttpDelete("delete-user-account")]
-    public async ValueTask<ActionResult<Response>> DeleteUserAccountAsync([FromBody] DeleteUserAccountRequest request)
-    {
-        var result = await sender.Send(new DeleteUserAccountCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
