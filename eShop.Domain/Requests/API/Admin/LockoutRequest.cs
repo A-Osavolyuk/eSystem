@@ -8,5 +8,5 @@ public record LockoutRequest
     public LockoutReason Reason { get; set; }
     public LockoutPeriod Period { get; set; }
     public string Description { get; set; } = string.Empty;
-    public DateTimeOffset LockoutEnd { get; set; }
+    public DateTimeOffset? EndDate { get; set; }
 }

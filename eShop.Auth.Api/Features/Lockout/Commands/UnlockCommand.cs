@@ -22,11 +22,6 @@ public class UnlockCommandHandler(
         
         var result = await lockoutManager.UnlockAsync(user, cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-        
-        return Result.Success();
+        return result;
     }
 }

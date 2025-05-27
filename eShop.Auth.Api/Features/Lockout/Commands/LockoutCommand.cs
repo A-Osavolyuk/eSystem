@@ -21,13 +21,8 @@ public class LockoutCommandHandler(
         }
 
         var result = await lockoutManager.LockoutAsync(user, request.Request.Reason, request.Request.Description,
-            request.Request.Period, request.Request.LockoutEnd, cancellationToken);
+            request.Request.Period, request.Request.EndDate, cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-        
-        return Result.Success();
+        return result;
     }
 }
