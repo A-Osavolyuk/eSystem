@@ -91,7 +91,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [HttpPost("confirm-reset")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmResetPassword(
-        [FromBody] ConfirmResetPasswordRequest confirmPasswordResetRequest)
+        [FromBody] ConfirmPasswordResetRequest confirmPasswordResetRequest)
     {
         var result = await sender.Send(new ConfirmResetPasswordCommand(confirmPasswordResetRequest));
 
@@ -122,7 +122,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("confirm-email")]
     public async ValueTask<ActionResult<Response>> ConfirmChangeEmail(
-        [FromBody] ConfirmChangeEmailRequest request)
+        [FromBody] ConfirmEmailChangeRequest request)
     {
         var result = await sender.Send(new ConfirmChangeEmailCommand(request));
 
@@ -168,7 +168,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("confirm-phone-number")]
     public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumber(
-        [FromBody] ConfirmChangePhoneNumberRequest request)
+        [FromBody] ConfirmPhoneNumberChangeRequest request)
     {
         var result = await sender.Send(new ConfirmChangePhoneNumberCommand(request));
 

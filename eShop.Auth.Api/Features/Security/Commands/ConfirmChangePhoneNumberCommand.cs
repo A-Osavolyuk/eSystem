@@ -3,7 +3,7 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ConfirmChangePhoneNumberCommand(ConfirmChangePhoneNumberRequest Request)
+internal sealed record ConfirmChangePhoneNumberCommand(ConfirmPhoneNumberChangeRequest Request)
     : IRequest<Result>;
 
 internal sealed class ConfirmChangePhoneNumberCommandHandler(

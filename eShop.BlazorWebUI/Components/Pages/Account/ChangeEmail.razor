@@ -12,7 +12,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var request = new ConfirmChangeEmailRequest()
+        var request = new ConfirmEmailChangeRequest()
         {
             CurrentEmail = CurrentEmail,
             NewEmail = NewEmail,

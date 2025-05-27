@@ -29,8 +29,8 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/reset-password", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
-    public async ValueTask<Response> ConfirmResetPasswordAsync(ConfirmResetPasswordRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/confirm-password", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<Response> ConfirmResetPasswordAsync(ConfirmPasswordResetRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/confirm-reset", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
     public async ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request) => await ApiClient.SendAsync(
@@ -41,7 +41,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/change-email", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
-    public async ValueTask<Response> ConfirmChangeEmailAsync(ConfirmChangeEmailRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> ConfirmChangeEmailAsync(ConfirmEmailChangeRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/confirm-email", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
@@ -57,7 +57,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/change-phone-number", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
-    public async ValueTask<Response> ConfirmChangePhoneNumberAsync(ConfirmChangePhoneNumberRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> ConfirmChangePhoneNumberAsync(ConfirmPhoneNumberChangeRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/confirm-phone-number", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
 
