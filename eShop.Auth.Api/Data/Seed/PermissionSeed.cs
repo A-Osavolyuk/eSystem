@@ -187,10 +187,24 @@ public class PermissionSeed : Seed<PermissionEntity, Guid>
             new()
             {
                 Id = Guid.CreateVersion7(),
+                ResourceId = Guid.Parse("92d73276-fddb-46bb-82a6-a41d26189ee3"), 
+                Name = "User:Lockout",
+                Action = ActionType.Delete
+            },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ResourceId = Guid.Parse("73d24d6e-7609-48a1-8a8f-dd780ddc384d"), 
+                Name = "User:Unlock",
+                Action = ActionType.Delete
+            },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
                 ResourceId = Guid.Parse("e3fef8c4-0105-419a-b889-66b9f1036e8c"), 
                 Name = "User:All",
                 Action = ActionType.All
-            }
+            },
 
             #endregion
         ];
