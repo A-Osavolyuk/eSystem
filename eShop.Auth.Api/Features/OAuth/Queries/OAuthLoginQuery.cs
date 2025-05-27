@@ -1,7 +1,6 @@
 ﻿using eShop.Domain.Responses.API.Auth;
-using Microsoft.AspNetCore.Authentication;
 
-namespace eShop.Auth.Api.Features.Security.Queries;
+namespace eShop.Auth.Api.Features.OAuth.Queries;
 
 internal sealed record OAuthLoginQuery(string Provider, string? ReturnUri) : IRequest<Result>;
 
