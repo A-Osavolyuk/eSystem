@@ -21,7 +21,7 @@ internal sealed class OAuthLoginQueryHandler(
             return Results.BadRequest($"Invalid oauth provider {request.Provider}.");
         }
 
-        var redirectUri = UrlGenerator.Action("handle-oauth-login", "Security",
+        var redirectUri = UrlGenerator.Action("handle-oauth-login", "OAuth",
             new { ReturnUri = request.ReturnUri ?? "/" });
         
         var properties = signInManager.ConfigureOAuthProperties(request.Provider, redirectUri );;

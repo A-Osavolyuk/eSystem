@@ -8,46 +8,9 @@ namespace eShop.Auth.Api.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Authorize]
-public class SecurityController(ISender sender, ISignInManager signInManager) : ControllerBase
+public class SecurityController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
-    private readonly ISignInManager signInManager = signInManager;
-
-    #region Get methods
-
-    [EndpointSummary("External login")]
-    [EndpointDescription("External login")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpGet("oauth-login/{provider}")]
-    public async ValueTask<ActionResult<Response>> ExternalLogin(string provider, string? returnUri = null)
-    {
-        var result = await sender.Send(new OAuthLoginQuery(provider, returnUri));
-
-        return result.Match(
-            s =>
-            {
-                var response = s.Value! as OAuthLoginResponse;
-                return Challenge(response!.AuthenticationProperties, response.Provider);
-            },
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Handle external login response")]
-    [EndpointDescription("Handles external login response")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpGet("handle-oauth-login")]
-    public async ValueTask<ActionResult<Response>> HandleExternalLoginResponse(string? remoteError = null,
-        string? returnUri = null)
-    {
-        var principal = await signInManager.AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
-        
-        var result = await sender.Send(new HandleOAuthLoginQuery(principal, remoteError, returnUri));
-        return result.Match(s => Redirect(Convert.ToString(s.Message!)!), ErrorHandler.Handle);
-    }
-
-    #endregion
 
     #region Post methods
 
