@@ -1,0 +1,12 @@
+﻿using eShop.Auth.Api.Enums;
+
+namespace eShop.Domain.Requests.API.Admin;
+
+public record LockoutRequest
+{
+    public Guid UserId { get; set; }
+    public bool Permanent { get; set; }
+    public LockoutReason Reason { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public DateTimeOffset LockoutEnd { get; set; }
+}
