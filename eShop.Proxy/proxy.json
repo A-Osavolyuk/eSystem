@@ -8,10 +8,16 @@
           "Path": "api/v1/Security/{**catch-all}"
         }
       },
-      "admin-route": {
+      "permission-route": {
         "ClusterID": "security-cluster",
         "Match": {
-          "Path": "api/v1/Admin/{**catch-all}"
+          "Path": "api/v1/Permissions/{**catch-all}"
+        }
+      },
+      "roles-route": {
+        "ClusterID": "security-cluster",
+        "Match": {
+          "Path": "api/v1/Roles/{**catch-all}"
         }
       },
       "profile-route": {
