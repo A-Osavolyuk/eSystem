@@ -1,8 +1,6 @@
-﻿using eShop.Application.Attributes;
+﻿namespace eShop.Auth.Api.Services;
 
-namespace eShop.Auth.Api.Services;
-
-[Injectable(typeof(IPermissionManager), Lifetime = ServiceLifetime.Scoped)]
+[Injectable(typeof(IPermissionManager), ServiceLifetime.Scoped)]
 public sealed class PermissionManager(AuthDbContext context) : IPermissionManager
 {
     private readonly AuthDbContext context = context;

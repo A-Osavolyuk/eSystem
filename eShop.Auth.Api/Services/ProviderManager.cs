@@ -1,9 +1,8 @@
-﻿using eShop.Application.Attributes;
-using eShop.Domain.Common.Security;
+﻿using eShop.Domain.Common.Security;
 
 namespace eShop.Auth.Api.Services;
 
-[Injectable(typeof(IProfileManager), Lifetime = ServiceLifetime.Scoped)]
+[Injectable(typeof(IProfileManager), ServiceLifetime.Scoped)]
 public sealed class ProviderManager(
     AuthDbContext context,
     ISecretManager secretManager) : IProviderManager

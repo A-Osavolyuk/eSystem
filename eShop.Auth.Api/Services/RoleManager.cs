@@ -1,8 +1,6 @@
-﻿using eShop.Application.Attributes;
+﻿namespace eShop.Auth.Api.Services;
 
-namespace eShop.Auth.Api.Services;
-
-[Injectable(typeof(IRoleManager), Lifetime = ServiceLifetime.Scoped)]
+[Injectable(typeof(IRoleManager), ServiceLifetime.Scoped)]
 public sealed class RoleManager(AuthDbContext context) : IRoleManager
 {
     private readonly AuthDbContext context = context;

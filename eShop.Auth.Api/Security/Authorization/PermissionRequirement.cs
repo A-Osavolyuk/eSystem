@@ -7,7 +7,8 @@ public class PermissionRequirement(string permissionName) : IAuthorizationRequir
     public string PermissionName { get; } = permissionName;
 }
 
-public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
+[Injectable(typeof(IAuthorizationHandler), ServiceLifetime.Singleton)]
+public sealed class PermissionHandler : AuthorizationHandler<PermissionRequirement>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
         PermissionRequirement requirement)

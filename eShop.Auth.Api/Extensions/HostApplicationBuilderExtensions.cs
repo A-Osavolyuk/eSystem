@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using eShop.Application.Attributes;
 using eShop.Auth.Api.Security.Schemes;
 using eShop.Domain.Requests.API.Cart;
 using eShop.Domain.Requests.API.Sms;
@@ -18,7 +17,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddIdentity();
         builder.AddServices<IAssemblyMarker>();
-        builder.AddDependencyInjection();
         builder.AddRedisCache();
         builder.AddMediatR();
         builder.AddMsSqlDb();
@@ -158,12 +156,7 @@ public static class HostApplicationBuilderExtensions
             .AddPolicy("GrantPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Grant")))
             .AddPolicy("RevokePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Revoke")));
     }
-
-    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-    }
-
+    
     private static void AddMessageBus(this IHostApplicationBuilder builder)
     {
         builder.Services.AddMassTransit(x =>

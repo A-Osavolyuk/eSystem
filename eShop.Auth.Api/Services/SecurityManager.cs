@@ -1,8 +1,6 @@
-﻿using eShop.Application.Attributes;
+﻿namespace eShop.Auth.Api.Services;
 
-namespace eShop.Auth.Api.Services;
-
-[Injectable(typeof(ISecurityManager), Lifetime = ServiceLifetime.Scoped)]
+[Injectable(typeof(ISecurityManager), ServiceLifetime.Scoped)]
 public sealed class SecurityManager(
     IUserManager userManager,
     ICodeManager codeManager) : ISecurityManager

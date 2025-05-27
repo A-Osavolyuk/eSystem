@@ -1,10 +1,9 @@
 ﻿using System.Security.Claims;
-using eShop.Application.Attributes;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Auth.Api.Services;
 
-[Injectable(typeof(ISignInManager), Lifetime = ServiceLifetime.Scoped)]
+[Injectable(typeof(ISignInManager), ServiceLifetime.Scoped)]
 public sealed class SignInManager(IAuthenticationSchemeProvider schemeProvider) : ISignInManager
 {
     private readonly IAuthenticationSchemeProvider schemeProvider = schemeProvider;

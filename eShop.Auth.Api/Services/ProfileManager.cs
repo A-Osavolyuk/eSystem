@@ -1,9 +1,8 @@
-﻿using eShop.Application.Attributes;
-using eShop.Domain.DTOs;
+﻿using eShop.Domain.DTOs;
 
 namespace eShop.Auth.Api.Services;
 
-[Injectable(typeof(IProfileManager), Lifetime = ServiceLifetime.Scoped)]
+[Injectable(typeof(IProfileManager), ServiceLifetime.Scoped)]
 public sealed class ProfileManager(AuthDbContext context) : IProfileManager
 {
     private readonly AuthDbContext context = context;
