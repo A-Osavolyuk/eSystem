@@ -11,12 +11,14 @@ internal sealed class LoginWith2FaCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
     ILoginTokenManager loginTokenManager,
-    IProviderManager providerManager) : IRequestHandler<TwoFactorLoginCommand, Result>
+    IProviderManager providerManager,
+    ILockoutManager lockoutManager) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
     private readonly IProviderManager providerManager = providerManager;
+    private readonly ILockoutManager lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(TwoFactorLoginCommand request,
         CancellationToken cancellationToken)
@@ -26,6 +28,13 @@ internal sealed class LoginWith2FaCommandHandler(
         if (user is null)
         {
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+        }
+        
+        var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
+
+        if (lockoutState.IsActive)
+        {
+            return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
         }
 
         var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);

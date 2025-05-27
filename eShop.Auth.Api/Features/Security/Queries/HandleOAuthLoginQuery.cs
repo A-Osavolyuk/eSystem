@@ -13,9 +13,9 @@ internal sealed class HandleOAuthLoginQueryHandler(
     ISecurityManager securityManager,
     ITokenManager tokenManager,
     IUserManager userManager,
-    IConfiguration configuration,
     IMessageService messageService,
-    IRoleManager roleManager) : IRequestHandler<HandleOAuthLoginQuery, Result>
+    IRoleManager roleManager,
+    ILockoutManager lockoutManager) : IRequestHandler<HandleOAuthLoginQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly ISecurityManager securityManager = securityManager;
@@ -23,6 +23,7 @@ internal sealed class HandleOAuthLoginQueryHandler(
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly IRoleManager roleManager = roleManager;
+    private readonly ILockoutManager lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(HandleOAuthLoginQuery request,
         CancellationToken cancellationToken)
@@ -39,6 +40,13 @@ internal sealed class HandleOAuthLoginQueryHandler(
 
         if (user is not null)
         {
+            var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
+
+            if (lockoutState.IsActive)
+            {
+                return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
+            }
+            
             var securityToken = await tokenManager.FindAsync(user, cancellationToken);
 
             if (securityToken is not null)

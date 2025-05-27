@@ -8,10 +8,12 @@ internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 internal sealed class LoginCommandHandler(
     ITokenManager tokenManager,
-    IUserManager userManager) : IRequestHandler<LoginCommand, Result>
+    IUserManager userManager,
+    ILockoutManager lockoutManager) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
+    private readonly ILockoutManager lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
@@ -32,6 +34,13 @@ internal sealed class LoginCommandHandler(
         if (!isValidPassword)
         {
             return Results.BadRequest("The password is not valid.");
+        }
+        
+        var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
+
+        if (lockoutState.IsActive)
+        {
+            return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
         }
         
         if (user.TwoFactorEnabled)
