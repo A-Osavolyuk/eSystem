@@ -17,7 +17,7 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointDescription("Gets all roles")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "ReadRolesPolicy")]
-    [HttpGet("roles")]
+    [HttpGet]
     public async ValueTask<ActionResult<Response>> GetRolesListAsync()
     {
         var result = await sender.Send(new GetRolesListQuery());
@@ -31,7 +31,7 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointDescription("Assigns role to user")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "AssignRolesPolicy")]
-    [HttpPost("assign-role")]
+    [HttpPost("assign")]
     public async ValueTask<ActionResult<Response>> AssignRoleAsync([FromBody] AssignRoleRequest request)
     {
         var result = await sender.Send(new AssignRoleCommand(request));
@@ -44,7 +44,7 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointDescription("Unassign roles")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UnassignRolesPolicy")]
-    [HttpPost("unassign-roles")]
+    [HttpPost("unassign")]
     public async ValueTask<ActionResult<Response>> UnassignRolesAsync([FromBody] UnassignRolesRequest request)
     {
         var result = await sender.Send(new UnassignRolesCommand(request));
