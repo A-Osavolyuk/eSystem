@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record DeleteUserAccountCommand(DeleteUserAccountRequest Request)
+internal sealed record DeleteUserAccountCommand(Guid Id)
     : IRequest<Result>;
 
 internal sealed class DeleteUserAccountCommandHandler(
@@ -21,11 +21,11 @@ internal sealed class DeleteUserAccountCommandHandler(
     public async Task<Result> Handle(DeleteUserAccountCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+            return Results.NotFound($"Cannot find user with ID {request.Id}");
         }
 
         var rolesResult = await roleManager.UnassignRolesAsync(user, cancellationToken);
