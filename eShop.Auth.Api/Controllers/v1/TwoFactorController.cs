@@ -8,6 +8,7 @@ namespace eShop.Auth.Api.Controllers.v1;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
+[Authorize]
 public class TwoFactorController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
@@ -16,6 +17,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Get two-factor providers")]
     [ProducesResponseType(200)]
     [HttpGet("get-providers")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> GetTwoFactorProvidersState()
     {
         var result = await sender.Send(new GetProvidersQuery());
@@ -32,6 +34,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Get user two-factor providers")]
     [ProducesResponseType(200)]
     [HttpGet("get-user-providers/{email}")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(string email)
     {
         var result = await sender.Send(new GetUserProvidersQuery(email));
@@ -48,6 +51,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Get two-factor state")]
     [ProducesResponseType(200)]
     [HttpGet("get-state/{email}")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(string email)
     {
         var result = await sender.Send(new GetTwoFactorStateQuery(email));
@@ -64,6 +68,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Login with two-factor")]
     [ProducesResponseType(200)]
     [HttpPost("login")]
+    [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> LoginWithTwoFactorAuthenticationCode(
         [FromBody] TwoFactorLoginRequest request)
     {
@@ -79,6 +84,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Changes two-factor state")]
     [ProducesResponseType(200)]
     [HttpPost("change-state")]
+    [Authorize(Policy = "UpdateUsersPolicy")]
     public async ValueTask<ActionResult<Response>> ChangeTwoFactorAuthentication(
         [FromBody] ChangeTwoFactorStateRequest request)
     {
@@ -93,6 +99,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Send two-factor token")]
     [ProducesResponseType(200)]
     [HttpPost("send-token")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> SendTokenAsync(
         [FromBody] SendTwoFactorTokenRequest request)
     {
@@ -107,6 +114,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Subscribe provider")]
     [ProducesResponseType(200)]
     [HttpPost("subscribe-provider")]
+    [Authorize(Policy = "UpdateUsersPolicy")]
     public async ValueTask<ActionResult<Response>> SubscribeProviderAsync(
         [FromBody] SubscribeProviderRequest request)
     {
@@ -121,6 +129,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Unsubscribe provider")]
     [ProducesResponseType(200)]
     [HttpPost("unsubscribe-provider")]
+    [Authorize(Policy = "UpdateUsersPolicy")]
     public async ValueTask<ActionResult<Response>> UnsubscribeProviderAsync(
         [FromBody] UnsubscribeProviderRequest request)
     {
