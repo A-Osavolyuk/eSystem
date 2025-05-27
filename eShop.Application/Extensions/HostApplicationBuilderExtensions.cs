@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using eShop.Application.Attributes;
 using eShop.Application.Documentation.Transformers;
 using eShop.Application.Middlewares;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -107,5 +109,42 @@ public static class HostApplicationBuilderExtensions
         services.AddHttpClient<TService, TImplementation>();
         var serviceDescriptor = new ServiceDescriptor(typeof(TService), typeof(TImplementation), lifetime);
         services.Add(serviceDescriptor);
+    }
+
+    public static void AddServices<TMarker>(this IHostApplicationBuilder builder)
+    {
+        var matches = typeof(TMarker).Assembly.GetTypes()
+            .Where(x => x is { IsClass: true, IsAbstract: false } 
+                        && x.GetCustomAttribute<InjectableAttribute>() is not null);
+
+        foreach (var match in matches)
+        {
+            var attribute = match.GetCustomAttribute<InjectableAttribute>()!;
+
+            var serviceType = attribute.Type;
+            var lifetime = attribute.Lifetime;
+            var key = attribute.Key;
+
+            if (string.IsNullOrEmpty(key))
+            {
+                switch (lifetime)
+                {
+                    case ServiceLifetime.Scoped: builder.Services.AddScoped(serviceType, match); break;
+                    case ServiceLifetime.Singleton: builder.Services.AddSingleton(serviceType, match); break;
+                    case ServiceLifetime.Transient: builder.Services.AddTransient(serviceType, match); break;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }
+            else
+            {
+                switch (lifetime)
+                {
+                    case ServiceLifetime.Scoped: builder.Services.AddKeyedScoped(serviceType, key, match); break;
+                    case ServiceLifetime.Singleton: builder.Services.AddKeyedSingleton(serviceType, key, match); break;
+                    case ServiceLifetime.Transient: builder.Services.AddKeyedTransient(serviceType, key, match); break;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
     }
 }
