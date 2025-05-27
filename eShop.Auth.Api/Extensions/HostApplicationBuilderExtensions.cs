@@ -129,37 +129,31 @@ public static class HostApplicationBuilderExtensions
             });
 
         builder.Services.AddAuthorizationBuilder()
-            .AddPolicy("DeleteAccountPolicy",
-                policy => { policy.Requirements.Add(new PermissionRequirement("Account:Delete")); })
-            .AddPolicy("CreateAccountPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Account:Create")))
-            .AddPolicy("UpdateAccountPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Account:Update")))
-            .AddPolicy("ReadAccountPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Account:Read")))
+            .AddPolicy("DeleteAccountPolicy", policy => { policy.Requirements.Add(new PermissionRequirement("Account:Delete")); })
+            .AddPolicy("CreateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Create")))
+            .AddPolicy("UpdateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Update")))
+            .AddPolicy("ReadAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Account:Read")))
+            
             .AddPolicy("DeleteUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Delete")))
             .AddPolicy("CreateUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Create")))
             .AddPolicy("UpdateUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Update")))
             .AddPolicy("ReadUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Read")))
+            .AddPolicy("LockoutUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Lockout")))
+            .AddPolicy("UnlockUsersPolicy", policy => policy.Requirements.Add(new PermissionRequirement("User:Unlock")))
+            
             .AddPolicy("DeleteRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Delete")))
             .AddPolicy("CreateRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Create")))
             .AddPolicy("UpdateRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Update")))
             .AddPolicy("ReadRolesPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Read")))
             .AddPolicy("AssignRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Assign")))
-            .AddPolicy("UnassignRolePolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Role:Unassign")))
-            .AddPolicy("DeletePermissionsPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Delete")))
-            .AddPolicy("CreatePermissionsPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Create")))
-            .AddPolicy("UpdatePermissionsPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Update")))
-            .AddPolicy("ReadPermissionsPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Read")))
-            .AddPolicy("GrantPermissionPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Grant")))
-            .AddPolicy("RevokePermissionPolicy",
-                policy => policy.Requirements.Add(new PermissionRequirement("Permission:Revoke")));
+            .AddPolicy("UnassignRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("Role:Unassign")))
+            
+            .AddPolicy("DeletePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Delete")))
+            .AddPolicy("CreatePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Create")))
+            .AddPolicy("UpdatePermissionsPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Update")))
+            .AddPolicy("ReadPermissionsPolicy",policy => policy.Requirements.Add(new PermissionRequirement("Permission:Read")))
+            .AddPolicy("GrantPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Grant")))
+            .AddPolicy("RevokePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Permission:Revoke")));
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
