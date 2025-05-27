@@ -1,7 +1,6 @@
 ﻿using eShop.Infrastructure.Security;
 using eShop.Infrastructure.State;
 using eShop.Infrastructure.Storage;
-using Microsoft.IdentityModel.Tokens;
 using AuthenticationManager = eShop.Infrastructure.Security.AuthenticationManager;
 using TokenHandler = eShop.Infrastructure.Security.TokenHandler;
 

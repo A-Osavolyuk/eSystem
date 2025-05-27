@@ -33,11 +33,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Get user two-factor providers")]
     [EndpointDescription("Get user two-factor providers")]
     [ProducesResponseType(200)]
-    [HttpGet("get-user-providers/{email}")]
+    [HttpGet("get-user-providers/{id:guid}")]
     [Authorize]
-    public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(string email)
+    public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(Guid id)
     {
-        var result = await sender.Send(new GetUserProvidersQuery(email));
+        var result = await sender.Send(new GetUserProvidersQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder()
@@ -50,11 +50,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Get two-factor state")]
     [EndpointDescription("Get two-factor state")]
     [ProducesResponseType(200)]
-    [HttpGet("get-state/{email}")]
+    [HttpGet("get-state/{id:guid}")]
     [Authorize]
-    public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(string email)
+    public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(Guid id)
     {
-        var result = await sender.Send(new GetTwoFactorStateQuery(email));
+        var result = await sender.Send(new GetTwoFactorStateQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder()

@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Features.TwoFactor.Queries;
 
-internal sealed record GetTwoFactorStateQuery(string Email)
+internal sealed record GetTwoFactorStateQuery(Guid Id)
     : IRequest<Result>;
 
 internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
@@ -14,16 +14,16 @@ internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
     public async Task<Result> Handle(
         GetTwoFactorStateQuery request, CancellationToken cancellationToken)
     {
-        var key = $"2fa-stata-{request.Email}";
+        var key = $"2fa-state-{request.Id}";
         var state = await cacheService.GetAsync<TwoFactorAuthenticationState>(key);
 
         if (state is null)
         {
-            var user = await userManager.FindByEmailAsync(request.Email, cancellationToken);
+            var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
 
             if (user is null)
             {
-                return Results.NotFound($"Cannot find user with email {request.Email}.");
+                return Results.NotFound($"Cannot find user with ID {request.Id}.");
             }
 
             state = new TwoFactorAuthenticationState() { Enabled = user.TwoFactorEnabled };

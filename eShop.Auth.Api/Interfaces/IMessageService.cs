@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Messages.Email;
-
-namespace eShop.Auth.Api.Interfaces;
+﻿namespace eShop.Auth.Api.Interfaces;
 
 public interface IMessageService
 {

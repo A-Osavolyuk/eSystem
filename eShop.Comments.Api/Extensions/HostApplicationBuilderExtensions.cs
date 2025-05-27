@@ -1,5 +1,4 @@
 ﻿using eShop.Comments.Api.Services;
-using eShop.Domain.Enums;
 using eShop.Domain.Interfaces.API;
 
 namespace eShop.Comments.Api.Extensions;

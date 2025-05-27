@@ -1,7 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-
-namespace eShop.Domain.Interfaces.Client;
+﻿namespace eShop.Domain.Interfaces.Client;
 
 public interface ITokenProvider
 {

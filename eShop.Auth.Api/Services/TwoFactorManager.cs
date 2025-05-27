@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.Security;
-using OtpNet;
+﻿using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 

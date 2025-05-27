@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.Security;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;

@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace eShop.Auth.Api.Entities;
+﻿namespace eShop.Auth.Api.Entities;
 
 public record PersonalDataEntity : IEntity<Guid>
 {

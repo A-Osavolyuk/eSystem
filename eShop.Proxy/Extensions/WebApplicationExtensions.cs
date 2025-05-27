@@ -1,5 +1,4 @@
 ﻿using eShop.ServiceDefaults;
-using Scalar.AspNetCore;
 
 namespace eShop.Proxy.Extensions;
 

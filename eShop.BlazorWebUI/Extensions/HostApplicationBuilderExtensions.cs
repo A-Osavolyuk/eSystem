@@ -1,5 +1,4 @@
-﻿using eShop.Application.Extensions;
-using MudBlazor.Services;
+﻿using MudBlazor.Services;
 using MudExtensions.Services;
 
 namespace eShop.BlazorWebUI.Extensions;

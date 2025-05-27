@@ -1,6 +1,4 @@
-﻿using SecurityToken = eShop.Domain.Types.SecurityToken;
-
-namespace eShop.Auth.Api.Interfaces;
+﻿namespace eShop.Auth.Api.Interfaces;
 
 public interface ITokenManager
 {

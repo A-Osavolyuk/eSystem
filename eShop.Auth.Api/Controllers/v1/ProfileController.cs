@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Requests.API.Auth;
-
-namespace eShop.Auth.Api.Controllers.v1;
+﻿namespace eShop.Auth.Api.Controllers.v1;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]

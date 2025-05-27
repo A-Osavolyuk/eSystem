@@ -1,6 +1,4 @@
-﻿using OpenTelemetry.Resources;
-
-namespace eShop.Auth.Api.Data;
+﻿namespace eShop.Auth.Api.Data;
 
 public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {

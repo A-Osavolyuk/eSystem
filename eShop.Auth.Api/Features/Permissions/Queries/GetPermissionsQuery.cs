@@ -1,13 +1,13 @@
 ﻿namespace eShop.Auth.Api.Features.Permissions.Queries;
 
-internal sealed record GetPermissionsListQuery() : IRequest<Result>;
+internal sealed record GetPermissionsQuery() : IRequest<Result>;
 
-internal sealed class GetPermissionsListQueryHandler(
-    IPermissionManager permissionManager) : IRequestHandler<GetPermissionsListQuery, Result>
+internal sealed class GetPermissionsQueryHandler(
+    IPermissionManager permissionManager) : IRequestHandler<GetPermissionsQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
 
-    public async Task<Result> Handle(GetPermissionsListQuery request,
+    public async Task<Result> Handle(GetPermissionsQuery request,
         CancellationToken cancellationToken)
     {
         var permissions = await permissionManager.GetAllAsync(cancellationToken);

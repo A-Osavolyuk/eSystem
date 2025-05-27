@@ -1,6 +1,4 @@
-﻿using StackExchange.Redis;
-
-namespace eShop.Auth.Api.Data.Seed;
+﻿namespace eShop.Auth.Api.Data.Seed;
 
 public class RoleSeed : Seed<RoleEntity, Guid>
 {

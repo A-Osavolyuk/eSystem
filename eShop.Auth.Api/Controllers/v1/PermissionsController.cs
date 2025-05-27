@@ -1,8 +1,5 @@
 ﻿using eShop.Auth.Api.Features.Permissions.Queries;
-using eShop.Auth.Api.Features.Roles.Commands;
-using eShop.Auth.Api.Features.Roles.Queries;
 using eShop.Auth.Api.Features.Users.Commands;
-using eShop.Auth.Api.Features.Users.Queries;
 using eShop.Domain.Requests.API.Admin;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -20,9 +17,9 @@ public class PermissionsController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "ReadPermissionsPolicy")]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetPermissionsListAsync()
+    public async ValueTask<ActionResult<Response>> GetPermissionsAsync()
     {
-        var result = await sender.Send(new GetPermissionsListQuery());
+        var result = await sender.Send(new GetPermissionsQuery());
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
@@ -34,7 +31,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "GrantPermissionsPolicy")]
     [HttpPost("grant")]
-    public async ValueTask<ActionResult<Response>> GrantPermissionsAsync([FromBody] GrantPermissionRequest request)
+    public async ValueTask<ActionResult<Response>> GrantAsync([FromBody] GrantPermissionRequest request)
     {
         var result = await sender.Send(new GrantPermissionCommand(request));
         return result.Match(
@@ -47,7 +44,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "RevokePermissionPolicy")]
     [HttpPost("revoke")]
-    public async ValueTask<ActionResult<Response>> RevokePermissionAsync(
+    public async ValueTask<ActionResult<Response>> Revokesync(
         [FromBody] RevokePermissionRequest request)
     {
         var result = await sender.Send(new RevokePermissionCommand(request));

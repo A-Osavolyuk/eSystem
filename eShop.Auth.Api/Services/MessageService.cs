@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Messages.Email;
-using MassTransit;
+﻿using MassTransit;
 
 namespace eShop.Auth.Api.Services;
 

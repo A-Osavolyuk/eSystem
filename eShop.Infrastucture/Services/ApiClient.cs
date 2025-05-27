@@ -1,7 +1,6 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Options;
 using eShop.Infrastructure.Security;
-using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Infrastructure.Services;
 

@@ -1,5 +1,4 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Enums;
 using eShop.Files.Api.Interfaces;
 
 namespace eShop.Files.Api.Features.Queries;

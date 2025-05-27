@@ -18,7 +18,7 @@ public class RolesController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "ReadRolesPolicy")]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetRolesListAsync()
+    public async ValueTask<ActionResult<Response>> GetRolesAsync()
     {
         var result = await sender.Send(new GetRolesListQuery());
 
@@ -32,7 +32,7 @@ public class RolesController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "AssignRolesPolicy")]
     [HttpPost("assign")]
-    public async ValueTask<ActionResult<Response>> AssignRoleAsync([FromBody] AssignRoleRequest request)
+    public async ValueTask<ActionResult<Response>> AssignAsync([FromBody] AssignRoleRequest request)
     {
         var result = await sender.Send(new AssignRoleCommand(request));
         return result.Match(
@@ -45,7 +45,7 @@ public class RolesController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UnassignRolesPolicy")]
     [HttpPost("unassign")]
-    public async ValueTask<ActionResult<Response>> UnassignRolesAsync([FromBody] UnassignRolesRequest request)
+    public async ValueTask<ActionResult<Response>> UnassignAsync([FromBody] UnassignRolesRequest request)
     {
         var result = await sender.Send(new UnassignRolesCommand(request));
         return result.Match(
@@ -59,7 +59,7 @@ public class RolesController(ISender sender) : ControllerBase
     [Authorize(Policy = "CreateRolesPolicy")]
     [HttpPost]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> CreateRoleAsync([FromBody] CreateRoleRequest request)
+    public async ValueTask<ActionResult<Response>> CreateAsync([FromBody] CreateRoleRequest request)
     {
         var result = await sender.Send(new CreateRoleCommand(request));
         return result.Match(
@@ -72,7 +72,7 @@ public class RolesController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "DeleteRolesPolicy")]
     [HttpDelete("{id:guid}")]
-    public async ValueTask<ActionResult<Response>> DeleteRoleAsync(Guid id)
+    public async ValueTask<ActionResult<Response>> DeleteAsync(Guid id)
     {
         var result = await sender.Send(new DeleteRoleCommand(id));
         return result.Match(

@@ -6,7 +6,6 @@ using eShop.Application.Middlewares;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
 
 namespace eShop.Application.Extensions;
 

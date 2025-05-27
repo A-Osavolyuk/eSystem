@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using eShop.Domain.Common.Security;
 using Microsoft.Extensions.Options;
-using SecurityToken = eShop.Domain.Types.SecurityToken;
 
 namespace eShop.Auth.Api.Services;
 

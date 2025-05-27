@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Features.TwoFactor.Queries;
 
-public record GetUserProvidersQuery(string Email) : IRequest<Result>;
+public record GetUserProvidersQuery(Guid Id) : IRequest<Result>;
 
 public class GetUserProvidersQueryHandler(
     IProviderManager providerManager,
@@ -11,11 +11,11 @@ public class GetUserProvidersQueryHandler(
 
     public async Task<Result> Handle(GetUserProvidersQuery request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Email}.");
+            return Results.NotFound($"Cannot find user with ID {request.Id}.");
         }
 
         var providers = await providerManager.GetProvidersAsync(user, cancellationToken);

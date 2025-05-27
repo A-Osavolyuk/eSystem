@@ -1,6 +1,4 @@
-﻿using eShop.Auth.Api.Security.Schemes;
-using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
 

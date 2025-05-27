@@ -1,5 +1,4 @@
-﻿using eShop.Application;
-using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;

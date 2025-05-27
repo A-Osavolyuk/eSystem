@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using eShop.Auth.Api.Security.Schemes;
-using eShop.Domain.Requests.API.Cart;
-using eShop.Domain.Requests.API.Sms;
+﻿using eShop.Auth.Api.Security.Schemes;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
 

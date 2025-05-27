@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace eShop.Auth.Api.Entities;
+﻿namespace eShop.Auth.Api.Entities;
 
 public class VerificationCodeEntity : IEntity<Guid>, IExpireable
 {
