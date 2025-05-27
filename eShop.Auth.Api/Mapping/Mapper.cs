@@ -124,5 +124,18 @@ public static class Mapper
             Id = source.Id,
             Name = source.Name
         };
-    } 
+    }
+
+    public static LockoutStateDto Map(LockoutStateEntity source)
+    {
+        return new()
+        {
+            Enabled = source.Enabled,
+            Permanent = source.Permanent,
+            Description = source.Description,
+            Reason = source.Reason,
+            EndDate = source.EndDate,
+            StartDate = source.StartDate
+        };
+    }
 }
