@@ -38,6 +38,12 @@
           "Path": "api/v1/OAuth/{**catch-all}"
         }
       },
+      "users-route": {
+        "ClusterID": "security-cluster",
+        "Match": {
+          "Path": "api/v1/Users/{**catch-all}"
+        }
+      },
       "cart-route": {
         "ClusterID": "cart-cluster",
         "Match": {
