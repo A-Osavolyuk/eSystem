@@ -12,16 +12,26 @@ public class LockoutManager(AuthDbContext context) : ILockoutManager
     }
 
     public async ValueTask<Result> LockoutAsync(UserEntity userEntity, LockoutReason reason, string description,
-        bool permanent = false, DateTimeOffset? endDate = null, CancellationToken cancellationToken = default)
+        LockoutPeriod period, DateTimeOffset? endDate = null, CancellationToken cancellationToken = default)
     {
         var entity = await context.LockoutState.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
 
-        entity.Permanent = permanent;
         entity.Enabled = true;
         entity.Reason = reason;
         entity.Description = description;
-        entity.EndDate = endDate;
         entity.UpdateDate = DateTime.UtcNow;
+        entity.Permanent = period is LockoutPeriod.Permanent;
+        entity.EndDate = period switch
+        {
+            LockoutPeriod.Day => DateTimeOffset.UtcNow.AddDays(1),
+            LockoutPeriod.Week => DateTimeOffset.UtcNow.AddDays(7),
+            LockoutPeriod.Month => DateTimeOffset.UtcNow.AddMonths(1),
+            LockoutPeriod.Quarter => DateTimeOffset.UtcNow.AddMonths(3),
+            LockoutPeriod.Year => DateTimeOffset.UtcNow.AddYears(1),
+            LockoutPeriod.Permanent or LockoutPeriod.None => null,
+            LockoutPeriod.Custom => endDate,
+            _ => throw new NotSupportedException("Not supported period")
+        };
 
         context.LockoutState.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
