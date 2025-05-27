@@ -78,4 +78,12 @@ public static class DbContextExtensions
             await context.RolePermissions.AddRangeAsync(seed.Get(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
+        
+        if (!await context.LockoutState.AnyAsync(cancellationToken))
+        {
+            var seed = new LockoutSeed();
+
+            await context.LockoutState.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }}
