@@ -58,7 +58,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPost("change-password")]
+    [HttpPost("password/change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangePassword(
         [FromBody] ChangePasswordRequest changePasswordRequest)
@@ -74,7 +74,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Request password reset")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("reset-password")]
+    [HttpPost("password/request-reset")]
     public async ValueTask<ActionResult<Response>> ResetPasswordRequest(ResetPasswordRequest request)
     {
         var result = await sender.Send(new RequestResetPasswordCommand(request));
@@ -88,7 +88,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Confirm password reset")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("confirm-reset")]
+    [HttpPost("password/confirm-reset")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmResetPassword(
         [FromBody] ConfirmPasswordResetRequest confirmPasswordResetRequest)
@@ -104,7 +104,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Request an email change")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPost("request-change-email")]
+    [HttpPost("email/request-change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangeEmail(
         [FromBody] ChangeEmailRequest changeEmailRequest)
@@ -120,7 +120,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Confirms an email change")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPost("confirm-email")]
+    [HttpPost("email/confirm-change")]
     public async ValueTask<ActionResult<Response>> ConfirmChangeEmail(
         [FromBody] ConfirmEmailChangeRequest request)
     {
@@ -135,7 +135,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Verifies email")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("verify-email")]
+    [HttpPost("email/verify")]
     public async ValueTask<ActionResult<Response>> ConfirmEmail(
         [FromBody] VerifyEmailRequest request)
     {
@@ -150,7 +150,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Request a phone number change")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPost("request-change-phone-number")]
+    [HttpPost("phone-number/request-change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangePhoneNumber(
         [FromBody] ChangePhoneNumberRequest changePhoneNumberRequest)
@@ -166,7 +166,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Confirm a phone number change")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPost("confirm-phone-number")]
+    [HttpPost("phone-number/confirm-change")]
     public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumber(
         [FromBody] ConfirmPhoneNumberChangeRequest request)
     {
@@ -181,7 +181,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Verifies code")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("verify-code")]
+    [HttpPost("code/verify")]
     public async ValueTask<ActionResult<Response>> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
     {
         var result = await sender.Send(new VerifyCodeCommand(request));
@@ -195,7 +195,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Resends verification code")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("resend-verification-code")]
+    [HttpPost("code/resend")]
     public async ValueTask<ActionResult<Response>> ResendVerificationCode(
         [FromBody] ResendEmailVerificationCodeRequest request)
     {
