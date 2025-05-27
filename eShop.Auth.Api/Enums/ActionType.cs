@@ -59,7 +59,17 @@ public enum ActionType
     /// Represents the action of removing a user from the system or a specific group.
     /// </summary>
     Remove = 25,
+    
+    /// <summary>
+    /// Represents the action of temporarily or permanently disabling a user’s ability to access the system or a resource.
+    /// </summary>
+    Lockout = 26,
 
+    /// <summary>
+    /// Represents the action of restoring access for a previously locked out user, re-enabling their ability to interact with the system or resource.
+    /// </summary>
+    Unlock = 27,
+    
     /// <summary>
     /// Represents full access to all actions.
     /// </summary>
