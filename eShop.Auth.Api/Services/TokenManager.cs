@@ -1,12 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using eShop.Application.Attributes;
 using eShop.Domain.Common.Security;
 using Microsoft.Extensions.Options;
 using SecurityToken = eShop.Domain.Types.SecurityToken;
 
 namespace eShop.Auth.Api.Services;
 
-public class TokenManager(
+[Injectable(typeof(ITokenManager), Lifetime = ServiceLifetime.Scoped)]
+public sealed class TokenManager(
     AuthDbContext context,
     IRoleManager roleManager,
     IPermissionManager permissionManager,

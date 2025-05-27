@@ -1,6 +1,9 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Application.Attributes;
 
-public class CodeManager(AuthDbContext context) : ICodeManager
+namespace eShop.Auth.Api.Services;
+
+[Injectable(typeof(ICodeManager), Lifetime = ServiceLifetime.Scoped)]
+public sealed class CodeManager(AuthDbContext context) : ICodeManager
 {
     private readonly AuthDbContext context = context;
 

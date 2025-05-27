@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using eShop.Application.Attributes;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace eShop.Auth.Api.Services;
 
-public class CacheService(IConnectionMultiplexer redis) : ICacheService
+[Injectable(typeof(ICacheService), Lifetime = ServiceLifetime.Scoped)]
+public sealed class CacheService(IConnectionMultiplexer redis) : ICacheService
 {
     private readonly IDatabase database = redis.GetDatabase();
 

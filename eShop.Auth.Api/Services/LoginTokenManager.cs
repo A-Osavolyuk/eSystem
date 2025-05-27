@@ -1,9 +1,11 @@
-﻿using eShop.Domain.Common.Security;
+﻿using eShop.Application.Attributes;
+using eShop.Domain.Common.Security;
 using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
-public class LoginTokenManager(
+[Injectable(typeof(ILoginTokenManager), Lifetime = ServiceLifetime.Scoped)]
+public sealed class LoginTokenManager(
     AuthDbContext context,
     ISecretManager secretManager) : ILoginTokenManager
 {

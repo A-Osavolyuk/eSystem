@@ -1,6 +1,9 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Application.Attributes;
 
-public class UserManager(AuthDbContext context) : IUserManager
+namespace eShop.Auth.Api.Services;
+
+[Injectable(typeof(IUserManager), Lifetime = ServiceLifetime.Scoped)]
+public sealed class UserManager(AuthDbContext context) : IUserManager
 {
     private readonly AuthDbContext context = context;
 

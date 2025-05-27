@@ -1,9 +1,11 @@
-﻿using eShop.Domain.Messages.Email;
+﻿using eShop.Application.Attributes;
+using eShop.Domain.Messages.Email;
 using MassTransit;
 
 namespace eShop.Auth.Api.Services;
 
-public class MessageService(IBus bus) : IMessageService
+[Injectable(typeof(IMessageService), Lifetime = ServiceLifetime.Scoped)]
+public sealed class MessageService(IBus bus) : IMessageService
 {
     private readonly IBus bus = bus;
     

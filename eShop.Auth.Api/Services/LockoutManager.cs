@@ -1,6 +1,9 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Application.Attributes;
 
-public class LockoutManager(AuthDbContext context) : ILockoutManager
+namespace eShop.Auth.Api.Services;
+
+[Injectable(typeof(ILockoutManager), Lifetime = ServiceLifetime.Scoped)]
+public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
 {
     private readonly AuthDbContext context = context;
 

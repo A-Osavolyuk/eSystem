@@ -1,8 +1,10 @@
-﻿using OtpNet;
+﻿using eShop.Application.Attributes;
+using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
-public class SecretManager(AuthDbContext context) : ISecretManager
+[Injectable(typeof(ISecretManager), Lifetime = ServiceLifetime.Scoped)]
+public sealed class SecretManager(AuthDbContext context) : ISecretManager
 {
     private readonly AuthDbContext context = context;
     

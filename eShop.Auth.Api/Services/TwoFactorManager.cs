@@ -1,9 +1,11 @@
-﻿using eShop.Domain.Common.Security;
+﻿using eShop.Application.Attributes;
+using eShop.Domain.Common.Security;
 using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
-public class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
+[Injectable(typeof(ITwoFactorManager), Lifetime = ServiceLifetime.Scoped)]
+public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
     private const int ExpirationMinutes = 30;

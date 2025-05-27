@@ -1,4 +1,6 @@
-﻿using eShop.Auth.Api.Security.Schemes;
+﻿using System.Reflection;
+using eShop.Application.Attributes;
+using eShop.Auth.Api.Security.Schemes;
 using eShop.Domain.Requests.API.Cart;
 using eShop.Domain.Requests.API.Sms;
 using MassTransit;
@@ -15,6 +17,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddValidation();
         builder.AddServiceDefaults();
         builder.AddIdentity();
+        builder.AddServices<IAssemblyMarker>();
         builder.AddDependencyInjection();
         builder.AddRedisCache();
         builder.AddMediatR();
@@ -158,22 +161,6 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IPermissionManager, PermissionManager>();
-        builder.Services.AddScoped<ISecurityManager, SecurityManager>();
-        builder.Services.AddScoped<IProfileManager, ProfileManager>();
-        builder.Services.AddScoped<ICacheService, CacheService>();
-        builder.Services.AddScoped<IMessageService, MessageService>();
-        builder.Services.AddScoped<ITokenManager, TokenManager>();
-        builder.Services.AddScoped<ICodeManager, CodeManager>();
-        builder.Services.AddScoped<IRoleManager, RoleManager>();
-        builder.Services.AddScoped<IUserManager, UserManager>();
-        builder.Services.AddScoped<ILockoutManager, LockoutManager>();
-        builder.Services.AddScoped<ITwoFactorManager, TwoFactorManager>();
-        builder.Services.AddScoped<ISignInManager, SignInManager>();
-        builder.Services.AddScoped<ISecretManager, SecretManager>();
-        builder.Services.AddScoped<ILoginTokenManager, LoginTokenManager>();
-        builder.Services.AddScoped<IProviderManager, ProviderManager>();
-
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
     }
 
