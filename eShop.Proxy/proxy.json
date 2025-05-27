@@ -26,6 +26,12 @@
           "Path": "api/v1/TwoFactor/{**catch-all}"
         }
       },
+      "lockout-route": {
+        "ClusterID": "security-cluster",
+        "Match": {
+          "Path": "api/v1/Lockout/{**catch-all}"
+        }
+      },
       "cart-route": {
         "ClusterID": "cart-cluster",
         "Match": {
