@@ -3,11 +3,6 @@
 public class LockoutManager(AuthDbContext context) : ILockoutManager
 {
     private readonly AuthDbContext context = context;
-    public async ValueTask<bool> IsLockedOutAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
-    {
-        var entity = await context.LockoutState.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
-        return entity.IsActive;
-    }
 
     public async ValueTask<LockoutStateEntity> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {

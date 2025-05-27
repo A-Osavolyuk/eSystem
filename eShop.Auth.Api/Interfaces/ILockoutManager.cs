@@ -2,7 +2,6 @@
 
 public interface ILockoutManager
 {
-    public ValueTask<bool> IsLockedOutAsync(UserEntity userEntity,CancellationToken cancellationToken = default);
     public ValueTask<LockoutStateEntity> FindAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default);
 
