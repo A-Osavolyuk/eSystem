@@ -12,8 +12,6 @@ public class SecurityController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
 
-    #region Post methods
-
     [EndpointSummary("Verify code")]
     [EndpointDescription("Verifies code")]
     [ProducesResponseType(200)]
@@ -146,10 +144,6 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    #endregion
-
-    #region Put methods
-
     [EndpointSummary("Confirm password")]
     [EndpointDescription("Confirm password reset")]
     [ProducesResponseType(200)]
@@ -213,6 +207,4 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-
-    #endregion
 }

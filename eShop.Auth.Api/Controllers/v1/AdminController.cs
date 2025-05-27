@@ -47,10 +47,10 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointDescription("Gets all users")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "ReadUsersPolicy")]
-    [HttpGet("get-all-users")]
+    [HttpGet("users")]
     public async ValueTask<ActionResult<Response>> GetAllUsersAsync()
     {
-        var result = await sender.Send(new GetUsersListQuery());
+        var result = await sender.Send(new GetUsersQuery());
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
@@ -61,7 +61,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointDescription("Gets all roles")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "ReadRolesPolicy")]
-    [HttpGet("get-roles")]
+    [HttpGet("roles")]
     public async ValueTask<ActionResult<Response>> GetRolesListAsync()
     {
         var result = await sender.Send(new GetRolesListQuery());
@@ -75,7 +75,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "ReadRolesPolicy")]
-    [HttpGet("get-user-roles/{id:guid}")]
+    [HttpGet("user/{id:guid}/roles")]
     public async ValueTask<ActionResult<Response>> GetUserRolesAsync(Guid id)
     {
         var result = await sender.Send(new GetUserRolesQuery(id));
@@ -89,7 +89,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointDescription("Gets all permissions")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "ReadPermissionsPolicy")]
-    [HttpGet("get-permissions")]
+    [HttpGet("permissions")]
     public async ValueTask<ActionResult<Response>> GetPermissionsListAsync()
     {
         var result = await sender.Send(new GetPermissionsListQuery());
@@ -143,7 +143,7 @@ public class AdminController(ISender sender) : ControllerBase
     [EndpointDescription("Create a user account")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "CreateUserPolicy")]
-    [HttpPost("create-user-account")]
+    [HttpPost("create")]
     public async ValueTask<ActionResult<Response>> CreateUserAccount([FromBody] CreateUserAccountRequest request)
     {
         var result = await sender.Send(new CreateUserAccountCommand(request));

@@ -3,20 +3,20 @@ using UserDto = eShop.Domain.DTOs.UserDto;
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 
-internal sealed record GetUsersListQuery() : IRequest<Result>;
+internal sealed record GetUsersQuery() : IRequest<Result>;
 
-internal sealed class GetUsersListQueryHandler(
+internal sealed class GetUsersQueryHandler(
     IPermissionManager permissionManager,
     IProfileManager profileManager,
     IUserManager userManager,
-    IRoleManager roleManager) : IRequestHandler<GetUsersListQuery, Result>
+    IRoleManager roleManager) : IRequestHandler<GetUsersQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
-    public async Task<Result> Handle(GetUsersListQuery request,
+    public async Task<Result> Handle(GetUsersQuery request,
         CancellationToken cancellationToken)
     {
         var usersList = await userManager.GetAllAsync(cancellationToken);
