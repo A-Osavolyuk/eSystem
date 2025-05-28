@@ -46,7 +46,7 @@ public sealed class ProviderManager(
             UpdateDate = null
         };
 
-        if (provider.Name == Providers.Authenticator)
+        if (provider.Name == ProviderTypes.Authenticator)
         {
             await secretManager.GenerateAsync(user, cancellationToken);
         }
@@ -68,7 +68,7 @@ public sealed class ProviderManager(
             return Results.NotFound("Not found user provider");
         }
 
-        if (provider.Name == Providers.Authenticator)
+        if (provider.Name == ProviderTypes.Authenticator)
         {
             await secretManager.DeleteAsync(user, cancellationToken);
         }

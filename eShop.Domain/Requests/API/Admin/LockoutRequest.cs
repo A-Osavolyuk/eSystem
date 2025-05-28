@@ -1,6 +1,4 @@
-﻿using eShop.Auth.Api.Enums;
-
-namespace eShop.Domain.Requests.API.Admin;
+﻿namespace eShop.Domain.Requests.API.Admin;
 
 public record LockoutRequest
 {

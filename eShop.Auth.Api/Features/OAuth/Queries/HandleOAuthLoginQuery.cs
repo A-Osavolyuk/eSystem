@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using eShop.Domain.Messages.Email;
 
-namespace eShop.Auth.Api.Features.Security.Queries;
+namespace eShop.Auth.Api.Features.OAuth.Queries;
 
 internal sealed record HandleOAuthLoginQuery(
     ClaimsPrincipal Principal,

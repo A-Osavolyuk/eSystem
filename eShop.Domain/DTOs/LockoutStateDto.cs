@@ -1,6 +1,4 @@
-﻿using eShop.Auth.Api.Enums;
-
-namespace eShop.Domain.DTOs;
+﻿namespace eShop.Domain.DTOs;
 
 public class LockoutStateDto
 {

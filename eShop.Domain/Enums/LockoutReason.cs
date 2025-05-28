@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Enums;
+﻿namespace eShop.Domain.Enums;
 
 /// <summary>
 /// Specifies the reason why a user account has been locked out.

@@ -13,23 +13,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
     
-    [EndpointSummary("Get two-factor providers")]
-    [EndpointDescription("Get two-factor providers")]
-    [ProducesResponseType(200)]
-    [HttpGet("providers")]
-    [Authorize]
-    public async ValueTask<ActionResult<Response>> GetTwoFactorProvidersState()
-    {
-        var result = await sender.Send(new GetProvidersQuery());
-
-        return result.Match(
-            s => Ok(new ResponseBuilder()
-                .Succeeded()
-                .WithResult(s.Value!)
-                .Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Get two-factor state")]
     [EndpointDescription("Get two-factor state")]
     [ProducesResponseType(200)]
@@ -87,36 +70,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
         [FromBody] SendTwoFactorTokenRequest request)
     {
         var result = await sender.Send(new SendTwoFactorTokenCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Subscribe provider")]
-    [EndpointDescription("Subscribe provider")]
-    [ProducesResponseType(200)]
-    [HttpPost("subscribe")]
-    [Authorize(Policy = "UpdateUsersPolicy")]
-    public async ValueTask<ActionResult<Response>> SubscribeProviderAsync(
-        [FromBody] SubscribeProviderRequest request)
-    {
-        var result = await sender.Send(new SubscribeProviderCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Unsubscribe provider")]
-    [EndpointDescription("Unsubscribe provider")]
-    [ProducesResponseType(200)]
-    [HttpPost("unsubscribe")]
-    [Authorize(Policy = "UpdateUsersPolicy")]
-    public async ValueTask<ActionResult<Response>> UnsubscribeProviderAsync(
-        [FromBody] UnsubscribeProviderRequest request)
-    {
-        var result = await sender.Send(new UnsubscribeProviderCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),

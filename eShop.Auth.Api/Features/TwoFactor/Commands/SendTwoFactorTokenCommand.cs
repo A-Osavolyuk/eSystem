@@ -39,7 +39,7 @@ public class SendTwoFactorTokenCommandHandler(
 
         switch (provider.Name)
         {
-            case Providers.Email:
+            case ProviderTypes.Email:
             {
                 var message = new TwoFactorTokenEmailMessage()
                 {
@@ -53,7 +53,7 @@ public class SendTwoFactorTokenCommandHandler(
                 await messageService.SendMessageAsync("email:two-factor-token", message, cancellationToken);
                 break;
             }
-            case Providers.Sms:
+            case ProviderTypes.Sms:
             {
                 var message = new TwoFactorTokenSmsMessage()
                 {

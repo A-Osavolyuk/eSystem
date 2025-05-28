@@ -50,6 +50,12 @@
           "Path": "api/v1/Users/{**catch-all}"
         }
       },
+      "providers-route": {
+        "ClusterID": "security-cluster",
+        "Match": {
+          "Path": "api/v1/Providers/{**catch-all}"
+        }
+      },
       "cart-route": {
         "ClusterID": "cart-cluster",
         "Match": {

@@ -48,7 +48,7 @@ public sealed class LoginTokenManager(
     public async ValueTask<Result> VerifyAsync(UserEntity user, ProviderEntity provider, string token,
         CancellationToken cancellationToken = default)
     {
-        if (provider.Name == Providers.Authenticator)
+        if (provider.Name == ProviderTypes.Authenticator)
         {
             var userSecret = await secretManager.FindAsync(user, cancellationToken);
 

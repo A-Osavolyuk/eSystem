@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.TwoFactor.Queries;
+﻿namespace eShop.Auth.Api.Features.Providers.Queries;
 
 public record GetProvidersQuery() : IRequest<Result>;
 

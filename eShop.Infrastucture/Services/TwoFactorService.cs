@@ -11,7 +11,7 @@ public class TwoFactorService(
 {
     public async ValueTask<Response> GetProvidersAsync() =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/get-providers", Method = HttpMethod.Get }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/Providers/", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = true, WithBearer = true });
 
     public async ValueTask<Response> GetProvidersAsync(string email) =>

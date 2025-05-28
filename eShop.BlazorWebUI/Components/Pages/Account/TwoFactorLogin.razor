@@ -69,7 +69,7 @@
                         <MudForm Model="TwoFactorLoginModel">
                         @switch (SendTwoFactorTokenModel.Provider)
                         {
-                            case Providers.Email:
+                            case ProviderTypes.Email:
                             {
                                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                          Style="width: 50ch; margin: auto">
@@ -79,7 +79,7 @@
                                 </MudText>
                                 break;
                             }
-                            case Providers.Sms:
+                            case ProviderTypes.Sms:
                             {
                                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                          Style="width: 50ch; margin: auto">
@@ -89,7 +89,7 @@
                                 </MudText>
                                 break;
                             }
-                            case Providers.Authenticator:
+                            case ProviderTypes.Authenticator:
                             {
                                 <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                          Style="width: 50ch; margin: auto">
@@ -182,7 +182,7 @@
 
     private async Task OnSendTokenAsync()
     {
-        if (SendTwoFactorTokenModel.Provider == Providers.Authenticator)
+        if (SendTwoFactorTokenModel.Provider == ProviderTypes.Authenticator)
         {
             await StepNextAsync();
         }

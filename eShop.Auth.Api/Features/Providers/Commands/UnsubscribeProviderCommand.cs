@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.TwoFactor;
 
-namespace eShop.Auth.Api.Features.TwoFactor.Commands;
+namespace eShop.Auth.Api.Features.Providers.Commands;
 
 public record UnsubscribeProviderCommand(UnsubscribeProviderRequest Request) : IRequest<Result>;
 
