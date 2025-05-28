@@ -28,6 +28,11 @@ public static class HostApplicationBuilderExtensions
         builder.AddSqlServerDbContext<AppDbContext>("product-db");
     }
     
+    private static void AddValidation(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+    }
+    
     private static void AddRedisCache(this IHostApplicationBuilder builder)
     {
         builder.AddRedisClient("redis");

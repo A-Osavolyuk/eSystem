@@ -1,5 +1,6 @@
 ﻿using eShop.Cart.Api.Services;
 using eShop.Domain.Interfaces.API;
+using FluentValidation;
 
 namespace eShop.Cart.Api.Extensions;
 
@@ -29,6 +30,11 @@ public static class HostApplicationBuilderExtensions
         {
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
         });
+    }
+    
+    private static void AddValidation(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
     
     private static void AddRedisCache(this IHostApplicationBuilder builder)

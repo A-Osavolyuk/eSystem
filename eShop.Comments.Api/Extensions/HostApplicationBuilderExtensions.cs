@@ -27,6 +27,11 @@ public static class HostApplicationBuilderExtensions
         builder.AddSqlServerDbContext<AppDbContext>("comment-db");
     }
     
+    private static void AddValidation(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+    }
+    
     private static void AddRedisCache(this IHostApplicationBuilder builder)
     {
         builder.AddRedisClient("redis");

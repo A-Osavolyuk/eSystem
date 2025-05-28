@@ -1,15 +1,16 @@
-﻿namespace eShop.TelegramBot.Api.Extensions;
+﻿using FluentValidation;
+
+namespace eShop.TelegramBot.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static IHostApplicationBuilder AddApiServices(this IHostApplicationBuilder builder)
+    public static void AddApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddLogging();
         builder.AddServiceDefaults();
         builder.AddJwtAuthentication();
         builder.AddVersioning();
         builder.AddValidation();
-        builder.AddDependencyInjection();
         builder.AddMessageBus();
         builder.AddMediatR();
         builder.AddExceptionHandler();
@@ -17,8 +18,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddDocumentation();
         builder.AddRedisCache();
         builder.Services.AddControllers();
-
-        return builder;
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)
@@ -28,9 +27,10 @@ public static class HostApplicationBuilderExtensions
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
         });
     }
-
-    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
+    
+    private static void AddValidation(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
     
     private static void AddRedisCache(this IHostApplicationBuilder builder)

@@ -1,4 +1,5 @@
 ﻿using eShop.SmsSender.Api.Interfaces;
+using FluentValidation;
 
 namespace eShop.SmsSender.Api.Extensions;
 
@@ -25,6 +26,11 @@ public static class HostApplicationBuilderExtensions
     private static void AddRedisCache(this IHostApplicationBuilder builder)
     {
         builder.AddRedisClient("redis");
+    }
+    
+    private static void AddValidation(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)
