@@ -3,7 +3,8 @@
 [AttributeUsage(AttributeTargets.Class)]
 public class InjectableAttribute(Type type, ServiceLifetime lifetime) : Attribute
 {
+    public Type Type { get; } = type;
+    public ServiceLifetime Lifetime { get; } = lifetime;
     public string? Key { get; set; }
-    public Type Type { get; set; } = type;
-    public ServiceLifetime Lifetime { get; set; } = lifetime;
+    public bool WithHttpClient { get; set; }
 }
