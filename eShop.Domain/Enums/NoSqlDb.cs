@@ -2,5 +2,8 @@
 
 public enum NoSqlDb
 {
-    Mongo
+    Mongo,
+    Cassandra,
+    Redis,
+    DynamoDb,
 }

@@ -48,6 +48,9 @@ public static class ConfigurationExtensions
         var section = type switch
         {
             NoSqlDb.Mongo => "Mongo",
+            NoSqlDb.Cassandra => "Cassandra",
+            NoSqlDb.Redis => "Redis",
+            NoSqlDb.DynamoDb => "DynamoDb",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
