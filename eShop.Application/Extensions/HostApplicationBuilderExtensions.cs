@@ -75,19 +75,6 @@ public static class HostApplicationBuilderExtensions
         const string key = "Configuration:Logging";
         builder.Logging.AddConfiguration(builder.Configuration.GetSection(key));
     }
-    
-    public static void AddCors(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddCors(o =>
-        {
-            o.AddDefaultPolicy(p =>
-            {
-                p.AllowAnyHeader();
-                p.AllowAnyMethod();
-                p.AllowAnyOrigin();
-            });
-        });
-    }
 
     public static void AddExceptionHandler(this IHostApplicationBuilder builder)
     {
@@ -104,8 +91,8 @@ public static class HostApplicationBuilderExtensions
         var serviceDescriptor = new ServiceDescriptor(typeof(TService), typeof(TImplementation), lifetime);
         services.Add(serviceDescriptor);
     }
-    
-    public static void AddHttpClient(this IServiceCollection services, Type serviceType, Type implementationType)
+
+    private static void AddHttpClient(this IServiceCollection services, Type serviceType, Type implementationType)
     {
         var addHttpClientMethod = typeof(HttpClientFactoryServiceCollectionExtensions)
             .GetMethods()

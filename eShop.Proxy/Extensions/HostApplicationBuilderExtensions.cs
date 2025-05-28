@@ -14,6 +14,19 @@ public static class HostApplicationBuilderExtensions
         builder.AddCors();
         builder.Configuration.AddJsonFile("proxy.json", optional: false, reloadOnChange: true);
     }
+    
+    private static void AddCors(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddCors(o =>
+        {
+            o.AddDefaultPolicy(p =>
+            {
+                p.AllowAnyHeader();
+                p.AllowAnyMethod();
+                p.AllowAnyOrigin();
+            });
+        });
+    }
 
     private static void AddReverseProxy(this IHostApplicationBuilder builder)
     {
