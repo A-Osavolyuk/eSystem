@@ -52,7 +52,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Code).HasMaxLength(6);
             
             entity.Property(x => x.Type)
-                .HasConversion(value => value.ToString(), x => Enum.Parse<Verification>(x));
+                .HasConversion(value => value.ToString(), x => Enum.Parse<CodeType>(x));
         });
 
         builder.Entity<UserRoleEntity>(entity =>

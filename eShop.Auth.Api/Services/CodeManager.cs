@@ -5,7 +5,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<string> GenerateAsync(UserEntity user, Verification type,
+    public async ValueTask<string> GenerateAsync(UserEntity user, CodeType type,
         CancellationToken cancellationToken = default)
     {
         var code = new Random().Next(100000, 999999).ToString();
@@ -34,7 +34,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         return entity;
     }
 
-    public async ValueTask<VerificationCodeEntity?> FindAsync(UserEntity user, Verification type,
+    public async ValueTask<VerificationCodeEntity?> FindAsync(UserEntity user, CodeType type,
         CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes
@@ -44,7 +44,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         return entity;
     }
 
-    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, Verification type,
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CodeType type,
         CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes

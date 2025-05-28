@@ -3,7 +3,7 @@
 /// <summary>
 /// Defines the various states or actions related to the verification process.
 /// </summary>
-public enum Verification
+public enum CodeType
 {
     /// <summary>
     /// Represent verification of the current (existing) resource like email, phone number, etc.

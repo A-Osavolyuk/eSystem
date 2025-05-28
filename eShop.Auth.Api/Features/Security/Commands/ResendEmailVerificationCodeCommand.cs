@@ -27,11 +27,11 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(
 
         string code;
 
-        var entity = await codeManager.FindAsync(user, Verification.Verify, cancellationToken);
+        var entity = await codeManager.FindAsync(user, CodeType.Verify, cancellationToken);
 
         if (entity is null || entity.ExpireDate < DateTime.UtcNow)
         {
-            code = await codeManager.GenerateAsync(user, Verification.Verify, cancellationToken);
+            code = await codeManager.GenerateAsync(user, CodeType.Verify, cancellationToken);
         }
         else
         {
