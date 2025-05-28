@@ -16,12 +16,12 @@ public class TwoFactorService(
 
     public async ValueTask<Response> GetProvidersAsync(string email) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/get-user-providers/{email}", Method = HttpMethod.Get }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/user-providers/{email}", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = true, WithBearer = true });
 
     public async ValueTask<Response> GetStateAsync(string email) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/get-state/{email}", Method = HttpMethod.Get }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/state/{email}", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = true, WithBearer = true });
 
     public async ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request) =>

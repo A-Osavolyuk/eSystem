@@ -26,6 +26,23 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Get user two-factor providers")]
+    [EndpointDescription("Get user two-factor providers")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}/providers")]
+    [Authorize]
+    public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(Guid id)
+    {
+        var result = await sender.Send(new GetUserProvidersQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Create user account")]
     [EndpointDescription("Create a user account")]
     [ProducesResponseType(200)]

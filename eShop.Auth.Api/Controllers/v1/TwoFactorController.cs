@@ -16,7 +16,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Get two-factor providers")]
     [EndpointDescription("Get two-factor providers")]
     [ProducesResponseType(200)]
-    [HttpGet("get-providers")]
+    [HttpGet("providers")]
     [Authorize]
     public async ValueTask<ActionResult<Response>> GetTwoFactorProvidersState()
     {
@@ -30,27 +30,10 @@ public class TwoFactorController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Get user two-factor providers")]
-    [EndpointDescription("Get user two-factor providers")]
-    [ProducesResponseType(200)]
-    [HttpGet("get-user-providers/{id:guid}")]
-    [Authorize]
-    public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(Guid id)
-    {
-        var result = await sender.Send(new GetUserProvidersQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder()
-                .Succeeded()
-                .WithResult(s.Value!)
-                .Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Get two-factor state")]
     [EndpointDescription("Get two-factor state")]
     [ProducesResponseType(200)]
-    [HttpGet("get-state/{id:guid}")]
+    [HttpGet("state/{id:guid}")]
     [Authorize]
     public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(Guid id)
     {
@@ -113,7 +96,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Subscribe provider")]
     [EndpointDescription("Subscribe provider")]
     [ProducesResponseType(200)]
-    [HttpPost("subscribe-provider")]
+    [HttpPost("subscribe")]
     [Authorize(Policy = "UpdateUsersPolicy")]
     public async ValueTask<ActionResult<Response>> SubscribeProviderAsync(
         [FromBody] SubscribeProviderRequest request)
@@ -128,7 +111,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Unsubscribe provider")]
     [EndpointDescription("Unsubscribe provider")]
     [ProducesResponseType(200)]
-    [HttpPost("unsubscribe-provider")]
+    [HttpPost("unsubscribe")]
     [Authorize(Policy = "UpdateUsersPolicy")]
     public async ValueTask<ActionResult<Response>> UnsubscribeProviderAsync(
         [FromBody] UnsubscribeProviderRequest request)

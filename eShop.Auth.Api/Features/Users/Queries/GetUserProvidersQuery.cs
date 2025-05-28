@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.TwoFactor.Queries;
+﻿namespace eShop.Auth.Api.Features.Users.Queries;
 
 public record GetUserProvidersQuery(Guid Id) : IRequest<Result>;
 

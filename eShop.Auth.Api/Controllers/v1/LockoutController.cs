@@ -15,7 +15,7 @@ public class LockoutController(ISender sender) : ControllerBase
     [EndpointSummary("Get lockout state")]
     [EndpointDescription("Get lockout state")]
     [ProducesResponseType(200)]
-    [HttpGet("get-state/{id:guid}")]
+    [HttpGet("state/{id:guid}")]
     [Authorize(Policy = "ReadUsersPolicy")]
     public async ValueTask<ActionResult<Response>> GetStateAsync(Guid id)
     {
