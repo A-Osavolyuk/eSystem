@@ -11,11 +11,6 @@ namespace eShop.Application.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static void AddValidation(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddValidatorsFromAssemblyContaining(typeof(HostApplicationBuilderExtensions));
-    }
-
     public static void AddDocumentation(this IHostApplicationBuilder builder)
     {
         builder.Services.AddEndpointsApiExplorer();
@@ -99,50 +94,60 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
     }
-
+    
     public static void AddHttpClient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>
         (this IServiceCollection services, ServiceLifetime lifetime)
-    where TImplementation : class, TService
-    where TService : class
+        where TImplementation : class, TService
+        where TService : class
     {
         services.AddHttpClient<TService, TImplementation>();
         var serviceDescriptor = new ServiceDescriptor(typeof(TService), typeof(TImplementation), lifetime);
         services.Add(serviceDescriptor);
     }
+    
+    public static void AddHttpClient(this IServiceCollection services, Type serviceType, Type implementationType)
+    {
+        var addHttpClientMethod = typeof(HttpClientFactoryServiceCollectionExtensions)
+            .GetMethods()
+            .First(m => m is { Name: "AddHttpClient", IsGenericMethodDefinition: true } 
+                        && m.GetGenericArguments().Length == 2 
+                        && m.GetParameters().Length == 1);
+
+        var genericMethod = addHttpClientMethod.MakeGenericMethod(serviceType, implementationType);
+
+        genericMethod.Invoke(null, [services]);
+
+    }
 
     public static void AddServices<TMarker>(this IHostApplicationBuilder builder)
     {
-        var matches = typeof(TMarker).Assembly.GetTypes()
+        var implementations = typeof(TMarker).Assembly.GetTypes()
             .Where(x => x is { IsClass: true, IsAbstract: false } 
                         && x.GetCustomAttribute<InjectableAttribute>() is not null);
 
-        foreach (var match in matches)
+        foreach (var implementation in implementations)
         {
-            var attribute = match.GetCustomAttribute<InjectableAttribute>()!;
+            var attribute = implementation.GetCustomAttribute<InjectableAttribute>()!;
 
             var serviceType = attribute.Type;
             var lifetime = attribute.Lifetime;
+            var withHttpClient = attribute.WithHttpClient;
             var key = attribute.Key;
 
+            if (withHttpClient)
+            {
+                builder.Services.AddHttpClient(serviceType, implementation);
+            }
+            
             if (string.IsNullOrEmpty(key))
             {
-                switch (lifetime)
-                {
-                    case ServiceLifetime.Scoped: builder.Services.AddScoped(serviceType, match); break;
-                    case ServiceLifetime.Singleton: builder.Services.AddSingleton(serviceType, match); break;
-                    case ServiceLifetime.Transient: builder.Services.AddTransient(serviceType, match); break;
-                    default: throw new ArgumentOutOfRangeException();
-                }
+                var service = new ServiceDescriptor(serviceType, implementation, lifetime);
+                builder.Services.Add(service);
             }
             else
             {
-                switch (lifetime)
-                {
-                    case ServiceLifetime.Scoped: builder.Services.AddKeyedScoped(serviceType, key, match); break;
-                    case ServiceLifetime.Singleton: builder.Services.AddKeyedSingleton(serviceType, key, match); break;
-                    case ServiceLifetime.Transient: builder.Services.AddKeyedTransient(serviceType, key, match); break;
-                    default: throw new ArgumentOutOfRangeException();
-                }
+                var service = new ServiceDescriptor(serviceType, key, implementation, lifetime);
+                builder.Services.Add(service);
             }
         }
     }
