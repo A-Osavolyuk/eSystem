@@ -1,8 +1,6 @@
 ﻿using eShop.Infrastructure.Security;
-using eShop.Infrastructure.State;
 using eShop.Infrastructure.Storage;
 using AuthenticationManager = eShop.Infrastructure.Security.AuthenticationManager;
-using TokenHandler = eShop.Infrastructure.Security.TokenHandler;
 
 namespace eShop.Infrastructure;
 
@@ -39,10 +37,6 @@ public static class Extensions
         builder.Services.AddScoped<IUserStorage, UserStorage>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
         builder.Services.AddScoped<ICookieManager, CookieManager>();
-
-        builder.Services.AddScoped<INotificationService, NotificationService>();
-        builder.Services.AddSingleton<InputImagesStateContainer>();
-        builder.Services.AddSingleton<NotificationsStateContainer>();
     }
     
     private static void AddJwtAuthentication(this IHostApplicationBuilder builder)
