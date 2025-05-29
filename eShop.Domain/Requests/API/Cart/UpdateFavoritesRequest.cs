@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Abstraction.Data;
 
-namespace eShop.Domain.Requests.API.Favorites;
+namespace eShop.Domain.Requests.API.Cart;
 
 public record UpdateFavoritesRequest : IIdentifiable<Guid>
 {

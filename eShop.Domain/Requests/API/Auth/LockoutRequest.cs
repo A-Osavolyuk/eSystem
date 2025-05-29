@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.API.Admin;
+﻿namespace eShop.Domain.Requests.API.Auth;
 
 public record LockoutRequest
 {

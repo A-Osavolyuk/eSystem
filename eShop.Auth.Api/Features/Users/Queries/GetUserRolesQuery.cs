@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Responses.API.Admin;
+﻿using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 

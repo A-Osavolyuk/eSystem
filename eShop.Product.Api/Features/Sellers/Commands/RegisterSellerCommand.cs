@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Seller;
+using eShop.Domain.Requests.API.Product;
 using eShop.Product.Api.Entities;
 using Results = eShop.Domain.Common.API.Results;
 

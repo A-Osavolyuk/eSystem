@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Requests.API.Admin;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Roles.Commands;
 

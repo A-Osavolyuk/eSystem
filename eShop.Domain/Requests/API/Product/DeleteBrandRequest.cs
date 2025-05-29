@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.API.Brand;
+﻿namespace eShop.Domain.Requests.API.Product;
 
 public record DeleteBrandRequest
 {

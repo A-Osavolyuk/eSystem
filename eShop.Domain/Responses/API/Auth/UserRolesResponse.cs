@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Responses.API.Admin;
+﻿namespace eShop.Domain.Responses.API.Auth;
 
 public record UserRolesResponse
 {

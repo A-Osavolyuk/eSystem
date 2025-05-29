@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.API.Account;
+﻿namespace eShop.Domain.Requests.API.Auth;
 
 public class SetPersonalDataRequest
 {

@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Brand;
+using eShop.Domain.Requests.API.Product;
 using eShop.Product.Api.Features.Brands.Commands;
 using eShop.Product.Api.Features.Brands.Queries;
 using Response = eShop.Domain.Common.API.Response;

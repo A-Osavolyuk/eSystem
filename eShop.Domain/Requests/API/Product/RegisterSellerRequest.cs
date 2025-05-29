@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests.API.Seller;
+﻿namespace eShop.Domain.Requests.API.Product;
 
 public class RegisterSellerRequest
 {

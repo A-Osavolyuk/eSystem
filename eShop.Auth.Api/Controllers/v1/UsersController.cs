@@ -1,6 +1,6 @@
 ﻿using eShop.Auth.Api.Features.Users.Commands;
 using eShop.Auth.Api.Features.Users.Queries;
-using eShop.Domain.Requests.API.Admin;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
 

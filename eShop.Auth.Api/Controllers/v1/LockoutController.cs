@@ -1,6 +1,6 @@
 ﻿using eShop.Auth.Api.Features.Lockout.Commands;
 using eShop.Auth.Api.Features.Lockout.Queries;
-using eShop.Domain.Requests.API.Admin;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
 

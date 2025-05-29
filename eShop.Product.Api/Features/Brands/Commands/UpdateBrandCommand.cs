@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Brand;
+using eShop.Domain.Requests.API.Product;
 using Results = eShop.Domain.Common.API.Results;
 
 namespace eShop.Product.Api.Features.Brands.Commands;

@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Requests.API.Favorites;
+using eShop.Domain.Requests.API.Cart;
 
 namespace eShop.Domain.Interfaces.Client;
 

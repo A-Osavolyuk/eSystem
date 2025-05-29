@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Abstraction.Services;
 using eShop.Domain.Common.API;
 using eShop.Domain.Options;
-using eShop.Domain.Requests.API.Seller;
+using eShop.Domain.Requests.API.Product;
 
 namespace eShop.Infrastructure.Services;
 
