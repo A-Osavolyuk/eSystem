@@ -16,6 +16,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddRedisCache();
         builder.AddMediatR();
+        builder.AddAzure();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
         builder.Services.AddControllers();
@@ -33,6 +34,11 @@ public static class HostApplicationBuilderExtensions
     private static void AddRedisCache(this IHostApplicationBuilder builder)
     {
         builder.AddRedisClient("redis");
+    }
+
+    private static void AddAzure(this IHostApplicationBuilder builder)
+    {
+        builder.AddAzureBlobClient("blobs");
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
