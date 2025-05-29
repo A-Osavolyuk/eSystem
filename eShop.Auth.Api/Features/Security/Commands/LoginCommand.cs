@@ -46,7 +46,7 @@ internal sealed class LoginCommandHandler(
         {
             return Result.Success(new LoginResponse()
             {
-                LockoutState = Mapper.Map(lockoutState),
+                IsLockedOut = lockoutState.IsActive,
                 TwoFactorEnabled = true
             });
         }
@@ -59,7 +59,7 @@ internal sealed class LoginCommandHandler(
             RefreshToken = refreshToken,
             Message = "Successfully logged in.",
             TwoFactorEnabled = false,
-            LockoutState = Mapper.Map(lockoutState),
+            IsLockedOut = lockoutState.IsActive,
         });
     }
 }
