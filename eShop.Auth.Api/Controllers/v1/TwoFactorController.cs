@@ -33,7 +33,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Login two-factor")]
     [EndpointDescription("Login with two-factor")]
     [ProducesResponseType(200)]
-    [HttpPost("two-factor-login")]
+    [HttpPost("login")]
     [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> LoginWithTwoFactorAuthenticationCode(
         [FromBody] TwoFactorLoginRequest request)

@@ -26,7 +26,7 @@ public class TwoFactorService(
 
     public async ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/two-factor-login", Method = HttpMethod.Post, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true });
 
     public async ValueTask<Response> SendTwoFactorTokenAsync(SendTwoFactorTokenRequest request) =>
