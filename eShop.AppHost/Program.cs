@@ -1,6 +1,17 @@
 var builder = DistributedApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+var storage = builder.AddAzureStorage("storage")
+    .RunAsEmulator(azurite =>
+    {
+        azurite.WithLifetime(ContainerLifetime.Persistent);
+        azurite.WithDataVolume();
+    });
+
+var blobs = storage.AddBlobs("blobs");
+var queue = storage.AddBlobs("queue");
+var table = storage.AddBlobs("table");
+
 var redisCache = builder.AddRedis()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume()
@@ -66,7 +77,8 @@ var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
 var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
     .WaitFor(authApi)
     .WaitForReference(rabbitMq)
-    .WaitForReference(redisCache);
+    .WaitForReference(redisCache)
+    .WaitForReference(blobs);
 
 var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
 
