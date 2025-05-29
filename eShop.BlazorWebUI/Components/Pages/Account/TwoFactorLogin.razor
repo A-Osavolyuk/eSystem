@@ -213,13 +213,24 @@
         if (result.Success)
         {
             var response = result.Get<LoginResponse>()!;
-            await Task.Delay(TimeSpan.FromMicroseconds(5));
-            await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
-            NavigationManager.NavigateTo("/products");
-            Snackbar.Add(result.Message, Severity.Success);
+
+            if (response.IsLockedOut)
+            {
+                NavigationManager.NavigateTo($"/account/locked-out?email={TwoFactorLoginModel.Email}");
+            }
+            else
+            {
+                await Task.Delay(TimeSpan.FromMicroseconds(5));
+                await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
+                NavigationManager.NavigateTo("/products");
+                Snackbar.Add(result.Message, Severity.Success);
+            }
         }
         else
+        {
             Snackbar.Add(result.Message, Severity.Error);
+        }
+            
     }
 
     private async Task StepNextAsync()

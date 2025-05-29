@@ -124,23 +124,32 @@
 
         if (result.Success)
         {
-            var data = result.Get<LoginResponse>()!;
+            var response = result.Get<LoginResponse>()!;
 
-            if (data!.TwoFactorEnabled)
+            if (response.IsLockedOut)
             {
-                Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/two-factor-login/{Model.Email}");
+                NavigationManager.NavigateTo($"/account/locked-out?email={Model.Email}");
             }
             else
             {
-                await AuthenticationManager.LogInAsync(data!.AccessToken, data.RefreshToken);
-                NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
-                Snackbar.Add(result.Message, Severity.Success);
-                Model = new();
+                if (response!.TwoFactorEnabled)
+                {
+                    Snackbar.Add(result.Message, Severity.Success);
+                    NavigationManager.NavigateTo($"/account/two-factor-login/{Model.Email}");
+                }
+                else
+                {
+                    await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
+                    NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
+                    Snackbar.Add(result.Message, Severity.Success);
+                    Model = new();
+                }
             }
         }
         else
+        {
             Snackbar.Add(result.Message, Severity.Error);
+        }
     }
 
     private void ExternalLogin(string providerName)
