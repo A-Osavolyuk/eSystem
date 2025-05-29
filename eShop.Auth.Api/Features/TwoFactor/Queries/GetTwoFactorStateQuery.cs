@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.TwoFactor.Queries;
+﻿using eShop.Domain.DTOs;
+
+namespace eShop.Auth.Api.Features.TwoFactor.Queries;
 
 internal sealed record GetTwoFactorStateQuery(Guid Id)
     : IRequest<Result>;
@@ -15,7 +17,7 @@ internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
         GetTwoFactorStateQuery request, CancellationToken cancellationToken)
     {
         var key = $"2fa-state-{request.Id}";
-        var state = await cacheService.GetAsync<TwoFactorAuthenticationState>(key);
+        var state = await cacheService.GetAsync<TwoFactorStateDto>(key);
 
         if (state is null)
         {
@@ -26,7 +28,7 @@ internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
                 return Results.NotFound($"Cannot find user with ID {request.Id}.");
             }
 
-            state = new TwoFactorAuthenticationState() { Enabled = user.TwoFactorEnabled };
+            state = new TwoFactorStateDto() { Enabled = user.TwoFactorEnabled };
             await cacheService.SetAsync(key, state, TimeSpan.FromHours(6));
         }
         
