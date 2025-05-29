@@ -17,7 +17,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointDescription("OAuth login")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpGet("oauth-login/{provider}")]
+    [HttpGet("login/{provider}")]
     public async ValueTask<ActionResult<Response>> OAuthLoginAsync(string provider, string? returnUri = null)
     {
         var result = await sender.Send(new OAuthLoginQuery(provider, returnUri));
@@ -35,7 +35,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointDescription("Handles OAuth login")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpGet("handle-oauth-login")]
+    [HttpGet("handle-login")]
     public async ValueTask<ActionResult<Response>> HandleOAuthLoginAsync(string? remoteError = null,
         string? returnUri = null)
     {
