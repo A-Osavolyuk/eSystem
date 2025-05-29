@@ -46,7 +46,7 @@ internal sealed class LoginCommandHandler(
         {
             return Result.Success(new LoginResponse()
             {
-                HasTwoFactorAuthentication = true
+                TwoFactorEnabled = true
             });
         }
         
@@ -57,7 +57,7 @@ internal sealed class LoginCommandHandler(
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             Message = "Successfully logged in.",
-            HasTwoFactorAuthentication = false
+            TwoFactorEnabled = false
         });
     }
 }

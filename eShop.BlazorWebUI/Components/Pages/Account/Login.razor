@@ -126,7 +126,7 @@
         {
             var data = result.Get<LoginResponse>()!;
 
-            if (data!.HasTwoFactorAuthentication)
+            if (data!.TwoFactorEnabled)
             {
                 Snackbar.Add(result.Message, Severity.Success);
                 NavigationManager.NavigateTo($"/account/two-factor-login/{Model.Email}");
