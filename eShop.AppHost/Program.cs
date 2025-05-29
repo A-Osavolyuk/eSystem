@@ -9,8 +9,8 @@ var storage = builder.AddAzureStorage("storage")
     });
 
 var blobs = storage.AddBlobs("blobs");
-var queue = storage.AddBlobs("queue");
-var table = storage.AddBlobs("table");
+var queue = storage.AddQueues("queue");
+var table = storage.AddTables("table");
 
 var redisCache = builder.AddRedis()
     .WithLifetime(ContainerLifetime.Persistent)
