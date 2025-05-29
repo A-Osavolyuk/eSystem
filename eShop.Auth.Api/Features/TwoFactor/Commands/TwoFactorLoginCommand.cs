@@ -58,7 +58,8 @@ internal sealed class LoginWith2FaCommandHandler(
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            Message = "Successfully logged in."
+            Message = "Successfully logged in.",
+            LockoutState = Mapper.Map(lockoutState),
         });
     }
 }

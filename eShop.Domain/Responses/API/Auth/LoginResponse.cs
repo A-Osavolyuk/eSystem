@@ -6,4 +6,5 @@ public record LoginResponse
     public string RefreshToken { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public bool TwoFactorEnabled { get; set; } = false;
+    public LockoutStateDto LockoutState { get; set; } = new();
 }
