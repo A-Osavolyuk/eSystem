@@ -1,3 +1,3 @@
 ﻿namespace eShop.Domain.Abstraction.Messaging;
 
-public class TelegramMessage : Message<TelegramCredentials> {}
+public class TelegramMessage : MessageBase<TelegramCredentials> {}
