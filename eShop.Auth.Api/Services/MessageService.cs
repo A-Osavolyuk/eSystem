@@ -32,4 +32,11 @@ public sealed class MessageService(IBus bus) : IMessageService
         var endpoint = await bus.GetSendEndpoint(address);
         await endpoint.Send(message as object, cancellationToken);
     }
+
+    public async ValueTask SendMessageAsync(string queryName, TelegramMessage message, CancellationToken cancellationToken = default)
+    {
+        var address = CreateQueryUri(queryName);
+        var endpoint = await bus.GetSendEndpoint(address);
+        await endpoint.Send(message as object, cancellationToken);
+    }
 }
