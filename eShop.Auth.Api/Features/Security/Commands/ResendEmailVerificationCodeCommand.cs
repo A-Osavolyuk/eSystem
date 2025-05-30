@@ -40,10 +40,13 @@ internal sealed class ResendEmailVerificationCodeCommandHandler(
 
         await messageService.SendMessageAsync("email:email-verification", new EmailVerificationMessage()
         {
-            To = request.Request.Email,
             Code = code,
-            Subject = "Email verification",
-            UserName = user.UserName!
+            Credentials = new EmailCredentials()
+            {
+                To = request.Request.Email,
+                Subject = "Email verification",
+                UserName = user.UserName!
+            }
         }, cancellationToken);
 
         return Result.Success("Verification code was successfully resend");

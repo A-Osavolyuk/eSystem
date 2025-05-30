@@ -39,7 +39,7 @@ var rabbitMq = builder.AddRabbitMq()
 var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
 
 var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
-    .WithReference(rabbitMq)
+    .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
 var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-service-api")

@@ -7,7 +7,8 @@ public class ChangeEmailConsumer(IEmailService emailService)
 
     public async Task Consume(ConsumeContext<ChangeEmailMessage> context)
     {
-        var htmlBody = GetEmailBody(context.Message.To, context.Message.Code, context.Message.NewEmail);
+        var credentials = context.Message.Credentials;
+        var htmlBody = GetEmailBody(credentials.To, context.Message.Code, context.Message.NewEmail);
         var messageOptions = Mapper.Map(context.Message);
         await emailService.SendMessageAsync(htmlBody, messageOptions);
     }

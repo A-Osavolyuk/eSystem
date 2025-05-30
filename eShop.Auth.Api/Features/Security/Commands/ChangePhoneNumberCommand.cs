@@ -33,13 +33,19 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
         await messageService.SendMessageAsync("sms:change-phone-number", new ChangePhoneNumberMessage()
         {
             Code = oldPhoneNumberCode,
-            PhoneNumber = request.Request.NewPhoneNumber
+            Credentials = new SmsCredentials()
+            {
+                PhoneNumber = request.Request.NewPhoneNumber
+            }
         }, cancellationToken);
 
         await messageService.SendMessageAsync("sms:verify-phone-number", new ChangePhoneNumberMessage()
         {
             Code = newPhoneNumberCode,
-            PhoneNumber = request.Request.NewPhoneNumber
+            Credentials = new SmsCredentials()
+            {
+                PhoneNumber = request.Request.NewPhoneNumber
+            }
         }, cancellationToken);
 
         return Result.Success("We have sent sms messages to your phone numbers.");

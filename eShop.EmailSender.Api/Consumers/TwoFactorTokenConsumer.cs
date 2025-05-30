@@ -7,7 +7,8 @@ public class TwoFactorTokenConsumer(IEmailService emailService)
 
     public async Task Consume(ConsumeContext<TwoFactorTokenEmailMessage> context)
     {
-        var htmlBody = GetEmailBody(context.Message.To, context.Message.Token);
+        var credentials = context.Message.Credentials;
+        var htmlBody = GetEmailBody(credentials.To, context.Message.Token);
         var messageOptions = Mapper.Map(context.Message);
         await emailService.SendMessageAsync(htmlBody, messageOptions);
     }

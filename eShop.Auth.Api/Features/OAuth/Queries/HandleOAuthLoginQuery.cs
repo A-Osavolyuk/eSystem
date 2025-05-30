@@ -111,11 +111,14 @@ internal sealed class HandleOAuthLoginQueryHandler(
             
             await messageService.SendMessageAsync("email:external-provider-registration", new ExternalRegistrationMessage()
             {
-                To = email,
-                Subject = $"Account registered with {provider}",
                 TempPassword = tempPassword,
-                UserName = email,
-                ProviderName = provider!
+                ProviderName = provider!,
+                Credentials = new EmailCredentials()
+                {
+                    To = email,
+                    Subject = $"Account registered with {provider}",
+                    UserName = email,
+                },
             }, cancellationToken);
             
             var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);

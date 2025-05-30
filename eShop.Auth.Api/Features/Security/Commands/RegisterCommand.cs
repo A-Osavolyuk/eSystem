@@ -67,10 +67,13 @@ internal sealed class RegisterCommandHandler(
         
         await messageService.SendMessageAsync("email:email-verification", new EmailVerificationMessage()
         {
-            To = request.Request.Email,
-            Subject = "Email verification",
             Code = code,
-            UserName = newUser.UserName!
+            Credentials = new EmailCredentials()
+            {
+                To = request.Request.Email,
+                Subject = "Email verification",
+                UserName = newUser.UserName!
+            }
         }, cancellationToken);
 
         return Result.Success($"Your account have been successfully registered. " +

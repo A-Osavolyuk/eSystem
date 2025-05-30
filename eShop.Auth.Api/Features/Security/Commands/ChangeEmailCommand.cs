@@ -32,18 +32,24 @@ internal sealed class RequestChangeEmailCommandHandler(
         await messageService.SendMessageAsync("email:email-change", new ChangeEmailMessage()
         {
             Code = oldEmailCode,
-            To = request.Request.CurrentEmail,
-            Subject = "Email change (step one)",
-            UserName = request.Request.CurrentEmail,
             NewEmail = request.Request.NewEmail,
+            Credentials = new EmailCredentials()
+            {
+                To = request.Request.CurrentEmail,
+                Subject = "Email change (step one)",
+                UserName = request.Request.CurrentEmail,
+            }
         }, cancellationToken);
 
         await messageService.SendMessageAsync("email:email-verification", new EmailVerificationMessage()
         {
             Code = newEmailCode,
-            UserName = request.Request.CurrentEmail,
-            Subject = "Email change (step two)",
-            To = request.Request.NewEmail,
+            Credentials = new EmailCredentials()
+            {
+                UserName = request.Request.CurrentEmail,
+                Subject = "Email change (step two)",
+                To = request.Request.NewEmail,
+            }
         }, cancellationToken);
 
         return Result.Success("We have sent a letter with instructions to your current and new email addresses");

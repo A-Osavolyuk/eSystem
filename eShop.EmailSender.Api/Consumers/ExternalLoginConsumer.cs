@@ -6,7 +6,8 @@ public class ExternalLoginConsumer(IEmailService emailService) : IConsumer<Exter
 
     public async Task Consume(ConsumeContext<ExternalRegistrationMessage> context)
     {
-        var htmlBody = GetEmailBody(context.Message.To, context.Message.ProviderName, context.Message.TempPassword);
+        var credentials = context.Message.Credentials;
+        var htmlBody = GetEmailBody(credentials.To, context.Message.ProviderName, context.Message.TempPassword);
         var messageOptions = Mapper.Map(context.Message);
         await emailService.SendMessageAsync(htmlBody, messageOptions);
     }

@@ -13,7 +13,7 @@ public class VerifyPhoneNumberConsumer(ISmsService smsService) : IConsumer<Verif
         var response = await smsService.SendSingleMessage(new SingleMessageRequest()
         {
             Message = $"Phone number verification code: {request.Code}",
-            PhoneNumber = request.PhoneNumber
+            PhoneNumber = request.Credentials.PhoneNumber
         });
         await context.RespondAsync(response);
     }

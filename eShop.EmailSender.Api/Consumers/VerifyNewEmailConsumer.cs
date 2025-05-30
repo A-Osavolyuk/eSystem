@@ -6,7 +6,8 @@ public class VerifyNewEmailConsumer(IEmailService emailService) : IConsumer<NewE
 
     public async Task Consume(ConsumeContext<NewEmailVerificationMessage> context)
     {
-        var htmlBody = GetEmailBody(context.Message.To, context.Message.Code);
+      var credentials = context.Message.Credentials;
+        var htmlBody = GetEmailBody(credentials.UserName, context.Message.Code);
         var messageOptions = Mapper.Map(context.Message);
         await emailService.SendMessageAsync(htmlBody, messageOptions);
     }

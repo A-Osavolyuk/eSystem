@@ -8,9 +8,9 @@ public static class Mapper
     {
         return new MessageOptions()
         {
-            Subject = email.Subject,
-            To = email.To,
-            UserName = email.UserName
+            Subject = email.Credentials.Subject,
+            To = email.Credentials.To,
+            UserName = email.Credentials.UserName
         };
     }
 }

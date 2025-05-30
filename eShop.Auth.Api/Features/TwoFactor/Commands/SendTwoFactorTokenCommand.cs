@@ -44,9 +44,12 @@ public class SendTwoFactorTokenCommandHandler(
                 var message = new TwoFactorTokenEmailMessage()
                 {
                     Token = token,
-                    To = user.Email,
-                    UserName = user.UserName,
-                    Subject = "Two-factor authentication token"
+                    Credentials = new EmailCredentials()
+                    {
+                        To = user.Email,
+                        UserName = user.UserName,
+                        Subject = "Two-factor authentication token"
+                    }
                 };
                 
                 deliveryType = "email address";
@@ -58,7 +61,10 @@ public class SendTwoFactorTokenCommandHandler(
                 var message = new TwoFactorTokenSmsMessage()
                 {
                     Token = token,
-                    PhoneNumber = user.PhoneNumber
+                    Credentials = new SmsCredentials()
+                    {
+                        PhoneNumber = user.PhoneNumber
+                    }
                 };
                 
                 deliveryType = "phone number";

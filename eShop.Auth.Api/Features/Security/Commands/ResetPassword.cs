@@ -31,10 +31,13 @@ internal sealed class RequestResetPasswordCommandHandler(
 
         await messageService.SendMessageAsync("email:password-reset", new ResetPasswordMessage()
         {
-            To = request.Request.Email,
-            Subject = "Password reset",
             Code = code,
-            UserName = user.UserName!
+            Credentials = new EmailCredentials()
+            {
+                To = request.Request.Email,
+                Subject = "Password reset",
+                UserName = user.UserName!
+            }
         }, cancellationToken);
 
         return Result.Success($"You have to confirm password reset. " +

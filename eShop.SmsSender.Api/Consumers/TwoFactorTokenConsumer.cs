@@ -13,7 +13,7 @@ public class TwoFactorTokenConsumer(ISmsService smsService) : IConsumer<TwoFacto
         var response = await smsService.SendSingleMessage(new SingleMessageRequest()
         {
             Message = $"Two-factor authentication code: {request.Token}",
-            PhoneNumber = request.PhoneNumber
+            PhoneNumber = request.Credentials.PhoneNumber
         });
         await context.RespondAsync(response);
     }
