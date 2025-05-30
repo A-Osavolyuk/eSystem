@@ -8,7 +8,7 @@ internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStore
 
     public async ValueTask<List<string>> FindManyAsync(string prefix, Container container)
     {
-        var containerClient = await GetContainerClient(container);
+        var containerClient = await GetClientAsync(container);
         var files = containerClient.GetBlobs(prefix: prefix);
 
         if (files is null || !files.Any())
@@ -24,7 +24,7 @@ internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStore
     {
         var uriList = new List<string>();
         var blobs = files.ToImmutableList();
-        var containerClient = await GetContainerClient(container);
+        var containerClient = await GetClientAsync(container);
 
         var index = 0;
 
@@ -43,7 +43,7 @@ internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStore
 
     public async ValueTask<string> UploadAsync(IFormFile file, string key, Container container)
     {
-        var containerClient = await GetContainerClient(container);
+        var containerClient = await GetClientAsync(container);
         var client = containerClient.GetBlobClient($"{key}");
 
         await using var stream = file.OpenReadStream();
@@ -56,7 +56,7 @@ internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStore
 
     public async ValueTask DeleteAsync(string prefix, Container container)
     {
-        var containerClient = await GetContainerClient(container);
+        var containerClient = await GetClientAsync(container);
         await foreach (var blobItem in containerClient.GetBlobsAsync(prefix: prefix))
         {
             var blobClient = containerClient.GetBlobClient(blobItem.Name);
@@ -66,12 +66,12 @@ internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStore
 
     public async ValueTask<string> FindAsync(string key, Container container)
     {
-        var containerClient = await GetContainerClient(container);
+        var containerClient = await GetClientAsync(container);
         var blobClient = containerClient.GetBlobClient(key);
         return blobClient.Uri.ToString();
     }
 
-    private async Task<BlobContainerClient> GetContainerClient(Container container)
+    private async Task<BlobContainerClient> GetClientAsync(Container container)
     {
         var containerName = container switch
         {
