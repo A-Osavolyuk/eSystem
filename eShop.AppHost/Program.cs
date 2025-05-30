@@ -36,6 +36,8 @@ var rabbitMq = builder.AddRabbitMq()
     .WithManagementPlugin()
     .WithDataVolume();
 
+var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
+
 var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
     .WithReference(rabbitMq)
     .WaitForReference(redisCache);
@@ -51,45 +53,42 @@ var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegr
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WaitForReference(authDb)
     .WaitForReference(rabbitMq)
-    .WaitFor(emailService)
-    .WaitFor(smsService)
-    .WaitFor(telegramService)
-    .WaitForReference(redisCache);
+    .WaitForReference(redisCache)
+    .WaitFor(emailService).WithRelationship(telegramService.Resource, "Email")
+    .WaitFor(smsService).WithRelationship(telegramService.Resource, "SMS")
+    .WaitFor(telegramService).WithRelationship(telegramService.Resource, "Telegram");
 
 var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
-    .WaitFor(authApi)
+    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(productDb);
 
 var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("reviews-api")
-    .WaitFor(authApi)
+    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitForReference(commentsDb)
     .WaitForReference(redisCache)
     .WaitForReference(rabbitMq);
 
 var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
-    .WaitFor(authApi)
+    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(cartDb);
 
 var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
-    .WaitFor(authApi)
+    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(blobs);
 
-var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
-
 var blazorClient = builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
-    .WaitFor(gateway)
-    .WaitFor(authApi);
+    .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
+    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication");
 
-var angularClient = builder.AddNpmApp("angular-webui",
-        "../eShop.AngularWebUI")
-    .WaitFor(gateway)
-    .WaitFor(authApi)
+var angularClient = builder.AddNpmApp("angular-webui", "../eShop.AngularWebUI")
+    .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
+    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WithHttpEndpoint(port: 40502, targetPort: 4200, env: "PORT")
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
