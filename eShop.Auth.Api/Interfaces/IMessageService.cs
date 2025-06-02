@@ -2,7 +2,6 @@
 
 public interface IMessageService
 {
-    public ValueTask SendMessageAsync(string queryName, EmailMessage message, CancellationToken cancellationToken = default);
-    public ValueTask SendMessageAsync(string queryName, SmsMessage message, CancellationToken cancellationToken = default);
-    public ValueTask SendMessageAsync(string queryName, TelegramMessage message, CancellationToken cancellationToken = default);
+    public ValueTask SendMessageAsync(MessageType type, string queueName, object? payload,
+        MessageCredentials credentials, CancellationToken cancellationToken = default);
 }

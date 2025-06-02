@@ -1,4 +1,6 @@
-﻿using MassTransit;
+﻿using eShop.Domain.Common.Messaging;
+using MassTransit;
+using Newtonsoft.Json;
 
 namespace eShop.Auth.Api.Services;
 
@@ -6,37 +8,35 @@ namespace eShop.Auth.Api.Services;
 public sealed class MessageService(IBus bus) : IMessageService
 {
     private readonly IBus bus = bus;
-    
-    private Uri CreateQueryUri(string queryName)
+
+    public async ValueTask SendMessageAsync(MessageType type, string queueName, object? payload,
+        MessageCredentials credentials, CancellationToken cancellationToken = default)
     {
-        const string uriBase = "rabbitmq://localhost/";
+        var message = new MessageRequest()
+        {
+            Type = type,
+            Queue = queueName,
+            Payload = payload is null ? [] : ToDictionary(payload),
+            Credentials = ToDictionary(credentials)
+        };
 
-        var uri = new Uri(
-            new StringBuilder(uriBase)
-                .Append(queryName)
-                .ToString());
-
-        return uri;
-    }
-
-    public async ValueTask SendMessageAsync(string queryName, EmailMessage message, CancellationToken cancellationToken = default)
-    {
-        var address = CreateQueryUri(queryName);
+        var address = ToQueueUri("unified-message");
         var endpoint = await bus.GetSendEndpoint(address);
         await endpoint.Send(message as object, cancellationToken);
     }
 
-    public async ValueTask SendMessageAsync(string queryName, SmsMessage message, CancellationToken cancellationToken = default)
-    {
-        var address = CreateQueryUri(queryName);
-        var endpoint = await bus.GetSendEndpoint(address);
-        await endpoint.Send(message as object, cancellationToken);
-    }
+    private Uri ToQueueUri(string queueName) => new($"rabbitmq://localhost/{queueName}");
 
-    public async ValueTask SendMessageAsync(string queryName, TelegramMessage message, CancellationToken cancellationToken = default)
+    private Dictionary<string, string> ToDictionary(object obj)
     {
-        var address = CreateQueryUri(queryName);
-        var endpoint = await bus.GetSendEndpoint(address);
-        await endpoint.Send(message as object, cancellationToken);
+        if (obj is null)
+        {
+            throw new NullReferenceException("Cannot serialize null to dictionary");
+        }
+
+        var json = JsonConvert.SerializeObject(obj);
+        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json)!;
+
+        return dictionary;
     }
 }
