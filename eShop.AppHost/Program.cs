@@ -38,46 +38,53 @@ var rabbitMq = builder.AddRabbitMq()
 
 var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
 
+var messageBus = builder.AddProject<Projects.eShop_MessageBus>("message-bus")
+    .WaitForReference(rabbitMq);
+
 var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
 var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-service-api")
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
 var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegram-service-api")
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WaitForReference(authDb)
-    .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
-    .WaitFor(emailService).WithRelationship(telegramService.Resource, "Email")
-    .WaitFor(smsService).WithRelationship(telegramService.Resource, "SMS")
-    .WaitFor(telegramService).WithRelationship(telegramService.Resource, "Telegram");
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging");
 
 var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(productDb);
 
 var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("reviews-api")
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(commentsDb)
     .WaitForReference(redisCache)
     .WaitForReference(rabbitMq);
 
 var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(cartDb);
 
 var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(blobs);

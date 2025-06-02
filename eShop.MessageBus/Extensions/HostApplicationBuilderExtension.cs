@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Extensions;
+using eShop.ServiceDefaults;
 using MassTransit;
 
 namespace eShop.MessageBus.Extensions;
@@ -10,6 +11,7 @@ public static class HostApplicationBuilderExtension
         builder.AddMessageBus();
         builder.AddExceptionHandler();
         builder.AddLogging();
+        builder.AddServiceDefaults();
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)
