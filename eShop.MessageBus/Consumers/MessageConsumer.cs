@@ -17,7 +17,8 @@ public class MessageConsumer(
     public async Task Consume(ConsumeContext<MessageRequest> context)
     {
         var request = context.Message;
-        var configuration = registry.GetByQueueName(request.Queue);
+        var queueName = $"{request.Type.ToString().ToLower()}:{request.Queue}";
+        var configuration = registry.GetByQueueName(queueName);
 
         if (configuration is null)
         {
