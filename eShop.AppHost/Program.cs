@@ -97,13 +97,11 @@ var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-a
 
 var blazorClient = builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
-    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-    .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway");
+    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication");
 
 var angularClient = builder.AddNpmApp("angular-webui", "../eShop.AngularWebUI")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-    .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
     .WithHttpEndpoint(port: 40502, targetPort: 4200, env: "PORT")
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
