@@ -1,6 +1,9 @@
-﻿using eShop.Domain.Common.Messaging;
+﻿using eShop.Domain.Abstraction.Messaging;
+using eShop.Domain.Common.Messaging;
+using eShop.Domain.Enums;
 using eShop.MessageBus.Bus;
 using MassTransit;
+using Newtonsoft.Json;
 
 namespace eShop.MessageBus.Consumers;
 
@@ -13,13 +16,31 @@ public class MessageConsumer(
 
     public async Task Consume(ConsumeContext<MessageRequest> context)
     {
-        throw new NotImplementedException();
+        var request = context.Message;
+        var configuration = registry.GetByQueueName(request.Queue);
+
+        if (configuration is null)
+        {
+            throw new NotSupportedException($"Queue {request.Queue} not supported");
+        }
+
+        var message = MapTo(configuration.MessageType, request.Payload, request.Credentials);
+        await SendAsync(configuration.QueueName, message);
     }
 
-    private async Task SendMessageAsync(string queue, object message, CancellationToken cancellationToken = default)
+    private async Task SendAsync(string queue, object message, CancellationToken cancellationToken = default)
     {
         var address = new Uri($"rabbitmq://localhost/{queue}");
         var endpoint = await bus.GetSendEndpoint(address);
-        await endpoint.Send(message as object, cancellationToken);
+        await endpoint.Send(message, cancellationToken);
+    }
+
+    private static object MapTo(Type type, Dictionary<string, string> payload, Dictionary<string, string> credentials)
+    {
+        var combined = payload.ToDictionary(kvp => kvp.Key, object (kvp) => kvp.Value);
+        combined.Add("Credentials", credentials.ToDictionary(kvp => kvp.Key, object (kvp) => kvp.Value));
+        
+        var json = JsonConvert.SerializeObject(combined);
+        return JsonConvert.DeserializeObject(json, type)!;
     }
 }
