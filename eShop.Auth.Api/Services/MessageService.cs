@@ -9,7 +9,7 @@ public sealed class MessageService(IBus bus) : IMessageService
 {
     private readonly IBus bus = bus;
 
-    public async ValueTask SendMessageAsync(MessageType type, string queueName, object? payload,
+    public async ValueTask SendMessageAsync(SenderType type, string queueName, object? payload,
         MessageCredentials credentials, CancellationToken cancellationToken = default)
     {
         var message = new MessageRequest()

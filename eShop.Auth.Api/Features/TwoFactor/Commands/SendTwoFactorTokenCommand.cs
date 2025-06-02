@@ -43,7 +43,7 @@ public class SendTwoFactorTokenCommandHandler(
             case ProviderTypes.Email:
             {
                 deliveryType = "email address";
-                await messageService.SendMessageAsync(MessageType.Email, MessagePath.TwoFactorToken, 
+                await messageService.SendMessageAsync(SenderType.Email, MessagePath.TwoFactorToken, 
                     new
                     {
                         Token = token,
@@ -70,7 +70,7 @@ public class SendTwoFactorTokenCommandHandler(
                 
                 deliveryType = "phone number";
                 
-                await messageService.SendMessageAsync(MessageType.Email, MessagePath.TwoFactorToken, 
+                await messageService.SendMessageAsync(SenderType.Email, MessagePath.TwoFactorToken, 
                     new { Token = token, }, new SmsCredentials() { PhoneNumber = user.PhoneNumber }, 
                     cancellationToken);
                 

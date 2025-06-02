@@ -1,4 +1,6 @@
 ﻿using eShop.Application.Extensions;
+using eShop.Domain.Enums;
+using eShop.Domain.Messages.Email;
 using eShop.ServiceDefaults;
 using MassTransit;
 
@@ -16,6 +18,11 @@ public static class HostApplicationBuilderExtension
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)
     {
+        builder.AddMessageBus(cfg =>
+        {
+            cfg.AddQueue<ChangeEmailMessage>("email:email-change", SenderType.Email);
+        });
+        
         builder.Services.AddMassTransit(x =>
         {
             x.UsingRabbitMq((context, cfg) =>

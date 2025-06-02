@@ -31,10 +31,10 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
 
         var credentials = new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber };
         
-        await messageService.SendMessageAsync(MessageType.Email, MessagePath.ChangePhoneNumber,
+        await messageService.SendMessageAsync(SenderType.Email, MessagePath.ChangePhoneNumber,
             new { Code = oldPhoneNumberCode, }, credentials, cancellationToken);
 
-        await messageService.SendMessageAsync(MessageType.Email, MessagePath.VerifyPhoneNumber,
+        await messageService.SendMessageAsync(SenderType.Email, MessagePath.VerifyPhoneNumber,
             new { Code = newPhoneNumberCode, }, credentials, cancellationToken);
 
         return Result.Success("We have sent sms messages to your phone numbers.");

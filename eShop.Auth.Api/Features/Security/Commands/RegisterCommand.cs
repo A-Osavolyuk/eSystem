@@ -64,7 +64,7 @@ internal sealed class RegisterCommandHandler(
 
         var code = await codeManager.GenerateAsync(user!, CodeType.Verify, cancellationToken);
         
-        await messageService.SendMessageAsync(MessageType.Email, MessagePath.VerifyEmail, new { Code = code, },
+        await messageService.SendMessageAsync(SenderType.Email, MessagePath.VerifyEmail, new { Code = code, },
             new EmailCredentials()
             {
                 To = request.Request.Email,

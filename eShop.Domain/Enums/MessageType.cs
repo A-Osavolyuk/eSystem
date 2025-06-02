@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Enums;
 
-public enum MessageType
+public enum SenderType
 {
     Email,
     Sms,
