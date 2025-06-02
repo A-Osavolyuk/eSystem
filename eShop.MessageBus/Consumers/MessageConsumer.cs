@@ -15,6 +15,11 @@ public class MessageConsumer(
     {
         throw new NotImplementedException();
     }
-    
-    private Uri ToQueueUri(string queueName) => new($"rabbitmq://localhost/{queueName}");
+
+    private async Task SendMessageAsync(string queue, object message, CancellationToken cancellationToken = default)
+    {
+        var address = new Uri($"rabbitmq://localhost/{queue}");
+        var endpoint = await bus.GetSendEndpoint(address);
+        await endpoint.Send(message as object, cancellationToken);
+    }
 }
