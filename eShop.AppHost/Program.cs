@@ -38,24 +38,24 @@ var rabbitMq = builder.AddRabbitMq()
 
 var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
 
-var messageBus = builder.AddProject<Projects.eShop_MessageBus>("message-bus")
-    .WaitForReference(rabbitMq);
-
 var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
 var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-service-api")
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
 var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegram-service-api")
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
+
+var messageBus = builder.AddProject<Projects.eShop_MessageBus>("message-bus")
+    .WaitForReference(rabbitMq)
+    .WaitFor(emailService)
+    .WaitFor(smsService)
+    .WaitFor(telegramService);
 
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WaitForReference(authDb)
@@ -95,11 +95,11 @@ var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-a
     .WaitForReference(redisCache)
     .WaitForReference(blobs);
 
-var blazorClient = builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
+builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication");
 
-var angularClient = builder.AddNpmApp("angular-webui", "../eShop.AngularWebUI")
+builder.AddNpmApp("angular-webui", "../eShop.AngularWebUI")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WithHttpEndpoint(port: 40502, targetPort: 4200, env: "PORT")
