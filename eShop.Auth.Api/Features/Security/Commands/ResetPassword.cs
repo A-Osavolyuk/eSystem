@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -29,16 +30,17 @@ internal sealed class RequestResetPasswordCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, CodeType.Reset, cancellationToken);
 
-        await messageService.SendMessageAsync("email:password-reset", new ResetPasswordMessage()
-        {
-            Code = code,
-            Credentials = new EmailCredentials()
+        await messageService.SendMessageAsync(MessageType.Email, MessagePath.ResetPassword, 
+            new
+            {
+                Code = code,
+            },
+            new EmailCredentials()
             {
                 To = request.Request.Email,
-                Subject = "Password reset",
+                Subject = "Email verification",
                 UserName = user.UserName!
-            }
-        }, cancellationToken);
+            }, cancellationToken);
 
         return Result.Success($"You have to confirm password reset. " +
                               $"We have sent an email with instructions to your email address.");

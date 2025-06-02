@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Security;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Common.Security;
 using eShop.Domain.Messages.Email;
 using eShop.Domain.Messages.Sms;
 using eShop.Domain.Requests.API.Auth;
@@ -41,19 +42,19 @@ public class SendTwoFactorTokenCommandHandler(
         {
             case ProviderTypes.Email:
             {
-                var message = new TwoFactorTokenEmailMessage()
-                {
-                    Token = token,
-                    Credentials = new EmailCredentials()
+                deliveryType = "email address";
+                await messageService.SendMessageAsync(MessageType.Email, MessagePath.TwoFactorToken, 
+                    new
+                    {
+                        Token = token,
+                    },
+                    new EmailCredentials()
                     {
                         To = user.Email,
                         UserName = user.UserName,
                         Subject = "Two-factor authentication token"
-                    }
-                };
+                    }, cancellationToken);
                 
-                deliveryType = "email address";
-                await messageService.SendMessageAsync("email:two-factor-token", message, cancellationToken);
                 break;
             }
             case ProviderTypes.Sms:
@@ -68,7 +69,11 @@ public class SendTwoFactorTokenCommandHandler(
                 };
                 
                 deliveryType = "phone number";
-                await messageService.SendMessageAsync("sms:two-factor-token", message, cancellationToken);
+                
+                await messageService.SendMessageAsync(MessageType.Email, MessagePath.TwoFactorToken, 
+                    new { Token = token, }, new SmsCredentials() { PhoneNumber = user.PhoneNumber }, 
+                    cancellationToken);
+                
                 break;
             }
         }

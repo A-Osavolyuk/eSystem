@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -29,28 +30,30 @@ internal sealed class RequestChangeEmailCommandHandler(
         var oldEmailCode = await codeManager.GenerateAsync(user, CodeType.Current, cancellationToken);
         var newEmailCode = await codeManager.GenerateAsync(user, CodeType.New, cancellationToken);
 
-        await messageService.SendMessageAsync("email:email-change", new ChangeEmailMessage()
-        {
-            Code = oldEmailCode,
-            NewEmail = request.Request.NewEmail,
-            Credentials = new EmailCredentials()
+        await messageService.SendMessageAsync(MessageType.Email, MessagePath.ChangeEmail, 
+            new
+            {
+                Code = oldEmailCode,
+                NewEmail = request.Request.NewEmail,
+            },
+            new EmailCredentials()
             {
                 To = request.Request.CurrentEmail,
                 Subject = "Email change (step one)",
                 UserName = request.Request.CurrentEmail,
-            }
-        }, cancellationToken);
+            }, cancellationToken);
 
-        await messageService.SendMessageAsync("email:email-verification", new EmailVerificationMessage()
-        {
-            Code = newEmailCode,
-            Credentials = new EmailCredentials()
+        await messageService.SendMessageAsync(MessageType.Email, MessagePath.VerifyEmail, 
+            new
             {
+                Code = newEmailCode,
+            },
+            new EmailCredentials()
+            {
+                To = request.Request.CurrentEmail,
+                Subject = "Email change (step one)",
                 UserName = request.Request.CurrentEmail,
-                Subject = "Email change (step two)",
-                To = request.Request.NewEmail,
-            }
-        }, cancellationToken);
+            }, cancellationToken);
 
         return Result.Success("We have sent a letter with instructions to your current and new email addresses");
     }

@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -31,15 +32,14 @@ internal sealed class VerifyEmailCommandHandler(
             return confirmResult;
         }
 
-        await messageService.SendMessageAsync("email:email-verified", new EmailVerifiedMessage()
-        {
-            Credentials = new EmailCredentials()
+        await messageService.SendMessageAsync(MessageType.Email, MessagePath.VerifyEmail, 
+            null,
+            new EmailCredentials()
             {
                 To = request.Request.Email,
-                Subject = "Email verified",
+                Subject = "Email verification",
                 UserName = user.UserName!
-            }
-        }, cancellationToken);
+            }, cancellationToken);
 
         return Result.Success("Your email address was successfully confirmed.");
     }

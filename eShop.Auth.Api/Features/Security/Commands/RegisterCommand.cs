@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -65,16 +66,13 @@ internal sealed class RegisterCommandHandler(
 
         var code = await codeManager.GenerateAsync(user!, CodeType.Verify, cancellationToken);
         
-        await messageService.SendMessageAsync("email:email-verification", new EmailVerificationMessage()
-        {
-            Code = code,
-            Credentials = new EmailCredentials()
+        await messageService.SendMessageAsync(MessageType.Email, MessagePath.VerifyEmail, new { Code = code, },
+            new EmailCredentials()
             {
                 To = request.Request.Email,
                 Subject = "Email verification",
                 UserName = newUser.UserName!
-            }
-        }, cancellationToken);
+            }, cancellationToken);
 
         return Result.Success($"Your account have been successfully registered. " +
                               $"Now you have to confirm you email address to log in. " +

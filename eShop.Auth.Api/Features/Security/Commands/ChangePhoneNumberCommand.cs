@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Messages.Sms;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Messages.Sms;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -26,27 +27,17 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
         {
             return Results.NotFound($"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
         }
-        
+
         var oldPhoneNumberCode = await codeManager.GenerateAsync(user, CodeType.Current, cancellationToken);
         var newPhoneNumberCode = await codeManager.GenerateAsync(user, CodeType.New, cancellationToken);
 
-        await messageService.SendMessageAsync("sms:change-phone-number", new ChangePhoneNumberMessage()
-        {
-            Code = oldPhoneNumberCode,
-            Credentials = new SmsCredentials()
-            {
-                PhoneNumber = request.Request.NewPhoneNumber
-            }
-        }, cancellationToken);
+        await messageService.SendMessageAsync(MessageType.Email, MessagePath.ChangePhoneNumber,
+            new { Code = oldPhoneNumberCode, }, new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber },
+            cancellationToken);
 
-        await messageService.SendMessageAsync("sms:verify-phone-number", new ChangePhoneNumberMessage()
-        {
-            Code = newPhoneNumberCode,
-            Credentials = new SmsCredentials()
-            {
-                PhoneNumber = request.Request.NewPhoneNumber
-            }
-        }, cancellationToken);
+        await messageService.SendMessageAsync(MessageType.Email, MessagePath.VerifyPhoneNumber,
+            new { Code = newPhoneNumberCode, }, new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber }, 
+            cancellationToken);
 
         return Result.Success("We have sent sms messages to your phone numbers.");
     }

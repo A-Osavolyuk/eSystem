@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using eShop.Domain.Common.Messaging;
 using eShop.Domain.Messages.Email;
 
 namespace eShop.Auth.Api.Features.OAuth.Queries;
@@ -46,15 +47,15 @@ internal sealed class HandleOAuthLoginQueryHandler(
             {
                 return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
             }
-            
+
             var securityToken = await tokenManager.FindAsync(user, cancellationToken);
 
             if (securityToken is not null)
             {
                 var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
                 var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
-                var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken});
-                
+                var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken });
+
                 return Result.Success(link);
             }
             else
@@ -62,11 +63,11 @@ internal sealed class HandleOAuthLoginQueryHandler(
                 var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
                 var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
                 var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken });
-                
+
                 return Result.Success(link);
             }
         }
-        
+
         {
             user = new UserEntity()
             {
@@ -83,14 +84,14 @@ internal sealed class HandleOAuthLoginQueryHandler(
             {
                 return result;
             }
-            
+
             var role = await roleManager.FindByNameAsync("User", cancellationToken);
 
             if (role is null)
             {
                 return Results.NotFound("Cannot find role with name User");
             }
-            
+
             var assignRoleResult = await roleManager.AssignRoleAsync(user, role, cancellationToken);
 
             if (!assignRoleResult.Succeeded)
@@ -99,7 +100,7 @@ internal sealed class HandleOAuthLoginQueryHandler(
             }
 
             var permissions = role.Permissions.Select(x => x.Permission).ToList();
-            
+
             var grantPermissionsResult = await permissionManager.GrantAsync(user, permissions, cancellationToken);
 
             if (!grantPermissionsResult.Succeeded)
@@ -108,23 +109,24 @@ internal sealed class HandleOAuthLoginQueryHandler(
             }
 
             var provider = request.Principal.Identity!.AuthenticationType!;
-            
-            await messageService.SendMessageAsync("email:external-provider-registration", new ExternalRegistrationMessage()
-            {
-                TempPassword = tempPassword,
-                ProviderName = provider!,
-                Credentials = new EmailCredentials()
+
+            await messageService.SendMessageAsync(MessageType.Email, MessagePath.OAuthRegistration, 
+                new
+                {
+                    TempPassword = tempPassword,
+                    ProviderName = provider!,
+                },
+                new EmailCredentials()
                 {
                     To = email,
                     Subject = $"Account registered with {provider}",
                     UserName = email,
-                },
-            }, cancellationToken);
-            
+                }, cancellationToken);
+
             var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
             var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
             var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken });
-            
+
             return Result.Success(link);
         }
     }
