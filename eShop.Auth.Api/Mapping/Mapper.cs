@@ -54,6 +54,7 @@ public static class Mapper
     {
         return new UserEntity()
         {
+            Id = Guid.CreateVersion7(),
             Email = request.Email,
             UserName = request.Email,
             NormalizedEmail = request.Email.ToUpper(),
