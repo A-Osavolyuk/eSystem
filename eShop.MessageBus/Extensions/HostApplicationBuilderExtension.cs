@@ -1,9 +1,26 @@
-﻿namespace eShop.MessageBus.Extensions;
+﻿using eShop.Application.Extensions;
+using MassTransit;
+
+namespace eShop.MessageBus.Extensions;
 
 public static class HostApplicationBuilderExtension
 {
     public static void AddServices(this IHostApplicationBuilder builder)
     {
-        
+        builder.AddMessageBus();
+        builder.AddExceptionHandler();
+        builder.AddLogging();
+    }
+
+    private static void AddMessageBus(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
+                cfg.Host(connectionString);
+            });
+        });
     }
 }
