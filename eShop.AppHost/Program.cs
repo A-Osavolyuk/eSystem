@@ -60,6 +60,7 @@ var messageBus = builder.AddProject<Projects.eShop_MessageBus>("message-bus")
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WaitForReference(authDb)
     .WaitForReference(redisCache)
+    .WaitForReference(rabbitMq)
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway");
 
