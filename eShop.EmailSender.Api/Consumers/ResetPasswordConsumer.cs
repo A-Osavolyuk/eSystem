@@ -1,10 +1,10 @@
 ﻿namespace eShop.EmailSender.Api.Consumers;
 
-public class ResetPasswordConsumer(IEmailService emailService) : IConsumer<ResetPasswordMessage>
+public class ResetPasswordConsumer(IEmailService emailService) : IConsumer<ResetPasswordEmailMessage>
 {
     private readonly IEmailService emailService = emailService;
 
-    public async Task Consume(ConsumeContext<ResetPasswordMessage> context)
+    public async Task Consume(ConsumeContext<ResetPasswordEmailMessage> context)
     {
         var credentials = context.Message.Credentials;
         var htmlBody = GetEmailBody(credentials.To, context.Message.Code);

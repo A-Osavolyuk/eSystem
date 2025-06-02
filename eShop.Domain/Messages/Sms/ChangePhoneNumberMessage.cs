@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.Messages.Sms;
 
-public class ChangePhoneNumberMessage : SmsMessage
+public class ChangePhoneNumberSmsMessage : SmsMessage
 {
     public string Code { get; set; } = string.Empty;
 }

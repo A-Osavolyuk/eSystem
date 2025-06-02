@@ -3,11 +3,11 @@ using eShop.SmsSender.Api.Interfaces;
 
 namespace eShop.SmsSender.Api.Consumers;
 
-public class VerifyPhoneNumberConsumer(ISmsService smsService) : IConsumer<VerifyPhoneNumberMessage>
+public class VerifyPhoneNumberConsumer(ISmsService smsService) : IConsumer<VerifyPhoneNumberSmsMessage>
 {
     private readonly ISmsService smsService = smsService;
 
-    public async Task Consume(ConsumeContext<VerifyPhoneNumberMessage> context)
+    public async Task Consume(ConsumeContext<VerifyPhoneNumberSmsMessage> context)
     {
         var request = context.Message;
         var response = await smsService.SendSingleMessage(new SingleMessageRequest()

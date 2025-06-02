@@ -1,10 +1,10 @@
 ﻿namespace eShop.EmailSender.Api.Consumers;
 
-public class VerifyEmailConsumer(IEmailService emailService) : IConsumer<EmailVerificationMessage>
+public class VerifyEmailConsumer(IEmailService emailService) : IConsumer<VerifyEmailMessage>
 {
     private readonly IEmailService emailService = emailService;
 
-    public async Task Consume(ConsumeContext<EmailVerificationMessage> context)
+    public async Task Consume(ConsumeContext<VerifyEmailMessage> context)
     {
         var credentials = context.Message.Credentials;
         var htmlBody = GetEmailBody(credentials.To, context.Message.Code);

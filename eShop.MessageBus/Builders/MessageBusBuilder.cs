@@ -9,7 +9,7 @@ public class MessageBusBuilder
 
     public MessageBusBuilder AddQueue<TMessage>(string queueName, SenderType sender)
     {
-        queues.Add(new QueueConfiguration(typeof(TMessage), queueName, sender));
+        queues.Add(new QueueConfiguration(typeof(TMessage), $"{sender.ToString().ToLower()}:{queueName}",sender));
         return this;
     }
 

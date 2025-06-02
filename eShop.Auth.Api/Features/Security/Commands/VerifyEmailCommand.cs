@@ -32,7 +32,7 @@ internal sealed class VerifyEmailCommandHandler(
             return confirmResult;
         }
 
-        await messageService.SendMessageAsync(SenderType.Email, MessagePath.VerifyEmail, 
+        await messageService.SendMessageAsync(SenderType.Email, "email-verification", 
             null,
             new EmailCredentials()
             {

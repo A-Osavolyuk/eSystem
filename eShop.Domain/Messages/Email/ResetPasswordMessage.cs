@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.Messages.Email;
 
-public class ResetPasswordMessage : EmailMessage
+public class ResetPasswordEmailMessage : EmailMessage
 {
     public string Code { get; set; } = string.Empty;
 }

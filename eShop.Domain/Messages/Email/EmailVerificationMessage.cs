@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.Messages.Email;
 
-public class EmailVerificationMessage : EmailMessage
+public class VerifyEmailMessage : EmailMessage
 {
     public string Code { get; init; } = string.Empty;
 }

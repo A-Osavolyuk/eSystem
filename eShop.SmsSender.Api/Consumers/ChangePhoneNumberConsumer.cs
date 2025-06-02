@@ -4,11 +4,11 @@ using eShop.SmsSender.Api.Interfaces;
 namespace eShop.SmsSender.Api.Consumers;
 
 public class ChangePhoneNumberConsumer(
-    ISmsService smsService) : IConsumer<ChangePhoneNumberMessage>
+    ISmsService smsService) : IConsumer<ChangePhoneNumberSmsMessage>
 {
     private readonly ISmsService smsService = smsService;
 
-    public async Task Consume(ConsumeContext<ChangePhoneNumberMessage> context)
+    public async Task Consume(ConsumeContext<ChangePhoneNumberSmsMessage> context)
     {
         var request = context.Message;
         var response = await smsService.SendSingleMessage(new SingleMessageRequest()

@@ -110,7 +110,7 @@ internal sealed class HandleOAuthLoginQueryHandler(
 
             var provider = request.Principal.Identity!.AuthenticationType!;
 
-            await messageService.SendMessageAsync(SenderType.Email, MessagePath.OAuthRegistration, 
+            await messageService.SendMessageAsync(SenderType.Email, "oauth-registration", 
                 new
                 {
                     TempPassword = tempPassword,

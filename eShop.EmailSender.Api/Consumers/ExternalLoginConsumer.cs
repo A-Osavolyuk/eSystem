@@ -1,10 +1,10 @@
 ﻿namespace eShop.EmailSender.Api.Consumers;
 
-public class ExternalLoginConsumer(IEmailService emailService) : IConsumer<ExternalRegistrationMessage>
+public class ExternalLoginConsumer(IEmailService emailService) : IConsumer<OAuthRegistrationEmailMessage>
 {
     private readonly IEmailService emailService = emailService;
 
-    public async Task Consume(ConsumeContext<ExternalRegistrationMessage> context)
+    public async Task Consume(ConsumeContext<OAuthRegistrationEmailMessage> context)
     {
         var credentials = context.Message.Credentials;
         var htmlBody = GetEmailBody(credentials.To, context.Message.ProviderName, context.Message.TempPassword);
