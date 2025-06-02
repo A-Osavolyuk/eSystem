@@ -3,6 +3,7 @@ using eShop.Domain.Common.Messaging;
 using eShop.Domain.Enums;
 using eShop.Domain.Messages.Email;
 using eShop.Domain.Messages.Sms;
+using eShop.MessageBus.Consumers;
 using eShop.ServiceDefaults;
 using MassTransit;
 
@@ -41,7 +42,11 @@ public static class HostApplicationBuilderExtension
             {
                 var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
                 cfg.Host(connectionString);
+
+                cfg.ReceiveEndpoint("unified-message", e => e.ConfigureConsumer<MessageConsumer>(context));
             });
+
+            x.AddConsumer<MessageConsumer>();
         });
     }
 }
