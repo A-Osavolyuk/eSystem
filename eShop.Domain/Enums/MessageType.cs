@@ -1,8 +1,8 @@
 ﻿namespace eShop.Domain.Enums;
 
-public enum MessageProvider
+public enum MessageType
 {
     Email,
     Sms,
-    Telegram
+    Telegram,
 }
