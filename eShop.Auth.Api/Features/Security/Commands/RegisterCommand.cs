@@ -10,7 +10,6 @@ internal sealed class RegisterCommandHandler(
     IPermissionManager permissionManager,
     IUserManager userManager,
     IMessageService messageService,
-    IConfiguration configuration,
     ICodeManager codeManager,
     IRoleManager roleManager) : IRequestHandler<RegisterCommand, Result>
 {
@@ -19,7 +18,6 @@ internal sealed class RegisterCommandHandler(
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IRoleManager roleManager = roleManager;
-    private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)

@@ -10,13 +10,11 @@ internal sealed record RequestResetPasswordCommand(ResetPasswordRequest Request)
 internal sealed class RequestResetPasswordCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
-    IConfiguration configuration,
     ICodeManager codeManager) : IRequestHandler<RequestResetPasswordCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
-    private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(RequestResetPasswordCommand request,
         CancellationToken cancellationToken)

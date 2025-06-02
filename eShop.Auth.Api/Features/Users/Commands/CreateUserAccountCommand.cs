@@ -10,17 +10,13 @@ internal sealed class CreateUserAccountCommandHandler(
     IProfileManager profileManager,
     ISecurityManager securityManager,
     IUserManager userManager,
-    IRoleManager roleManager,
-    IConfiguration configuration) : IRequestHandler<CreateUserAccountCommand, Result>
+    IRoleManager roleManager) : IRequestHandler<CreateUserAccountCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
     private readonly ISecurityManager securityManager = securityManager;
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
-    private readonly string defaultRole = configuration["Configuration:General:DefaultValues:DefaultRole"]!;
-    private readonly List<string> defaultPermissions =
-        configuration.GetValue<List<string>>("Configuration:General:DefaultValues:DefaultPermissions")!;
 
     public async Task<Result> Handle(CreateUserAccountCommand request,
         CancellationToken cancellationToken)
@@ -73,7 +69,7 @@ internal sealed class CreateUserAccountCommandHandler(
         }
         else
         {
-            var roleResult = await roleManager.AssignRoleAsync(user, defaultRole, cancellationToken);
+            var roleResult = await roleManager.AssignRoleAsync(user, "User", cancellationToken);
 
             if (!roleResult.Succeeded)
             {
@@ -102,22 +98,7 @@ internal sealed class CreateUserAccountCommandHandler(
         }
         else
         {
-            foreach (var permission in defaultPermissions)
-            {
-                var entity = await permissionManager.FindByNameAsync(permission, cancellationToken);
-
-                if (entity is null)
-                {
-                    return Results.NotFound($"Cannot find permission {permission}.");
-                }
-                
-                var permissionResult = await permissionManager.GrantAsync(user, entity, cancellationToken);
-
-                if (!permissionResult.Succeeded)
-                {
-                    return permissionResult;
-                }
-            }
+            //TODO: load default permissions
         }
 
         return Result.Success($"User account was successfully created with temporary password: {password}");

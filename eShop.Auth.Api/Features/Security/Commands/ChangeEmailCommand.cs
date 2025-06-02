@@ -8,14 +8,12 @@ internal sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest
 
 internal sealed class RequestChangeEmailCommandHandler(
     IMessageService messageService,
-    IConfiguration configuration,
     ICodeManager codeManager,
     IUserManager userManager) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly IMessageService messageService = messageService;
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
-    private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangeEmailCommand request,
         CancellationToken cancellationToken)

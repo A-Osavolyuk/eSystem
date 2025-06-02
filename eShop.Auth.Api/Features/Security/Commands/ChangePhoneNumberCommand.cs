@@ -9,14 +9,12 @@ internal sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request
 
 internal sealed class RequestChangePhoneNumberCommandHandler(
     IMessageService messageService,
-    IConfiguration configuration,
     ICodeManager codeManager,
     IUserManager userManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IUserManager userManager = userManager;
-    private readonly string frontendUri = configuration["Configuration:General:Frontend:Clients:BlazorServer:Uri"]!;
 
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
@@ -31,13 +29,13 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
         var oldPhoneNumberCode = await codeManager.GenerateAsync(user, CodeType.Current, cancellationToken);
         var newPhoneNumberCode = await codeManager.GenerateAsync(user, CodeType.New, cancellationToken);
 
+        var credentials = new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber };
+        
         await messageService.SendMessageAsync(MessageType.Email, MessagePath.ChangePhoneNumber,
-            new { Code = oldPhoneNumberCode, }, new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber },
-            cancellationToken);
+            new { Code = oldPhoneNumberCode, }, credentials, cancellationToken);
 
         await messageService.SendMessageAsync(MessageType.Email, MessagePath.VerifyPhoneNumber,
-            new { Code = newPhoneNumberCode, }, new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber }, 
-            cancellationToken);
+            new { Code = newPhoneNumberCode, }, credentials, cancellationToken);
 
         return Result.Success("We have sent sms messages to your phone numbers.");
     }
