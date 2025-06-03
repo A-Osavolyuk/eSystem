@@ -68,7 +68,7 @@ public sealed class TokenManager(
 
     public async Task<string> GenerateAsync(UserEntity userEntity, TokenType type, CancellationToken cancellationToken = default)
     {
-        var key = Encoding.UTF8.GetBytes(options.Key);
+        var key = Encoding.UTF8.GetBytes(options.Secret);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
         
         var token = await GenerateTokenAsync(signingCredentials, userEntity, type);

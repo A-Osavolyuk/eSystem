@@ -61,7 +61,7 @@ public static class HostApplicationBuilderExtensions
     {
         var configuration = builder.Configuration;
 
-        builder.Services.Configure<JwtOptions>(configuration.GetSection("Configuration:Security:Authentication:JWT"));
+        builder.Services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
 
         builder.Services.AddAuthentication(options =>
             {
@@ -110,8 +110,8 @@ public static class HostApplicationBuilderExtensions
             })
             .AddJwtBearer(options =>
             {
-                var settings = configuration.Get<JwtOptions>("Configuration:Security:Authentication:JWT");
-                var encodedKey = Encoding.UTF8.GetBytes(settings.Key);
+                var settings = configuration.Get<JwtOptions>("Jwt");
+                var encodedKey = Encoding.UTF8.GetBytes(settings.Secret);
                 var symmetricSecurityKey = new SymmetricSecurityKey(encodedKey);
 
                 options.TokenValidationParameters = new TokenValidationParameters()

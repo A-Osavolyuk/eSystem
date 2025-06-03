@@ -52,9 +52,9 @@ public static class HostApplicationBuilderExtensions
         })
         .AddJwtBearer(options =>
         {
-            const string audiencePath = "Configuration:Security:Authentication:JWT:Audience";
-            const string issuerPath = "Configuration:Security:Authentication:JWT:Issuer";
-            const string keyPath = "Configuration:Security:Authentication:JWT:Key";
+            const string audiencePath = "JWT:Audience";
+            const string issuerPath = "JWT:Issuer";
+            const string keyPath = "JWT:Key";
             
             options.TokenValidationParameters = new TokenValidationParameters()
             {
