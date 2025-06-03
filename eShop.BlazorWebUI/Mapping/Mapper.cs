@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using eShop.BlazorWebUI.Models;
+using eShop.Domain.DTOs;
 using eShop.Domain.Models;
 using eShop.Domain.Requests.API.Auth;
 
@@ -64,6 +65,19 @@ public static class Mapper
             BirthDate = source.PersonalData?.BirthDate?.ToString("D", new CultureInfo("en-GB")) ?? string.Empty,
             FullName = source.PersonalData?.FullName ?? string.Empty,
             Gender = source.PersonalData?.Gender ?? string.Empty,
+        };
+    }
+
+    public static LockoutModel Map(LockoutStateDto source)
+    {
+        return new LockoutModel()
+        {
+            Description = source.Description,
+            Enabled = source.Enabled,
+            EndDate = source.EndDate,
+            Permanent = source.Permanent,
+            Reason = source.Reason,
+            StartDate = source.StartDate
         };
     }
 }
