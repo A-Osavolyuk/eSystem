@@ -54,7 +54,7 @@ public static class HostApplicationBuilderExtensions
         {
             const string audiencePath = "JWT:Audience";
             const string issuerPath = "JWT:Issuer";
-            const string keyPath = "JWT:Key";
+            const string keyPath = "JWT:Secret";
             
             options.TokenValidationParameters = new TokenValidationParameters()
             {
