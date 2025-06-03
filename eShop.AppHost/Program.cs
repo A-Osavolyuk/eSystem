@@ -36,7 +36,8 @@ var rabbitMq = builder.AddRabbitMq()
     .WithManagementPlugin()
     .WithDataVolume();
 
-var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy");
+var gateway = builder.AddProject<Projects.eShop_Proxy>("proxy")
+    .WithJwtConfig();
 
 var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
@@ -58,6 +59,7 @@ var messageBus = builder.AddProject<Projects.eShop_MessageBus>("message-bus")
     .WaitFor(telegramService);
 
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
+    .WithJwtConfig()
     .WaitForReference(authDb)
     .WaitForReference(redisCache)
     .WaitForReference(rabbitMq)
@@ -65,6 +67,7 @@ var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway");
 
 var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
+    .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
@@ -73,6 +76,7 @@ var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
     .WaitForReference(productDb);
 
 var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("reviews-api")
+    .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
@@ -81,6 +85,7 @@ var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("reviews-api")
     .WaitForReference(rabbitMq);
 
 var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
+    .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
@@ -89,6 +94,7 @@ var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
     .WaitForReference(cartDb);
 
 var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-api")
+    .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
@@ -97,6 +103,7 @@ var filesStorageApi = builder.AddProject<Projects.eShop_Files_Api>("file-store-a
     .WaitForReference(blobs);
 
 builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
+    .WithJwtConfig()
     .WaitFor(gateway).WithRelationship(gateway.Resource, "Gateway")
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication");
 
