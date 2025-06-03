@@ -17,7 +17,7 @@ public class UserSeed : Seed<UserEntity, Guid>
                 PasswordHash = "ARAnAAAl1FoQrHhNWGK51c8k0FFv1BuyOTZvNXrRWI7EVVDW5ScOzlWykcg+O8MKwnwzJEs=",
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
-                TwoFactorEnabled = false,
+                TwoFactorEnabled = true,
                 PhoneNumber = "380686100242",
             }
         ];
