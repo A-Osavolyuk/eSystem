@@ -219,7 +219,7 @@
 
             if (response.IsLockedOut)
             {
-                NavigationManager.NavigateTo($"/account/locked-out?email={TwoFactorLoginModel.Email}");
+                NavigationManager.NavigateTo($"/account/locked-out?id={response.UserId}");
             }
             else
             {

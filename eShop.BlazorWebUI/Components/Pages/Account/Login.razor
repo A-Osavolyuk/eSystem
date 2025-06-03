@@ -127,7 +127,7 @@
 
             if (response.IsLockedOut)
             {
-                NavigationManager.NavigateTo($"/account/locked-out?email={Model.Email}&id={response.UserId}");
+                NavigationManager.NavigateTo($"/account/locked-out?id={response.UserId}");
             }
             else
             {
