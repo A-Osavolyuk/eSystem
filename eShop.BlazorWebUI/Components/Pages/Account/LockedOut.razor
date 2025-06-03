@@ -4,6 +4,29 @@
 
 @inject IUsersService UsersService
 
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4">
+        <MudPaper Outlined="true" Class="pa-5" Style="margin-top: 150px">
+            <MudGrid>
+                <MudItem xs="12" Class="mb-2">
+                    @if (Model.Permanent)
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center"> You account is locked out permanently </MudText>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center"> You account is locked out until: @Model.EndDate </MudText>
+                    }
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.subtitle1"> Reason: @Model.Reason.ToString() </MudText>
+                    <MudText Typo="Typo.subtitle1"> Reason: @Model.Description </MudText>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
 @code {
     [SupplyParameterFromQuery(Name = "id")] public Guid Id { get; set; }
 
