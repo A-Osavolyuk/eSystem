@@ -134,7 +134,7 @@
                 if (response!.TwoFactorEnabled)
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    NavigationManager.NavigateTo($"/account/two-factor-login/{Model.Email}");
+                    NavigationManager.NavigateTo($"/account/two-factor-login?email={Model.Email}&id={response.UserId}");
                 }
                 else
                 {

@@ -14,16 +14,6 @@ public class TwoFactorService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Providers/", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = true, WithBearer = true });
 
-    public async ValueTask<Response> GetProvidersAsync(string email) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/user-providers/{email}", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true });
-
-    public async ValueTask<Response> GetStateAsync(string email) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/state/{email}", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true });
-
     public async ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 

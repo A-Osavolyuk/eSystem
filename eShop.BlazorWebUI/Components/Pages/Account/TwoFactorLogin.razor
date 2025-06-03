@@ -1,10 +1,11 @@
-﻿@page "/account/two-factor-login/{Email}"
+﻿@page "/account/two-factor-login"
 
 @using Size = MudBlazor.Size
 
 @inherits PageBase
 
 @inject ITwoFactorService TwoFactorService
+@inject IUsersService UsersService
 @inject AuthenticationManager AuthenticationManager
 
 <Title Text="Login with 2FA"/>
@@ -148,7 +149,9 @@
 @code {
     [SupplyParameterFromForm] private SendTwoFactorTokenModel SendTwoFactorTokenModel { get; set; } = new();
     [SupplyParameterFromForm] private TwoFactorLoginModel TwoFactorLoginModel { get; set; } = new();
-    [Parameter] public string Email { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "id")] public Guid Id { get; set; }
 
     private MudStepperExtended stepper = new();
     private List<ProviderDto> providers = [];
@@ -168,7 +171,7 @@
 
     private async Task LoadProvidersAsync()
     {
-        var result = await TwoFactorService.GetProvidersAsync(Email);
+        var result = await UsersService.GetTwoFactorProvidersAsync(Id);
 
         if (result.Success)
         {
