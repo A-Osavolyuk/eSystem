@@ -1,0 +1,27 @@
+﻿@page "/account/locked-out"
+
+@inherits PageBase
+
+@inject IUsersService UsersService
+
+@code {
+    [SupplyParameterFromQuery(Name = "id")] public Guid Id { get; set; }
+
+    private LockoutModel Model { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsersService.GetLockoutStateAsync(Id);
+
+        if (result.Success)
+        {
+            var response = result.Get<LockoutStateDto>()!;
+            Model = Mapper.Map(response);
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+}
