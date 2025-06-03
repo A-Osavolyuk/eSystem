@@ -52,20 +52,12 @@ internal sealed class HandleOAuthLoginQueryHandler(
 
             if (securityToken is not null)
             {
-                var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
-                var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
-                var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken });
-
-                return Result.Success(link);
+                await tokenManager.RemoveAsync(user, cancellationToken);
             }
-            else
-            {
-                var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
-                var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
-                var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken });
 
-                return Result.Success(link);
-            }
+            var link = await GenerateLinkAsync(user, request.ReturnUri!, cancellationToken);
+
+            return Result.Success(link);
         }
 
         {
@@ -110,7 +102,7 @@ internal sealed class HandleOAuthLoginQueryHandler(
 
             var provider = request.Principal.Identity!.AuthenticationType!;
 
-            await messageService.SendMessageAsync(SenderType.Email, "oauth-registration", 
+            await messageService.SendMessageAsync(SenderType.Email, "oauth-registration",
                 new
                 {
                     TempPassword = tempPassword,
@@ -123,11 +115,18 @@ internal sealed class HandleOAuthLoginQueryHandler(
                     UserName = email,
                 }, cancellationToken);
 
-            var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
-            var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
-            var link = UrlGenerator.ActionLink(request.ReturnUri!, new { accessToken, refreshToken });
+            var link = await GenerateLinkAsync(user, request.ReturnUri!, cancellationToken);
 
             return Result.Success(link);
         }
+    }
+
+    private async Task<string> GenerateLinkAsync(UserEntity user, string returnUri, CancellationToken cancellationToken = default)
+    {
+        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+        var link = UrlGenerator.ActionLink(returnUri, new { accessToken, refreshToken });
+
+        return link;
     }
 }

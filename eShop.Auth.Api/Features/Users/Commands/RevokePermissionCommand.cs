@@ -30,22 +30,15 @@ internal sealed class RemoveUserFromPermissionCommandHandler(
             return Results.NotFound($"Cannot find permission {request.Request.PermissionName}.");
         }
 
-        var hasUserPermission =
-            await permissionManager.HasAsync(user, permission.Name, cancellationToken);
+        var hasUserPermission = await permissionManager.HasAsync(user, permission.Name, cancellationToken);
 
         if (!hasUserPermission)
         {
             return Result.Success("User does not have the permission.");
         }
 
-        var permissionResult =
-            await permissionManager.RevokeAsync(user, permission, cancellationToken);
+        var result = await permissionManager.RevokeAsync(user, permission, cancellationToken);
 
-        if (!permissionResult.Succeeded)
-        {
-            return permissionResult;
-        }
-
-        return Result.Success("Successfully removed user form permission.");
+        return result;
     }
 }

@@ -23,11 +23,6 @@ internal sealed class VerifyCodeCommandHandler(
         
         var result = await codeManager.VerifyAsync(user, request.Request.Code, request.Request.Type, cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-
-        return Result.Success("Code was successfully verified");
+        return result;
     }
 }

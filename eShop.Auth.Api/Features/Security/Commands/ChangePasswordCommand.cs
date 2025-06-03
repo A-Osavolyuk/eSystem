@@ -27,11 +27,7 @@ internal sealed class ChangePasswordCommandHandler(
         }
 
         var result = await userManager.ChangePasswordAsync(user, request.Request.OldPassword, request.Request.NewPassword, cancellationToken);
-        if (!result.Succeeded)
-        {
-            return result;
-        }
 
-        return Result.Success("Password has been successfully changed.");
+        return result;
     }
 }

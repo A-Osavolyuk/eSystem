@@ -28,11 +28,6 @@ internal sealed class AssignRoleCommandHandler(
 
         var result = await roleManager.AssignRoleAsync(user, role.Name!, cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-
-        return Result.Success("Role was successfully assigned");
+        return result;
     }
 }

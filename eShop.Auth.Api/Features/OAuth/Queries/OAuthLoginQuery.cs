@@ -31,6 +31,6 @@ internal sealed class OAuthLoginQueryHandler(
             AuthenticationProperties = properties
         });
         
-        return await Task.FromResult(result);
+        return result;
     }
 }

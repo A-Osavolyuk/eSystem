@@ -25,6 +25,6 @@ internal sealed class ConfirmResetPasswordCommandHandler(
 
         var resetResult = await securityManager.ResetPasswordAsync(user, request.Request.Code, request.Request.NewPassword);
 
-        return !resetResult.Succeeded ? resetResult : Result.Success("Your password has been successfully reset.");
+        return resetResult;
     }
 }

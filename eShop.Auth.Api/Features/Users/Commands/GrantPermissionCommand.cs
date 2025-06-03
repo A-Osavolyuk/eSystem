@@ -51,6 +51,6 @@ internal sealed class IssuePermissionCommandHandler(
             }
         }
 
-        return Result.Success("Successfully issued permissions.");
+        return Result.Success();
     }
 }

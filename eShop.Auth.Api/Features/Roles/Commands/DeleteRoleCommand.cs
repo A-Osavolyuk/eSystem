@@ -19,6 +19,6 @@ internal sealed class DeleteRoleCommandHandler(
         
         await roleManager.DeleteAsync(role, cancellationToken);
 
-        return Result.Success("Role was successfully deleted.");
+        return Result.Success();
     }
 }

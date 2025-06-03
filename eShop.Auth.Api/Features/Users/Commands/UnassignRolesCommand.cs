@@ -40,6 +40,6 @@ internal sealed class RemoveUserRolesCommandHandler(
             }
         }
 
-        return Result.Success("Roles were successfully removed from user");
+        return Result.Success();
     }
 }

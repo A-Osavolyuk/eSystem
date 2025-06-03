@@ -24,11 +24,6 @@ internal sealed record SetPersonalDataCommandHandler(
         var entity = Mapper.Map(request.Request);
         var result = await profileManager.SetAsync(user, entity, cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-
-        return Result.Success("Personal data was successfully set");
+        return result;
     }
 }

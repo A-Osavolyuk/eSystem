@@ -24,11 +24,6 @@ internal sealed class VerifyPhoneNumberCommandHandler(
 
         var result = await securityManager.ConfirmPhoneNumberAsync(user, request.Request.Code);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-
-        return Result.Success("Phone number was successfully verified");
+        return result;
     }
 }

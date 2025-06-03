@@ -30,11 +30,6 @@ internal sealed class ChangePersonalDataCommandHandler(
         var entity = Mapper.Map(request.Request);
         var result = await profileManager.UpdateAsync(user, entity, cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-
-        return Result.Success("Personal data was successfully updated");
+        return result;
     }
 }

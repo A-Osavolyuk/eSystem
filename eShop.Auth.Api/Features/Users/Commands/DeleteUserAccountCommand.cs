@@ -56,11 +56,6 @@ internal sealed class DeleteUserAccountCommandHandler(
 
         var accountResult = await userManager.DeleteAsync(user, cancellationToken);
 
-        if (!accountResult.Succeeded)
-        {
-            return accountResult;
-        }
-
-        return Result.Success("User account was successfully deleted.");
+        return accountResult;
     }
 }

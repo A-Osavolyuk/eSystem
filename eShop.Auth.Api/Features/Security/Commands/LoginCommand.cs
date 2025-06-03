@@ -53,6 +53,7 @@ internal sealed class LoginCommandHandler(
         
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+        
         return Result.Success(new LoginResponse()
         {
             AccessToken = accessToken,

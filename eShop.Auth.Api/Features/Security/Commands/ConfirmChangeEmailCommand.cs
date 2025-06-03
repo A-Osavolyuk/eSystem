@@ -25,6 +25,6 @@ internal sealed class ConfirmChangeEmailCommandHandler(
 
         var result = await securityManager.ChangeEmailAsync(user, request.Request.NewEmail, request.Request.CodeSet);
 
-        return !result.Succeeded ? result : Result.Success("Your email address was successfully changed.");
+        return result;
     }
 }
