@@ -19,7 +19,7 @@ public class UsersController(ISender sender) : ControllerBase
     [HttpGet("{id:guid}/roles")]
     public async ValueTask<ActionResult<Response>> GetUserRolesAsync(Guid id)
     {
-        var result = await sender.Send(new GetUserRolesQuery(id));
+        var result = await sender.Send(new GetRolesQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
@@ -33,7 +33,38 @@ public class UsersController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(Guid id)
     {
-        var result = await sender.Send(new GetUserProvidersQuery(id));
+        var result = await sender.Send(new GetProvidersQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Get lockout state")]
+    [EndpointDescription("Get lockout state")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}/lockout-state")]
+    [Authorize(Policy = "ReadUsersPolicy")]
+    public async ValueTask<ActionResult<Response>> GetStateAsync(Guid id)
+    {
+        var result = await sender.Send(new GetLockoutStateQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Get two-factor state")]
+    [EndpointDescription("Get two-factor state")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}/two-factor-state")]
+    [Authorize]
+    public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(Guid id)
+    {
+        var result = await sender.Send(new GetTwoFactorStateQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder()

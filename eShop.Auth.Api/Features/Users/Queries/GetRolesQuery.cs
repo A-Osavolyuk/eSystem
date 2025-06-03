@@ -2,16 +2,16 @@
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 
-internal sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
+internal sealed record GetRolesQuery(Guid Id) : IRequest<Result>;
 
 internal sealed class GetUserRolesQueryHandler(
     IUserManager userManager,
-    IRoleManager roleManager) : IRequestHandler<GetUserRolesQuery, Result>
+    IRoleManager roleManager) : IRequestHandler<GetRolesQuery, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
-    public async Task<Result> Handle(GetUserRolesQuery request,
+    public async Task<Result> Handle(GetRolesQuery request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Id, cancellationToken);

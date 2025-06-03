@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.DTOs;
 
-namespace eShop.Auth.Api.Features.TwoFactor.Queries;
+namespace eShop.Auth.Api.Features.Users.Queries;
 
 internal sealed record GetTwoFactorStateQuery(Guid Id)
     : IRequest<Result>;

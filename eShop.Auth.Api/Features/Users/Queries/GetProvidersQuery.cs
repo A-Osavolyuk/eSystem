@@ -1,15 +1,15 @@
 ﻿namespace eShop.Auth.Api.Features.Users.Queries;
 
-public record GetUserProvidersQuery(Guid Id) : IRequest<Result>;
+public record GetProvidersQuery(Guid Id) : IRequest<Result>;
 
 public class GetUserProvidersQueryHandler(
     IProviderManager providerManager,
-    IUserManager userManager) : IRequestHandler<GetUserProvidersQuery, Result>
+    IUserManager userManager) : IRequestHandler<GetProvidersQuery, Result>
 {
     private readonly IProviderManager providerManager = providerManager;
     private readonly IUserManager userManager = userManager;
 
-    public async Task<Result> Handle(GetUserProvidersQuery request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(GetProvidersQuery request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
 

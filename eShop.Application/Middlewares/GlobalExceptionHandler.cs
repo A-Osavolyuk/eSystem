@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace eShop.Application.Middlewares;
 
-public class GlobalExceptionHandler(
+public class  GlobalExceptionHandler(
     ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> logger = logger;

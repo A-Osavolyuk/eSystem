@@ -1,5 +1,4 @@
 ﻿using eShop.Auth.Api.Features.Lockout.Commands;
-using eShop.Auth.Api.Features.Lockout.Queries;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -11,20 +10,6 @@ namespace eShop.Auth.Api.Controllers.v1;
 public class LockoutController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
-    
-    [EndpointSummary("Get lockout state")]
-    [EndpointDescription("Get lockout state")]
-    [ProducesResponseType(200)]
-    [HttpGet("state/{id:guid}")]
-    [Authorize(Policy = "ReadUsersPolicy")]
-    public async ValueTask<ActionResult<Response>> GetStateAsync(Guid id)
-    {
-        var result = await sender.Send(new GetLockoutStateQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
     
     [EndpointSummary("Lockout")]
     [EndpointDescription("Lockout")]

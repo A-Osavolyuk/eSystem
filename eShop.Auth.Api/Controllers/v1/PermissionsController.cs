@@ -44,7 +44,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "RevokePermissionPolicy")]
     [HttpPost("revoke")]
-    public async ValueTask<ActionResult<Response>> Revokesync(
+    public async ValueTask<ActionResult<Response>> RevokeAsync(
         [FromBody] RevokePermissionRequest request)
     {
         var result = await sender.Send(new RevokePermissionCommand(request));

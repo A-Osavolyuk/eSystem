@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Features.Lockout.Queries;
+﻿namespace eShop.Auth.Api.Features.Users.Queries;
 
 public record GetLockoutStateQuery(Guid Id) : IRequest<Result>;
 

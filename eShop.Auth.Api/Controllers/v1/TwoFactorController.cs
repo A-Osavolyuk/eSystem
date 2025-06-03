@@ -1,5 +1,4 @@
 ﻿using eShop.Auth.Api.Features.TwoFactor.Commands;
-using eShop.Auth.Api.Features.TwoFactor.Queries;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -11,23 +10,6 @@ namespace eShop.Auth.Api.Controllers.v1;
 public class TwoFactorController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
-    
-    [EndpointSummary("Get two-factor state")]
-    [EndpointDescription("Get two-factor state")]
-    [ProducesResponseType(200)]
-    [HttpGet("state/{id:guid}")]
-    [Authorize]
-    public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(Guid id)
-    {
-        var result = await sender.Send(new GetTwoFactorStateQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder()
-                .Succeeded()
-                .WithResult(s.Value!)
-                .Build()),
-            ErrorHandler.Handle);
-    }
     
     [EndpointSummary("Login two-factor")]
     [EndpointDescription("Login with two-factor")]
