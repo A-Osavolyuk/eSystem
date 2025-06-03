@@ -37,7 +37,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
-    public async ValueTask<Response> RequestChangeEmailAsync(ChangeEmailRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> ChangeEmailAsync(ChangeEmailRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/request-change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
@@ -53,7 +53,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/refresh-token", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = false, WithBearer = true });
     
-    public async ValueTask<Response> RequestChangePhoneNumberAsync(ChangePhoneNumberRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> ChangePhoneNumberAsync(ChangePhoneNumberRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/request-change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
