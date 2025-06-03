@@ -17,4 +17,9 @@ public class UsersService(
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor-state", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = true, WithBearer = true });
+    
+    public async ValueTask<Response> GetLockoutStateAsync(Guid id) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/lockout-state", Method = HttpMethod.Get }, 
+            new HttpOptions { ValidateToken = false, WithBearer = false });
 }
