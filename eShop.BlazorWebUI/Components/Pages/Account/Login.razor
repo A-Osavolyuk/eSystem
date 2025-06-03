@@ -134,7 +134,7 @@
                 if (response!.TwoFactorEnabled)
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    NavigationManager.NavigateTo($"/account/two-factor-login?email={Model.Email}&id={response.UserId}");
+                    NavigationManager.NavigateTo($"/account/2fa/login?email={Model.Email}&id={response.UserId}");
                 }
                 else
                 {
@@ -154,7 +154,7 @@
     private void ExternalLogin(string providerName)
     {
         var gatewayUri = Configuration["Configuration:Services:Proxy:Gateway:Uri"]!;
-        var returnUri = NavigationManager.BaseUri + "account/oauth-login";
+        var returnUri = NavigationManager.BaseUri + "account/oauth/login";
         var authUrl = $"{gatewayUri}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}";
         NavigationManager.NavigateTo(authUrl);
     }
