@@ -56,6 +56,7 @@ internal sealed class LoginWith2FaCommandHandler(
 
         return Result.Success(new LoginResponse()
         {
+            UserId = user.Id,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             Message = "Successfully logged in.",
