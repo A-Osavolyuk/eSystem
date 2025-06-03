@@ -30,7 +30,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Get lockout state")]
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}/lockout-state")]
-    [Authorize(Policy = "ReadUsersPolicy")]
+    [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> GetStateAsync(Guid id)
     {
         var result = await sender.Send(new GetLockoutStateQuery(id));
@@ -44,7 +44,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Get two-factor state")]
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}/two-factor-state")]
-    [Authorize]
+    [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(Guid id)
     {
         var result = await sender.Send(new GetTwoFactorStateQuery(id));
