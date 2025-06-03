@@ -11,7 +11,7 @@ public class SecurityService(
 {
     public async ValueTask<Response> LoginAsync(LoginRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/login", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { ValidateToken = true, WithBearer = true });
+        new HttpOptions { ValidateToken = true, WithBearer = false });
     
     public async ValueTask<Response> ResendVerificationCodeAsync(ResendEmailVerificationCodeRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/code/resend", Method = HttpMethod.Post, Data = request },
@@ -23,7 +23,7 @@ public class SecurityService(
     
     public async ValueTask<Response> RegisterAsync(RegistrationRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/register", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { ValidateToken = true, WithBearer = true });
+        new HttpOptions { ValidateToken = true, WithBearer = false });
     
     public async ValueTask<Response> RequestResetPasswordAsync(ResetPasswordRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/request-reset", Method = HttpMethod.Post, Data = request },
