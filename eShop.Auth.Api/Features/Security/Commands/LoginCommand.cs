@@ -47,7 +47,8 @@ internal sealed class LoginCommandHandler(
             return Result.Success(new LoginResponse()
             {
                 IsLockedOut = lockoutState.IsActive,
-                TwoFactorEnabled = true
+                TwoFactorEnabled = true,
+                UserId = user.Id
             });
         }
         
@@ -58,6 +59,7 @@ internal sealed class LoginCommandHandler(
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
+            UserId = user.Id,
             Message = "Successfully logged in.",
             TwoFactorEnabled = false,
             IsLockedOut = lockoutState.IsActive,
