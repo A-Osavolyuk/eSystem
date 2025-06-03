@@ -39,7 +39,12 @@ internal sealed class LoginCommandHandler(
 
         if (lockoutState.IsActive)
         {
-            return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
+            return Result.Success(new LoginResponse()
+            {
+                UserId = user.Id,
+                Message = "Successfully logged in.",
+                IsLockedOut = lockoutState.IsActive,
+            });
         }
         
         if (user.TwoFactorEnabled)
@@ -61,7 +66,7 @@ internal sealed class LoginCommandHandler(
             RefreshToken = refreshToken,
             UserId = user.Id,
             Message = "Successfully logged in.",
-            TwoFactorEnabled = false,
+            TwoFactorEnabled = user.TwoFactorEnabled,
             IsLockedOut = lockoutState.IsActive,
         });
     }
