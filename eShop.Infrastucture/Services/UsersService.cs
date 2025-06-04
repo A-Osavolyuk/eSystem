@@ -22,4 +22,9 @@ public class UsersService(
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/lockout-state", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = false, WithBearer = false });
+
+    public async ValueTask<Response> GetPersonalDataAsync(Guid id) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/personal-data", Method = HttpMethod.Get }, 
+            new HttpOptions { ValidateToken = true, WithBearer = true });
 }
