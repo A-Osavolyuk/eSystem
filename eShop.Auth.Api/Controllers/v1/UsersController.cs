@@ -26,6 +26,20 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Get personal data")]
+    [EndpointDescription("Get personal data")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}/personal-data")]
+    [AllowAnonymous]
+    public async ValueTask<ActionResult<Response>> GetPersonalDataAsync(Guid id)
+    {
+        var result = await sender.Send(new GetPersonalDataQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Get lockout state")]
     [EndpointDescription("Get lockout state")]
     [ProducesResponseType(200)]
