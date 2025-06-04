@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using eShop.Domain.Stores;
-
-namespace eShop.Domain.Interfaces.Client;
+﻿namespace eShop.Domain.Interfaces.Client;
 
 public interface IUserStorage
 {

@@ -1,5 +1,4 @@
 ﻿using eShop.Domain.Common.Security;
-using eShop.Domain.Stores;
 
 namespace eShop.Infrastructure.Security;
 

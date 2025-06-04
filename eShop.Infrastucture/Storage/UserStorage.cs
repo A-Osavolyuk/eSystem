@@ -1,8 +1,4 @@
-﻿using eShop.Domain.Common.Security;
-using eShop.Domain.Stores;
-using eShop.Domain.Types;
-
-namespace eShop.Infrastructure.Storage;
+﻿namespace eShop.Infrastructure.Storage;
 
 public class UserStorage(ILocalStorageService localStorage) : IUserStorage
 {
