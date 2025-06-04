@@ -5,6 +5,8 @@
 @inject IUserStorage UserStorage
 @inject ISnackbar Snackbar
 @inject IConfiguration Configuration
+@inject ITokenProvider TokenProvider
+@inject TokenHandler TokenHandler
 
 <MudAvatar @onclick="DrawerToggle">
     <MudImage
@@ -79,7 +81,7 @@
 
 @code {
     private bool isDrawerOpen = false;
-    private UserModel userModel = new();
+    private string userName = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -98,20 +100,12 @@
 
     private async Task LoadUserAsync()
     {
-        var data = await UserStorage.GetAsync();
-
-        if (data is not null)
-        {
-            userModel = Mapper.Map(data);
-        }
-    }
-
-    private string GetDefaultAvatar()
-    {
-        var uri = Configuration["Configuration:General:DefaultValues:DefaultAvatar"]!.ToString();
-        return uri;
+        var token = await TokenProvider.GetTokenAsync();
+        var rawToken = TokenHandler.ReadToken(token)!;
+        var claims = TokenHandler.ReadClaims(rawToken);
+        userName = claims.First(x => x.Type == AppClaimTypes.UserName).Value;
     }
 
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
-    private string GetUserName() => string.IsNullOrEmpty(userModel.UserName) ? string.Empty : userModel.UserName;
+    private string GetUserName() => string.IsNullOrEmpty(userName) ? string.Empty : userName;
 }
