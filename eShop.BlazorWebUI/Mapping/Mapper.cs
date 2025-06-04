@@ -2,6 +2,7 @@
 using eShop.BlazorWebUI.Models;
 using eShop.Domain.DTOs;
 using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Stores;
 using eShop.Domain.Types;
 
 namespace eShop.BlazorWebUI.Mapping;

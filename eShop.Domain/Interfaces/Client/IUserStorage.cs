@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using eShop.Domain.Stores;
 
 namespace eShop.Domain.Interfaces.Client;
 

@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Types;
+﻿namespace eShop.Domain.Stores;
 
 public class UserStore
 {

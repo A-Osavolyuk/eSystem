@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Common.Security;
+using eShop.Domain.Stores;
 using eShop.Domain.Types;
 
 namespace eShop.Infrastructure.Storage;
