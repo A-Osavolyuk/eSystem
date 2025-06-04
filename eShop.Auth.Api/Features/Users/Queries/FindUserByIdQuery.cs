@@ -7,12 +7,12 @@ internal sealed record FindUserByIdQuery(Guid UserId) : IRequest<Result>;
 
 internal sealed class FindUserByIdQueryHandler(
     IPermissionManager permissionManager,
-    IProfileManager profileManager,
+    IPersonalDataManager personalDataManager,
     IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<FindUserByIdQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly IProfileManager profileManager = profileManager;
+    private readonly IPersonalDataManager personalDataManager = personalDataManager;
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
@@ -28,7 +28,7 @@ internal sealed class FindUserByIdQueryHandler(
         }
 
         var accountData = Mapper.Map(user);
-        var personalData = await profileManager.FindAsync(user, cancellationToken);
+        var personalData = await personalDataManager.FindAsync(user, cancellationToken);
         var roles = await roleManager.GetByUserAsync(user, cancellationToken);
         var permissions = await permissionManager.GetByUserAsync(user, cancellationToken);
 

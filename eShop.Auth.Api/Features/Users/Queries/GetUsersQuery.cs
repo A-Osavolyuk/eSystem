@@ -7,12 +7,12 @@ internal sealed record GetUsersQuery() : IRequest<Result>;
 
 internal sealed class GetUsersQueryHandler(
     IPermissionManager permissionManager,
-    IProfileManager profileManager,
+    IPersonalDataManager personalDataManager,
     IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<GetUsersQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly IProfileManager profileManager = profileManager;
+    private readonly IPersonalDataManager personalDataManager = personalDataManager;
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
@@ -31,7 +31,7 @@ internal sealed class GetUsersQueryHandler(
         foreach (var user in usersList)
         {
             var accountData = Mapper.Map(user);
-            var personalData = await profileManager.FindAsync(user, cancellationToken);
+            var personalData = await personalDataManager.FindAsync(user, cancellationToken);
             var roles = await roleManager.GetByUserAsync(user, cancellationToken);
             var permissions = await permissionManager.GetByUserAsync(user, cancellationToken);
             

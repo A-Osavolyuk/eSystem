@@ -8,12 +8,12 @@ internal sealed record FindUserByEmailQuery(string Email) : IRequest<Result>;
 internal sealed class FindUserByEmailQueryHandler(
     IUserManager userManager,
     IRoleManager roleManager,
-    IProfileManager profileManager,
+    IPersonalDataManager personalDataManager,
     IPermissionManager permissionManager) : IRequestHandler<FindUserByEmailQuery, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
-    private readonly IProfileManager profileManager = profileManager;
+    private readonly IPersonalDataManager personalDataManager = personalDataManager;
     private readonly IPermissionManager permissionManager = permissionManager;
 
     public async Task<Result> Handle(FindUserByEmailQuery request,
@@ -27,7 +27,7 @@ internal sealed class FindUserByEmailQueryHandler(
         }
 
         var accountData = Mapper.Map(user);
-        var personalData = await profileManager.FindAsync(user, cancellationToken);
+        var personalData = await personalDataManager.FindAsync(user, cancellationToken);
         var roles = await roleManager.GetByUserAsync(user, cancellationToken);
         var permissions = await permissionManager.GetByUserAsync(user, cancellationToken);
 

@@ -5,13 +5,13 @@ internal sealed record DeleteUserAccountCommand(Guid Id)
 
 internal sealed class DeleteUserAccountCommandHandler(
     IPermissionManager permissionManager,
-    IProfileManager profileManager,
+    IPersonalDataManager personalDataManager,
     ITokenManager tokenManager,
     IRoleManager roleManager,
     IUserManager userManager) : IRequestHandler<DeleteUserAccountCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly IProfileManager profileManager = profileManager;
+    private readonly IPersonalDataManager personalDataManager = personalDataManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IRoleManager roleManager = roleManager;
     private readonly IUserManager userManager = userManager;
@@ -40,7 +40,7 @@ internal sealed class DeleteUserAccountCommandHandler(
             return permissionsResult;
         }
 
-        var personalDataResult = await profileManager.DeleteAsync(user, cancellationToken);
+        var personalDataResult = await personalDataManager.DeleteAsync(user, cancellationToken);
 
         if (!personalDataResult.Succeeded)
         {

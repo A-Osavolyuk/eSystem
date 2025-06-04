@@ -7,10 +7,10 @@ internal sealed record ChangePersonalDataCommand(ChangePersonalDataRequest Reque
 
 internal sealed class ChangePersonalDataCommandHandler(
     IUserManager userManager,
-    IProfileManager profileManager) : IRequestHandler<ChangePersonalDataCommand, Result>
+    IPersonalDataManager personalDataManager) : IRequestHandler<ChangePersonalDataCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IProfileManager profileManager = profileManager;
+    private readonly IPersonalDataManager personalDataManager = personalDataManager;
 
     public async Task<Result> Handle(ChangePersonalDataCommand request,
         CancellationToken cancellationToken)
@@ -28,7 +28,7 @@ internal sealed class ChangePersonalDataCommandHandler(
         }
 
         var entity = Mapper.Map(request.Request);
-        var result = await profileManager.UpdateAsync(user, entity, cancellationToken);
+        var result = await personalDataManager.UpdateAsync(user, entity, cancellationToken);
 
         return result;
     }

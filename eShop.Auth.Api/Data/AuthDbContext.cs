@@ -32,11 +32,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.NormalizedUserName).HasMaxLength(64);
             entity.Property(x => x.PhoneNumber).HasMaxLength(17);
             entity.Property(x => x.PasswordHash).HasMaxLength(1000);
-            
-            entity.HasOne(p => p.PersonalData)
-                .WithOne()
-                .HasForeignKey<UserEntity>(p => p.PersonalDataId)
-                .IsRequired(false);
         });
         
         builder.Entity<RoleEntity>(entity =>
@@ -73,6 +68,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             
             entity.Property(x => x.Gender)
                 .HasConversion(value => value.ToString(), x => Enum.Parse<Gender>(x));
+
+            entity.HasOne(p => p.User)
+                .WithOne()
+                .HasForeignKey<PersonalDataEntity>(p => p.UserId);
         });
 
         builder.Entity<PermissionEntity>(entity =>

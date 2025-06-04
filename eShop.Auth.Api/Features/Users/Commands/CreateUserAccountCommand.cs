@@ -7,12 +7,12 @@ internal sealed record CreateUserAccountCommand(CreateUserAccountRequest Request
 
 internal sealed class CreateUserAccountCommandHandler(
     IPermissionManager permissionManager,
-    IProfileManager profileManager,
+    IPersonalDataManager personalDataManager,
     IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<CreateUserAccountCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly IProfileManager profileManager = profileManager;
+    private readonly IPersonalDataManager personalDataManager = personalDataManager;
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
@@ -38,7 +38,7 @@ internal sealed class CreateUserAccountCommandHandler(
             return accountResult;
         }
 
-        await profileManager.SetAsync(user, new PersonalDataEntity()
+        await personalDataManager.SetAsync(user, new PersonalDataEntity()
         {
             FirstName = request.Request.FirstName,
             LastName = request.Request.LastName,

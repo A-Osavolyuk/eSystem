@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Interfaces;
 
-public interface IProfileManager
+public interface IPersonalDataManager
 {
     public ValueTask<PersonalDataEntity?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
 
