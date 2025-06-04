@@ -14,9 +14,10 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         return entity;
     }
 
-    public async ValueTask<Result> SetAsync(UserEntity userEntity, PersonalDataEntity personalData,
+    public async ValueTask<Result> CreateAsync(UserEntity userEntity, PersonalDataEntity personalData,
         CancellationToken cancellationToken = default)
     {
+        personalData.UserId = userEntity.Id;
         await context.PersonalData.AddAsync(personalData, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 

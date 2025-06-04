@@ -22,7 +22,7 @@ internal sealed record SetPersonalDataCommandHandler(
         }
 
         var entity = Mapper.Map(request.Request);
-        var result = await personalDataManager.SetAsync(user, entity, cancellationToken);
+        var result = await personalDataManager.CreateAsync(user, entity, cancellationToken);
 
         return result;
     }
