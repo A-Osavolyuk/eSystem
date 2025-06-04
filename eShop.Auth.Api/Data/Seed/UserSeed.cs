@@ -18,6 +18,7 @@ public class UserSeed : Seed<UserEntity, Guid>
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 TwoFactorEnabled = true,
+                AccountConfirmed = true,
                 PhoneNumber = "380686100242",
             }
         ];
