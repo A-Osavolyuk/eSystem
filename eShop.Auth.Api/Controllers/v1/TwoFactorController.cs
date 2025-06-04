@@ -46,7 +46,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Send two-factor token")]
     [ProducesResponseType(200)]
     [HttpPost("send-token")]
-    [Authorize]
+    [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> SendTokenAsync(
         [FromBody] SendTwoFactorTokenRequest request)
     {
