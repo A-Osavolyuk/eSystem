@@ -42,6 +42,6 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
         var principal = await signInManager.AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
         
         var result = await sender.Send(new HandleOAuthLoginQuery(principal, remoteError, returnUri));
-        return result.Match(s => Redirect(Convert.ToString(s.Message!)!), ErrorHandler.Handle);
+        return result.Match(s => Redirect(s.Message), ErrorHandler.Handle);
     }
 }
