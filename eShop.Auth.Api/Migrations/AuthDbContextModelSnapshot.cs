@@ -159,7 +159,13 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("PersonalData");
                 });
@@ -321,9 +327,6 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<Guid?>("PersonalDataId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(17)
@@ -344,10 +347,6 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PersonalDataId")
-                        .IsUnique()
-                        .HasFilter("[PersonalDataId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -518,6 +517,17 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Resource");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithOne()
+                        .HasForeignKey("eShop.Auth.Api.Entities.PersonalDataEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.RefreshTokenEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "UserEntity")
@@ -546,15 +556,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.PersonalDataEntity", "PersonalData")
-                        .WithOne()
-                        .HasForeignKey("eShop.Auth.Api.Entities.UserEntity", "PersonalDataId");
-
-                    b.Navigation("PersonalData");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>

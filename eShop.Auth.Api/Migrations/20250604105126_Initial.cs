@@ -12,23 +12,6 @@ namespace eShop.Auth.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "PersonalData",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PersonalData", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Providers",
                 columns: table => new
                 {
@@ -76,7 +59,6 @@ namespace eShop.Auth.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PersonalDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
@@ -93,11 +75,6 @@ namespace eShop.Auth.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_PersonalData_PersonalDataId",
-                        column: x => x.PersonalDataId,
-                        principalTable: "PersonalData",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -154,6 +131,7 @@ namespace eShop.Auth.Api.Migrations
                     Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
+                    Permanent = table.Column<bool>(type: "bit", nullable: false),
                     StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -193,6 +171,30 @@ namespace eShop.Auth.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_LoginTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PersonalData",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonalData", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PersonalData_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -375,6 +377,12 @@ namespace eShop.Auth.Api.Migrations
                 column: "ResourceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PersonalData_UserId",
+                table: "PersonalData",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
                 table: "RefreshTokens",
                 column: "UserId",
@@ -401,13 +409,6 @@ namespace eShop.Auth.Api.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_PersonalDataId",
-                table: "Users",
-                column: "PersonalDataId",
-                unique: true,
-                filter: "[PersonalDataId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserSecret_UserId",
                 table: "UserSecret",
                 column: "UserId",
@@ -425,6 +426,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "LoginTokens");
+
+            migrationBuilder.DropTable(
+                name: "PersonalData");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
@@ -458,9 +462,6 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Resources");
-
-            migrationBuilder.DropTable(
-                name: "PersonalData");
         }
     }
 }

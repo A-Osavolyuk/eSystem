@@ -7,14 +7,6 @@ public static class DbContextExtensions
     public static async Task SeedAsync(this AuthDbContext context, bool isStoreOperation = false,
         CancellationToken cancellationToken = default)
     {
-        if (!await context.PersonalData.AnyAsync(cancellationToken))
-        {
-            var seed = new PersonalDataSeed();
-
-            await context.PersonalData.AddRangeAsync(seed.Get(), cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        
         if (!await context.Providers.AnyAsync(cancellationToken))
         {
             var seed = new ProviderSeed();
@@ -28,6 +20,14 @@ public static class DbContextExtensions
             var seed = new UserSeed();
 
             await context.Users.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        
+        if (!await context.PersonalData.AnyAsync(cancellationToken))
+        {
+            var seed = new PersonalDataSeed();
+
+            await context.PersonalData.AddRangeAsync(seed.Get(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
 
