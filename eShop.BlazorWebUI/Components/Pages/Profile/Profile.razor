@@ -1,4 +1,5 @@
 ﻿@page "/account/profile"
+@using System.Globalization
 @using PersonalDataModel = eShop.BlazorWebUI.Models.PersonalDataModel
 
 @inject IUserStorage UserStorage
@@ -179,8 +180,9 @@
 
         if (result.Success)
         {
-            var response = result.Get<PersonalDataModel>();
-            PersonalDataModel = response;
+            var response = result.Get<PersonalDataDto>()!;
+            var model = Mapper.Map(response);
+            PersonalDataModel = model;
         }
         else
         {

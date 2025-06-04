@@ -78,4 +78,15 @@ public static class Mapper
             StartDate = source.StartDate
         };
     }
+
+    public static PersonalDataModel Map(PersonalDataDto source)
+    {
+        return new PersonalDataModel()
+        {
+            FirstName = source.FirstName,
+            LastName = source.LastName,
+            BirthDate = source.BirthDate.ToString("D", new CultureInfo("en-GB")),
+            Gender = source.Gender,
+        };
+    }
 }
