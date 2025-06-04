@@ -2,8 +2,6 @@
 using eShop.BlazorWebUI.Models;
 using eShop.Domain.DTOs;
 using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Stores;
-using eShop.Domain.Types;
 
 namespace eShop.BlazorWebUI.Mapping;
 
@@ -52,17 +50,6 @@ public static class Mapper
         {
             Email = source.Email,
             Provider = source.Provider
-        };
-    }
-    
-    public static UserModel Map(UserStore source)
-    {
-        return new UserModel()
-        {
-            Id = source.Id,
-            UserName = source.UserName,
-            Email = source.Email,
-            PhoneNumber = source.PhoneNumber ?? "-",
         };
     }
 
