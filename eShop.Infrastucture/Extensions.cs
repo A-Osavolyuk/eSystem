@@ -29,7 +29,6 @@ public static class Extensions
         builder.Services.AddHttpClient<IFavoritesService, FavoritesService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IStoreService, StoreService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<ISellerService, SellerService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IProfileService, ProfileService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<ITwoFactorService, TwoFactorService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IUsersService, UsersService>(ServiceLifetime.Scoped);
 

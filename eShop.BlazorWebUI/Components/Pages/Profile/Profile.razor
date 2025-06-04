@@ -1,6 +1,8 @@
 ﻿@page "/account/profile"
+@using PersonalDataModel = eShop.BlazorWebUI.Models.PersonalDataModel
 
 @inject IUserStorage UserStorage
+@inject IUsersService UsersService
 
 @attribute [Authorize]
 
@@ -45,7 +47,7 @@
                                 </MudItem>
                                 <MudItem xs="9">
                                     <MudText>
-                                        @model.UserName
+                                        @UserModel.UserName
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="12">
@@ -58,7 +60,7 @@
                                 </MudItem>
                                 <MudItem xs="9">
                                     <MudText>
-                                        @model.Email
+                                        @UserModel.Email
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="12">
@@ -71,7 +73,7 @@
                                 </MudItem>
                                 <MudItem xs="9">
                                     <MudText>
-                                        @(string.IsNullOrEmpty(model.PhoneNumber) ? "-" : model.PhoneNumber)
+                                        @(string.IsNullOrEmpty(UserModel.PhoneNumber) ? "-" : UserModel.PhoneNumber)
                                     </MudText>
                                 </MudItem>
                             </MudGrid>
@@ -85,16 +87,29 @@
                                         Personal information
                                     </MudText>
                                 </MudItem>
-                                @if (model.HasPersonalData)
+                                @if (PersonalDataModel is not null)
                                 {
                                     <MudItem xs="3">
                                         <MudText>
-                                            Full name
+                                            First name
                                         </MudText>
                                     </MudItem>
                                     <MudItem xs="9">
                                         <MudText>
-                                            @model.FullName
+                                            @PersonalDataModel.FirstName
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                    <MudItem xs="3">
+                                        <MudText>
+                                            Last name
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText>
+                                            @PersonalDataModel.LastName
                                         </MudText>
                                     </MudItem>
                                     <MudItem xs="12">
@@ -107,7 +122,7 @@
                                     </MudItem>
                                     <MudItem xs="9">
                                         <MudText>
-                                            @model.BirthDate
+                                            @PersonalDataModel.BirthDate
                                         </MudText>
                                     </MudItem>
                                     <MudItem xs="12">
@@ -120,7 +135,7 @@
                                     </MudItem>
                                     <MudItem xs="9">
                                         <MudText>
-                                            @model.Gender
+                                            @PersonalDataModel.Gender
                                         </MudText>
                                     </MudItem>
                                 }
@@ -134,20 +149,42 @@
 </MudGrid>
 
 @code {
-    private ProfileModel model = new();
+    private UserModel UserModel { get; set; } = new();
+    private PersonalDataModel? PersonalDataModel { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var user = await UserStorage.GetAsync();
-
-            if (user is not null)
-            {
-                model = Mapper.Map(user);
-            }
+            await LoadUserAsync();
+            await LoadPersonalDataAsync();
             
             StateHasChanged();
+        }
+    }
+
+    private async Task LoadUserAsync()
+    {
+        var user = await UserStorage.GetAsync();
+
+        if (user is not null)
+        {
+            UserModel = Mapper.Map(user);
+        }
+    }
+
+    private async Task LoadPersonalDataAsync()
+    {
+        var result = await UsersService.GetPersonalDataAsync(UserModel.Id);
+
+        if (result.Success)
+        {
+            var response = result.Get<PersonalDataModel>();
+            PersonalDataModel = response;
+        }
+        else
+        {
+            PersonalDataModel = null;
         }
     }
 

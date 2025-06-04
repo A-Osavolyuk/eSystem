@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.Security;
-using eShop.Domain.Models;
+using eShop.Domain.Types;
 
 namespace eShop.Infrastructure.Storage;
 
@@ -13,7 +13,7 @@ public class UserStorage(ILocalStorageService localStorage) : IUserStorage
     {
         if (!await localStorage.ContainKeyAsync(UserKey))
         {
-            var user = new UserModel
+            var user = new UserStore
             {
                 Id = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value),
                 Email = claims.First(x => x.Type == AppClaimTypes.Email).Value,
@@ -25,9 +25,9 @@ public class UserStorage(ILocalStorageService localStorage) : IUserStorage
         }
     }
 
-    public async ValueTask<UserModel?> GetAsync()
+    public async ValueTask<UserStore?> GetAsync()
     {
-        var user = await localStorage.GetItemAsync<UserModel>(UserKey);
+        var user = await localStorage.GetItemAsync<UserStore>(UserKey);
         return user;   
     }
 
