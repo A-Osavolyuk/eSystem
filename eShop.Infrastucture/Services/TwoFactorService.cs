@@ -24,6 +24,11 @@ public class TwoFactorService(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/send-token", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true });
 
+    public async ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/generate-qr-code", Method = HttpMethod.Post, Data = request }, 
+            new HttpOptions { ValidateToken = true, WithBearer = true });
+
     public async ValueTask<Response> ChangeStateAsync(ChangeTwoFactorStateRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/change-state", Method = HttpMethod.Post, Data = request }, 

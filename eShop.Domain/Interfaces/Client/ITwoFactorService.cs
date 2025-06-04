@@ -9,4 +9,5 @@ public interface ITwoFactorService
     public ValueTask<Response> ChangeStateAsync(ChangeTwoFactorStateRequest request);
     public ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request);
     public ValueTask<Response> SendTwoFactorTokenAsync(SendTwoFactorTokenRequest request);
+    public ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request);
 }
