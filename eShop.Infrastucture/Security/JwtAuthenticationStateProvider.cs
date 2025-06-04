@@ -69,8 +69,8 @@ public class JwtAuthenticationStateProvider(
             var claims = tokenHandler.ReadClaims(rawToken);
             claimsPrincipal = new(new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme));
 
-            var store = Map(claims);
-            await userStorage.SaveAsync(store);
+            var userId = Map(claims);
+            await userStorage.SaveAsync(userId);
         }
 
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
@@ -98,16 +98,9 @@ public class JwtAuthenticationStateProvider(
     }
 
 
-    private UserStore Map(List<Claim> claims)
+    private Guid Map(List<Claim> claims)
     {
-        var user = new UserStore
-        {
-            Id = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value),
-            Email = claims.First(x => x.Type == AppClaimTypes.Email).Value,
-            UserName = claims.First(x => x.Type == AppClaimTypes.UserName).Value,
-            PhoneNumber = claims.FirstOrDefault(x => x.Type == AppClaimTypes.PhoneNumber)?.Value ?? null
-        };
-
-        return user;
+        var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value);
+        return userId;
     }
 }
