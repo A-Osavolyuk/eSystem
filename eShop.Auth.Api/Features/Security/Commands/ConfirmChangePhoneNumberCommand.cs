@@ -8,11 +8,9 @@ internal sealed record ConfirmChangePhoneNumberCommand(ConfirmPhoneNumberChangeR
 
 internal sealed class ConfirmChangePhoneNumberCommandHandler(
     IUserManager userManager,
-    ISecurityManager securityManager,
     ITokenManager tokenManager)
     : IRequestHandler<ConfirmChangePhoneNumberCommand, Result>
 {
-    private readonly ISecurityManager securityManager = securityManager;
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
 
@@ -26,8 +24,12 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
             return Results.InternalServerError(
                 $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
         }
+        
+        var currentPhoneNumberCode = request.Request.CurrentPhoneNumber;
+        var newPhoneNumberCode = request.Request.NewPhoneNumberCode;
 
-        var result = await securityManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber, request.Request.CodeSet);
+        var result = await userManager.ChangePhoneNumberAsync(user, currentPhoneNumberCode, newPhoneNumberCode, 
+            request.Request.NewPhoneNumber, cancellationToken);
 
         if (!result.Succeeded)
         {

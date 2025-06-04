@@ -11,7 +11,6 @@ internal sealed record HandleOAuthLoginQuery(
 
 internal sealed class HandleOAuthLoginQueryHandler(
     IPermissionManager permissionManager,
-    ISecurityManager securityManager,
     ITokenManager tokenManager,
     IUserManager userManager,
     IMessageService messageService,
@@ -19,7 +18,6 @@ internal sealed class HandleOAuthLoginQueryHandler(
     ILockoutManager lockoutManager) : IRequestHandler<HandleOAuthLoginQuery, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly ISecurityManager securityManager = securityManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
@@ -69,7 +67,7 @@ internal sealed class HandleOAuthLoginQueryHandler(
                 EmailConfirmed = true
             };
 
-            var tempPassword = securityManager.GenerateRandomPassword(18);
+            var tempPassword = userManager.GenerateRandomPassword(18);
             var result = await userManager.CreateAsync(user, tempPassword, cancellationToken);
 
             if (!result.Succeeded)

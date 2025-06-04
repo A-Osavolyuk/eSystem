@@ -5,13 +5,9 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record ConfirmChangeEmailCommand(ConfirmEmailChangeRequest Request)
     : IRequest<Result>;
 
-internal sealed class ConfirmChangeEmailCommandHandler(
-    IUserManager userManager,
-    ISecurityManager securityManager)
-    : IRequestHandler<ConfirmChangeEmailCommand, Result>
+internal sealed class ConfirmChangeEmailCommandHandler(IUserManager userManager) : IRequestHandler<ConfirmChangeEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ISecurityManager securityManager = securityManager;
 
     public async Task<Result> Handle(ConfirmChangeEmailCommand request,
         CancellationToken cancellationToken)
@@ -23,7 +19,11 @@ internal sealed class ConfirmChangeEmailCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.CurrentEmail}.");
         }
 
-        var result = await securityManager.ChangeEmailAsync(user, request.Request.NewEmail, request.Request.CodeSet);
+        var currentEmailCode = request.Request.CurrentEmailCode;
+        var newEmailCode = request.Request.NewEmailCode;
+        
+        var result = await userManager.ChangeEmailAsync(user, currentEmailCode, newEmailCode, 
+            request.Request.NewEmail, cancellationToken);
 
         return result;
     }

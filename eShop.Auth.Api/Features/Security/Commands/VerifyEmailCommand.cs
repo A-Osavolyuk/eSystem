@@ -7,11 +7,9 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 internal sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<Result>;
 
 internal sealed class VerifyEmailCommandHandler(
-    ISecurityManager securityManager,
     IUserManager userManager,
     IMessageService messageService) : IRequestHandler<VerifyEmailCommand, Result>
 {
-    private readonly ISecurityManager securityManager = securityManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
 
@@ -25,7 +23,7 @@ internal sealed class VerifyEmailCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var confirmResult = await securityManager.ConfirmEmailAsync(user, request.Request.Code);
+        var confirmResult = await userManager.ConfirmEmailAsync(user, request.Request.Code, cancellationToken);
 
         if (!confirmResult.Succeeded)
         {

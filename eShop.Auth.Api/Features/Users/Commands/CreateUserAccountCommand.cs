@@ -8,13 +8,11 @@ internal sealed record CreateUserAccountCommand(CreateUserAccountRequest Request
 internal sealed class CreateUserAccountCommandHandler(
     IPermissionManager permissionManager,
     IProfileManager profileManager,
-    ISecurityManager securityManager,
     IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<CreateUserAccountCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IProfileManager profileManager = profileManager;
-    private readonly ISecurityManager securityManager = securityManager;
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
 
@@ -32,7 +30,7 @@ internal sealed class CreateUserAccountCommandHandler(
             PhoneNumberConfirmed = true,
         };
 
-        var password = securityManager.GenerateRandomPassword(18);
+        var password = userManager.GenerateRandomPassword(18);
         var accountResult = await userManager.CreateAsync(user, password, cancellationToken);
 
         if (!accountResult.Succeeded)

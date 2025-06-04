@@ -6,11 +6,9 @@ internal sealed record ConfirmResetPasswordCommand(ConfirmPasswordResetRequest R
     : IRequest<Result>;
 
 internal sealed class ConfirmResetPasswordCommandHandler(
-    ISecurityManager securityManager,
     IUserManager userManager)
     : IRequestHandler<ConfirmResetPasswordCommand, Result>
 {
-    private readonly ISecurityManager securityManager = securityManager;
     private readonly IUserManager userManager = userManager;
 
     public async Task<Result> Handle(ConfirmResetPasswordCommand request,
@@ -23,7 +21,8 @@ internal sealed class ConfirmResetPasswordCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        var resetResult = await securityManager.ResetPasswordAsync(user, request.Request.Code, request.Request.NewPassword);
+        var resetResult = await userManager.ResetPasswordAsync(user, request.Request.Code, 
+            request.Request.NewPassword, cancellationToken);
 
         return resetResult;
     }

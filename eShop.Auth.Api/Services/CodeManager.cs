@@ -59,6 +59,9 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
             return Results.NotFound("Code not found");
         }
 
+        context.Codes.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+        
         return Result.Success();
     }
 

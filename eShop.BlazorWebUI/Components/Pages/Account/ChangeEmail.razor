@@ -15,8 +15,7 @@
         var request = new ConfirmEmailChangeRequest()
         {
             CurrentEmail = CurrentEmail,
-            NewEmail = NewEmail,
-            CodeSet = new CodeSet()
+            NewEmail = NewEmail
         };
 
         var result = await SecurityService.ConfirmChangeEmailAsync(request);
