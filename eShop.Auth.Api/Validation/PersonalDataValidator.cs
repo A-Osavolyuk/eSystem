@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Validation;
 
-public class PersonalDataValidator : Validator<ChangePersonalDataRequest>
+public class PersonalDataValidator : Validator<UpdatePersonalDataRequest>
 {
     public PersonalDataValidator()
     {

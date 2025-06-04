@@ -1,18 +1,17 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.Account.Commands;
+namespace eShop.Auth.Api.Features.PersonalData.Commands;
 
-internal sealed record ChangePersonalDataCommand(ChangePersonalDataRequest Request)
-    : IRequest<Result>;
+public sealed record UpdatePersonalDataCommand(UpdatePersonalDataRequest Request) : IRequest<Result>;
 
-internal sealed class ChangePersonalDataCommandHandler(
+public sealed class UpdatePersonalDataCommandHandler(
     IUserManager userManager,
-    IPersonalDataManager personalDataManager) : IRequestHandler<ChangePersonalDataCommand, Result>
+    IPersonalDataManager personalDataManager) : IRequestHandler<UpdatePersonalDataCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPersonalDataManager personalDataManager = personalDataManager;
 
-    public async Task<Result> Handle(ChangePersonalDataCommand request,
+    public async Task<Result> Handle(UpdatePersonalDataCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);

@@ -17,7 +17,7 @@ public static class Mapper
         };
     }
 
-    public static PersonalDataEntity Map(ChangePersonalDataRequest request)
+    public static PersonalDataEntity Map(UpdatePersonalDataRequest request)
     {
         return new PersonalDataEntity()
         {

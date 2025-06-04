@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.Account.Commands;
+namespace eShop.Auth.Api.Features.PersonalData.Commands;
 
 internal sealed record SetPersonalDataCommand(SetPersonalDataRequest Request)
     : IRequest<Result>;
