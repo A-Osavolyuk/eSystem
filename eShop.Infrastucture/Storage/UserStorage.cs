@@ -8,20 +8,20 @@ public class UserStorage(ILocalStorageService localStorage) : IUserStorage
 {
     private readonly ILocalStorageService localStorage = localStorage;
 
-    private const string UserKey = "user";
+    private const string UserKey = "userId";
 
-    public async ValueTask SaveAsync(UserStore store)
+    public async ValueTask SaveAsync(Guid userId)
     {
         if (!await localStorage.ContainKeyAsync(UserKey))
         {
-            await localStorage.SetItemAsync(UserKey, store);
+            await localStorage.SetItemAsync(UserKey, userId);
         }
     }
 
-    public async ValueTask<UserStore?> GetAsync()
+    public async ValueTask<Guid> GetAsync()
     {
-        var user = await localStorage.GetItemAsync<UserStore>(UserKey);
-        return user;   
+        var userId = await localStorage.GetItemAsync<Guid>(UserKey);
+        return userId;   
     }
 
     public async ValueTask ClearAsync() => await localStorage.RemoveItemAsync(UserKey);
