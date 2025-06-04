@@ -28,7 +28,7 @@ internal sealed class ChangePersonalDataCommandHandler(
         }
 
         var entity = Mapper.Map(request.Request);
-        var result = await personalDataManager.UpdateAsync(user, entity, cancellationToken);
+        var result = await personalDataManager.UpdateAsync(entity, cancellationToken);
 
         return result;
     }

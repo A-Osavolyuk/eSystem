@@ -38,7 +38,7 @@ internal sealed class CreateUserAccountCommandHandler(
             return accountResult;
         }
 
-        await personalDataManager.CreateAsync(user, new PersonalDataEntity()
+        await personalDataManager.CreateAsync(new PersonalDataEntity()
         {
             FirstName = request.Request.FirstName,
             LastName = request.Request.LastName,

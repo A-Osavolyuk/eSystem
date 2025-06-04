@@ -39,8 +39,15 @@ internal sealed class DeleteUserAccountCommandHandler(
         {
             return permissionsResult;
         }
+        
+        var personalDataEntity = await personalDataManager.FindAsync(user, cancellationToken);
 
-        var personalDataResult = await personalDataManager.DeleteAsync(user, cancellationToken);
+        if (personalDataEntity is null)
+        {
+            return Results.NotFound("Not found personal data");
+        }
+
+        var personalDataResult = await personalDataManager.DeleteAsync(personalDataEntity, cancellationToken);
 
         if (!personalDataResult.Succeeded)
         {

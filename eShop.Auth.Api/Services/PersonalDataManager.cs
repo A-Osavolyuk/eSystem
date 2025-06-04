@@ -14,30 +14,19 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         return entity;
     }
 
-    public async ValueTask<Result> CreateAsync(UserEntity userEntity, PersonalDataEntity personalData,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(PersonalDataEntity personalData, CancellationToken cancellationToken = default)
     {
-        personalData.UserId = userEntity.Id;
         await context.PersonalData.AddAsync(personalData, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> UpdateAsync(UserEntity userEntity, PersonalDataEntity personalData,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> UpdateAsync(PersonalDataEntity personalData, CancellationToken cancellationToken = default)
     {
-        var data = await context.PersonalData
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
-
-        if (data is null)
-        {
-            return Results.NotFound("Cannot find personal data");
-        }
-
         var newData = new PersonalDataEntity()
         {
-            Id = data.Id,
+            Id = personalData.Id,
             Gender = personalData.Gender,
             FirstName = personalData.FirstName,
             LastName = personalData.LastName,
@@ -50,18 +39,9 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         return Result.Success();
     }
 
-    public async ValueTask<Result> DeleteAsync(UserEntity userEntity,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> DeleteAsync(PersonalDataEntity personalData, CancellationToken cancellationToken = default)
     {
-        var data = await context.PersonalData
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
-
-        if (data is null)
-        {
-            return Results.NotFound("Cannot find personal data");
-        }
-
-        context.PersonalData.Remove(data);
+        context.PersonalData.Remove(personalData);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

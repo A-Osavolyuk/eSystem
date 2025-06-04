@@ -3,13 +3,7 @@
 public interface IPersonalDataManager
 {
     public ValueTask<PersonalDataEntity?> FindAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
-
-    public ValueTask<Result> CreateAsync(UserEntity userEntity, PersonalDataEntity personalData,
-        CancellationToken cancellationToken = default);
-
-    public ValueTask<Result> UpdateAsync(UserEntity userEntity, PersonalDataEntity personalData,
-        CancellationToken cancellationToken = default);
-
-    public ValueTask<Result> DeleteAsync(UserEntity userEntity,
-        CancellationToken cancellationToken = default);
+    public ValueTask<Result> CreateAsync(PersonalDataEntity personalData, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UpdateAsync(PersonalDataEntity personalData, CancellationToken cancellationToken = default);
+    public ValueTask<Result> DeleteAsync(PersonalDataEntity personalData, CancellationToken cancellationToken = default);
 }
