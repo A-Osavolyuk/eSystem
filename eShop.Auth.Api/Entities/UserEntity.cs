@@ -3,7 +3,6 @@
 public class UserEntity : IEntity<Guid>
 {
     public Guid Id { get; init; }
-    public Guid? PersonalDataId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string NormalizedEmail { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;
@@ -17,7 +16,6 @@ public class UserEntity : IEntity<Guid>
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }
     
-    public PersonalDataEntity? PersonalData { get; init; }
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
 }
