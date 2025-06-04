@@ -10,19 +10,11 @@ public class UserStorage(ILocalStorageService localStorage) : IUserStorage
 
     private const string UserKey = "user";
 
-    public async ValueTask SaveAsync(List<Claim> claims)
+    public async ValueTask SaveAsync(UserStore store)
     {
         if (!await localStorage.ContainKeyAsync(UserKey))
         {
-            var user = new UserStore
-            {
-                Id = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value),
-                Email = claims.First(x => x.Type == AppClaimTypes.Email).Value,
-                UserName = claims.First(x => x.Type == AppClaimTypes.UserName).Value,
-                PhoneNumber = claims.FirstOrDefault(x => x.Type == AppClaimTypes.PhoneNumber)?.Value ?? null
-            };
-        
-            await localStorage.SetItemAsync(UserKey, user);
+            await localStorage.SetItemAsync(UserKey, store);
         }
     }
 
