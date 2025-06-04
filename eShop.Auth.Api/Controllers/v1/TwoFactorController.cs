@@ -56,4 +56,19 @@ public class TwoFactorController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Generate QR code")]
+    [EndpointDescription("Generate QR code")]
+    [ProducesResponseType(200)]
+    [HttpPost("generate-qr-code")]
+    [Authorize]
+    public async ValueTask<ActionResult<Response>> GenerateQrCodeAsync(
+        [FromBody] GenerateQrCodeRequest request)
+    {
+        var result = await sender.Send(new GenerateQrCodeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
 }

@@ -3,9 +3,12 @@
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ITwoFactorManager), ServiceLifetime.Scoped)]
-public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
+public sealed class TwoFactorManager(
+    AuthDbContext context,
+    ISecretManager secretManager) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
+    private readonly ISecretManager secretManager = secretManager;
     private const int ExpirationMinutes = 30;
 
     public async ValueTask<Result> EnableAsync(UserEntity user,
@@ -29,22 +32,30 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return Result.Success();
     }
 
-    public async ValueTask<QrCode> GenerateQrCodeAsync(UserEntity user, string secret,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<string> GenerateQrCodeAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         const string issuer = "eShop";
-        var qrCode = GenerateQrCode(user.Email, secret, issuer);
+        var secretEntity = await secretManager.FindAsync(user, cancellationToken);
 
-        return await Task.FromResult(qrCode);
+        if (secretEntity is null)
+        {
+            var secret = await secretManager.GenerateAsync(user, cancellationToken);
+            var qrCode = GenerateQrCode(user.Email, secret, issuer);
+            return qrCode;
+        }
+        else
+        {
+            var qrCode = GenerateQrCode(user.Email, secretEntity.Secret, issuer);
+            return qrCode;
+        }
     }
     
-    private QrCode GenerateQrCode(string email, string secret, string issuer)
+    private string GenerateQrCode(string email, string secret, string issuer)
     {
 
         var otpUri = new OtpUri(OtpType.Totp, secret, email, issuer);
         var url = otpUri.ToString();
-        var qrCode = new QrCode() { Url = url };
         
-        return qrCode;
+        return url;
     }
 }
