@@ -36,12 +36,18 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddMediatR(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddMediatR(x => { x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>(); });
+        builder.Services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
+        });
     }
 
     private static void AddGrpc(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddGrpc(options => { options.EnableDetailedErrors = true; });
+        builder.Services.AddGrpc(options =>
+        {
+            options.EnableDetailedErrors = true;
+        });
     }
 
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)
@@ -83,8 +89,8 @@ public static class HostApplicationBuilderExtensions
                 var settings =
                     configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Google");
 
-                options.ClientId = settings.ClientId ?? "";
-                options.ClientSecret = settings.ClientSecret ?? "";
+                options.ClientId = settings.ClientId;
+                options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
             })
@@ -93,8 +99,8 @@ public static class HostApplicationBuilderExtensions
                 var settings =
                     configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Facebook");
 
-                options.ClientId = settings.ClientId ?? "";
-                options.ClientSecret = settings.ClientSecret ?? "";
+                options.ClientId = settings.ClientId;
+                options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
             })
@@ -103,8 +109,8 @@ public static class HostApplicationBuilderExtensions
                 var settings =
                     configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Microsoft");
 
-                options.ClientId = settings.ClientId ?? "";
-                options.ClientSecret = settings.ClientSecret ?? "";
+                options.ClientId = settings.ClientId;
+                options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
             })
