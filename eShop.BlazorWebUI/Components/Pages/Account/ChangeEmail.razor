@@ -15,117 +15,144 @@
                             ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
             <ChildContent>
                 <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="6">
-                            <MudPaper Outlined="true" Class="pa-5">
-                                <MudForm @ref="changeEmailForm" Validation="ChangeEmailValidator">
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem xs="12">
-                                            <MudText Class="mb-1">
-                                                To change email, you should enter new email address.
-                                                Please, enter new email address.
-                                            </MudText>
-                                        </MudItem>
-                                        <MudItem xs="12">
-                                            <MudTextField
-                                                @bind-Value="ChangeEmailModel.NewEmail"
-                                                For="() => ChangeEmailModel.NewEmail"
-                                                Label="New email"
-                                                Variant="Variant.Outlined"
-                                                Immediate="true"
-                                                Clearable="true"/>
-                                        </MudItem>
-                                        <MudItem xs="12">
-                                            <MudButton
-                                                FullWidth="true"
-                                                Variant="Variant.Filled"
-                                                Color="Color.Primary"
-                                                ButtonType="ButtonType.Button"
-                                                OnClick="async () => await OnChangeEmailAsync()">
-                                                Change
-                                            </MudButton>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudForm>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="6">
+                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                    <MudText Align="Align.Center" Typo="Typo.h4">
+                                        Email change
+                                    </MudText>
+                                </MudPaper>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudPaper Outlined="true" Class="pa-5">
+                                    <MudForm @ref="changeEmailForm" Validation="ChangeEmailValidator">
+                                        <MudGrid Justify="Justify.Center">
+                                            <MudItem xs="12">
+                                                <MudText Class="mb-1">
+                                                    To change email, you should enter new email address.
+                                                    Please, enter new email address.
+                                                </MudText>
+                                            </MudItem>
+                                            <MudItem xs="12">
+                                                <MudTextField
+                                                    @bind-Value="ChangeEmailModel.NewEmail"
+                                                    For="() => ChangeEmailModel.NewEmail"
+                                                    Label="New email"
+                                                    Variant="Variant.Outlined"
+                                                    Immediate="true"
+                                                    Clearable="true"/>
+                                            </MudItem>
+                                            <MudItem xs="12">
+                                                <MudButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="async () => await OnChangeEmailAsync()">
+                                                    Change
+                                                </MudButton>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudForm>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
                 </MudStepExtended>
                 <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Confirmation">
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="6">
-                            <MudPaper Outlined="true" Class="pa-5">
-                                <MudForm>
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem xs="12">
-                                            <MudText Class="mb-2">
-                                                Enter code from letter we sent your current email address
-                                            </MudText>
-                                        </MudItem>
-                                        <MudItem xs="7">
-                                            <MudCodeInput
-                                                Count="6"
-                                                Margin="Margin.Normal" Spacing="1"
-                                                @bind-Value="ConfirmChangeEmailModel.CurrentEmailCode"
-                                                Variant="Variant.Outlined"
-                                                Required/>
-                                        </MudItem>
-                                        <MudItem xs="12">
-                                            <MudButton
-                                                FullWidth="true"
-                                                Variant="Variant.Filled"
-                                                Color="Color.Primary"
-                                                ButtonType="ButtonType.Button"
-                                                OnClick="async () => await StepNextAsync()">
-                                                Confirm
-                                            </MudButton>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudForm>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="6">
+                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                    <MudText Align="Align.Center" Typo="Typo.h4">
+                                        Code confirmation
+                                    </MudText>
+                                </MudPaper>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudPaper Outlined="true" Class="pa-5">
+                                    <MudForm>
+                                        <MudGrid Justify="Justify.Center">
+                                            <MudItem xs="12">
+                                                <MudText Class="mb-2">
+                                                    Enter code from letter we sent your current email address
+                                                </MudText>
+                                            </MudItem>
+                                            <MudItem xs="7">
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal" Spacing="1"
+                                                    @bind-Value="ConfirmChangeEmailModel.CurrentEmailCode"
+                                                    Variant="Variant.Outlined"
+                                                    Required/>
+                                            </MudItem>
+                                            <MudItem xs="12">
+                                                <MudButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="async () => await StepNextAsync()">
+                                                    Confirm
+                                                </MudButton>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudForm>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
                 </MudStepExtended>
                 <MudStepExtended Order="2" Icon="@Icons.Material.Filled.Check" Title="Verification">
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="6">
-                            <MudPaper Outlined="true" Class="pa-5">
-                                <MudForm>
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem xs="12">
-                                            <MudText Class="mb-2">
-                                                Enter code from letter we sent you to: @ChangeEmailModel.NewEmail
-                                            </MudText>
-                                        </MudItem>
-                                        <MudItem xs="7">
-                                            <MudCodeInput
-                                                Count="6"
-                                                Margin="Margin.Normal" Spacing="1"
-                                                @bind-Value="ConfirmChangeEmailModel.NewEmailCode"
-                                                Variant="Variant.Outlined"
-                                                Required/>
-                                        </MudItem>
-                                        <MudItem xs="12">
-                                            <MudButton
-                                                FullWidth="true"
-                                                Variant="Variant.Filled"
-                                                Color="Color.Primary"
-                                                ButtonType="ButtonType.Button"
-                                                OnClick="async () => await OnConfirmEmailChangeAsync()">
-                                                Verify
-                                            </MudButton>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudForm>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="6">
+                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                    <MudText Align="Align.Center" Typo="Typo.h4">
+                                        Email verification
+                                    </MudText>
+                                </MudPaper>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudPaper Outlined="true" Class="pa-5">
+                                    <MudForm>
+                                        <MudGrid Justify="Justify.Center">
+                                            <MudItem xs="12">
+                                                <MudText Class="mb-2">
+                                                    Enter code from letter we sent you to: @ChangeEmailModel.NewEmail
+                                                </MudText>
+                                            </MudItem>
+                                            <MudItem xs="7">
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal" Spacing="1"
+                                                    @bind-Value="ConfirmChangeEmailModel.NewEmailCode"
+                                                    Variant="Variant.Outlined"
+                                                    Required/>
+                                            </MudItem>
+                                            <MudItem xs="12">
+                                                <MudButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="async () => await OnConfirmEmailChangeAsync()">
+                                                    Verify
+                                                </MudButton>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudForm>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
                 </MudStepExtended>
                 <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Email changed" IsResultStep="true">
                     <ChildContent>
-                        <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
-                                       Variant="Variant.Filled" Color="Color.Success"/>
                         <div class="d-flex flex-column align-center justify-center" style="height: 200px">
+                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
+                                           Variant="Variant.Filled" Color="Color.Success"/>
                             <MudText Style="width: 55ch; margin: auto">
                                 Your email address was successfully changed.
                                 You will be redirected to login page to re-sign up with a new email address in 5
