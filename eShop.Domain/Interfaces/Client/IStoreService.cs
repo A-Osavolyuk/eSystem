@@ -1,11 +1,9 @@
 ﻿using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Storage;
 
 namespace eShop.Domain.Interfaces.Client;
 
 public interface IStoreService
 {
-    public ValueTask<Response> RemoveUserAvatarAsync(string userId);
-    public ValueTask<Response> UploadUserAvatarAsync(string userId, IBrowserFile file);
-    public ValueTask<Response> GetUserAvatarAsync(string userId);
-    public ValueTask<Response> UploadProductImagesAsync(IReadOnlyList<IBrowserFile> files, Guid productId);
+    public ValueTask<Response> UploadFilesAsync(UploadFilesRequest request);
 }

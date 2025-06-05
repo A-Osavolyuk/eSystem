@@ -94,6 +94,9 @@ public class ApiClient(
                 }
             }
 
+            var metadata = JsonConvert.SerializeObject(request.Metadata);
+            content.Add(new StringContent(metadata), "metadata");
+
             message.Content = content;
 
             var httpResponse = await httpClient.SendAsync(message);
