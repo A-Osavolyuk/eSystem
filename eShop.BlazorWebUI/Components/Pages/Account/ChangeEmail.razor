@@ -1,35 +1,210 @@
 ﻿@page "/account/change-email/"
 
-@inject ISecurityService SecurityService
-@inject NavigationManager NavigationManager
+@inherits PageBase
+
+@using Size = MudBlazor.Size
+
+@inject ChangeEmailValidator ChangeEmailValidator
 @inject AuthenticationManager AuthenticationManager
-@inject ISnackbar Snackbar
+@inject ISecurityService SecurityService
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="8" Style="margin-top:150px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="6">
+                            <MudPaper Outlined="true" Class="pa-5">
+                                <MudForm @ref="changeEmailForm" Validation="ChangeEmailValidator">
+                                    <MudGrid Justify="Justify.Center">
+                                        <MudItem xs="12">
+                                            <MudText Class="mb-1">
+                                                To change email, you should enter new email address.
+                                                Please, enter new email address.
+                                            </MudText>
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudTextField
+                                                @bind-Value="ChangeEmailModel.NewEmail"
+                                                For="() => ChangeEmailModel.NewEmail"
+                                                Label="New email"
+                                                Variant="Variant.Outlined"
+                                                Immediate="true"
+                                                Clearable="true"/>
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudButton
+                                                FullWidth="true"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="async () => await OnChangeEmailAsync()">
+                                                Change
+                                            </MudButton>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudForm>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Confirmation">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="6">
+                            <MudPaper Outlined="true" Class="pa-5">
+                                <MudForm>
+                                    <MudGrid Justify="Justify.Center">
+                                        <MudItem xs="12">
+                                            <MudText Class="mb-2">
+                                                Enter code from letter we sent your current email address
+                                            </MudText>
+                                        </MudItem>
+                                        <MudItem xs="7">
+                                            <MudCodeInput
+                                                Count="6"
+                                                Margin="Margin.Normal" Spacing="1"
+                                                @bind-Value="ConfirmChangeEmailModel.CurrentEmailCode"
+                                                Variant="Variant.Outlined"
+                                                Required/>
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudButton
+                                                FullWidth="true"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="async () => await StepNextAsync()">
+                                                Confirm
+                                            </MudButton>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudForm>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudStepExtended>
+                <MudStepExtended Order="2" Icon="@Icons.Material.Filled.Check" Title="Verification">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="6">
+                            <MudPaper Outlined="true" Class="pa-5">
+                                <MudForm>
+                                    <MudGrid Justify="Justify.Center">
+                                        <MudItem xs="12">
+                                            <MudText Class="mb-2">
+                                                Enter code from letter we sent you to: @ChangeEmailModel.NewEmail
+                                            </MudText>
+                                        </MudItem>
+                                        <MudItem xs="7">
+                                            <MudCodeInput
+                                                Count="6"
+                                                Margin="Margin.Normal" Spacing="1"
+                                                @bind-Value="ConfirmChangeEmailModel.NewEmailCode"
+                                                Variant="Variant.Outlined"
+                                                Required/>
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudButton
+                                                FullWidth="true"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="async () => await OnConfirmEmailChangeAsync()">
+                                                Verify
+                                            </MudButton>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudForm>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudStepExtended>
+                <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Email changed" IsResultStep="true">
+                    <ChildContent>
+                        <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
+                                       Variant="Variant.Filled" Color="Color.Success"/>
+                        <div class="d-flex flex-column align-center justify-center" style="height: 200px">
+                            <MudText Style="width: 55ch; margin: auto">
+                                Your email address was successfully changed.
+                                You will be redirected to login page to re-sign up with a new email address in 5
+                                seconds.
+                            </MudText>
+                        </div>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "currentEmail")] public string CurrentEmail { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "newEmail")] public string NewEmail { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "token")] public string Token { get; set; } = string.Empty;
+    [SupplyParameterFromForm] private ChangeEmailModel ChangeEmailModel { get; set; } = new();
+    [SupplyParameterFromForm] private ConfirmChangeEmailModel ConfirmChangeEmailModel { get; set; } = new();
+
+    private MudStepperExtended stepper = new();
+    private MudForm changeEmailForm = new();
+
+    private Guid userId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var request = new ConfirmEmailChangeRequest()
+        if (firstRender)
         {
-            CurrentEmail = CurrentEmail,
-            NewEmail = NewEmail
-        };
+            userId = await UserStorage.GetAsync();
+        }
+    }
+
+    private async Task OnChangeEmailAsync()
+    {
+        await changeEmailForm.Validate();
+
+        if (changeEmailForm.IsValid)
+        {
+            var request = Mapper.Map(ChangeEmailModel);
+            request.UserId = userId;
+
+            var result = await SecurityService.ChangeEmailAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Confirmation codes were send", Severity.Success);
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task OnConfirmEmailChangeAsync()
+    {
+        var request = Mapper.Map(ConfirmChangeEmailModel);
+        request.UserId = userId;
+        request.NewEmail = ChangeEmailModel.NewEmail;
 
         var result = await SecurityService.ConfirmChangeEmailAsync(request);
 
         if (result.Success)
         {
+            Snackbar.Add("Email address was successfully changed", Severity.Success);
+            await StepNextAsync();
+            await Task.Delay(5000);
             await AuthenticationManager.LogOutAsync();
-            Snackbar.Add(result.Message, Severity.Success);
             NavigationManager.NavigateTo("/account/login");
         }
         else
         {
             Snackbar.Add(result.Message, Severity.Error);
-            NavigationManager.NavigateTo("/profile");
         }
     }
+
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+    }
+
 }

@@ -76,4 +76,23 @@ public static class Mapper
             Gender = source.Gender,
         };
     }
+
+    public static ChangeEmailRequest Map(ChangeEmailModel source)
+    {
+        return new ChangeEmailRequest()
+        {
+            UserId = source.UserId,
+            NewEmail = source.NewEmail
+        };
+    }
+    
+    public static ConfirmEmailChangeRequest Map(ConfirmChangeEmailModel source)
+    {
+        return new ConfirmEmailChangeRequest()
+        {
+            UserId = source.UserId,
+            CurrentEmailCode = source.CurrentEmailCode,
+            NewEmailCode = source.NewEmailCode
+        };
+    }
 }

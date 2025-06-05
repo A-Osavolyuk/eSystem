@@ -52,7 +52,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
             .SingleOrDefaultAsync(x => x.UserId == user.Id
                                        && x.Code == code
                                        && x.Type == type
-                                       && x.ExpireDate < DateTime.UtcNow, cancellationToken: cancellationToken);
+                                       && x.ExpireDate > DateTime.UtcNow, cancellationToken: cancellationToken);
 
         if (entity is null)
         {

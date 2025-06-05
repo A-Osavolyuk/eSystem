@@ -116,6 +116,7 @@ public sealed class UserManager(
         user.Email = newEmail;
         user.NormalizedEmail = newEmail.ToUpperInvariant();
         user.UpdateDate = DateTime.UtcNow;
+        user.UserName = newEmail;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
