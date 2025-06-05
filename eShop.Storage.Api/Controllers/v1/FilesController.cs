@@ -19,7 +19,7 @@ public class FilesController(
     [EndpointSummary("Get product images")]
     [EndpointDescription("Gets product images")]
     [ProducesResponseType(200)]
-    [HttpGet("get-product-images/{productId:guid}")]
+    [HttpPost("get-product-images/{productId:guid}")]
     public async ValueTask<ActionResult<Response>> GetProductImagesAsync(Guid productId)
     {
         var response = await sender.Send(new GetProductImagesQuery(productId));
@@ -31,7 +31,7 @@ public class FilesController(
     [EndpointSummary("Get user avatar")]
     [EndpointDescription("Gets user avatar")]
     [ProducesResponseType(200)]
-    [HttpGet("get-user-avatar/{userId:guid}")]
+    [HttpPost("get-user-avatar/{userId:guid}")]
     public async ValueTask<ActionResult<Response>> GetUserAvatarAsync(Guid userId)
     {
         var response = await sender.Send(new GetUserAvatarQuery(userId));
