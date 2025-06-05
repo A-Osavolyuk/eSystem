@@ -93,7 +93,7 @@ var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
     .WaitForReference(redisCache)
     .WaitForReference(cartDb);
 
-var filesStorageApi = builder.AddProject<Projects.eShop_Storage_Api>("storage-api")
+var storageApi = builder.AddProject<Projects.eShop_Storage_Api>("storage-api")
     .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
