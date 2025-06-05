@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Responses.API.Files;
+using eShop.Domain.Responses.API.Storage;
 using eShop.Storage.Api.Enums;
 using eShop.Storage.Api.Interfaces;
 
@@ -24,10 +24,9 @@ internal sealed class UploadProductImagesCommandHandler(
             return Results.InternalServerError($"Cannot upload images for product with ID {request.ProductId}.");
         }
 
-        return Result.Success(new UploadProductImagesResponse()
+        return Result.Success(new UploadFiledResponse()
         {
-            Images = list,
-            Message = "Files were uploaded successfully.",
+            Files = list,
         });
     }
 }

@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Responses.API.Files;
+using eShop.Domain.Responses.API.Storage;
 using eShop.Storage.Api.Enums;
 using eShop.Storage.Api.Interfaces;
 
@@ -16,17 +16,16 @@ internal sealed class UploadUserAvatarCommandHandler(
         CancellationToken cancellationToken)
     {
         var key = $"avatar_{request.UserId}";
-        var response = await service.UploadAsync(request.File, key, Container.Avatar);
+        var uri = await service.UploadAsync(request.File, key, Container.Avatar);
 
-        if (string.IsNullOrEmpty(response))
+        if (string.IsNullOrEmpty(uri))
         {
             return Results.InternalServerError($"Cannot upload avatar of user with ID {request.UserId}");
         }
 
-        return Result.Success(new UploadAvatarResponse()
+        return Result.Success(new UploadFiledResponse()
         {
-            Message = "User avatar was uploaded successfully",
-            Uri = response
+            Files = [uri]
         });
     }
 }
