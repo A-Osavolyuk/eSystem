@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Common.API;
+using eShop.Domain.Responses.API.Storage;
 using eShop.Storage.Api.Enums;
 using eShop.Storage.Api.Interfaces;
 
@@ -14,12 +15,14 @@ internal sealed class GetProductImagesQueryHandler(IStoreService service)
     public async Task<Result> Handle(GetProductImagesQuery request, CancellationToken cancellationToken)
     {
         var prefix = request.ProductId.ToString();
-        var response = await service.FindManyAsync(prefix, Container.Product);
+        var files = await service.FindManyAsync(prefix, Container.Product);
 
-        if (response.Count == 0)
+        if (files.Count == 0)
         {
             return Results.NotFound($"Cannot find product images for product with ID {request.ProductId}.");
         }
+
+        var response = new LoadFiledResponse() { Files = files };
 
         return Result.Success(response);
     }

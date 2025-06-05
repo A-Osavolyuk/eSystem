@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Common.API;
+using eShop.Domain.Responses.API.Storage;
 using eShop.Storage.Api.Enums;
 using eShop.Storage.Api.Interfaces;
 
@@ -14,13 +15,15 @@ internal sealed class GetUserAvatarQueryHandler(IStoreService service)
     public async Task<Result> Handle(GetUserAvatarQuery request, CancellationToken cancellationToken)
     {
         var key = request.UserId.ToString();
-        var response = await service.FindAsync(key, Container.Avatar);
+        var file = await service.FindAsync(key, Container.Avatar);
 
-        if (string.IsNullOrWhiteSpace(response))
+        if (string.IsNullOrWhiteSpace(file))
         {
             return Results.NotFound($"Cannot get avatar of user with ID {request.UserId}");
         }
 
-        return Result.Success(response);
+        var response = new LoadFiledResponse() { Files = [file] };
+
+        return Result.Success(file);
     }
 }

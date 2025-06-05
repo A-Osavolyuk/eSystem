@@ -24,9 +24,8 @@ internal sealed class UploadProductImagesCommandHandler(
             return Results.InternalServerError($"Cannot upload images for product with ID {request.ProductId}.");
         }
 
-        return Result.Success(new UploadFiledResponse()
-        {
-            Files = list,
-        });
+        var response = new UploadFiledResponse() { Files = list };
+        
+        return Result.Success(response);
     }
 }

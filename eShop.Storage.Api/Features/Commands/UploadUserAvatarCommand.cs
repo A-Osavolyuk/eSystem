@@ -23,9 +23,8 @@ internal sealed class UploadUserAvatarCommandHandler(
             return Results.InternalServerError($"Cannot upload avatar of user with ID {request.UserId}");
         }
 
-        return Result.Success(new UploadFiledResponse()
-        {
-            Files = [uri]
-        });
+        var response = new UploadFiledResponse() { Files = [uri] };
+        
+        return Result.Success(response);
     }
 }
