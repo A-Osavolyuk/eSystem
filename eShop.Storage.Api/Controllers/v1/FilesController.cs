@@ -1,8 +1,8 @@
 ﻿using eShop.Application.Utilities;
 using eShop.Domain.Common.API;
 using eShop.Storage.Api.Features.Commands;
-using eShop.Storage.Api.Features.Queries;
 using eShop.Storage.Api.Interfaces;
+using Newtonsoft.Json;
 
 namespace eShop.Storage.Api.Controllers.v1;
 
@@ -16,75 +16,16 @@ public class FilesController(
     private readonly IStoreService storeService = storeService;
     private readonly ISender sender = sender;
 
-    [EndpointSummary("Get product images")]
-    [EndpointDescription("Gets product images")]
+    [EndpointSummary("Upload files")]
+    [EndpointDescription("Uploads files")]
     [ProducesResponseType(200)]
-    [HttpPost("get-product-images/{productId:guid}")]
-    public async ValueTask<ActionResult<Response>> GetProductImagesAsync(Guid productId)
+    [HttpPost("upload")]
+    public async ValueTask<ActionResult<Response>> UploadProductImagesAsync(IFormFileCollection files, [FromForm] string metadata)
     {
-        var response = await sender.Send(new GetProductImagesQuery(productId));
-        return response.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Get user avatar")]
-    [EndpointDescription("Gets user avatar")]
-    [ProducesResponseType(200)]
-    [HttpPost("get-user-avatar/{userId:guid}")]
-    public async ValueTask<ActionResult<Response>> GetUserAvatarAsync(Guid userId)
-    {
-        var response = await sender.Send(new GetUserAvatarQuery(userId));
-        return response.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Upload product images")]
-    [EndpointDescription("Uploads product images")]
-    [ProducesResponseType(200)]
-    [HttpPost("upload-product-images/{productId:guid}")]
-    public async ValueTask<ActionResult<Response>> UploadProductImagesAsync(IFormFileCollection files, Guid productId)
-    {
-        var response = await sender.Send(new UploadProductImagesCommand(files, productId));
+        var metadataObject = JsonConvert.DeserializeObject<Metadata>(metadata)!;
+        var response = await sender.Send(new UploadFilesCommand(files, metadataObject));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Upload user avatar")]
-    [EndpointDescription("Uploads user avatar")]
-    [ProducesResponseType(200)]
-    [HttpPost("upload-user-avatar/{userId:guid}")]
-    public async ValueTask<ActionResult<Response>> UploadUserAvatarAsync(IFormFileCollection files, Guid userId)
-    {
-        var response = await sender.Send(new UploadUserAvatarCommand(files[0], userId));
-        return response.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Delete product images")]
-    [EndpointDescription("Deletes product images")]
-    [ProducesResponseType(200)]
-    [HttpDelete("delete-product-images/{productId:guid}")]
-    public async ValueTask<ActionResult<Response>> DeleteProductImagesAsync(Guid productId)
-    {
-        var response = await sender.Send(new DeleteProductImagesCommand(productId));
-        return response.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Delete user avatar")]
-    [EndpointDescription("Deletes user avatar")]
-    [ProducesResponseType(200)]
-    [HttpDelete("delete-user-avatar/{userId:guid}")]
-    public async ValueTask<ActionResult<Response>> DeleteUserAvatarAsync(Guid userId)
-    {
-        var response = await sender.Send(new DeleteUserAvatarCommand(userId));
-        return response.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 }
