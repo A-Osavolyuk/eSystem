@@ -2,9 +2,9 @@
 
 global using System.Collections.Immutable;
 global using Azure.Storage.Blobs;
-global using eShop.Files.Api.Enums;
-global using eShop.Files.Api.Extensions;
-global using eShop.Files.Api.Services;
+global using eShop.Storage.Api.Enums;
+global using eShop.Storage.Api.Extensions;
+global using eShop.Storage.Api.Services;
 global using FluentValidation;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;

@@ -1,3 +1,3 @@
-﻿namespace eShop.Files.Api;
+﻿namespace eShop.Storage.Api;
 
 public interface IAssemblyMarker;

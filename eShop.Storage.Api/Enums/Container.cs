@@ -1,4 +1,4 @@
-﻿namespace eShop.Files.Api.Enums;
+﻿namespace eShop.Storage.Api.Enums;
 
 public enum Container
 {

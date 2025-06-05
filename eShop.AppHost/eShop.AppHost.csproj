@@ -37,7 +37,7 @@
     <ProjectReference Include="..\eShop.BlazorWebUI\eShop.BlazorWebUI.csproj" />
     <ProjectReference Include="..\eShop.Cart.Api\eShop.Cart.Api.csproj" />
     <ProjectReference Include="..\eShop.EmailSender.Api\eShop.EmailSender.Api.csproj" />
-    <ProjectReference Include="..\eShop.Files.Api\eShop.Files.Api.csproj" />
+    <ProjectReference Include="..\eShop.Storage.Api\eShop.Storage.Api.csproj" />
     <ProjectReference Include="..\eShop.MessageBus\eShop.MessageBus.csproj" />
     <ProjectReference Include="..\eShop.Proxy\eShop.Proxy.csproj" />
     <ProjectReference Include="..\eShop.Product.Api\eShop.Product.Api.csproj" />

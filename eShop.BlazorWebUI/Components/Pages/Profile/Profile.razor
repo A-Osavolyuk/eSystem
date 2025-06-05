@@ -157,37 +157,33 @@
     {
         if (firstRender)
         {
-            // await LoadUserAsync();
-            // await LoadPersonalDataAsync();
+            await LoadUserAsync();
+            await LoadPersonalDataAsync();
             
             StateHasChanged();
         }
     }
 
-    // private async Task LoadUserAsync()
-    // {
-    //     var user = await UserStorage.GetAsync();
-    //
-    //     if (user is not null)
-    //     {
-    //         UserModel = Mapper.Map(user);
-    //     }
-    // }
-    //
-    // private async Task LoadPersonalDataAsync()
-    // {
-    //     var result = await UsersService.GetPersonalDataAsync(UserModel.Id);
-    //
-    //     if (result.Success)
-    //     {
-    //         var response = result.Get<PersonalDataDto>()!;
-    //         var model = Mapper.Map(response);
-    //         PersonalDataModel = model;
-    //     }
-    //     else
-    //     {
-    //         PersonalDataModel = null;
-    //     }
-    // }
+    private async Task LoadUserAsync()
+    {
+        
+    }
+   
+    private async Task LoadPersonalDataAsync()
+    {
+        var userId = await UserStorage.GetAsync();
+        var result = await UsersService.GetPersonalDataAsync(userId);
+   
+        if (result.Success)
+        {
+            var response = result.Get<PersonalDataDto>()!;
+            var model = Mapper.Map(response);
+            PersonalDataModel = model;
+        }
+        else
+        {
+            PersonalDataModel = null;
+        }
+    }
 
 }

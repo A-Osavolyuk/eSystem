@@ -1,8 +1,9 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Responses.API.Files;
-using eShop.Files.Api.Interfaces;
+using eShop.Storage.Api.Enums;
+using eShop.Storage.Api.Interfaces;
 
-namespace eShop.Files.Api.Features.Commands;
+namespace eShop.Storage.Api.Features.Commands;
 
 internal sealed record UploadProductImagesCommand(IFormFileCollection Files, Guid ProductId)
     : IRequest<Result>;

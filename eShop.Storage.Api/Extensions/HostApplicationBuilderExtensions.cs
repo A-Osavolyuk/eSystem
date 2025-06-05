@@ -1,9 +1,10 @@
 ﻿using eShop.Application.Extensions;
 using eShop.Domain.Interfaces.API;
-using eShop.Files.Api.Interfaces;
 using eShop.ServiceDefaults;
+using eShop.Storage.Api.Interfaces;
+using eShop.Storage.Api.Services;
 
-namespace eShop.Files.Api.Extensions;
+namespace eShop.Storage.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {

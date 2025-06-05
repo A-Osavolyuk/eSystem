@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
-namespace eShop.Files.Api.Services;
+namespace eShop.Storage.Api.Services;
 
 public class CacheService(IConnectionMultiplexer redis) : ICacheService
 {

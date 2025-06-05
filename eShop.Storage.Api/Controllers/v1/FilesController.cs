@@ -1,10 +1,10 @@
 ﻿using eShop.Application.Utilities;
 using eShop.Domain.Common.API;
-using eShop.Files.Api.Features.Commands;
-using eShop.Files.Api.Features.Queries;
-using eShop.Files.Api.Interfaces;
+using eShop.Storage.Api.Features.Commands;
+using eShop.Storage.Api.Features.Queries;
+using eShop.Storage.Api.Interfaces;
 
-namespace eShop.Files.Api.Controllers.v1;
+namespace eShop.Storage.Api.Controllers.v1;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]

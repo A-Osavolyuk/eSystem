@@ -1,7 +1,8 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Files.Api.Interfaces;
+using eShop.Storage.Api.Enums;
+using eShop.Storage.Api.Interfaces;
 
-namespace eShop.Files.Api.Features.Queries;
+namespace eShop.Storage.Api.Features.Queries;
 
 internal sealed record GetProductImagesQuery(Guid ProductId) : IRequest<Result>;
 

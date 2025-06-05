@@ -15,5 +15,4 @@ public static class ProjectResourceBuilderExtensions
             .WithEnvironment("Jwt__Audience", options.Audience)
             .WithEnvironment("Jwt__ExpirationDays", options.ExpirationDays.ToString());
     }
-
 }

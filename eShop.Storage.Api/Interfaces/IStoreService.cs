@@ -1,4 +1,6 @@
-﻿namespace eShop.Files.Api.Interfaces;
+﻿using eShop.Storage.Api.Enums;
+
+namespace eShop.Storage.Api.Interfaces;
 
 public interface IStoreService
 {

@@ -1,7 +1,7 @@
 ﻿using eShop.ServiceDefaults;
 using Scalar.AspNetCore;
 
-namespace eShop.Files.Api.Extensions;
+namespace eShop.Storage.Api.Extensions;
 
 public static class WebApplicationExtensions
 {

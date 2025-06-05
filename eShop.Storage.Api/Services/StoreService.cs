@@ -1,6 +1,7 @@
-﻿using eShop.Files.Api.Interfaces;
+﻿using eShop.Storage.Api.Enums;
+using eShop.Storage.Api.Interfaces;
 
-namespace eShop.Files.Api.Services;
+namespace eShop.Storage.Api.Services;
 
 internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStoreService
 {
