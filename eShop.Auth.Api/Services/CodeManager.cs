@@ -44,7 +44,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         return entity;
     }
 
-    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CodeType type,
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CodeType type, bool thenRemove = true,
         CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes
@@ -59,8 +59,11 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
             return Results.NotFound("Code not found");
         }
 
-        context.Codes.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        if (thenRemove)
+        {
+            context.Codes.Remove(entity);
+            await context.SaveChangesAsync(cancellationToken);
+        }
         
         return Result.Success();
     }
