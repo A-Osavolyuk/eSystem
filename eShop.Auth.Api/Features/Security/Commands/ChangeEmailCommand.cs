@@ -4,9 +4,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<Result>;
+public sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<Result>;
 
-internal sealed class RequestChangeEmailCommandHandler(
+public sealed class RequestChangeEmailCommandHandler(
     IMessageService messageService,
     ICodeManager codeManager,
     IUserManager userManager) : IRequestHandler<ChangeEmailCommand, Result>
@@ -18,11 +18,11 @@ internal sealed class RequestChangeEmailCommandHandler(
     public async Task<Result> Handle(ChangeEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.CurrentEmail, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.CurrentEmail}");
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
 
         var oldEmailCode = await codeManager.GenerateAsync(user, CodeType.Current, cancellationToken);
@@ -36,9 +36,9 @@ internal sealed class RequestChangeEmailCommandHandler(
             },
             new EmailCredentials()
             {
-                To = request.Request.CurrentEmail,
+                To = user.Email,
                 Subject = "Email change (step one)",
-                UserName = request.Request.CurrentEmail,
+                UserName = user.UserName,
             }, cancellationToken);
 
         await messageService.SendMessageAsync(SenderType.Email, "email-verification", 
@@ -48,11 +48,11 @@ internal sealed class RequestChangeEmailCommandHandler(
             },
             new EmailCredentials()
             {
-                To = request.Request.CurrentEmail,
-                Subject = "Email change (step one)",
-                UserName = request.Request.CurrentEmail,
+                To = request.Request.NewEmail,
+                Subject = "Email verification (step two)",
+                UserName = user.UserName,
             }, cancellationToken);
 
-        return Result.Success("We have sent a letter with instructions to your current and new email addresses");
+        return Result.Success();
     }
 }
