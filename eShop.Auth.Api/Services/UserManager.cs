@@ -79,13 +79,6 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string code, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var result = await codeManager.VerifyAsync(user, code, CodeType.Reset, cancellationToken);
-
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-        
         var passwordHash = PasswordHasher.HashPassword(newPassword);
 
         user.PasswordHash = passwordHash;

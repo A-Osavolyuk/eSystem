@@ -1,6 +1,7 @@
 ﻿using eShop.Domain.Common.Messaging;
 using eShop.Domain.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -40,7 +41,11 @@ internal sealed class RequestResetPasswordCommandHandler(
                 UserName = user.UserName!
             }, cancellationToken);
 
-        return Result.Success($"You have to confirm password reset. " +
-                              $"We have sent an email with instructions to your email address.");
+        var response = new ResetPasswordResponse()
+        {
+            UserId = user.Id
+        };
+
+        return Result.Success(response);
     }
 }

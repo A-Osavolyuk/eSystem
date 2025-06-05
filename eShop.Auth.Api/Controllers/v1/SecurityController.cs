@@ -80,7 +80,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new RequestResetPasswordCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
     

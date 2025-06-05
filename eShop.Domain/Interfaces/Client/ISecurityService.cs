@@ -7,7 +7,7 @@ public interface ISecurityService
 {
     public ValueTask<Response> LoginAsync(LoginRequest request);
     public ValueTask<Response> RegisterAsync(RegistrationRequest request);
-    public ValueTask<Response> RequestResetPasswordAsync(ResetPasswordRequest request);
+    public ValueTask<Response> ResetPasswordAsync(ResetPasswordRequest request);
     public ValueTask<Response> ConfirmResetPasswordAsync(ConfirmPasswordResetRequest request);
     public ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request);
     public ValueTask<Response> ChangeEmailAsync(ChangeEmailRequest request);

@@ -25,7 +25,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/register", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = false });
     
-    public async ValueTask<Response> RequestResetPasswordAsync(ResetPasswordRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> ResetPasswordAsync(ResetPasswordRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/request-reset", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
