@@ -17,7 +17,7 @@ internal sealed class UploadFilesCommandHandler(
         CancellationToken cancellationToken)
     {
         var metadata = request.Metadata;
-        var list = await service.UploadRangeAsync(request.Files, metadata.Identifier, metadata.Type);
+        var list = await service.UploadAsync(request.Files, metadata);
 
         if (list.Count == 0)
         {
