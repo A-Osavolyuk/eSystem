@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Extensions;
+using eShop.Domain.DTOs;
 using eShop.EmailSender.Api.Consumers;
 using eShop.EmailSender.Api.Services;
 
@@ -38,15 +39,16 @@ public static class HostApplicationBuilderExtensions
                 var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
                 cfg.Host(connectionString);
 
+                cfg.ReceiveEndpoint("email:account-recovery", e => e.ConfigureConsumer<AccountRecoveryConsumer>(context));
                 cfg.ReceiveEndpoint("email:password-reset", e => e.ConfigureConsumer<ResetPasswordConsumer>(context));
                 cfg.ReceiveEndpoint("email:email-change", e => e.ConfigureConsumer<ChangeEmailConsumer>(context));
                 cfg.ReceiveEndpoint("email:email-verification", e => e.ConfigureConsumer<VerifyEmailConsumer>(context));
                 cfg.ReceiveEndpoint("email:email-verified", e => e.ConfigureConsumer<EmailVerifiedConsumer>(context));
                 cfg.ReceiveEndpoint("email:two-factor-token", e => e.ConfigureConsumer<TwoFactorTokenConsumer>(context));
-                cfg.ReceiveEndpoint("email:external-provider-registration",
-                    e => e.ConfigureConsumer<ExternalLoginConsumer>(context));
+                cfg.ReceiveEndpoint("email:external-provider-registration", e => e.ConfigureConsumer<ExternalLoginConsumer>(context));
             });
 
+            x.AddConsumer<AccountRecoveryConsumer>();
             x.AddConsumer<VerifyEmailConsumer>();
             x.AddConsumer<ResetPasswordConsumer>();
             x.AddConsumer<ChangeEmailConsumer>();
