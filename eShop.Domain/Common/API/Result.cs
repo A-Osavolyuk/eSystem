@@ -66,14 +66,14 @@ public class Result
         return result;
     }
 
-    public TResponse Match<TResponse>(Func<Result, TResponse> success, Func<Error, TResponse> failure)
+    public TResponse Match<TResponse>(Func<Result, TResponse> success, Func<Result, TResponse> failure)
     {
         if (Succeeded)
         {
             return success(this);
         }
         
-        return failure(Error!);
+        return failure(this);
     }
 
     public Error GetError() => Error!;

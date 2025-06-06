@@ -6,7 +6,7 @@ public class ResponseBuilder
     private object? result;
     private bool isSucceeded;
 
-    public ResponseBuilder WithResult(object value)
+    public ResponseBuilder WithResult(object? value)
     {
         result = value;
         return this;

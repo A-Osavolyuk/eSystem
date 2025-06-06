@@ -4,13 +4,16 @@ namespace eShop.Application.Utilities;
 
 public static class ErrorHandler
 {
-    public static ActionResult<Response> Handle(Error error)
+    public static ActionResult<Response> Handle(Result result)
     {
+        var error = result.GetError();
+        var value = result.Value;
+        
         return new ObjectResult(
             new ResponseBuilder()
                 .Failed()
-                .WithResult(error)
-                .WithMessage(error.Message)
+                .WithResult(value)
+                .WithMessage(error.Details!)
                 .Build())
         {
             StatusCode = Convert.ToInt32(error.Code),
