@@ -116,6 +116,8 @@
 
     private MudForm form = new();
 
+    private MudTextField<string> field = new();
+
     private async Task OnSubmitAsync()
     {
         var request = Mapper.Map(Model);
@@ -147,7 +149,26 @@
         }
         else
         {
-            Snackbar.Add(result.Message, Severity.Error);
+            if (result.Result is not null)
+            {
+                var response = result.Get<LoginResponse>()!;
+                Model.FailedLoginAttempts = response.FailedLoginAttempts;
+
+                if (Model.FailedLoginAttempts < 5 && !response.IsLockedOut)
+                {
+                    var attemptsLeft = 5 - Model.FailedLoginAttempts;
+                    var message = $"Incorrect password. You have {attemptsLeft}, then account will be locked out.";
+                    Snackbar.Add(message, Severity.Error);
+                }
+                else
+                {
+                    Snackbar.Add(result.Message, Severity.Error);
+                }
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 
