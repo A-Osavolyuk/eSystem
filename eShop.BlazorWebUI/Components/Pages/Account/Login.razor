@@ -159,7 +159,7 @@
                 else
                 {
                     var redirectUri = response.Reason == LockoutReason.TooManyFailedLoginAttempts
-                        ? $"/account/recovery?id={response.UserId}"
+                        ? $"/account/recover?id={response.UserId}"
                         : $"/account/locked-out?id={response.UserId}";
 
                     Snackbar.Add(result.Message, Severity.Error);

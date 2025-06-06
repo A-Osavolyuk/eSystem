@@ -1,0 +1,78 @@
+﻿@page "/account/recover"
+
+@inherits PageBase
+
+@inject ISecurityService SecurityService
+
+<Title Text="Account recovery"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4">
+        <MudPaper Outlined="true" Class="pa-3" Style="margin-bottom: 15px">
+            <MudText Align="Align.Center" Typo="Typo.h4"> Account recovery</MudText>
+        </MudPaper>
+        <MudPaper Outlined="true" Class="pa-5">
+            <MudForm @ref="form" Model="Model">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12">
+                        <MudText Align="Align.Center" Class="mb-2">
+                            Your account was locked out due to reason: 'Too many failed login attempts'.
+                            To recover access to your account, please check your email address, we sent you the letter
+                            with recovery code.
+                        </MudText>
+                    </MudItem>
+                    <MudItem xs="7">
+                        <MudCodeInput
+                            Count="6"
+                            Margin="Margin.Normal" Spacing="1"
+                            @bind-Value="Model.Code"
+                            Variant="Variant.Outlined"
+                            Required/>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudButton
+                            FullWidth="true"
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            ButtonType="ButtonType.Button"
+                            OnClick="async () => await OnRecoverAsync()">
+                            Recover
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "id")]
+    private Guid UserId { get; set; }
+
+    [SupplyParameterFromForm] private RecoverAccountModel Model { get; set; } = new();
+
+    private MudForm form = new();
+
+    private async Task OnRecoverAsync()
+    {
+        var request = new RecoverAccountRequest()
+        {
+            Code = Model.Code,
+            UserId = UserId
+        };
+
+        var result = await SecurityService.RecoverAccountAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add("Account was successfully recovered", Severity.Success);
+            NavigationManager.NavigateTo("/account/login");
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+}
