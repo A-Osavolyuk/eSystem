@@ -57,7 +57,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Recover account")]
     [EndpointDescription("Recover account")]
     [ProducesResponseType(200)]
-    [Authorize]
+    [AllowAnonymous]
     [HttpPost("account/recover")]
     public async ValueTask<ActionResult<Response>> RecoverAsync([FromBody] RecoverAccountRequest request)
     {
