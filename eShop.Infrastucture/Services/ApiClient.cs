@@ -115,12 +115,7 @@ public class ApiClient(
     private async ValueTask<Response> HandleStatusCode(HttpResponseMessage httpResponse)
     {
         var json = await httpResponse.Content.ReadAsStringAsync();
-        var response = JsonConvert.DeserializeObject<Response>(json);
-
-        return httpResponse.StatusCode switch
-        {
-            HttpStatusCode.OK => response!,
-            _ => new ResponseBuilder().Failed().WithMessage(response!.Message).Build(),
-        };
+        var response = JsonConvert.DeserializeObject<Response>(json)!;
+        return response;
     }
 }
