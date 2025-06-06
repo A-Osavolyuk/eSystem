@@ -71,20 +71,21 @@ public class ApiClient(
 
                     if (httpRequest.Data is not null)
                     {
-                        var files = (httpRequest.Data as IReadOnlyList<IBrowserFile>)!;
-                        
-                        foreach (var file in files)
+                        if (httpRequest.Data is IReadOnlyList<IBrowserFile> files)
                         {
-                            var fileContent = new StreamContent(file.OpenReadStream());
-                            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                            content.Add(fileContent, "files", file.Name);
+                            foreach (var file in files)
+                            {
+                                var fileContent = new StreamContent(file.OpenReadStream());
+                                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                                content.Add(fileContent, "files", file.Name);
+                            }
                         }
+                        
+                        var metadata = JsonConvert.SerializeObject(httpRequest.Metadata);
+                        content.Add(new StringContent(metadata), "metadata");
+
+                        message.Content = content;
                     }
-
-                    var metadata = JsonConvert.SerializeObject(httpRequest.Metadata);
-                    content.Add(new StringContent(metadata), "metadata");
-
-                    message.Content = content;
                     
                     break;
                 }
