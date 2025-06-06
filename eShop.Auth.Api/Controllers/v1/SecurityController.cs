@@ -54,6 +54,20 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Recover account")]
+    [EndpointDescription("Recover account")]
+    [ProducesResponseType(200)]
+    [Authorize]
+    [HttpPost("account/recover")]
+    public async ValueTask<ActionResult<Response>> RecoverAsync([FromBody] RecoverAccountRequest request)
+    {
+        var result = await sender.Send(new RecoverAccountCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Change password")]
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
