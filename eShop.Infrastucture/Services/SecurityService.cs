@@ -62,4 +62,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/confirm-change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<Response> RecoverAccountAsync(RecoverAccountRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/account/recover", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
 }
