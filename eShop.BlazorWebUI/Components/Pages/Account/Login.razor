@@ -34,13 +34,13 @@
                     Variant="Variant.Outlined"/>
 
                 <MudLoadingButton
-                    LoadingAdornment="Adornment.End" 
+                    LoadingAdornment="Adornment.End"
                     ButtonType="ButtonType.Button"
                     OnClick="async () => await OnSubmitAsync()"
                     StartIcon="@Icons.Material.Filled.Login"
                     Disabled="@(string.IsNullOrEmpty(Model.Password) || string.IsNullOrEmpty(Model.Email))"
-                    Variant="Variant.Filled" 
-                    Color="Color.Primary" 
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
                     Class="mt-3"
                     FullWidth="true">
                     Log In
@@ -50,45 +50,45 @@
         <MudPaper Outlined Class="mt-3 pa-3">
             <MudGrid Spacing="1">
                 <MudItem xs="6">
-                    <MudButton 
-                        ButtonType="ButtonType.Button" 
+                    <MudButton
+                        ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Google"
-                        Variant="Variant.Filled" 
+                        Variant="Variant.Filled"
                         OnClick="@(() => ExternalLogin("Google"))"
-                        Color="Color.Primary" 
+                        Color="Color.Primary"
                         FullWidth="true">
                         Google
                     </MudButton>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudButton 
-                        ButtonType="ButtonType.Button" 
+                    <MudButton
+                        ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Facebook"
-                        Variant="Variant.Filled" 
+                        Variant="Variant.Filled"
                         OnClick="@(() => ExternalLogin("Facebook"))"
-                        Color="Color.Primary" 
+                        Color="Color.Primary"
                         FullWidth="true">
                         Facebook
                     </MudButton>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudButton 
-                        ButtonType="ButtonType.Button" 
+                    <MudButton
+                        ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Microsoft"
-                        Variant="Variant.Filled" 
+                        Variant="Variant.Filled"
                         OnClick="@(() => ExternalLogin("Microsoft"))"
-                        Color="Color.Primary" 
+                        Color="Color.Primary"
                         FullWidth="true">
                         Microsoft
                     </MudButton>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudButton 
-                        ButtonType="ButtonType.Button" 
+                    <MudButton
+                        ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Twitter"
-                        Variant="Variant.Filled" 
+                        Variant="Variant.Filled"
                         OnClick="@(() => ExternalLogin("Twitter"))"
-                        Color="Color.Primary" 
+                        Color="Color.Primary"
                         FullWidth="true">
                         Twitter
                     </MudButton>
@@ -111,7 +111,10 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "returnUri")] public string ReturnUri { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "returnUri")]
+    public string ReturnUri { get; set; } = string.Empty;
+
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
 
     private MudForm form = new();
@@ -127,24 +130,17 @@
         {
             var response = result.Get<LoginResponse>()!;
 
-            if (response.IsLockedOut)
+            if (response!.TwoFactorEnabled)
             {
-                NavigationManager.NavigateTo($"/account/locked-out?id={response.UserId}");
+                Snackbar.Add(result.Message, Severity.Success);
+                NavigationManager.NavigateTo($"/account/2fa/login?email={Model.Email}&id={response.UserId}");
             }
             else
             {
-                if (response!.TwoFactorEnabled)
-                {
-                    Snackbar.Add(result.Message, Severity.Success);
-                    NavigationManager.NavigateTo($"/account/2fa/login?email={Model.Email}&id={response.UserId}");
-                }
-                else
-                {
-                    await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
-                    NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
-                    Snackbar.Add(result.Message, Severity.Success);
-                    Model = new();
-                }
+                await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
+                NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
+                Snackbar.Add(result.Message, Severity.Success);
+                Model = new();
             }
         }
         else
@@ -162,7 +158,12 @@
                 }
                 else
                 {
+                    var redirectUri = response.Reason == LockoutReason.TooManyFailedLoginAttempts
+                        ? $"/account/recovery?id={response.UserId}"
+                        : $"/account/locked-out?id={response.UserId}";
+
                     Snackbar.Add(result.Message, Severity.Error);
+                    NavigationManager.NavigateTo(redirectUri);
                 }
             }
             else
