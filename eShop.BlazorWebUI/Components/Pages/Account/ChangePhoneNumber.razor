@@ -23,8 +23,6 @@
                                         Phone number change
                                     </MudText>
                                 </MudPaper>
-                            </MudItem>
-                            <MudItem xs="6">
                                 <MudPaper Outlined="true" Class="pa-5">
                                     <MudForm Validation="ChangePhoneNumberModel">
                                         <MudGrid Justify="Justify.Center">
@@ -69,8 +67,6 @@
                                         Code confirmation
                                     </MudText>
                                 </MudPaper>
-                            </MudItem>
-                            <MudItem xs="6">
                                 <MudPaper Outlined="true" Class="pa-5">
                                     <MudForm>
                                         <MudGrid Justify="Justify.Center">
@@ -113,14 +109,13 @@
                                         Phone number verification
                                     </MudText>
                                 </MudPaper>
-                            </MudItem>
-                            <MudItem xs="6">
                                 <MudPaper Outlined="true" Class="pa-5">
                                     <MudForm>
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2">
-                                                    Enter code from SMS we sent you to: @ChangePhoneNumberModel.NewPhoneNumber
+                                                    Enter code from SMS we sent you
+                                                    to: @ChangePhoneNumberModel.NewPhoneNumber
                                                 </MudText>
                                             </MudItem>
                                             <MudItem xs="7">
@@ -217,7 +212,7 @@
         {
             var response = result.Get<ConfirmChangePhoneNumberResponse>()!;
             await StepNextAsync();
-            
+
             Snackbar.Add("Phone number was successfully changed", Severity.Success);
             await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
             NavigationManager.NavigateTo("/profile");
@@ -227,10 +222,11 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task StepNextAsync()
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
     }
+
 }

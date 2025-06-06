@@ -933,5 +933,12 @@
       <jdbc-url>mongodb://admin:atpDWGvDb4jR5pE7rT59c7@localhost:54401/CartDB?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="redis" uuid="da0a751d-8e59-484d-803c-f9bdb50fd5ac">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://jvGeNWtWwEvYPp6qhqXZZ0@localhost:59365</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
