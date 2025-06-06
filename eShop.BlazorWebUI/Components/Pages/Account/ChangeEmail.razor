@@ -189,8 +189,11 @@
 
         if (changeEmailForm.IsValid)
         {
-            var request = Mapper.Map(ChangeEmailModel);
-            request.UserId = userId;
+            var request = new ChangeEmailRequest()
+            {
+                UserId = userId,
+                NewEmail = ChangeEmailModel.NewEmail
+            };
 
             var result = await SecurityService.ChangeEmailAsync(request);
 
@@ -208,9 +211,13 @@
 
     private async Task OnConfirmEmailChangeAsync()
     {
-        var request = Mapper.Map(ConfirmChangeEmailModel);
-        request.UserId = userId;
-        request.NewEmail = ChangeEmailModel.NewEmail;
+        var request = new ConfirmEmailChangeRequest()
+        {
+            CurrentEmailCode = ConfirmChangeEmailModel.CurrentEmailCode,
+            NewEmailCode = ConfirmChangeEmailModel.NewEmailCode,
+            NewEmail = ConfirmChangeEmailModel.NewEmail,
+            UserId = userId
+        };
 
         var result = await SecurityService.ConfirmChangeEmailAsync(request);
 

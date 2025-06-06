@@ -85,14 +85,4 @@ public static class Mapper
             NewEmail = source.NewEmail
         };
     }
-    
-    public static ConfirmEmailChangeRequest Map(ConfirmChangeEmailModel source)
-    {
-        return new ConfirmEmailChangeRequest()
-        {
-            UserId = source.UserId,
-            CurrentEmailCode = source.CurrentEmailCode,
-            NewEmailCode = source.NewEmailCode
-        };
-    }
 }
