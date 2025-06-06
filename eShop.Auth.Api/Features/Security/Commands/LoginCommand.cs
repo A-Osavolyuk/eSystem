@@ -8,11 +8,15 @@ internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 internal sealed class LoginCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
-    ILockoutManager lockoutManager) : IRequestHandler<LoginCommand, Result>
+    ILockoutManager lockoutManager,
+    ICodeManager codeManager,
+    IMessageService messageService) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
+    private readonly ICodeManager codeManager = codeManager;
+    private readonly IMessageService messageService = messageService;
     private const int MaxLoginAttempts = 5;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -34,23 +38,35 @@ internal sealed class LoginCommandHandler(
         if (!isValidPassword)
         {
             user.FailedLoginAttempts += 1;
-            
+
             var updateResult = await userManager.UpdateAsync(user, cancellationToken);
 
             if (!updateResult.Succeeded)
             {
                 return updateResult;
             }
-            
+
             if (user.FailedLoginAttempts == MaxLoginAttempts)
             {
-                var lockoutResult = await lockoutManager.LockoutAsync(user, LockoutReason.TooManyFailedLoginAttempts, 
+                var lockoutResult = await lockoutManager.LockoutAsync(user, LockoutReason.TooManyFailedLoginAttempts,
                     "Too many failed login attempts", LockoutPeriod.Permanent, cancellationToken: cancellationToken);
 
                 if (!lockoutResult.Succeeded)
                 {
                     return lockoutResult;
                 }
+
+                var code = await codeManager.GenerateAsync(user, CodeType.Recover, cancellationToken);
+                var payload = new { Code = code };
+                var credentials = new EmailCredentials()
+                {
+                    Subject = "Account Recovery",
+                    To = user.Email,
+                    UserName = user.UserName
+                };
+                
+                await messageService.SendMessageAsync(SenderType.Email, "account-recovery",
+                    payload, credentials, cancellationToken);
 
                 var response = new LoginResponse()
                 {
@@ -71,7 +87,7 @@ internal sealed class LoginCommandHandler(
                     IsLockedOut = false,
                     UserId = user.Id,
                 };
-            
+
                 return Results.BadRequest("The password is not valid.", response);
             }
         }
@@ -86,7 +102,7 @@ internal sealed class LoginCommandHandler(
                 return updateResult;
             }
         }
-        
+
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
         if (lockoutState.IsActive)
@@ -98,7 +114,7 @@ internal sealed class LoginCommandHandler(
                 IsLockedOut = lockoutState.IsActive,
             });
         }
-        
+
         if (user.TwoFactorEnabled)
         {
             return Result.Success(new LoginResponse()
@@ -108,10 +124,10 @@ internal sealed class LoginCommandHandler(
                 UserId = user.Id
             });
         }
-        
+
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
-        
+
         return Result.Success(new LoginResponse()
         {
             AccessToken = accessToken,

@@ -25,5 +25,10 @@ public enum CodeType
     /// Represents a verification code specifically generated for resetting a resource,
     /// such as a password or other account-related data.
     /// </summary>
-    Reset = 4
+    Reset = 4,
+    
+    /// <summary>
+    /// Represent a recovery code for account recover
+    /// </summary>
+    Recover = 5
 }

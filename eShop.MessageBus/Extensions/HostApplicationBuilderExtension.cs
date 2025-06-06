@@ -30,6 +30,7 @@ public static class HostApplicationBuilderExtension
             cfg.AddQueue<OAuthRegistrationEmailMessage>("oauth-registration", SenderType.Email);
             cfg.AddQueue<ResetPasswordEmailMessage>("password-reset", SenderType.Email);
             cfg.AddQueue<TwoFactorTokenEmailMessage>("two-factor-token", SenderType.Email);
+            cfg.AddQueue<AccountRecoveryEmailMessage>("account-recovery", SenderType.Email);
             
             cfg.AddQueue<ChangePhoneNumberSmsMessage>("phone-number-change", SenderType.Sms);
             cfg.AddQueue<VerifyPhoneNumberSmsMessage>("phone-number-verification", SenderType.Sms);
