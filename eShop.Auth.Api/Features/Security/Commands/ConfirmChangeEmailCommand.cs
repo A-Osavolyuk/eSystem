@@ -1,11 +1,14 @@
 ﻿using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ConfirmChangeEmailCommand(ConfirmEmailChangeRequest Request)
+public sealed record ConfirmChangeEmailCommand(ConfirmEmailChangeRequest Request)
     : IRequest<Result>;
 
-internal sealed class ConfirmChangeEmailCommandHandler(IUserManager userManager) : IRequestHandler<ConfirmChangeEmailCommand, Result>
+public sealed class ConfirmChangeEmailCommandHandler(
+    IUserManager userManager,
+    ITokenManager tokenManager) : IRequestHandler<ConfirmChangeEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
 
@@ -25,6 +28,27 @@ internal sealed class ConfirmChangeEmailCommandHandler(IUserManager userManager)
         var result = await userManager.ChangeEmailAsync(user, request.Request.NewEmail, currentEmailCode, 
             newEmailCode, cancellationToken);
 
-        return result;
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+        
+        user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        
+        if (user is null)
+        {
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        }
+        
+        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+
+        var response = new ConfirmChangeEmailResponse()
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+        };
+
+        return Result.Success(response);
     }
 }
