@@ -13,6 +13,7 @@ internal sealed class LoginCommandHandler(
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
+    private const int MaxLoginAttempts = 5;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
@@ -41,12 +42,10 @@ internal sealed class LoginCommandHandler(
                 return updateResult;
             }
             
-            if (user.FailedLoginAttempts == 5)
+            if (user.FailedLoginAttempts == MaxLoginAttempts)
             {
-                var lockoutPeriod = DateTimeOffset.UtcNow.AddMinutes(5);
-                
                 var lockoutResult = await lockoutManager.LockoutAsync(user, LockoutReason.TooManyFailedLoginAttempts, 
-                    "Too many failed login attempts", LockoutPeriod.Custom, lockoutPeriod, cancellationToken);
+                    "Too many failed login attempts", LockoutPeriod.Permanent, cancellationToken: cancellationToken);
 
                 if (!lockoutResult.Succeeded)
                 {
@@ -60,7 +59,9 @@ internal sealed class LoginCommandHandler(
                     UserId = user.Id,
                 };
                 
-                return Results.BadRequest("Account is locked out due to too many failed login attempts.", response);
+                return Results.BadRequest(
+                    @"Account is locked out due to too many failed login attempts. 
+                            We sent letter with instruction to your email address", response);
             }
             else
             {
