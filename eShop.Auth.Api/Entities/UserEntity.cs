@@ -12,7 +12,9 @@ public class UserEntity : IEntity<Guid>
     public bool EmailConfirmed { get; set; }
     public bool AccountConfirmed { get; set; }
     public bool TwoFactorEnabled { get; set; }
+    public int FailedLoginAttempts { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
+    public DateTimeOffset? PasswordUpdateDate { get; set; }
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }
     
