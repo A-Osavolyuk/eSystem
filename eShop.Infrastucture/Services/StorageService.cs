@@ -1,5 +1,6 @@
 ﻿using eShop.Domain.Abstraction.Services;
 using eShop.Domain.Common.API;
+using eShop.Domain.Enums;
 using eShop.Domain.Options;
 using eShop.Domain.Requests.API.Storage;
 
@@ -11,17 +12,16 @@ class StorageService(
 {
     public async ValueTask<Response> UploadFilesAsync(UploadFilesRequest request) =>
         await ApiClient.SendAsync(
-            new FileRequest
+            new HttpRequest()
             {
-                Data = new FileData(request.Files), 
-                Method = HttpMethod.Post, 
+                Data = request.Files,
+                Method = HttpMethod.Post,
                 Url = $"{Gateway}/api/v1/Files/upload",
                 Metadata = new Metadata()
                 {
                     Identifier = request.Identifier,
                     Type = request.Type
                 }
-            }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true });
-
+            },
+            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.File });
 }

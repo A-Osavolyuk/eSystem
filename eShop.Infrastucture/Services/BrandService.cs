@@ -1,5 +1,6 @@
 ﻿using eShop.Domain.Abstraction.Services;
 using eShop.Domain.Common.API;
+using eShop.Domain.Enums;
 using eShop.Domain.Options;
 
 namespace eShop.Infrastructure.Services;
@@ -10,5 +11,5 @@ public class BrandService(
 {
     public async ValueTask<Response> GetBrandsListAsync() => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Brands", Method = HttpMethod.Get },
-        new HttpOptions { WithBearer = true, ValidateToken = true });
+        new HttpOptions { WithBearer = true, ValidateToken = true, Type = DataType.Text });
 }
