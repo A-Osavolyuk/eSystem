@@ -29,6 +29,14 @@ public class RecoverAccountCommandHandler(
         {
             return verificationResult;
         }
+
+        user.FailedLoginAttempts = 0;
+        var updateResult = await userManager.UpdateAsync(user, cancellationToken);
+
+        if (!updateResult.Succeeded)
+        {
+            return updateResult;
+        }
         
         var unlockResult = await lockoutManager.UnlockAsync(user, cancellationToken);
         
