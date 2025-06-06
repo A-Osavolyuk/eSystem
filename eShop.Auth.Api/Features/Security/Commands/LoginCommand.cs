@@ -41,12 +41,49 @@ internal sealed class LoginCommandHandler(
                 return updateResult;
             }
             
-            var response = new LoginResponse()
+            if (user.FailedLoginAttempts == 5)
             {
-                FailedLoginAttempts = user.FailedLoginAttempts
-            };
+                var lockoutPeriod = DateTimeOffset.UtcNow.AddMinutes(5);
+                
+                var lockoutResult = await lockoutManager.LockoutAsync(user, LockoutReason.TooManyFailedLoginAttempts, 
+                    "Too many failed login attempts", LockoutPeriod.Custom, lockoutPeriod, cancellationToken);
+
+                if (!lockoutResult.Succeeded)
+                {
+                    return lockoutResult;
+                }
+
+                var response = new LoginResponse()
+                {
+                    FailedLoginAttempts = user.FailedLoginAttempts,
+                    IsLockedOut = true,
+                    UserId = user.Id,
+                };
+                
+                return Results.BadRequest("Account is locked out due to too many failed login attempts.", response);
+            }
+            else
+            {
+                var response = new LoginResponse()
+                {
+                    FailedLoginAttempts = user.FailedLoginAttempts,
+                    IsLockedOut = false,
+                    UserId = user.Id,
+                };
             
-            return Results.BadRequest("The password is not valid.", response);
+                return Results.BadRequest("The password is not valid.", response);
+            }
+        }
+
+        if (user.FailedLoginAttempts > 0)
+        {
+            user.FailedLoginAttempts = 0;
+            var updateResult = await userManager.UpdateAsync(user, cancellationToken);
+
+            if (!updateResult.Succeeded)
+            {
+                return updateResult;
+            }
         }
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
