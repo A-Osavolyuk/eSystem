@@ -54,8 +54,10 @@ public class ApiClient(
             message.Method = httpRequest.Method;
 
             var httpResponse = await httpClient.SendAsync(message);
+            var json = await httpResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<Response>(json)!;
 
-            return await HandleStatusCode(httpResponse);
+            return response;
         }
         catch (Exception ex)
         {
@@ -100,8 +102,10 @@ public class ApiClient(
             message.Content = content;
 
             var httpResponse = await httpClient.SendAsync(message);
+            var json = await httpResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<Response>(json)!;
 
-            return await HandleStatusCode(httpResponse);
+            return response;
         }
         catch(Exception ex)
         {
@@ -110,12 +114,5 @@ public class ApiClient(
                 .WithMessage(ex.Message)
                 .Build();
         }
-    }
-
-    private async ValueTask<Response> HandleStatusCode(HttpResponseMessage httpResponse)
-    {
-        var json = await httpResponse.Content.ReadAsStringAsync();
-        var response = JsonConvert.DeserializeObject<Response>(json)!;
-        return response;
     }
 }
