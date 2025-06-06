@@ -32,7 +32,21 @@ internal sealed class LoginCommandHandler(
 
         if (!isValidPassword)
         {
-            return Results.BadRequest("The password is not valid.");
+            user.FailedLoginAttempts += 1;
+            
+            var updateResult = await userManager.UpdateAsync(user, cancellationToken);
+
+            if (!updateResult.Succeeded)
+            {
+                return updateResult;
+            }
+            
+            var response = new LoginResponse()
+            {
+                FailedLoginAttempts = user.FailedLoginAttempts
+            };
+            
+            return Results.BadRequest("The password is not valid.", response);
         }
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);

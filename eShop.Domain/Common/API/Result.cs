@@ -53,13 +53,14 @@ public class Result
         return result;
     }
 
-    public static Result Failure(Error error)
+    public static Result Failure(Error error, object? value = null)
     {
         var result = new Result
         {
             Succeeded = false,
             Error = error,
             Message = error.Message,
+            Value = value
         };
         
         return result;

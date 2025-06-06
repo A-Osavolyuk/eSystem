@@ -27,6 +27,8 @@ public interface IUserManager
 
     public ValueTask<Result> CreateAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default);
 
     public ValueTask<Result> SetUserNameAsync(UserEntity user, string userName,
         CancellationToken cancellationToken = default);

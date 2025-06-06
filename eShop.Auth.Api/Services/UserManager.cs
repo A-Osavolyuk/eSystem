@@ -51,7 +51,7 @@ public sealed class UserManager(
         }
         
         user.EmailConfirmed = true;
-        user.UpdateDate = DateTime.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -69,7 +69,7 @@ public sealed class UserManager(
         }
         
         user.PhoneNumberConfirmed = true;
-        user.UpdateDate = DateTime.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -89,7 +89,9 @@ public sealed class UserManager(
         var passwordHash = PasswordHasher.HashPassword(newPassword);
 
         user.PasswordHash = passwordHash;
-        user.UpdateDate = DateTime.UtcNow;
+        user.PasswordUpdateDate = DateTimeOffset.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -115,7 +117,7 @@ public sealed class UserManager(
         
         user.Email = newEmail;
         user.NormalizedEmail = newEmail.ToUpperInvariant();
-        user.UpdateDate = DateTime.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
         user.UserName = newEmail;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
@@ -141,7 +143,7 @@ public sealed class UserManager(
         }
         
         user.PhoneNumber = newPhoneNumber;
-        user.UpdateDate = DateTime.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -157,7 +159,7 @@ public sealed class UserManager(
             UserId = user.Id,
             Reason = LockoutReason.None,
             Enabled = false,
-            CreateDate = DateTime.UtcNow,
+            CreateDate = DateTimeOffset.UtcNow,
         };
         
         var passwordHash = PasswordHasher.HashPassword(password);
@@ -165,7 +167,7 @@ public sealed class UserManager(
         user.PasswordHash = passwordHash;
         user.NormalizedEmail = user.Email.ToUpper();
         user.NormalizedUserName = user.UserName.ToUpper();
-        user.CreateDate = DateTime.UtcNow;
+        user.CreateDate = DateTimeOffset.UtcNow;
         
         await context.Users.AddAsync(user, cancellationToken);
         await context.LockoutState.AddAsync(lockoutState, cancellationToken);
@@ -174,12 +176,20 @@ public sealed class UserManager(
         return Result.Success();
     }
 
+    public async ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
     public async ValueTask<Result> SetUserNameAsync(UserEntity user, string userName,
         CancellationToken cancellationToken = default)
     {
         user.UserName = userName;
         user.NormalizedUserName = userName.ToUpper();
-        user.UpdateDate = DateTime.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -211,7 +221,9 @@ public sealed class UserManager(
         var newPasswordHash = PasswordHasher.HashPassword(newPassword);
         
         user.PasswordHash = newPasswordHash;
-        user.UpdateDate = DateTime.UtcNow;
+        user.PasswordUpdateDate = DateTimeOffset.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
         
