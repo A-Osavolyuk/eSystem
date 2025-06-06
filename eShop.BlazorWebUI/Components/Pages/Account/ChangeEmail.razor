@@ -225,10 +225,11 @@
 
         if (result.Success)
         {
-            Snackbar.Add("Email address was successfully changed", Severity.Success);
+            var response = result.Get<ConfirmChangeEmailResponse>()!;
             await StepNextAsync();
-            await Task.Delay(5000);
-            await AuthenticationManager.LogOutAsync();
+            
+            Snackbar.Add("Email address was successfully changed", Severity.Success);
+            await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
             NavigationManager.NavigateTo("/account/login");
         }
         else
