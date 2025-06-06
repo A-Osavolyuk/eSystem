@@ -8,6 +8,14 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
     public async ValueTask<string> GenerateAsync(UserEntity user, CodeType type,
         CancellationToken cancellationToken = default)
     {
+        var entity = await context.Codes.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Type == type, cancellationToken);
+
+        if (entity is not null)
+        {
+            context.Codes.Remove(entity);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        
         var code = new Random().Next(100000, 999999).ToString();
 
         await context.Codes.AddAsync(new VerificationCodeEntity()
@@ -27,9 +35,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
     public async ValueTask<VerificationCodeEntity?> FindAsync(UserEntity user, string code,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.Codes
-            .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.UserId == user.Id && c.Code == code, cancellationToken: cancellationToken);
+        var entity = await context.Codes.FirstOrDefaultAsync(c => c.UserId == user.Id && c.Code == code, cancellationToken: cancellationToken);
 
         return entity;
     }
@@ -37,9 +43,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
     public async ValueTask<VerificationCodeEntity?> FindAsync(UserEntity user, CodeType type,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.Codes
-            .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.UserId == user.Id && c.Type == type, cancellationToken: cancellationToken);
+        var entity = await context.Codes.FirstOrDefaultAsync(c => c.UserId == user.Id && c.Type == type, cancellationToken: cancellationToken);
 
         return entity;
     }
