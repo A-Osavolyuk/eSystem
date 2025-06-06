@@ -4,10 +4,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request)
-    : IRequest<Result>;
+public sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request) : IRequest<Result>;
 
-internal sealed class RequestChangePhoneNumberCommandHandler(
+public sealed class RequestChangePhoneNumberCommandHandler(
     IMessageService messageService,
     ICodeManager codeManager,
     IUserManager userManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
@@ -19,11 +18,11 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
         var oldPhoneNumberCode = await codeManager.GenerateAsync(user, CodeType.Current, cancellationToken);
@@ -37,6 +36,6 @@ internal sealed class RequestChangePhoneNumberCommandHandler(
         await messageService.SendMessageAsync(SenderType.Email, "phone-number-verification",
             new { Code = newPhoneNumberCode, }, credentials, cancellationToken);
 
-        return Result.Success("We have sent sms messages to your phone numbers.");
+        return Result.Success();
     }
 }

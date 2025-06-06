@@ -3,10 +3,9 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ConfirmChangePhoneNumberCommand(ConfirmPhoneNumberChangeRequest Request)
-    : IRequest<Result>;
+public sealed record ConfirmChangePhoneNumberCommand(ConfirmPhoneNumberChangeRequest Request) : IRequest<Result>;
 
-internal sealed class ConfirmChangePhoneNumberCommandHandler(
+public sealed class ConfirmChangePhoneNumberCommandHandler(
     IUserManager userManager,
     ITokenManager tokenManager)
     : IRequestHandler<ConfirmChangePhoneNumberCommand, Result>
@@ -17,15 +16,14 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
     public async Task<Result> Handle(ConfirmChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByPhoneNumberAsync(request.Request.CurrentPhoneNumber, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Results.InternalServerError(
-                $"Cannot find user with phone number {request.Request.CurrentPhoneNumber}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
         
-        var currentPhoneNumberCode = request.Request.CurrentPhoneNumber;
+        var currentPhoneNumberCode = request.Request.CurrentPhoneNumberCode;
         var newPhoneNumberCode = request.Request.NewPhoneNumberCode;
 
         var result = await userManager.ChangePhoneNumberAsync(user, currentPhoneNumberCode, newPhoneNumberCode, 
@@ -36,7 +34,7 @@ internal sealed class ConfirmChangePhoneNumberCommandHandler(
             return result;
         }
 
-        user = await userManager.FindByPhoneNumberAsync(request.Request.NewPhoneNumber, cancellationToken);
+        user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
