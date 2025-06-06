@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Requests.API.Auth;
 
-public record ConfirmPhoneNumberChangeRequest
+public record ConfirmChangePhoneNumberRequest
 {
     public Guid UserId { get; set; }
     public string NewPhoneNumber { get; set; } = string.Empty;

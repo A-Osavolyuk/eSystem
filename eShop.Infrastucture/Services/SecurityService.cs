@@ -57,7 +57,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/request-change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
     
-    public async ValueTask<Response> ConfirmChangePhoneNumberAsync(ConfirmPhoneNumberChangeRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> ConfirmChangePhoneNumberAsync(ConfirmChangePhoneNumberRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/confirm-change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true });
 

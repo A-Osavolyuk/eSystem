@@ -13,4 +13,9 @@ public class AuthenticationManager(AuthenticationStateProvider authenticationSta
     {
         await (authenticationStateProvider as JwtAuthenticationStateProvider)!.LogOutAsync();
     }
+    
+    public async Task ReauthenticateAsync(string accessToken, string refreshToken)
+    {
+        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.ReauthenticateAsync(accessToken, refreshToken);
+    }
 }

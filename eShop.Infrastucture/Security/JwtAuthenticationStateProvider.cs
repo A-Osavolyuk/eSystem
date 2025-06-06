@@ -56,23 +56,47 @@ public class JwtAuthenticationStateProvider(
         }
     }
 
-    public async Task LoginAsync(string accessToken, string refreshToken)
+    public async Task ReauthenticateAsync(string accessToken, string refreshToken)
     {
-        var claimsPrincipal = new ClaimsPrincipal();
-
         if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
         {
             await tokenProvider.SetTokenAsync(refreshToken);
 
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = tokenHandler.ReadClaims(rawToken);
-            claimsPrincipal = new(new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme));
+            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            var authenticationState = new AuthenticationState(claimsPrincipal);
+            
+            NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
+        }
+        else
+        {
+            await UnauthorizeAsync();
+        }
+    }
+
+    public async Task LoginAsync(string accessToken, string refreshToken)
+    {
+        if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
+        {
+            await tokenProvider.SetTokenAsync(refreshToken);
+
+            var rawToken = tokenHandler.ReadToken(accessToken)!;
+            var claims = tokenHandler.ReadClaims(rawToken);
+            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            var authenticationState = new AuthenticationState(claimsPrincipal);
 
             var userId = Map(claims);
             await userStorage.SaveAsync(userId);
+            
+            NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
-
-        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+        else
+        {
+            await UnauthorizeAsync();
+        }
     }
 
     public async Task<AuthenticationState> LogOutAsync()

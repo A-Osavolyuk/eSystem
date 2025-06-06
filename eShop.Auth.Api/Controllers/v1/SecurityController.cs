@@ -168,7 +168,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("phone-number/confirm-change")]
     public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumber(
-        [FromBody] ConfirmPhoneNumberChangeRequest request)
+        [FromBody] ConfirmChangePhoneNumberRequest request)
     {
         var result = await sender.Send(new ConfirmChangePhoneNumberCommand(request));
 
