@@ -5,13 +5,11 @@ namespace eShop.Infrastructure.Security;
 public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage localStorage,
-    IUserStorage userStorage,
     TokenHandler tokenHandler) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage localStorage = localStorage;
-    private readonly IUserStorage userStorage = userStorage;
     private readonly TokenHandler tokenHandler = tokenHandler;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -89,7 +87,7 @@ public class JwtAuthenticationStateProvider(
             var authenticationState = new AuthenticationState(claimsPrincipal);
 
             var userId = Map(claims);
-            await userStorage.SaveAsync(userId);
+            await localStorage.SetAsync("userId", userId);
             
             NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
@@ -103,7 +101,6 @@ public class JwtAuthenticationStateProvider(
     {
         await tokenProvider.RemoveAsync();
         await localStorage.ClearAsync();
-        await userStorage.ClearAsync();
         return await UnauthorizeAsync();
     }
 

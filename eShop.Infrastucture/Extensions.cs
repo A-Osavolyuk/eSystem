@@ -34,7 +34,6 @@ public static class Extensions
 
         builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
-        builder.Services.AddScoped<IUserStorage, UserStorage>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
         builder.Services.AddScoped<ICookieManager, CookieManager>();
     }

@@ -1,11 +1,10 @@
 ﻿@page "/account/profile"
 
-@using PersonalDataModel = eShop.BlazorWebUI.Models.PersonalDataModel
-
-@inject IUserStorage UserStorage
-@inject IUsersService UsersService
+@inherits PageBase
 
 @attribute [Authorize]
+
+@inject IUsersService UsersService
 
 <Title Text="Profile"></Title>
 
@@ -171,7 +170,7 @@
    
     private async Task LoadPersonalDataAsync()
     {
-        var userId = await UserStorage.GetAsync();
+        var userId = await LocalStorage.GetAsync<Guid>("userId");
         var result = await UsersService.GetPersonalDataAsync(userId);
    
         if (result.Success)

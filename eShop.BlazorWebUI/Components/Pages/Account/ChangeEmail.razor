@@ -181,7 +181,7 @@
     {
         if (firstRender)
         {
-            userId = await UserStorage.GetAsync();
+            userId = await LocalStorage.GetAsync<Guid>("userId");
         }
     }
 
