@@ -15,4 +15,13 @@ public static class ProjectResourceBuilderExtensions
             .WithEnvironment("Jwt__Audience", options.Audience)
             .WithEnvironment("Jwt__ExpirationDays", options.ExpirationDays.ToString());
     }
+
+    public static IResourceBuilder<ProjectResource> AddProject<TProject>(this IDistributedApplicationBuilder builder,
+        string name, bool excludeLaunchProperties) where TProject : IProjectMetadata, new()
+    {
+        return builder.AddProject<TProject>(name, cfg =>
+        {
+            cfg.ExcludeLaunchProfile = excludeLaunchProperties;
+        });
+    }
 }
