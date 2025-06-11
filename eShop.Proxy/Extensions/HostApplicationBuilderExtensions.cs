@@ -104,7 +104,7 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
-                RouteId = "comment-route", ClusterId = "review-cluster",
+                RouteId = "comment-route", ClusterId = "comment-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Comments/{**catch-all}" }
             },
             new RouteConfig
@@ -114,6 +114,8 @@ public static class HostApplicationBuilderExtensions
             },
         };
 
+        var configuration = builder.Configuration;
+
         var clusterConfigs = new[]
         {
             new ClusterConfig
@@ -121,15 +123,7 @@ public static class HostApplicationBuilderExtensions
                 ClusterId = "security-cluster",
                 Destinations = new Dictionary<string, DestinationConfig>()
                 {
-                    ["security-destination"] = new DestinationConfig { Address = "https://localhost:40201/" }
-                }
-            },
-            new ClusterConfig
-            {
-                ClusterId = "email-cluster",
-                Destinations = new Dictionary<string, DestinationConfig>()
-                {
-                    ["review-destination"] = new DestinationConfig { Address = "https://localhost:40202/" }
+                    ["security-destination"] = new() { Address = configuration["services:auth-api:http:0"]! }
                 }
             },
             new ClusterConfig
@@ -137,7 +131,7 @@ public static class HostApplicationBuilderExtensions
                 ClusterId = "files-cluster",
                 Destinations = new Dictionary<string, DestinationConfig>()
                 {
-                    ["files-destination"] = new DestinationConfig { Address = "https://localhost:40203/" }
+                    ["files-destination"] = new() { Address = configuration["services:storage-api:http:0"]! }
                 }
             },
             new ClusterConfig
@@ -145,7 +139,7 @@ public static class HostApplicationBuilderExtensions
                 ClusterId = "product-cluster",
                 Destinations = new Dictionary<string, DestinationConfig>()
                 {
-                    ["product-destination"] = new DestinationConfig { Address = "https://localhost:40204/" }
+                    ["product-destination"] = new() { Address = configuration["services:product-api:http:0"]! }
                 }
             },
             new ClusterConfig
@@ -153,31 +147,15 @@ public static class HostApplicationBuilderExtensions
                 ClusterId = "cart-cluster",
                 Destinations = new Dictionary<string, DestinationConfig>()
                 {
-                    ["cart-destination"] = new DestinationConfig { Address = "https://localhost:40205/" }
+                    ["cart-destination"] = new() { Address = configuration["services:cart-api:http:0"]! }
                 }
             },
             new ClusterConfig
             {
-                ClusterId = "review-cluster",
+                ClusterId = "comment-cluster",
                 Destinations = new Dictionary<string, DestinationConfig>()
                 {
-                    ["review-destination"] = new DestinationConfig { Address = "https://localhost:40206/" }
-                }
-            },
-            new ClusterConfig
-            {
-                ClusterId = "sms-cluster",
-                Destinations = new Dictionary<string, DestinationConfig>()
-                {
-                    ["review-destination"] = new DestinationConfig { Address = "https://localhost:40207/" }
-                }
-            },
-            new ClusterConfig
-            {
-                ClusterId = "telegram-cluster",
-                Destinations = new Dictionary<string, DestinationConfig>()
-                {
-                    ["review-destination"] = new DestinationConfig { Address = "https://localhost:40208/" }
+                    ["comment-destination"] = new() { Address = configuration["services:comment-api:http:0"]! }
                 }
             },
         };
