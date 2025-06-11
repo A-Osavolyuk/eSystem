@@ -6,15 +6,11 @@ public static class WebApplicationBuilder
     {
         app.MapDefaultEndpoints();
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-            app.MapScalarApiReference();
-            await app.ConfigureDatabaseAsync<AuthDbContext>();
-        }
+        app.MapOpenApi();
+        app.MapScalarApiReference();
+        await app.ConfigureDatabaseAsync<AuthDbContext>();
 
         app.UseRouting();
-        app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

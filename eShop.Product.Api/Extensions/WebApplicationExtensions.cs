@@ -9,14 +9,10 @@ public static class WebApplicationExtensions
     {
         app.MapDefaultEndpoints();
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-            app.MapScalarApiReference();
-            await app.ConfigureDatabaseAsync<AppDbContext>();
-        }
+        app.MapOpenApi();
+        app.MapScalarApiReference();
+        await app.ConfigureDatabaseAsync<AppDbContext>();
 
-        app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

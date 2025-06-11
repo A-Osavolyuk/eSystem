@@ -4,15 +4,11 @@ namespace eShop.Cart.Api.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static async Task MapApiServices(this WebApplication app)
+    public static void MapApiServices(this WebApplication app)
     {
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-            app.MapScalarApiReference();
-        }
-
-        app.UseHttpsRedirection();
+        app.MapDefaultEndpoints();
+        app.MapOpenApi();
+        app.MapScalarApiReference();
         app.UseAuthorization();
         app.MapControllers();
         app.UseExceptionHandler();

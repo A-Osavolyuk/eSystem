@@ -4,8 +4,6 @@ builder.AddApiServices();
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
-
-await app.MapApiServices();
+app.MapApiServices();
 
 app.Run();

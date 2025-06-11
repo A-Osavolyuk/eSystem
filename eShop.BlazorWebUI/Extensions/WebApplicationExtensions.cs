@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Hosting.StaticWebAssets;
+using Microsoft.AspNetCore.Localization;
 
 namespace eShop.BlazorWebUI.Extensions;
 
@@ -8,21 +9,15 @@ public static class WebApplicationExtensions
     {
         app.MapDefaultEndpoints();
 
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Error", createScopeForErrors: true);
-            app.UseHsts();
-        }
+        //app.UseExceptionHandler("/Error", createScopeForErrors: true);
+        app.UseHsts();
 
-        app.UseStaticFiles();
-        app.MapStaticAssets();
-        app.UseHttpsRedirection();
+        app.UseStaticWebAssets();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseAntiforgery();
         app.UseStatusCodePagesWithRedirects("/Error?code={0}");
-
         app.UseLocalization();
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();
@@ -31,7 +26,7 @@ public static class WebApplicationExtensions
     private static void UseLocalization(this WebApplication app)
     {
         var supportedCultures = new[] { "en-US", "ru-RU", "uk-UA" };
-    
+
         var localizationOptions = new RequestLocalizationOptions
         {
             DefaultRequestCulture = new RequestCulture("en-US"),
@@ -41,7 +36,14 @@ public static class WebApplicationExtensions
         localizationOptions.AddSupportedCultures(supportedCultures);
         localizationOptions.AddSupportedUICultures(supportedCultures);
         localizationOptions.RequestCultureProviders = [new CookieRequestCultureProvider()];
-        
+
         app.UseRequestLocalization(localizationOptions);
+    }
+
+    private static void UseStaticWebAssets(this WebApplication app)
+    {
+        app.UseStaticFiles();
+        app.MapStaticAssets();
+        StaticWebAssetsLoader.UseStaticWebAssets(app.Environment, app.Configuration);
     }
 }

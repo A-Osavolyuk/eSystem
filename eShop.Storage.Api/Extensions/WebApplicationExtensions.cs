@@ -7,13 +7,8 @@ public static class WebApplicationExtensions
 {
     public static void MapAppServices(this WebApplication app)
     {
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-            app.MapScalarApiReference();
-        }
-
-        app.UseHttpsRedirection();
+        app.MapOpenApi();
+        app.MapScalarApiReference();
         app.UseAuthorization();
         app.MapControllers();
         app.MapDefaultEndpoints();
