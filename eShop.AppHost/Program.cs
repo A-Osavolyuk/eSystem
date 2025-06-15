@@ -37,63 +37,61 @@ var rabbitMq = builder.AddRabbitMq()
     .WithDataVolume();
 
 var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
-    .WithHttpEndpoint(5104)
-    .WithReference(rabbitMq)
-    .WithReference(redisCache);
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
+    .WithReference(redisCache).WaitFor(redisCache);
 
 var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-service-api")
-    .WithHttpEndpoint(5103)
-    .WithReference(rabbitMq)
-    .WithReference(redisCache);
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
+    .WithReference(redisCache).WaitFor(redisCache);
 
 var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegram-service-api")
-    .WithReference(rabbitMq)
-    .WithReference(redisCache);
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
+    .WithReference(redisCache).WaitFor(redisCache);
 
 var messageBus = builder.AddProject<Projects.eShop_MessageBus>("message-bus")
-    .WithReference(rabbitMq)
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(emailService)
     .WaitFor(smsService)
     .WaitFor(telegramService);
 
 var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WithJwtConfig()
-    .WithReference(authDb)
-    .WithReference(redisCache)
-    .WithReference(rabbitMq)
+    .WithReference(authDb).WaitFor(authDb)
+    .WithReference(redisCache).WaitFor(redisCache)
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging");
 
 var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
     .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-    .WithReference(rabbitMq)
-    .WithReference(redisCache)
-    .WithReference(productDb);
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
+    .WithReference(redisCache).WaitFor(rabbitMq)
+    .WithReference(productDb).WaitFor(productDb);
 
 var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("comment-api")
     .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-    .WithReference(commentsDb)
-    .WithReference(redisCache)
-    .WithReference(rabbitMq);
+    .WithReference(commentsDb).WaitFor(commentsDb)
+    .WithReference(redisCache).WaitFor(redisCache)
+    .WithReference(rabbitMq).WaitFor(rabbitMq);
 
 var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
     .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-    .WithReference(rabbitMq)
-    .WithReference(redisCache)
-    .WithReference(cartDb);
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
+    .WithReference(redisCache).WaitFor(redisCache)
+    .WithReference(cartDb).WaitFor(cartDb);
 
 var storageApi = builder.AddProject<Projects.eShop_Storage_Api>("storage-api")
     .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-    .WithReference(rabbitMq)
-    .WithReference(redisCache)
-    .WithReference(blobs);
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
+    .WithReference(redisCache).WaitFor(redisCache)
+    .WithReference(blobs).WaitFor(blobs);
 
 var proxy = builder.AddProject<Projects.eShop_Proxy>("proxy")
     .WithJwtConfig()
