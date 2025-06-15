@@ -4,33 +4,6 @@ namespace eShop.AppHost.Extensions;
 
 public static class DistributedApplicationExtensions
 {
-    public static IResourceBuilder<ProjectResource> WaitForReference(this IResourceBuilder<ProjectResource> builder,
-        IResourceBuilder<IResourceWithConnectionString> resource)
-    {
-        builder.WithReference(resource);
-        builder.WaitFor(resource);
-
-        return builder;
-    }
-
-    public static IResourceBuilder<ProjectResource> WaitForReference(this IResourceBuilder<ProjectResource> builder,
-        IResourceBuilder<ProjectResource> resource)
-    {
-        builder.WithReference(resource);
-        builder.WaitFor(resource);
-
-        return builder;
-    }
-
-    public static IResourceBuilder<ExecutableResource> WaitForReference(
-        this IResourceBuilder<ExecutableResource> builder, IResourceBuilder<ProjectResource> resource)
-    {
-        builder.WithReference(resource);
-        builder.WaitFor(resource);
-
-        return builder;
-    }
-    
     public static IResourceBuilder<SqlServerServerResource> AddSqlServer(this IDistributedApplicationBuilder builder)
     {
         var options = builder.Configuration.GetSectionValue<MsSqlOptions>("Configuration:MSSQL");
@@ -45,7 +18,7 @@ public static class DistributedApplicationExtensions
 
         return builder.AddRedis(options.Name, options.Port);
     }
-    
+
     public static IResourceBuilder<MongoDBServerResource> AddMongoDb(this IDistributedApplicationBuilder builder)
     {
         var options = builder.Configuration.GetSectionValue<MongoDbOptions>("Configuration:MongoDB");
@@ -54,7 +27,7 @@ public static class DistributedApplicationExtensions
 
         return builder.AddMongoDB(options.Name, options.Port, user, password);
     }
-    
+
     public static IResourceBuilder<RabbitMQServerResource> AddRabbitMq(this IDistributedApplicationBuilder builder)
     {
         var options = builder.Configuration.GetSectionValue<RabbitMqOptions>("Configuration:RabbitMQ");
