@@ -14,15 +14,17 @@
       "dotnetRunMessages": true,
       "launchBrowser": false,
       "launchUrl": "scalar/v1" ,
-      "applicationUrl": "https://localhost:40205",
+      "applicationUrl": "https://localhost:7205;https://localhost:5205",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
       "launchUrl": "scalar/v1" ,
+      "applicationUrl": "https://localhost:5205",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

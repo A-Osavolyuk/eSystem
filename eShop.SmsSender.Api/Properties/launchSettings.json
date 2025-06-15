@@ -6,7 +6,17 @@
       "dotnetRunMessages": true,
       "launchBrowser": false,
       "launchUrl": "scalar/v1" ,
-      "applicationUrl": "https://localhost:40207",
+      "applicationUrl": "https://localhost:7207;http://localhost:5207",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "scalar/v1" ,
+      "applicationUrl": "http://localhost:5207",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

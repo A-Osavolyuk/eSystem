@@ -36,74 +36,66 @@ var rabbitMq = builder.AddRabbitMq()
     .WithManagementPlugin()
     .WithDataVolume();
 
-var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api", true)
+var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
     .WithHttpEndpoint(5104)
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
-var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-service-api", true)
+var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-service-api")
     .WithHttpEndpoint(5103)
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
-var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegram-service-api", true)
-    .WithHttpEndpoint(5102)
+var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegram-service-api")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache);
 
-var messageBus = builder.AddProject<Projects.eShop_MessageBus>("message-bus", true)
+var messageBus = builder.AddProject<Projects.eShop_MessageBus>("message-bus")
     .WaitForReference(rabbitMq)
-    .WithHttpEndpoint(5101)
     .WaitFor(emailService)
     .WaitFor(smsService)
     .WaitFor(telegramService);
 
-var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api", true)
+var authApi = builder.AddProject<Projects.eShop_Auth_Api>("auth-api")
     .WithJwtConfig()
-    .WithHttpEndpoint(5001)
     .WaitForReference(authDb)
     .WaitForReference(redisCache)
     .WaitForReference(rabbitMq)
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging");
 
-var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api", true)
+var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
     .WithJwtConfig()
-    .WithHttpEndpoint(5002)
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(productDb);
 
-var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("comment-api", true)
+var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("comment-api")
     .WithJwtConfig()
-    .WithHttpEndpoint(5003)
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(commentsDb)
     .WaitForReference(redisCache)
     .WaitForReference(rabbitMq);
 
-var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api", true)
+var cartApi = builder.AddProject<Projects.eShop_Cart_Api>("cart-api")
     .WithJwtConfig()
-    .WithHttpEndpoint(5004)
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(cartDb);
 
-var storageApi = builder.AddProject<Projects.eShop_Storage_Api>("storage-api", true)
+var storageApi = builder.AddProject<Projects.eShop_Storage_Api>("storage-api")
     .WithJwtConfig()
-    .WithHttpEndpoint(5005)
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WaitForReference(rabbitMq)
     .WaitForReference(redisCache)
     .WaitForReference(blobs);
 
-var proxy = builder.AddProject<Projects.eShop_Proxy>("proxy", true)
-    .WithHttpsEndpoint(5000)
+var proxy = builder.AddProject<Projects.eShop_Proxy>("proxy")
     .WithJwtConfig()
     .WithReference(authApi).WaitFor(authApi)
     .WithReference(productApi).WaitFor(productApi)
@@ -111,9 +103,8 @@ var proxy = builder.AddProject<Projects.eShop_Proxy>("proxy", true)
     .WithReference(storageApi).WaitFor(storageApi)
     .WithReference(reviewsApi).WaitFor(reviewsApi);
 
-builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui", true)
+builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
     .WithJwtConfig()
-    .WithHttpsEndpoint(5901)
     .WithReference(proxy).WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy");
 
 builder.AddNpmApp("angular-webui", "../eShop.AngularWebUI")
