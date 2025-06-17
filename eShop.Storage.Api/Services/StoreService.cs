@@ -15,7 +15,7 @@ internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStore
 
         if (files is null || !files.Any())
         {
-            return new List<string>();
+            return [];
         }
         
         var uris = files.Select(x => x.Name).ToList();
@@ -27,15 +27,13 @@ internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStore
         var uriList = new List<string>();
         var blobs = files.ToImmutableList();
         var containerClient = await GetClientAsync(metadata.Type);
-
-        var index = 0;
-
+        
         foreach (var file in blobs)
         {
+            var index = blobs.IndexOf(file);
             var client = containerClient.GetBlobClient($"{metadata.Identifier}_{index}");
-            await using var stream = blobs[index].OpenReadStream();
+            await using var stream = file.OpenReadStream();
             await client.UploadAsync(stream, true);
-            index++;
 
             uriList.Add(client.Uri.ToString());
         }
