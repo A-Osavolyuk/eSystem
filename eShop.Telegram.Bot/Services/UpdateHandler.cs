@@ -1,8 +1,9 @@
-﻿using IUpdateHandler = eShop.TelegramBot.Api.Interfaces.IUpdateHandler;
+﻿using Interfaces_IUpdateHandler = eShop.Telegram.Bot.Interfaces.IUpdateHandler;
+using IUpdateHandler = eShop.Telegram.Bot.Interfaces.IUpdateHandler;
 
-namespace eShop.TelegramBot.Api.Services;
+namespace eShop.Telegram.Bot.Services;
 
-public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger) : IUpdateHandler
+public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger) : Interfaces_IUpdateHandler
 {
     private readonly ITelegramBotClient bot = bot;
     private readonly ILogger<UpdateHandler> logger = logger;

@@ -2,9 +2,9 @@
 
 global using eShop.Application.Extensions;
 global using eShop.ServiceDefaults;
-global using eShop.TelegramBot.Api.Extensions;
-global using eShop.TelegramBot.Api.Options;
-global using eShop.TelegramBot.Api.Services;
+global using eShop.Telegram.Bot.Extensions;
+global using eShop.Telegram.Bot.Options;
+global using eShop.Telegram.Bot.Services;
 global using MassTransit;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Options;

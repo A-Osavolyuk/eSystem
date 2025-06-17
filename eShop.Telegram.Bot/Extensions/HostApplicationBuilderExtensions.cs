@@ -1,6 +1,8 @@
-﻿using FluentValidation;
+﻿using eShop.Telegram.Bot.Options;
+using eShop.Telegram.Bot.Services;
+using FluentValidation;
 
-namespace eShop.TelegramBot.Api.Extensions;
+namespace eShop.Telegram.Bot.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {

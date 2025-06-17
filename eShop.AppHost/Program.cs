@@ -36,15 +36,15 @@ var rabbitMq = builder.AddRabbitMq()
     .WithManagementPlugin()
     .WithDataVolume();
 
-var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender-api")
+var emailService = builder.AddProject<Projects.eShop_EmailSender_Api>("email-sender")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache);
 
-var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-service-api")
+var smsService = builder.AddProject<Projects.eShop_SmsSender_Api>("sms-sender")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache);
 
-var telegramService = builder.AddProject<Projects.eShop_TelegramBot_Api>("telegram-service-api")
+var telegramService = builder.AddProject<Projects.eShop_Telegram_Bot>("telegram-bot")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache);
 

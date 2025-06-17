@@ -1,6 +1,6 @@
 ﻿using Scalar.AspNetCore;
 
-namespace eShop.TelegramBot.Api.Extensions;
+namespace eShop.Telegram.Bot.Extensions;
 
 public static class WebApplicationExtensions
 {

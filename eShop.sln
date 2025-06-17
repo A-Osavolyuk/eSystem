@@ -47,7 +47,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.Storage.Api", "eShop.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.SmsSender.Api", "eShop.SmsSender.Api\eShop.SmsSender.Api.csproj", "{F142D343-82AD-4B8E-8EB8-F9C86CDF6546}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.TelegramBot.Api", "eShop.TelegramBot.Api\eShop.TelegramBot.Api.csproj", "{0EAAC853-CF03-4859-95A9-C03A38F161D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.Telegram.Bot", "eShop.Telegram.Bot\eShop.Telegram.Bot.csproj", "{0EAAC853-CF03-4859-95A9-C03A38F161D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.MessageBus", "eShop.MessageBus\eShop.MessageBus.csproj", "{E276D61F-4DEB-4976-9F18-751B5DCB29B1}"
 EndProject

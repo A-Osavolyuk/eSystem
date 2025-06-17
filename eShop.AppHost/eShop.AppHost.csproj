@@ -43,7 +43,7 @@
     <ProjectReference Include="..\eShop.Product.Api\eShop.Product.Api.csproj" />
     <ProjectReference Include="..\eShop.Comments.Api\eShop.Comments.Api.csproj" />
     <ProjectReference Include="..\eShop.SmsSender.Api\eShop.SmsSender.Api.csproj" />
-    <ProjectReference Include="..\eShop.TelegramBot.Api\eShop.TelegramBot.Api.csproj" />
+    <ProjectReference Include="..\eShop.Telegram.Bot\eShop.Telegram.Bot.csproj" />
   </ItemGroup>
 
 </Project>

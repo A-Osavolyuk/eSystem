@@ -1,4 +1,4 @@
-﻿namespace eShop.TelegramBot.Api;
+﻿namespace eShop.Telegram.Bot;
 
 public interface IAssemblyMarker
 {
