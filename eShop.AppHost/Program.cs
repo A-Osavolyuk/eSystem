@@ -69,7 +69,7 @@ var productApi = builder.AddProject<Projects.eShop_Product_Api>("product-api")
     .WithReference(redisCache).WaitFor(rabbitMq)
     .WithReference(productDb).WaitFor(productDb);
 
-var reviewsApi = builder.AddProject<Projects.eShop_Comments_Api>("comment-api")
+var commentApi = builder.AddProject<Projects.eShop_Comments_Api>("comment-api")
     .WithJwtConfig()
     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
@@ -99,7 +99,7 @@ var proxy = builder.AddProject<Projects.eShop_Proxy>("proxy")
     .WithReference(productApi).WaitFor(productApi)
     .WithReference(cartApi).WaitFor(cartApi)
     .WithReference(storageApi).WaitFor(storageApi)
-    .WithReference(reviewsApi).WaitFor(reviewsApi);
+    .WithReference(commentApi).WaitFor(commentApi);
 
 builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
     .WithJwtConfig()
