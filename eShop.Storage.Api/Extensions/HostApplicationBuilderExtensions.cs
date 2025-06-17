@@ -44,7 +44,7 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IStoreService, StoreService>();
+        builder.Services.AddScoped<IStorageManager, StorageManager>();
         builder.Services.AddScoped<ICacheService, CacheService>();
     }
 }

@@ -4,7 +4,7 @@ using eShop.Storage.Api.Interfaces;
 
 namespace eShop.Storage.Api.Services;
 
-internal sealed class StoreService(BlobServiceClient blobServiceClient) : IStoreService
+internal sealed class StorageManager(BlobServiceClient blobServiceClient) : IStorageManager
 {
     private readonly BlobServiceClient blobServiceClient = blobServiceClient;
 

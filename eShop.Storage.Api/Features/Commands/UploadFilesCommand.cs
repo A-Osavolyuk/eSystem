@@ -9,9 +9,9 @@ internal sealed record UploadFilesCommand(IFormFileCollection Files, Metadata Me
     : IRequest<Result>;
 
 internal sealed class UploadFilesCommandHandler(
-    IStoreService service) : IRequestHandler<UploadFilesCommand, Result>
+    IStorageManager service) : IRequestHandler<UploadFilesCommand, Result>
 {
-    private readonly IStoreService service = service;
+    private readonly IStorageManager service = service;
 
     public async Task<Result> Handle(UploadFilesCommand request,
         CancellationToken cancellationToken)

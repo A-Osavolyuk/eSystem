@@ -10,10 +10,10 @@ namespace eShop.Storage.Api.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 public class FilesController(
-    IStoreService storeService,
+    IStorageManager storageManager,
     ISender sender) : ControllerBase
 {
-    private readonly IStoreService storeService = storeService;
+    private readonly IStorageManager storageManager = storageManager;
     private readonly ISender sender = sender;
 
     [EndpointSummary("Upload files")]
