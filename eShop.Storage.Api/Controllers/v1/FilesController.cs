@@ -24,7 +24,7 @@ public class FilesController(ISender sender) : ControllerBase
         var metadataObject = JsonConvert.DeserializeObject<Metadata>(metadata)!;
         var response = await sender.Send(new UploadFilesCommand(files, metadataObject));
         return response.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
     
@@ -36,7 +36,7 @@ public class FilesController(ISender sender) : ControllerBase
     {
         var response = await sender.Send(new LoadFilesCommand(request));
         return response.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 }
