@@ -40,41 +40,50 @@
                                         Account information
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="3">
+                                <MudItem xs="3" Class="mt-2">
                                     <MudText>
                                         User name
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="9">
-                                    <MudText>
+                                <MudItem xs="8" Class="mt-2">
+                                    <MudText Inline="true">
                                         @UserModel.UserName
                                     </MudText>
+                                </MudItem>
+                                <MudItem xs="1">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" />
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudDivider/>
                                 </MudItem>
-                                <MudItem xs="3">
+                                <MudItem xs="3" Class="mt-2">
                                     <MudText>
                                         Email address
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="9">
+                                <MudItem xs="8" Class="mt-2">
                                     <MudText>
                                         @UserModel.Email
                                     </MudText>
                                 </MudItem>
+                                <MudItem xs="1">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" />
+                                </MudItem>
                                 <MudItem xs="12">
                                     <MudDivider/>
                                 </MudItem>
-                                <MudItem xs="3">
+                                <MudItem xs="3" Class="mt-2">
                                     <MudText>
                                         Phone number
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="9">
+                                <MudItem xs="8" Class="mt-2">
                                     <MudText>
                                         @(string.IsNullOrEmpty(UserModel.PhoneNumber) ? "-" : UserModel.PhoneNumber)
                                     </MudText>
+                                </MudItem>
+                                <MudItem xs="1">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" />
                                 </MudItem>
                             </MudGrid>
                         </MudPaper>
@@ -87,7 +96,7 @@
                                         Personal information
                                     </MudText>
                                 </MudItem>
-                                @if (PersonalDataModel is not null)
+                                @if (UserModel.PersonalData is not null)
                                 {
                                     <MudItem xs="3">
                                         <MudText>
@@ -96,7 +105,7 @@
                                     </MudItem>
                                     <MudItem xs="9">
                                         <MudText>
-                                            @PersonalDataModel.FirstName
+                                            @UserModel.PersonalData.FirstName
                                         </MudText>
                                     </MudItem>
                                     <MudItem xs="12">
@@ -109,7 +118,7 @@
                                     </MudItem>
                                     <MudItem xs="9">
                                         <MudText>
-                                            @PersonalDataModel.LastName
+                                            @UserModel.PersonalData.LastName
                                         </MudText>
                                     </MudItem>
                                     <MudItem xs="12">
@@ -122,7 +131,7 @@
                                     </MudItem>
                                     <MudItem xs="9">
                                         <MudText>
-                                            @PersonalDataModel.BirthDate
+                                            @UserModel.PersonalData.BirthDate
                                         </MudText>
                                     </MudItem>
                                     <MudItem xs="12">
@@ -135,8 +144,16 @@
                                     </MudItem>
                                     <MudItem xs="9">
                                         <MudText>
-                                            @PersonalDataModel.Gender
+                                            @UserModel.PersonalData.Gender.ToString()
                                         </MudText>
+                                    </MudItem>
+                                    <MudItem Class="mt-2" xs="12">
+                                        <MudButton
+                                            Color="Color.Primary"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button">
+                                            Change personal data
+                                        </MudButton>
                                     </MudItem>
                                 }
                             </MudGrid>
@@ -150,38 +167,30 @@
 
 @code {
     private UserModel UserModel { get; set; } = new();
-    private PersonalDataModel? PersonalDataModel { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await LoadUserAsync();
-            await LoadPersonalDataAsync();
-            
             StateHasChanged();
         }
     }
 
     private async Task LoadUserAsync()
     {
-        
-    }
-   
-    private async Task LoadPersonalDataAsync()
-    {
         var userId = await LocalStorage.GetAsync<Guid>("userId");
-        var result = await UsersService.GetPersonalDataAsync(userId);
+        var result = await UsersService.GetUserAsync(userId);
    
         if (result.Success)
         {
-            var response = result.Get<PersonalDataDto>()!;
+            var response = result.Get<UserDto>()!;
             var model = Mapper.Map(response);
-            PersonalDataModel = model;
+            UserModel = model;
         }
         else
         {
-            PersonalDataModel = null;
+            Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
