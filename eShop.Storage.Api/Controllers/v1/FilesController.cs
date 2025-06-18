@@ -3,6 +3,7 @@ using eShop.Domain.Common.API;
 using eShop.Domain.Requests.API.Storage;
 using eShop.Storage.Api.Features.Commands;
 using eShop.Storage.Api.Interfaces;
+using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 
 namespace eShop.Storage.Api.Controllers.v1;
@@ -10,11 +11,8 @@ namespace eShop.Storage.Api.Controllers.v1;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
-public class FilesController(
-    IStorageManager storageManager,
-    ISender sender) : ControllerBase
+public class FilesController(ISender sender) : ControllerBase
 {
-    private readonly IStorageManager storageManager = storageManager;
     private readonly ISender sender = sender;
 
     [EndpointSummary("Upload files")]
