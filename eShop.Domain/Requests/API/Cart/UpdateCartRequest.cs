@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.Requests.API.Cart;
 
-public record UpdateCartRequest : IIdentifiable<Guid>
+public record UpdateCartRequest
 {
     public Guid Id { get; init; }
     public int ItemsCount { get; set; }

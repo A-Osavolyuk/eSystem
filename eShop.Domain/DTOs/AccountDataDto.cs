@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.DTOs;
 
-public record AccountDataDto : IIdentifiable<Guid>
+public record AccountDataDto
 {
     public Guid Id { get; init; }
     public string Email { get; set; } = string.Empty;

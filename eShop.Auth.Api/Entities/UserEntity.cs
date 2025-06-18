@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class UserEntity : IEntity<Guid>
+public class UserEntity : IEntity
 {
     public Guid Id { get; init; }
     public string Email { get; set; } = string.Empty;

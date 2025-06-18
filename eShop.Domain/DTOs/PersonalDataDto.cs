@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.DTOs;
 
-public record PersonalDataDto : IIdentifiable<Guid>
+public record PersonalDataDto
 {
     public Guid Id { get; init; }
     public string FirstName { get; set; } = string.Empty;

@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.DTOs;
 
-public record ProductDto : IIdentifiable<Guid>
+public record ProductDto
 {
     public Guid Id { get; init; }
     public ProductTypes Type { get; set; } = ProductTypes.None;

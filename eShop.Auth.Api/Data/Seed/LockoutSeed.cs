@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data.Seed;
 
-public class LockoutSeed : Seed<LockoutStateEntity, Guid>
+public class LockoutSeed : Seed<LockoutStateEntity>
 {
     public override List<LockoutStateEntity> Get()
     {

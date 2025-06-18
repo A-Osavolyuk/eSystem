@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public record PersonalDataEntity : IEntity<Guid>
+public record PersonalDataEntity : IEntity
 {
     public Guid Id { get; init; }
     public Guid UserId { get; set; }

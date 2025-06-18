@@ -3,7 +3,7 @@ using eShop.Domain.Types;
 
 namespace eShop.Cart.Api.Entities;
 
-public class CartEntity : IEntity<Guid>
+public class CartEntity : IEntity
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]

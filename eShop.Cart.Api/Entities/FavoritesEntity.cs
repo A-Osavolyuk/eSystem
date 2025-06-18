@@ -3,7 +3,7 @@ using eShop.Domain.Types;
 
 namespace eShop.Cart.Api.Entities;
 
-public class FavoritesEntity : IEntity<Guid>
+public class FavoritesEntity : IEntity
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]

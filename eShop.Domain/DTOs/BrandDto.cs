@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.DTOs;
 
-public class BrandDto : IIdentifiable<Guid>
+public class BrandDto
 {
     public Guid Id { get; init; }
     public string Name { get; set; } = string.Empty;

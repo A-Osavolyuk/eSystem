@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data.Seed;
 
-public class ResourceSeed : Seed<ResourceEntity, Guid>
+public class ResourceSeed : Seed<ResourceEntity>
 {
     public override List<ResourceEntity> Get()
     {

@@ -2,7 +2,7 @@
 
 namespace eShop.Product.Api.Entities;
 
-public class SellerProductsEntity : IEntity<Guid>
+public class SellerProductsEntity : IEntity
 {
     public Guid Id { get; init; }
     public Guid SellerId { get; set; }

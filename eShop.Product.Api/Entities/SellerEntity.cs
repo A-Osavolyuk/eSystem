@@ -2,7 +2,7 @@
 
 namespace eShop.Product.Api.Entities;
 
-public class SellerEntity : IEntity<Guid>
+public class SellerEntity : IEntity
 {
     public Guid Id { get; init; } = Guid.CreateVersion7();
     public Guid UserId { get; set; } = Guid.CreateVersion7();

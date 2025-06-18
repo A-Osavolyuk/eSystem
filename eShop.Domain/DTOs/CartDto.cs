@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.DTOs;
 
-public class CartDto : IIdentifiable<Guid>
+public class CartDto
 {
     public Guid Id { get; init; }
     public int Count { get; set; }

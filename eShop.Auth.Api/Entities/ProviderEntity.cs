@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class ProviderEntity : IEntity<Guid>
+public class ProviderEntity : IEntity
 {
     public Guid Id { get; init; }
 

@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data.Seed;
 
-public class PermissionSeed : Seed<PermissionEntity, Guid>
+public class PermissionSeed : Seed<PermissionEntity>
 {
     public override List<PermissionEntity> Get()
     {

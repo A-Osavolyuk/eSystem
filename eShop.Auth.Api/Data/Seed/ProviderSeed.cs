@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Data.Seed;
 
-public class ProviderSeed : Seed<ProviderEntity, Guid>
+public class ProviderSeed : Seed<ProviderEntity>
 {
     public override List<ProviderEntity> Get()
     {

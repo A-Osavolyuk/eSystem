@@ -1,6 +1,6 @@
 ﻿namespace eShop.Comments.Api.Entities;
 
-public record CommentEntity : IEntity<Guid>
+public record CommentEntity : IEntity
 {
     public Guid Id { get; init; }
     public Guid ProductId { get; set; }

@@ -1,4 +1,7 @@
 ﻿namespace eShop.Domain.Abstraction.Data;
 
-public interface IEntity<TKey> : IIdentifiable<TKey>, IAuditable;
-public interface IEntity :  IAuditable;
+public interface IEntity
+{
+    DateTimeOffset? CreateDate { get; set; }
+    DateTimeOffset? UpdateDate { get; set; }
+}

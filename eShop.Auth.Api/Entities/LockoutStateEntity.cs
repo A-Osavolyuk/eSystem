@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class LockoutStateEntity : IEntity<Guid>
+public class LockoutStateEntity : IEntity
 {
     public Guid Id { get; init; }
     public Guid UserId { get; set; }

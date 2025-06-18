@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.DTOs;
 
-public class ReviewDto : IAuditable, IIdentifiable<Guid>
+public class ReviewDto
 {
     public Guid Id { get; init; }
     public Guid ProductId { get; set; }
