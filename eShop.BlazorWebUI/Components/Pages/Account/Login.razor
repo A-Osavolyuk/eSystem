@@ -145,30 +145,32 @@
         }
         else
         {
-            if (result.Result is not null)
+            if (result.Result is null)
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+            else
             {
                 var response = result.Get<LoginResponse>()!;
-                Model.FailedLoginAttempts = response.FailedLoginAttempts;
+                var userId = response.UserId;
 
-                if (Model.FailedLoginAttempts < 5 && !response.IsLockedOut)
+                if (response is { FailedLoginAttempts: < 5, IsLockedOut: false })
                 {
-                    var attemptsLeft = 5 - Model.FailedLoginAttempts;
-                    var message = $"Incorrect password. You have {attemptsLeft}, then account will be locked out.";
+                    var attemptsLeft = 5 - response.FailedLoginAttempts;
+                    var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
                     Snackbar.Add(message, Severity.Error);
                 }
                 else
                 {
-                    var redirectUri = response.Reason == LockoutReason.TooManyFailedLoginAttempts
-                        ? $"/account/recover?id={response.UserId}"
-                        : $"/account/locked-out?id={response.UserId}";
+                    var redirectUri = response.Reason switch
+                    {
+                        LockoutReason.TooManyFailedLoginAttempts => $"/account/recover?id={userId}",
+                        _ => $"/account/locked-out?id={userId}"
+                    };
 
                     Snackbar.Add(result.Message, Severity.Error);
                     NavigationManager.NavigateTo(redirectUri);
                 }
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
             }
         }
     }
