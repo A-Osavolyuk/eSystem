@@ -8,5 +8,5 @@ public abstract class ApiService(IConfiguration configuration, IApiClient apiCli
 {
     protected IApiClient ApiClient { get; } = apiClient;
     protected string Gateway { get; } = configuration[Key]!;
-    private const string Key = "services:proxy:https:0";
+    private const string Key = "services:proxy:http:0";
 }
