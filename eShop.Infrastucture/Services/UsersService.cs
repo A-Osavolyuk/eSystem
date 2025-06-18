@@ -12,7 +12,7 @@ public class UsersService(
     public async ValueTask<Response> GetUserAsync(Guid id)=>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
+            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
     public async ValueTask<Response> GetTwoFactorProvidersAsync(Guid id) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor-providers", Method = HttpMethod.Get }, 
