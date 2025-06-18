@@ -17,7 +17,7 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
+            <MudForm Model="Model" Validation="Validator.ValidateValue">
                 <MudTextField
                     @bind-Value="Model.Email"
                     For="(() => Model.Email)"
@@ -54,7 +54,7 @@
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Google"
                         Variant="Variant.Filled"
-                        OnClick="@(() => ExternalLogin("Google"))"
+                        OnClick="@(() => OnExternalLogin("Google"))"
                         Color="Color.Primary"
                         FullWidth="true">
                         Google
@@ -65,7 +65,7 @@
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Facebook"
                         Variant="Variant.Filled"
-                        OnClick="@(() => ExternalLogin("Facebook"))"
+                        OnClick="@(() => OnExternalLogin("Facebook"))"
                         Color="Color.Primary"
                         FullWidth="true">
                         Facebook
@@ -76,7 +76,7 @@
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Microsoft"
                         Variant="Variant.Filled"
-                        OnClick="@(() => ExternalLogin("Microsoft"))"
+                        OnClick="@(() => OnExternalLogin("Microsoft"))"
                         Color="Color.Primary"
                         FullWidth="true">
                         Microsoft
@@ -87,7 +87,7 @@
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Twitter"
                         Variant="Variant.Filled"
-                        OnClick="@(() => ExternalLogin("Twitter"))"
+                        OnClick="@(() => OnExternalLogin("Twitter"))"
                         Color="Color.Primary"
                         FullWidth="true">
                         Twitter
@@ -112,14 +112,10 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "returnUri")]
-    public string ReturnUri { get; set; } = string.Empty;
-
+    [SupplyParameterFromQuery(Name = "returnUri")] public string ReturnUri { get; set; } = string.Empty;
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
-
-    private MudForm form = new();
-
-    private MudTextField<string> field = new();
+    
+    private const int MaxLoginAttempts = 5;
 
     private async Task OnSubmitAsync()
     {
@@ -154,9 +150,9 @@
                 var response = result.Get<LoginResponse>()!;
                 var userId = response.UserId;
 
-                if (response is { FailedLoginAttempts: < 5, IsLockedOut: false })
+                if (response is { FailedLoginAttempts: < MaxLoginAttempts, IsLockedOut: false })
                 {
-                    var attemptsLeft = 5 - response.FailedLoginAttempts;
+                    var attemptsLeft = MaxLoginAttempts - response.FailedLoginAttempts;
                     var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
                     Snackbar.Add(message, Severity.Error);
                 }
@@ -175,7 +171,7 @@
         }
     }
 
-    private void ExternalLogin(string providerName)
+    private void OnExternalLogin(string providerName)
     {
         var gatewayUri = Configuration["Configuration:Services:Proxy:Gateway:Uri"]!;
         var returnUri = NavigationManager.BaseUri + "account/oauth/login";
