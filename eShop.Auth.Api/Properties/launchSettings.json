@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
     "https": {
       "commandName": "Project",
@@ -19,15 +20,6 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5201"
-    }
-  },
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:59960/",
-      "sslPort": 44336
     }
   }
 }
