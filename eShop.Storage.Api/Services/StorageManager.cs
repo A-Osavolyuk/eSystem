@@ -8,7 +8,7 @@ internal sealed class StorageManager(BlobServiceClient blobServiceClient) : ISto
 {
     private readonly BlobServiceClient blobServiceClient = blobServiceClient;
 
-    public async ValueTask<List<string>> DownloadAsync(Metadata metadata)
+    public async ValueTask<List<string>> LoadAsync(Metadata metadata)
     {
         var containerClient = await GetClientAsync(metadata.Type);
         var files = containerClient.GetBlobs(prefix: metadata.Identifier);

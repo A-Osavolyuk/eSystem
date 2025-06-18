@@ -1,7 +1,8 @@
-﻿namespace eShop.Domain.Requests.API.Storage;
+﻿using eShop.Domain.Common.API;
+
+namespace eShop.Domain.Requests.API.Storage;
 
 public class LoadFilesRequest
 {
-    public string ResourceGroup { get; set; } = string.Empty;
-    public List<string> Identifiers { get; set; } = [];
+    public required Metadata Metadata { get; set; }
 }

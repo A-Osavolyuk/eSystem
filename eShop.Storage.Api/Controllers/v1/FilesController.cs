@@ -1,5 +1,6 @@
 ﻿using eShop.Application.Utilities;
 using eShop.Domain.Common.API;
+using eShop.Domain.Requests.API.Storage;
 using eShop.Storage.Api.Features.Commands;
 using eShop.Storage.Api.Interfaces;
 using Newtonsoft.Json;
@@ -20,10 +21,22 @@ public class FilesController(
     [EndpointDescription("Uploads files")]
     [ProducesResponseType(200)]
     [HttpPost("upload")]
-    public async ValueTask<ActionResult<Response>> UploadProductImagesAsync(IFormFileCollection files, [FromForm] string metadata)
+    public async ValueTask<ActionResult<Response>> UploadFilesAsync(IFormFileCollection files, [FromForm] string metadata)
     {
         var metadataObject = JsonConvert.DeserializeObject<Metadata>(metadata)!;
         var response = await sender.Send(new UploadFilesCommand(files, metadataObject));
+        return response.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Load files")]
+    [EndpointDescription("Load files uris")]
+    [ProducesResponseType(200)]
+    [HttpPost("load")]
+    public async ValueTask<ActionResult<Response>> LoadFilesAsync([FromBody] LoadFilesRequest request)
+    {
+        var response = await sender.Send(new LoadFilesCommand(request));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
