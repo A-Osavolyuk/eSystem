@@ -85,4 +85,16 @@ public static class Mapper
             NewEmail = source.NewEmail
         };
     }
+
+    public static UserModel Map(UserDto source)
+    {
+        return new UserModel()
+        {
+            Id = source.Id,
+            Email = source.Email,
+            PhoneNumber = source.PhoneNumber,
+            UserName = source.Username,
+            PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
+        };
+    }
 }
