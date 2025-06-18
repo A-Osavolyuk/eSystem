@@ -24,4 +24,9 @@ class StorageService(
                 }
             },
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.File });
+    
+    public async ValueTask<Response> LoadFilesAsync(LoadFilesRequest request) =>
+        await ApiClient.SendAsync(
+            new HttpRequest() { Data = request, Method = HttpMethod.Post, Url = $"{Gateway}/api/v1/Files/load" },
+            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 }

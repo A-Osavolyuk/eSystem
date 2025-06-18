@@ -6,4 +6,5 @@ namespace eShop.Domain.Interfaces.Client;
 public interface IStoreService
 {
     public ValueTask<Response> UploadFilesAsync(UploadFilesRequest request);
+    public ValueTask<Response> LoadFilesAsync(LoadFilesRequest request);
 }
