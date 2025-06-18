@@ -1038,5 +1038,75 @@
       <jdbc-url>mongodb://admin:atpDWGvDb4jR5pE7rT59c7@localhost:58471/CartDB?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="redis" uuid="10b6a11a-06bf-4f70-bc73-f97a0d3616a4">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://hACGhGxpHSrZbuUtRNxQGy@localhost:55371</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="auth-db" uuid="88164f7e-731f-4da0-958c-3b1c2e74c204">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,55289;User ID=sa;Password=atpDWGvDb4jR5pE7rT59c7;TrustServerCertificate=true;Initial Catalog=AuthDB</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="product-db" uuid="a1e08aeb-1f99-4d25-9b9d-b0609b93187a">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,55289;User ID=sa;Password=atpDWGvDb4jR5pE7rT59c7;TrustServerCertificate=true;Initial Catalog=ProductDB</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="comment-db" uuid="c252588a-c162-48a6-968a-91b8bb66e307">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,55289;User ID=sa;Password=atpDWGvDb4jR5pE7rT59c7;TrustServerCertificate=true;Initial Catalog=CommentsDB</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="cart-db" uuid="7a346c5d-a842-4c26-8e08-69ff03f3d9c3">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:atpDWGvDb4jR5pE7rT59c7@localhost:55838/CartDB?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="redis" uuid="222a3c35-73b4-4721-a941-87f91c5b6952">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://hACGhGxpHSrZbuUtRNxQGy@localhost:58384</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="auth-db" uuid="63369b81-7b71-4b1e-8779-8e79d8b640cf">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,58396;User ID=sa;Password=atpDWGvDb4jR5pE7rT59c7;TrustServerCertificate=true;Initial Catalog=AuthDB</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="cart-db" uuid="b73e79e6-2730-4267-a9cf-028e80cb08dc">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:atpDWGvDb4jR5pE7rT59c7@localhost:58438/CartDB?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="comment-db" uuid="485f2e4b-be24-4b18-a601-f6c38211b64d">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,58396;User ID=sa;Password=atpDWGvDb4jR5pE7rT59c7;TrustServerCertificate=true;Initial Catalog=CommentsDB</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="product-db" uuid="55c92549-949d-4eb7-9352-3848038026a2">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,58396;User ID=sa;Password=atpDWGvDb4jR5pE7rT59c7;TrustServerCertificate=true;Initial Catalog=ProductDB</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

@@ -62,16 +62,15 @@ public static class Mapper
         };
     }
 
-    public static AccountDataDto Map(UserEntity userEntity)
+    public static UserDto Map(UserEntity userEntity)
     {
-        return new AccountDataDto()
+        return new()
         {
             Id = userEntity.Id,
-            Email = userEntity.Email!,
-            UserName = userEntity.UserName!,
-            PhoneNumber = userEntity.PhoneNumber!,
-            EmailConfirmed = userEntity.EmailConfirmed,
-            PhoneNumberConfirmed = userEntity.PhoneNumberConfirmed,
+            Email = userEntity.Email,
+            PhoneNumber = userEntity.PhoneNumber,
+            Username = userEntity.UserName,
+            TwoFactorEnabled = userEntity.TwoFactorEnabled
         };
     }
 

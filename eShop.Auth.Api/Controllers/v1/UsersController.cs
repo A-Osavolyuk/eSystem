@@ -12,6 +12,20 @@ public class UsersController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
     
+    [EndpointSummary("Get user")]
+    [EndpointDescription("Gets user")]
+    [ProducesResponseType(200)]
+    [Authorize]
+    [HttpGet("{id:guid}")]
+    public async ValueTask<ActionResult<Response>> GetUserAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Get user roles")]
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
