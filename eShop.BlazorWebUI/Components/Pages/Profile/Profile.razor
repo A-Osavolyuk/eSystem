@@ -51,7 +51,11 @@
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="1">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" />
+                                    <MudIconButton 
+                                        Icon="@Icons.Material.Filled.Edit" 
+                                        Color="Color.Primary" 
+                                        Variant="Variant.Filled"
+                                        OnClick="@(() => NavigationManager.NavigateTo("/account/change-username"))"/>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudDivider/>
@@ -67,7 +71,11 @@
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="1">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" />
+                                    <MudIconButton 
+                                        Icon="@Icons.Material.Filled.Edit" 
+                                        Color="Color.Primary" 
+                                        Variant="Variant.Filled"
+                                        OnClick="@(() => NavigationManager.NavigateTo("/account/change-email"))"/>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudDivider/>
@@ -83,7 +91,11 @@
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="1">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" />
+                                    <MudIconButton 
+                                        Icon="@Icons.Material.Filled.Edit" 
+                                        Color="Color.Primary" 
+                                        Variant="Variant.Filled" 
+                                        OnClick="@(() => NavigationManager.NavigateTo("/account/change-phone-number"))"/>
                                 </MudItem>
                             </MudGrid>
                         </MudPaper>
@@ -193,5 +205,4 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-
 }
