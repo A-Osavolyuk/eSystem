@@ -1,4 +1,5 @@
 ﻿using eShop.Infrastructure.Security;
+using eShop.Infrastructure.State;
 using eShop.Infrastructure.Storage;
 using AuthenticationManager = eShop.Infrastructure.Security.AuthenticationManager;
 
@@ -8,6 +9,7 @@ public static class Extensions
 {
     public static void AddInfrastructureLayer(this IHostApplicationBuilder builder)
     {
+        builder.AddState();
         builder.AddDependencyInjection();
         builder.AddJwtAuthentication();
         
@@ -50,6 +52,11 @@ public static class Extensions
         builder.Services.AddScoped<AuthenticationManager>();
         builder.Services.AddScoped<JwtAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+    }
+
+    private static void AddState(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<UserState>();
     }
 
 }

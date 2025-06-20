@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Abstraction.State;
 
-namespace eShop.BlazorWebUI.State;
+namespace eShop.Infrastructure.State;
 
 public class UserState : AsyncStateContainer
 {
