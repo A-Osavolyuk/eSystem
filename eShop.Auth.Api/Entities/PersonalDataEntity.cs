@@ -4,10 +4,10 @@ public record PersonalDataEntity : IEntity
 {
     public Guid Id { get; init; }
     public Guid UserId { get; set; }
-    public string FirstName { get; init; } = string.Empty;
-    public string LastName { get; init; } = string.Empty;
-    public Gender Gender { get; init; } = Gender.Unspecified;
-    public DateTime DateOfBirth { get; init; } = new(1980, 1, 1);
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public Gender Gender { get; set; } = Gender.Unspecified;
+    public DateTime DateOfBirth { get; set; } = new(1980, 1, 1);
     
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }

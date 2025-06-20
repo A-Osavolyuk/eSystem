@@ -136,7 +136,7 @@ public class UsersController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
     {
-        var result = await sender.Send(new UpdatePersonalDataCommand(request));
+        var result = await sender.Send(new ChangePersonalDataCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
