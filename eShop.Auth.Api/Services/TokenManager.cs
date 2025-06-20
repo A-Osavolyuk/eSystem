@@ -143,10 +143,7 @@ public sealed class TokenManager(
     {
         var claims = new List<Claim>()
         {
-            new(AppClaimTypes.UserName, userEntity.UserName!),
-            new(AppClaimTypes.Email, userEntity.Email!),
             new(AppClaimTypes.Id, userEntity.Id.ToString()),
-            new(AppClaimTypes.PhoneNumber, userEntity.PhoneNumber ?? "")
         };
         
         var roles = await roleManager.GetByUserAsync(userEntity);
