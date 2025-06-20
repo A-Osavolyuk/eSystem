@@ -24,16 +24,7 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
 
     public async ValueTask<Result> UpdateAsync(PersonalDataEntity personalData, CancellationToken cancellationToken = default)
     {
-        var newData = new PersonalDataEntity()
-        {
-            Id = personalData.Id,
-            Gender = personalData.Gender,
-            FirstName = personalData.FirstName,
-            LastName = personalData.LastName,
-            DateOfBirth = personalData.DateOfBirth
-        };
-
-        context.PersonalData.Update(newData);
+        context.PersonalData.Update(personalData);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
