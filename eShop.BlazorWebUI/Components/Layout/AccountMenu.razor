@@ -1,11 +1,16 @@
-﻿@using Size = MudBlazor.Size
+﻿@using eShop.BlazorWebUI.State
+@using Size = MudBlazor.Size
 
 @inject AuthenticationManager AuthenticationManager
 @inject NavigationManager NavigationManager
-@inject ISnackbar Snackbar
-@inject IConfiguration Configuration
-@inject ITokenProvider TokenProvider
 @inject TokenHandler TokenHandler
+@inject UserState UserState
+@inject ISnackbar Snackbar
+@inject ITokenProvider TokenProvider
+@inject IStorage Storage
+@inject IUsersService UsersService
+
+@implements IDisposable
 
 <MudAvatar @onclick="DrawerToggle">
     <MudImage
@@ -82,6 +87,20 @@
     private bool isDrawerOpen = false;
     private string userName = string.Empty;
 
+    protected override void OnInitialized()
+    {
+        UserState.OnChange += ReloadAsync;
+    }
+
+    private async Task ReloadAsync()
+    {
+        var userId = await Storage.GetAsync<Guid>("userId");
+        var result = await UsersService.GetUserAsync(userId);
+        var user = result.Get<UserDto>()!;
+        userName = user.Username;
+        await InvokeAsync(StateHasChanged);
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -107,4 +126,10 @@
 
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
     private string GetUserName() => string.IsNullOrEmpty(userName) ? string.Empty : userName;
+
+    public void Dispose()
+    {
+        UserState.OnChange -= ReloadAsync;
+    }
+
 }

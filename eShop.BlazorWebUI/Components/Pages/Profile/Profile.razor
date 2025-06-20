@@ -1,10 +1,12 @@
 ﻿@page "/account/profile"
 
 @using eShop.BlazorWebUI.Components.Pages.Account
+@using eShop.BlazorWebUI.State
 @inherits PageBase
 
 @attribute [Authorize]
 
+@inject UserState UserState
 @inject IUsersService UsersService
 @inject IDialogService DialogService
 
@@ -290,6 +292,7 @@
         {
             await LoadUserAsync();
             StateHasChanged();
+            await UserState.Change();
         }
     }
 }

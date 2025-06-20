@@ -1,4 +1,5 @@
-﻿using MudBlazor.Services;
+﻿using eShop.BlazorWebUI.State;
+using MudBlazor.Services;
 using MudExtensions.Services;
 
 namespace eShop.BlazorWebUI.Extensions;
@@ -29,6 +30,8 @@ public static class HostApplicationBuilderExtensions
 
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
+        
+        builder.Services.AddSingleton<UserState>();
     }
 
     private static void AddValidation(this IHostApplicationBuilder builder)
