@@ -94,6 +94,10 @@ public static class Mapper
             Email = source.Email,
             PhoneNumber = source.PhoneNumber,
             UserName = source.Username,
+            EmailChangeDate = source.EmailChangeDate,
+            PasswordChangeDate = source.PasswordChangeDate,
+            UserNameChangeDate = source.UserNameChangeDate,
+            PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
         };
     }

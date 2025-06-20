@@ -7,5 +7,9 @@ public class UserModel
     public string UserName { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; } = string.Empty;
     public string? AvatarUri { get; set; } = string.Empty;
+    public DateTimeOffset? PasswordChangeDate { get; set; }
+    public DateTimeOffset? EmailChangeDate { get; set; }
+    public DateTimeOffset? PhoneNumberChangeDate { get; set; }
+    public DateTimeOffset? UserNameChangeDate { get; set; }
     public PersonalDataModel? PersonalData { get; set; }
 }

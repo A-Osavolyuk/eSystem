@@ -19,8 +19,8 @@
                         <MudImage
                             Class="w-100 h-auto rounded-lg"
                             Alt="Avatar"
-                            Src="/images/no-avatar.png"
-                            FallbackSrc="/images/no-avatar.png"/>
+                            Src="/images/avatar.jpg"
+                            FallbackSrc="/images/avatar.jpg"/>
 
                         <MudButton
                             FullWidth="true"
@@ -61,9 +61,23 @@
                                             OnClick="@(async () => await OnUserNameChangeAsync())"/>
                                     </MudTooltip>
                                 </MudItem>
-                                <MudItem xs="12">
-                                    <MudDivider/>
-                                </MudItem>
+                                @if (UserModel.UserNameChangeDate is not null)
+                                {
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Align="Align.End" Typo="Typo.caption" Style="opacity: .5;">
+                                            Last change: @UserModel.UserNameChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
+                                else
+                                {
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
                                 <MudItem xs="3" Class="mt-2">
                                     <MudText>
                                         Email address
@@ -83,9 +97,23 @@
                                             OnClick="@(() => NavigationManager.NavigateTo("/account/email/change"))"/>
                                     </MudTooltip>
                                 </MudItem>
-                                <MudItem xs="12">
-                                    <MudDivider/>
-                                </MudItem>
+                                @if (UserModel.EmailChangeDate is not null)
+                                {
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                                            Last change: @UserModel.EmailChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
+                                else
+                                {
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
                                 <MudItem xs="3" Class="mt-2">
                                     <MudText>
                                         Phone number
@@ -118,6 +146,14 @@
                                         </MudTooltip>
                                     }
                                 </MudItem>
+                                @if (UserModel.PhoneNumberChangeDate is not null)
+                                {
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                                            Last change: @UserModel.PhoneNumberChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                        </MudText>
+                                    </MudItem>
+                                }
                             </MudGrid>
                         </MudPaper>
                     </MudItem>
