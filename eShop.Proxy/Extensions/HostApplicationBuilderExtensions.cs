@@ -49,11 +49,6 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
-                RouteId = "profile-route", ClusterId = "security-cluster",
-                Match = new RouteMatch { Path = "/api/v1/Profile/{**catch-all}" }
-            },
-            new RouteConfig
-            {
                 RouteId = "two-factor-route", ClusterId = "security-cluster",
                 Match = new RouteMatch { Path = "/api/v1/TwoFactor/{**catch-all}" }
             },
