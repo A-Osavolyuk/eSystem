@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Features.PersonalData.Commands;
-using eShop.Auth.Api.Features.Users.Commands;
+﻿using eShop.Auth.Api.Features.Users.Commands;
 using eShop.Auth.Api.Features.Users.Queries;
 using eShop.Domain.Requests.API.Auth;
 

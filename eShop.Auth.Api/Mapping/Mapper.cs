@@ -36,6 +36,7 @@ public static class Mapper
             LastName = source.LastName,
             Gender = source.Gender,
             BirthDate = source.DateOfBirth,
+            UpdateDate = source.UpdateDate
         };
     }
 

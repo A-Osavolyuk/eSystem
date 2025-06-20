@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.PersonalData.Commands;
+namespace eShop.Auth.Api.Features.Users.Commands;
 
 public sealed record ChangePersonalDataCommand(ChangePersonalDataRequest Request) : IRequest<Result>;
 
@@ -37,6 +37,7 @@ public sealed class UpdatePersonalDataCommandHandler(
         personalData.LastName = request.Request.LastName;
         personalData.Gender = request.Request.Gender;
         personalData.DateOfBirth = request.Request.BirthDate!.Value;
+        personalData.UpdateDate = DateTimeOffset.UtcNow;
         
         var result = await personalDataManager.UpdateAsync(personalData, cancellationToken);
 

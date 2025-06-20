@@ -47,6 +47,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Features\PersonalData\Commands\" />
       <Folder Include="Features\TwoFactor\Queries\" />
     </ItemGroup>
 </Project>
