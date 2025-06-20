@@ -105,11 +105,11 @@ builder.AddProject<Projects.eShop_BlazorWebUI>("blazor-webui")
     .WithJwtConfig()
     .WithReference(proxy).WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy");
 
-builder.AddNpmApp("angular-webui", "../eShop.AngularWebUI")
-    .WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy")
-    .WithHttpsEndpoint(port: 5902, targetPort: 4200, env: "PORT")
-    .WithExternalHttpEndpoints()
-    .PublishAsDockerFile();
+// builder.AddNpmApp("angular-webui", "../eShop.AngularWebUI")
+//     .WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy")
+//     .WithHttpsEndpoint(port: 5902, targetPort: 4200, env: "PORT")
+//     .WithExternalHttpEndpoints()
+//     .PublishAsDockerFile();
 
 var app = builder.Build();
 
