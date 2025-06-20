@@ -37,7 +37,7 @@
 
                 </MudAvatar>
             </MudStack>
-            <MudText Inline="true" Align="Align.Center"> @GetUserName() </MudText>
+            <MudText Inline="true" Align="Align.Center"> @model?.UserName </MudText>
             <MudDivider/>
         </MudStack>
     </MudDrawerHeader>
@@ -85,7 +85,7 @@
 
 @code {
     private bool isDrawerOpen = false;
-    private string userName = string.Empty;
+    private UserModel? model;
 
     protected override void OnInitialized()
     {
@@ -94,10 +94,7 @@
 
     private async Task ReloadAsync()
     {
-        var userId = await Storage.GetAsync<Guid>("userId");
-        var result = await UsersService.GetUserAsync(userId);
-        var user = result.Get<UserDto>()!;
-        userName = user.Username;
+        await LoadAsync();
         await InvokeAsync(StateHasChanged);
     }
 
@@ -105,7 +102,8 @@
     {
         if (firstRender)
         {
-            await LoadUserAsync();
+            await LoadAsync();
+            StateHasChanged();
         }
     }
 
@@ -116,16 +114,15 @@
         NavigationManager.NavigateTo("/account/login");
     }
 
-    private async Task LoadUserAsync()
+    private async Task LoadAsync()
     {
-        var token = await TokenProvider.GetTokenAsync();
-        var rawToken = TokenHandler.ReadToken(token)!;
-        var claims = TokenHandler.ReadClaims(rawToken);
-        userName = claims.First(x => x.Type == AppClaimTypes.UserName).Value;
+        var userId = await Storage.GetAsync<Guid>("userId");
+        var result = await UsersService.GetUserAsync(userId);
+        var user = result.Get<UserDto>()!;
+        model = Mapper.Map(user);
     }
 
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
-    private string GetUserName() => string.IsNullOrEmpty(userName) ? string.Empty : userName;
 
     public void Dispose()
     {
