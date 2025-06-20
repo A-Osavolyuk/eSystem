@@ -166,10 +166,24 @@ public class SecurityController(ISender sender) : ControllerBase
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("phone-number/add")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> AddPhoneNumberAsync(
-        [FromBody] AddPhoneNumberRequest request)
+    public async ValueTask<ActionResult<Response>> AddPhoneNumberAsync([FromBody] AddPhoneNumberRequest request)
     {
         var result = await sender.Send(new AddPhoneNumberCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Verify phone number")]
+    [EndpointDescription("Verify phone number change")]
+    [ProducesResponseType(200)]
+    [Authorize(Policy = "UpdateAccountPolicy")]
+    [HttpPost("phone-number/verify")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> VerifyPhoneNumberAsync([FromBody] VerifyPhoneNumberRequest request)
+    {
+        var result = await sender.Send(new VerifyPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
