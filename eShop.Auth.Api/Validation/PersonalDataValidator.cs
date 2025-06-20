@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Validation;
 
-public class PersonalDataValidator : Validator<UpdatePersonalDataRequest>
+public class PersonalDataValidator : Validator<ChangePersonalDataRequest>
 {
     public PersonalDataValidator()
     {
@@ -19,7 +19,7 @@ public class PersonalDataValidator : Validator<UpdatePersonalDataRequest>
         RuleFor(x => x.Gender)
             .NotEmpty().WithMessage("Gender is must!");
 
-        RuleFor(x => x.DateOfBirth)
+        RuleFor(x => x.BirthDate)
             .LessThan(DateTime.Now).WithMessage("You cannot choose today`s date.");
     }
 }

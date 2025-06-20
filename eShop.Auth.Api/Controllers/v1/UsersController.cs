@@ -1,4 +1,5 @@
-﻿using eShop.Auth.Api.Features.Users.Commands;
+﻿using eShop.Auth.Api.Features.PersonalData.Commands;
+using eShop.Auth.Api.Features.Users.Commands;
 using eShop.Auth.Api.Features.Users.Queries;
 using eShop.Domain.Requests.API.Auth;
 
@@ -125,6 +126,20 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new ChangeUserNameCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Change personal data")]
+    [EndpointDescription("Change personal data")]
+    [ProducesResponseType(200)]
+    [HttpPut("{id:guid}/personal-data")]
+    [AllowAnonymous]
+    public async ValueTask<ActionResult<Response>> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
+    {
+        var result = await sender.Send(new UpdatePersonalDataCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
     

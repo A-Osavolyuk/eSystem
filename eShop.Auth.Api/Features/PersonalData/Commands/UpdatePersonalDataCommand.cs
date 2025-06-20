@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Features.PersonalData.Commands;
 
-public sealed record UpdatePersonalDataCommand(UpdatePersonalDataRequest Request) : IRequest<Result>;
+public sealed record UpdatePersonalDataCommand(ChangePersonalDataRequest Request) : IRequest<Result>;
 
 public sealed class UpdatePersonalDataCommandHandler(
     IUserManager userManager,
@@ -14,7 +14,7 @@ public sealed class UpdatePersonalDataCommandHandler(
     public async Task<Result> Handle(UpdatePersonalDataCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.Id, cancellationToken);
 
         if (user is null)
         {
@@ -22,7 +22,7 @@ public sealed class UpdatePersonalDataCommandHandler(
             {
                 Code = ErrorCode.NotFound,
                 Message = "Not found",
-                Details = $"Cannot find user with email {request.Request.Email}."
+                Details = $"Cannot find user with ID {request.Request.Id}."
             });
         }
 

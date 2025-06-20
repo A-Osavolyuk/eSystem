@@ -6,14 +6,14 @@ namespace eShop.Auth.Api.Mapping;
 
 public static class Mapper
 {
-    public static PersonalDataEntity Map(UpdatePersonalDataRequest source)
+    public static PersonalDataEntity Map(ChangePersonalDataRequest source)
     {
         return new PersonalDataEntity()
         {
             FirstName = source.FirstName,
             LastName = source.LastName,
             Gender = source.Gender,
-            DateOfBirth = source.DateOfBirth!.Value
+            DateOfBirth = source.BirthDate!.Value
         };
     }
 
