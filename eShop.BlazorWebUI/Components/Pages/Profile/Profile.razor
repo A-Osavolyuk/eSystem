@@ -53,11 +53,13 @@
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="1">
-                                    <MudIconButton 
-                                        Icon="@Icons.Material.Filled.Edit" 
-                                        Color="Color.Primary" 
-                                        Variant="Variant.Filled"
-                                        OnClick="@(async () => await OnUserNameChangeAsync())"/>
+                                    <MudTooltip Text="Change username">
+                                        <MudIconButton 
+                                            Icon="@Icons.Material.Filled.Edit" 
+                                            Color="Color.Primary" 
+                                            Variant="Variant.Filled"
+                                            OnClick="@(async () => await OnUserNameChangeAsync())"/>
+                                    </MudTooltip>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudDivider/>
@@ -73,11 +75,13 @@
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="1">
-                                    <MudIconButton 
-                                        Icon="@Icons.Material.Filled.Edit" 
-                                        Color="Color.Primary" 
-                                        Variant="Variant.Filled"
-                                        OnClick="@(() => NavigationManager.NavigateTo("/account/change-email"))"/>
+                                    <MudTooltip Text="Change email">
+                                        <MudIconButton 
+                                            Icon="@Icons.Material.Filled.Edit" 
+                                            Color="Color.Primary" 
+                                            Variant="Variant.Filled"
+                                            OnClick="@(() => NavigationManager.NavigateTo("/account/email/change"))"/>
+                                    </MudTooltip>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudDivider/>
@@ -93,11 +97,26 @@
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="1">
-                                    <MudIconButton 
-                                        Icon="@Icons.Material.Filled.Edit" 
-                                        Color="Color.Primary" 
-                                        Variant="Variant.Filled" 
-                                        OnClick="@(() => NavigationManager.NavigateTo("/account/change-phone-number"))"/>
+                                    @if (UserModel.PhoneNumber is null)
+                                    {
+                                        <MudTooltip Text="Add phone number">
+                                            <MudIconButton 
+                                                Icon="@Icons.Material.Filled.Add" 
+                                                Color="Color.Primary" 
+                                                Variant="Variant.Filled"
+                                                OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/add"))"/>
+                                        </MudTooltip>
+                                    }
+                                    else
+                                    {
+                                        <MudTooltip Text="Change phone number">
+                                            <MudIconButton 
+                                                Icon="@Icons.Material.Filled.Edit" 
+                                                Color="Color.Primary" 
+                                                Variant="Variant.Filled" 
+                                                OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/change"))"/>
+                                        </MudTooltip>
+                                    }
                                 </MudItem>
                             </MudGrid>
                         </MudPaper>

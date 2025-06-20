@@ -74,7 +74,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            NavigationManager.NavigateTo($"/account/verify-email?email={Model.Email}");
+            NavigationManager.NavigateTo($"/account/email/verify?email={Model.Email}");
         }
         else
         {
