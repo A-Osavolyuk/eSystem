@@ -2,6 +2,7 @@
 using eShop.Domain.Common.API;
 using eShop.Domain.Enums;
 using eShop.Domain.Options;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Infrastructure.Services;
 
@@ -32,4 +33,10 @@ public class UsersService(
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/personal-data", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<Response> ChangeUsernameAsync(ChangeUserNameRequest request) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.Id}/username", Method = HttpMethod.Patch, Data = request }, 
+            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+
 }
