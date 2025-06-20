@@ -1,7 +1,5 @@
 ﻿@page "/account/profile"
 
-@using eShop.BlazorWebUI.Components.Pages.Account
-@using eShop.Infrastructure.State
 @inherits PageBase
 
 @attribute [Authorize]
@@ -202,7 +200,7 @@
                                     </MudItem>
                                     <MudItem xs="9">
                                         <MudText>
-                                            @UserModel.PersonalData.BirthDate
+                                            @UserModel.PersonalData.BirthDate.ToString("D", new CultureInfo("en-GB"))
                                         </MudText>
                                     </MudItem>
                                     <MudItem xs="12">
@@ -222,7 +220,8 @@
                                         <MudButton
                                             Color="Color.Primary"
                                             Variant="Variant.Filled"
-                                            ButtonType="ButtonType.Button">
+                                            ButtonType="ButtonType.Button"
+                                            OnClick="async () => await OnPersonalDataChangeAsync()">
                                             Change personal data
                                         </MudButton>
                                     </MudItem>
@@ -293,6 +292,32 @@
             await LoadUserAsync();
             StateHasChanged();
             await UserState.Change();
+        }
+    }
+    
+    private async Task OnPersonalDataChangeAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = Mapper.Map(UserModel);
+        
+        var parameters = new DialogParameters<ChangePersonalDataDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<ChangePersonalDataDialog>("Personal data change", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
         }
     }
 }

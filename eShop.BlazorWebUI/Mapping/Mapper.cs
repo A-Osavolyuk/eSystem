@@ -72,7 +72,7 @@ public static class Mapper
         {
             FirstName = source.FirstName,
             LastName = source.LastName,
-            BirthDate = source.BirthDate.ToString("D", new CultureInfo("en-GB")),
+            BirthDate = source.BirthDate,
             Gender = source.Gender,
         };
     }
@@ -108,6 +108,30 @@ public static class Mapper
         {
             Id = source.Id,
             UserName = source.UserName
+        };
+    }
+
+    public static ChangePersonalDataRequest Map(ChangePersonalDataModel source)
+    {
+        return new()
+        {
+            Id = source.Id,
+            FirstName = source.FirstName,
+            LastName = source.LastName,
+            BirthDate = source.BirthDate,
+            Gender = source.Gender,
+        };
+    }
+
+    public static ChangePersonalDataModel Map(UserModel source)
+    {
+        return new()
+        {
+            Id = source.Id,
+            Gender = source.PersonalData!.Gender,
+            BirthDate = source.PersonalData!.BirthDate,
+            FirstName = source.PersonalData!.FirstName,
+            LastName = source.PersonalData!.LastName,
         };
     }
 }
