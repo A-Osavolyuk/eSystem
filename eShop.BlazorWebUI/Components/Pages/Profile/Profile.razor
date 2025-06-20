@@ -1,10 +1,12 @@
 ﻿@page "/account/profile"
 
+@using eShop.BlazorWebUI.Components.Pages.Account
 @inherits PageBase
 
 @attribute [Authorize]
 
 @inject IUsersService UsersService
+@inject IDialogService DialogService
 
 <Title Text="Profile"></Title>
 
@@ -55,7 +57,7 @@
                                         Icon="@Icons.Material.Filled.Edit" 
                                         Color="Color.Primary" 
                                         Variant="Variant.Filled"
-                                        OnClick="@(() => NavigationManager.NavigateTo("/account/change-username"))"/>
+                                        OnClick="@(async () => await OnUserNameChangeAsync())"/>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudDivider/>
@@ -203,6 +205,36 @@
         else
         {
             Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnUserNameChangeAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new ChangeUserNameModel()
+        {
+            Id = UserModel.Id,
+            UserName = UserModel.UserName,
+        };
+        
+        var parameters = new DialogParameters<ChangeUsernameDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<ChangeUsernameDialog>("Change username", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
         }
     }
 }

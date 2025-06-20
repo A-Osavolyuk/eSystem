@@ -97,4 +97,13 @@ public static class Mapper
             PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
         };
     }
+
+    public static ChangeUserNameRequest Map(ChangeUserNameModel source)
+    {
+        return new()
+        {
+            Id = source.Id,
+            UserName = source.UserName
+        };
+    }
 }
