@@ -12,8 +12,8 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250606101315_AddFields")]
-    partial class AddFields
+    [Migration("20250620075416_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -312,6 +312,9 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<DateTimeOffset?>("EmailChangeDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
@@ -328,18 +331,21 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<DateTimeOffset?>("PasswordChangeDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTimeOffset?>("PasswordUpdateDate")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(17)
                         .HasColumnType("nvarchar(17)");
+
+                    b.Property<DateTimeOffset?>("PhoneNumberChangeDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -354,6 +360,9 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset?>("UserNameChangeDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
