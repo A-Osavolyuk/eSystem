@@ -30,7 +30,7 @@ public interface IUserManager
     
     public ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> SetUserNameAsync(UserEntity user, string userName,
+    public ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName,
         CancellationToken cancellationToken = default);
 
     public ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default);

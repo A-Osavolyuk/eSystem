@@ -115,6 +115,19 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Change username")]
+    [EndpointDescription("Change username")]
+    [ProducesResponseType(200)]
+    [Authorize]
+    [HttpPatch("{id:guid}/username")]
+    public async ValueTask<ActionResult<Response>> ChangeUsernameAsync([FromBody] ChangeUserNameRequest request)
+    {
+        var result = await sender.Send(new ChangeUserNameCommand(request));
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Delete user account")]
     [EndpointDescription("Deletes user account")]
     [ProducesResponseType(200)]

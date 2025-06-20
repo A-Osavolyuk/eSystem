@@ -186,7 +186,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> SetUserNameAsync(UserEntity user, string userName,
+    public async ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName,
         CancellationToken cancellationToken = default)
     {
         user.UserName = userName;
