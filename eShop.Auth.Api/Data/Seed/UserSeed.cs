@@ -15,10 +15,10 @@ public class UserSeed : Seed<UserEntity>
                 NormalizedUserName = "sasha.osavolll111@gmail.com".ToUpper(),
                 PasswordHash = "ARAnAAAl1FoQrHhNWGK51c8k0FFv1BuyOTZvNXrRWI7EVVDW5ScOzlWykcg+O8MKwnwzJEs=",
                 EmailConfirmed = true,
-                PhoneNumberConfirmed = true,
                 TwoFactorEnabled = false,
                 AccountConfirmed = true,
-                PhoneNumber = "380686100242",
+                //PhoneNumberConfirmed = true,
+                //PhoneNumber = "380686100242",
             }
         ];
     }
