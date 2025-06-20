@@ -125,7 +125,7 @@
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="1">
-                                    @if (UserModel.PhoneNumber is null)
+                                    @if (string.IsNullOrEmpty(UserModel.PhoneNumber ))
                                     {
                                         <MudTooltip Text="Add phone number">
                                             <MudIconButton 
