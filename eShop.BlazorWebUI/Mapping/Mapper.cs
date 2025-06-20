@@ -66,7 +66,7 @@ public static class Mapper
         };
     }
 
-    public static PersonalDataModel Map(PersonalDataDto source)
+    private static PersonalDataModel Map(PersonalDataDto source)
     {
         return new PersonalDataModel()
         {
@@ -74,6 +74,7 @@ public static class Mapper
             LastName = source.LastName,
             BirthDate = source.BirthDate,
             Gender = source.Gender,
+            UpdateDate = source.UpdateDate
         };
     }
 

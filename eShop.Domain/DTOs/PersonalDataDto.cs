@@ -9,4 +9,5 @@ public record PersonalDataDto
     public string LastName { get; set; } = string.Empty;
     public Gender Gender { get; set; }
     public DateTime BirthDate { get; set; } = new(1980, 1, 1);
+    public DateTimeOffset? UpdateDate { get; set; }
 }

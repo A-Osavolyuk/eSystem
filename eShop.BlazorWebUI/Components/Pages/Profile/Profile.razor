@@ -160,13 +160,44 @@
                     <MudItem xs="12">
                         <MudPaper Outlined="true" Class="pa-5">
                             <MudGrid Spacing="3">
-                                <MudItem xs="12">
-                                    <MudText Class="mb-2" Typo="Typo.h6">
-                                        Personal information
-                                    </MudText>
-                                </MudItem>
-                                @if (UserModel.PersonalData is not null)
+                                @if (UserModel.PersonalData is null)
                                 {
+                                    <MudItem xs="11">
+                                        <MudText Class="mb-2" Typo="Typo.h6">
+                                            Personal information
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1">
+                                        <MudTooltip Text="Add personal data">
+                                            <MudIconButton 
+                                                Icon="@Icons.Material.Filled.Add" 
+                                                Color="Color.Primary" 
+                                                Variant="Variant.Filled" />
+                                        </MudTooltip>
+                                    </MudItem>
+                                }
+                                else
+                                {
+                                    <MudItem xs="11">
+                                        <MudText Class="mb-2" Typo="Typo.h6">
+                                            Personal information
+                                        </MudText>
+                                        @if (UserModel.PersonalData.UpdateDate is not null)
+                                        {
+                                            <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                                                Last change: @UserModel.PersonalData!.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
+                                            </MudText>
+                                        }
+                                    </MudItem>
+                                    <MudItem xs="1">
+                                        <MudTooltip Text="Change personal data">
+                                            <MudIconButton 
+                                                Icon="@Icons.Material.Filled.Edit" 
+                                                Color="Color.Primary" 
+                                                Variant="Variant.Filled" 
+                                                OnClick="@(async () => await OnPersonalDataChangeAsync())"/>
+                                        </MudTooltip>
+                                    </MudItem>
                                     <MudItem xs="3">
                                         <MudText>
                                             First name
@@ -215,15 +246,6 @@
                                         <MudText>
                                             @UserModel.PersonalData.Gender.ToString()
                                         </MudText>
-                                    </MudItem>
-                                    <MudItem Class="mt-2" xs="12">
-                                        <MudButton
-                                            Color="Color.Primary"
-                                            Variant="Variant.Filled"
-                                            ButtonType="ButtonType.Button"
-                                            OnClick="async () => await OnPersonalDataChangeAsync()">
-                                            Change personal data
-                                        </MudButton>
                                     </MudItem>
                                 }
                             </MudGrid>

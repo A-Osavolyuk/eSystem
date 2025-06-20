@@ -8,4 +8,5 @@ public class PersonalDataModel
     public string LastName { get; set; } = string.Empty;
     public Gender Gender { get; set; }
     public DateTime BirthDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
 }
