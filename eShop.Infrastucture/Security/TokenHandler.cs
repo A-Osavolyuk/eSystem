@@ -22,9 +22,6 @@ public class TokenHandler
         var claims = new List<Claim>()
         {
             new(AppClaimTypes.Id, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Id)!.Value),
-            new(AppClaimTypes.Email, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Email)!.Value),
-            new(AppClaimTypes.UserName, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.UserName)!.Value),
-            new(AppClaimTypes.PhoneNumber, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.PhoneNumber)!.Value),
         };
 
         claims.AddRange(token.Claims.Where(x => x.Type == AppClaimTypes.Role));
