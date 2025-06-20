@@ -152,6 +152,17 @@ public sealed class UserManager(
         return Result.Success();
     }
 
+    public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber, CancellationToken cancellationToken = default)
+    {
+        user.PhoneNumber = phoneNumber;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
     public async ValueTask<Result> CreateAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {

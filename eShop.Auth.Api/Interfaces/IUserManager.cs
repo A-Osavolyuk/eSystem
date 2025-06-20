@@ -24,6 +24,8 @@ public interface IUserManager
 
     public ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string currentPhoneNumberCode,
         string newPhoneNumberCode, string newPhoneNumber, CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber, CancellationToken cancellationToken = default);
 
     public ValueTask<Result> CreateAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default);

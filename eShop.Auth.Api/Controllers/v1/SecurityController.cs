@@ -159,6 +159,22 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Add phone number")]
+    [EndpointDescription("Add phone number change")]
+    [ProducesResponseType(200)]
+    [Authorize(Policy = "UpdateAccountPolicy")]
+    [HttpPost("phone-number/add")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> AddPhoneNumberAsync(
+        [FromBody] AddPhoneNumberRequest request)
+    {
+        var result = await sender.Send(new AddPhoneNumberCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Request change phone number")]
     [EndpointDescription("Request a phone number change")]
@@ -167,9 +183,9 @@ public class SecurityController(ISender sender) : ControllerBase
     [HttpPost("phone-number/request-change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangePhoneNumber(
-        [FromBody] ChangePhoneNumberRequest changePhoneNumberRequest)
+        [FromBody] ChangePhoneNumberRequest request)
     {
-        var result = await sender.Send(new ChangePhoneNumberCommand(changePhoneNumberRequest));
+        var result = await sender.Send(new ChangePhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
