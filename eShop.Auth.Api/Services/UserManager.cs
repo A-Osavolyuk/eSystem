@@ -89,7 +89,7 @@ public sealed class UserManager(
         var passwordHash = PasswordHasher.HashPassword(newPassword);
 
         user.PasswordHash = passwordHash;
-        user.PasswordUpdateDate = DateTimeOffset.UtcNow;
+        user.PasswordChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
@@ -117,6 +117,7 @@ public sealed class UserManager(
         
         user.Email = newEmail;
         user.NormalizedEmail = newEmail.ToUpperInvariant();
+        user.EmailChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.UserName = newEmail;
         context.Users.Update(user);
@@ -144,6 +145,7 @@ public sealed class UserManager(
         
         user.PhoneNumber = newPhoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
+        user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -189,7 +191,9 @@ public sealed class UserManager(
     {
         user.UserName = userName;
         user.NormalizedUserName = userName.ToUpper();
+        user.UserNameChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
+        
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -221,7 +225,7 @@ public sealed class UserManager(
         var newPasswordHash = PasswordHasher.HashPassword(newPassword);
         
         user.PasswordHash = newPasswordHash;
-        user.PasswordUpdateDate = DateTimeOffset.UtcNow;
+        user.PasswordChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);

@@ -7,6 +7,11 @@ public class UserDto
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public bool TwoFactorEnabled { get; set; }
+    
+    public DateTimeOffset? PasswordChangeDate { get; set; }
+    public DateTimeOffset? EmailChangeDate { get; set; }
+    public DateTimeOffset? PhoneNumberChangeDate { get; set; }
+    public DateTimeOffset? UserNameChangeDate { get; set; }
 
     public PersonalDataDto? PersonalData { get; set; }
 }

@@ -3,18 +3,25 @@
 public class UserEntity : IEntity
 {
     public Guid Id { get; init; }
+    
     public string Email { get; set; } = string.Empty;
     public string NormalizedEmail { get; set; } = string.Empty;
+    public bool EmailConfirmed { get; set; }
+    public DateTimeOffset? EmailChangeDate { get; set; }
+    
     public string UserName { get; set; } = string.Empty;
     public string NormalizedUserName { get; set; } = string.Empty;
+    public DateTimeOffset? UserNameChangeDate { get; set; }
+    
     public string PhoneNumber { get; set; } = string.Empty;
     public bool PhoneNumberConfirmed { get; set; }
-    public bool EmailConfirmed { get; set; }
+    public DateTimeOffset? PhoneNumberChangeDate { get; set; }
+    
     public bool AccountConfirmed { get; set; }
     public bool TwoFactorEnabled { get; set; }
     public int FailedLoginAttempts { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
-    public DateTimeOffset? PasswordUpdateDate { get; set; }
+    public DateTimeOffset? PasswordChangeDate { get; set; }
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }
     

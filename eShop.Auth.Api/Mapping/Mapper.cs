@@ -6,80 +6,73 @@ namespace eShop.Auth.Api.Mapping;
 
 public static class Mapper
 {
-    public static PersonalDataResponse Map(PersonalDataDto entity)
-    {
-        return new PersonalDataResponse()
-        {
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            Gender = entity.Gender,
-            DateOfBirth = entity.BirthDate
-        };
-    }
-
-    public static PersonalDataEntity Map(UpdatePersonalDataRequest request)
+    public static PersonalDataEntity Map(UpdatePersonalDataRequest source)
     {
         return new PersonalDataEntity()
         {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Gender = request.Gender,
-            DateOfBirth = request.DateOfBirth!.Value
+            FirstName = source.FirstName,
+            LastName = source.LastName,
+            Gender = source.Gender,
+            DateOfBirth = source.DateOfBirth!.Value
         };
     }
 
-    public static PersonalDataEntity Map(SetPersonalDataRequest request)
+    public static PersonalDataEntity Map(SetPersonalDataRequest source)
     {
         return new PersonalDataEntity()
         {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Gender = request.Gender,
-            DateOfBirth = request.BirthDate,
+            FirstName = source.FirstName,
+            LastName = source.LastName,
+            Gender = source.Gender,
+            DateOfBirth = source.BirthDate,
         };
     }
 
-    public static PersonalDataDto Map(PersonalDataEntity data)
+    public static PersonalDataDto Map(PersonalDataEntity source)
     {
         return new PersonalDataDto()
         {
-            FirstName = data.FirstName,
-            LastName = data.LastName,
-            Gender = data.Gender,
-            BirthDate = data.DateOfBirth,
+            FirstName = source.FirstName,
+            LastName = source.LastName,
+            Gender = source.Gender,
+            BirthDate = source.DateOfBirth,
         };
     }
 
-    public static UserEntity Map(RegistrationRequest request)
+    public static UserEntity Map(RegistrationRequest source)
     {
         return new UserEntity()
         {
             Id = Guid.CreateVersion7(),
-            Email = request.Email,
-            UserName = request.Email,
-            NormalizedEmail = request.Email.ToUpper(),
-            NormalizedUserName = request.Email.ToUpper(),
+            Email = source.Email,
+            UserName = source.Email,
+            NormalizedEmail = source.Email.ToUpper(),
+            NormalizedUserName = source.Email.ToUpper(),
         };
     }
 
-    public static UserDto Map(UserEntity userEntity)
+    public static UserDto Map(UserEntity source)
     {
         return new()
         {
-            Id = userEntity.Id,
-            Email = userEntity.Email,
-            PhoneNumber = userEntity.PhoneNumber,
-            Username = userEntity.UserName,
-            TwoFactorEnabled = userEntity.TwoFactorEnabled
+            Id = source.Id,
+            Email = source.Email,
+            PhoneNumber = source.PhoneNumber,
+            Username = source.UserName,
+            TwoFactorEnabled = source.TwoFactorEnabled,
+            EmailChangeDate = source.EmailChangeDate,
+            PhoneNumberChangeDate = source.PhoneNumberChangeDate,
+            UserNameChangeDate = source.UserNameChangeDate,
+            PasswordChangeDate = source.PasswordChangeDate
         };
     }
 
-    public static LockoutStatusResponse Map(LockoutStatus status)
+    public static LockoutStatusResponse Map(LockoutStatus source)
     {
         return new LockoutStatusResponse()
         {
-            LockoutEnd = status.LockoutEnd,
-            LockoutEnabled = status.LockoutEnabled
+            LockoutEnd = source.LockoutEnd,
+            LockoutEnabled = source.LockoutEnabled
         };
     }
 
