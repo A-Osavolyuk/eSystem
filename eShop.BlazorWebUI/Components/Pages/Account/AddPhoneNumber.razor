@@ -33,13 +33,16 @@
                                                     We will the send SMS with 6-digit code to this phone number
                                                 </MudText>
                                                 <br/>
-                                                <MudTextField Label="Phone number" For="@(() => AddPhoneNumberModel.PhoneNumber)"
+                                                <MudTextField Label="Phone number"
+                                                              Class="mt-2"
+                                                              For="@(() => AddPhoneNumberModel.PhoneNumber)"
                                                               Variant="Variant.Outlined"
                                                               Immediate
                                                               @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
                                             </MudItem>
                                             <MudItem xs="12">
                                                 <MudButton Size="Size.Large" FullWidth Variant="Variant.Filled"
+                                                           Class="mt-2"
                                                            Color="Color.Primary"
                                                            ButtonType="ButtonType.Button"
                                                            OnClick="async () => await OnAddPhoneNumberAsync()">Send code
@@ -72,12 +75,16 @@
                                                 </MudText>
                                             </MudItem>
                                             <MudItem xs="7">
-                                                <MudCodeInput Count="6" Margin="Margin.Normal" Spacing="1"
+                                                <MudCodeInput Count="6" 
+                                                              Margin="Margin.Normal" 
+                                                              Spacing="1"
+                                                              Class="mt-2"
                                                               @bind-Value="VerifyCodeModel.Code"
                                                               Variant="Variant.Outlined" Required/>
                                             </MudItem>
                                             <MudItem xs="12">
                                                 <MudButton Size="Size.Large" FullWidth Variant="Variant.Filled"
+                                                           Class="mt-2"
                                                            Color="Color.Primary"
                                                            Disabled="@(VerifyCodeModel.Code.Length <= 5)"
                                                            ButtonType="ButtonType.Button"
