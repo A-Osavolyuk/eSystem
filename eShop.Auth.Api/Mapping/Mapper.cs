@@ -17,14 +17,17 @@ public static class Mapper
         };
     }
 
-    public static PersonalDataEntity Map(SetPersonalDataRequest source)
+    public static PersonalDataEntity Map(AddPersonalDataRequest source)
     {
         return new PersonalDataEntity()
         {
+            Id = Guid.CreateVersion7(),
+            UserId = source.Id,
             FirstName = source.FirstName,
             LastName = source.LastName,
             Gender = source.Gender,
             DateOfBirth = source.BirthDate,
+            CreateDate = DateTimeOffset.UtcNow
         };
     }
 

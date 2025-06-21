@@ -12,7 +12,7 @@ public class ValidationFilter() : Attribute, IAsyncActionFilter
         {
             if (parameter.Value is not null)
             {
-                var scope = context.HttpContext.RequestServices.CreateScope();
+                using var scope = context.HttpContext.RequestServices.CreateScope();
                 var argumentType = parameter.Value.GetType();
                 var validatorType = typeof(IValidator<>).MakeGenericType(argumentType);
                 

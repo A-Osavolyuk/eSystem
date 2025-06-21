@@ -128,6 +128,20 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Add personal data")]
+    [EndpointDescription("Add personal data")]
+    [ProducesResponseType(200)]
+    [HttpPost("{id:guid}/personal-data")]
+    [AllowAnonymous]
+    public async ValueTask<ActionResult<Response>> AddPersonalDataAsync([FromBody] AddPersonalDataRequest request)
+    {
+        var result = await sender.Send(new AddPersonalDataCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Change personal data")]
     [EndpointDescription("Change personal data")]
     [ProducesResponseType(200)]
