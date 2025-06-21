@@ -7,7 +7,6 @@ namespace eShop.Auth.Api.Controllers.v1;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
-[Authorize]
 public class UsersController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
@@ -44,7 +43,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Get personal data")]
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}/personal-data")]
-    [AllowAnonymous]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> GetPersonalDataAsync(Guid id)
     {
         var result = await sender.Send(new GetPersonalDataQuery(id));
@@ -72,7 +71,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Get two-factor state")]
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}/two-factor-state")]
-    [AllowAnonymous]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(Guid id)
     {
         var result = await sender.Send(new GetTwoFactorStateQuery(id));
@@ -132,7 +131,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Add personal data")]
     [ProducesResponseType(200)]
     [HttpPost("{id:guid}/personal-data")]
-    [AllowAnonymous]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> AddPersonalDataAsync([FromBody] AddPersonalDataRequest request)
     {
         var result = await sender.Send(new AddPersonalDataCommand(request));
@@ -146,7 +145,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Change personal data")]
     [ProducesResponseType(200)]
     [HttpPut("{id:guid}/personal-data")]
-    [AllowAnonymous]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
     {
         var result = await sender.Send(new ChangePersonalDataCommand(request));
