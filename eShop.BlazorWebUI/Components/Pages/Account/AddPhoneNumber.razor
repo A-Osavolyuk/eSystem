@@ -1,0 +1,166 @@
+﻿@page "/account/phone-number/add"
+
+@using Size = MudBlazor.Size
+@inherits PageBase
+
+@inject ISecurityService SecurityService
+
+<Title Text="Add phone number"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" md="10" xl="8" Style="margin-top: 150px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            Animation="true"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Add" Title="Phone number">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="6">
+                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                    <MudText Align="Align.Center" Typo="Typo.h4">
+                                        Phone number add
+                                    </MudText>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudForm Model="AddPhoneNumberModel">
+                                        <MudGrid Spacing="1" Justify="Justify.Center">
+                                            <MudItem xs="12">
+                                                <MudText Align="Align.Center" Typo="Typo.body1"
+                                                         Style="width: 55ch; margin: auto">
+                                                    To add phone number, please enter the phone number, you want to add. 
+                                                    We will the send SMS with 6-digit code to this phone number
+                                                </MudText>
+                                                <br/>
+                                                <MudTextField Label="Phone number" For="@(() => AddPhoneNumberModel.PhoneNumber)"
+                                                              Variant="Variant.Outlined"
+                                                              Immediate
+                                                              @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
+                                            </MudItem>
+                                            <MudItem xs="12">
+                                                <MudButton Size="Size.Large" FullWidth Variant="Variant.Filled"
+                                                           Color="Color.Primary"
+                                                           ButtonType="ButtonType.Button"
+                                                           OnClick="async () => await OnAddPhoneNumberAsync()">Send code
+                                                </MudButton>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudForm>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Verification">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="6">
+                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                    <MudText Align="Align.Center" Typo="Typo.h4">
+                                        Phone number verification
+                                    </MudText>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudForm Model="VerifyCodeModel">
+                                        <MudGrid Spacing="1" Justify="Justify.Center">
+                                            <MudItem xs="12">
+                                                <MudText Align="Align.Center" Typo="Typo.body1"
+                                                         Style="width: 55ch; margin: auto">
+                                                    To verify your phone number, please enter the 6-digit code from
+                                                    the SMS we sent you to: <strong>@AddPhoneNumberModel.PhoneNumber</strong>
+                                                </MudText>
+                                            </MudItem>
+                                            <MudItem xs="7">
+                                                <MudCodeInput Count="6" Margin="Margin.Normal" Spacing="1"
+                                                              @bind-Value="VerifyCodeModel.Code"
+                                                              Variant="Variant.Outlined" Required/>
+                                            </MudItem>
+                                            <MudItem xs="12">
+                                                <MudButton Size="Size.Large" FullWidth Variant="Variant.Filled"
+                                                           Color="Color.Primary"
+                                                           Disabled="@(VerifyCodeModel.Code.Length <= 5)"
+                                                           ButtonType="ButtonType.Button"
+                                                           OnClick="async () => await OnVerifyCodeAsync()">Confirm
+                                                </MudButton>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudForm>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Result Step" IsResultStep="true">
+                    <ChildContent>
+                        <div class="d-flex flex-column align-center justify-center" style="height: 200px">
+                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
+                                           Variant="Variant.Filled" Color="Color.Success"/>
+                            <MudText Style="width: 55ch; margin: auto" Align="Align.Center">
+                                Your password was successfully reset. You will be automatically redirected to login page
+                                in 5 seconds
+                            </MudText>
+                        </div>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private AddPhoneNumberModel AddPhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private VerifyCodeModel VerifyCodeModel { get; set; } = new();
+    
+    private MudStepperExtended stepper = new();
+    
+    private async Task OnAddPhoneNumberAsync()
+    {
+        var userId = await LocalStorage.GetAsync<Guid>("userId");
+        var request = new AddPhoneNumberRequest()
+        {
+            Id = userId, 
+            PhoneNumber = AddPhoneNumberModel.PhoneNumber
+        };
+        
+        var result = await SecurityService.AddPhoneNumberAsync(request);
+
+        if (result.Success)
+        {
+            await StepNextAsync();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnVerifyCodeAsync()
+    {
+        var userId = await LocalStorage.GetAsync<Guid>("userId");
+        var request = new VerifyCodeRequest()
+        {
+            Code = VerifyCodeModel.Code,
+            Type = CodeType.Verify,
+            UserId = userId
+        };
+        
+        var result = await SecurityService.VerifyCodeAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add(result.Message, Severity.Success);
+            NavigationManager.NavigateTo("/account/profile");
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+    }
+}
