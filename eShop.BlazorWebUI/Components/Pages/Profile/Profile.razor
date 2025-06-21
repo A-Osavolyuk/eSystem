@@ -172,7 +172,8 @@
                                             <MudIconButton 
                                                 Icon="@Icons.Material.Filled.Add" 
                                                 Color="Color.Primary" 
-                                                Variant="Variant.Filled" />
+                                                Variant="Variant.Filled"
+                                                OnClick="@(async () => await OnAddPersonalDataAsync())"/>
                                         </MudTooltip>
                                     </MudItem>
                                 }
@@ -195,7 +196,7 @@
                                                 Icon="@Icons.Material.Filled.Edit" 
                                                 Color="Color.Primary" 
                                                 Variant="Variant.Filled" 
-                                                OnClick="@(async () => await OnPersonalDataChangeAsync())"/>
+                                                OnClick="@(async () => await OnChangePersonalDataAsync())"/>
                                         </MudTooltip>
                                     </MudItem>
                                     <MudItem xs="3">
@@ -317,7 +318,7 @@
         }
     }
     
-    private async Task OnPersonalDataChangeAsync()
+    private async Task OnChangePersonalDataAsync()
     {
         var options = new DialogOptions()
         {
@@ -333,7 +334,33 @@
             { x => x.Model, model }
         };
 
-        var dialog = await DialogService.ShowAsync<ChangePersonalDataDialog>("Personal data change", parameters, options);
+        var dialog = await DialogService.ShowAsync<ChangePersonalDataDialog>("Change personal data", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+    }
+    
+    private async Task OnAddPersonalDataAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new AddPersonalDataModel() { Id = UserModel.Id };
+        
+        var parameters = new DialogParameters<AddPersonalDataDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<AddPersonalDataDialog>("Add personal data", parameters, options);
         var result = await dialog.Result;
 
         if (!result!.Canceled)

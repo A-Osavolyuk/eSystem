@@ -135,4 +135,16 @@ public static class Mapper
             LastName = source.PersonalData!.LastName,
         };
     }
+
+    public static AddPersonalDataRequest Map(AddPersonalDataModel source)
+    {
+        return new()
+        {
+            Id = source.Id,
+            Gender = source.Gender,
+            BirthDate = source.BirthDate!.Value,
+            FirstName = source.FirstName,
+            LastName = source.LastName,
+        };
+    }
 }
