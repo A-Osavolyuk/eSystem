@@ -12,4 +12,5 @@ public interface IUsersService
     public ValueTask<Response> GetPersonalDataAsync(Guid id);
     public ValueTask<Response> ChangeUsernameAsync(ChangeUserNameRequest request);
     public ValueTask<Response> ChangePersonalDataAsync(ChangePersonalDataRequest request);
+    public ValueTask<Response> AddPersonalDataAsync(AddPersonalDataRequest request);
 }
