@@ -147,4 +147,15 @@ public static class Mapper
             LastName = source.LastName,
         };
     }
+
+    public static ChangePasswordRequest Map(ChangePasswordModel source)
+    {
+        return new()
+        {
+            Id = source.Id,
+            CurrentPassword = source.CurrentPassword,
+            NewPassword = source.NewPassword,
+            ConfirmNewPassword = source.ConfirmNewPassword,
+        };
+    }
 }
