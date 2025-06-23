@@ -18,7 +18,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         
         var code = new Random().Next(100000, 999999).ToString();
 
-        await context.Codes.AddAsync(new VerificationCodeEntity()
+        await context.Codes.AddAsync(new CodeEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -32,7 +32,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         return code;
     }
 
-    public async ValueTask<VerificationCodeEntity?> FindAsync(UserEntity user, string code,
+    public async ValueTask<CodeEntity?> FindAsync(UserEntity user, string code,
         CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes.FirstOrDefaultAsync(c => c.UserId == user.Id && c.Code == code, cancellationToken: cancellationToken);
@@ -40,7 +40,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         return entity;
     }
 
-    public async ValueTask<VerificationCodeEntity?> FindAsync(UserEntity user, CodeType type,
+    public async ValueTask<CodeEntity?> FindAsync(UserEntity user, CodeType type,
         CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes.FirstOrDefaultAsync(c => c.UserId == user.Id && c.Type == type, cancellationToken: cancellationToken);
@@ -72,7 +72,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         return Result.Success();
     }
 
-    public async ValueTask DeleteAsync(VerificationCodeEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask DeleteAsync(CodeEntity entity, CancellationToken cancellationToken = default)
     {
         context.Codes.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);

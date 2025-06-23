@@ -9,7 +9,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
-    public DbSet<VerificationCodeEntity> Codes { get; set; }
+    public DbSet<CodeEntity> Codes { get; set; }
     public DbSet<ProviderEntity> Providers { get; set; }
     public DbSet<LoginTokenEntity> LoginTokens { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
@@ -41,7 +41,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.NormalizedName).HasMaxLength(64);
         });
 
-        builder.Entity<VerificationCodeEntity>(entity =>
+        builder.Entity<CodeEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Code).HasMaxLength(6);
@@ -105,8 +105,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(k => k.Id);
 
-            entity.Property(t => t.Token).HasColumnType("VARCHAR(MAX)");
-
             entity.HasOne(t => t.UserEntity)
                 .WithOne()
                 .HasForeignKey<RefreshTokenEntity>(t => t.UserId);
@@ -124,7 +122,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             
-            entity.Property(x => x.Token).HasColumnType("NVARCHAR(MAX)");
+            entity.Property(x => x.Token).HasMaxLength(6);
 
             entity.HasOne(x => x.User)
                 .WithOne()
