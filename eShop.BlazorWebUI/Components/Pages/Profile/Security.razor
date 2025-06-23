@@ -4,6 +4,7 @@
 
 @inject IUsersService UsersService
 @inject IDialogService DialogService
+@inject ITwoFactorService TwoFactorService
 
 @attribute [Authorize]
 
@@ -11,43 +12,100 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6">
-        <MudPaper Outlined="true" Class="pa-5">
-            <MudGrid Justify="Justify.Center">
-                <MudItem xs="12">
-                    <MudText Typo="Typo.h6">
-                        Password
-                    </MudText>
-                    @if (UserModel.PasswordChangeDate is not null)
-                    {
-                        <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;" Class="mb-2">
-                            Last change: @UserModel.PasswordChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
-                        </MudText>
-                    }
-                </MudItem>
-                <MudItem xs="12">
-                    <MudButton
-                        Color="Color.Primary"
-                        Variant="Variant.Filled"
-                        ButtonType="ButtonType.Button"
-                        OnClick="async () => await OnChangePasswordAsync()">
-                        Change password
-                    </MudButton>
-                    <MudButton
-                        Color="Color.Error"
-                        Variant="Variant.Outlined"
-                        ButtonType="ButtonType.Button"
-                        OnClick="async () => await OnResetPasswordAsync()">
-                        Reset password
-                    </MudButton>
-                </MudItem>
-            </MudGrid>
-        </MudPaper>
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12">
+                <MudPaper Outlined="true" Class="pa-5">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="12">
+                            <MudText Typo="Typo.h6">
+                                Password
+                            </MudText>
+                            @if (UserModel.PasswordChangeDate is not null)
+                            {
+                                <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;" Class="mb-2">
+                                    Last change: @UserModel.PasswordChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
+                                </MudText>
+                            }
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudButton
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                ButtonType="ButtonType.Button"
+                                OnClick="async () => await OnChangePasswordAsync()">
+                                Change password
+                            </MudButton>
+                            <MudButton
+                                Color="Color.Error"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button"
+                                OnClick="async () => await OnResetPasswordAsync()">
+                                Reset password
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper Outlined="true" Class="pa-5">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="11">
+                            <MudText Typo="Typo.h6" Inline="true">
+                                Two-factor authentication (2FA):
+                            </MudText>
+                            @if (UserModel.TwoFactorEnabled is not null)
+                            {
+                                if (UserModel.TwoFactorEnabled.Value)
+                                {
+                                    <MudText Typo="Typo.h6" Inline="true" Color="Color.Success">
+                                        Enabled
+                                    </MudText>
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.h6" Inline="true" Color="Color.Error">
+                                        Disabled
+                                    </MudText>
+                                }
+                            }
+                        </MudItem>
+                        <MudItem xs="1" Class="text-end">
+                            @if (UserModel.TwoFactorEnabled is not null)
+                            {
+                                if (UserModel.TwoFactorEnabled.Value)
+                                {
+                                    <MudTooltip Text="Disable">
+                                        <MudIconButton 
+                                            Color="Color.Error"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button"
+                                            Icon="@Icons.Material.Filled.Close"
+                                            OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
+                                    </MudTooltip>
+                                }
+                                else
+                                {
+                                    <MudTooltip Text="Enable">
+                                        <MudIconButton 
+                                            Color="Color.Success"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button"
+                                            Icon="@Icons.Material.Filled.Check"
+                                            OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
+                                    </MudTooltip>
+                                }
+                            }
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
     </MudItem>
 </MudGrid>
 
 @code {
     private UserModel UserModel { get; set; } = new();
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -61,7 +119,7 @@
     {
         var userId = await LocalStorage.GetAsync<Guid>("userId");
         var result = await UsersService.GetUserAsync(userId);
-   
+
         if (result.Success)
         {
             var response = result.Get<UserDto>()!;
@@ -73,7 +131,7 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task OnChangePasswordAsync()
     {
         var options = new DialogOptions()
@@ -84,7 +142,7 @@
         };
 
         var model = new ChangePasswordModel() { Id = UserModel.Id };
-        
+
         var parameters = new DialogParameters<ChangePasswordDialog>()
         {
             { x => x.Model, model }
@@ -99,7 +157,7 @@
             StateHasChanged();
         }
     }
-    
+
     private async Task OnResetPasswordAsync()
     {
         var options = new DialogOptions()
@@ -110,7 +168,7 @@
         };
 
         var model = new ResetPasswordModel() { Id = UserModel.Id };
-        
+
         var parameters = new DialogParameters<ResetPasswordDialog>()
         {
             { x => x.Model, model }
@@ -125,4 +183,27 @@
             StateHasChanged();
         }
     }
+
+    private async Task OnTwoFactorStateChangeAsync()
+    {
+        var request = new ChangeTwoFactorStateRequest() { Id = UserModel.Id };
+        var result = await TwoFactorService.ChangeStateAsync(request);
+
+        if (result.Success)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+
+            var message = UserModel.TwoFactorEnabled!.Value
+                ? "Two-factor authentication was enabled"
+                : "Two-factor authentication was disabled";
+            
+            Snackbar.Add(message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
 }

@@ -100,6 +100,7 @@ public static class Mapper
             UserNameChangeDate = source.UserNameChangeDate,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
+            TwoFactorEnabled = source.TwoFactorEnabled,
         };
     }
 
