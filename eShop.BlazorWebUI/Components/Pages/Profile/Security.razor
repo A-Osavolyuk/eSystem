@@ -35,7 +35,8 @@
                     <MudButton
                         Color="Color.Error"
                         Variant="Variant.Outlined"
-                        ButtonType="ButtonType.Button">
+                        ButtonType="ButtonType.Button"
+                        OnClick="async () => await OnResetPasswordAsync()">
                         Reset password
                     </MudButton>
                 </MudItem>
@@ -90,6 +91,32 @@
         };
 
         var dialog = await DialogService.ShowAsync<ChangePasswordDialog>("Change password", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+    }
+    
+    private async Task OnResetPasswordAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new ResetPasswordModel() { Id = UserModel.Id };
+        
+        var parameters = new DialogParameters<ResetPasswordDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<ResetPasswordDialog>("Reset password", parameters, options);
         var result = await dialog.Result;
 
         if (!result!.Canceled)
