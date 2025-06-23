@@ -1,0 +1,19 @@
+﻿@using ZXing
+<MudDialog Style="width: 500px">
+    <TitleContent>
+        Authenticator QR code
+    </TitleContent>
+    <DialogContent>
+        <MudBarcode 
+            Value="@QrCode"
+            Width="450"
+            Height="450"
+            Clickable="false"
+            BarcodeFormat="BarcodeFormat.QR_CODE"/>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter] public string QrCode { get; set; } = string.Empty;
+    [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
+}

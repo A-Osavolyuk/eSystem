@@ -92,18 +92,32 @@
                                                         Color="Color.Info"
                                                         Variant="Variant.Filled"
                                                         ButtonType="ButtonType.Button"
-                                                        Icon="@Icons.Material.Filled.QrCode"/>
+                                                        Icon="@Icons.Material.Filled.QrCode"
+                                                        OnClick="async () => await OnShowQrCodeAsync()"/>
                                                 </MudTooltip>
                                             }
-                                            <MudTooltip Text="@(provider.Subscribed ? "Disable" : "Enable")">
-                                                <MudIconButton
-                                                    Color="@(provider.Subscribed ? Color.Error : Color.Success)"
-                                                    Variant="Variant.Filled"
-                                                    ButtonType="ButtonType.Button"
-                                                    Icon="@(provider.Subscribed
-                                                              ? Icons.Material.Filled.Close
-                                                              : Icons.Material.Filled.Check)"/>
-                                            </MudTooltip>
+                                            @if (provider.Subscribed)
+                                            {
+                                                <MudTooltip Text="Disable">
+                                                    <MudIconButton
+                                                        OnClick="async () => await OnUnsubscribeAsync(provider.Name)"
+                                                        Color="Color.Error"
+                                                        Variant="Variant.Filled"
+                                                        ButtonType="ButtonType.Button"
+                                                        Icon="@Icons.Material.Filled.Close"/>
+                                                </MudTooltip>
+                                            }
+                                            else
+                                            {
+                                                <MudTooltip Text="Enable">
+                                                    <MudIconButton
+                                                        OnClick="async () => await OnSubscribeAsync(provider.Name)"
+                                                        Color="Color.Success"
+                                                        Variant="Variant.Filled"
+                                                        ButtonType="ButtonType.Button"
+                                                        Icon="@Icons.Material.Filled.Check"/>
+                                                </MudTooltip>
+                                            }
                                         </MudItem>
 
                                         if (provider != SecurityModel.Providers.Last())
@@ -276,4 +290,76 @@
         }
     }
 
+    private async Task OnSubscribeAsync(string provider)
+    {
+        var request = new SubscribeProviderRequest() { Id = UserModel.Id, Provider = provider };
+        var result = await ProvidersService.SubscribeProviderAsync(request);
+
+        if (result.Success)
+        {
+            await LoadProvidersAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task OnUnsubscribeAsync(string provider)
+    {
+        var request = new UnsubscribeProviderRequest() { Id = UserModel.Id, Provider = provider };
+        var result = await ProvidersService.UnsubscribeProviderAsync(request);
+
+        if (result.Success)
+        {
+            await LoadProvidersAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnShowQrCodeAsync()
+    {
+        if (string.IsNullOrEmpty(SecurityModel.QrCode))
+        {
+            var request = new GenerateQrCodeRequest() { UserId = UserModel.Id };
+            var result = await TwoFactorService.GenerateQrCodeAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<GenerateQrCodeResponse>()!;
+                SecurityModel.QrCode = response.QrCode;
+                
+                await ShowQrCodeAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+        else
+        {
+            await ShowQrCodeAsync();
+        }
+    }
+
+    private async Task ShowQrCodeAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters<ShowQrCodeDialog>()
+        {
+            { x => x.QrCode, SecurityModel.QrCode }
+        };
+
+        var dialog = await DialogService.ShowAsync<ShowQrCodeDialog>("QR code dialog", parameters, options);
+    }
 }
