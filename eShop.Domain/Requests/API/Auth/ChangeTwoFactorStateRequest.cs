@@ -2,5 +2,5 @@
 
 public record ChangeTwoFactorStateRequest
 {
-    public string Email { get; set; } = string.Empty;
+    public Guid Id { get; set; }
 }
