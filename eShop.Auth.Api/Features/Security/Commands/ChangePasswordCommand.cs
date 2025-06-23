@@ -26,7 +26,7 @@ public sealed class ChangePasswordCommandHandler(
             return Results.BadRequest($"Wrong password.");
         }
 
-        var result = await userManager.ChangePasswordAsync(user, request.Request.CurrentPassword, request.Request.NewPassword, cancellationToken);
+        var result = await userManager.ChangePasswordAsync(user, request.Request.NewPassword, cancellationToken);
 
         return result;
     }

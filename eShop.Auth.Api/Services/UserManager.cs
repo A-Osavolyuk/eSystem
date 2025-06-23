@@ -225,14 +225,8 @@ public sealed class UserManager(
         return await Task.FromResult(result);
     }
 
-    public async ValueTask<Result> ChangePasswordAsync(UserEntity user, string currentPassword, string newPassword,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ChangePasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default)
     {
-        if (PasswordHasher.VerifyPassword(currentPassword, user.PasswordHash))
-        {
-            return Results.BadRequest("Incorrect password");
-        }
-        
         var newPasswordHash = PasswordHasher.HashPassword(newPassword);
         
         user.PasswordHash = newPasswordHash;
