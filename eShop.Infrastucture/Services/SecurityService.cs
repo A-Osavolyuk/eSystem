@@ -26,12 +26,12 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/register", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = false, Type = DataType.Text });
     
-    public async ValueTask<Response> ResetPasswordAsync(ResetPasswordRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/request-reset", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<Response> ForgotPasswordAsync(ForgotPasswordRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/forgot", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
     
-    public async ValueTask<Response> ConfirmResetPasswordAsync(ConfirmPasswordResetRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/confirm-reset", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<Response> ResetResetPasswordAsync(ResetPasswordRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/reset", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
     
     public async ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request) => await ApiClient.SendAsync(

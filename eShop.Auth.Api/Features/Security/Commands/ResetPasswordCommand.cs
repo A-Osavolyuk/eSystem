@@ -2,16 +2,16 @@
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record ConfirmResetPasswordCommand(ConfirmPasswordResetRequest Request)
+public sealed record ResetPasswordCommand(ResetPasswordRequest Request)
     : IRequest<Result>;
 
-public sealed class ConfirmResetPasswordCommandHandler(
+public sealed class ResetPasswordCommandHandler(
     IUserManager userManager)
-    : IRequestHandler<ConfirmResetPasswordCommand, Result>
+    : IRequestHandler<ResetPasswordCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
 
-    public async Task<Result> Handle(ConfirmResetPasswordCommand request,
+    public async Task<Result> Handle(ResetPasswordCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);

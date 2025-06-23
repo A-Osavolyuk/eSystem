@@ -5,19 +5,19 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record RequestResetPasswordCommand(ResetPasswordRequest Request)
+public sealed record ForgotPasswordCommand(ForgotPasswordRequest Request)
     : IRequest<Result>;
 
-public sealed class RequestResetPasswordCommandHandler(
+public sealed class ForgotPasswordCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
-    ICodeManager codeManager) : IRequestHandler<RequestResetPasswordCommand, Result>
+    ICodeManager codeManager) : IRequestHandler<ForgotPasswordCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
 
-    public async Task<Result> Handle(RequestResetPasswordCommand request,
+    public async Task<Result> Handle(ForgotPasswordCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
