@@ -14,19 +14,19 @@ public sealed class ChangePasswordCommandHandler(
         IRequestHandler<ChangePasswordCommand, Result>.Handle(ChangePasswordCommand request,
             CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.Id, cancellationToken);
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.Id}.");
         }
 
-        var isCorrectPassword = await userManager.CheckPasswordAsync(user, request.Request.OldPassword, cancellationToken);
+        var isCorrectPassword = await userManager.CheckPasswordAsync(user, request.Request.CurrentPassword, cancellationToken);
         if (!isCorrectPassword)
         {
             return Results.BadRequest($"Wrong password.");
         }
 
-        var result = await userManager.ChangePasswordAsync(user, request.Request.OldPassword, request.Request.NewPassword, cancellationToken);
+        var result = await userManager.ChangePasswordAsync(user, request.Request.CurrentPassword, request.Request.NewPassword, cancellationToken);
 
         return result;
     }
