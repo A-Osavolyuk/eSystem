@@ -120,6 +120,16 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             CreateDate = DateTimeOffset.UtcNow,
         };
         
+        var providers = await context.Providers
+            .Select(p => new UserProviderEntity()
+            {
+                UserId = user.Id, 
+                ProviderId = p.Id, 
+                Subscribed = false, 
+                CreateDate = DateTimeOffset.UtcNow
+            })
+            .ToListAsync(cancellationToken);
+
         var passwordHash = PasswordHasher.HashPassword(password);
 
         user.PasswordHash = passwordHash;
@@ -128,6 +138,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         user.CreateDate = DateTimeOffset.UtcNow;
         
         await context.Users.AddAsync(user, cancellationToken);
+        await context.UserProvider.AddRangeAsync(providers, cancellationToken);
         await context.LockoutState.AddAsync(lockoutState, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
