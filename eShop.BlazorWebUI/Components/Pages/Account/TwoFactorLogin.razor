@@ -41,7 +41,7 @@
                                         RequiredError="Select a provider">
                                         @if (providers.Any())
                                         {
-                                            foreach (var provider in providers)
+                                            foreach (var provider in providers.Where(x => x.Subscribed))
                                             {
                                                 <MudSelectItem Value="@provider.Name">@provider.Name</MudSelectItem>
                                             }
@@ -154,7 +154,7 @@
     [SupplyParameterFromQuery(Name = "id")] public Guid Id { get; set; }
 
     private MudStepperExtended stepper = new();
-    private List<ProviderDto> providers = [];
+    private List<UserProviderDto> providers = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -175,7 +175,7 @@
 
         if (result.Success)
         {
-            providers = result.Get<List<ProviderDto>>()!;
+            providers = result.Get<List<UserProviderDto>>()!;
         }
         else
         {
