@@ -4,6 +4,7 @@ public class UserProviderEntity : IEntity
 {
     public Guid UserId { get; set; }
     public Guid ProviderId { get; set; }
+    public bool Subscribed { get; set; }
     
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }

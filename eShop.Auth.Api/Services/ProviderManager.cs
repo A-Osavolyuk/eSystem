@@ -16,13 +16,12 @@ public sealed class ProviderManager(
         return providers;
     }
 
-    public async ValueTask<List<ProviderEntity>> GetProvidersAsync(UserEntity user,
+    public async ValueTask<List<UserProviderEntity>> GetProvidersAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         var providers = await context.UserProvider
             .Where(x => x.UserId == user.Id)
             .Include(x => x.Provider)
-            .Select(x => x.Provider)
             .ToListAsync(cancellationToken);
 
         return providers;
@@ -42,6 +41,7 @@ public sealed class ProviderManager(
         {
             UserId = user.Id,
             ProviderId = provider.Id,
+            Subscribed = true,
             CreateDate = DateTime.UtcNow,
             UpdateDate = null
         };
@@ -68,12 +68,9 @@ public sealed class ProviderManager(
             return Results.NotFound("Not found user provider");
         }
 
-        if (provider.Name == ProviderTypes.Authenticator)
-        {
-            await secretManager.DeleteAsync(user, cancellationToken);
-        }
-
-        context.UserProvider.Remove(userProvider);
+        userProvider.Subscribed = false;
+        
+        context.UserProvider.Update(userProvider);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
