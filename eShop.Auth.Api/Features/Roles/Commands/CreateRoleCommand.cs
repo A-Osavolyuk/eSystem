@@ -2,9 +2,9 @@
 
 namespace eShop.Auth.Api.Features.Roles.Commands;
 
-internal sealed record CreateRoleCommand(CreateRoleRequest Request) : IRequest<Result>;
+public sealed record CreateRoleCommand(CreateRoleRequest Request) : IRequest<Result>;
 
-internal sealed class CreateRoleCommandHandler(
+public sealed class CreateRoleCommandHandler(
     IRoleManager roleManager) : IRequestHandler<CreateRoleCommand, Result>
 {
     private readonly IRoleManager roleManager = roleManager;

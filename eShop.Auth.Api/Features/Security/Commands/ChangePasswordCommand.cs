@@ -2,10 +2,10 @@
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ChangePasswordCommand(ChangePasswordRequest Request)
+public sealed record ChangePasswordCommand(ChangePasswordRequest Request)
     : IRequest<Result>;
 
-internal sealed class ChangePasswordCommandHandler(
+public sealed class ChangePasswordCommandHandler(
     IUserManager userManager) : IRequestHandler<ChangePasswordCommand, Result>
 {
     private readonly IUserManager userManager = userManager;

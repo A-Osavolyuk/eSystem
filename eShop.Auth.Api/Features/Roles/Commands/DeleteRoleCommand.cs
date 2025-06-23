@@ -1,8 +1,8 @@
 ﻿namespace eShop.Auth.Api.Features.Roles.Commands;
 
-internal sealed record DeleteRoleCommand(Guid Id) : IRequest<Result>;
+public sealed record DeleteRoleCommand(Guid Id) : IRequest<Result>;
 
-internal sealed class DeleteRoleCommandHandler(
+public sealed class DeleteRoleCommandHandler(
     IRoleManager roleManager) : IRequestHandler<DeleteRoleCommand, Result>
 {
     private readonly IRoleManager roleManager = roleManager;

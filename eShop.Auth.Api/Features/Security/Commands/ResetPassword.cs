@@ -5,10 +5,10 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record RequestResetPasswordCommand(ResetPasswordRequest Request)
+public sealed record RequestResetPasswordCommand(ResetPasswordRequest Request)
     : IRequest<Result>;
 
-internal sealed class RequestResetPasswordCommandHandler(
+public sealed class RequestResetPasswordCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
     ICodeManager codeManager) : IRequestHandler<RequestResetPasswordCommand, Result>

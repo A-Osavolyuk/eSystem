@@ -2,10 +2,10 @@
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 
-internal sealed record GetTwoFactorStateQuery(Guid Id)
+public sealed record GetTwoFactorStateQuery(Guid Id)
     : IRequest<Result>;
 
-internal sealed class GetTwoFactorAuthenticationStateQueryHandler(
+public sealed class GetTwoFactorAuthenticationStateQueryHandler(
     IUserManager userManager,
     ICacheService cacheService)
     : IRequestHandler<GetTwoFactorStateQuery, Result>

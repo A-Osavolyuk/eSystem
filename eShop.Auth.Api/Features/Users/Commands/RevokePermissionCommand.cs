@@ -2,10 +2,10 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record RevokePermissionCommand(RevokePermissionRequest Request)
+public sealed record RevokePermissionCommand(RevokePermissionRequest Request)
     : IRequest<Result>;
 
-internal sealed class RemoveUserFromPermissionCommandHandler(
+public sealed class RemoveUserFromPermissionCommandHandler(
     IPermissionManager permissionManager,
     IUserManager userManager)
     : IRequestHandler<RevokePermissionCommand, Result>

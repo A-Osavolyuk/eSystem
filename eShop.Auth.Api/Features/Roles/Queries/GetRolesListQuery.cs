@@ -1,8 +1,8 @@
 ﻿namespace eShop.Auth.Api.Features.Roles.Queries;
 
-internal sealed record GetRolesListQuery() : IRequest<Result>;
+public sealed record GetRolesListQuery() : IRequest<Result>;
 
-internal sealed class GetRolesListQueryHandler(
+public sealed class GetRolesListQueryHandler(
     IRoleManager roleManager) : IRequestHandler<GetRolesListQuery, Result>
 {
     private readonly IRoleManager roleManager = roleManager;

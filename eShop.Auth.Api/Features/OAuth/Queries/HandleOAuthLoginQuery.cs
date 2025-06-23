@@ -4,12 +4,12 @@ using eShop.Domain.Messages.Email;
 
 namespace eShop.Auth.Api.Features.OAuth.Queries;
 
-internal sealed record HandleOAuthLoginQuery(
+public sealed record HandleOAuthLoginQuery(
     ClaimsPrincipal Principal,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
 
-internal sealed class HandleOAuthLoginQueryHandler(
+public sealed class HandleOAuthLoginQueryHandler(
     IPermissionManager permissionManager,
     ITokenManager tokenManager,
     IUserManager userManager,

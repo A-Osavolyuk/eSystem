@@ -2,9 +2,9 @@
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record AssignRoleCommand(AssignRoleRequest Request) : IRequest<Result>;
+public sealed record AssignRoleCommand(AssignRoleRequest Request) : IRequest<Result>;
 
-internal sealed class AssignRoleCommandHandler(
+public sealed class AssignRoleCommandHandler(
     IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<AssignRoleCommand, Result>
 {

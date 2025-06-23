@@ -3,10 +3,10 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
-internal sealed record ChangeTwoFactorStateCommand(ChangeTwoFactorStateRequest Request)
+public sealed record ChangeTwoFactorStateCommand(ChangeTwoFactorStateRequest Request)
     : IRequest<Result>;
 
-internal sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
+public sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
     IUserManager userManager,
     ITwoFactorManager twoFactorManager)
     : IRequestHandler<ChangeTwoFactorStateCommand, Result>

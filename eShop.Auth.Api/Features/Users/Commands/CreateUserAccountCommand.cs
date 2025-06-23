@@ -2,10 +2,10 @@
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record CreateUserAccountCommand(CreateUserAccountRequest Request)
+public sealed record CreateUserAccountCommand(CreateUserAccountRequest Request)
     : IRequest<Result>;
 
-internal sealed class CreateUserAccountCommandHandler(
+public sealed class CreateUserAccountCommandHandler(
     IPermissionManager permissionManager,
     IPersonalDataManager personalDataManager,
     IUserManager userManager,

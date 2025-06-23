@@ -2,10 +2,10 @@
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record GrantPermissionCommand(GrantPermissionRequest Request)
+public sealed record GrantPermissionCommand(GrantPermissionRequest Request)
     : IRequest<Result>;
 
-internal sealed class IssuePermissionCommandHandler(
+public sealed class IssuePermissionCommandHandler(
     IPermissionManager permissionManager,
     IUserManager userManager) : IRequestHandler<GrantPermissionCommand, Result>
 {

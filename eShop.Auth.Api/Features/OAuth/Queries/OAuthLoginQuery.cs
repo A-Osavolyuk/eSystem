@@ -2,9 +2,9 @@
 
 namespace eShop.Auth.Api.Features.OAuth.Queries;
 
-internal sealed record OAuthLoginQuery(string Provider, string? ReturnUri) : IRequest<Result>;
+public sealed record OAuthLoginQuery(string Provider, string? ReturnUri) : IRequest<Result>;
 
-internal sealed class OAuthLoginQueryHandler(
+public sealed class OAuthLoginQueryHandler(
     ISignInManager signInManager) : IRequestHandler<OAuthLoginQuery, Result>
 {
     private readonly ISignInManager signInManager = signInManager;

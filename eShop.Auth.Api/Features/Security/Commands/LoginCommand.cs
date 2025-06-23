@@ -3,9 +3,9 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
+public sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
-internal sealed class LoginCommandHandler(
+public sealed class LoginCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
     ILockoutManager lockoutManager,

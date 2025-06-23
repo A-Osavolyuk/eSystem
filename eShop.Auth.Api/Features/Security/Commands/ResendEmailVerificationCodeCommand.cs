@@ -4,10 +4,10 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ResendEmailVerificationCodeCommand(ResendEmailVerificationCodeRequest Request)
+public sealed record ResendEmailVerificationCodeCommand(ResendEmailVerificationCodeRequest Request)
     : IRequest<Result>;
 
-internal sealed class ResendEmailVerificationCodeCommandHandler(
+public sealed class ResendEmailVerificationCodeCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
     ICodeManager codeManager)

@@ -3,10 +3,10 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
-internal sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
+public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
     : IRequest<Result>;
 
-internal sealed class LoginWith2FaCommandHandler(
+public sealed class LoginWith2FaCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
     ILoginTokenManager loginTokenManager,

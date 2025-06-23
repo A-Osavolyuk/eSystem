@@ -2,10 +2,10 @@
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record ConfirmResetPasswordCommand(ConfirmPasswordResetRequest Request)
+public sealed record ConfirmResetPasswordCommand(ConfirmPasswordResetRequest Request)
     : IRequest<Result>;
 
-internal sealed class ConfirmResetPasswordCommandHandler(
+public sealed class ConfirmResetPasswordCommandHandler(
     IUserManager userManager)
     : IRequestHandler<ConfirmResetPasswordCommand, Result>
 {

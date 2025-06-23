@@ -1,9 +1,9 @@
 ﻿namespace eShop.Auth.Api.Features.Users.Commands;
 
-internal sealed record DeleteUserAccountCommand(Guid Id)
+public sealed record DeleteUserAccountCommand(Guid Id)
     : IRequest<Result>;
 
-internal sealed class DeleteUserAccountCommandHandler(
+public sealed class DeleteUserAccountCommandHandler(
     IPermissionManager permissionManager,
     IPersonalDataManager personalDataManager,
     ITokenManager tokenManager,

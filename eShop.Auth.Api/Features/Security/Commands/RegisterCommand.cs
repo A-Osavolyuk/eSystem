@@ -4,9 +4,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record RegisterCommand(RegistrationRequest Request) : IRequest<Result>;
+public sealed record RegisterCommand(RegistrationRequest Request) : IRequest<Result>;
 
-internal sealed class RegisterCommandHandler(
+public sealed class RegisterCommandHandler(
     IPermissionManager permissionManager,
     IUserManager userManager,
     IMessageService messageService,

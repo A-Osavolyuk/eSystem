@@ -2,9 +2,9 @@
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record VerifyCodeCommand(VerifyCodeRequest Request) : IRequest<Result>;
+public sealed record VerifyCodeCommand(VerifyCodeRequest Request) : IRequest<Result>;
 
-internal sealed class VerifyCodeCommandHandler(
+public sealed class VerifyCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager)
     : IRequestHandler<VerifyCodeCommand, Result>

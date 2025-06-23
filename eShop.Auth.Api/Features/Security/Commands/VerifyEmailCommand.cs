@@ -4,9 +4,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-internal sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<Result>;
+public sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<Result>;
 
-internal sealed class VerifyEmailCommandHandler(
+public sealed class VerifyEmailCommandHandler(
     IUserManager userManager,
     IMessageService messageService) : IRequestHandler<VerifyEmailCommand, Result>
 {

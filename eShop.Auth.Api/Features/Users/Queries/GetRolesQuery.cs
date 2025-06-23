@@ -2,9 +2,9 @@
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 
-internal sealed record GetRolesQuery(Guid Id) : IRequest<Result>;
+public sealed record GetRolesQuery(Guid Id) : IRequest<Result>;
 
-internal sealed class GetUserRolesQueryHandler(
+public sealed class GetUserRolesQueryHandler(
     IUserManager userManager,
     IRoleManager roleManager) : IRequestHandler<GetRolesQuery, Result>
 {
