@@ -52,7 +52,7 @@
                                         @UserModel.UserName
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="1">
+                                <MudItem xs="1" Class="text-end">
                                     <MudTooltip Text="Change username">
                                         <MudIconButton 
                                             Icon="@Icons.Material.Filled.Edit" 
@@ -88,7 +88,7 @@
                                         @UserModel.Email
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="1">
+                                <MudItem xs="1" Class="text-end">
                                     <MudTooltip Text="Change email">
                                         <MudIconButton 
                                             Icon="@Icons.Material.Filled.Edit" 
@@ -124,7 +124,7 @@
                                         @(string.IsNullOrEmpty(UserModel.PhoneNumber) ? "-" : UserModel.PhoneNumber)
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="1">
+                                <MudItem xs="1" Class="text-end">
                                     @if (string.IsNullOrEmpty(UserModel.PhoneNumber ))
                                     {
                                         <MudTooltip Text="Add phone number">
@@ -167,7 +167,7 @@
                                             Personal information
                                         </MudText>
                                     </MudItem>
-                                    <MudItem xs="1">
+                                    <MudItem xs="1" Class="text-end">
                                         <MudTooltip Text="Add personal data">
                                             <MudIconButton 
                                                 Icon="@Icons.Material.Filled.Add" 
@@ -196,7 +196,7 @@
                                             </MudText>
                                         }
                                     </MudItem>
-                                    <MudItem xs="1">
+                                    <MudItem xs="1" Class="text-end">
                                         <MudTooltip Text="Change personal data">
                                             <MudIconButton 
                                                 Icon="@Icons.Material.Filled.Edit" 

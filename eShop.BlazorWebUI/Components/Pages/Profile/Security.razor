@@ -5,6 +5,7 @@
 @inject IUsersService UsersService
 @inject IDialogService DialogService
 @inject ITwoFactorService TwoFactorService
+@inject IProvidersService ProvidersService
 
 @attribute [Authorize]
 
@@ -13,6 +14,111 @@
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6">
         <MudGrid Justify="Justify.Center">
+            <MudItem xs="12">
+                <MudPaper Outlined="true" Class="pa-5">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="11">
+                            <MudText Typo="Typo.h6" Inline="true">
+                                Two-factor authentication (2FA):
+                            </MudText>
+                            @if (UserModel.TwoFactorEnabled is not null)
+                            {
+                                if (UserModel.TwoFactorEnabled.Value)
+                                {
+                                    <MudText Typo="Typo.h6" Inline="true" Color="Color.Success">
+                                        Enabled
+                                    </MudText>
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.h6" Inline="true" Color="Color.Error">
+                                        Disabled
+                                    </MudText>
+                                }
+                            }
+                        </MudItem>
+                        <MudItem xs="1" Class="text-end">
+                            @if (UserModel.TwoFactorEnabled is not null)
+                            {
+                                if (UserModel.TwoFactorEnabled.Value)
+                                {
+                                    <MudTooltip Text="Disable">
+                                        <MudIconButton
+                                            Color="Color.Error"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button"
+                                            Icon="@Icons.Material.Filled.Close"
+                                            OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
+                                    </MudTooltip>
+                                }
+                                else
+                                {
+                                    <MudTooltip Text="Enable">
+                                        <MudIconButton
+                                            Color="Color.Success"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button"
+                                            Icon="@Icons.Material.Filled.Check"
+                                            OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
+                                    </MudTooltip>
+                                }
+                            }
+                        </MudItem>
+                        @if (UserModel.TwoFactorEnabled.HasValue && UserModel.TwoFactorEnabled.Value)
+                        {
+                            <MudItem xs="12">
+                                <MudDivider/>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudGrid>
+                                    @foreach (var provider in SecurityModel.Providers)
+                                    {
+                                        <MudItem xs="5" Class="mt-2">
+                                            <MudText>
+                                                @provider.Name
+                                            </MudText>
+                                        </MudItem>
+                                        <MudItem xs="5">
+                                            <MudText Class="mt-2" Color="@(provider.Subscribed ? Color.Success : Color.Error)">
+                                                @(provider.Subscribed ? "Enabled" : "Disabled")
+                                            </MudText>
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            @if (provider is { Name: "Authenticator", Subscribed: true })
+                                            {
+                                                <MudTooltip Text="Show QR code">
+                                                    <MudIconButton
+                                                        Class="mx-1"
+                                                        Color="Color.Info"
+                                                        Variant="Variant.Filled"
+                                                        ButtonType="ButtonType.Button"
+                                                        Icon="@Icons.Material.Filled.QrCode"/>
+                                                </MudTooltip>
+                                            }
+                                            <MudTooltip Text="@(provider.Subscribed ? "Disable" : "Enable")">
+                                                <MudIconButton
+                                                    Color="@(provider.Subscribed ? Color.Error : Color.Success)"
+                                                    Variant="Variant.Filled"
+                                                    ButtonType="ButtonType.Button"
+                                                    Icon="@(provider.Subscribed
+                                                              ? Icons.Material.Filled.Close
+                                                              : Icons.Material.Filled.Check)"/>
+                                            </MudTooltip>
+                                        </MudItem>
+
+                                        if (provider != SecurityModel.Providers.Last())
+                                        {
+                                            <MudItem xs="12">
+                                                <MudDivider/>
+                                            </MudItem>
+                                        }
+                                    }
+                                </MudGrid>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
             <MudItem xs="12">
                 <MudPaper Outlined="true" Class="pa-5">
                     <MudGrid Justify="Justify.Center">
@@ -46,71 +152,20 @@
                     </MudGrid>
                 </MudPaper>
             </MudItem>
-            <MudItem xs="12">
-                <MudPaper Outlined="true" Class="pa-5">
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="11">
-                            <MudText Typo="Typo.h6" Inline="true">
-                                Two-factor authentication (2FA):
-                            </MudText>
-                            @if (UserModel.TwoFactorEnabled is not null)
-                            {
-                                if (UserModel.TwoFactorEnabled.Value)
-                                {
-                                    <MudText Typo="Typo.h6" Inline="true" Color="Color.Success">
-                                        Enabled
-                                    </MudText>
-                                }
-                                else
-                                {
-                                    <MudText Typo="Typo.h6" Inline="true" Color="Color.Error">
-                                        Disabled
-                                    </MudText>
-                                }
-                            }
-                        </MudItem>
-                        <MudItem xs="1" Class="text-end">
-                            @if (UserModel.TwoFactorEnabled is not null)
-                            {
-                                if (UserModel.TwoFactorEnabled.Value)
-                                {
-                                    <MudTooltip Text="Disable">
-                                        <MudIconButton 
-                                            Color="Color.Error"
-                                            Variant="Variant.Filled"
-                                            ButtonType="ButtonType.Button"
-                                            Icon="@Icons.Material.Filled.Close"
-                                            OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
-                                    </MudTooltip>
-                                }
-                                else
-                                {
-                                    <MudTooltip Text="Enable">
-                                        <MudIconButton 
-                                            Color="Color.Success"
-                                            Variant="Variant.Filled"
-                                            ButtonType="ButtonType.Button"
-                                            Icon="@Icons.Material.Filled.Check"
-                                            OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
-                                    </MudTooltip>
-                                }
-                            }
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-            </MudItem>
         </MudGrid>
     </MudItem>
 </MudGrid>
 
 @code {
     private UserModel UserModel { get; set; } = new();
+    private SecurityModel SecurityModel { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await LoadUserAsync();
+            await LoadProvidersAsync();
             StateHasChanged();
         }
     }
@@ -125,6 +180,21 @@
             var response = result.Get<UserDto>()!;
             var model = Mapper.Map(response);
             UserModel = model;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task LoadProvidersAsync()
+    {
+        var userId = await LocalStorage.GetAsync<Guid>("userId");
+        var result = await UsersService.GetTwoFactorProvidersAsync(userId);
+
+        if (result.Success)
+        {
+            SecurityModel.Providers = result.Get<List<UserProviderDto>>()!;
         }
         else
         {
@@ -197,7 +267,7 @@
             var message = UserModel.TwoFactorEnabled!.Value
                 ? "Two-factor authentication was enabled"
                 : "Two-factor authentication was disabled";
-            
+
             Snackbar.Add(message, Severity.Success);
         }
         else

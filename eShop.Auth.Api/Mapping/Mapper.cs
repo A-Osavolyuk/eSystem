@@ -111,6 +111,16 @@ public static class Mapper
         };
     }
 
+    public static UserProviderDto Map(UserProviderEntity source)
+    {
+        return new UserProviderDto()
+        {
+            Id = source.Provider.Id,
+            Name = source.Provider.Name,
+            Subscribed = source.Subscribed
+        };
+    }
+    
     public static ProviderDto Map(ProviderEntity source)
     {
         return new ProviderDto()
