@@ -37,21 +37,25 @@ public sealed class ProviderManager(
     public async ValueTask<Result> SubscribeAsync(UserEntity user, ProviderEntity provider,
         CancellationToken cancellationToken = default)
     {
-        var userProvider = new UserProviderEntity()
+        var userProvider = await context.UserProvider
+            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.ProviderId == provider.Id, cancellationToken);
+
+        if (userProvider is null)
         {
-            UserId = user.Id,
-            ProviderId = provider.Id,
-            Subscribed = true,
-            CreateDate = DateTime.UtcNow,
-            UpdateDate = null
-        };
+            return Results.NotFound("Not found user provider");
+        }
+        
+        userProvider.Subscribed = true;
 
         if (provider.Name == ProviderTypes.Authenticator)
         {
-            await secretManager.GenerateAsync(user, cancellationToken);
+            if (!await context.UserSecret.AnyAsync(x => x.UserId == user.Id, cancellationToken))
+            {
+                await secretManager.GenerateAsync(user, cancellationToken);
+            }
         }
 
-        await context.UserProvider.AddAsync(userProvider, cancellationToken);
+        context.UserProvider.Update(userProvider);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

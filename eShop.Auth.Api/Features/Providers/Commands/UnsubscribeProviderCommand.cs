@@ -13,11 +13,11 @@ public class UnsubscribeProviderCommandHandler(
 
     public async Task<Result> Handle(UnsubscribeProviderCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.Id, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.Id}.");
         }
         
         var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);

@@ -17,7 +17,7 @@ public sealed class SecretManager(AuthDbContext context) : ISecretManager
     {
         var secretKey = KeyGeneration.GenerateRandomKey(20);
         var base32Secret = Base32Encoding.ToString(secretKey);
-
+        
         var entity = new UserSecretEntity()
         {
             Id = Guid.CreateVersion7(),
