@@ -7,11 +7,13 @@ public sealed record ConfirmChangePhoneNumberCommand(ConfirmChangePhoneNumberReq
 
 public sealed class ConfirmChangePhoneNumberCommandHandler(
     IUserManager userManager,
-    ITokenManager tokenManager)
+    ITokenManager tokenManager,
+    ICodeManager codeManager)
     : IRequestHandler<ConfirmChangePhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
+    private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(ConfirmChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
@@ -22,12 +24,25 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
-        
+
         var currentPhoneNumberCode = request.Request.CurrentPhoneNumberCode;
         var newPhoneNumberCode = request.Request.NewPhoneNumberCode;
+        
+        var currentPhoneNumberResult = await codeManager.VerifyAsync(user, currentPhoneNumberCode, CodeType.Current, cancellationToken);
 
-        var result = await userManager.ChangePhoneNumberAsync(user, currentPhoneNumberCode, newPhoneNumberCode, 
-            request.Request.NewPhoneNumber, cancellationToken);
+        if (!currentPhoneNumberResult.Succeeded)
+        {
+            return currentPhoneNumberResult;
+        }
+        
+        var newPhoneNumberResult = await codeManager.VerifyAsync(user, newPhoneNumberCode, CodeType.New, cancellationToken);
+
+        if (!newPhoneNumberResult.Succeeded)
+        {
+            return newPhoneNumberResult;
+        }
+
+        var result = await userManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber, cancellationToken);
 
         if (!result.Succeeded)
         {

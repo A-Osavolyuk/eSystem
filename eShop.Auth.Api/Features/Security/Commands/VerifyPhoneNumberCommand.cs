@@ -4,9 +4,12 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 
 public sealed record VerifyPhoneNumberCommand(VerifyPhoneNumberRequest Request) : IRequest<Result>;
 
-public sealed class VerifyPhoneNumberCommandHandler(IUserManager userManager) : IRequestHandler<VerifyPhoneNumberCommand, Result>
+public sealed class VerifyPhoneNumberCommandHandler(
+    IUserManager userManager,
+    ICodeManager codeManager) : IRequestHandler<VerifyPhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(VerifyPhoneNumberCommand request,
         CancellationToken cancellationToken)
@@ -17,9 +20,16 @@ public sealed class VerifyPhoneNumberCommandHandler(IUserManager userManager) : 
         {
             return Results.NotFound($"Cannot find user with ID ${request.Request.Id}");
         }
+        
+        var result = await codeManager.VerifyAsync(user, request.Request.Code, CodeType.Verify, cancellationToken);
 
-        var result = await userManager.ConfirmPhoneNumberAsync(user, request.Request.Code, cancellationToken);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
 
-        return result;
+        var confirmationResult = await userManager.ConfirmPhoneNumberAsync(user, cancellationToken);
+
+        return confirmationResult;
     }
 }

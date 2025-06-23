@@ -8,10 +8,12 @@ public sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<R
 
 public sealed class VerifyEmailCommandHandler(
     IUserManager userManager,
-    IMessageService messageService) : IRequestHandler<VerifyEmailCommand, Result>
+    IMessageService messageService,
+    ICodeManager codeManager) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
+    private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken)
@@ -22,8 +24,15 @@ public sealed class VerifyEmailCommandHandler(
         {
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
+        
+        var result = await codeManager.VerifyAsync(user, request.Request.Code, CodeType.Verify, cancellationToken);
 
-        var confirmResult = await userManager.ConfirmEmailAsync(user, request.Request.Code, cancellationToken);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        var confirmResult = await userManager.ConfirmEmailAsync(user, cancellationToken);
 
         if (!confirmResult.Succeeded)
         {

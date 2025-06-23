@@ -1,12 +1,9 @@
 ﻿namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IUserManager), ServiceLifetime.Scoped)]
-public sealed class UserManager(
-    AuthDbContext context,
-    ICodeManager codeManager) : IUserManager
+public sealed class UserManager(AuthDbContext context) : IUserManager
 {
     private readonly AuthDbContext context = context;
-    private readonly ICodeManager codeManager = codeManager;
 
     public async ValueTask<List<UserEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -41,15 +38,8 @@ public sealed class UserManager(
         return user;
     }
 
-    public async ValueTask<Result> ConfirmEmailAsync(UserEntity user, string code, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ConfirmEmailAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var result = await codeManager.VerifyAsync(user, code, CodeType.Verify, cancellationToken);
-
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-        
         user.EmailConfirmed = true;
         user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
@@ -58,16 +48,8 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user, string code,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var result = await codeManager.VerifyAsync(user, code, CodeType.Verify, cancellationToken);
-
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-        
         user.PhoneNumberConfirmed = true;
         user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
@@ -91,23 +73,8 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, string currentEmailCode, 
-        string newEmailCode, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default)
     {
-        var currentEmailResult = await codeManager.VerifyAsync(user, currentEmailCode, CodeType.Current, cancellationToken);
-
-        if (!currentEmailResult.Succeeded)
-        {
-            return currentEmailResult;
-        }
-        
-        var newEmailResult = await codeManager.VerifyAsync(user, newEmailCode, CodeType.New, cancellationToken);
-        
-        if (!newEmailResult.Succeeded)
-        {
-            return newEmailResult;
-        }
-        
         user.Email = newEmail;
         user.NormalizedEmail = newEmail.ToUpperInvariant();
         user.EmailChangeDate = DateTimeOffset.UtcNow;
@@ -119,23 +86,8 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string currentPhoneNumberCode,
-        string newPhoneNumberCode, string newPhoneNumber, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default)
     {
-        var currentPhoneNumberResult = await codeManager.VerifyAsync(user, currentPhoneNumberCode, CodeType.Current, cancellationToken);
-
-        if (!currentPhoneNumberResult.Succeeded)
-        {
-            return currentPhoneNumberResult;
-        }
-        
-        var newPhoneNumberResult = await codeManager.VerifyAsync(user, newPhoneNumberCode, CodeType.New, cancellationToken);
-
-        if (!newPhoneNumberResult.Succeeded)
-        {
-            return newPhoneNumberResult;
-        }
-        
         user.PhoneNumber = newPhoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;

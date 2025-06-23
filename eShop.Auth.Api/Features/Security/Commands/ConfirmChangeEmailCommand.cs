@@ -8,9 +8,12 @@ public sealed record ConfirmChangeEmailCommand(ConfirmEmailChangeRequest Request
 
 public sealed class ConfirmChangeEmailCommandHandler(
     IUserManager userManager,
-    ITokenManager tokenManager) : IRequestHandler<ConfirmChangeEmailCommand, Result>
+    ITokenManager tokenManager,
+    ICodeManager codeManager) : IRequestHandler<ConfirmChangeEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly ITokenManager tokenManager = tokenManager;
+    private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(ConfirmChangeEmailCommand request,
         CancellationToken cancellationToken)
@@ -22,11 +25,21 @@ public sealed class ConfirmChangeEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var currentEmailCode = request.Request.CurrentEmailCode;
-        var newEmailCode = request.Request.NewEmailCode;
+        var currentEmailResult = await codeManager.VerifyAsync(user, request.Request.CurrentEmailCode, CodeType.Current, cancellationToken);
+
+        if (!currentEmailResult.Succeeded)
+        {
+            return currentEmailResult;
+        }
         
-        var result = await userManager.ChangeEmailAsync(user, request.Request.NewEmail, currentEmailCode, 
-            newEmailCode, cancellationToken);
+        var newEmailResult = await codeManager.VerifyAsync(user, request.Request.NewEmailCode, CodeType.New, cancellationToken);
+        
+        if (!newEmailResult.Succeeded)
+        {
+            return newEmailResult;
+        }
+        
+        var result = await userManager.ChangeEmailAsync(user, request.Request.NewEmail, cancellationToken);
 
         if (!result.Succeeded)
         {
