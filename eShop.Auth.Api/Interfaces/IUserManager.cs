@@ -16,8 +16,7 @@ public interface IUserManager
     public ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user, string code,
         CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> ResetPasswordAsync(UserEntity user, string code, string newPassword,
-        CancellationToken cancellationToken = default);
+    public ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default);
 
     public ValueTask<Result> ChangeEmailAsync(UserEntity user, string currentEmailCode, string newEmailCode,
         string newEmail, CancellationToken cancellationToken = default);

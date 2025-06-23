@@ -8,14 +8,15 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
     public async ValueTask<string> GenerateAsync(UserEntity user, CodeType type,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.Codes.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Type == type, cancellationToken);
+        var entity =
+            await context.Codes.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Type == type, cancellationToken);
 
         if (entity is not null)
         {
             context.Codes.Remove(entity);
             await context.SaveChangesAsync(cancellationToken);
         }
-        
+
         var code = new Random().Next(100000, 999999).ToString();
 
         await context.Codes.AddAsync(new CodeEntity()
@@ -35,12 +36,13 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
     public async ValueTask<CodeEntity?> FindAsync(UserEntity user, CodeType type,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.Codes.FirstOrDefaultAsync(c => c.UserId == user.Id && c.Type == type, cancellationToken: cancellationToken);
+        var entity = await context.Codes.FirstOrDefaultAsync(c => c.UserId == user.Id && c.Type == type,
+            cancellationToken: cancellationToken);
 
         return entity;
     }
 
-    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CodeType type, bool thenRemove = true,
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CodeType type,
         CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes
@@ -55,12 +57,9 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
             return Results.NotFound("Code not found");
         }
 
-        if (thenRemove)
-        {
-            context.Codes.Remove(entity);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        
+        context.Codes.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+
         return Result.Success();
     }
 

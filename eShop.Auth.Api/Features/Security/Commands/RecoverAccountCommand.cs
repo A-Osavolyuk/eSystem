@@ -23,7 +23,7 @@ public class RecoverAccountCommandHandler(
         }
 
         var code = request.Request.Code;
-        var verificationResult = await codeManager.VerifyAsync(user, code, CodeType.Recover, true, cancellationToken);
+        var verificationResult = await codeManager.VerifyAsync(user, code, CodeType.Recover, cancellationToken);
 
         if (!verificationResult.Succeeded)
         {

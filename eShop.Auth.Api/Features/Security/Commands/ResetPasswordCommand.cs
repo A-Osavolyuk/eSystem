@@ -14,15 +14,14 @@ public sealed class ResetPasswordCommandHandler(
     public async Task<Result> Handle(ResetPasswordCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.Id, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.Id}.");
         }
 
-        var resetResult = await userManager.ResetPasswordAsync(user, request.Request.Code, 
-            request.Request.NewPassword, cancellationToken);
+        var resetResult = await userManager.ResetPasswordAsync(user, request.Request.NewPassword, cancellationToken);
 
         return resetResult;
     }

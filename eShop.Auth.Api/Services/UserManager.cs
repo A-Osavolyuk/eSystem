@@ -43,7 +43,7 @@ public sealed class UserManager(
 
     public async ValueTask<Result> ConfirmEmailAsync(UserEntity user, string code, CancellationToken cancellationToken = default)
     {
-        var result = await codeManager.VerifyAsync(user, code, CodeType.Verify, true, cancellationToken);
+        var result = await codeManager.VerifyAsync(user, code, CodeType.Verify, cancellationToken);
 
         if (!result.Succeeded)
         {
@@ -61,7 +61,7 @@ public sealed class UserManager(
     public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user, string code,
         CancellationToken cancellationToken = default)
     {
-        var result = await codeManager.VerifyAsync(user, code, CodeType.Verify, true, cancellationToken);
+        var result = await codeManager.VerifyAsync(user, code, CodeType.Verify, cancellationToken);
 
         if (!result.Succeeded)
         {
@@ -76,16 +76,9 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string code, string newPassword,
+    public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var result = await codeManager.VerifyAsync(user, code, CodeType.Reset, true, cancellationToken);
-
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-        
         var passwordHash = PasswordHasher.HashPassword(newPassword);
 
         user.PasswordHash = passwordHash;
@@ -101,14 +94,14 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, string currentEmailCode, 
         string newEmailCode, CancellationToken cancellationToken = default)
     {
-        var currentEmailResult = await codeManager.VerifyAsync(user, currentEmailCode, CodeType.Current, true, cancellationToken);
+        var currentEmailResult = await codeManager.VerifyAsync(user, currentEmailCode, CodeType.Current, cancellationToken);
 
         if (!currentEmailResult.Succeeded)
         {
             return currentEmailResult;
         }
         
-        var newEmailResult = await codeManager.VerifyAsync(user, newEmailCode, CodeType.New, true, cancellationToken);
+        var newEmailResult = await codeManager.VerifyAsync(user, newEmailCode, CodeType.New, cancellationToken);
         
         if (!newEmailResult.Succeeded)
         {
@@ -129,14 +122,14 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string currentPhoneNumberCode,
         string newPhoneNumberCode, string newPhoneNumber, CancellationToken cancellationToken = default)
     {
-        var currentPhoneNumberResult = await codeManager.VerifyAsync(user, currentPhoneNumberCode, CodeType.Current, true, cancellationToken);
+        var currentPhoneNumberResult = await codeManager.VerifyAsync(user, currentPhoneNumberCode, CodeType.Current, cancellationToken);
 
         if (!currentPhoneNumberResult.Succeeded)
         {
             return currentPhoneNumberResult;
         }
         
-        var newPhoneNumberResult = await codeManager.VerifyAsync(user, newPhoneNumberCode, CodeType.New, true, cancellationToken);
+        var newPhoneNumberResult = await codeManager.VerifyAsync(user, newPhoneNumberCode, CodeType.New, cancellationToken);
 
         if (!newPhoneNumberResult.Succeeded)
         {
