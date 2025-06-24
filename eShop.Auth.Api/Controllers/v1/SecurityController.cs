@@ -175,6 +175,21 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Confirm email reset")]
+    [EndpointDescription("Confirm email reset")]
+    [ProducesResponseType(200)]
+    [Authorize(Policy = "UpdateAccountPolicy")]
+    [HttpPost("email/confirm-reset")]
+    public async ValueTask<ActionResult<Response>> ConfirmEmailResetAsync(
+        [FromBody] ConfirmResetEmailRequest request)
+    {
+        var result = await sender.Send(new ConfirmResetEmailCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Add phone number")]
     [EndpointDescription("Add phone number change")]
     [ProducesResponseType(200)]
@@ -245,6 +260,21 @@ public class SecurityController(ISender sender) : ControllerBase
         [FromBody] ResetPhoneNumberRequest request)
     {
         var result = await sender.Send(new ResetPhoneNumberCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Confirm phone number reset")]
+    [EndpointDescription("Confirm phone number reset")]
+    [ProducesResponseType(200)]
+    [Authorize(Policy = "UpdateAccountPolicy")]
+    [HttpPost("phone-number/confirm-reset")]
+    public async ValueTask<ActionResult<Response>> ConfirmPhoneNumberResetAsync(
+        [FromBody] ConfirmResetPhoneNumberRequest request)
+    {
+        var result = await sender.Send(new ConfirmResetPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
