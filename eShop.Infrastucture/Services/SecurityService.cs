@@ -33,7 +33,11 @@ public class SecurityService(
     public async ValueTask<Response> ResetPasswordAsync(ResetPasswordRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/reset", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
-    
+
+    public async ValueTask<Response> ResetEmailAsync(ResetEmailRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/reset", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
@@ -72,5 +76,9 @@ public class SecurityService(
 
     public async ValueTask<Response> AddPhoneNumberAsync(AddPhoneNumberRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/add", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+    
+    public async ValueTask<Response> ResetPhoneNumberAsync(ResetPhoneNumberRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/reset", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 }
