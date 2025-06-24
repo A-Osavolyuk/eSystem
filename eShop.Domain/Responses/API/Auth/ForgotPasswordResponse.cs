@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Responses.API.Auth;
 
-public class ResetPasswordResponse
+public class ForgotPasswordResponse
 {
     public Guid UserId { get; set; }
 }

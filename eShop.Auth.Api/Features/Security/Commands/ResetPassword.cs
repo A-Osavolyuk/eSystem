@@ -41,7 +41,7 @@ public sealed class ForgotPasswordCommandHandler(
                 UserName = user.UserName!
             }, cancellationToken);
 
-        var response = new ResetPasswordResponse()
+        var response = new ForgotPasswordResponse()
         {
             UserId = user.Id
         };
