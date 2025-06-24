@@ -1,6 +1,5 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Responses.API.Storage;
-using eShop.Storage.Api.Enums;
 using eShop.Storage.Api.Interfaces;
 
 namespace eShop.Storage.Api.Features.Commands;

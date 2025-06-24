@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging;
-using eShop.Domain.Common.Messaging;
-using eShop.Domain.Enums;
+﻿using eShop.Domain.Common.Messaging;
 using eShop.MessageBus.Bus;
 using MassTransit;
 using Newtonsoft.Json;

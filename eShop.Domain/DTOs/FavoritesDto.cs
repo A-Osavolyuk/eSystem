@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Data;
-
-namespace eShop.Domain.DTOs;
+﻿namespace eShop.Domain.DTOs;
 
 public class FavoritesDto
 {

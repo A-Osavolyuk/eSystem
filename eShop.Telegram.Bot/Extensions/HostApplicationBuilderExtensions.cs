@@ -1,6 +1,4 @@
-﻿using eShop.Telegram.Bot.Options;
-using eShop.Telegram.Bot.Services;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace eShop.Telegram.Bot.Extensions;
 

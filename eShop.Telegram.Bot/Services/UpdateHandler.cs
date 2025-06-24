@@ -1,5 +1,4 @@
 ﻿using Interfaces_IUpdateHandler = eShop.Telegram.Bot.Interfaces.IUpdateHandler;
-using IUpdateHandler = eShop.Telegram.Bot.Interfaces.IUpdateHandler;
 
 namespace eShop.Telegram.Bot.Services;
 

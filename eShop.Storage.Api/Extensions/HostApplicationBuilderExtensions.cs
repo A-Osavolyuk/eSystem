@@ -2,7 +2,6 @@
 using eShop.Domain.Interfaces.API;
 using eShop.ServiceDefaults;
 using eShop.Storage.Api.Interfaces;
-using eShop.Storage.Api.Services;
 
 namespace eShop.Storage.Api.Extensions;
 

@@ -1,7 +1,4 @@
-﻿using eShop.Domain.DTOs;
-using eShop.Domain.Responses.API.Auth;
-
-namespace eShop.Auth.Api.Features.Users.Queries;
+﻿namespace eShop.Auth.Api.Features.Users.Queries;
 
 public sealed record GetUserQuery(Guid UserId) : IRequest<Result>;
 

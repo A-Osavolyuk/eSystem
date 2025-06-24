@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Common.Messaging;
-using eShop.Domain.Common.Security;
-using eShop.Domain.Messages.Email;
+﻿using eShop.Domain.Common.Security;
 using eShop.Domain.Messages.Sms;
 using eShop.Domain.Requests.API.Auth;
 

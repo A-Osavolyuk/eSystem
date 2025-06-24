@@ -1,5 +1,4 @@
 ﻿using eShop.Application.Extensions;
-using eShop.Domain.Common.Messaging;
 using eShop.Domain.Enums;
 using eShop.Domain.Messages.Email;
 using eShop.Domain.Messages.Sms;

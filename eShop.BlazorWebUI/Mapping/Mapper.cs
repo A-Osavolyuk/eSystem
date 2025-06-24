@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using eShop.BlazorWebUI.Models;
+﻿using eShop.BlazorWebUI.Models;
 using eShop.Domain.DTOs;
 using eShop.Domain.Requests.API.Auth;
 

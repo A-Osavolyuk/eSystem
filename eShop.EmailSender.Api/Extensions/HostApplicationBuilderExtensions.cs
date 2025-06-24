@@ -1,5 +1,4 @@
 ﻿using eShop.Application.Extensions;
-using eShop.Domain.DTOs;
 using eShop.EmailSender.Api.Consumers;
 using eShop.EmailSender.Api.Services;
 
