@@ -154,14 +154,13 @@
     private async Task OnVerifyCodeAsync()
     {
         var userId = await LocalStorage.GetAsync<Guid>("userId");
-        var request = new VerifyCodeRequest()
+        var request = new VerifyPhoneNumberRequest()
         {
             Code = VerifyCodeModel.Code,
-            Type = CodeType.Verify,
-            UserId = userId
+            Id = userId
         };
         
-        var result = await SecurityService.VerifyCodeAsync(request);
+        var result = await SecurityService.VerifyPhoneNumberAsync(request);
 
         if (result.Success)
         {
