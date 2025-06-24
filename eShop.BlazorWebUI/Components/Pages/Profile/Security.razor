@@ -40,28 +40,16 @@
                         <MudItem xs="1" Class="text-end">
                             @if (UserModel.TwoFactorEnabled is not null)
                             {
-                                if (UserModel.TwoFactorEnabled.Value)
-                                {
-                                    <MudTooltip Text="Disable">
-                                        <MudIconButton
-                                            Color="Color.Error"
-                                            Variant="Variant.Filled"
-                                            ButtonType="ButtonType.Button"
-                                            Icon="@Icons.Material.Filled.Close"
-                                            OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
-                                    </MudTooltip>
-                                }
-                                else
-                                {
-                                    <MudTooltip Text="Enable">
-                                        <MudIconButton
-                                            Color="Color.Success"
-                                            Variant="Variant.Filled"
-                                            ButtonType="ButtonType.Button"
-                                            Icon="@Icons.Material.Filled.Check"
-                                            OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
-                                    </MudTooltip>
-                                }
+                                <MudTooltip Text="@(UserModel.TwoFactorEnabled.Value ? "Disable" : "Enable")">
+                                    <MudIconButton
+                                        Color="Color.@(UserModel.TwoFactorEnabled.Value ? Color.Error : Color.Success)"
+                                        Variant="Variant.Filled"
+                                        ButtonType="ButtonType.Button"
+                                        Icon="@(UserModel.TwoFactorEnabled.Value
+                                                  ? Icons.Material.Filled.Close
+                                                  : Icons.Material.Filled.Check)"
+                                        OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
+                                </MudTooltip>
                             }
                         </MudItem>
                         @if (UserModel.TwoFactorEnabled.HasValue && UserModel.TwoFactorEnabled.Value)
@@ -79,7 +67,8 @@
                                             </MudText>
                                         </MudItem>
                                         <MudItem xs="5">
-                                            <MudText Class="mt-2" Color="@(provider.Subscribed ? Color.Success : Color.Error)">
+                                            <MudText Class="mt-2"
+                                                     Color="@(provider.Subscribed ? Color.Success : Color.Error)">
                                                 @(provider.Subscribed ? "Enabled" : "Disabled")
                                             </MudText>
                                         </MudItem>
@@ -305,7 +294,7 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task OnUnsubscribeAsync(string provider)
     {
         var request = new UnsubscribeProviderRequest() { Id = UserModel.Id, Provider = provider };
@@ -333,7 +322,7 @@
             {
                 var response = result.Get<GenerateQrCodeResponse>()!;
                 SecurityModel.QrCode = response.QrCode;
-                
+
                 await ShowQrCodeAsync();
             }
             else
@@ -362,4 +351,5 @@
 
         var dialog = await DialogService.ShowAsync<ShowQrCodeDialog>("QR code dialog", parameters, options);
     }
+
 }
