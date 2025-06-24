@@ -164,7 +164,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Reset email")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPost("email/reset")]
+    [HttpPost("email/request-reset")]
     public async ValueTask<ActionResult<Response>> ResetEmailAsync(
         [FromBody] ResetEmailRequest request)
     {
@@ -240,7 +240,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointDescription("Reset phone number")]
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
-    [HttpPost("phone-number/reset")]
+    [HttpPost("phone-number/request-reset")]
     public async ValueTask<ActionResult<Response>> ResetPhoneNumberAsync(
         [FromBody] ResetPhoneNumberRequest request)
     {
