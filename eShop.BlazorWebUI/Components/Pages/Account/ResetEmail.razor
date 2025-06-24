@@ -72,7 +72,7 @@
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2" Align="Align.Center">
                                                     Enter code from the letter we sent you
-                                                    to: <strong>@ConfirmResetEmailModel.NewEmail</strong>
+                                                    to: <strong>@ResetEmailModel.NewEmail</strong>
                                                 </MudText>
                                             </MudItem>
                                             <MudItem xs="7">
@@ -195,7 +195,7 @@
     private async Task OnCompleteAsync()
     {
         await Task.Delay(TimeSpan.FromMicroseconds(5));
-        NavigationManager.NavigateTo("profile");
+        NavigationManager.NavigateTo("/account/profile");
     }
 
 }
