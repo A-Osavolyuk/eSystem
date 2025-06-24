@@ -166,12 +166,18 @@
 
     private MudStepperExtended stepper = new();
     private Guid userId;
+    private bool completed = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             userId = await LocalStorage.GetAsync<Guid>("userId");
+        }
+
+        if (completed)
+        {
+            await OnCompleteAsync();
         }
     }
 
@@ -227,6 +233,18 @@
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
+        
+        if (stepper.IsAllStepsCompleted())
+        {
+            completed = true;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task OnCompleteAsync()
+    {
+        await Task.Delay(TimeSpan.FromMicroseconds(5));
+        NavigationManager.NavigateTo("account/login");
     }
 
 }

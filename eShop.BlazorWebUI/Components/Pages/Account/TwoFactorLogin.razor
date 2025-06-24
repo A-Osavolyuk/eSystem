@@ -155,6 +155,15 @@
 
     private MudStepperExtended stepper = new();
     private List<UserProviderDto> providers = [];
+    private bool completed = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (completed)
+        {
+            await OnCompleteAsync();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -240,6 +249,17 @@
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
+        
+        if (stepper.IsAllStepsCompleted())
+        {
+            completed = true;
+            StateHasChanged();
+        }
     }
-
+    
+    private async Task OnCompleteAsync()
+    {
+        await Task.Delay(TimeSpan.FromMicroseconds(5));
+        NavigationManager.NavigateTo("account/login");
+    }
 }

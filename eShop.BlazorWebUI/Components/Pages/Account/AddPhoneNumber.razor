@@ -120,7 +120,16 @@
     [SupplyParameterFromForm] private VerifyCodeModel VerifyCodeModel { get; set; } = new();
     
     private MudStepperExtended stepper = new();
-    
+    private bool completed = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (completed)
+        {
+            await OnCompleteAsync();
+        }
+    }
+
     private async Task OnAddPhoneNumberAsync()
     {
         var userId = await LocalStorage.GetAsync<Guid>("userId");
@@ -169,5 +178,17 @@
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
+        
+        if (stepper.IsAllStepsCompleted())
+        {
+            completed = true;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task OnCompleteAsync()
+    {
+        await Task.Delay(TimeSpan.FromMicroseconds(5));
+        NavigationManager.NavigateTo("account/login");
     }
 }
