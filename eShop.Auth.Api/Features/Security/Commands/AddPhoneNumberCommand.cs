@@ -32,7 +32,7 @@ public class AddPhoneNumberCommandHandler(
             return result;
         }
 
-        var code = await codeManager.GenerateAsync(user, CodeType.Verify, cancellationToken);
+        var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Verify, cancellationToken);
         
         //TODO: send verify phone number code
 

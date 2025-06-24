@@ -70,7 +70,7 @@ public sealed class LoginCommandHandler(
                         return lockoutResult;
                     }
                     
-                    var code = await codeManager.GenerateAsync(user, CodeType.Recover, cancellationToken);
+                    var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Recover, cancellationToken);
                     var payload = new { Code = code };
                     var credentials = new EmailCredentials()
                     {

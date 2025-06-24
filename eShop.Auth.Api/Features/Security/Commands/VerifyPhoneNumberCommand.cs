@@ -21,7 +21,8 @@ public sealed class VerifyPhoneNumberCommandHandler(
             return Results.NotFound($"Cannot find user with ID ${request.Request.Id}");
         }
         
-        var result = await codeManager.VerifyAsync(user, request.Request.Code, CodeType.Verify, cancellationToken);
+        var result = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Sms, 
+            CodeType.Verify, cancellationToken);
 
         if (!result.Succeeded)
         {

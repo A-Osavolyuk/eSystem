@@ -25,10 +25,10 @@ public sealed class RequestChangeEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
 
-        var oldEmailCode = await codeManager.GenerateAsync(user, CodeType.Current, cancellationToken);
-        var newEmailCode = await codeManager.GenerateAsync(user, CodeType.New, cancellationToken);
+        var oldEmailCode = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Current, cancellationToken);
+        var newEmailCode = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.New, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "email-change", 
+        await messageService.SendMessageAsync(SenderType.Email, "email-change",
             new
             {
                 Code = oldEmailCode,
@@ -41,7 +41,7 @@ public sealed class RequestChangeEmailCommandHandler(
                 UserName = user.UserName,
             }, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "email-verification", 
+        await messageService.SendMessageAsync(SenderType.Email, "email-verification",
             new
             {
                 Code = newEmailCode,

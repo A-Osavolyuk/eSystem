@@ -5,11 +5,13 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<string> GenerateAsync(UserEntity user, CodeType type,
+    public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, CodeType type,
         CancellationToken cancellationToken = default)
     {
-        var entity =
-            await context.Codes.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Type == type, cancellationToken);
+        var entity = await context.Codes
+            .FirstOrDefaultAsync(x => x.UserId == user.Id 
+                                      && x.Type == type 
+                                      && x.Sender == sender, cancellationToken);
 
         if (entity is not null)
         {
@@ -25,6 +27,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
             UserId = user.Id,
             Code = code,
             Type = type,
+            Sender = sender,
             CreateDate = DateTime.UtcNow,
             ExpireDate = DateTime.UtcNow.AddMinutes(10)
         }, cancellationToken);
@@ -33,23 +36,25 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         return code;
     }
 
-    public async ValueTask<CodeEntity?> FindAsync(UserEntity user, CodeType type,
+    public async ValueTask<CodeEntity?> FindAsync(UserEntity user, SenderType sender, CodeType type,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.Codes.FirstOrDefaultAsync(c => c.UserId == user.Id && c.Type == type,
-            cancellationToken: cancellationToken);
+        var entity = await context.Codes
+            .FirstOrDefaultAsync(c => c.UserId == user.Id 
+                                      && c.Type == type 
+                                      && c.Sender == sender, cancellationToken);
 
         return entity;
     }
 
-    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CodeType type,
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, CodeType type,
         CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes
-            .AsNoTracking()
             .SingleOrDefaultAsync(x => x.UserId == user.Id
                                        && x.Code == code
                                        && x.Type == type
+                                       && x.Sender == sender
                                        && x.ExpireDate > DateTime.UtcNow, cancellationToken: cancellationToken);
 
         if (entity is null)
@@ -61,11 +66,5 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
-    }
-
-    public async ValueTask DeleteAsync(CodeEntity entity, CancellationToken cancellationToken = default)
-    {
-        context.Codes.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
     }
 }

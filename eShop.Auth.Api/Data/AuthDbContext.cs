@@ -48,6 +48,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             
             entity.Property(x => x.Type)
                 .HasConversion(value => value.ToString(), x => Enum.Parse<CodeType>(x));
+            
+            entity.Property(x => x.Sender)
+                .HasConversion(value => value.ToString(), x => Enum.Parse<SenderType>(x));
         });
 
         builder.Entity<UserRoleEntity>(entity =>

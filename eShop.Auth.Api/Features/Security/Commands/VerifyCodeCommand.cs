@@ -21,7 +21,8 @@ public sealed class VerifyCodeCommandHandler(
             return Results.NotFound("User not found.");
         }
         
-        var result = await codeManager.VerifyAsync(user, request.Request.Code, request.Request.Type, cancellationToken);
+        var result = await codeManager.VerifyAsync(user, request.Request.Code, request.Request.Sender, 
+            request.Request.Type, cancellationToken);
 
         return result;
     }

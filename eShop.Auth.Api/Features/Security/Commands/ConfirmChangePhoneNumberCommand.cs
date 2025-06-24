@@ -28,14 +28,16 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
         var currentPhoneNumberCode = request.Request.CurrentPhoneNumberCode;
         var newPhoneNumberCode = request.Request.NewPhoneNumberCode;
         
-        var currentPhoneNumberResult = await codeManager.VerifyAsync(user, currentPhoneNumberCode, CodeType.Current, cancellationToken);
+        var currentPhoneNumberResult = await codeManager.VerifyAsync(user, currentPhoneNumberCode, 
+            SenderType.Sms, CodeType.Current, cancellationToken);
 
         if (!currentPhoneNumberResult.Succeeded)
         {
             return currentPhoneNumberResult;
         }
         
-        var newPhoneNumberResult = await codeManager.VerifyAsync(user, newPhoneNumberCode, CodeType.New, cancellationToken);
+        var newPhoneNumberResult = await codeManager.VerifyAsync(user, newPhoneNumberCode, 
+            SenderType.Sms, CodeType.New, cancellationToken);
 
         if (!newPhoneNumberResult.Succeeded)
         {

@@ -25,8 +25,8 @@ public sealed class RequestChangePhoneNumberCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var oldPhoneNumberCode = await codeManager.GenerateAsync(user, CodeType.Current, cancellationToken);
-        var newPhoneNumberCode = await codeManager.GenerateAsync(user, CodeType.New, cancellationToken);
+        var oldPhoneNumberCode = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Current, cancellationToken);
+        var newPhoneNumberCode = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.New, cancellationToken);
 
         var credentials = new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber };
         

@@ -25,14 +25,16 @@ public sealed class ConfirmChangeEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var currentEmailResult = await codeManager.VerifyAsync(user, request.Request.CurrentEmailCode, CodeType.Current, cancellationToken);
+        var currentEmailResult = await codeManager.VerifyAsync(user, request.Request.CurrentEmailCode, 
+            SenderType.Email, CodeType.Current, cancellationToken);
 
         if (!currentEmailResult.Succeeded)
         {
             return currentEmailResult;
         }
         
-        var newEmailResult = await codeManager.VerifyAsync(user, request.Request.NewEmailCode, CodeType.New, cancellationToken);
+        var newEmailResult = await codeManager.VerifyAsync(user, request.Request.NewEmailCode, 
+            SenderType.Email, CodeType.New, cancellationToken);
         
         if (!newEmailResult.Succeeded)
         {

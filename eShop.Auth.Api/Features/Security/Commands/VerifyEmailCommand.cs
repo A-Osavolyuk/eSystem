@@ -25,7 +25,8 @@ public sealed class VerifyEmailCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
         
-        var result = await codeManager.VerifyAsync(user, request.Request.Code, CodeType.Verify, cancellationToken);
+        var result = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Email, 
+            CodeType.Verify, cancellationToken);
 
         if (!result.Succeeded)
         {

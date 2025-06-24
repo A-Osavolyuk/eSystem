@@ -42,7 +42,7 @@
                             {
                                 <MudTooltip Text="@(UserModel.TwoFactorEnabled.Value ? "Disable" : "Enable")">
                                     <MudIconButton
-                                        Color="Color.@(UserModel.TwoFactorEnabled.Value ? Color.Error : Color.Success)"
+                                        Color="@(UserModel.TwoFactorEnabled.Value ? Color.Error : Color.Success)"
                                         Variant="Variant.Filled"
                                         ButtonType="ButtonType.Button"
                                         Icon="@(UserModel.TwoFactorEnabled.Value
