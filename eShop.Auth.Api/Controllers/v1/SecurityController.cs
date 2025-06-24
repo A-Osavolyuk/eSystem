@@ -160,6 +160,21 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Reset email")]
+    [EndpointDescription("Reset email")]
+    [ProducesResponseType(200)]
+    [Authorize(Policy = "UpdateAccountPolicy")]
+    [HttpPost("email/reset")]
+    public async ValueTask<ActionResult<Response>> ResetEmailAsync(
+        [FromBody] ResetEmailRequest request)
+    {
+        var result = await sender.Send(new ResetEmailCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Add phone number")]
     [EndpointDescription("Add phone number change")]
     [ProducesResponseType(200)]
@@ -211,10 +226,25 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("phone-number/confirm-change")]
-    public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumber(
+    public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumberAsync(
         [FromBody] ConfirmChangePhoneNumberRequest request)
     {
         var result = await sender.Send(new ConfirmChangePhoneNumberCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Reset phone number")]
+    [EndpointDescription("Reset phone number")]
+    [ProducesResponseType(200)]
+    [Authorize(Policy = "UpdateAccountPolicy")]
+    [HttpPost("phone-number/reset")]
+    public async ValueTask<ActionResult<Response>> ResetPhoneNumberAsync(
+        [FromBody] ResetPhoneNumberRequest request)
+    {
+        var result = await sender.Send(new ResetPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
