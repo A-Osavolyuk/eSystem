@@ -73,6 +73,33 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
+    public async ValueTask<Result> ResetEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default)
+    {
+        user.Email = newEmail;
+        user.EmailConfirmed = true;
+        user.EmailChangeDate = DateTimeOffset.UtcNow;
+        user.NormalizedEmail = newEmail.ToUpper();
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default)
+    {
+        user.PhoneNumber = newPhoneNumber;
+        user.PhoneNumberConfirmed = true;
+        user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
     public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default)
     {
         user.Email = newEmail;
