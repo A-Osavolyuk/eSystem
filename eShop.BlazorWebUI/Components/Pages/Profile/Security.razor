@@ -155,6 +155,105 @@
                     </MudGrid>
                 </MudPaper>
             </MudItem>
+            <MudItem xs="12">
+                <MudPaper Outlined="true" Class="pa-5">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="12">
+                            <MudText Typo="Typo.h6">
+                                Email
+                            </MudText>
+                            @if (UserModel.EmailChangeDate is not null)
+                            {
+                                <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;" Class="mb-2">
+                                    Last change: @UserModel.EmailChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
+                                </MudText>
+                            }
+                        </MudItem>
+                        <MudItem xs="12" Style="padding-top: 10px">
+                            <MudText>
+                                @UserModel.Email
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudButton
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                ButtonType="ButtonType.Button"
+                                Href="/account/email/change">
+                                Change email
+                            </MudButton>
+                            <MudButton
+                                Color="Color.Error"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button"
+                                Href="/account/email/reset">
+                                Reset email
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper Outlined="true" Class="pa-5">
+                    <MudGrid Justify="Justify.Center">
+                        @if (string.IsNullOrEmpty(UserModel.PhoneNumber))
+                        {
+                            <MudItem xs="12">
+                                <MudText Typo="Typo.h6">
+                                    Phone number
+                                </MudText>
+                                <MudText Style="opacity: 0.5" Typo="Typo.caption">
+                                    Phone number was not added. You can add it by click button below.
+                                </MudText>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudButton
+                                    Color="Color.Primary"
+                                    Variant="Variant.Filled"
+                                    ButtonType="ButtonType.Button"
+                                    Href="/account/phone-number/add">
+                                    Add phone number
+                                </MudButton>
+                            </MudItem>
+                        }
+                        else
+                        {
+                            <MudItem xs="12">
+                                <MudText Typo="Typo.h6">
+                                    Phone number
+                                </MudText>
+                                @if (UserModel.PhoneNumberChangeDate is not null)
+                                {
+                                    <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;" Class="mb-2">
+                                        Last change: @UserModel.PhoneNumberChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
+                                    </MudText>
+                                }
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudText>
+                                    @UserModel.PhoneNumber
+                                </MudText>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudButton
+                                    Color="Color.Primary"
+                                    Variant="Variant.Filled"
+                                    ButtonType="ButtonType.Button"
+                                    Href="/account/phone-number/change">
+                                    Change phone number
+                                </MudButton>
+                                <MudButton
+                                    Color="Color.Error"
+                                    Variant="Variant.Outlined"
+                                    ButtonType="ButtonType.Button"
+                                    Href="/account/phone-number/reset">
+                                    Reset phone number
+                                </MudButton>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
         </MudGrid>
     </MudItem>
 </MudGrid>

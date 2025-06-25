@@ -54,9 +54,9 @@
                                 </MudItem>
                                 <MudItem xs="1" Class="text-end">
                                     <MudTooltip Text="Change username">
-                                        <MudIconButton 
-                                            Icon="@Icons.Material.Filled.Edit" 
-                                            Color="Color.Primary" 
+                                        <MudIconButton
+                                            Icon="@Icons.Material.Filled.Edit"
+                                            Color="Color.Primary"
                                             Variant="Variant.Filled"
                                             OnClick="@(async () => await OnUserNameChangeAsync())"/>
                                     </MudTooltip>
@@ -90,9 +90,9 @@
                                 </MudItem>
                                 <MudItem xs="1" Class="text-end">
                                     <MudTooltip Text="Change email">
-                                        <MudIconButton 
-                                            Icon="@Icons.Material.Filled.Edit" 
-                                            Color="Color.Primary" 
+                                        <MudIconButton
+                                            Icon="@Icons.Material.Filled.Edit"
+                                            Color="Color.Primary"
                                             Variant="Variant.Filled"
                                             OnClick="@(() => NavigationManager.NavigateTo("/account/email/change"))"/>
                                     </MudTooltip>
@@ -114,43 +114,57 @@
                                         <MudDivider/>
                                     </MudItem>
                                 }
-                                <MudItem xs="3" Class="mt-2">
-                                    <MudText>
-                                        Phone number
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="8" Class="mt-2">
-                                    <MudText>
-                                        @(string.IsNullOrEmpty(UserModel.PhoneNumber) ? "-" : UserModel.PhoneNumber)
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="1" Class="text-end">
-                                    @if (string.IsNullOrEmpty(UserModel.PhoneNumber ))
+                                @if (!string.IsNullOrEmpty(UserModel.PhoneNumber))
+                                {
+                                    <MudItem xs="3" Class="mt-2">
+                                        <MudText>
+                                            Phone number
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="8" Class="mt-2">
+                                        <MudText>
+                                            @UserModel.PhoneNumber
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="text-end">
+                                        <MudTooltip Text="Change phone number">
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Edit"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/change"))"/>
+                                        </MudTooltip>
+                                    </MudItem>
+
+                                    if (UserModel.PhoneNumberChangeDate is not null)
                                     {
+                                        <MudItem xs="12" Style="padding-top: 0">
+                                            <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                                                Last
+                                                change: @UserModel.PhoneNumberChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                            </MudText>
+                                        </MudItem>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudItem xs="11" Class="mt-2">
+                                        <MudText>
+                                            Phone number
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="text-end">
                                         <MudTooltip Text="Add phone number">
-                                            <MudIconButton 
-                                                Icon="@Icons.Material.Filled.Add" 
-                                                Color="Color.Primary" 
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Add"
+                                                Color="Color.Primary"
                                                 Variant="Variant.Filled"
                                                 OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/add"))"/>
                                         </MudTooltip>
-                                    }
-                                    else
-                                    {
-                                        <MudTooltip Text="Change phone number">
-                                            <MudIconButton 
-                                                Icon="@Icons.Material.Filled.Edit" 
-                                                Color="Color.Primary" 
-                                                Variant="Variant.Filled" 
-                                                OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/change"))"/>
-                                        </MudTooltip>
-                                    }
-                                </MudItem>
-                                @if (UserModel.PhoneNumberChangeDate is not null)
-                                {
+                                    </MudItem>
                                     <MudItem xs="12" Style="padding-top: 0">
-                                        <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
-                                            Last change: @UserModel.PhoneNumberChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                        <MudText Style="opacity: 0.5" Typo="Typo.caption">
+                                            Phone number was not added. You can add it by click button right.
                                         </MudText>
                                     </MudItem>
                                 }
@@ -169,17 +183,16 @@
                                     </MudItem>
                                     <MudItem xs="1" Class="text-end">
                                         <MudTooltip Text="Add personal data">
-                                            <MudIconButton 
-                                                Icon="@Icons.Material.Filled.Add" 
-                                                Color="Color.Primary" 
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Add"
+                                                Color="Color.Primary"
                                                 Variant="Variant.Filled"
                                                 OnClick="@(async () => await OnAddPersonalDataAsync())"/>
                                         </MudTooltip>
                                     </MudItem>
-                                    <MudItem xs="12">
-                                        <MudText>
-                                            You have not provided personal data to display.
-                                            Please, provide your personal data.
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Style="opacity: 0.5" Typo="Typo.caption">
+                                            Personal information was not added. You can add it by click button right.
                                         </MudText>
                                     </MudItem>
                                 }
@@ -192,16 +205,17 @@
                                         @if (UserModel.PersonalData.UpdateDate is not null)
                                         {
                                             <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
-                                                Last change: @UserModel.PersonalData!.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
+                                                Last
+                                                change: @UserModel.PersonalData!.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
                                             </MudText>
                                         }
                                     </MudItem>
                                     <MudItem xs="1" Class="text-end">
                                         <MudTooltip Text="Change personal data">
-                                            <MudIconButton 
-                                                Icon="@Icons.Material.Filled.Edit" 
-                                                Color="Color.Primary" 
-                                                Variant="Variant.Filled" 
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Edit"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
                                                 OnClick="@(async () => await OnChangePersonalDataAsync())"/>
                                         </MudTooltip>
                                     </MudItem>
@@ -280,7 +294,7 @@
     {
         var userId = await LocalStorage.GetAsync<Guid>("userId");
         var result = await UsersService.GetUserAsync(userId);
-   
+
         if (result.Success)
         {
             var response = result.Get<UserDto>()!;
@@ -307,7 +321,7 @@
             Id = UserModel.Id,
             UserName = UserModel.UserName,
         };
-        
+
         var parameters = new DialogParameters<ChangeUserNameDialog>()
         {
             { x => x.Model, model }
@@ -323,7 +337,7 @@
             await UserState.Change();
         }
     }
-    
+
     private async Task OnChangePersonalDataAsync()
     {
         var options = new DialogOptions()
@@ -334,7 +348,7 @@
         };
 
         var model = Mapper.Map(UserModel);
-        
+
         var parameters = new DialogParameters<ChangePersonalDataDialog>()
         {
             { x => x.Model, model }
@@ -349,7 +363,7 @@
             StateHasChanged();
         }
     }
-    
+
     private async Task OnAddPersonalDataAsync()
     {
         var options = new DialogOptions()
@@ -360,7 +374,7 @@
         };
 
         var model = new AddPersonalDataModel() { Id = UserModel.Id };
-        
+
         var parameters = new DialogParameters<AddPersonalDataDialog>()
         {
             { x => x.Model, model }
@@ -375,4 +389,5 @@
             StateHasChanged();
         }
     }
+
 }
