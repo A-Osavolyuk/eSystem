@@ -3,6 +3,7 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
+@inject VerifyEmailValidator Validator
 
 <Title Text="Verify email"></Title>
 
@@ -14,44 +15,46 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudGrid Spacing="2" Justify="Justify.Center">
-                <MudItem xs="12">
-                    <MudText Typo="Typo.h6" Align="Align.Center">
-                        Please, check your email
-                    </MudText>
-                </MudItem>
+            <MudForm Model="Model" Validation="Validator.ValidateValue">
+                <MudGrid Spacing="2" Justify="Justify.Center">
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h6" Align="Align.Center">
+                            Please, check your email
+                        </MudText>
+                    </MudItem>
 
-                <MudItem xs="12" Style="display: flex; justify-content: center">
-                    <MudText
-                        Typo="Typo.caption"
-                        Align="Align.Center">
-                        We have sent code to email: <strong>@Email</strong>
-                    </MudText>
-                </MudItem>
+                    <MudItem xs="12" Style="display: flex; justify-content: center">
+                        <MudText
+                            Typo="Typo.caption"
+                            Align="Align.Center">
+                            We have sent code to email: <strong>@Email</strong>
+                        </MudText>
+                    </MudItem>
 
-                <MudItem xs="12" sm="8" Style="margin: 15px 0"
-                         Class="d-flex flex-column gap-8 align-center justify-center">
-                    <MudCodeInput
-                        Variant="Variant.Outlined"
-                        Spacing="2"
-                        Margin="Margin.None"
-                        Count="6"
-                        @bind-Value="Model.Code"/>
-                </MudItem>
+                    <MudItem xs="12" sm="8" Style="margin: 15px 0"
+                             Class="d-flex flex-column gap-8 align-center justify-center">
+                        <MudCodeInput
+                            Variant="Variant.Outlined"
+                            Spacing="2"
+                            Margin="Margin.None"
+                            Count="6"
+                            @bind-Value="Model.Code"/>
+                    </MudItem>
 
-                <MudItem xs="8">
-                    <MudButton
-                        ButtonType="ButtonType.Button"
-                        Variant="Variant.Filled"
-                        Color="Color.Primary"
-                        Class="mt-3"
-                        FullWidth
-                        Disabled="@(Model.Code.Length <= 5)"
-                        OnClick="async () => await VerifyEmailAsync()">
-                        Verify
-                    </MudButton>
-                </MudItem>
-            </MudGrid>
+                    <MudItem xs="8">
+                        <MudButton
+                            ButtonType="ButtonType.Button"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            Class="mt-3"
+                            FullWidth
+                            Disabled="@(Model.Code.Length <= 5)"
+                            OnClick="async () => await VerifyEmailAsync()">
+                            Verify
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
         </MudPaper>
         <MudPaper Outlined Class="pa-3 mt-1">
             <MudItem xs="12" Style="margin: 10px 0">

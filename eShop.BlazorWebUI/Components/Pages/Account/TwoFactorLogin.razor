@@ -7,6 +7,7 @@
 @inject ITwoFactorService TwoFactorService
 @inject IUsersService UsersService
 @inject AuthenticationManager AuthenticationManager
+@inject TwoFactorLoginValidator TwoFactorLoginValidator
 
 <Title Text="Login with 2FA"/>
 
@@ -67,7 +68,7 @@
             <MudStepExtended Icon="@Icons.Material.Filled.Login" Title="Code verification" Order="2">
                 <ChildContent>
                     <MudPaper Outlined Class="pa-3">
-                        <MudForm Model="TwoFactorLoginModel">
+                        <MudForm Model="TwoFactorLoginModel" Validation="TwoFactorLoginValidator.ValidateValue">
                         @switch (SendTwoFactorTokenModel.Provider)
                         {
                             case ProviderTypes.Email:

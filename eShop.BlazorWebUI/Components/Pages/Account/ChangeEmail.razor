@@ -5,6 +5,7 @@
 @using Size = MudBlazor.Size
 
 @inject ChangeEmailValidator ChangeEmailValidator
+@inject ConfirmChangeEmailValidator ConfirmChangeEmailValidator
 @inject AuthenticationManager AuthenticationManager
 @inject ISecurityService SecurityService
 
@@ -26,7 +27,7 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm @ref="changeEmailForm" Validation="ChangeEmailValidator">
+                                    <MudForm @ref="changeEmailForm" Validation="ChangeEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-1" Align="Align.Center">
@@ -120,7 +121,7 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm>
+                                    <MudForm Model="ConfirmChangeEmailModel" Validation="ConfirmChangeEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2" Align="Align.Center">
