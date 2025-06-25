@@ -89,12 +89,20 @@
                                     </MudText>
                                 </MudItem>
                                 <MudItem xs="1" Class="text-end">
+                                    <MudTooltip Text="Reset email">
+                                        <MudIconButton
+                                            Icon="@Icons.Material.Filled.Loop"
+                                            Color="Color.Primary"
+                                            Class="mx-1"
+                                            Variant="Variant.Filled"
+                                            Href="/account/email/reset"/>
+                                    </MudTooltip>
                                     <MudTooltip Text="Change email">
                                         <MudIconButton
                                             Icon="@Icons.Material.Filled.Edit"
                                             Color="Color.Primary"
                                             Variant="Variant.Filled"
-                                            OnClick="@(() => NavigationManager.NavigateTo("/account/email/change"))"/>
+                                            Href="/account/email/change"/>
                                     </MudTooltip>
                                 </MudItem>
                                 @if (UserModel.EmailChangeDate is not null)
@@ -127,12 +135,20 @@
                                         </MudText>
                                     </MudItem>
                                     <MudItem xs="1" Class="text-end">
+                                        <MudTooltip Text="Reset phone number">
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Loop"
+                                                Color="Color.Primary"
+                                                Class="mx-1"
+                                                Variant="Variant.Filled"
+                                                Href="/account/phone-number/reset"/>
+                                        </MudTooltip>
                                         <MudTooltip Text="Change phone number">
                                             <MudIconButton
                                                 Icon="@Icons.Material.Filled.Edit"
                                                 Color="Color.Primary"
                                                 Variant="Variant.Filled"
-                                                OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/change"))"/>
+                                                Href="/account/phone-number/change"/>
                                         </MudTooltip>
                                     </MudItem>
 
@@ -159,7 +175,7 @@
                                                 Icon="@Icons.Material.Filled.Add"
                                                 Color="Color.Primary"
                                                 Variant="Variant.Filled"
-                                                OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/add"))"/>
+                                                Href="/account/phone-number/add"/>
                                         </MudTooltip>
                                     </MudItem>
                                     <MudItem xs="12" Style="padding-top: 0">
@@ -389,5 +405,4 @@
             StateHasChanged();
         }
     }
-
 }
