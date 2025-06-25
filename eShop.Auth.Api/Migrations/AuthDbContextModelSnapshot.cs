@@ -377,8 +377,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(17)
-                        .HasColumnType("nvarchar(17)");
+                        .HasMaxLength(18)
+                        .HasColumnType("nvarchar(18)");
 
                     b.Property<DateTimeOffset?>("PhoneNumberChangeDate")
                         .HasColumnType("datetimeoffset");
