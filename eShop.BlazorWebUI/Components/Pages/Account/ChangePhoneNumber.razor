@@ -6,6 +6,7 @@
 @inject ISecurityService SecurityService
 @inject AuthenticationManager AuthenticationManager
 @inject ChangePhoneNumberValidator ChangePhoneNumberValidator
+@inject ConfirmChangePhoneNumberValidator ConfirmChangePhoneNumberValidator
 
 <Title Text="Change phone number"></Title>
 
@@ -119,7 +120,9 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm Model="ConfirmChangePhoneNumberModel">
+                                    <MudForm 
+                                        Model="ConfirmChangePhoneNumberModel" 
+                                        Validation="ConfirmChangePhoneNumberValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2" Align="Align.Center">

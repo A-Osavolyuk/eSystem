@@ -36,6 +36,7 @@
                                         Label="Providers"
                                         @bind-Value="SendTwoFactorTokenModel.Provider"
                                         For="() => SendTwoFactorTokenModel.Provider"
+                                        Disabled="@(string.IsNullOrEmpty(SendTwoFactorTokenModel.Provider))"
                                         Immediate="true"
                                         Clearable="true"
                                         Required="true"
@@ -68,7 +69,9 @@
             <MudStepExtended Icon="@Icons.Material.Filled.Login" Title="Code verification" Order="2">
                 <ChildContent>
                     <MudPaper Outlined Class="pa-3">
-                        <MudForm Model="TwoFactorLoginModel" Validation="TwoFactorLoginValidator.ValidateValue">
+                        <MudForm 
+                            Model="TwoFactorLoginModel" 
+                            Validation="TwoFactorLoginValidator.ValidateValue">
                         @switch (SendTwoFactorTokenModel.Provider)
                         {
                             case ProviderTypes.Email:

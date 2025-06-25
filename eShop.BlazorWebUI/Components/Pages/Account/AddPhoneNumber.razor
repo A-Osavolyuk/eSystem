@@ -4,6 +4,8 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
+@inject AddPhoneNumberValidator AddPhoneNumberValidator
+@inject VerifyCodeValidator VerifyCodeValidator
 
 <Title Text="Add phone number"></Title>
 
@@ -24,7 +26,7 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined Class="pa-3">
-                                    <MudForm Model="AddPhoneNumberModel">
+                                    <MudForm Model="AddPhoneNumberModel" Validation="AddPhoneNumberValidator.ValidateValue">
                                         <MudGrid Spacing="1" Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Align="Align.Center" Typo="Typo.body1"
@@ -65,7 +67,7 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined Class="pa-3">
-                                    <MudForm Model="VerifyCodeModel">
+                                    <MudForm Model="VerifyCodeModel" Validation="VerifyCodeValidator.ValidateValue">
                                         <MudGrid Spacing="1" Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Align="Align.Center" Typo="Typo.body1"

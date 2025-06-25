@@ -3,6 +3,7 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
+@inject RecoverAccountValidator RecoverAccountValidator
 
 <Title Text="Account recovery"></Title>
 
@@ -12,7 +13,7 @@
             <MudText Align="Align.Center" Typo="Typo.h4"> Account recovery</MudText>
         </MudPaper>
         <MudPaper Outlined="true" Class="pa-5">
-            <MudForm @ref="form" Model="Model">
+            <MudForm @ref="form" Model="Model" Validation="RecoverAccountValidator.ValidateValue">
                 <MudGrid Justify="Justify.Center">
                     <MudItem xs="12">
                         <MudText Align="Align.Center" Class="mb-2">

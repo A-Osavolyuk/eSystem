@@ -27,7 +27,7 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm @ref="changeEmailForm" Validation="ChangeEmailValidator.ValidateValue">
+                                    <MudForm @ref="changeEmailForm" Model="ChangeEmailModel" Validation="ChangeEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-1" Align="Align.Center">
@@ -71,7 +71,7 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm>
+                                    <MudForm Model="ConfirmChangeEmailModel">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2" Align="Align.Center">
