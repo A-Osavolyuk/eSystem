@@ -20,7 +20,7 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
-                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                <MudPaper Outlined Class="pa-3 mb-1">
                                     <MudText Align="Align.Center" Typo="Typo.h4">
                                         Email change
                                     </MudText>
@@ -64,7 +64,7 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
-                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                <MudPaper Outlined Class="pa-3 mb-1">
                                     <MudText Align="Align.Center" Typo="Typo.h4">
                                         Code confirmation
                                     </MudText>
@@ -74,7 +74,7 @@
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from letter we sent your current email address
+                                                    Enter code from letter we sent to your current email address
                                                 </MudText>
                                             </MudItem>
                                             <MudItem xs="7">
@@ -98,6 +98,14 @@
                                         </MudGrid>
                                     </MudForm>
                                 </MudPaper>
+                                <MudPaper Outlined Class="pa-3 mt-1">
+                                    <MudText Align="Align.Center">
+                                        Loose access to your current email address?
+                                        <MudLink Href="account/email/reset">
+                                            Reset it
+                                        </MudLink>
+                                    </MudText>
+                                </MudPaper>
                             </MudItem>
                         </MudGrid>
                     </ChildContent>
@@ -106,7 +114,7 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
-                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                <MudPaper Outlined="true" Class="pa-3 mb-1">
                                     <MudText Align="Align.Center" Typo="Typo.h4">
                                         Email verification
                                     </MudText>
@@ -227,7 +235,7 @@
         {
             var response = result.Get<ConfirmChangeEmailResponse>()!;
             await StepNextAsync();
-            
+
             Snackbar.Add("Email address was successfully changed", Severity.Success);
             await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
             NavigationManager.NavigateTo("/account/login");
@@ -242,14 +250,14 @@
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
-        
+
         if (stepper.IsAllStepsCompleted())
         {
             completed = true;
             StateHasChanged();
         }
     }
-    
+
     private async Task OnCompleteAsync()
     {
         await Task.Delay(TimeSpan.FromMicroseconds(5));
