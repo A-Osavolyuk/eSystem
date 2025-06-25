@@ -14,7 +14,10 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm Model="Model" @ref="form" Validation="Validator.ValidateValue">
+            <MudForm 
+                @ref="form" 
+                Model="Model" 
+                Validation="Validator.ValidateValue">
                 <MudTextField
                     @bind-Value="Model.Email"
                     For="(() => Model.Email)"
@@ -67,20 +70,25 @@
 
     private async Task RegisterUserAsync()
     {
-        var request = Mapper.Map(Model);
-        var result = await SecurityService.RegisterAsync(request);
+        await form.Validate();
 
-        if (result.Success)
+        if (form.IsValid)
         {
-            Snackbar.Add(result.Message, Severity.Success);
-            NavigationManager.NavigateTo($"/account/email/verify?email={Model.Email}");
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
+            var request = Mapper.Map(Model);
+            var result = await SecurityService.RegisterAsync(request);
 
-        Model = new();
+            if (result.Success)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+                NavigationManager.NavigateTo($"/account/email/verify?email={Model.Email}");
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+
+            Model = new();
+        }
     }
 
 

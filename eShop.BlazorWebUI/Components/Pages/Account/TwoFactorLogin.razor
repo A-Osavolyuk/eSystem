@@ -20,7 +20,9 @@
             <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Info" Title="Send code">
                 <ChildContent>
                     <MudPaper Outlined Class="pa-3">
-                        <MudForm Model="SendTwoFactorTokenModel">
+                        <MudForm 
+                            @ref="sendTwoFactorTokenForm"
+                            Model="SendTwoFactorTokenModel">
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
@@ -70,6 +72,7 @@
                 <ChildContent>
                     <MudPaper Outlined Class="pa-3">
                         <MudForm 
+                            @ref="twoFactorForm"
                             Model="TwoFactorLoginModel" 
                             Validation="TwoFactorLoginValidator.ValidateValue">
                         @switch (SendTwoFactorTokenModel.Provider)
@@ -157,6 +160,9 @@
     [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
     [SupplyParameterFromQuery(Name = "id")] public Guid Id { get; set; }
 
+    private MudForm sendTwoFactorTokenForm = new();
+    private MudForm twoFactorForm = new();
+    
     private MudStepperExtended stepper = new();
     private List<UserProviderDto> providers = [];
     private bool completed = false;
@@ -198,55 +204,64 @@
 
     private async Task OnSendTokenAsync()
     {
-        if (SendTwoFactorTokenModel.Provider == ProviderTypes.Authenticator)
-        {
-            await StepNextAsync();
-        }
-        else
-        {
-            var request = Mapper.Map(SendTwoFactorTokenModel);
-            var result = await TwoFactorService.SendTwoFactorTokenAsync(request);
+        await sendTwoFactorTokenForm.Validate();
 
-            if (result.Success)
+        if (sendTwoFactorTokenForm.IsValid)
+        {
+            if (SendTwoFactorTokenModel.Provider == ProviderTypes.Authenticator)
             {
                 await StepNextAsync();
             }
             else
             {
-                Snackbar.Add(result.Message, Severity.Error);
+                var request = Mapper.Map(SendTwoFactorTokenModel);
+                var result = await TwoFactorService.SendTwoFactorTokenAsync(request);
+
+                if (result.Success)
+                {
+                    await StepNextAsync();
+                }
+                else
+                {
+                    Snackbar.Add(result.Message, Severity.Error);
+                }
             }
         }
     }
 
     private async Task OnVerifyTokenAsync()
     {
-        var request = Mapper.Map(TwoFactorLoginModel);
+        await twoFactorForm.Validate();
 
-        request.Provider = SendTwoFactorTokenModel.Provider;
-        
-        var result = await TwoFactorService.TwoFactorLoginAsync(request);
-
-        if (result.Success)
+        if (twoFactorForm.IsValid)
         {
-            var response = result.Get<LoginResponse>()!;
+            var request = Mapper.Map(TwoFactorLoginModel);
 
-            if (response.IsLockedOut)
+            request.Provider = SendTwoFactorTokenModel.Provider;
+        
+            var result = await TwoFactorService.TwoFactorLoginAsync(request);
+
+            if (result.Success)
             {
-                NavigationManager.NavigateTo($"/account/locked-out?id={response.UserId}");
+                var response = result.Get<LoginResponse>()!;
+
+                if (response.IsLockedOut)
+                {
+                    NavigationManager.NavigateTo($"/account/locked-out?id={response.UserId}");
+                }
+                else
+                {
+                    await Task.Delay(TimeSpan.FromMicroseconds(5));
+                    await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
+                    NavigationManager.NavigateTo("/products");
+                    Snackbar.Add(result.Message, Severity.Success);
+                }
             }
             else
             {
-                await Task.Delay(TimeSpan.FromMicroseconds(5));
-                await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
-                NavigationManager.NavigateTo("/products");
-                Snackbar.Add(result.Message, Severity.Success);
+                Snackbar.Add(result.Message, Severity.Error);
             }
         }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-            
     }
 
     private async Task StepNextAsync()

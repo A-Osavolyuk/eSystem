@@ -13,7 +13,10 @@
             <MudText Align="Align.Center" Typo="Typo.h4"> Account recovery</MudText>
         </MudPaper>
         <MudPaper Outlined="true" Class="pa-5">
-            <MudForm @ref="form" Model="Model" Validation="RecoverAccountValidator.ValidateValue">
+            <MudForm 
+                @ref="form" 
+                Model="Model" 
+                Validation="RecoverAccountValidator.ValidateValue">
                 <MudGrid Justify="Justify.Center">
                     <MudItem xs="12">
                         <MudText Align="Align.Center" Class="mb-2">
@@ -57,22 +60,27 @@
 
     private async Task OnRecoverAsync()
     {
-        var request = new RecoverAccountRequest()
-        {
-            Code = Model.Code,
-            UserId = UserId
-        };
+        await form.Validate();
 
-        var result = await SecurityService.RecoverAccountAsync(request);
+        if (form.IsValid)
+        {
+            var request = new RecoverAccountRequest()
+            {
+                Code = Model.Code,
+                UserId = UserId
+            };
 
-        if (result.Success)
-        {
-            Snackbar.Add("Account was successfully recovered", Severity.Success);
-            NavigationManager.NavigateTo("/account/login");
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var result = await SecurityService.RecoverAccountAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Account was successfully recovered", Severity.Success);
+                NavigationManager.NavigateTo("/account/login");
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 

@@ -7,7 +7,7 @@
         Add personal data
     </TitleContent>
     <DialogContent>
-        <MudForm Model="Model" Validation="Validator.ValidateValue">
+        <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
             <MudTextField
                 @bind-Value="Model.FirstName"
                 For="() => Model.FirstName"
@@ -66,18 +66,25 @@
     [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
     [Parameter] public AddPersonalDataModel Model { get; set; } = new();
 
+    private MudForm form = new();
+
     private async Task OnSubmitAsync()
     {
-        var request = Mapper.Map(Model);
-        var result = await UsersService.AddPersonalDataAsync(request);
+        await form.Validate();
 
-        if (result.Success)
+        if (form.IsValid)
         {
-            Dialog?.Close(DialogResult.Ok(true));
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var request = Mapper.Map(Model);
+            var result = await UsersService.AddPersonalDataAsync(request);
+
+            if (result.Success)
+            {
+                Dialog?.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
     

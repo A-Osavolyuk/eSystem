@@ -25,7 +25,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm Model="ResetPhoneNumberModel" Validation="ResetPhoneNumberValidator.ValidateValue">
+                                    <MudForm 
+                                        @ref="resetPhoneNumberForm"
+                                        Model="ResetPhoneNumberModel" 
+                                        Validation="ResetPhoneNumberValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-1" Align="Align.Center">
@@ -69,7 +72,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm Model="ConfirmResetPhoneNumberModel" Validation="ConfirmResetPhoneNumberValidator.ValidateValue">
+                                    <MudForm 
+                                        @ref="confirmResetPhoneNumberForm"
+                                        Model="ConfirmResetPhoneNumberModel" 
+                                        Validation="ConfirmResetPhoneNumberValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2" Align="Align.Center">
@@ -124,6 +130,8 @@
     [SupplyParameterFromForm] private ConfirmResetPhoneNumberModel ConfirmResetPhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
+    private MudForm resetPhoneNumberForm = new();
+    private MudForm confirmResetPhoneNumberForm = new();
     private Guid userId;
     private bool completed = false;
 
@@ -142,43 +150,53 @@
 
     private async Task OnResetPhoneNumberAsync()
     {
-        var request = new ResetPhoneNumberRequest()
-        {
-            Id = userId,
-            NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber
-        };
+        await resetPhoneNumberForm.Validate();
 
-        var result = await SecurityService.ResetPhoneNumberAsync(request);
+        if (resetPhoneNumberForm.IsValid)
+        {
+            var request = new ResetPhoneNumberRequest()
+            {
+                Id = userId,
+                NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber
+            };
 
-        if (result.Success)
-        {
-            await StepNextAsync();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var result = await SecurityService.ResetPhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 
     private async Task OnConfirmResetPhoneNumberAsync()
     {
-        var request = new ConfirmResetPhoneNumberRequest()
-        {
-            Id = userId,
-            NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
-            Code = ConfirmResetPhoneNumberModel.Code
-        };
+        await confirmResetPhoneNumberForm.Validate();
 
-        var result = await SecurityService.ConfirmResetPhoneNumberAsync(request);
+        if (confirmResetPhoneNumberForm.IsValid)
+        {
+            var request = new ConfirmResetPhoneNumberRequest()
+            {
+                Id = userId,
+                NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
+                Code = ConfirmResetPhoneNumberModel.Code
+            };
 
-        if (result.Success)
-        {
-            Snackbar.Add("Phone number was successfully reset", Severity.Success);
-            await StepNextAsync();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var result = await SecurityService.ConfirmResetPhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Phone number was successfully reset", Severity.Success);
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 

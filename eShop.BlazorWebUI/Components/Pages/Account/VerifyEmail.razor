@@ -15,7 +15,10 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm Model="Model" Validation="Validator.ValidateValue">
+            <MudForm 
+                @ref="form"
+                Model="Model" 
+                Validation="Validator.ValidateValue">
                 <MudGrid Spacing="2" Justify="Justify.Center">
                     <MudItem xs="12">
                         <MudText Typo="Typo.h6" Align="Align.Center">
@@ -70,19 +73,26 @@
     [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
     [SupplyParameterFromQuery(Name = "email")] private string Email { get; set; } = string.Empty;
 
+    private MudForm form = new();
+    
     private async Task VerifyEmailAsync()
     {
-        var request = Mapper.Map(Model);
-        request.Email = Email;
-        var result = await SecurityService.VerifyEmailAsync(request);
+        await form.Validate();
 
-        if (result.Success)
+        if (form.IsValid)
         {
-            Snackbar.Add(result.Message, Severity.Success);
-            NavigationManager.NavigateTo("/account/login");
+            var request = Mapper.Map(Model);
+            request.Email = Email;
+            var result = await SecurityService.VerifyEmailAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+                NavigationManager.NavigateTo("/account/login");
+            }
+            else
+                Snackbar.Add(result.Message, Severity.Error);
         }
-        else
-            Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task ResendCodeAsync()

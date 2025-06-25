@@ -26,7 +26,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm Validation="ChangePhoneNumberValidator.ValidateValue" Model="ChangePhoneNumberModel">
+                                    <MudForm
+                                        @ref="changePhoneNumberForm"
+                                        Validation="ChangePhoneNumberValidator.ValidateValue" 
+                                        Model="ChangePhoneNumberModel">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-1" Align="Align.Center">
@@ -120,7 +123,8 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm 
+                                    <MudForm
+                                        @ref="confirmChangePhoneNumberForm"
                                         Model="ConfirmChangePhoneNumberModel" 
                                         Validation="ConfirmChangePhoneNumberValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
@@ -177,6 +181,8 @@
     [SupplyParameterFromForm] private ConfirmChangePhoneNumberModel ConfirmChangePhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
+    private MudForm changePhoneNumberForm = new();
+    private MudForm confirmChangePhoneNumberForm = new();
     private Guid userId;
     private bool completed = false;
 
@@ -195,49 +201,59 @@
 
     private async Task OnChangePhoneNumberAsync()
     {
-        var request = new ChangePhoneNumberRequest()
-        {
-            UserId = userId,
-            NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber
-        };
+        await changePhoneNumberForm.Validate();
 
-        var result = await SecurityService.ChangePhoneNumberAsync(request);
+        if (changePhoneNumberForm.IsValid)
+        {
+            var request = new ChangePhoneNumberRequest()
+            {
+                UserId = userId,
+                NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber
+            };
 
-        if (result.Success)
-        {
-            Snackbar.Add("Codes were sent", Severity.Success);
-            await StepNextAsync();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var result = await SecurityService.ChangePhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Codes were sent", Severity.Success);
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 
     private async Task OnConfirmChangePhoneNumberAsync()
     {
-        var request = new ConfirmChangePhoneNumberRequest()
-        {
-            UserId = userId,
-            NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
-            CurrentPhoneNumberCode = ConfirmChangePhoneNumberModel.CurrentPhoneNumberCode,
-            NewPhoneNumberCode = ConfirmChangePhoneNumberModel.NewPhoneNumberCode,
-        };
+        await confirmChangePhoneNumberForm.Validate();
 
-        var result = await SecurityService.ConfirmChangePhoneNumberAsync(request);
-
-        if (result.Success)
+        if (confirmChangePhoneNumberForm.IsValid)
         {
-            var response = result.Get<ConfirmChangePhoneNumberResponse>()!;
-            await StepNextAsync();
+            var request = new ConfirmChangePhoneNumberRequest()
+            {
+                UserId = userId,
+                NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
+                CurrentPhoneNumberCode = ConfirmChangePhoneNumberModel.CurrentPhoneNumberCode,
+                NewPhoneNumberCode = ConfirmChangePhoneNumberModel.NewPhoneNumberCode,
+            };
 
-            Snackbar.Add("Phone number was successfully changed", Severity.Success);
-            await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
-            NavigationManager.NavigateTo("/profile");
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var result = await SecurityService.ConfirmChangePhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<ConfirmChangePhoneNumberResponse>()!;
+                await StepNextAsync();
+
+                Snackbar.Add("Phone number was successfully changed", Severity.Success);
+                await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
+                NavigationManager.NavigateTo("/profile");
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 

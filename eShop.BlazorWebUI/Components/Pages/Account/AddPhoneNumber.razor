@@ -26,7 +26,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined Class="pa-3">
-                                    <MudForm Model="AddPhoneNumberModel" Validation="AddPhoneNumberValidator.ValidateValue">
+                                    <MudForm
+                                        @ref="addPhoneNumberForm"
+                                        Model="AddPhoneNumberModel" 
+                                        Validation="AddPhoneNumberValidator.ValidateValue">
                                         <MudGrid Spacing="1" Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Align="Align.Center" Typo="Typo.body1"
@@ -67,7 +70,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined Class="pa-3">
-                                    <MudForm Model="VerifyCodeModel" Validation="VerifyCodeValidator.ValidateValue">
+                                    <MudForm
+                                        @ref="verifyCodeForm"
+                                        Model="VerifyCodeModel" 
+                                        Validation="VerifyCodeValidator.ValidateValue">
                                         <MudGrid Spacing="1" Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Align="Align.Center" Typo="Typo.body1"
@@ -122,6 +128,8 @@
     [SupplyParameterFromForm] private VerifyCodeModel VerifyCodeModel { get; set; } = new();
     
     private MudStepperExtended stepper = new();
+    private MudForm addPhoneNumberForm = new();
+    private MudForm verifyCodeForm = new();
     private bool completed = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -134,44 +142,54 @@
 
     private async Task OnAddPhoneNumberAsync()
     {
-        var userId = await LocalStorage.GetAsync<Guid>("userId");
-        var request = new AddPhoneNumberRequest()
-        {
-            Id = userId, 
-            PhoneNumber = AddPhoneNumberModel.PhoneNumber
-        };
-        
-        var result = await SecurityService.AddPhoneNumberAsync(request);
+        await addPhoneNumberForm.Validate();
 
-        if (result.Success)
+        if (addPhoneNumberForm.IsValid)
         {
-            await StepNextAsync();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var userId = await LocalStorage.GetAsync<Guid>("userId");
+            var request = new AddPhoneNumberRequest()
+            {
+                Id = userId, 
+                PhoneNumber = AddPhoneNumberModel.PhoneNumber
+            };
+        
+            var result = await SecurityService.AddPhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 
     private async Task OnVerifyCodeAsync()
     {
-        var userId = await LocalStorage.GetAsync<Guid>("userId");
-        var request = new VerifyPhoneNumberRequest()
-        {
-            Code = VerifyCodeModel.Code,
-            Id = userId
-        };
-        
-        var result = await SecurityService.VerifyPhoneNumberAsync(request);
+        await verifyCodeForm.Validate();
 
-        if (result.Success)
+        if (verifyCodeForm.IsValid)
         {
-            Snackbar.Add(result.Message, Severity.Success);
-            NavigationManager.NavigateTo("/account/profile");
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var userId = await LocalStorage.GetAsync<Guid>("userId");
+            var request = new VerifyPhoneNumberRequest()
+            {
+                Code = VerifyCodeModel.Code,
+                Id = userId
+            };
+        
+            var result = await SecurityService.VerifyPhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+                NavigationManager.NavigateTo("/account/profile");
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
     

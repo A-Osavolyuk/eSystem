@@ -27,7 +27,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm @ref="changeEmailForm" Model="ChangeEmailModel" Validation="ChangeEmailValidator.ValidateValue">
+                                    <MudForm 
+                                        @ref="changeEmailForm" 
+                                        Model="ChangeEmailModel" 
+                                        Validation="ChangeEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-1" Align="Align.Center">
@@ -121,7 +124,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm Model="ConfirmChangeEmailModel" Validation="ConfirmChangeEmailValidator.ValidateValue">
+                                    <MudForm 
+                                        @ref="confirmChangeEmailForm"
+                                        Model="ConfirmChangeEmailModel" 
+                                        Validation="ConfirmChangeEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2" Align="Align.Center">
@@ -176,7 +182,9 @@
     [SupplyParameterFromForm] private ConfirmChangeEmailModel ConfirmChangeEmailModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
+    
     private MudForm changeEmailForm = new();
+    private MudForm confirmChangeEmailForm = new();
 
     private Guid userId;
     private bool completed = false;
@@ -222,28 +230,33 @@
 
     private async Task OnConfirmEmailChangeAsync()
     {
-        var request = new ConfirmEmailChangeRequest()
-        {
-            CurrentEmailCode = ConfirmChangeEmailModel.CurrentEmailCode,
-            NewEmailCode = ConfirmChangeEmailModel.NewEmailCode,
-            NewEmail = ConfirmChangeEmailModel.NewEmail,
-            UserId = userId
-        };
+        await confirmChangeEmailForm.Validate();
 
-        var result = await SecurityService.ConfirmChangeEmailAsync(request);
-
-        if (result.Success)
+        if (confirmChangeEmailForm.IsValid)
         {
-            var response = result.Get<ConfirmChangeEmailResponse>()!;
-            await StepNextAsync();
+            var request = new ConfirmEmailChangeRequest()
+            {
+                CurrentEmailCode = ConfirmChangeEmailModel.CurrentEmailCode,
+                NewEmailCode = ConfirmChangeEmailModel.NewEmailCode,
+                NewEmail = ConfirmChangeEmailModel.NewEmail,
+                UserId = userId
+            };
 
-            Snackbar.Add("Email address was successfully changed", Severity.Success);
-            await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
-            NavigationManager.NavigateTo("/account/login");
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var result = await SecurityService.ConfirmChangeEmailAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<ConfirmChangeEmailResponse>()!;
+                await StepNextAsync();
+
+                Snackbar.Add("Email address was successfully changed", Severity.Success);
+                await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
+                NavigationManager.NavigateTo("/account/login");
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 

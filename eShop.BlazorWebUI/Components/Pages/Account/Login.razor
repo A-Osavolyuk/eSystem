@@ -17,7 +17,10 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm Model="Model" Validation="Validator.ValidateValue">
+            <MudForm
+                @ref="form"
+                Model="Model" 
+                Validation="Validator.ValidateValue">
                 <MudTextField
                     @bind-Value="Model.Email"
                     For="(() => Model.Email)"
@@ -116,56 +119,62 @@
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
     
     private const int MaxLoginAttempts = 5;
+    private MudForm form = new();
 
     private async Task OnSubmitAsync()
     {
-        var request = Mapper.Map(Model);
-        var result = await SecurityService.LoginAsync(request);
+        await form.Validate();
 
-        if (result.Success)
+        if (form.IsValid)
         {
-            var response = result.Get<LoginResponse>()!;
+            var request = Mapper.Map(Model);
+            var result = await SecurityService.LoginAsync(request);
 
-            if (response!.TwoFactorEnabled)
-            {
-                Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/2fa/login?email={Model.Email}&id={response.UserId}");
-            }
-            else
-            {
-                await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
-                NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
-                Snackbar.Add(result.Message, Severity.Success);
-                Model = new();
-            }
-        }
-        else
-        {
-            if (result.Result is null)
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
-            else
+            if (result.Success)
             {
                 var response = result.Get<LoginResponse>()!;
-                var userId = response.UserId;
 
-                if (response is { FailedLoginAttempts: < MaxLoginAttempts, IsLockedOut: false })
+                if (response!.TwoFactorEnabled)
                 {
-                    var attemptsLeft = MaxLoginAttempts - response.FailedLoginAttempts;
-                    var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
-                    Snackbar.Add(message, Severity.Error);
+                    Snackbar.Add(result.Message, Severity.Success);
+                    NavigationManager.NavigateTo($"/account/2fa/login?email={Model.Email}&id={response.UserId}");
                 }
                 else
                 {
-                    var redirectUri = response.Reason switch
-                    {
-                        LockoutReason.TooManyFailedLoginAttempts => $"/account/recover?id={userId}",
-                        _ => $"/account/locked-out?id={userId}"
-                    };
-
+                    await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
+                    NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
+                    Snackbar.Add(result.Message, Severity.Success);
+                    Model = new();
+                }
+            }
+            else
+            {
+                if (result.Result is null)
+                {
                     Snackbar.Add(result.Message, Severity.Error);
-                    NavigationManager.NavigateTo(redirectUri);
+                }
+                else
+                {
+                    var response = result.Get<LoginResponse>()!;
+                    var userId = response.UserId;
+
+                    if (response is { FailedLoginAttempts: < MaxLoginAttempts, IsLockedOut: false })
+                    {
+                        var attemptsLeft = MaxLoginAttempts - response.FailedLoginAttempts;
+                        var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
+                        Snackbar.Add(message, Severity.Error);
+                    }
+                    else
+                    {
+                        var redirectUri = response.Reason switch
+                        {
+                            LockoutReason.TooManyFailedLoginAttempts => $"/account/recover?id={userId}",
+                            _ => $"/account/locked-out?id={userId}"
+                        };
+
+                        Snackbar.Add(result.Message, Severity.Error);
+                        NavigationManager.NavigateTo(redirectUri);
+                    }
                 }
             }
         }

@@ -7,7 +7,10 @@
         Change username
     </TitleContent>
     <DialogContent>
-        <MudForm Model="Model" Validation="Validator.ValidateValue">
+        <MudForm
+            @ref="form"
+            Model="Model" 
+            Validation="Validator.ValidateValue">
             <MudTextField
                 @bind-Value="Model.UserName"
                 For="() => Model.UserName"
@@ -39,18 +42,25 @@
     [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
     [Parameter] public ChangeUserNameModel Model { get; set; } = new();
 
+    private MudForm form = new();
+
     private async Task OnSubmitAsync()
     {
-        var request = Mapper.Map(Model);
-        var result = await UsersService.ChangeUsernameAsync(request);
+        await form.Validate();
 
-        if (result.Success)
+        if (form.IsValid)
         {
-            Dialog?.Close(DialogResult.Ok(true));
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var request = Mapper.Map(Model);
+            var result = await UsersService.ChangeUsernameAsync(request);
+
+            if (result.Success)
+            {
+                Dialog?.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
     

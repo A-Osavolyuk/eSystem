@@ -7,7 +7,10 @@
         Change personal data
     </TitleContent>
     <DialogContent>
-        <MudForm Model="Model" Validation="Validator.ValidateValue">
+        <MudForm 
+            @ref="changePersonalDataForm" 
+            Model="Model" 
+            Validation="Validator.ValidateValue">
             <MudTextField
                 @bind-Value="Model.FirstName"
                 For="() => Model.FirstName"
@@ -66,18 +69,25 @@
     [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
     [Parameter] public ChangePersonalDataModel Model { get; set; } = new();
 
+    private MudForm changePersonalDataForm = new();
+
     private async Task OnSubmitAsync()
     {
-        var request = Mapper.Map(Model);
-        var result = await UsersService.ChangePersonalDataAsync(request);
+        await changePersonalDataForm.Validate();
 
-        if (result.Success)
+        if (changePersonalDataForm.IsValid)
         {
-            Dialog?.Close(DialogResult.Ok(true));
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var request = Mapper.Map(Model);
+            var result = await UsersService.ChangePersonalDataAsync(request);
+
+            if (result.Success)
+            {
+                Dialog?.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
     

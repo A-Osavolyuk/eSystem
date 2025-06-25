@@ -25,7 +25,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm Model="ResetEmailModel" Validation="ResetEmailValidator.ValidateValue">
+                                    <MudForm 
+                                        @ref="resetEmailForm" 
+                                        Model="ResetEmailModel" 
+                                        Validation="ResetEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-1" Align="Align.Center">
@@ -69,7 +72,10 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm Model="ConfirmResetEmailModel" Validation="ConfirmChangeEmailValidator.ValidateValue">
+                                    <MudForm 
+                                        @ref="confirmResetEmailForm" 
+                                        Model="ConfirmResetEmailModel" 
+                                        Validation="ConfirmChangeEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
                                                 <MudText Class="mb-2" Align="Align.Center">
@@ -124,6 +130,8 @@
     [SupplyParameterFromForm] private ConfirmResetEmailModel ConfirmResetEmailModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
+    private MudForm resetEmailForm = new();
+    private MudForm confirmResetEmailForm = new();
     private Guid userId;
     private bool completed = false;
 
@@ -142,43 +150,53 @@
 
     private async Task OnResetEmailAsync()
     {
-        var request = new ResetEmailRequest()
-        {
-            Id = userId,
-            NewEmail = ResetEmailModel.NewEmail
-        };
+        await resetEmailForm.Validate();
 
-        var result = await SecurityService.ResetEmailAsync(request);
+        if (resetEmailForm.IsValid)
+        {
+            var request = new ResetEmailRequest()
+            {
+                Id = userId,
+                NewEmail = ResetEmailModel.NewEmail
+            };
 
-        if (result.Success)
-        {
-            await StepNextAsync();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var result = await SecurityService.ResetEmailAsync(request);
+
+            if (result.Success)
+            {
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 
     private async Task OnConfirmResetEmailAsync()
     {
-        var request = new ConfirmResetEmailRequest()
-        {
-            Id = userId,
-            NewEmail = ResetEmailModel.NewEmail,
-            Code = ConfirmResetEmailModel.Code
-        };
+        await confirmResetEmailForm.Validate();
 
-        var result = await SecurityService.ConfirmResetEmailAsync(request);
+        if (confirmResetEmailForm.IsValid)
+        {
+            var request = new ConfirmResetEmailRequest()
+            {
+                Id = userId,
+                NewEmail = ResetEmailModel.NewEmail,
+                Code = ConfirmResetEmailModel.Code
+            };
 
-        if (result.Success)
-        {
-            Snackbar.Add("Email was successfully reset", Severity.Success);
-            await StepNextAsync();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
+            var result = await SecurityService.ConfirmResetEmailAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Email was successfully reset", Severity.Success);
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 
