@@ -1,14 +1,5 @@
 ﻿global using eShop.Application.Extensions;
-global using eShop.Application.Utilities;
 global using eShop.Cart.Api.Extensions;
-global using eShop.Cart.Api.Rpc;
 global using eShop.ServiceDefaults;
-global using Grpc.Core;
 global using MassTransit;
-global using MediatR;
-global using Microsoft.AspNetCore.Mvc;
-global using MongoDB.Bson;
-global using MongoDB.Bson.Serialization.Attributes;
-global using MongoDB.Driver;
 global using Newtonsoft.Json;
-global using Results = eShop.Domain.Common.API.Results;

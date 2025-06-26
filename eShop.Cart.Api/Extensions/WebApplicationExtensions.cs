@@ -12,6 +12,5 @@ public static class WebApplicationExtensions
         app.UseAuthorization();
         app.MapControllers();
         app.UseExceptionHandler();
-        app.MapGrpcService<CartServer>();
     }
 }

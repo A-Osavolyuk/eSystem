@@ -74,16 +74,6 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
-                RouteId = "cart-route", ClusterId = "cart-cluster",
-                Match = new RouteMatch { Path = "/api/v1/Carts/{**catch-all}" }
-            },
-            new RouteConfig
-            {
-                RouteId = "favorites-route", ClusterId = "cart-cluster",
-                Match = new RouteMatch { Path = "/api/v1/Favorites/{**catch-all}" }
-            },
-            new RouteConfig
-            {
                 RouteId = "files-route", ClusterId = "files-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Files/{**catch-all}" }
             },

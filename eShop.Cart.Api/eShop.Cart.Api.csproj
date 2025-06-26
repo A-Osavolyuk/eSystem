@@ -30,8 +30,8 @@
     </ItemGroup>
     
     <ItemGroup>
-        <Protobuf Include="..\eShop.Application\Protos\cart.proto" GrpcServices="Server">
-            <GrpcCSharpNamespace>eShop.Cart.Api</GrpcCSharpNamespace>
-        </Protobuf>
+      <Folder Include="Controllers\v1\" />
+      <Folder Include="Entities\" />
+      <Folder Include="Features\" />
     </ItemGroup>
 </Project>
