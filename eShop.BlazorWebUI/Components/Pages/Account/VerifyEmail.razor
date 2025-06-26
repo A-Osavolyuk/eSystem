@@ -45,7 +45,7 @@
                     </MudItem>
 
                     <MudItem xs="8">
-                        <MudButton
+                        <MudLoadingButton
                             ButtonType="ButtonType.Button"
                             Variant="Variant.Filled"
                             Color="Color.Primary"
@@ -54,7 +54,7 @@
                             Disabled="@(Model.Code.Length <= 5)"
                             OnClick="async () => await VerifyEmailAsync()">
                             Verify
-                        </MudButton>
+                        </MudLoadingButton>
                     </MudItem>
                 </MudGrid>
             </MudForm>

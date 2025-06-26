@@ -46,12 +46,12 @@
                                                               @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
                                             </MudItem>
                                             <MudItem xs="12">
-                                                <MudButton Size="Size.Large" FullWidth Variant="Variant.Filled"
+                                                <MudLoadingButton Size="Size.Large" FullWidth Variant="Variant.Filled"
                                                            Class="mt-2"
                                                            Color="Color.Primary"
                                                            ButtonType="ButtonType.Button"
                                                            OnClick="async () => await OnAddPhoneNumberAsync()">Send code
-                                                </MudButton>
+                                                </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>
@@ -91,13 +91,13 @@
                                                               Variant="Variant.Outlined"/>
                                             </MudItem>
                                             <MudItem xs="12">
-                                                <MudButton Size="Size.Large" FullWidth Variant="Variant.Filled"
+                                                <MudLoadingButton Size="Size.Large" FullWidth Variant="Variant.Filled"
                                                            Class="mt-2"
                                                            Color="Color.Primary"
                                                            Disabled="@(VerifyCodeModel.Code.Length <= 5)"
                                                            ButtonType="ButtonType.Button"
                                                            OnClick="async () => await OnVerifyCodeAsync()">Confirm
-                                                </MudButton>
+                                                </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>

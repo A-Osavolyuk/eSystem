@@ -137,20 +137,20 @@
                             }
                         </MudItem>
                         <MudItem xs="12">
-                            <MudButton
+                            <MudLoadingButton
                                 Color="Color.Primary"
                                 Variant="Variant.Filled"
                                 ButtonType="ButtonType.Button"
                                 OnClick="async () => await OnChangePasswordAsync()">
                                 Change password
-                            </MudButton>
-                            <MudButton
+                            </MudLoadingButton>
+                            <MudLoadingButton
                                 Color="Color.Error"
                                 Variant="Variant.Outlined"
                                 ButtonType="ButtonType.Button"
                                 OnClick="async () => await OnResetPasswordAsync()">
                                 Reset password
-                            </MudButton>
+                            </MudLoadingButton>
                         </MudItem>
                     </MudGrid>
                 </MudPaper>
@@ -175,20 +175,20 @@
                             </MudText>
                         </MudItem>
                         <MudItem xs="12">
-                            <MudButton
+                            <MudLoadingButton
                                 Color="Color.Primary"
                                 Variant="Variant.Filled"
                                 ButtonType="ButtonType.Button"
                                 Href="/account/email/change">
                                 Change email
-                            </MudButton>
-                            <MudButton
+                            </MudLoadingButton>
+                            <MudLoadingButton
                                 Color="Color.Error"
                                 Variant="Variant.Outlined"
                                 ButtonType="ButtonType.Button"
                                 Href="/account/email/reset">
                                 Reset email
-                            </MudButton>
+                            </MudLoadingButton>
                         </MudItem>
                     </MudGrid>
                 </MudPaper>
@@ -207,13 +207,13 @@
                                 </MudText>
                             </MudItem>
                             <MudItem xs="12">
-                                <MudButton
+                                <MudLoadingButton
                                     Color="Color.Primary"
                                     Variant="Variant.Filled"
                                     ButtonType="ButtonType.Button"
                                     Href="/account/phone-number/add">
                                     Add phone number
-                                </MudButton>
+                                </MudLoadingButton>
                             </MudItem>
                         }
                         else
@@ -235,20 +235,20 @@
                                 </MudText>
                             </MudItem>
                             <MudItem xs="12">
-                                <MudButton
+                                <MudLoadingButton
                                     Color="Color.Primary"
                                     Variant="Variant.Filled"
                                     ButtonType="ButtonType.Button"
                                     Href="/account/phone-number/change">
                                     Change phone number
-                                </MudButton>
-                                <MudButton
+                                </MudLoadingButton>
+                                <MudLoadingButton
                                     Color="Color.Error"
                                     Variant="Variant.Outlined"
                                     ButtonType="ButtonType.Button"
                                     Href="/account/phone-number/reset">
                                     Reset phone number
-                                </MudButton>
+                                </MudLoadingButton>
                             </MudItem>
                         }
                     </MudGrid>
