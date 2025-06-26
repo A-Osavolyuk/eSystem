@@ -6,10 +6,12 @@ public record AddPhoneNumberCommand(AddPhoneNumberRequest Request) : IRequest<Re
 
 public class AddPhoneNumberCommandHandler(
     IUserManager userManager,
-    ICodeManager codeManager) : IRequestHandler<AddPhoneNumberCommand, Result>
+    ICodeManager codeManager,
+    IMessageService messageService) : IRequestHandler<AddPhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
+    private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(AddPhoneNumberCommand request, CancellationToken cancellationToken)
     {
@@ -33,8 +35,9 @@ public class AddPhoneNumberCommandHandler(
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Verify, cancellationToken);
-        
-        //TODO: send verify phone number code
+
+        await messageService.SendMessageAsync(SenderType.Sms, "phone-number-verify", new { Code = code },
+            new SmsCredentials() { PhoneNumber = request.Request.PhoneNumber }, cancellationToken);
 
         return Result.Success();
     }
