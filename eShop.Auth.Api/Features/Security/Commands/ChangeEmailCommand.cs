@@ -39,7 +39,7 @@ public sealed class RequestChangeEmailCommandHandler(
                 UserName = user.UserName,
             }, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "email/verification",
+        await messageService.SendMessageAsync(SenderType.Email, "email/verify",
             new
             {
                 Code = newEmailCode,
