@@ -37,7 +37,7 @@ public sealed class ResendEmailVerificationCodeCommandHandler(
             code = entity.Code;
         }
 
-        await messageService.SendMessageAsync(SenderType.Email, "email/verify", 
+        await messageService.SendMessageAsync(SenderType.Email, "email-verify", 
             new
             {
                 Code = code,

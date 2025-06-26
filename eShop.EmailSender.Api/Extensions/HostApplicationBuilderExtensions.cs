@@ -38,12 +38,12 @@ public static class HostApplicationBuilderExtensions
                 var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
                 cfg.Host(connectionString);
 
-                cfg.ReceiveEndpoint("email:account/recovery", e => e.ConfigureConsumer<AccountRecoveryConsumer>(context));
-                cfg.ReceiveEndpoint("email:email/change", e => e.ConfigureConsumer<ChangeEmailConsumer>(context));
-                cfg.ReceiveEndpoint("email:oauth/login", e => e.ConfigureConsumer<OAuthLoginConsumer>(context));
-                cfg.ReceiveEndpoint("email:password/reset", e => e.ConfigureConsumer<ResetPasswordConsumer>(context));
-                cfg.ReceiveEndpoint("email:email/verify", e => e.ConfigureConsumer<VerifyEmailConsumer>(context));
-                cfg.ReceiveEndpoint("email:2fa/token", e => e.ConfigureConsumer<TwoFactorTokenConsumer>(context));
+                cfg.ReceiveEndpoint("email:account-recovery", e => e.ConfigureConsumer<AccountRecoveryConsumer>(context));
+                cfg.ReceiveEndpoint("email:email-change", e => e.ConfigureConsumer<ChangeEmailConsumer>(context));
+                cfg.ReceiveEndpoint("email:oauth-login", e => e.ConfigureConsumer<OAuthLoginConsumer>(context));
+                cfg.ReceiveEndpoint("email:password-reset", e => e.ConfigureConsumer<ResetPasswordConsumer>(context));
+                cfg.ReceiveEndpoint("email:email-verify", e => e.ConfigureConsumer<VerifyEmailConsumer>(context));
+                cfg.ReceiveEndpoint("email:2fa-token", e => e.ConfigureConsumer<TwoFactorTokenConsumer>(context));
             });
 
             x.AddConsumer<AccountRecoveryConsumer>();

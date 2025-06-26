@@ -38,7 +38,7 @@ public sealed class VerifyEmailCommandHandler(
             return confirmResult;
         }
 
-        await messageService.SendMessageAsync(SenderType.Email, "email/verify", 
+        await messageService.SendMessageAsync(SenderType.Email, "email-verify", 
             null,
             new EmailCredentials()
             {

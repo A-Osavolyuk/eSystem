@@ -24,7 +24,7 @@ public class ResetEmailCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "email/reset",
+        await messageService.SendMessageAsync(SenderType.Email, "email-reset",
             new
             {
                 Code = code

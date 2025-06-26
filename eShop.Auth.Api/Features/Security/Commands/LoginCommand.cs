@@ -79,7 +79,7 @@ public sealed class LoginCommandHandler(
                         UserName = user.UserName
                     };
                 
-                    await messageService.SendMessageAsync(SenderType.Email, "account/recovery",
+                    await messageService.SendMessageAsync(SenderType.Email, "account-recovery",
                         payload, credentials, cancellationToken);
                 }
 

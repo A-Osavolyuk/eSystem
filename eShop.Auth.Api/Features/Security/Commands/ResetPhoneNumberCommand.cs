@@ -24,7 +24,7 @@ public class ResetPhoneNumberCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Reset, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "phone-number/reset",
+        await messageService.SendMessageAsync(SenderType.Email, "phone-number-reset",
             new
             {
                 Code = code

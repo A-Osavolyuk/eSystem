@@ -36,7 +36,7 @@ public class AddPhoneNumberCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Verify, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Sms, "phone-number/verify", new { Code = code },
+        await messageService.SendMessageAsync(SenderType.Sms, "phone-number-verify", new { Code = code },
             new SmsCredentials() { PhoneNumber = request.Request.PhoneNumber }, cancellationToken);
 
         return Result.Success();
