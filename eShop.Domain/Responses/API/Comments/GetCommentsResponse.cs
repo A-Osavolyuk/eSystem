@@ -1,8 +1,7 @@
-﻿using eShop.Domain.Abstraction.Responses;
+﻿namespace eShop.Domain.Responses.API.Comments;
 
-namespace eShop.Domain.Responses.API.Comments;
-
-public class GetCommentsResponse : ResponseBase
+public class GetCommentsResponse
 {
     public List<CommentDto> Comments { get; set; } = [];
+    public string Message { get; set; } = string.Empty;
 }

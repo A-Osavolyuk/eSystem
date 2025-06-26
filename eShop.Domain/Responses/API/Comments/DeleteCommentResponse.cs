@@ -1,5 +1,6 @@
-﻿using eShop.Domain.Abstraction.Responses;
+﻿namespace eShop.Domain.Responses.API.Comments;
 
-namespace eShop.Domain.Responses.API.Comments;
-
-public class DeleteCommentResponse : ResponseBase;
+public class DeleteCommentResponse
+{
+    public string Message { get; set; } = string.Empty;
+}
