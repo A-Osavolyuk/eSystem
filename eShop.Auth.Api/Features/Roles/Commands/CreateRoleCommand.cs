@@ -20,8 +20,8 @@ public sealed class CreateRoleCommandHandler(
         }
 
         var entity = Mapper.Map(request.Request);
-        await roleManager.CreateAsync(entity, cancellationToken);
+        var result = await roleManager.CreateAsync(entity, cancellationToken);
 
-        return Result.Success();
+        return result;
     }
 }

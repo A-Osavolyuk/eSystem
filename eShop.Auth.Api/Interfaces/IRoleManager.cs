@@ -7,9 +7,9 @@ public interface IRoleManager
     public ValueTask<List<RoleEntity>> GetByUserAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<RoleEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
     public ValueTask<RoleEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    public ValueTask DeleteAsync(RoleEntity entity, CancellationToken cancellationToken = default);
-    public ValueTask CreateAsync(RoleEntity entity, CancellationToken cancellationToken = default);
-    public ValueTask UpdateAsync(RoleEntity entity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> DeleteAsync(RoleEntity entity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> CreateAsync(RoleEntity entity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UpdateAsync(RoleEntity entity, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsInRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
     public ValueTask<Result> AssignAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
     public ValueTask<Result> AssignAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);

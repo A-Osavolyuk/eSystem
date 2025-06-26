@@ -49,22 +49,28 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         return role;
     }
 
-    public async ValueTask DeleteAsync(RoleEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> DeleteAsync(RoleEntity entity, CancellationToken cancellationToken = default)
     {
         context.Roles.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
     }
 
-    public async ValueTask CreateAsync(RoleEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(RoleEntity entity, CancellationToken cancellationToken = default)
     {
         await context.Roles.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
     }
 
-    public async ValueTask UpdateAsync(RoleEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> UpdateAsync(RoleEntity entity, CancellationToken cancellationToken = default)
     {
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
+        
+        return  Result.Success();
     }
     
     public async ValueTask<Result> UnassignAsync(UserEntity user, string roleName,
