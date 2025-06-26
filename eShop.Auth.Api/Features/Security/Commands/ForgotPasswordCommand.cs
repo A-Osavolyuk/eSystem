@@ -27,7 +27,7 @@ public sealed class ForgotPasswordCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "password-reset", 
+        await messageService.SendMessageAsync(SenderType.Email, "password/reset", 
             new
             {
                 Code = code,

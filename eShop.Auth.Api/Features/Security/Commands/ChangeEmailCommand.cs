@@ -26,7 +26,7 @@ public sealed class RequestChangeEmailCommandHandler(
         var oldEmailCode = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Current, cancellationToken);
         var newEmailCode = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.New, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "email-change",
+        await messageService.SendMessageAsync(SenderType.Email, "email/change",
             new
             {
                 Code = oldEmailCode,
@@ -39,7 +39,7 @@ public sealed class RequestChangeEmailCommandHandler(
                 UserName = user.UserName,
             }, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "email-verification",
+        await messageService.SendMessageAsync(SenderType.Email, "email/verification",
             new
             {
                 Code = newEmailCode,

@@ -41,7 +41,7 @@ public class SendTwoFactorTokenCommandHandler(
             case ProviderTypes.Email:
             {
                 deliveryType = "email address";
-                await messageService.SendMessageAsync(SenderType.Email, "two-factor-token", 
+                await messageService.SendMessageAsync(SenderType.Email, "2fa/token", 
                     new
                     {
                         Token = token,
@@ -68,7 +68,7 @@ public class SendTwoFactorTokenCommandHandler(
                 
                 deliveryType = "phone number";
                 
-                await messageService.SendMessageAsync(SenderType.Email, "two-factor-token", 
+                await messageService.SendMessageAsync(SenderType.Email, "2fa/token", 
                     new { Token = token, }, new SmsCredentials() { PhoneNumber = user.PhoneNumber }, 
                     cancellationToken);
                 

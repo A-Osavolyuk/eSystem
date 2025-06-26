@@ -28,10 +28,10 @@ public sealed class RequestChangePhoneNumberCommandHandler(
 
         var credentials = new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber };
         
-        await messageService.SendMessageAsync(SenderType.Email, "phone-number-change",
+        await messageService.SendMessageAsync(SenderType.Email, "phone-number/change",
             new { Code = oldPhoneNumberCode, }, credentials, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "phone-number-verification",
+        await messageService.SendMessageAsync(SenderType.Email, "phone-number/verify",
             new { Code = newPhoneNumberCode, }, credentials, cancellationToken);
 
         return Result.Success();
