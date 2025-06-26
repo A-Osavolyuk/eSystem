@@ -1,4 +1,5 @@
-﻿using eShop.BlazorWebUI.Models;
+﻿using eShop.Application.Validation;
+using eShop.BlazorWebUI.Models;
 
 namespace eShop.BlazorWebUI.Validation;
 
@@ -6,7 +7,6 @@ public class RecoverAccountValidator : Validator<RecoverAccountModel>
 {
     public RecoverAccountValidator()
     {
-        RuleFor(x => x.Code)
-            .Length(6).WithMessage("Invalid code format");
+        RuleFor(x => x.Code).SetValidator(new CodeValidator());
     }
 }

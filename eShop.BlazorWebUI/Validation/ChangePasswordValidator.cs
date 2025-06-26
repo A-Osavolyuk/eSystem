@@ -1,4 +1,5 @@
-﻿using eShop.BlazorWebUI.Models;
+﻿using eShop.Application.Validation;
+using eShop.BlazorWebUI.Models;
 
 namespace eShop.BlazorWebUI.Validation;
 
@@ -11,13 +12,7 @@ public class ChangePasswordValidator : Validator<ChangePasswordModel>
 
         RuleFor(p => p.NewPassword)
             .NotEqual(x => x.CurrentPassword).WithMessage("New password cannot be the same with old one.")
-            .NotEmpty().WithMessage("Field is required.")
-            .MinimumLength(8).WithMessage("New password must be at least 8 characters long.")
-            .MaximumLength(32).WithMessage("New password cannot be longer then 32 characters.")
-            .Matches("[A-Z]").WithMessage("New password must contain at least one uppercase letter.")
-            .Matches("[a-z]").WithMessage("New password must contain at least one lowercase letter.")
-            .Matches("[0-9]").WithMessage("New password must contain at least one numeric digit.")
-            .Matches("[^a-zA-Z0-9]").WithMessage("New password must contain at least one special character.");
+            .SetValidator(new PhoneNumberValidator());
 
         RuleFor(p => p.ConfirmNewPassword)
             .NotEmpty().WithMessage("You must confirm your new password.")

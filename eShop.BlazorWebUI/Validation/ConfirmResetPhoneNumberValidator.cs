@@ -1,4 +1,5 @@
-﻿using eShop.BlazorWebUI.Models;
+﻿using eShop.Application.Validation;
+using eShop.BlazorWebUI.Models;
 
 namespace eShop.BlazorWebUI.Validation;
 
@@ -6,8 +7,6 @@ public class ConfirmResetPhoneNumberValidator : Validator<ConfirmResetPhoneNumbe
 {
     public ConfirmResetPhoneNumberValidator()
     {
-        RuleFor(x => x.NewPhoneNumber)
-            .Matches(@"^\+\(\d{2}\)-\d{3}-\d{3}-\d{4}$|^\d{12}$").WithMessage("Wrong phone number format.")
-            .NotEmpty().WithMessage("Phone number is must!");
+        RuleFor(x => x.NewPhoneNumber).SetValidator(new PhoneNumberValidator());
     }
 }
