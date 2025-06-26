@@ -9,7 +9,7 @@ public static class WebApplicationExtensions
     {
         app.MapDefaultEndpoints();
 
-        //app.UseExceptionHandler("/Error", createScopeForErrors: true);
+        app.UseExceptionHandler("/Error", createScopeForErrors: true);
         app.UseHsts();
 
         app.UseStaticWebAssets();
