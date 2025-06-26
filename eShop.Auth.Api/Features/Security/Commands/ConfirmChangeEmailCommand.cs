@@ -3,7 +3,7 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record ConfirmChangeEmailCommand(ConfirmEmailChangeRequest Request)
+public sealed record ConfirmChangeEmailCommand(ConfirmChangeEmailRequest Request)
     : IRequest<Result>;
 
 public sealed class ConfirmChangeEmailCommandHandler(

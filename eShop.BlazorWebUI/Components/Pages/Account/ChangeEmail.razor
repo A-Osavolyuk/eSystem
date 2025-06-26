@@ -232,7 +232,7 @@
 
         if (confirmChangeEmailForm.IsValid)
         {
-            var request = new ConfirmEmailChangeRequest()
+            var request = new ConfirmChangeEmailRequest()
             {
                 CurrentEmailCode = ConfirmChangeEmailModel.CurrentEmailCode,
                 NewEmailCode = ConfirmChangeEmailModel.NewEmailCode,
