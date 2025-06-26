@@ -66,6 +66,19 @@ public class RolesController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Delete role")]
+    [EndpointDescription("Deletes role")]
+    [ProducesResponseType(200)]
+    [Authorize(Policy = "DeleteRolesPolicy")]
+    [HttpPut("{id:guid}")]
+    public async ValueTask<ActionResult<Response>> UpdateAsync([FromBody] UpdateRoleRequest request)
+    {
+        var result = await sender.Send(new UpdateRoleCommand(request));
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Delete role")]
     [EndpointDescription("Deletes role")]
