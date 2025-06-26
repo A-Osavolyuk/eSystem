@@ -19,7 +19,7 @@ public class TransactionBehaviour<TRequest, TResponse>(
             logger.LogInformation("Executing transaction");
             try
             {
-                var result = await next();
+                var result = await next(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
                 logger.LogInformation("Committed transaction");
