@@ -1,13 +1,13 @@
 ﻿namespace eShop.Auth.Api.Features.Roles.Queries;
 
-public sealed record GetRolesListQuery() : IRequest<Result>;
+public sealed record GetRolesQuery() : IRequest<Result>;
 
 public sealed class GetRolesListQueryHandler(
-    IRoleManager roleManager) : IRequestHandler<GetRolesListQuery, Result>
+    IRoleManager roleManager) : IRequestHandler<GetRolesQuery, Result>
 {
     private readonly IRoleManager roleManager = roleManager;
 
-    public async Task<Result> Handle(GetRolesListQuery request,
+    public async Task<Result> Handle(GetRolesQuery request,
         CancellationToken cancellationToken)
     {
         var roles = await roleManager.GetAllAsync(cancellationToken);

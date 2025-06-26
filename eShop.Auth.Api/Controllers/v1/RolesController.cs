@@ -20,7 +20,7 @@ public class RolesController(ISender sender) : ControllerBase
     [HttpGet]
     public async ValueTask<ActionResult<Response>> GetRolesAsync()
     {
-        var result = await sender.Send(new GetRolesListQuery());
+        var result = await sender.Send(new GetRolesQuery());
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
