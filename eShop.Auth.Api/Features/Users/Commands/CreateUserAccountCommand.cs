@@ -67,15 +67,30 @@ public sealed class CreateUserAccountCommandHandler(
         }
         else
         {
+            var role = await roleManager.FindByNameAsync("User", cancellationToken);
+
+            if (role is null)
+            {
+                return Results.NotFound("Cannot find role User");
+            }
+            
             var roleResult = await roleManager.AssignRoleAsync(user, "User", cancellationToken);
 
             if (!roleResult.Succeeded)
             {
                 return roleResult;
             }
+
+            var permissions = role.Permissions.Select(x => x.Permission).ToList();
+            var permissionResult = await permissionManager.GrantAsync(user, permissions, cancellationToken);
+
+            if (!permissionResult.Succeeded)
+            {
+                return permissionResult;
+            }
         }
 
-        if (request.Request.Permissions.Any())
+        if (request.Request.Permissions.Count > 0)
         {
             foreach (var permission in request.Request.Permissions)
             {
@@ -93,10 +108,6 @@ public sealed class CreateUserAccountCommandHandler(
                     return permissionResult;
                 }
             }
-        }
-        else
-        {
-            //TODO: load default permissions
         }
 
         return Result.Success($"User account was successfully created with temporary password: {password}");
