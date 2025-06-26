@@ -42,7 +42,7 @@ public sealed class RegisterCommandHandler(
             return Results.NotFound("Cannot find role with name User");
         }
             
-        var assignRoleResult = await roleManager.AssignRoleAsync(newUser, role, cancellationToken);
+        var assignRoleResult = await roleManager.AssignAsync(newUser, role, cancellationToken);
 
         if (!assignRoleResult.Succeeded)
         {

@@ -11,9 +11,9 @@ public interface IRoleManager
     public ValueTask CreateAsync(RoleEntity entity, CancellationToken cancellationToken = default);
     public ValueTask UpdateAsync(RoleEntity entity, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsInRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> AssignRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> AssignRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
-    public ValueTask<Result> UnassignRoleAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
-    public ValueTask<Result> UnassignRoleAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
-    public ValueTask<Result> UnassignRolesAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> AssignAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
+    public ValueTask<Result> AssignAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UnassignAsync(UserEntity user, string roleName, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UnassignAsync(UserEntity user, RoleEntity role, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UnassignAsync(UserEntity user, CancellationToken cancellationToken = default);
 }

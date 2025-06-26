@@ -80,7 +80,7 @@ public sealed class HandleOAuthLoginQueryHandler(
                 return Results.NotFound("Cannot find role with name User");
             }
 
-            var assignRoleResult = await roleManager.AssignRoleAsync(user, role, cancellationToken);
+            var assignRoleResult = await roleManager.AssignAsync(user, role, cancellationToken);
 
             if (!assignRoleResult.Succeeded)
             {

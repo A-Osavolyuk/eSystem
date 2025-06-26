@@ -57,7 +57,7 @@ public sealed class CreateUserAccountCommandHandler(
                     return Results.InternalServerError($"Role {role} does not exist.");
                 }
 
-                var roleResult = await roleManager.AssignRoleAsync(user, role, cancellationToken);
+                var roleResult = await roleManager.AssignAsync(user, role, cancellationToken);
 
                 if (!roleResult.Succeeded)
                 {
@@ -74,7 +74,7 @@ public sealed class CreateUserAccountCommandHandler(
                 return Results.NotFound("Cannot find role User");
             }
             
-            var roleResult = await roleManager.AssignRoleAsync(user, "User", cancellationToken);
+            var roleResult = await roleManager.AssignAsync(user, "User", cancellationToken);
 
             if (!roleResult.Succeeded)
             {

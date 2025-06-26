@@ -67,7 +67,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         await context.SaveChangesAsync(cancellationToken);
     }
     
-    public async ValueTask<Result> UnassignRoleAsync(UserEntity user, string roleName,
+    public async ValueTask<Result> UnassignAsync(UserEntity user, string roleName,
         CancellationToken cancellationToken = default)
     {
         var role = await context.UserRoles
@@ -86,7 +86,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> UnassignRoleAsync(UserEntity user, RoleEntity role,
+    public async ValueTask<Result> UnassignAsync(UserEntity user, RoleEntity role,
         CancellationToken cancellationToken = default)
     {
         var userRole = await context.UserRoles
@@ -103,7 +103,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> UnassignRolesAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> UnassignAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var userRoles = await context.UserRoles
             .Where(x => x.UserId == user.Id)
@@ -115,7 +115,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         return Result.Success();
     }
     
-    public async ValueTask<Result> AssignRoleAsync(UserEntity user, string roleName,
+    public async ValueTask<Result> AssignAsync(UserEntity user, string roleName,
         CancellationToken cancellationToken = default)
     {
         var role = await context.Roles.FirstOrDefaultAsync(x => x.Name == roleName || x.NormalizedName == roleName,
@@ -139,7 +139,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> AssignRoleAsync(UserEntity user, RoleEntity role,
+    public async ValueTask<Result> AssignAsync(UserEntity user, RoleEntity role,
         CancellationToken cancellationToken = default)
     {
         var userRole = new UserRoleEntity()

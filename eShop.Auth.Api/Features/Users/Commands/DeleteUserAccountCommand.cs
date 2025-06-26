@@ -26,7 +26,7 @@ public sealed class DeleteUserAccountCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Id}");
         }
 
-        var rolesResult = await roleManager.UnassignRolesAsync(user, cancellationToken);
+        var rolesResult = await roleManager.UnassignAsync(user, cancellationToken);
 
         if (!rolesResult.Succeeded)
         {

@@ -32,7 +32,7 @@ public sealed class RemoveUserRolesCommandHandler(
                 return Results.BadRequest($"User with ID {request.Request.UserId} is not in role {role}.");
             }
 
-            var result = await roleManager.UnassignRoleAsync(user, role, cancellationToken);
+            var result = await roleManager.UnassignAsync(user, role, cancellationToken);
 
             if (!result.Succeeded)
             {
