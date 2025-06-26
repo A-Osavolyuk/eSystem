@@ -22,18 +22,16 @@ public static class HostApplicationBuilderExtension
     {
         builder.AddMessageBus(cfg =>
         {
-            cfg.AddQueue<ChangeEmailMessage>("email-change", SenderType.Email);
-            cfg.AddQueue<VerifyEmailMessage>("email-verification", SenderType.Email);
-            cfg.AddQueue<EmailVerifiedMessage>("email-verified", SenderType.Email);
-            cfg.AddQueue<NewEmailVerificationMessage>("new-email-verified", SenderType.Email);
-            cfg.AddQueue<OAuthRegistrationEmailMessage>("oauth-registration", SenderType.Email);
-            cfg.AddQueue<ResetPasswordEmailMessage>("password-reset", SenderType.Email);
-            cfg.AddQueue<TwoFactorTokenEmailMessage>("two-factor-token", SenderType.Email);
-            cfg.AddQueue<AccountRecoveryEmailMessage>("account-recovery", SenderType.Email);
+            cfg.AddQueue<ChangeEmailMessage>("email/change", SenderType.Email);
+            cfg.AddQueue<VerifyEmailMessage>("email/verify", SenderType.Email);
+            cfg.AddQueue<OAuthRegistrationEmailMessage>("oauth/registration", SenderType.Email);
+            cfg.AddQueue<ResetPasswordEmailMessage>("password/reset", SenderType.Email);
+            cfg.AddQueue<TwoFactorTokenEmailMessage>("2fa/token", SenderType.Email);
+            cfg.AddQueue<AccountRecoveryEmailMessage>("account/recovery", SenderType.Email);
             
-            cfg.AddQueue<ChangePhoneNumberSmsMessage>("phone-number-change", SenderType.Sms);
-            cfg.AddQueue<VerifyPhoneNumberSmsMessage>("phone-number-verification", SenderType.Sms);
-            cfg.AddQueue<TwoFactorTokenSmsMessage>("two-factor-token", SenderType.Sms);
+            cfg.AddQueue<ChangePhoneNumberSmsMessage>("phone-number/change", SenderType.Sms);
+            cfg.AddQueue<VerifyPhoneNumberSmsMessage>("phone-number/verify", SenderType.Sms);
+            cfg.AddQueue<TwoFactorTokenSmsMessage>("2fa/token", SenderType.Sms);
         });
         
         builder.Services.AddMassTransit(x =>
