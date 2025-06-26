@@ -84,21 +84,6 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
-                RouteId = "brand-route", ClusterId = "product-cluster",
-                Match = new RouteMatch { Path = "/api/v1/Brands/{**catch-all}" }
-            },
-            new RouteConfig
-            {
-                RouteId = "product-route", ClusterId = "product-cluster",
-                Match = new RouteMatch { Path = "/api/v1/Products/{**catch-all}" }
-            },
-            new RouteConfig
-            {
-                RouteId = "seller-route", ClusterId = "product-cluster",
-                Match = new RouteMatch { Path = "/api/v1/Seller/{**catch-all}" }
-            },
-            new RouteConfig
-            {
                 RouteId = "comment-route", ClusterId = "comment-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Comments/{**catch-all}" }
             },

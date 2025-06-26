@@ -7,7 +7,6 @@ global using Grpc.Core;
 global using MassTransit;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
-global using Microsoft.Extensions.Caching.Distributed;
 global using MongoDB.Bson;
 global using MongoDB.Bson.Serialization.Attributes;
 global using MongoDB.Driver;

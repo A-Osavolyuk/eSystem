@@ -38,13 +38,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<Protobuf Include="..\eShop.Application\Protos\auth.proto" GrpcServices="Client">
-			<GrpcCSharpNamespace>eShop.Product.Api</GrpcCSharpNamespace>
-		</Protobuf>
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <Folder Include="Features\Sellers\Queries\" />
+	  <Folder Include="Controllers\v1\" />
+	  <Folder Include="Features\" />
+	  <Folder Include="Validation\" />
 	</ItemGroup>
 
 </Project>

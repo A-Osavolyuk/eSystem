@@ -49,8 +49,6 @@ public static class HostApplicationBuilderExtensions
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<ICacheService, CacheService>();
-
-        builder.Services.AddScoped<AuthClient>();
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)

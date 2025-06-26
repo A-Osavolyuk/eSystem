@@ -2,7 +2,6 @@
 
 global using System.Collections.Immutable;
 global using Azure.Storage.Blobs;
-global using eShop.Storage.Api.Enums;
 global using eShop.Storage.Api.Extensions;
 global using eShop.Storage.Api.Services;
 global using FluentValidation;
