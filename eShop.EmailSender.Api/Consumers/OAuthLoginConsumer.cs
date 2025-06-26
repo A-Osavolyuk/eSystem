@@ -1,10 +1,10 @@
 ﻿namespace eShop.EmailSender.Api.Consumers;
 
-public class OAuthLoginConsumer(IEmailService emailService) : IConsumer<OAuthRegistrationEmailMessage>
+public class OAuthLoginConsumer(IEmailService emailService) : IConsumer<OAuthLoginEmailMessage>
 {
     private readonly IEmailService emailService = emailService;
 
-    public async Task Consume(ConsumeContext<OAuthRegistrationEmailMessage> context)
+    public async Task Consume(ConsumeContext<OAuthLoginEmailMessage> context)
     {
         var credentials = context.Message.Credentials;
         var htmlBody = GetEmailBody(credentials.To, context.Message.ProviderName, context.Message.TempPassword);

@@ -24,7 +24,7 @@ public static class HostApplicationBuilderExtension
         {
             cfg.AddQueue<ChangeEmailMessage>("email/change", SenderType.Email);
             cfg.AddQueue<VerifyEmailMessage>("email/verify", SenderType.Email);
-            cfg.AddQueue<OAuthRegistrationEmailMessage>("oauth/registration", SenderType.Email);
+            cfg.AddQueue<OAuthLoginEmailMessage>("oauth/login", SenderType.Email);
             cfg.AddQueue<ResetPasswordEmailMessage>("password/reset", SenderType.Email);
             cfg.AddQueue<TwoFactorTokenEmailMessage>("2fa/token", SenderType.Email);
             cfg.AddQueue<AccountRecoveryEmailMessage>("account/recovery", SenderType.Email);
