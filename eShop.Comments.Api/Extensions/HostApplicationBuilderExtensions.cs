@@ -59,11 +59,7 @@ public static class HostApplicationBuilderExtensions
             {
                 var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
                 cfg.Host(connectionString);
-
-                cfg.ReceiveEndpoint("product-deleted", e => e.ConfigureConsumer<ProductDeletedReceiver>(context));
             });
-
-            x.AddConsumer<ProductDeletedReceiver>();
         });
     }
 }

@@ -1,6 +1,4 @@
 ﻿global using eShop.Application.Extensions;
-global using eShop.Domain.Abstraction.Validation;
-global using eShop.Domain.Enums;
 global using eShop.Product.Api.Behaviours;
 global using eShop.Product.Api.Data;
 global using eShop.Product.Api.Extensions;

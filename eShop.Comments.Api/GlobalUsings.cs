@@ -1,17 +1,10 @@
 ﻿global using eShop.Application.Extensions;
-global using eShop.Application.Filters;
-global using eShop.Application.Utilities;
 global using eShop.Comments.Api.Behaviours;
 global using eShop.Comments.Api.Data;
 global using eShop.Comments.Api.Extensions;
-global using eShop.Comments.Api.Mapping;
-global using eShop.Comments.Api.Receivers;
-global using eShop.Domain.Abstraction.Data;
-global using eShop.Domain.Abstraction.Validation;
 global using eShop.ServiceDefaults;
 global using FluentValidation;
 global using MassTransit;
 global using MediatR;
-global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;

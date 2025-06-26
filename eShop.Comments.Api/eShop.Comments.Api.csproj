@@ -27,7 +27,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Controllers\v1\" />
+	  <Folder Include="Entities\" />
 	  <Folder Include="Features\" />
+	  <Folder Include="Validation\" />
 	</ItemGroup>
 
 </Project>

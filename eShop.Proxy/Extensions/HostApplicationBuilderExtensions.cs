@@ -84,11 +84,6 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
-                RouteId = "comment-route", ClusterId = "comment-cluster",
-                Match = new RouteMatch { Path = "/api/v1/Comments/{**catch-all}" }
-            },
-            new RouteConfig
-            {
                 RouteId = "files-route", ClusterId = "files-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Files/{**catch-all}" }
             },

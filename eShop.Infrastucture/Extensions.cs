@@ -23,8 +23,6 @@ public static class Extensions
 
         builder.Services.AddHttpClient();
         builder.Services.AddHttpClient<ISecurityService, SecurityService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<ICommentService, CommentService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IReviewService, ReviewService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<ICartService, CartService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IFavoritesService, FavoritesService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IStoreService, StorageService>(ServiceLifetime.Scoped);
