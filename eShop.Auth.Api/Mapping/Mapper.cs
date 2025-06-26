@@ -6,17 +6,6 @@ namespace eShop.Auth.Api.Mapping;
 
 public static class Mapper
 {
-    public static PersonalDataEntity Map(ChangePersonalDataRequest source)
-    {
-        return new PersonalDataEntity()
-        {
-            FirstName = source.FirstName,
-            LastName = source.LastName,
-            Gender = source.Gender,
-            DateOfBirth = source.BirthDate!.Value
-        };
-    }
-
     public static PersonalDataEntity Map(AddPersonalDataRequest source)
     {
         return new PersonalDataEntity()
@@ -71,15 +60,6 @@ public static class Mapper
         };
     }
 
-    public static LockoutStatusResponse Map(LockoutStatus source)
-    {
-        return new LockoutStatusResponse()
-        {
-            LockoutEnd = source.LockoutEnd,
-            LockoutEnabled = source.LockoutEnabled
-        };
-    }
-
     public static RoleEntity Map(CreateRoleRequest source)
     {
         return new RoleEntity()
@@ -99,15 +79,6 @@ public static class Mapper
             Id = source.Id,
             Name = source.Name ?? string.Empty,
             NormalizedName = source.NormalizedName ?? string.Empty
-        };
-    }
-    
-    public static PermissionDto Map(PermissionEntity source)
-    {
-        return new PermissionDto()
-        {
-            Id = source.Id,
-            Name = source.Name
         };
     }
 
