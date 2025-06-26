@@ -3,9 +3,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Validation;
 
-public class ChangePhoneNumberValidator : Validator<ChangePhoneNumberRequest>
+public class ConfirmResetPhoneNumberValidator : Validator<ConfirmResetPhoneNumberRequest>
 {
-    public ChangePhoneNumberValidator()
+    public ConfirmResetPhoneNumberValidator()
     {
         RuleFor(x => x.NewPhoneNumber).SetValidator(new PhoneNumberValidator());
     }

@@ -59,6 +59,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("account/recover")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RecoverAsync([FromBody] RecoverAccountRequest request)
     {
         var result = await sender.Send(new RecoverAccountCommand(request));
@@ -89,6 +90,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("password/forgot")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ForgotPasswordRequest(ForgotPasswordRequest request)
     {
         var result = await sender.Send(new ForgotPasswordCommand(request));
@@ -135,8 +137,9 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("email/confirm-change")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmChangeEmail(
-        [FromBody] ConfirmEmailChangeRequest request)
+        [FromBody] ConfirmChangeEmailRequest request)
     {
         var result = await sender.Send(new ConfirmChangeEmailCommand(request));
 
@@ -150,6 +153,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("email/verify")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmEmail(
         [FromBody] VerifyEmailRequest request)
     {
@@ -165,6 +169,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("email/request-reset")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ResetEmailAsync(
         [FromBody] ResetEmailRequest request)
     {
@@ -180,6 +185,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("email/confirm-reset")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmEmailResetAsync(
         [FromBody] ConfirmResetEmailRequest request)
     {
@@ -241,6 +247,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("phone-number/confirm-change")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumberAsync(
         [FromBody] ConfirmChangePhoneNumberRequest request)
     {
@@ -256,6 +263,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("phone-number/request-reset")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ResetPhoneNumberAsync(
         [FromBody] ResetPhoneNumberRequest request)
     {
@@ -271,6 +279,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("phone-number/confirm-reset")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmPhoneNumberResetAsync(
         [FromBody] ConfirmResetPhoneNumberRequest request)
     {
@@ -286,6 +295,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("code/verify")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
     {
         var result = await sender.Send(new VerifyCodeCommand(request));

@@ -3,9 +3,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Validation;
 
-public class VerifyEmailValidator : Validator<VerifyEmailRequest>
+public class ConfirmResetEmailValidator : Validator<ConfirmResetEmailRequest>
 {
-    public VerifyEmailValidator()
+    public ConfirmResetEmailValidator()
     {
         RuleFor(x => x.Code).SetValidator(new CodeValidator());
     }

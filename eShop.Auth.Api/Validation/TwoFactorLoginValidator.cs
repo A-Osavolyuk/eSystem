@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Application.Validation;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Validation;
 
@@ -6,8 +7,6 @@ public class TwoFactorLoginValidator : Validator<TwoFactorLoginRequest>
 {
     public TwoFactorLoginValidator()
     {
-        RuleFor(x => x.Token)
-            .NotEmpty().WithMessage("Code cannot be empty.")
-            .Length(6).WithMessage("Must contain 6 characters.");
+        RuleFor(x => x.Token).SetValidator(new CodeValidator());
     }
 }

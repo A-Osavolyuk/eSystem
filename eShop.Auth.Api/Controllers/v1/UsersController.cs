@@ -119,6 +119,7 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [Authorize]
     [HttpPatch("{id:guid}/username")]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangeUsernameAsync([FromBody] ChangeUserNameRequest request)
     {
         var result = await sender.Send(new ChangeUserNameCommand(request));
@@ -132,6 +133,7 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("{id:guid}/personal-data")]
     [Authorize]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> AddPersonalDataAsync([FromBody] AddPersonalDataRequest request)
     {
         var result = await sender.Send(new AddPersonalDataCommand(request));
@@ -146,6 +148,7 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPut("{id:guid}/personal-data")]
     [Authorize]
+    [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
     {
         var result = await sender.Send(new ChangePersonalDataCommand(request));
