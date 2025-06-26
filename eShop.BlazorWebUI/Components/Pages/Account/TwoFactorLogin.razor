@@ -132,18 +132,6 @@
                     </MudPaper>
                 </ChildContent>
             </MudStepExtended>
-            <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Result Step" IsResultStep="true">
-                <ChildContent>
-                    <div class="d-flex flex-column align-center justify-center" style="height: 200px">
-                        <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
-                                       Variant="Variant.Filled" Color="Color.Success"/>
-                        <MudText Style="width: 55ch; margin: auto">
-                            You successfully logged in with two-factor authentication.
-                            You will be automatically redirected to main page in 5 seconds
-                        </MudText>
-                    </div>
-                </ChildContent>
-            </MudStepExtended>
         </MudStepperExtended>
         <MudPaper Outlined Class="pa-3">
             <MudText Align="Align.Center">More about 2-fa you can read
@@ -165,15 +153,6 @@
     
     private MudStepperExtended stepper = new();
     private List<UserProviderDto> providers = [];
-    private bool completed = false;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (completed)
-        {
-            await OnCompleteAsync();
-        }
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -251,10 +230,9 @@
                 }
                 else
                 {
-                    await Task.Delay(TimeSpan.FromMicroseconds(5));
                     await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
-                    NavigationManager.NavigateTo("/products");
                     Snackbar.Add(result.Message, Severity.Success);
+                    NavigationManager.NavigateTo("/products");
                 }
             }
             else
@@ -268,17 +246,5 @@
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
-        
-        if (stepper.IsAllStepsCompleted())
-        {
-            completed = true;
-            StateHasChanged();
-        }
-    }
-    
-    private async Task OnCompleteAsync()
-    {
-        await Task.Delay(TimeSpan.FromMicroseconds(5));
-        NavigationManager.NavigateTo("account/login");
     }
 }
