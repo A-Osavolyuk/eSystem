@@ -1,5 +1,4 @@
 ﻿using eShop.Domain.Abstraction.Data;
-using eShop.Domain.Enums;
 
 namespace eShop.Product.Api.Entities;
 
