@@ -12,7 +12,7 @@ using eShop.Product.Api.Data;
 namespace eShop.Product.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250627085346_Initial")]
+    [Migration("20250627131003_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -88,16 +88,10 @@ namespace eShop.Product.Api.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
-                    b.Property<DateTimeOffset?>("ExpirationDate")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<string>("Grade")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTimeOffset>("HarvestDate")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("IsOrganic")
                         .HasColumnType("bit");

@@ -45,9 +45,7 @@ namespace eShop.Product.Api.Migrations
                     RequiresRefrigeration = table.Column<bool>(type: "bit", nullable: false),
                     ContainsSeeds = table.Column<bool>(type: "bit", nullable: false),
                     IsTropical = table.Column<bool>(type: "bit", nullable: false),
-                    IsOrganic = table.Column<bool>(type: "bit", nullable: false),
-                    HarvestDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ExpirationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                    IsOrganic = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
