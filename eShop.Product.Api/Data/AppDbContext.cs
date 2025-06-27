@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasKey(x => x.Id);
             
             e.Property(x => x.Name).HasMaxLength(128);
+            e.Property(p => p.Price).HasPrecision(18, 4);
             e.Property(x => x.ProductType).HasEnumConversion();
             e.Property(x => x.PricePerUnitType).HasEnumConversion();
             e.Property(x => x.UnitOfMeasure).HasEnumConversion();
