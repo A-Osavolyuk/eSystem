@@ -1,18 +1,18 @@
-﻿using eShop.Domain.Enums;
-using eShop.Product.Api.Entities;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eShop.Product.Api.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<ProductEntity> Products { get; set; }
+    public DbSet<FruitProductEntity> Fruits { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<ProductEntity>(e =>
         {
             e.UseTptMappingStrategy();
+            e.ToTable("Products");
 
             e.HasKey(x => x.Id);
             
@@ -21,6 +21,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(x => x.ProductType).HasEnumConversion();
             e.Property(x => x.PricePerUnitType).HasEnumConversion();
             e.Property(x => x.UnitOfMeasure).HasEnumConversion();
+        });
+
+        builder.Entity<FruitProductEntity>(e =>
+        {
+            e.ToTable("Fruits");
+            
+            e.Property(x => x.Variety).HasMaxLength(64);
+            e.Property(x => x.Color).HasMaxLength(64);
+            e.Property(x => x.CountryOfOrigin).HasMaxLength(64);
+            e.Property(x => x.RipenessStage).HasMaxLength(64);
+            e.Property(x => x.StorageTemperature).HasMaxLength(64);
+            e.Property(x => x.Grade).HasMaxLength(64);
         });
     }
 }
