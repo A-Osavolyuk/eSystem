@@ -43,7 +43,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddMediatR(c =>
         {
             c.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            c.AddOpenBehavior(typeof(TransactionBehaviour<,>), ServiceLifetime.Transient);
+            c.AddOpenBehavior(typeof(TransactionBehaviour<,>));
         });
     }
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
