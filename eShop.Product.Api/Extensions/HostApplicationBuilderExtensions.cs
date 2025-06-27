@@ -22,28 +22,8 @@ public static class HostApplicationBuilderExtensions
         builder.AddMsSqlDb();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
-        
-        builder.Services.AddControllers().AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
-            {
-                Modifiers =
-                {
-                    resolver =>
-                    {
-                        if (resolver.Type == typeof(CreateProductRequest))
-                        {
-                            var polymorphism = new JsonPolymorphismOptions
-                            {
-                                TypeDiscriminatorPropertyName = "productType"
-                            };
-                            polymorphism.DerivedTypes.Add(new JsonDerivedType(typeof(CreateFruitProductRequest), (int)ProductType.Fruit));
-                            resolver.PolymorphismOptions = polymorphism;
-                        }
-                    }
-                }
-            };
-        });
+
+        builder.Services.AddControllers();
     }
 
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)

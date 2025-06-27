@@ -77,6 +77,11 @@ public static class HostApplicationBuilderExtensions
                 RouteId = "files-route", ClusterId = "files-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Files/{**catch-all}" }
             },
+            new RouteConfig
+            {
+                RouteId = "product-route", ClusterId = "product-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Products/{**catch-all}" }
+            },
         };
 
         var configuration = builder.Configuration;
