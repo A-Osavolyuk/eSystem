@@ -25,7 +25,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<UserEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-
             entity.Property(x => x.Email).HasMaxLength(64);
             entity.Property(x => x.NormalizedEmail).HasMaxLength(64);
             entity.Property(x => x.UserName).HasMaxLength(64);
@@ -45,12 +44,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Code).HasMaxLength(6);
-            
-            entity.Property(x => x.Type)
-                .HasConversion(value => value.ToString(), x => Enum.Parse<CodeType>(x));
-            
-            entity.Property(x => x.Sender)
-                .HasConversion(value => value.ToString(), x => Enum.Parse<SenderType>(x));
+            entity.Property(x => x.Type).HasEnumConversion();
+            entity.Property(x => x.Sender).HasEnumConversion();
         });
 
         builder.Entity<UserRoleEntity>(entity =>
@@ -68,9 +63,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<PersonalDataEntity>(entity =>
         {
             entity.HasKey(p => p.Id);
-            
-            entity.Property(x => x.Gender)
-                .HasConversion(value => value.ToString(), x => Enum.Parse<Gender>(x));
+            entity.Property(x => x.Gender).HasEnumConversion();
 
             entity.HasOne(p => p.User)
                 .WithOne()
@@ -80,15 +73,13 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<PermissionEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            
             entity.Property(x => x.Name).HasMaxLength(64);
+            entity.Property(x => x.Action).HasEnumConversion();
             
             entity.HasOne<ResourceEntity>(x => x.Resource)
                 .WithMany()
                 .HasForeignKey(x => x.ResourceId);
 
-            entity.Property(x => x.Action)
-                .HasConversion(value => value.ToString(), x => Enum.Parse<ActionType>(x));
         });
 
         builder.Entity<UserPermissionsEntity>(entity =>
@@ -107,12 +98,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<RefreshTokenEntity>(entity =>
         {
             entity.HasKey(k => k.Id);
+            entity.Property(x => x.Token).HasColumnType("NVARCHAR(MAX)");
 
             entity.HasOne(t => t.UserEntity)
                 .WithOne()
                 .HasForeignKey<RefreshTokenEntity>(t => t.UserId);
-            
-            entity.Property(x => x.Token).HasColumnType("NVARCHAR(MAX)");
         });
 
         builder.Entity<ProviderEntity>(entity =>
@@ -124,7 +114,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<LoginTokenEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            
             entity.Property(x => x.Token).HasMaxLength(6);
 
             entity.HasOne(x => x.User)
@@ -181,14 +170,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<LockoutStateEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Description).HasMaxLength(3000);
+            entity.Property(x => x.Reason).HasEnumConversion();
             
             entity.HasOne(p => p.User)
                 .WithOne()
                 .HasForeignKey<LockoutStateEntity>(x => x.UserId);
-
-            entity.Property(x => x.Description).HasMaxLength(3000);
-            entity.Property(x => x.Reason)
-                .HasConversion(value => value.ToString(), x => Enum.Parse<LockoutReason>(x));;
         });
     }
 }
