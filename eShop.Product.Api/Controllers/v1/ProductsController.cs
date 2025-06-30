@@ -1,5 +1,5 @@
-﻿using eShop.Application.Utilities;
-using eShop.Domain.Requests.API.Product;
+﻿using eShop.Domain.Requests.API.Product;
+using eShop.Product.Api.Features.Product.Commands;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

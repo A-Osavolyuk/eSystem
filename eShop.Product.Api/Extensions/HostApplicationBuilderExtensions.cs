@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization.Metadata;
 using eShop.Domain.Interfaces.API;
 using eShop.Domain.Requests.API.Product;
-using eShop.Product.Api.Interfaces;
 using eShop.Product.Api.Services;
 
 namespace eShop.Product.Api.Extensions;

@@ -1,4 +1,5 @@
 ﻿global using eShop.Application.Extensions;
+global using eShop.Application.Utilities;
 global using eShop.Domain.Common.API;
 global using eShop.Domain.Enums;
 global using eShop.Product.Api.Behaviours;
@@ -6,6 +7,7 @@ global using eShop.Product.Api.Data;
 global using eShop.Product.Api.Entities;
 global using eShop.Product.Api.Extensions;
 global using eShop.Product.Api.Features.Product;
+global using eShop.Product.Api.Interfaces;
 global using eShop.ServiceDefaults;
 global using FluentValidation;
 global using MassTransit;
@@ -13,3 +15,4 @@ global using MediatR;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
 global using Response = eShop.Domain.Common.API.Response;
+global using Results = eShop.Domain.Common.API.Results;
