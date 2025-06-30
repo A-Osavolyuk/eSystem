@@ -23,6 +23,15 @@ public static class Mapper
         };
     }
     
+    public static PriceTypeDto Map(PriceTypeEntity entity)
+    {
+        return new PriceTypeDto()
+        {
+            Id = entity.Id,
+            Name = entity.Name
+        };
+    }
+    
     public static UnitDto Map(UnitEntity entity)
     {
         return new UnitDto()
