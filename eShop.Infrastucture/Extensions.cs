@@ -27,6 +27,7 @@ public static class Extensions
         builder.Services.AddHttpClient<ITwoFactorService, TwoFactorService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IUsersService, UsersService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IProvidersService, ProvidersService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<ITypeService, TypeService>(ServiceLifetime.Scoped);
 
         builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
