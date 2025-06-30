@@ -27,7 +27,15 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)
     {
-        builder.AddSqlServerDbContext<AppDbContext>("product-db");
+        builder.AddSqlServerDbContext<AppDbContext>("product-db",
+            configureDbContextOptions: cfg =>
+            {
+                cfg.UseAsyncSeeding(async (ctx,  _, ct) =>
+                {
+                    var context = (ctx as AppDbContext)!;
+                    await context.SeedAsync(ct);
+                });
+            });
     }
     
     private static void AddValidation(this IHostApplicationBuilder builder)
