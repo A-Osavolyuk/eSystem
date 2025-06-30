@@ -9,8 +9,8 @@ public class ProductModel
     public TypeModel Type { get; set; } = new();
     public decimal Price { get; set; }
     public int QuantityInStock { get; set; }
-    public UnitOfMeasure UnitOfMeasure { get; set; }
-    public PricePerUnitType PricePerUnitType { get; set; }
+    public UnitDto Unit { get; set; } = new();
+    public PriceTypeDto PriceType { get; set; } = new();
     public Dictionary<string, object> Properties { get; set; } = [];
     public List<TypeDto> Types { get; set; } = [];
 }
