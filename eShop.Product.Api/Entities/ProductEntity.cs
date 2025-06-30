@@ -10,11 +10,12 @@ public class ProductEntity : IEntity
     public decimal Price { get; set; }
     public int QuantityInStock { get; set; }
     public Guid TypeId { get; set; }
-    public UnitOfMeasure UnitOfMeasure { get; set; }
+    public Guid UnitId { get; set; }
     public PricePerUnitType PricePerUnitType { get; set; }
 
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }
 
-    public TypeEntity? Type { get; set; } 
+    public TypeEntity? Type { get; set; }
+    public UnitEntity? Unit { get; set; }
 }

@@ -6,7 +6,7 @@ public class CreateProductRequest
     public int QuantityInStock { get; set; }
     public decimal Price { get; set; }
     public Guid TypeId { get; set; }
-    public UnitOfMeasure UnitOfMeasure { get; set; }
+    public Guid UnitId { get; set; }
     public PricePerUnitType PricePerUnitType { get; set; }
     public Dictionary<string, object> Properties { get; set; } = [];
 }
