@@ -12,19 +12,81 @@
     <MudItem xs="6">
         <MudPaper Outlined="true" Class="pa-3">
             <MudForm Model="Model">
-                <MudGrid Justify="Justify.Center">
+                <MudGrid Spacing="1" Justify="Justify.Center">
+                    <MudItem xs="12">
+                        <MudTextField 
+                            Label="Name"
+                            @bind-Value="Model.Name"
+                            For="() => Model.Name"
+                            Variant="Variant.Outlined"
+                            Immediate="true"
+                            Clearable="true"/>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudNumericField 
+                            Label="Quantity in stock"
+                            @bind-Value="Model.QuantityInStock"
+                            For="() => Model.QuantityInStock"
+                            Step="1"
+                            Variant="Variant.Outlined"
+                            Immediate="true"
+                            Clearable="true"/>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudSelect
+                            T="Guid?"
+                            Label="Units"
+                            For="() => Model.Unit.Id"
+                            Value="Model.Unit.Id"
+                            ValueChanged="@((value) => OnUnitChanged(value))"
+                            Variant="Variant.Outlined"
+                            Immediate="true"
+                            Clearable="true">
+                            @foreach (var type in Model.Units)
+                            {
+                                <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudNumericField 
+                            Label="Price"
+                            @bind-Value="Model.Price"
+                            For="() => Model.Price"
+                            Step="0.1m"
+                            Variant="Variant.Outlined"
+                            Immediate="true"
+                            Clearable="true"/>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudSelect
+                            T="Guid?"
+                            Label="Price per"
+                            For="() => Model.PriceType.Id"
+                            Value="Model.PriceType.Id"
+                            ValueChanged="@((value) => OnPriceTypeChanged(value))"
+                            Variant="Variant.Outlined"
+                            Immediate="true"
+                            Clearable="true">
+                            @foreach (var type in Model.PriceTypes)
+                            {
+                                <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
                     <MudItem xs="12">
                         <MudSelect
-                            T="string?"
+                            T="Guid?"
                             Label="Type"
-                            @bind-Value="Model.Type.Name"
-                            For="() => Model.Type.Name"
+                            For="() => Model.Type.Id"
+                            Value="Model.Type.Id"
+                            ValueChanged="@((value) => OnTypeChanged(value))"
                             Variant="Variant.Outlined"
                             Immediate="true"
                             Clearable="true">
                             @foreach (var type in Model.Types)
                             {
-                                <MudSelectItem T="string?" Value="type.Name">@type.Name</MudSelectItem>
+                                <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
                             }
                         </MudSelect>
                     </MudItem>
@@ -46,11 +108,65 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        Model.Types = [
+        Model.Types = 
+        [
             new TypeDto() { Id = Guid.CreateVersion7(), Name = "Fruit" },
             new TypeDto() { Id = Guid.CreateVersion7(), Name = "Vegetable" },
             new TypeDto() { Id = Guid.CreateVersion7(), Name = "Berry" },
         ];
+
+        Model.Units =
+        [
+            new UnitDto() { Id = Guid.CreateVersion7(), Name = "Kilogram", Code = "kg"  },
+            new UnitDto() { Id = Guid.CreateVersion7(), Name = "Gram", Code = "g"  },
+            new UnitDto() { Id = Guid.CreateVersion7(), Name = "Item", Code = "item"  },
+        ];
+        
+        Model.PriceTypes = 
+        [
+            new PriceTypeDto() { Id = Guid.CreateVersion7(), Name = "Per kilogram" },
+            new PriceTypeDto() { Id = Guid.CreateVersion7(), Name = "Per gram" },
+            new PriceTypeDto() { Id = Guid.CreateVersion7(), Name = "Per item" },
+        ];
     }
 
+    private void OnPriceTypeChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var priceType = Model.PriceTypes.Find(x => x.Id == value)!;
+            Model.PriceType = new()
+            {
+                Id = priceType.Id,
+                Name = priceType.Name
+            };
+        }
+    }
+
+    private void OnUnitChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var unit = Model.Units.Find(x => x.Id == value)!;
+            Model.Unit = new UnitModel
+            {
+                Id = unit.Id,
+                Name = unit.Name,
+                Code = unit.Code
+            };
+        }
+    }
+    
+    private void OnTypeChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var type = Model.Types.Find(x => x.Id == value)!;
+            Model.Type = new TypeModel()
+            {
+                Id = type.Id,
+                Name = type.Name
+            };
+        }
+    }
 }
