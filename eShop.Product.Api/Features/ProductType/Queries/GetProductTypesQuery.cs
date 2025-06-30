@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Features.ProductType.Queries;
+﻿using eShop.Product.Api.Mapping;
+
+namespace eShop.Product.Api.Features.ProductType.Queries;
 
 public record GetProductTypesQuery() : IRequest<Result>;
 
@@ -9,6 +11,8 @@ public class GetProductTypesQueryHandler(ITypeManager typeManager) : IRequestHan
     public async Task<Result> Handle(GetProductTypesQuery request, CancellationToken cancellationToken)
     {
         var entities = await typeManager.GetAllAsync(cancellationToken);
-        return Result.Success(entities);
+        var result = entities.Select(Mapper.Map).ToList();
+        
+        return Result.Success(result);
     }
 }
