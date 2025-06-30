@@ -1,0 +1,32 @@
+﻿<MudGrid Justify="Justify.Center">
+    <MudItem xs="12">
+        <MudTextField
+            T="string"
+            Value="@Properties["Color"]?.ToString()"
+            ValueChanged="@((value) => OnChange("Color", value!))"
+            Label="Color"
+            Variant="Variant.Outlined"
+            Immediate="true"
+            Clearable="true"
+            Required="true"
+            RequiredError="Field is required">
+        </MudTextField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter] public Dictionary<string, object> Properties { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        Properties = new Dictionary<string, object>()
+        {
+            { "Color", string.Empty }
+        };
+    }
+
+    private void OnChange(string code, string value)
+    {
+        Properties[code] = value;
+    }
+}

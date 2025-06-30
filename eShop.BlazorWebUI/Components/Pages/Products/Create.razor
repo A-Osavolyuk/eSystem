@@ -1,0 +1,56 @@
+﻿@page "/products/create"
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject ITypeService TypeService
+
+<Title Text="Create product"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6">
+        <MudPaper Outlined="true" Class="pa-3">
+            <MudForm Model="Model">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12">
+                        <MudSelect
+                            T="string?"
+                            Label="Type"
+                            @bind-Value="Model.Type.Name"
+                            For="() => Model.Type.Name"
+                            Variant="Variant.Outlined"
+                            Immediate="true"
+                            Clearable="true">
+                            @foreach (var type in Model.Types)
+                            {
+                                <MudSelectItem T="string?" Value="type.Name">@type.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                    @if (!string.IsNullOrEmpty(Model.Type.Name))
+                    {
+                        <MudItem xs="12">
+                            <Properties Model="Model"/>
+                        </MudItem>
+                    }
+                </MudGrid>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private ProductModel Model { get; set; } = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        Model.Types = [
+            new ProductTypeDto() { Id = Guid.CreateVersion7(), Name = "Fruit" },
+            new ProductTypeDto() { Id = Guid.CreateVersion7(), Name = "Vegetable" },
+            new ProductTypeDto() { Id = Guid.CreateVersion7(), Name = "Berry" },
+        ];
+    }
+
+}
