@@ -5,14 +5,26 @@ namespace eShop.Product.Api.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<TypeEntity> Types { get; set; }
+    public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<FruitProductEntity> Fruits { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<CategoryEntity>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(128);
+        });
+        
         builder.Entity<TypeEntity>(e =>
         {
             e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(128);
+
+            e.HasOne(x => x.Category)
+                .WithMany()
+                .HasForeignKey(x => x.CategoryId);
         });
         
         builder.Entity<ProductEntity>(e =>

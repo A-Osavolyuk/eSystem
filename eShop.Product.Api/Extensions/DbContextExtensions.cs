@@ -13,4 +13,12 @@ public static class DbContextExtensions
             await context.Types.AddRangeAsync(seed.Get(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
-    }}
+        if (!await context.Categories.AnyAsync(cancellationToken))
+        {
+            var seed = new CategorySeed();
+
+            await context.Categories.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+    }
+}
