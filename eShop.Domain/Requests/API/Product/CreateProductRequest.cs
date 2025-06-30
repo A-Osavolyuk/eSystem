@@ -7,6 +7,6 @@ public class CreateProductRequest
     public decimal Price { get; set; }
     public Guid TypeId { get; set; }
     public Guid UnitId { get; set; }
-    public PricePerUnitType PricePerUnitType { get; set; }
+    public Guid PriceTypeId { get; set; }
     public Dictionary<string, object> Properties { get; set; } = [];
 }

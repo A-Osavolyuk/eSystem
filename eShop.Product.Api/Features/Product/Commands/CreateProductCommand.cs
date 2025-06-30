@@ -27,7 +27,7 @@ public class CreateProductCommandHandler(
         entity.Name = request.Request.Name;
         entity.TypeId = type.Id;
         entity.UnitId = request.Request.UnitId;
-        entity.PricePerUnitType = request.Request.PricePerUnitType;
+        entity.PriceTypeId = request.Request.PriceTypeId;
         entity.Price = request.Request.Price;
         entity.QuantityInStock = request.Request.QuantityInStock;
         entity.CreateDate = DateTimeOffset.UtcNow;

@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Data;
-
-namespace eShop.Product.Api.Entities;
+﻿namespace eShop.Product.Api.Entities;
 
 public class ProductEntity : IEntity
 {
@@ -11,11 +9,11 @@ public class ProductEntity : IEntity
     public int QuantityInStock { get; set; }
     public Guid TypeId { get; set; }
     public Guid UnitId { get; set; }
-    public PricePerUnitType PricePerUnitType { get; set; }
-
+    public Guid PriceTypeId { get; set; }
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }
 
     public TypeEntity? Type { get; set; }
     public UnitEntity? Unit { get; set; }
+    public PriceTypeEntity? PriceType { get; set; }
 }
