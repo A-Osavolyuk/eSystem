@@ -14,7 +14,7 @@ public class CreateProductCommandHandler(
 
     public async Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var type = await typeManager.FindAsync(request.Request.TypeId, cancellationToken);
+        var type = await typeManager.FindByIdAsync(request.Request.TypeId, cancellationToken);
 
         if (type is null)
         {

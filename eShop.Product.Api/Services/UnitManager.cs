@@ -9,4 +9,16 @@ public class UnitManager(AppDbContext context) : IUnitManager
         var entities = await context.Units.ToListAsync(cancellationToken);
         return entities;
     }
+
+    public async ValueTask<UnitEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var entity = await context.Units.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return entity;
+    }
+
+    public async ValueTask<UnitEntity?> FindByCodeAsync(string code, CancellationToken cancellationToken)
+    {
+        var entity = await context.Units.FirstOrDefaultAsync(x => x.Code == code, cancellationToken);
+        return entity;
+    }
 }

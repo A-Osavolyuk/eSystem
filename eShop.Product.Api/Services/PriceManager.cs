@@ -9,4 +9,10 @@ public class PriceManager(AppDbContext context) : IPriceManager
         var entities = await context.PriceType.ToListAsync(cancellationToken);
         return entities;
     }
+
+    public async ValueTask<PriceTypeEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entity = await context.PriceType.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return entity;
+    }
 }

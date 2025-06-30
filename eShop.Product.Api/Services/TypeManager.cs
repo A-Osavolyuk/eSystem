@@ -13,7 +13,7 @@ public class TypeManager(AppDbContext context) : ITypeManager
         return entities.ToList();
     }
 
-    public async ValueTask<TypeEntity?> FindAsync(Guid id, CancellationToken cancellationToken)
+    public async ValueTask<TypeEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var entity = await context.Types
             .Include(x => x.Category)

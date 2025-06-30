@@ -10,7 +10,7 @@ public class CategoryManager(AppDbContext context) : ICategoryManager
         return entities;
     }
 
-    public async ValueTask<CategoryEntity?> FindAsync(Guid id, CancellationToken cancellationToken = default)
+    public async ValueTask<CategoryEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var entity = await context.Categories.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         return entity;
