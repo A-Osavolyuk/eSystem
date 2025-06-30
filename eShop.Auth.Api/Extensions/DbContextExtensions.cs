@@ -4,8 +4,7 @@ namespace eShop.Auth.Api.Extensions;
 
 public static class DbContextExtensions
 {
-    public static async Task SeedAsync(this AuthDbContext context, bool isStoreOperation = false,
-        CancellationToken cancellationToken = default)
+    public static async Task SeedAsync(this AuthDbContext context, CancellationToken cancellationToken = default)
     {
         if (!await context.Providers.AnyAsync(cancellationToken))
         {

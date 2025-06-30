@@ -55,10 +55,10 @@ public static class HostApplicationBuilderExtensions
         builder.AddSqlServerDbContext<AuthDbContext>("auth-db",
             configureDbContextOptions: cfg =>
             {
-                cfg.UseAsyncSeeding(async (ctx, isStoreOperation, ct) =>
+                cfg.UseAsyncSeeding(async (ctx, _, ct) =>
                 {
                     var context = (ctx as AuthDbContext)!;
-                    await context.SeedAsync(isStoreOperation, ct);
+                    await context.SeedAsync(ct);
                 });
             });
     }
