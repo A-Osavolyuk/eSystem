@@ -20,7 +20,7 @@ public class TypesController(ISender sender) : ControllerBase
     {
         var result = await sender.Send(new GetProductTypesQuery());
         
-        return result.Match(s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message!).Build()),
+        return result.Match(s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message!).WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 }
