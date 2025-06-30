@@ -6,13 +6,19 @@ public class TypeManager(AppDbContext context) : ITypeManager
 
     public async ValueTask<List<TypeEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var entities = await context.Types.ToListAsync(cancellationToken);
+        var entities = await context.Types
+            .Include(x => x.Category)
+            .ToListAsync(cancellationToken);
+        
         return entities.ToList();
     }
 
     public async ValueTask<TypeEntity?> FindAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await context.Types.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var entity = await context.Types
+            .Include(x => x.Category)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        
         return entity;
     }
 }
