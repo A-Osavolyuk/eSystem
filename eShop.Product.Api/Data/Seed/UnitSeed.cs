@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Data;
-
-namespace eShop.Product.Api.Data.Seed;
+﻿namespace eShop.Product.Api.Data.Seed;
 
 public class UnitSeed : Seed<UnitEntity>
 {
@@ -12,79 +10,92 @@ public class UnitSeed : Seed<UnitEntity>
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Item",
-                Code = "item"
+                Code = "item",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Kilogram",
-                Code = "kg"
+                Code = "kg",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Gram",
-                Code = "g"
+                Code = "g",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Liter",
-                Code = "l"
+                Code = "l",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Milliliter",
-                Code = "ml"
+                Code = "ml",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Meter",
-                Code = "m"
+                Code = "m",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Centimeter",
-                Code = "cm"
+                Code = "cm",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "SquareMeter",
-                Code = "m2"
+                Code = "m2",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "CubicMeter",
-                Code = "m3"
+                Code = "m3",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Dozen",
-                Code = "d"
+                Code = "d",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Package",
-                Code = "pack"
+                Code = "pack",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Box",
-                Code = "box"
+                Code = "box",
+                CreateDate = DateTimeOffset.UtcNow
             },
             new UnitEntity()
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Piece",
-                Code = "psc"
+                Code = "psc",
+                CreateDate = DateTimeOffset.UtcNow
             }
         ];
     }
