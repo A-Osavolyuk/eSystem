@@ -12,5 +12,5 @@ public class ProductModel
     public UnitOfMeasure UnitOfMeasure { get; set; }
     public PricePerUnitType PricePerUnitType { get; set; }
     public Dictionary<string, object> Properties { get; set; } = [];
-    public List<ProductTypeDto> Types { get; set; } = [];
+    public List<TypeDto> Types { get; set; } = [];
 }
