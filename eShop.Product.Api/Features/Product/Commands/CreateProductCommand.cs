@@ -1,22 +1,31 @@
 ﻿using System.Text.Json;
 using eShop.Domain.Requests.API.Product;
-using eShop.Product.Api.Interfaces;
 
-namespace eShop.Product.Api.Features.Product;
+namespace eShop.Product.Api.Features.Product.Commands;
 
 public record CreateProductCommand(CreateProductRequest Request) : IRequest<Result>;
 
-public class CreateProductCommandHandler(IProductManager productManager) : IRequestHandler<CreateProductCommand, Result>
+public class CreateProductCommandHandler(
+    IProductManager productManager,
+    ITypeManager typeManager) : IRequestHandler<CreateProductCommand, Result>
 {
     private readonly IProductManager productManager = productManager;
+    private readonly ITypeManager typeManager = typeManager;
 
     public async Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var entity = Map(request.Request);
+        var type = await typeManager.FindAsync(request.Request.TypeId, cancellationToken);
+
+        if (type is null)
+        {
+            return Results.NotFound($"Cannot find product type with ID {request.Request.TypeId}");
+        }
+        
+        var entity = Map(request.Request, type.Name);
         
         entity.Id = Guid.CreateVersion7();
         entity.Name = request.Request.Name;
-        entity.ProductType = request.Request.ProductType;
+        entity.TypeId = request.Request.TypeId;
         entity.UnitOfMeasure = request.Request.UnitOfMeasure;
         entity.PricePerUnitType = request.Request.PricePerUnitType;
         entity.Price = request.Request.Price;
@@ -28,7 +37,7 @@ public class CreateProductCommandHandler(IProductManager productManager) : IRequ
         return result;
     }
 
-    private ProductEntity Map(CreateProductRequest request)
+    private ProductEntity Map(CreateProductRequest request, string type)
     {
         var values = new Dictionary<string, object>();
         var properties = request.Properties.ToDictionary(
@@ -51,9 +60,9 @@ public class CreateProductCommandHandler(IProductManager productManager) : IRequ
 
         var json = JsonConvert.SerializeObject(values);
 
-        var entity = request.ProductType switch
+        var entity = type switch
         {
-            ProductType.Fruit => JsonConvert.DeserializeObject<FruitProductEntity>(json)!,
+            "fruit" => JsonConvert.DeserializeObject<FruitProductEntity>(json)!,
             _ => throw new ArgumentOutOfRangeException()
         };
         
