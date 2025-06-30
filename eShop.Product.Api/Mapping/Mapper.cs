@@ -22,4 +22,14 @@ public static class Mapper
             Name = entity.Name
         };
     }
+    
+    public static UnitDto Map(UnitEntity entity)
+    {
+        return new UnitDto()
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Code = entity.Code
+        };
+    }
 }
