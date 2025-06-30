@@ -4,13 +4,13 @@ namespace eShop.Product.Api.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public DbSet<ProductTypeEntity> Types { get; set; }
+    public DbSet<TypeEntity> Types { get; set; }
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<FruitProductEntity> Fruits { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<ProductTypeEntity>(e =>
+        builder.Entity<TypeEntity>(e =>
         {
             e.HasKey(x => x.Id);
         });

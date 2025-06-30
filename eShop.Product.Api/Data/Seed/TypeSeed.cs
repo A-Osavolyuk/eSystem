@@ -2,28 +2,31 @@
 
 namespace eShop.Product.Api.Data.Seed;
 
-public class TypeSeed : Seed<ProductTypeEntity>
+public class TypeSeed : Seed<TypeEntity>
 {
-    public override List<ProductTypeEntity> Get()
+    public override List<TypeEntity> Get()
     {
         return
         [
-            new ProductTypeEntity()
+            new TypeEntity()
             {
                 Id = Guid.CreateVersion7(),
-                Name = "fruit",
+                Name = "Fruit",
+                Group = "Food",
                 CreateDate = DateTimeOffset.UtcNow,
             },
-            new ProductTypeEntity()
+            new TypeEntity()
             {
                 Id = Guid.CreateVersion7(),
-                Name = "vegetable",
+                Name = "Vegetable",
+                Group = "Food",
                 CreateDate = DateTimeOffset.UtcNow,
             },
-            new ProductTypeEntity()
+            new TypeEntity()
             {
                 Id = Guid.CreateVersion7(),
-                Name = "berries",
+                Name = "Berry",
+                Group = "Food",
                 CreateDate = DateTimeOffset.UtcNow,
             },
         ];

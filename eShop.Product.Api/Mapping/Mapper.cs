@@ -4,7 +4,7 @@ namespace eShop.Product.Api.Mapping;
 
 public static class Mapper
 {
-    public static ProductTypeDto Map(ProductTypeEntity entity)
+    public static ProductTypeDto Map(TypeEntity entity)
     {
         return new ProductTypeDto()
         {
