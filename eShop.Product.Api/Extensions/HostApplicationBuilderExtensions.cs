@@ -53,6 +53,7 @@ public static class HostApplicationBuilderExtensions
     {
         builder.Services.AddScoped<ICacheService, CacheService>();
         builder.Services.AddScoped<IProductManager, ProductManager>();
+        builder.Services.AddScoped<ITypeManager, TypeManager>();
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)
