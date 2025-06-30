@@ -1,6 +1,4 @@
-﻿using eShop.Product.Api.Mapping;
-
-namespace eShop.Product.Api.Features.Units.Queries;
+﻿namespace eShop.Product.Api.Features.Units.Queries;
 
 public record GetUnitsQuery : IRequest<Result>;
 

@@ -9,6 +9,7 @@ global using eShop.Product.Api.Entities;
 global using eShop.Product.Api.Extensions;
 global using eShop.Product.Api.Features.Product;
 global using eShop.Product.Api.Interfaces;
+global using eShop.Product.Api.Mapping;
 global using eShop.ServiceDefaults;
 global using FluentValidation;
 global using MassTransit;

@@ -1,6 +1,4 @@
-﻿using eShop.Product.Api.Mapping;
-
-namespace eShop.Product.Api.Features.ProductType.Queries;
+﻿namespace eShop.Product.Api.Features.ProductType.Queries;
 
 public record GetProductTypesQuery() : IRequest<Result>;
 

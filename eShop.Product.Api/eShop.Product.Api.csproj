@@ -38,7 +38,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Folder Include="Features\Categories\Queries\" />
 	  <Folder Include="Features\PriceTypes\Queries\" />
 	  <Folder Include="Validation\" />
 	</ItemGroup>
