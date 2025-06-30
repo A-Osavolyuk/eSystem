@@ -7,6 +7,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<TypeEntity> Types { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<UnitEntity> Units { get; set; }
+    public DbSet<PriceTypeEntity> PriceType { get; set; }
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<FruitProductEntity> Fruits { get; set; }
 
@@ -20,6 +21,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         });
         
         builder.Entity<CategoryEntity>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(128);
+        });
+        
+        builder.Entity<PriceTypeEntity>(e =>
         {
             e.HasKey(x => x.Id);
             e.Property(x => x.Name).HasMaxLength(128);
@@ -44,7 +51,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             
             e.Property(x => x.Name).HasMaxLength(128);
             e.Property(p => p.Price).HasPrecision(18, 4);
-            e.Property(x => x.PricePerUnitType).HasEnumConversion();
             
             e.HasOne(x => x.Unit)
                 .WithMany()
@@ -53,6 +59,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasOne(x => x.Type)
                 .WithMany()
                 .HasForeignKey(x => x.TypeId);
+            
+            e.HasOne(x => x.PriceType)
+                .WithMany()
+                .HasForeignKey(x => x.PriceTypeId);
         });
 
         builder.Entity<FruitProductEntity>(e =>
