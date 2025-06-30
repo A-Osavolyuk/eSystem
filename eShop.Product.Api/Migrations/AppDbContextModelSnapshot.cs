@@ -47,12 +47,11 @@ namespace eShop.Product.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProductType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("TypeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UnitOfMeasure")
                         .IsRequired()
@@ -63,9 +62,32 @@ namespace eShop.Product.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TypeId");
+
                     b.ToTable("Products", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("eShop.Product.Api.Entities.ProductTypeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Types");
                 });
 
             modelBuilder.Entity("eShop.Product.Api.Entities.FruitProductEntity", b =>
@@ -115,6 +137,17 @@ namespace eShop.Product.Api.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.ToTable("Fruits", (string)null);
+                });
+
+            modelBuilder.Entity("eShop.Product.Api.Entities.ProductEntity", b =>
+                {
+                    b.HasOne("eShop.Product.Api.Entities.ProductTypeEntity", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("eShop.Product.Api.Entities.FruitProductEntity", b =>
