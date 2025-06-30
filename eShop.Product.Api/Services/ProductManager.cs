@@ -1,6 +1,4 @@
-﻿using eShop.Product.Api.Interfaces;
-
-namespace eShop.Product.Api.Services;
+﻿namespace eShop.Product.Api.Services;
 
 public class ProductManager(AppDbContext context) : IProductManager
 {
@@ -8,8 +6,8 @@ public class ProductManager(AppDbContext context) : IProductManager
 
     public async ValueTask<Result> CreateAsync(ProductEntity entity, CancellationToken cancellationToken = default)
     {
-        await context.AddAsync(entity);
-        await context.SaveChangesAsync();
+        await context.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
@@ -17,7 +15,7 @@ public class ProductManager(AppDbContext context) : IProductManager
     public async ValueTask<Result> UpdateAsync(ProductEntity entity, CancellationToken cancellationToken = default)
     {
         context.Update(entity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
@@ -25,7 +23,7 @@ public class ProductManager(AppDbContext context) : IProductManager
     public async ValueTask<Result> DeleteAsync(ProductEntity entity, CancellationToken cancellationToken = default)
     {
         context.Remove(entity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
