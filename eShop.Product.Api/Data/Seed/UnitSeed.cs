@@ -12,7 +12,7 @@ public class UnitSeed : Seed<UnitEntity>
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Item",
-                Code = "i"
+                Code = "item"
             },
             new UnitEntity()
             {
@@ -78,7 +78,7 @@ public class UnitSeed : Seed<UnitEntity>
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Box",
-                Code = "b"
+                Code = "box"
             },
             new UnitEntity()
             {
