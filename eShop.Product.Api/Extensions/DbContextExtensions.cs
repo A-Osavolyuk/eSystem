@@ -20,5 +20,19 @@ public static class DbContextExtensions
             await context.Categories.AddRangeAsync(seed.Get(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
+        if (!await context.Units.AnyAsync(cancellationToken))
+        {
+            var seed = new UnitSeed();
+
+            await context.Units.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        if (!await context.PriceType.AnyAsync(cancellationToken))
+        {
+            var seed = new PriceTypeSeed();
+
+            await context.PriceType.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }
 }
