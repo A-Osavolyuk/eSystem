@@ -26,6 +26,35 @@ namespace eShop.Product.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PriceType",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PriceType", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Units",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Units", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Types",
                 columns: table => new
                 {
@@ -56,8 +85,8 @@ namespace eShop.Product.Api.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
                     QuantityInStock = table.Column<int>(type: "int", nullable: false),
                     TypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UnitOfMeasure = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PricePerUnitType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PriceTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -65,9 +94,21 @@ namespace eShop.Product.Api.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Products_PriceType_PriceTypeId",
+                        column: x => x.PriceTypeId,
+                        principalTable: "PriceType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Products_Types_TypeId",
                         column: x => x.TypeId,
                         principalTable: "Types",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_Units_UnitId",
+                        column: x => x.UnitId,
+                        principalTable: "Units",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -100,9 +141,19 @@ namespace eShop.Product.Api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_PriceTypeId",
+                table: "Products",
+                column: "PriceTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_TypeId",
                 table: "Products",
                 column: "TypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_UnitId",
+                table: "Products",
+                column: "UnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Types_CategoryId",
@@ -120,7 +171,13 @@ namespace eShop.Product.Api.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
+                name: "PriceType");
+
+            migrationBuilder.DropTable(
                 name: "Types");
+
+            migrationBuilder.DropTable(
+                name: "Units");
 
             migrationBuilder.DropTable(
                 name: "Categories");

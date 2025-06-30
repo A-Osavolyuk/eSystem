@@ -12,7 +12,7 @@ using eShop.Product.Api.Data;
 namespace eShop.Product.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250630103451_Initial")]
+    [Migration("20250630122428_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -47,6 +47,28 @@ namespace eShop.Product.Api.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("eShop.Product.Api.Entities.PriceTypeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PriceType");
+                });
+
             modelBuilder.Entity("eShop.Product.Api.Entities.ProductEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -68,9 +90,8 @@ namespace eShop.Product.Api.Migrations
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<string>("PricePerUnitType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("PriceTypeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
@@ -78,16 +99,19 @@ namespace eShop.Product.Api.Migrations
                     b.Property<Guid>("TypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UnitOfMeasure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PriceTypeId");
+
                     b.HasIndex("TypeId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("Products", (string)null);
 
@@ -119,6 +143,33 @@ namespace eShop.Product.Api.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Types");
+                });
+
+            modelBuilder.Entity("eShop.Product.Api.Entities.UnitEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("eShop.Product.Api.Entities.FruitProductEntity", b =>
@@ -172,13 +223,29 @@ namespace eShop.Product.Api.Migrations
 
             modelBuilder.Entity("eShop.Product.Api.Entities.ProductEntity", b =>
                 {
+                    b.HasOne("eShop.Product.Api.Entities.PriceTypeEntity", "PriceType")
+                        .WithMany()
+                        .HasForeignKey("PriceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("eShop.Product.Api.Entities.TypeEntity", "Type")
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("eShop.Product.Api.Entities.UnitEntity", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PriceType");
+
                     b.Navigation("Type");
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("eShop.Product.Api.Entities.TypeEntity", b =>
