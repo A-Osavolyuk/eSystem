@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Data;
-
-namespace eShop.Product.Api.Entities;
+﻿namespace eShop.Product.Api.Entities;
 
 public class TypeEntity : IEntity
 {

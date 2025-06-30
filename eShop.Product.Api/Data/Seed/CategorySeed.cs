@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Abstraction.Data;
-
-namespace eShop.Product.Api.Data.Seed;
+﻿namespace eShop.Product.Api.Data.Seed;
 
 public class CategorySeed : Seed<CategoryEntity>
 {
