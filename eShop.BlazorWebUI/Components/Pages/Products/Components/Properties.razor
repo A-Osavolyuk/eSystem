@@ -7,4 +7,26 @@
 
 @code {
    [Parameter] public ProductModel Model { get; set; } = new();
+
+   protected override void OnInitialized()
+   {
+      Model.Properties = Model.Type.Name switch
+      {
+         "Fruit" => new()
+         {
+            { "Color", string.Empty },
+            { "Variety", string.Empty },
+            { "CountryOfOrigin", string.Empty },
+            { "RipenessStage", string.Empty },
+            { "StorageTemperature", string.Empty },
+            { "Grade", string.Empty },
+            { "RequiresRefrigeration", false },
+            { "ContainsSeeds", false },
+            { "IsTropical", false },
+            { "IsOrganic", false },
+         },
+         _ => []
+      };
+   }
+
 }
