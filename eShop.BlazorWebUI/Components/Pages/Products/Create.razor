@@ -5,6 +5,8 @@
 @attribute [Authorize]
 
 @inject ITypeService TypeService
+@inject IUnitService UnitService
+@inject IPriceService PriceService
 
 <Title Text="Create product"></Title>
 
@@ -44,7 +46,7 @@
                             Clearable="true">
                             @foreach (var type in Model.Units)
                             {
-                                <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                                <MudSelectItem T="Guid?" Value="type.Id">@($"{type.Name} ({type.Code})")</MudSelectItem>
                             }
                         </MudSelect>
                     </MudItem>
@@ -106,28 +108,58 @@
 @code {
     [SupplyParameterFromForm] private ProductModel Model { get; set; } = new();
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Model.Types = 
-        [
-            new TypeDto() { Id = Guid.CreateVersion7(), Name = "Fruit" },
-            new TypeDto() { Id = Guid.CreateVersion7(), Name = "Vegetable" },
-            new TypeDto() { Id = Guid.CreateVersion7(), Name = "Berry" },
-        ];
+        if (firstRender)
+        {
+            await LoadUnitsAsync();
+            await LoadTypesAsync();
+            await LoadPriceTypesAsync();
+            
+            StateHasChanged();
+        }
+    }
 
-        Model.Units =
-        [
-            new UnitDto() { Id = Guid.CreateVersion7(), Name = "Kilogram", Code = "kg"  },
-            new UnitDto() { Id = Guid.CreateVersion7(), Name = "Gram", Code = "g"  },
-            new UnitDto() { Id = Guid.CreateVersion7(), Name = "Item", Code = "item"  },
-        ];
-        
-        Model.PriceTypes = 
-        [
-            new PriceTypeDto() { Id = Guid.CreateVersion7(), Name = "Per kilogram" },
-            new PriceTypeDto() { Id = Guid.CreateVersion7(), Name = "Per gram" },
-            new PriceTypeDto() { Id = Guid.CreateVersion7(), Name = "Per item" },
-        ];
+    private async Task LoadUnitsAsync()
+    {
+        var result = await UnitService.GetAllAsync();
+
+        if (result.Success)
+        {
+            Model.Units = result.Get<List<UnitDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task LoadTypesAsync()
+    {
+        var result = await TypeService.GetAllAsync();
+
+        if (result.Success)
+        {
+            Model.Types = result.Get<List<TypeDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task LoadPriceTypesAsync()
+    {
+        var result = await UnitService.GetAllAsync();
+
+        if (result.Success)
+        {
+            Model.PriceTypes = result.Get<List<PriceTypeDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
     }
 
     private void OnPriceTypeChanged(Guid? value)
