@@ -13,113 +13,136 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6">
-        <MudPaper Outlined="true" Class="pa-3">
-            <MudForm Model="Model">
-                <MudGrid Spacing="1" Justify="Justify.Center">
+        <MudForm Model="Model">
+            <MudGrid Spacing="1" Justify="Justify.Center">
+                <MudItem xs="12">
+                    <MudPaper Outlined="true" Class="pa-3">
+                        <MudGrid Spacing="1" Justify="Justify.Center">
+                            <MudItem xs="12">
+                                <MudText Typo="Typo.h6">General properties</MudText>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField
+                                    Label="Name"
+                                    @bind-Value="Model.Name"
+                                    For="() => Model.Name"
+                                    Variant="Variant.Outlined"
+                                    Immediate="true"
+                                    Clearable="true"/>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudNumericField
+                                    T="int?"
+                                    Label="Quantity in stock"
+                                    @bind-Value="Model.QuantityInStock"
+                                    For="() => Model.QuantityInStock"
+                                    Step="1"
+                                    Variant="Variant.Outlined"
+                                    Immediate="true"
+                                    Clearable="true"/>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudSelect
+                                    T="Guid?"
+                                    Label="Units"
+                                    For="() => Model.Unit.Id"
+                                    Value="Model.Unit.Id"
+                                    ValueChanged="@((value) => OnUnitChanged(value))"
+                                    Variant="Variant.Outlined"
+                                    Immediate="true"
+                                    Clearable="true">
+                                    @foreach (var type in Model.Units)
+                                    {
+                                        <MudSelectItem T="Guid?"
+                                                       Value="type.Id">@($"{type.Name} ({type.Code})")</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudNumericField
+                                    T="decimal?"
+                                    Label="Price"
+                                    @bind-Value="Model.Price"
+                                    For="() => Model.Price"
+                                    Step="0.1m"
+                                    Variant="Variant.Outlined"
+                                    Immediate="true"
+                                    Clearable="true"/>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudSelect
+                                    T="Guid?"
+                                    Label="Price per"
+                                    For="() => Model.PriceType.Id"
+                                    Value="Model.PriceType.Id"
+                                    ValueChanged="@((value) => OnPriceTypeChanged(value))"
+                                    Variant="Variant.Outlined"
+                                    Immediate="true"
+                                    Clearable="true">
+                                    @foreach (var type in Model.PriceTypes)
+                                    {
+                                        <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudSelect
+                                    T="Guid?"
+                                    Label="Category"
+                                    For="() => Model.Category.Id"
+                                    Value="Model.Category.Id"
+                                    ValueChanged="@((value) => OnCategoryChanged(value))"
+                                    Variant="Variant.Outlined"
+                                    Immediate="true"
+                                    Clearable="true">
+                                    @foreach (var type in Model.Categories)
+                                    {
+                                        <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudSelect
+                                    Disabled="@(string.IsNullOrEmpty(Model.Category.Name))"
+                                    T="Guid?"
+                                    Label="Type"
+                                    For="() => Model.Type.Id"
+                                    Value="Model.Type.Id"
+                                    ValueChanged="@((value) => OnTypeChanged(value))"
+                                    Variant="Variant.Outlined"
+                                    Immediate="true"
+                                    Clearable="true">
+                                    @foreach (var type in Model.Types.Where(x => x.Category.Id == Model.Category.Id))
+                                    {
+                                        <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                </MudItem>
+                @if (!string.IsNullOrEmpty(Model.Type.Name))
+                {
                     <MudItem xs="12">
-                        <MudTextField 
-                            Label="Name"
-                            @bind-Value="Model.Name"
-                            For="() => Model.Name"
-                            Variant="Variant.Outlined"
-                            Immediate="true"
-                            Clearable="true"/>
+                        <Properties Model="Model"/>
                     </MudItem>
-                    <MudItem xs="6">
-                        <MudNumericField 
-                            Label="Quantity in stock"
-                            @bind-Value="Model.QuantityInStock"
-                            For="() => Model.QuantityInStock"
-                            Step="1"
-                            Variant="Variant.Outlined"
-                            Immediate="true"
-                            Clearable="true"/>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudSelect
-                            T="Guid?"
-                            Label="Units"
-                            For="() => Model.Unit.Id"
-                            Value="Model.Unit.Id"
-                            ValueChanged="@((value) => OnUnitChanged(value))"
-                            Variant="Variant.Outlined"
-                            Immediate="true"
-                            Clearable="true">
-                            @foreach (var type in Model.Units)
-                            {
-                                <MudSelectItem T="Guid?" Value="type.Id">@($"{type.Name} ({type.Code})")</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudNumericField 
-                            Label="Price"
-                            @bind-Value="Model.Price"
-                            For="() => Model.Price"
-                            Step="0.1m"
-                            Variant="Variant.Outlined"
-                            Immediate="true"
-                            Clearable="true"/>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudSelect
-                            T="Guid?"
-                            Label="Price per"
-                            For="() => Model.PriceType.Id"
-                            Value="Model.PriceType.Id"
-                            ValueChanged="@((value) => OnPriceTypeChanged(value))"
-                            Variant="Variant.Outlined"
-                            Immediate="true"
-                            Clearable="true">
-                            @foreach (var type in Model.PriceTypes)
-                            {
-                                <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudSelect
-                            T="Guid?"
-                            Label="Category"
-                            For="() => Model.Category.Id"
-                            Value="Model.Category.Id"
-                            ValueChanged="@((value) => OnCategoryChanged(value))"
-                            Variant="Variant.Outlined"
-                            Immediate="true"
-                            Clearable="true">
-                            @foreach (var type in Model.Categories)
-                            {
-                                <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudSelect
-                            Disabled="@(string.IsNullOrEmpty(Model.Category.Name))"
-                            T="Guid?"
-                            Label="Type"
-                            For="() => Model.Type.Id"
-                            Value="Model.Type.Id"
-                            ValueChanged="@((value) => OnTypeChanged(value))"
-                            Variant="Variant.Outlined"
-                            Immediate="true"
-                            Clearable="true">
-                            @foreach (var type in Model.Types.Where(x => x.Category.Id == Model.Category.Id))
-                            {
-                                <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudItem>
-
-                    @if (!string.IsNullOrEmpty(Model.Type.Name))
-                    {
-                        <MudItem xs="12">
-                            <Properties Model="Model"/>
-                        </MudItem>
-                    }
-                </MudGrid>
-            </MudForm>
-        </MudPaper>
+                }
+                <MudItem xs="12">
+                    <MudPaper Class="pa-3" Outlined="true">
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="12">
+                                <MudButton
+                                    ButtonType="ButtonType.Button"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary">
+                                    Submit
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
     </MudItem>
 </MudGrid>
 
@@ -134,7 +157,7 @@
             await LoadTypesAsync();
             await LoadPriceTypesAsync();
             await LoadCategoriesAsync();
-            
+
             StateHasChanged();
         }
     }
@@ -180,7 +203,7 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task LoadCategoriesAsync()
     {
         var result = await CategoryService.GetAllAsync();
@@ -221,7 +244,7 @@
             };
         }
     }
-    
+
     private void OnTypeChanged(Guid? value)
     {
         if (value.HasValue)
@@ -234,7 +257,7 @@
             };
         }
     }
-    
+
     private void OnCategoryChanged(Guid? value)
     {
         if (value.HasValue)
@@ -245,7 +268,7 @@
             {
                 Model.Type = new();
             }
-            
+
             Model.Category = new CategoryModel()
             {
                 Id = category.Id,
@@ -253,4 +276,5 @@
             };
         }
     }
+
 }

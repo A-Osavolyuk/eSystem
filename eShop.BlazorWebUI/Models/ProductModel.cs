@@ -6,8 +6,8 @@ namespace eShop.BlazorWebUI.Models;
 public class ProductModel
 {
     public string Name { get; set; } = string.Empty;
-    public decimal Price { get; set; }
-    public int QuantityInStock { get; set; }
+    public decimal? Price { get; set; }
+    public int? QuantityInStock { get; set; }
     public TypeModel Type { get; set; } = new();
     public UnitModel Unit { get; set; } = new();
     public PriceTypeModel PriceType { get; set; } = new();

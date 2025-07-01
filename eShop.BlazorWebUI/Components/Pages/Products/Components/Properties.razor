@@ -1,6 +1,20 @@
 ﻿@switch (Model.Type.Name)
 {
-   case "Fruit": <FruitProperties Properties="Model.Properties"/> break;
+   case "Fruit":
+   {
+      <MudPaper Class="pa-3" Outlined="true">
+         <MudGrid Justify="Justify.Center">
+            <MudItem xs="12">
+               <MudText Typo="Typo.h6">Product properties</MudText>
+            </MudItem>
+            <MudItem xs="12" Style="padding-top: 0">
+               <FruitProperties Properties="Model.Properties"/>
+            </MudItem>
+         </MudGrid>
+      </MudPaper>
+      
+      break;
+   }
    case "Vegetable": break;
    case "Berry": break;
 }
