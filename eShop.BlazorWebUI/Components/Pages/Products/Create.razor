@@ -51,7 +51,7 @@
                                     Variant="Variant.Outlined"
                                     Immediate="true"
                                     Clearable="true">
-                                    @foreach (var type in Model.Units)
+                                    @foreach (var type in Units)
                                     {
                                         <MudSelectItem T="Guid?"
                                                        Value="type.Id">@($"{type.Name} ({type.Code})")</MudSelectItem>
@@ -79,7 +79,7 @@
                                     Variant="Variant.Outlined"
                                     Immediate="true"
                                     Clearable="true">
-                                    @foreach (var type in Model.PriceTypes)
+                                    @foreach (var type in PriceTypes)
                                     {
                                         <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
                                     }
@@ -95,7 +95,7 @@
                                     Variant="Variant.Outlined"
                                     Immediate="true"
                                     Clearable="true">
-                                    @foreach (var type in Model.Categories)
+                                    @foreach (var type in Categories)
                                     {
                                         <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
                                     }
@@ -112,7 +112,7 @@
                                     Variant="Variant.Outlined"
                                     Immediate="true"
                                     Clearable="true">
-                                    @foreach (var type in Model.Types.Where(x => x.Category.Id == Model.Category.Id))
+                                    @foreach (var type in Types.Where(x => x.Category.Id == Model.Category.Id))
                                     {
                                         <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
                                     }
@@ -124,7 +124,7 @@
                 @if (!string.IsNullOrEmpty(Model.Type.Name))
                 {
                     <MudItem xs="12">
-                        <Properties Model="Model"/>
+                        <ProductProperties Model="Model"/>
                     </MudItem>
                 }
                 <MudItem xs="12">
@@ -137,6 +137,13 @@
                                     Color="Color.Primary">
                                     Submit
                                 </MudButton>
+                                <MudButton
+                                    ButtonType="ButtonType.Button"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Error"
+                                    OnClick="@(() => Clear())">
+                                    Clear
+                                </MudButton>
                             </MudItem>
                         </MudGrid>
                     </MudPaper>
@@ -148,6 +155,11 @@
 
 @code {
     [SupplyParameterFromForm] private ProductModel Model { get; set; } = new();
+    
+    private List<TypeDto> Types { get; set; } = [];
+    private List<UnitDto> Units { get; set; } = [];
+    private List<PriceTypeDto> PriceTypes { get; set; } = [];
+    private List<CategoryDto> Categories { get; set; } = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -168,7 +180,7 @@
 
         if (result.Success)
         {
-            Model.Units = result.Get<List<UnitDto>>()!;
+            Units = result.Get<List<UnitDto>>()!;
         }
         else
         {
@@ -182,7 +194,7 @@
 
         if (result.Success)
         {
-            Model.Types = result.Get<List<TypeDto>>()!;
+            Types = result.Get<List<TypeDto>>()!;
         }
         else
         {
@@ -196,7 +208,7 @@
 
         if (result.Success)
         {
-            Model.PriceTypes = result.Get<List<PriceTypeDto>>()!;
+            PriceTypes = result.Get<List<PriceTypeDto>>()!;
         }
         else
         {
@@ -210,7 +222,7 @@
 
         if (result.Success)
         {
-            Model.Categories = result.Get<List<CategoryDto>>()!;
+            Categories = result.Get<List<CategoryDto>>()!;
         }
         else
         {
@@ -222,7 +234,7 @@
     {
         if (value.HasValue)
         {
-            var priceType = Model.PriceTypes.Find(x => x.Id == value)!;
+            var priceType = PriceTypes.Find(x => x.Id == value)!;
             Model.PriceType = new()
             {
                 Id = priceType.Id,
@@ -235,7 +247,7 @@
     {
         if (value.HasValue)
         {
-            var unit = Model.Units.Find(x => x.Id == value)!;
+            var unit = Units.Find(x => x.Id == value)!;
             Model.Unit = new UnitModel
             {
                 Id = unit.Id,
@@ -249,7 +261,7 @@
     {
         if (value.HasValue)
         {
-            var type = Model.Types.Find(x => x.Id == value)!;
+            var type = Types.Find(x => x.Id == value)!;
             Model.Type = new TypeModel()
             {
                 Id = type.Id,
@@ -262,7 +274,7 @@
     {
         if (value.HasValue)
         {
-            var category = Model.Categories.Find(x => x.Id == value)!;
+            var category = Categories.Find(x => x.Id == value)!;
 
             if (Model.Category.Id != category.Id)
             {
@@ -275,6 +287,11 @@
                 Name = category.Name
             };
         }
+    }
+
+    private void Clear()
+    {
+        Model = new();
     }
 
 }

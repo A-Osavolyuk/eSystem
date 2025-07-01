@@ -13,8 +13,4 @@ public class ProductModel
     public PriceTypeModel PriceType { get; set; } = new();
     public CategoryModel Category { get; set; } = new();
     public Dictionary<string, object> Properties { get; set; } = [];
-    public List<TypeDto> Types { get; set; } = [];
-    public List<UnitDto> Units { get; set; } = [];
-    public List<PriceTypeDto> PriceTypes { get; set; } = [];
-    public List<CategoryDto> Categories { get; set; } = [];
 }
