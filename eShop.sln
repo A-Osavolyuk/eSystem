@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{B613A3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{F98374CC-05C3-4332-9C94-8340FA0F30AE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.BlazorWebUI", "eShop.BlazorWebUI\eShop.BlazorWebUI.csproj", "{5B1B4D1B-55A3-481D-90AE-626F42801DD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.UI.Blazor", "eShop.UI.Blazor\eShop.UI.Blazor.csproj", "{5B1B4D1B-55A3-481D-90AE-626F42801DD5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Product.Api", "eShop.Product.Api\eShop.Product.Api.csproj", "{628C7868-F50E-4BF1-893B-62F87114E29F}"
 EndProject

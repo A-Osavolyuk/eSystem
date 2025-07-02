@@ -34,7 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\eShop.AngularWebUI\eShop.AngularWebUI.esproj" />
     <ProjectReference Include="..\eShop.Auth.Api\eShop.Auth.Api.csproj" />
-    <ProjectReference Include="..\eShop.BlazorWebUI\eShop.BlazorWebUI.csproj" />
+    <ProjectReference Include="..\eShop.UI.Blazor\eShop.UI.Blazor.csproj" />
     <ProjectReference Include="..\eShop.Cart.Api\eShop.Cart.Api.csproj" />
     <ProjectReference Include="..\eShop.EmailSender.Api\eShop.EmailSender.Api.csproj" />
     <ProjectReference Include="..\eShop.Storage.Api\eShop.Storage.Api.csproj" />
