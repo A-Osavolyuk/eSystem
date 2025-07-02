@@ -2,7 +2,7 @@
     <MudItem xs="12">
         <MudPaper Class="pa-3" Outlined="true">
             <MudText Typo="Typo.h6">
-                @($"Uploaded images: {Model.Files.Count}/20")
+                @($"Uploaded images: {Model.Images.Count}/20")
             </MudText>
         </MudPaper>
     </MudItem>
@@ -25,7 +25,7 @@
                     <MudGallery
                         @ref="gallery"
                         ItemPerLine="4"
-                        ImageSource="Model.Images"
+                        ImageSource="@Model.Images.Select(x => x.Source).ToList()"
                         EnableAnimation="true"
                         EnableBackdropClick="true"
                         MaxWidth="MaxWidth.Medium">
@@ -41,14 +41,14 @@
                             Upload
                         </MudButton>
                         <MudButton
-                            Disabled="@(Model.Files.Count == 0)"
+                            Disabled="@(Model.Images.Count == 0)"
                             Variant="Variant.Filled"
                             Color="Color.Secondary"
                             FullWidth="true">
                             Edit
                         </MudButton>
                         <MudButton
-                            Disabled="@(Model.Files.Count == 0)"
+                            Disabled="@(Model.Images.Count == 0)"
                             Variant="Variant.Outlined"
                             Color="Color.Error"
                             FullWidth="true"
@@ -74,10 +74,16 @@
         {
             foreach (var file in files)
             {
-                var image = await HandleImageAsync(file);
+                var src = await HandleImageAsync(file);
+                
+                var image = new ImageModel()
+                {
+                    Id = Guid.CreateVersion7(),
+                    File = file,
+                    Source = src
+                };
 
                 Model.Images.Add(image);
-                Model.Files.Add(file);
             }
         }
     }
@@ -86,7 +92,6 @@
 
     private void OnClearImages()
     {
-        Model.Files.Clear();
         Model.Images.Clear();
     }
 
