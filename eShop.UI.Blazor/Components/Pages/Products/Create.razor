@@ -17,17 +17,17 @@
             <MudForm Model="Model">
                 <MudGrid Spacing="1" Justify="Justify.Center">
                     <MudItem xs="4">
-                        <Images />
+                        <Images Model="Model"/>
                     </MudItem>
                     <MudItem xs="8">
                         <MudGrid Spacing="1" Justify="Justify.Center">
                             <MudItem xs="12">
-                                <GeneralProperties/>
+                                <GeneralProperties Model="Model"/>
                             </MudItem>
                             @if (!string.IsNullOrEmpty(Model.Type.Name))
                             {
                                 <MudItem xs="12">
-                                    <Properties/>
+                                    <Properties Model="Model"/>
                                 </MudItem>
                             }
                             <MudItem xs="12">

@@ -63,7 +63,7 @@
 </MudGrid>
 
 @code {
-    [CascadingParameter] public required ProductModel Model { get; set; }
+    [Parameter] public required ProductModel Model { get; set; }
 
     private MudFileUpload<IReadOnlyList<IBrowserFile>> fileUpload = new();
     private MudGallery gallery = new();

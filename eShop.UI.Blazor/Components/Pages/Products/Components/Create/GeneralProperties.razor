@@ -121,7 +121,7 @@
 </MudGrid>
 
 @code {
-    [CascadingParameter] public ProductModel Model { get; set; } = new();
+    [Parameter] public ProductModel Model { get; set; } = new();
 
     private List<TypeDto> Types { get; set; } = [];
     private List<UnitDto> Units { get; set; } = [];
