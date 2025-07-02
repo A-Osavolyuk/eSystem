@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eShop.AngularWebUI\eShop.AngularWebUI.esproj" />
+    <ProjectReference Include="..\eShop.UI.Angular\eShop.UI.Angular.esproj" />
     <ProjectReference Include="..\eShop.Auth.Api\eShop.Auth.Api.csproj" />
     <ProjectReference Include="..\eShop.UI.Blazor\eShop.UI.Blazor.csproj" />
     <ProjectReference Include="..\eShop.Cart.Api\eShop.Cart.Api.csproj" />

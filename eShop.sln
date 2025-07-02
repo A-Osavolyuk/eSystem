@@ -41,7 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Proxy", "Proxy", "{B69FD745
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.Proxy", "eShop.Proxy\eShop.Proxy.csproj", "{4F4C7074-77BA-4A0D-AB71-77B5AD746292}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eShop.AngularWebUI", "eShop.AngularWebUI\eShop.AngularWebUI.esproj", "{A0D750E3-848A-4BE9-9F85-805B6B228091}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eShop.UI.Angular", "eShop.UI.Angular\eShop.UI.Angular.esproj", "{A0D750E3-848A-4BE9-9F85-805B6B228091}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.Storage.Api", "eShop.Storage.Api\eShop.Storage.Api.csproj", "{1F9BA980-B39D-49DD-A4FD-D2FE91A996C1}"
 EndProject

@@ -105,7 +105,7 @@ builder.AddProject<Projects.eShop_UI_Blazor>("ui-blazor")
     .WithJwtConfig()
     .WithReference(proxy).WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy");
 
-// builder.AddNpmApp("angular-webui", "../eShop.AngularWebUI")
+// builder.AddNpmApp("ui-angular", "../eShop.UI.Angular")
 //     .WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy")
 //     .WithHttpsEndpoint(port: 5902, targetPort: 4200, env: "PORT")
 //     .WithExternalHttpEndpoints()
