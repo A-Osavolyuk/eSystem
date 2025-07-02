@@ -55,6 +55,7 @@ public static class Extensions
     private static void AddState(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<UserState>();
+        builder.Services.AddScoped<ProductState>();
     }
 
 }
