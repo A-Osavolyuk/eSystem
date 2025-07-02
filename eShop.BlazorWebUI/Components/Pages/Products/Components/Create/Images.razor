@@ -1,0 +1,104 @@
+﻿<MudGrid Spacing="1" Justify="Justify.Center">
+    <MudItem xs="12">
+        <MudPaper Class="pa-3" Outlined="true">
+            <MudText Typo="Typo.h6">
+                @($"Uploaded images: {Model.Files.Count}/20")
+            </MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper Class="pa-3" Outlined="true">
+            <MudGrid Spacing="1" Justify="Justify.Center">
+                <MudItem xs="12">
+                    <MudFileUpload
+                        @ref="fileUpload"
+                        T="IReadOnlyList<IBrowserFile>"
+                        FilesChanged="@(async (files) => await OnUploadFiles(files))"
+                        Required="true"
+                        RequiredError="Upload at least one image"
+                        Accept=".png, .jpg"
+                        Hidden="false"
+                        InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                        InputStyle="opacity:0"
+                        MaximumFileCount="16">
+                    </MudFileUpload>
+                    <MudGallery
+                        @ref="gallery"
+                        ItemPerLine="4"
+                        ImageSource="Model.Images"
+                        EnableAnimation="true"
+                        EnableBackdropClick="true"
+                        MaxWidth="MaxWidth.Medium">
+                    </MudGallery>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStack Spacing="1">
+                        <MudButton
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            FullWidth="true"
+                            OnClick="@(async () => await OnOpenDialogAsync())">
+                            Upload
+                        </MudButton>
+                        <MudButton
+                            Disabled="@(Model.Files.Count == 0)"
+                            Variant="Variant.Filled"
+                            Color="Color.Secondary"
+                            FullWidth="true">
+                            Edit
+                        </MudButton>
+                        <MudButton
+                            Disabled="@(Model.Files.Count == 0)"
+                            Variant="Variant.Outlined"
+                            Color="Color.Error"
+                            FullWidth="true"
+                            OnClick="@(() => OnClearImages())">
+                            Clear
+                        </MudButton>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [CascadingParameter] public required ProductModel Model { get; set; }
+
+    private MudFileUpload<IReadOnlyList<IBrowserFile>> fileUpload = new();
+    private MudGallery gallery = new();
+
+    private async Task OnUploadFiles(IReadOnlyList<IBrowserFile>? files)
+    {
+        if (files is not null)
+        {
+            foreach (var file in files)
+            {
+                var image = await HandleImageAsync(file);
+
+                Model.Images.Add(image);
+                Model.Files.Add(file);
+            }
+        }
+    }
+    
+    private async Task OnOpenDialogAsync() => await fileUpload.OpenFilePickerAsync();
+
+    private void OnClearImages()
+    {
+        Model.Files.Clear();
+        Model.Images.Clear();
+    }
+
+    private async Task<string> HandleImageAsync(IBrowserFile file)
+    {
+        await using var stream = file.OpenReadStream(10 * 1024 * 1024);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+        var bytes = ms.ToArray();
+        var base64 = Convert.ToBase64String(bytes);
+        var contentType = file.ContentType;
+        var base64Image = $"data:{contentType};base64,{base64}";
+        return base64Image;
+    }
+}
