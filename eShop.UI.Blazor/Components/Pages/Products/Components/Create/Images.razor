@@ -1,4 +1,7 @@
-﻿<MudGrid Spacing="1" Justify="Justify.Center">
+﻿@inject IDialogService DialogService
+@inject ProductState State
+
+<MudGrid Spacing="1" Justify="Justify.Center">
     <MudItem xs="12">
         <MudPaper Class="pa-3" Outlined="true">
             <MudText Typo="Typo.h6">
@@ -37,14 +40,15 @@
                             Variant="Variant.Filled"
                             Color="Color.Primary"
                             FullWidth="true"
-                            OnClick="@(async () => await OnOpenDialogAsync())">
+                            OnClick="@(async () => await OnOpenAsync())">
                             Upload
                         </MudButton>
                         <MudButton
                             Disabled="@(Model.Images.Count == 0)"
                             Variant="Variant.Filled"
                             Color="Color.Secondary"
-                            FullWidth="true">
+                            FullWidth="true"
+                            OnClick="@(async () => await OnEditAsync())">
                             Edit
                         </MudButton>
                         <MudButton
@@ -72,11 +76,37 @@
     {
         if (files is not null)
         {
-            Model.Images = await ImageHandler.ConvertAsync(files);
+            var images = await ImageHandler.ConvertAsync(files);
+            Model.Images.AddRange(images);
         }
     }
     
-    private async Task OnOpenDialogAsync() => await fileUpload.OpenFilePickerAsync();
+    private async Task OnOpenAsync() => await fileUpload.OpenFilePickerAsync();
+
+    private async Task OnEditAsync()
+    {
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var parameters = new DialogParameters<EditImagesDialog>()
+        {
+            { x => x.Model, Model }
+        };
+
+        var dialog = await DialogService.ShowAsync<EditImagesDialog>("Edit images dialog", parameters, options);
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            State.Change();
+            StateHasChanged();
+        }
+    }
 
     private void OnClearImages()
     {

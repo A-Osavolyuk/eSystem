@@ -1,0 +1,56 @@
+﻿<MudDialog Style="width: 850px;">
+    <TitleContent>
+        Edit images
+    </TitleContent>
+    <DialogContent>
+        <MudGrid Spacing="1" Justify="Justify.FlexStart">
+            @foreach (var image in Model.Images)
+            {
+                <MudItem xs="3" Style="position: relative;">
+                    <MudImage
+                        Src="@image.Source"
+                        Alt="image"
+                        ObjectFit="ObjectFit.Fill"
+                        Style="height: 200px; width: 200px"/>
+                    <MudIconButton
+                        Size="Size.Medium"
+                        Color="Color.Error"
+                        Variant="Variant.Text"
+                        Icon="@Icons.Material.Filled.Close"
+                        Style="position: absolute; top: 0; right: -5px"
+                        Class="rounded-circle"
+                        OnClick="@(() => OnRemove(image.Id))"/>
+                </MudItem>
+            }
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton
+            ButtonType="ButtonType.Button"
+            Variant="Variant.Filled"
+            Color="Color.Error"
+            OnClick="@(() => OnClose())">
+            Close
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public required IMudDialogInstance Dialog { get; set; }
+    [Parameter] public required ProductModel Model { get; set; }
+
+    private void OnRemove(Guid id)
+    {
+        var image = Model.Images.First(x => x.Id == id);
+        Model.Images.Remove(image);
+
+        if (Model.Images.Count == 0)
+        {
+            OnClose();
+        }
+        
+        StateHasChanged();
+    }
+    
+    private void OnClose() => Dialog.Close(DialogResult.Ok(true));
+}
