@@ -1,297 +1,82 @@
 ﻿@page "/products/create"
 
+@using eShop.BlazorWebUI.Components.Pages.Products.Components.Create
+
 @inherits PageBase
+@implements IDisposable
 
 @attribute [Authorize]
 
-@inject ITypeService TypeService
-@inject IUnitService UnitService
-@inject IPriceService PriceService
-@inject ICategoryService CategoryService
+@inject ProductState State
 
 <Title Text="Create product"></Title>
 
 <MudGrid Justify="Justify.Center">
-    <MudItem xs="6">
-        <MudForm Model="Model">
-            <MudGrid Spacing="1" Justify="Justify.Center">
-                <MudItem xs="12">
-                    <MudPaper Outlined="true" Class="pa-3">
+    <MudItem xs="8">
+        <CascadingValue Value="Model">
+            <MudForm Model="Model">
+                <MudGrid Spacing="1" Justify="Justify.Center">
+                    <MudItem xs="4">
+                        <Images />
+                    </MudItem>
+                    <MudItem xs="8">
                         <MudGrid Spacing="1" Justify="Justify.Center">
                             <MudItem xs="12">
-                                <MudText Typo="Typo.h6">General properties</MudText>
+                                <GeneralProperties/>
                             </MudItem>
+                            @if (!string.IsNullOrEmpty(Model.Type.Name))
+                            {
+                                <MudItem xs="12">
+                                    <Properties/>
+                                </MudItem>
+                            }
                             <MudItem xs="12">
-                                <MudTextField
-                                    Label="Name"
-                                    @bind-Value="Model.Name"
-                                    For="() => Model.Name"
-                                    Variant="Variant.Outlined"
-                                    Immediate="true"
-                                    Clearable="true"/>
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudNumericField
-                                    T="int?"
-                                    Label="Quantity in stock"
-                                    @bind-Value="Model.QuantityInStock"
-                                    For="() => Model.QuantityInStock"
-                                    Step="1"
-                                    Variant="Variant.Outlined"
-                                    Immediate="true"
-                                    Clearable="true"/>
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudSelect
-                                    T="Guid?"
-                                    Label="Units"
-                                    For="() => Model.Unit.Id"
-                                    Value="Model.Unit.Id"
-                                    ValueChanged="@((value) => OnUnitChanged(value))"
-                                    Variant="Variant.Outlined"
-                                    Immediate="true"
-                                    Clearable="true">
-                                    @foreach (var type in Units)
-                                    {
-                                        <MudSelectItem T="Guid?"
-                                                       Value="type.Id">@($"{type.Name} ({type.Code})")</MudSelectItem>
-                                    }
-                                </MudSelect>
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudNumericField
-                                    T="decimal?"
-                                    Label="Price"
-                                    @bind-Value="Model.Price"
-                                    For="() => Model.Price"
-                                    Step="0.1m"
-                                    Variant="Variant.Outlined"
-                                    Immediate="true"
-                                    Clearable="true"/>
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudSelect
-                                    T="Guid?"
-                                    Label="Price per"
-                                    For="() => Model.PriceType.Id"
-                                    Value="Model.PriceType.Id"
-                                    ValueChanged="@((value) => OnPriceTypeChanged(value))"
-                                    Variant="Variant.Outlined"
-                                    Immediate="true"
-                                    Clearable="true">
-                                    @foreach (var type in PriceTypes)
-                                    {
-                                        <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
-                                    }
-                                </MudSelect>
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudSelect
-                                    T="Guid?"
-                                    Label="Category"
-                                    For="() => Model.Category.Id"
-                                    Value="Model.Category.Id"
-                                    ValueChanged="@((value) => OnCategoryChanged(value))"
-                                    Variant="Variant.Outlined"
-                                    Immediate="true"
-                                    Clearable="true">
-                                    @foreach (var type in Categories)
-                                    {
-                                        <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
-                                    }
-                                </MudSelect>
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudSelect
-                                    Disabled="@(string.IsNullOrEmpty(Model.Category.Name))"
-                                    T="Guid?"
-                                    Label="Type"
-                                    For="() => Model.Type.Id"
-                                    Value="Model.Type.Id"
-                                    ValueChanged="@((value) => OnTypeChanged(value))"
-                                    Variant="Variant.Outlined"
-                                    Immediate="true"
-                                    Clearable="true">
-                                    @foreach (var type in Types.Where(x => x.Category.Id == Model.Category.Id))
-                                    {
-                                        <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
-                                    }
-                                </MudSelect>
+                                <MudPaper Class="pa-3" Outlined="true">
+                                    <MudGrid Justify="Justify.Center">
+                                        <MudItem xs="12">
+                                            <MudButton
+                                                ButtonType="ButtonType.Button"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary">
+                                                Submit
+                                            </MudButton>
+                                            <MudButton
+                                                ButtonType="ButtonType.Button"
+                                                Variant="Variant.Outlined"
+                                                Color="Color.Error"
+                                                OnClick="@(() => Clear())">
+                                                Clear
+                                            </MudButton>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudPaper>
                             </MudItem>
                         </MudGrid>
-                    </MudPaper>
-                </MudItem>
-                @if (!string.IsNullOrEmpty(Model.Type.Name))
-                {
-                    <MudItem xs="12">
-                        <ProductProperties Model="Model"/>
                     </MudItem>
-                }
-                <MudItem xs="12">
-                    <MudPaper Class="pa-3" Outlined="true">
-                        <MudGrid Justify="Justify.Center">
-                            <MudItem xs="12">
-                                <MudButton
-                                    ButtonType="ButtonType.Button"
-                                    Variant="Variant.Filled"
-                                    Color="Color.Primary">
-                                    Submit
-                                </MudButton>
-                                <MudButton
-                                    ButtonType="ButtonType.Button"
-                                    Variant="Variant.Filled"
-                                    Color="Color.Error"
-                                    OnClick="@(() => Clear())">
-                                    Clear
-                                </MudButton>
-                            </MudItem>
-                        </MudGrid>
-                    </MudPaper>
-                </MudItem>
-            </MudGrid>
-        </MudForm>
+                </MudGrid>
+            </MudForm>
+        </CascadingValue>
     </MudItem>
 </MudGrid>
 
 @code {
     [SupplyParameterFromForm] private ProductModel Model { get; set; } = new();
-    
-    private List<TypeDto> Types { get; set; } = [];
-    private List<UnitDto> Units { get; set; } = [];
-    private List<PriceTypeDto> PriceTypes { get; set; } = [];
-    private List<CategoryDto> Categories { get; set; } = [];
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        if (firstRender)
-        {
-            await LoadUnitsAsync();
-            await LoadTypesAsync();
-            await LoadPriceTypesAsync();
-            await LoadCategoriesAsync();
-
-            StateHasChanged();
-        }
-    }
-
-    private async Task LoadUnitsAsync()
-    {
-        var result = await UnitService.GetAllAsync();
-
-        if (result.Success)
-        {
-            Units = result.Get<List<UnitDto>>()!;
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task LoadTypesAsync()
-    {
-        var result = await TypeService.GetAllAsync();
-
-        if (result.Success)
-        {
-            Types = result.Get<List<TypeDto>>()!;
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task LoadPriceTypesAsync()
-    {
-        var result = await PriceService.GetAllAsync();
-
-        if (result.Success)
-        {
-            PriceTypes = result.Get<List<PriceTypeDto>>()!;
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task LoadCategoriesAsync()
-    {
-        var result = await CategoryService.GetAllAsync();
-
-        if (result.Success)
-        {
-            Categories = result.Get<List<CategoryDto>>()!;
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private void OnPriceTypeChanged(Guid? value)
-    {
-        if (value.HasValue)
-        {
-            var priceType = PriceTypes.Find(x => x.Id == value)!;
-            Model.PriceType = new()
-            {
-                Id = priceType.Id,
-                Name = priceType.Name
-            };
-        }
-    }
-
-    private void OnUnitChanged(Guid? value)
-    {
-        if (value.HasValue)
-        {
-            var unit = Units.Find(x => x.Id == value)!;
-            Model.Unit = new UnitModel
-            {
-                Id = unit.Id,
-                Name = unit.Name,
-                Code = unit.Code
-            };
-        }
-    }
-
-    private void OnTypeChanged(Guid? value)
-    {
-        if (value.HasValue)
-        {
-            var type = Types.Find(x => x.Id == value)!;
-            Model.Type = new TypeModel()
-            {
-                Id = type.Id,
-                Name = type.Name
-            };
-        }
-    }
-
-    private void OnCategoryChanged(Guid? value)
-    {
-        if (value.HasValue)
-        {
-            var category = Categories.Find(x => x.Id == value)!;
-
-            if (Model.Category.Id != category.Id)
-            {
-                Model.Type = new();
-            }
-
-            Model.Category = new CategoryModel()
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
-        }
+        State.OnChange += StateHasChanged;
     }
 
     private void Clear()
     {
         Model = new();
+        Model.Files.Clear();
+        Model.Images.Clear();
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
     }
 
 }
