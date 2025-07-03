@@ -1,0 +1,16 @@
+﻿
+
+@code {
+    [Parameter] public required Dictionary<string, object> Properties { get; set; }
+    
+    private void OnChange(string code, object value)
+    {
+        Properties[code] = value;
+    }
+    
+    private void OnChange(string code)
+    {
+        var value = Convert.ToBoolean(Properties[code]);
+        Properties[code] = !value;
+    }
+}
