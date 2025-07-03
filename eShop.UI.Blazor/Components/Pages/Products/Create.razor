@@ -15,7 +15,7 @@
 <MudGrid Justify="Justify.Center">
     <MudItem xs="8">
         <CascadingValue Value="Model">
-            <MudForm Model="Model" Validation="Validator.ValidateValue">
+            <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
                 <MudGrid Spacing="1" Justify="Justify.Center">
                     <MudItem xs="4">
                         <Images Model="Model"/>
@@ -38,14 +38,15 @@
                                             <MudButton
                                                 ButtonType="ButtonType.Button"
                                                 Variant="Variant.Filled"
-                                                Color="Color.Primary">
+                                                Color="Color.Primary"
+                                                OnClick="@(async () => await OnSubmitAsync())">
                                                 Submit
                                             </MudButton>
                                             <MudButton
                                                 ButtonType="ButtonType.Button"
                                                 Variant="Variant.Outlined"
                                                 Color="Color.Error"
-                                                OnClick="@(() => Clear())">
+                                                OnClick="@(() => OnClear())">
                                                 Clear
                                             </MudButton>
                                         </MudItem>
@@ -63,12 +64,24 @@
 @code {
     [SupplyParameterFromForm] private ProductModel Model { get; set; } = new();
 
+    private MudForm form = new();
+    
     protected override void OnInitialized()
     {
         State.OnChange += StateHasChanged;
     }
 
-    private void Clear()
+    private async Task OnSubmitAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            
+        }
+    }
+
+    private void OnClear()
     {
         Model = new();
     }
