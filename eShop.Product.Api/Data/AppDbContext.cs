@@ -10,6 +10,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<PriceTypeEntity> PriceType { get; set; }
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<FruitProductEntity> Fruits { get; set; }
+    public DbSet<VegetableProductEntity> Vegetables { get; set; }
+    public DbSet<BerryProductEntity> Berries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -69,6 +71,30 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         builder.Entity<FruitProductEntity>(e =>
         {
             e.ToTable("Fruits");
+            
+            e.Property(x => x.Variety).HasMaxLength(64);
+            e.Property(x => x.Color).HasMaxLength(64);
+            e.Property(x => x.CountryOfOrigin).HasMaxLength(64);
+            e.Property(x => x.RipenessStage).HasMaxLength(64);
+            e.Property(x => x.StorageTemperature).HasMaxLength(64);
+            e.Property(x => x.Grade).HasMaxLength(64);
+        });
+        
+        builder.Entity<VegetableProductEntity>(e =>
+        {
+            e.ToTable("Vegetables");
+            
+            e.Property(x => x.Variety).HasMaxLength(64);
+            e.Property(x => x.Color).HasMaxLength(64);
+            e.Property(x => x.CountryOfOrigin).HasMaxLength(64);
+            e.Property(x => x.RipenessStage).HasMaxLength(64);
+            e.Property(x => x.StorageTemperature).HasMaxLength(64);
+            e.Property(x => x.Grade).HasMaxLength(64);
+        });
+        
+        builder.Entity<BerryProductEntity>(e =>
+        {
+            e.ToTable("Berries");
             
             e.Property(x => x.Variety).HasMaxLength(64);
             e.Property(x => x.Color).HasMaxLength(64);
