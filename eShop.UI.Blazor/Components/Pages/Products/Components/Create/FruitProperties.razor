@@ -1,37 +1,38 @@
-﻿@if (Model.Properties.Count > 0)
+﻿@inject ProductValidator Validator
+
+@if (Model.Properties.Count > 0)
 {
     <MudGrid Spacing="1" Justify="Justify.Center">
     <MudItem xs="12">
         <MudTextField
             T="string"
             Value="@Model.Properties["Color"].ToString()"
-            ValueChanged="@((value) => OnChange("Color", value))"
+            ValueChanged="@(value => OnChange("Color", value))"
+            Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "Color")))"
             Label="Color"
             Variant="Variant.Outlined"
             Immediate="true"
-            Clearable="true"
-            Required="true"
-            RequiredError="Field is required">
+            Clearable="true">
         </MudTextField>
     </MudItem>
     <MudItem xs="12">
         <MudTextField
             T="string"
             Value="@Model.Properties["Variety"].ToString()"
-            ValueChanged="@((value) => OnChange("Variety", value))"
+            ValueChanged="@(value => OnChange("Variety", value))"
+            Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "Variety")))"
             Label="Variety"
             Variant="Variant.Outlined"
             Immediate="true"
-            Clearable="true"
-            Required="true"
-            RequiredError="Field is required">
+            Clearable="true">
         </MudTextField>
     </MudItem>
     <MudItem xs="12">
         <MudTextField
             T="string"
             Value="@Model.Properties["Grade"].ToString()"
-            ValueChanged="@((value) => OnChange("Grade", value))"
+            ValueChanged="@(value => OnChange("Grade", value))"
+            Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "Grade")))"
             Label="Grade"
             Variant="Variant.Outlined"
             Immediate="true"
@@ -44,7 +45,8 @@
         <MudTextField
             T="string"
             Value="@Model.Properties["CountryOfOrigin"].ToString()"
-            ValueChanged="@((value) => OnChange("CountryOfOrigin", value))"
+            ValueChanged="@(value => OnChange("CountryOfOrigin", value))"
+            Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "CountryOfOrigin")))"
             Label="Country of origin"
             Variant="Variant.Outlined"
             Immediate="true"
@@ -57,7 +59,7 @@
         <MudSelect
             T="string"
             Value="@Model.Properties["RipenessStage"].ToString()"
-            ValueChanged="@((value) => OnChange("RipenessStage", value))"
+            ValueChanged="@(value => OnChange("RipenessStage", value))"
             Label="Ripeness stage"
             Variant="Variant.Outlined"
             Immediate="true"
@@ -74,7 +76,7 @@
         <MudTextField
             T="string"
             Value="@Model.Properties["StorageTemperature"].ToString()"
-            ValueChanged="@((value) => OnChange("StorageTemperature", value))"
+            ValueChanged="@(value => OnChange("StorageTemperature", value))"
             Label="Storage temperature"
             Variant="Variant.Outlined"
             Immediate="true"
