@@ -11,6 +11,11 @@ public class ProductValidator : Validator<ProductModel>
             .MaximumLength(128).WithMessage("Name must be less than 128 characters.")
             .MinimumLength(4).WithMessage("Name must be less than 4 characters.");
         
+        RuleFor(x => x.Description)
+            .NotEmpty().WithMessage("Field is required")
+            .MaximumLength(3000).WithMessage("Description must be less than 3000 characters.")
+            .MinimumLength(4).WithMessage("Description must be less than 4 characters.");
+        
         RuleFor(x => x.Price)
             .GreaterThan(0).WithMessage("Price must be greater than 0.")
             .LessThan(100_000).WithMessage("Price must be less than 100000.");

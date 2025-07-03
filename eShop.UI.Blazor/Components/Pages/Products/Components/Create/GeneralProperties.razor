@@ -29,6 +29,19 @@
                         Counter="128"
                         MaxLength="128"/>
                 </MudItem>
+                <MudItem xs="12">
+                    <MudTextField
+                        Label="Description"
+                        @bind-Value="Model.Description"
+                        For="() => Model.Description"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true"
+                        AutoGrow="true"
+                        Counter="3000"
+                        MaxLength="3000"
+                        Lines="5"/>
+                </MudItem>
                 <MudItem xs="6">
                     <MudNumericField
                         T="int?"
