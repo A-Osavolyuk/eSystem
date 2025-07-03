@@ -1,35 +1,30 @@
-﻿@switch (Model.Type.Name)
-{
-   case "Fruit":
-   {
-      <MudGrid Spacing="1" Justify="Justify.Center">
-         <MudItem xs="12">
-            <MudPaper Class="pa-3" Outlined="true">
-               <MudGrid Justify="Justify.Center">
-                  <MudItem xs="12">
-                     <MudText Typo="Typo.h6">
-                        Product properties
-                     </MudText>
-                  </MudItem>
-               </MudGrid>
-            </MudPaper>
-         </MudItem>
-         <MudItem xs="12">
-            <MudPaper Outlined="true" Class="pa-3">
-               <MudGrid Spacing="1" Justify="Justify.Center">
-                  <MudItem xs="12">
-                     <FruitProperties Properties="Model.Properties"/>
-                  </MudItem>
-               </MudGrid>
-            </MudPaper>
-         </MudItem>
-      </MudGrid>
-      
-      break;
-   }
-   case "Vegetable": break;
-   case "Berry": break;
-}
+﻿<MudGrid Spacing="1" Justify="Justify.Center">
+   <MudItem xs="12">
+      <MudPaper Class="pa-3" Outlined="true">
+         <MudGrid Justify="Justify.Center">
+            <MudItem xs="12">
+               <MudText Typo="Typo.h6">
+                  Product properties
+               </MudText>
+            </MudItem>
+         </MudGrid>
+      </MudPaper>
+   </MudItem>
+   <MudItem xs="12">
+      <MudPaper Outlined="true" Class="pa-3">
+         <MudGrid Spacing="1" Justify="Justify.Center">
+            <MudItem xs="12">
+               @switch (Model.Type.Name)
+               {
+                  case "Fruit": <FruitProperties Properties="Model.Properties"/> break;
+                  case "Vegetable": <VegetableProperties Properties="Model.Properties"/> break;
+                  case "Berry": <BerryProperties Properties="Model.Properties"/> break;
+               }
+            </MudItem>
+         </MudGrid>
+      </MudPaper>
+   </MudItem>
+</MudGrid>
 
 @code {
    [Parameter] public ProductModel Model { get; set; } = new();
