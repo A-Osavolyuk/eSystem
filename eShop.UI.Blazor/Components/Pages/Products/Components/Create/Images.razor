@@ -13,18 +13,6 @@
         <MudPaper Class="pa-3" Outlined="true">
             <MudGrid Spacing="1" Justify="Justify.Center">
                 <MudItem xs="12">
-                    <MudFileUpload
-                        @ref="fileUpload"
-                        T="IReadOnlyList<IBrowserFile>"
-                        FilesChanged="@(async (files) => await OnUploadFiles(files))"
-                        Required="true"
-                        RequiredError="Upload at least one image"
-                        Accept=".png, .jpg"
-                        Hidden="false"
-                        InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-                        InputStyle="opacity:0"
-                        MaximumFileCount="16">
-                    </MudFileUpload>
                     <MudGallery
                         @ref="gallery"
                         ItemPerLine="4"
@@ -38,18 +26,10 @@
                     <MudStack Spacing="1">
                         <MudButton
                             Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            FullWidth="true"
-                            OnClick="@(async () => await OnOpenAsync())">
-                            Upload
-                        </MudButton>
-                        <MudButton
-                            Disabled="@(Model.Images.Count == 0)"
-                            Variant="Variant.Filled"
-                            Color="Color.Secondary"
+                            Color="@(Model.Images.Count > 0 ? Color.Secondary : Color.Primary)"
                             FullWidth="true"
                             OnClick="@(async () => await OnEditAsync())">
-                            Edit
+                            @(Model.Images.Count > 0 ? "Edit" : "Upload")
                         </MudButton>
                         <MudButton
                             Disabled="@(Model.Images.Count == 0)"
@@ -68,20 +48,8 @@
 
 @code {
     [Parameter] public required ProductModel Model { get; set; }
-
-    private MudFileUpload<IReadOnlyList<IBrowserFile>> fileUpload = new();
-    private MudGallery gallery = new();
-
-    private async Task OnUploadFiles(IReadOnlyList<IBrowserFile>? files)
-    {
-        if (files is not null)
-        {
-            var images = await ImageHandler.ConvertAsync(files);
-            Model.Images.AddRange(images);
-        }
-    }
     
-    private async Task OnOpenAsync() => await fileUpload.OpenFilePickerAsync();
+    private MudGallery gallery = new();
 
     private async Task OnEditAsync()
     {
