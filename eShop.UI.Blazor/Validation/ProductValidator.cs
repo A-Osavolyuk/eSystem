@@ -49,7 +49,7 @@ public class ProductValidator : Validator<ProductModel>
         return result;
     }
 
-    private IValidator GetValidator(string key)
+    private IValidator? GetValidator(string key)
     {
         return key switch
         {
@@ -57,12 +57,14 @@ public class ProductValidator : Validator<ProductModel>
             "Variety" => new VarietyValidator(),
             "Grade" => new GradeValidator(),
             "CountryOfOrigin" => new OriginCountryValidator(),
-            _ => throw new NotImplementedException($"Validator not implemented for field {key}")
+            _ => null
         };
     }
 
-    private IEnumerable<string> Validate(IValidator validator, string value)
+    private IEnumerable<string> Validate(IValidator? validator, string value)
     {
+        if (validator is null) return [];
+        
         var context = new ValidationContext<string>(value);
         var result = validator.Validate(context);
         return result.Errors.Select(x => x.ErrorMessage);
