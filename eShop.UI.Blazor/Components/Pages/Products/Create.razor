@@ -8,13 +8,14 @@
 @attribute [Authorize]
 
 @inject ProductState State
+@inject ProductValidator Validator
 
 <Title Text="Create product"></Title>
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="8">
         <CascadingValue Value="Model">
-            <MudForm Model="Model">
+            <MudForm Model="Model" Validation="Validator.ValidateValue">
                 <MudGrid Spacing="1" Justify="Justify.Center">
                     <MudItem xs="4">
                         <Images Model="Model"/>
