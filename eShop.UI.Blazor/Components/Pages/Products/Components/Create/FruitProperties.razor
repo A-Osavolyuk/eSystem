@@ -1,4 +1,6 @@
-﻿<MudGrid Spacing="1" Justify="Justify.Center">
+﻿@if (Properties.Count > 0)
+{
+    <MudGrid Spacing="1" Justify="Justify.Center">
     <MudItem xs="12">
         <MudTextField
             T="string"
@@ -106,11 +108,37 @@
             Label="Organic"/>
     </MudItem>
 </MudGrid>
+}
 
 @code {
     [Parameter] public required Dictionary<string, object> Properties { get; set; }
 
     private List<string> RipenessStages { get; set; } = ["Unripe", "Partially ripe", "Ripe", "Overripe", "Spoiled"];
+
+    protected override void OnInitialized()
+    {
+        Properties = new()
+        {
+            { "Color", string.Empty },
+            { "Variety", string.Empty },
+            { "CountryOfOrigin", string.Empty },
+            { "RipenessStage", string.Empty },
+            { "StorageTemperature", string.Empty },
+            { "Grade", string.Empty },
+            { "RequiresRefrigeration", false },
+            { "ContainsSeeds", false },
+            { "IsTropical", false },
+            { "IsOrganic", false },
+        };
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (Properties.Count > 0 && firstRender)
+        {
+            StateHasChanged();
+        }
+    }
 
     private void OnChange(string code, object value)
     {
@@ -122,4 +150,5 @@
         var value = Convert.ToBoolean(Properties[code]);
         Properties[code] = !value;
     }
+
 }

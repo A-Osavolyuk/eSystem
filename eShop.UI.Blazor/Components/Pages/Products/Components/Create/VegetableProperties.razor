@@ -1,4 +1,6 @@
-﻿<MudGrid Spacing="1" Justify="Justify.Center">
+﻿@if (Properties.Count > 0)
+{
+    <MudGrid Spacing="1" Justify="Justify.Center">
     <MudItem xs="12">
         <MudTextField
             T="string"
@@ -89,15 +91,15 @@
     </MudItem>
     <MudItem xs="6" Class="text-start">
         <MudCheckBox
-            Value="@Convert.ToBoolean(Properties["ContainsSeeds"])"
-            @onclick="@(() => OnChange("ContainsSeeds"))"
-            Label="Contains seeds"/>
+            Value="@Convert.ToBoolean(Properties["IsLeafy"])"
+            @onclick="@(() => OnChange("IsLeafy"))"
+            Label="Leafy"/>
     </MudItem>
     <MudItem xs="6" Class="text-start">
         <MudCheckBox
-            Value="@Convert.ToBoolean(Properties["IsWildHarvested"])"
-            @onclick="@(() => OnChange("IsWildHarvested"))"
-            Label="Wild harvested"/>
+            Value="@Convert.ToBoolean(Properties["IsRootVegetable"])"
+            @onclick="@(() => OnChange("IsRootVegetable"))"
+            Label="Root vegetable"/>
     </MudItem>
     <MudItem xs="6" Class="text-start">
         <MudCheckBox
@@ -106,12 +108,38 @@
             Label="Organic"/>
     </MudItem>
 </MudGrid>
+}
 
 @code {
     [Parameter] public required Dictionary<string, object> Properties { get; set; }
     
     private List<string> RipenessStages { get; set; } = ["Unripe", "Partially ripe", "Ripe", "Overripe", "Spoiled"];
-    
+
+    protected override void OnInitialized()
+    {
+        Properties = new()
+        {
+            { "Color", string.Empty },
+            { "Variety", string.Empty },
+            { "CountryOfOrigin", string.Empty },
+            { "RipenessStage", string.Empty },
+            { "StorageTemperature", string.Empty },
+            { "Grade", string.Empty },
+            { "RequiresRefrigeration", false },
+            { "IsLeafy", false },
+            { "IsRootVegetable", false },
+            { "IsOrganic", false },
+        };
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (Properties.Count > 0 && firstRender)
+        {
+            StateHasChanged();
+        }
+    }
+
     private void OnChange(string code, object value)
     {
         Properties[code] = value;
