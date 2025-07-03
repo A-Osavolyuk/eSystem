@@ -50,6 +50,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasKey(x => x.Id);
             
             e.Property(x => x.Name).HasMaxLength(128);
+            e.Property(x => x.Description).HasMaxLength(3000);
             e.Property(p => p.Price).HasPrecision(18, 4);
             
             e.HasOne(x => x.Unit)
