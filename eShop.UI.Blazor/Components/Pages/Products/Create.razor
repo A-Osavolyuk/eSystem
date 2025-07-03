@@ -25,12 +25,9 @@
                             <MudItem xs="12">
                                 <GeneralProperties Model="Model"/>
                             </MudItem>
-                            @if (!string.IsNullOrEmpty(Model.Type.Name))
-                            {
-                                <MudItem xs="12">
-                                    <Properties Model="Model"/>
-                                </MudItem>
-                            }
+                            <MudItem xs="12">
+                                <Properties Model="Model"/>
+                            </MudItem>
                             <MudItem xs="12">
                                 <MudPaper Class="pa-3" Outlined="true">
                                     <MudGrid Justify="Justify.Center">
@@ -65,7 +62,7 @@
     [SupplyParameterFromForm] private ProductModel Model { get; set; } = new();
 
     private MudForm form = new();
-    
+
     protected override void OnInitialized()
     {
         State.OnChange += StateHasChanged;
@@ -77,7 +74,6 @@
 
         if (form.IsValid)
         {
-            
         }
     }
 
