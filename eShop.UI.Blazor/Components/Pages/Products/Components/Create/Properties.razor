@@ -16,9 +16,9 @@
             <MudItem xs="12">
                @switch (Model.Type.Name)
                {
-                  case "Fruit": <FruitProperties Properties="Model.Properties"/> break;
-                  case "Vegetable": <VegetableProperties Properties="Model.Properties"/> break;
-                  case "Berry": <BerryProperties Properties="Model.Properties"/> break;
+                  case "Fruit": <FruitProperties Model="Model"/> break;
+                  case "Vegetable": <VegetableProperties Model="Model"/> break;
+                  case "Berry": <BerryProperties Model="Model"/> break;
                }
             </MudItem>
          </MudGrid>

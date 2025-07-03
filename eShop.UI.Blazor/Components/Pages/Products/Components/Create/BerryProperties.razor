@@ -1,10 +1,10 @@
-﻿@if (Properties.Count > 0)
+﻿@if (Model.Properties.Count > 0)
 {
     <MudGrid Spacing="1" Justify="Justify.Center">
     <MudItem xs="12">
         <MudTextField
             T="string"
-            Value="@Properties["Color"].ToString()"
+            Value="@Model.Properties["Color"].ToString()"
             ValueChanged="@((value) => OnChange("Color", value))"
             Label="Color"
             Variant="Variant.Outlined"
@@ -17,7 +17,7 @@
     <MudItem xs="12">
         <MudTextField
             T="string"
-            Value="@Properties["Variety"].ToString()"
+            Value="@Model.Properties["Variety"].ToString()"
             ValueChanged="@((value) => OnChange("Variety", value))"
             Label="Variety"
             Variant="Variant.Outlined"
@@ -30,7 +30,7 @@
     <MudItem xs="12">
         <MudTextField
             T="string"
-            Value="@Properties["Grade"].ToString()"
+            Value="@Model.Properties["Grade"].ToString()"
             ValueChanged="@((value) => OnChange("Grade", value))"
             Label="Grade"
             Variant="Variant.Outlined"
@@ -43,7 +43,7 @@
     <MudItem xs="12">
         <MudTextField
             T="string"
-            Value="@Properties["CountryOfOrigin"].ToString()"
+            Value="@Model.Properties["CountryOfOrigin"].ToString()"
             ValueChanged="@((value) => OnChange("CountryOfOrigin", value))"
             Label="Country of origin"
             Variant="Variant.Outlined"
@@ -56,7 +56,7 @@
     <MudItem xs="12">
         <MudSelect
             T="string"
-            Value="@Properties["RipenessStage"].ToString()"
+            Value="@Model.Properties["RipenessStage"].ToString()"
             ValueChanged="@((value) => OnChange("RipenessStage", value))"
             Label="Ripeness stage"
             Variant="Variant.Outlined"
@@ -73,7 +73,7 @@
     <MudItem xs="12">
         <MudTextField
             T="string"
-            Value="@Properties["StorageTemperature"].ToString()"
+            Value="@Model.Properties["StorageTemperature"].ToString()"
             ValueChanged="@((value) => OnChange("StorageTemperature", value))"
             Label="Storage temperature"
             Variant="Variant.Outlined"
@@ -85,25 +85,25 @@
     </MudItem>
     <MudItem xs="6" Class="text-start">
         <MudCheckBox
-            Value="@Convert.ToBoolean(Properties["RequiresRefrigeration"])"
+            Value="@Convert.ToBoolean(Model.Properties["RequiresRefrigeration"])"
             @onclick="@(() => OnChange("RequiresRefrigeration"))"
             Label="Requires refrigeration"/>
     </MudItem>
     <MudItem xs="6" Class="text-start">
         <MudCheckBox
-            Value="@Convert.ToBoolean(Properties["ContainsSeeds"])"
+            Value="@Convert.ToBoolean(Model.Properties["ContainsSeeds"])"
             @onclick="@(() => OnChange("ContainsSeeds"))"
             Label="Contains seeds"/>
     </MudItem>
     <MudItem xs="6" Class="text-start">
         <MudCheckBox
-            Value="@Convert.ToBoolean(Properties["IsWildHarvested"])"
+            Value="@Convert.ToBoolean(Model.Properties["IsWildHarvested"])"
             @onclick="@(() => OnChange("IsWildHarvested"))"
             Label="Wild harvested"/>
     </MudItem>
     <MudItem xs="6" Class="text-start">
         <MudCheckBox
-            Value="@Convert.ToBoolean(Properties["IsOrganic"])"
+            Value="@Convert.ToBoolean(Model.Properties["IsOrganic"])"
             @onclick="@(() => OnChange("IsOrganic"))"
             Label="Organic"/>
     </MudItem>
@@ -111,13 +111,13 @@
 }
 
 @code {
-    [Parameter] public required Dictionary<string, object> Properties { get; set; }
+    [Parameter] public required ProductModel Model { get; set; }
 
     private List<string> RipenessStages { get; set; } = ["Unripe", "Partially ripe", "Ripe", "Overripe", "Spoiled"];
 
     protected override void OnInitialized()
     {
-        Properties = new()
+        Model.Properties = new()
         {
             { "Color", string.Empty },
             { "Variety", string.Empty },
@@ -134,7 +134,7 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (Properties.Count > 0 && firstRender)
+        if (Model.Properties.Count > 0 && firstRender)
         {
             StateHasChanged();
         }
@@ -142,12 +142,12 @@
 
     private void OnChange(string code, object value)
     {
-        Properties[code] = value;
+        Model.Properties[code] = value;
     }
     
     private void OnChange(string code)
     {
-        var value = Convert.ToBoolean(Properties[code]);
-        Properties[code] = !value;
+        var value = Convert.ToBoolean(Model.Properties[code]);
+        Model.Properties[code] = !value;
     }
 }
