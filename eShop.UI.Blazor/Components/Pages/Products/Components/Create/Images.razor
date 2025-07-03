@@ -61,12 +61,12 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var parameters = new DialogParameters<EditImagesDialog>()
+        var parameters = new DialogParameters<ImagesDialog>()
         {
             { x => x.Model, Model }
         };
 
-        var dialog = await DialogService.ShowAsync<EditImagesDialog>("Edit images dialog", parameters, options);
+        var dialog = await DialogService.ShowAsync<ImagesDialog>("Images dialog", parameters, options);
         var result = await dialog.Result;
 
         if (result is not null && !result.Canceled)
