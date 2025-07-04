@@ -2,6 +2,7 @@
 @inject IUnitService UnitService
 @inject IPriceService PriceService
 @inject ICategoryService CategoryService
+@inject ICurrencyService CurrencyService
 @inject ISnackbar Snackbar
 @inject ProductState State
 
@@ -70,7 +71,7 @@
                         }
                     </MudSelect>
                 </MudItem>
-                <MudItem xs="6">
+                <MudItem xs="4">
                     <MudNumericField
                         T="decimal?"
                         Label="Price"
@@ -81,7 +82,7 @@
                         Immediate="true"
                         Clearable="true"/>
                 </MudItem>
-                <MudItem xs="6">
+                <MudItem xs="4">
                     <MudSelect
                         T="Guid?"
                         Label="Price per"
@@ -94,6 +95,22 @@
                         @foreach (var type in PriceTypes)
                         {
                             <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudSelect
+                        T="Guid?"
+                        Label="Currency"
+                        For="() => Model.Currency.Id"
+                        Value="Model.Currency.Id"
+                        ValueChanged="@((value) => OnCurrencyChanged(value))"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true">
+                        @foreach (var type in Currencies)
+                        {
+                            <MudSelectItem T="Guid?" Value="type.Id">@($"{type.Name} ({type.Code}, {type.Sign})")</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
@@ -142,6 +159,7 @@
     private List<UnitDto> Units { get; set; } = [];
     private List<PriceTypeDto> PriceTypes { get; set; } = [];
     private List<CategoryDto> Categories { get; set; } = [];
+    private List<CurrencyDto> Currencies { get; set; } = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -151,6 +169,7 @@
             await LoadTypesAsync();
             await LoadPriceTypesAsync();
             await LoadCategoriesAsync();
+            await LoadCurrenciesAsync();
 
             StateHasChanged();
         }
@@ -205,6 +224,20 @@
         if (result.Success)
         {
             Categories = result.Get<List<CategoryDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task LoadCurrenciesAsync()
+    {
+        var result = await CurrencyService.GetAllAsync();
+
+        if (result.Success)
+        {
+            Currencies = result.Get<List<CurrencyDto>>()!;
         }
         else
         {
@@ -274,5 +307,21 @@
             State.Change();
         }
     }
+    
+    private void OnCurrencyChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var category = Currencies.Find(x => x.Id == value)!;
 
+            Model.Currency = new CurrencyModel()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Sign = category.Sign
+            };
+
+            State.Change();
+        }
+    }
 }

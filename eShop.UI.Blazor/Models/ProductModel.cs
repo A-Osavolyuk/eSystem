@@ -10,6 +10,7 @@ public class ProductModel
     public UnitModel Unit { get; set; } = new();
     public PriceTypeModel PriceType { get; set; } = new();
     public CategoryModel Category { get; set; } = new();
+    public CurrencyModel Currency { get; set; } = new();
     public Dictionary<string, object> Properties { get; set; } = [];
     public List<ImageModel> Images { get; set; } = [];
 }
