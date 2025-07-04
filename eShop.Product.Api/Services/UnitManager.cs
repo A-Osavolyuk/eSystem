@@ -1,5 +1,6 @@
 ﻿namespace eShop.Product.Api.Services;
 
+[Injectable(typeof(IUnitManager), ServiceLifetime.Scoped)]
 public class UnitManager(AppDbContext context) : IUnitManager
 {
     private readonly AppDbContext context = context;

@@ -1,5 +1,6 @@
 ﻿namespace eShop.Product.Api.Services;
 
+[Injectable(typeof(ICategoryManager), ServiceLifetime.Scoped)]
 public class CategoryManager(AppDbContext context) : ICategoryManager
 {
     private readonly AppDbContext context = context;

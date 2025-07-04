@@ -3,6 +3,7 @@ using StackExchange.Redis;
 
 namespace eShop.Product.Api.Services;
 
+[Injectable(typeof(ICacheService), ServiceLifetime.Scoped)]
 public class CacheService(IConnectionMultiplexer redis) : ICacheService
 {
     private readonly IDatabase database = redis.GetDatabase();

@@ -12,7 +12,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddServiceDefaults();
         builder.AddJwtAuthentication();
-        builder.AddDependencyInjection();
         builder.AddVersioning();
         builder.AddMessageBus();
         builder.AddValidation();
@@ -21,6 +20,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddMsSqlDb();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
+        builder.AddServices<IAssemblyMarker>();
 
         builder.Services.AddControllers();
     }
@@ -55,16 +55,6 @@ public static class HostApplicationBuilderExtensions
             c.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
             c.AddOpenBehavior(typeof(TransactionBehaviour<,>));
         });
-    }
-    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddScoped<ICacheService, CacheService>();
-        builder.Services.AddScoped<IProductManager, ProductManager>();
-        builder.Services.AddScoped<ITypeManager, TypeManager>();
-        builder.Services.AddScoped<ICategoryManager, CategoryManager>();
-        builder.Services.AddScoped<IUnitManager, UnitManager>();
-        builder.Services.AddScoped<IPriceManager, PriceManager>();
-        builder.Services.AddScoped<ICurrencyManager, CurrencyManager>();
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)

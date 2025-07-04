@@ -1,5 +1,6 @@
 ﻿namespace eShop.Product.Api.Services;
 
+[Injectable(typeof(IProductManager), ServiceLifetime.Scoped)]
 public class ProductManager(AppDbContext context) : IProductManager
 {
     private readonly AppDbContext context = context;

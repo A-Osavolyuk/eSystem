@@ -1,4 +1,5 @@
-﻿global using eShop.Application.Extensions;
+﻿global using eShop.Application.Attributes;
+global using eShop.Application.Extensions;
 global using eShop.Application.Utilities;
 global using eShop.Domain.Abstraction.Data;
 global using eShop.Domain.Common.API;

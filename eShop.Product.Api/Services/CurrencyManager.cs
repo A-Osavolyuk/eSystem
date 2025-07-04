@@ -1,5 +1,6 @@
 ﻿namespace eShop.Product.Api.Services;
 
+[Injectable(typeof(ICurrencyManager), ServiceLifetime.Scoped)]
 public class CurrencyManager(AppDbContext context) : ICurrencyManager
 {
     private readonly AppDbContext context = context;
