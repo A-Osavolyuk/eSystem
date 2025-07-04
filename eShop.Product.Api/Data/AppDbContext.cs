@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<UnitEntity> Units { get; set; }
     public DbSet<CurrencyEntity> Currency { get; set; }
+    public DbSet<BrandEntity> Brands { get; set; }
     public DbSet<PriceTypeEntity> PriceType { get; set; }
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<FruitProductEntity> Fruits { get; set; }
@@ -16,6 +17,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<BrandEntity>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(64);
+            e.Property(x => x.Description).HasMaxLength(3000);
+            e.Property(x => x.WebsiteUrl).HasMaxLength(128);
+            e.Property(x => x.LogoUrl).HasMaxLength(1500);
+            e.Property(x => x.Country).HasMaxLength(64);
+        });
+        
         builder.Entity<CurrencyEntity>(e =>
         {
             e.HasKey(x => x.Id);
