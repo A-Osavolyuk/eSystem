@@ -18,9 +18,9 @@ public class RolePermissionSeed : Seed<RolePermissionEntity>
             new() { RoleId = Guid.Parse("370b1519-9e73-4676-814c-e21433ceb424"), PermissionId = Guid.Parse("1473d3b4-ea69-4637-b35e-b3e87d3f8d87") },
             
             // Moderator access
-            new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231") },
-            new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231") },
-            new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231") },
+            new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("791fabb6-8370-4dcf-8adf-693e478404c4") },
+            new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("1f523f32-a423-4f84-ab2f-00dc568aaa62") },
+            new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("3ac2c17e-02cd-40a9-991b-df068b18a0aa") },
             new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("cd00c3b1-201a-4e25-ae09-d2ad9a81122b") },
             new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("28974878-6f22-4abb-8a73-efd12f7f65b4") },
             new() { RoleId = Guid.Parse("52425482-b33d-493f-acb2-aa520d73ce95"), PermissionId = Guid.Parse("0988be01-70fd-4408-b78c-a573492a975c") },

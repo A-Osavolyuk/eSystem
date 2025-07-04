@@ -222,21 +222,21 @@ public class PermissionSeed : Seed<PermissionEntity>
             //Supplier permissions
             new()
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.Parse("791fabb6-8370-4dcf-8adf-693e478404c4"),
                 ResourceId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231"), 
                 Name = "Supplier:Create",
                 Action = ActionType.Create
             },
             new()
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.Parse("1f523f32-a423-4f84-ab2f-00dc568aaa62"),
                 ResourceId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231"), 
                 Name = "Supplier:Delete",
                 Action = ActionType.Delete
             },
             new()
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.Parse("3ac2c17e-02cd-40a9-991b-df068b18a0aa"),
                 ResourceId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231"), 
                 Name = "Supplier:Update",
                 Action = ActionType.Update
