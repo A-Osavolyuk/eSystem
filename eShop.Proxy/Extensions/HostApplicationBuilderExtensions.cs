@@ -102,6 +102,11 @@ public static class HostApplicationBuilderExtensions
                 RouteId = "categories-route", ClusterId = "product-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Category/{**catch-all}" }
             },
+            new RouteConfig
+            {
+                RouteId = "currency-route", ClusterId = "product-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Currency/{**catch-all}" }
+            },
         };
 
         var configuration = builder.Configuration;
