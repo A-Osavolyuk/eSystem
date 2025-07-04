@@ -34,5 +34,12 @@ public static class DbContextExtensions
             await context.PriceType.AddRangeAsync(seed.Get(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
+        if (!await context.Currency.AnyAsync(cancellationToken))
+        {
+            var seed = new CurrencySeed();
+
+            await context.Currency.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }
 }
