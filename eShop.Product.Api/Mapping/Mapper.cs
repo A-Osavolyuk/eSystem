@@ -65,4 +65,18 @@ public static class Mapper
             WebsiteUrl = entity.WebsiteUrl
         };
     }
+    
+    public static SupplierDto Map(SupplierEntity entity)
+    {
+        return new SupplierDto()
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Description = entity.Description,
+            WebsiteUrl = entity.WebsiteUrl,
+            Address = entity.Address,
+            Email = entity.Email,
+            PhoneNumber = entity.PhoneNumber
+        };
+    }
 }
