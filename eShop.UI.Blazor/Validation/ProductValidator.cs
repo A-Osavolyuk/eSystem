@@ -57,6 +57,8 @@ public class ProductValidator : Validator<ProductModel>
             "Variety" => new VarietyValidator(),
             "Grade" => new GradeValidator(),
             "CountryOfOrigin" => new OriginCountryValidator(),
+            "RipenessStage" => new RipenessStageValidator(),
+            "StorageTemperature" => new StorageTemperatureValidator(),
             _ => null
         };
     }

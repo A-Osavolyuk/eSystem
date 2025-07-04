@@ -6,6 +6,6 @@ public class GradeValidator : AbstractValidator<string>
     {
         RuleFor(x => x)
             .NotEmpty().WithMessage("Field is required.")
-            .Length(4, 64).WithMessage("Field length must be between 4 and 64 characters.");
+            .Length(1, 32).WithMessage("Field length must be between 1 and 32 characters.");
     }
 }
