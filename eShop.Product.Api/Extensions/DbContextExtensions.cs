@@ -6,6 +6,20 @@ public static class DbContextExtensions
 {
     public static async Task SeedAsync(this AppDbContext context, CancellationToken cancellationToken = default)
     {
+        if (!await context.Brands.AnyAsync(cancellationToken))
+        {
+            var seed = new BrandSeed();
+
+            await context.Brands.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        if (!await context.Suppliers.AnyAsync(cancellationToken))
+        {
+            var seed = new SupplierSeed();
+
+            await context.Suppliers.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
         if (!await context.Categories.AnyAsync(cancellationToken))
         {
             var seed = new CategorySeed();
