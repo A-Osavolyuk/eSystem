@@ -14,7 +14,7 @@ public class JwtAuthenticationHandler(
 {
     private readonly TokenHandler tokenHandler = tokenHandler;
 
-    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         try
         {
@@ -22,7 +22,7 @@ public class JwtAuthenticationHandler(
 
             if (string.IsNullOrEmpty(token))
             {
-                return AuthenticateResult.NoResult();
+                return Task.FromResult(AuthenticateResult.NoResult());
             }
 
             var rawToken = tokenHandler.ReadToken(token)!;
@@ -31,11 +31,11 @@ public class JwtAuthenticationHandler(
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, JwtBearerDefaults.AuthenticationScheme);
             
-            return AuthenticateResult.Success(ticket);
+            return Task.FromResult(AuthenticateResult.Success(ticket));
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            return AuthenticateResult.NoResult();
+            return Task.FromResult(AuthenticateResult.NoResult());
         }
     }
 

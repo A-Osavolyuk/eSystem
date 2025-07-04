@@ -111,7 +111,7 @@ public class JwtAuthenticationStateProvider(
             NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
             return await Task.FromResult(anonymous);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return await Task.FromResult(anonymous);
         }
