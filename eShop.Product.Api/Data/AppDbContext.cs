@@ -21,7 +21,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasKey(x => x.Id);
             e.Property(x => x.Name).HasMaxLength(64);
             e.Property(x => x.Code).HasMaxLength(16);
-            e.Property(x => x.Symbol).HasMaxLength(4);
+            e.Property(x => x.Sign).HasMaxLength(4);
         });
         
         builder.Entity<UnitEntity>(e =>
