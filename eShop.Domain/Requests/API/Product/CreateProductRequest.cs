@@ -8,5 +8,8 @@ public class CreateProductRequest
     public Guid TypeId { get; set; }
     public Guid UnitId { get; set; }
     public Guid PriceTypeId { get; set; }
+    public Guid CurrencyId { get; set; }
+    public Guid BrandId { get; set; }
+    public Guid SupplierId { get; set; }
     public Dictionary<string, object> Properties { get; set; } = [];
 }
