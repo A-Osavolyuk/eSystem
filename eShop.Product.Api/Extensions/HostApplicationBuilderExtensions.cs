@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization.Metadata;
+using eShop.Application.Security.Authorization.Requirements;
 using eShop.Domain.Interfaces.API;
 using eShop.Domain.Requests.API.Product;
 using eShop.Product.Api.Services;
@@ -12,6 +13,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddServiceDefaults();
         builder.AddJwtAuthentication();
+        builder.AddAuthorization();
         builder.AddVersioning();
         builder.AddMessageBus();
         builder.AddValidation();
@@ -67,5 +69,16 @@ public static class HostApplicationBuilderExtensions
                 cfg.Host(connectionString);
             });
         });
+    }
+
+    private static void AddAuthorization(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddAuthorizationBuilder()
+            .AddPolicy("DeleteBrandPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Brand:Delete")))
+            .AddPolicy("CreateBrandPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Brand:Create")))
+            .AddPolicy("UpdateBrandPolicy", policy => policy.Requirements.Add(new PermissionRequirement("Brand:Update")))
+            .AddPolicy("DeleteSupplierPolicy", policy => policy.Requirements.Add(new PermissionRequirement("supplier:Delete")))
+            .AddPolicy("CreateSupplierPolicy", policy => policy.Requirements.Add(new PermissionRequirement("supplier:Create")))
+            .AddPolicy("UpdateSupplierPolicy", policy => policy.Requirements.Add(new PermissionRequirement("supplier:Update")));
     }
 }
