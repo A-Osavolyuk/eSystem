@@ -1,6 +1,8 @@
-﻿using eShop.Domain.Common.Security;
+﻿using eShop.Application.Attributes;
+using eShop.Domain.Common.Security;
+using Microsoft.AspNetCore.Authorization;
 
-namespace eShop.Auth.Api.Security.Authorization;
+namespace eShop.Application.Security.Authorization.Requirements;
 
 public class PermissionRequirement(string permissionName) : IAuthorizationRequirement
 {

@@ -1,4 +1,5 @@
-﻿using eShop.Auth.Api.Security.Schemes;
+﻿using eShop.Application.Security.Authorization.Requirements;
+using eShop.Auth.Api.Security.Schemes;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
