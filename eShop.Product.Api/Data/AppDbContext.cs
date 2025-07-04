@@ -77,7 +77,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(x => x.CountryOfOrigin).HasMaxLength(64);
             e.Property(x => x.RipenessStage).HasMaxLength(64);
             e.Property(x => x.StorageTemperature).HasMaxLength(64);
-            e.Property(x => x.Grade).HasMaxLength(64);
+            e.Property(x => x.Grade).HasMaxLength(32);
         });
         
         builder.Entity<VegetableProductEntity>(e =>
@@ -89,7 +89,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(x => x.CountryOfOrigin).HasMaxLength(64);
             e.Property(x => x.RipenessStage).HasMaxLength(64);
             e.Property(x => x.StorageTemperature).HasMaxLength(64);
-            e.Property(x => x.Grade).HasMaxLength(64);
+            e.Property(x => x.Grade).HasMaxLength(32);
         });
         
         builder.Entity<BerryProductEntity>(e =>
@@ -101,7 +101,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(x => x.CountryOfOrigin).HasMaxLength(64);
             e.Property(x => x.RipenessStage).HasMaxLength(64);
             e.Property(x => x.StorageTemperature).HasMaxLength(64);
-            e.Property(x => x.Grade).HasMaxLength(64);
+            e.Property(x => x.Grade).HasMaxLength(32);
         });
     }
 }
