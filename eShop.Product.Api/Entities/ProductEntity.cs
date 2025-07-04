@@ -3,15 +3,17 @@
 public class ProductEntity : IEntity
 {
     public Guid Id { get; set; }
+    public Guid TypeId { get; set; }
+    public Guid UnitId { get; set; }
+    public Guid PriceTypeId { get; set; }
+    public Guid CurrencyId { get; set; }
+    public Guid BrandId { get; set; }
+    public Guid SupplierId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public long Article { get; set; }
     public decimal Price { get; set; }
     public int QuantityInStock { get; set; }
-    public Guid TypeId { get; set; }
-    public Guid UnitId { get; set; }
-    public Guid PriceTypeId { get; set; }
-    public Guid CurrencyId { get; set; }
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }
 
@@ -19,4 +21,6 @@ public class ProductEntity : IEntity
     public UnitEntity? Unit { get; set; }
     public PriceTypeEntity? PriceType { get; set; }
     public CurrencyEntity? Currency { get; set; }
+    public BrandEntity? Brand { get; set; }
+    public SupplierEntity? Supplier { get; set; }
 }

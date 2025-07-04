@@ -102,6 +102,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasOne(x => x.Currency)
                 .WithMany()
                 .HasForeignKey(x => x.CurrencyId);
+            
+            e.HasOne(x => x.Brand)
+                .WithMany()
+                .HasForeignKey(x => x.BrandId);
+            
+            e.HasOne(x => x.Supplier)
+                .WithMany()
+                .HasForeignKey(x => x.SupplierId);
         });
 
         builder.Entity<FruitProductEntity>(e =>
