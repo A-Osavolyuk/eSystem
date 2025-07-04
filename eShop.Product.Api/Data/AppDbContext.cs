@@ -9,7 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<UnitEntity> Units { get; set; }
     public DbSet<CurrencyEntity> Currency { get; set; }
     public DbSet<BrandEntity> Brands { get; set; }
-    public DbSet<SupplierEntity> Supplier { get; set; }
+    public DbSet<SupplierEntity> Suppliers { get; set; }
     public DbSet<PriceTypeEntity> PriceType { get; set; }
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<FruitProductEntity> Fruits { get; set; }
