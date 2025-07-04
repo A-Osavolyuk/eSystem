@@ -6,8 +6,7 @@ public class PermissionSeed : Seed<PermissionEntity>
     {
         return
         [
-            #region Account
-
+            //Account permissions
             new()
             {
                 Id = Guid.Parse("b2c8c2b7-0c88-47cd-9870-1638c1b022c3"),
@@ -43,11 +42,8 @@ public class PermissionSeed : Seed<PermissionEntity>
                 Name = "Account:All",
                 Action = ActionType.All
             },
-
-            #endregion
-
-            #region Roles
-
+            
+            //Role permissions
             new()
             {
                 Id = Guid.CreateVersion7(),
@@ -97,11 +93,8 @@ public class PermissionSeed : Seed<PermissionEntity>
                 Name = "Role:All",
                 Action = ActionType.All
             },
-
-            #endregion
-
-            #region Permission
-
+            
+            //Permissions permissions
             new()
             {
                 Id = Guid.CreateVersion7(),
@@ -151,11 +144,8 @@ public class PermissionSeed : Seed<PermissionEntity>
                 Name = "Permission:All",
                 Action = ActionType.All
             },
-
-            #endregion
-
-            #region Users
-
+            
+            //User permissions
             new()
             {
                 Id = Guid.CreateVersion7(),
@@ -205,8 +195,75 @@ public class PermissionSeed : Seed<PermissionEntity>
                 Name = "User:All",
                 Action = ActionType.All
             },
-
-            #endregion
+            
+            //Brand permissions
+            new()
+            {
+                Id = Guid.Parse("cd00c3b1-201a-4e25-ae09-d2ad9a81122b"),
+                ResourceId = Guid.Parse("5201d4b1-d6bf-488b-b925-7a5f8d1c8a0d"), 
+                Name = "Brand:Create",
+                Action = ActionType.Create
+            },
+            new()
+            {
+                Id = Guid.Parse("28974878-6f22-4abb-8a73-efd12f7f65b4"),
+                ResourceId = Guid.Parse("5201d4b1-d6bf-488b-b925-7a5f8d1c8a0d"), 
+                Name = "Brand:Delete",
+                Action = ActionType.Delete
+            },
+            new()
+            {
+                Id = Guid.Parse("0988be01-70fd-4408-b78c-a573492a975c"),
+                ResourceId = Guid.Parse("5201d4b1-d6bf-488b-b925-7a5f8d1c8a0d"), 
+                Name = "Brand:Update",
+                Action = ActionType.Update
+            },
+            
+            //Supplier permissions
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ResourceId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231"), 
+                Name = "Supplier:Create",
+                Action = ActionType.Create
+            },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ResourceId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231"), 
+                Name = "Supplier:Delete",
+                Action = ActionType.Delete
+            },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ResourceId = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231"), 
+                Name = "Supplier:Update",
+                Action = ActionType.Update
+            },
+            
+            //Product permissions
+            new()
+            {
+                Id = Guid.Parse("2fb162b2-5e7b-4af3-8d9d-08d48ed94d31"),
+                ResourceId = Guid.Parse("9120cce8-d123-4181-8a53-baaa7774599b"), 
+                Name = "Product:Create",
+                Action = ActionType.Create
+            },
+            new()
+            {
+                Id = Guid.Parse("39848c79-7f8d-4abb-9f81-ee25193a5ee5"),
+                ResourceId = Guid.Parse("9120cce8-d123-4181-8a53-baaa7774599b"), 
+                Name = "Product:Delete",
+                Action = ActionType.Delete
+            },
+            new()
+            {
+                Id = Guid.Parse("1473d3b4-ea69-4637-b35e-b3e87d3f8d87"),
+                ResourceId = Guid.Parse("9120cce8-d123-4181-8a53-baaa7774599b"), 
+                Name = "Product:Update",
+                Action = ActionType.Update
+            },
         ];
     }
 }

@@ -34,6 +34,27 @@ public class ResourceSeed : Seed<ResourceEntity>
                 CreateDate = null,
                 UpdateDate = null
             },
+            new ResourceEntity()
+            {
+                Id = Guid.Parse("5201d4b1-d6bf-488b-b925-7a5f8d1c8a0d"),
+                Name = "Brand",
+                CreateDate = null,
+                UpdateDate = null
+            },
+            new ResourceEntity()
+            {
+                Id = Guid.Parse("b4c8a3dc-ca22-4972-a4bc-ac6899936231"),
+                Name = "Supplier",
+                CreateDate = null,
+                UpdateDate = null
+            },
+            new ResourceEntity()
+            {
+                Id = Guid.Parse("9120cce8-d123-4181-8a53-baaa7774599b"),
+                Name = "Product",
+                CreateDate = null,
+                UpdateDate = null
+            },
         ];
     }
 }
