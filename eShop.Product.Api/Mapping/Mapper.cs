@@ -41,4 +41,15 @@ public static class Mapper
             Code = entity.Code
         };
     }
+    
+    public static CurrencyDto Map(CurrencyEntity entity)
+    {
+        return new CurrencyDto()
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Code = entity.Code,
+            Sign = entity.Sign
+        };
+    }
 }
