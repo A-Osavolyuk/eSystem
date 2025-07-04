@@ -38,6 +38,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <Folder Include="Features\Suppliers\Queries\" />
 	  <Folder Include="Validation\" />
 	</ItemGroup>
 

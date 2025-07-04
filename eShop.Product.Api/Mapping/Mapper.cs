@@ -52,4 +52,17 @@ public static class Mapper
             Sign = entity.Sign
         };
     }
+    
+    public static BrandDto Map(BrandEntity entity)
+    {
+        return new BrandDto()
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Country = entity.Country,
+            Description = entity.Description,
+            LogoUrl = entity.LogoUrl,
+            WebsiteUrl = entity.WebsiteUrl
+        };
+    }
 }
