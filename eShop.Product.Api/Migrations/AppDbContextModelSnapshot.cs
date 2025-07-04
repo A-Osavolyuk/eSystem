@@ -17,10 +17,48 @@ namespace eShop.Product.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("ProductVersion", "9.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("eShop.Product.Api.Entities.BrandEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<string>("LogoUrl")
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("WebsiteUrl")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brands");
+                });
 
             modelBuilder.Entity("eShop.Product.Api.Entities.CategoryEntity", b =>
                 {
@@ -107,6 +145,9 @@ namespace eShop.Product.Api.Migrations
                     b.Property<long>("Article")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid>("BrandId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
@@ -133,6 +174,9 @@ namespace eShop.Product.Api.Migrations
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("TypeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -144,9 +188,13 @@ namespace eShop.Product.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BrandId");
+
                     b.HasIndex("CurrencyId");
 
                     b.HasIndex("PriceTypeId");
+
+                    b.HasIndex("SupplierId");
 
                     b.HasIndex("TypeId");
 
@@ -155,6 +203,48 @@ namespace eShop.Product.Api.Migrations
                     b.ToTable("Products", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("eShop.Product.Api.Entities.SupplierEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(18)
+                        .HasColumnType("nvarchar(18)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("WebsiteUrl")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("eShop.Product.Api.Entities.TypeEntity", b =>
@@ -360,6 +450,12 @@ namespace eShop.Product.Api.Migrations
 
             modelBuilder.Entity("eShop.Product.Api.Entities.ProductEntity", b =>
                 {
+                    b.HasOne("eShop.Product.Api.Entities.BrandEntity", "Brand")
+                        .WithMany()
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("eShop.Product.Api.Entities.CurrencyEntity", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
@@ -369,6 +465,12 @@ namespace eShop.Product.Api.Migrations
                     b.HasOne("eShop.Product.Api.Entities.PriceTypeEntity", "PriceType")
                         .WithMany()
                         .HasForeignKey("PriceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Product.Api.Entities.SupplierEntity", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -384,9 +486,13 @@ namespace eShop.Product.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Brand");
+
                     b.Navigation("Currency");
 
                     b.Navigation("PriceType");
+
+                    b.Navigation("Supplier");
 
                     b.Navigation("Type");
 
