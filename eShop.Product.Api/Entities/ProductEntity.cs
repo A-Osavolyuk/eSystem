@@ -11,10 +11,12 @@ public class ProductEntity : IEntity
     public Guid TypeId { get; set; }
     public Guid UnitId { get; set; }
     public Guid PriceTypeId { get; set; }
+    public Guid CurrencyId { get; set; }
     public DateTimeOffset? CreateDate { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }
 
     public TypeEntity? Type { get; set; }
     public UnitEntity? Unit { get; set; }
     public PriceTypeEntity? PriceType { get; set; }
+    public CurrencyEntity? Currency { get; set; }
 }

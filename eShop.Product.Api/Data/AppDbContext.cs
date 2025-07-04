@@ -75,6 +75,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasOne(x => x.PriceType)
                 .WithMany()
                 .HasForeignKey(x => x.PriceTypeId);
+            
+            e.HasOne(x => x.Currency)
+                .WithMany()
+                .HasForeignKey(x => x.CurrencyId);
         });
 
         builder.Entity<FruitProductEntity>(e =>
