@@ -2,6 +2,5 @@
 
 public interface IMessageService
 {
-    public ValueTask SendMessageAsync(SenderType type, string queueName, object? payload,
-        MessageCredentials credentials, CancellationToken cancellationToken = default);
+    public ValueTask SendMessageAsync(SenderType type, Message message, CancellationToken cancellationToken = default);
 }

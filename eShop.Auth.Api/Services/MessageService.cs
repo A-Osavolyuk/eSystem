@@ -8,21 +8,31 @@ namespace eShop.Auth.Api.Services;
 public sealed class MessageService(IBus bus) : IMessageService
 {
     private readonly IBus bus = bus;
-
-    public async ValueTask SendMessageAsync(SenderType type, string queueName, object? payload,
-        MessageCredentials credentials, CancellationToken cancellationToken = default)
+    
+    public async ValueTask SendMessageAsync(SenderType type, Message message, CancellationToken cancellationToken = default)
     {
-        var message = new MessageRequest()
+        var body = message.Build();
+        var credentials = message.Credentials;
+
+        var queue = type switch
+        {
+            SenderType.Email => "email-message",
+            SenderType.Sms => "sms-message",
+            SenderType.Telegram => "telegram-message",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+        
+        var request = new MessageRequest()
         {
             Type = type,
-            Queue = queueName,
-            Payload = payload is null ? [] : ToDictionary(payload),
-            Credentials = ToDictionary(credentials)
+            Queue = queue,
+            Body = body,
+            Credentials = credentials
         };
 
         var address = ToQueueUri("unified-message");
         var endpoint = await bus.GetSendEndpoint(address);
-        await endpoint.Send(message as object, cancellationToken);
+        await endpoint.Send(request as object, cancellationToken);
     }
 
     private Uri ToQueueUri(string queueName) => new($"rabbitmq://localhost/{queueName}");
