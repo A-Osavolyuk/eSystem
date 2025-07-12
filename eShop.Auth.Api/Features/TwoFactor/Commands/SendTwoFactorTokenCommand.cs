@@ -1,7 +1,6 @@
-﻿using eShop.Domain.Abstraction.Messaging.Email;
-using eShop.Domain.Abstraction.Messaging.Sms;
+﻿using eShop.Auth.Api.Messaging.Email;
+using eShop.Auth.Api.Messaging.Sms;
 using eShop.Domain.Common.Security;
-using eShop.Domain.Messages.Sms;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;
@@ -36,24 +35,24 @@ public class SendTwoFactorTokenCommandHandler(
         }
         
         var token = await loginTokenManager.GenerateAsync(user, provider, cancellationToken);
-        var deliveryType = string.Empty;
 
         switch (provider.Name)
         {
             case ProviderTypes.Email:
             {
-                deliveryType = "email address";
-                await messageService.SendMessageAsync(SenderType.Email, "2fa-token", 
-                    new
+                var message = new TwoFactorTokenEmailMessage()
+                {
+                    Credentials = new ()
                     {
-                        Token = token,
-                    },
-                    new EmailCredentials()
-                    {
-                        To = user.Email,
-                        UserName = user.UserName,
-                        Subject = "Two-factor authentication token"
-                    }, cancellationToken);
+                        { "To", user!.Email },
+                        { "Subject", "Two-factor authentication" },
+                        { "UserName", user.Email },
+                    }, 
+                    UserName = user.UserName,
+                    Token = token
+                };
+        
+                await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
                 
                 break;
             }
@@ -61,23 +60,19 @@ public class SendTwoFactorTokenCommandHandler(
             {
                 var message = new TwoFactorTokenSmsMessage()
                 {
-                    Token = token,
-                    Credentials = new SmsCredentials()
+                    Credentials = new ()
                     {
-                        PhoneNumber = user.PhoneNumber
-                    }
+                        { "PhoneNumber", user!.PhoneNumber },
+                    }, 
+                    Token = token
                 };
-                
-                deliveryType = "phone number";
-                
-                await messageService.SendMessageAsync(SenderType.Email, "2fa-token", 
-                    new { Token = token, }, new SmsCredentials() { PhoneNumber = user.PhoneNumber }, 
-                    cancellationToken);
+        
+                await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
                 
                 break;
             }
         }
         
-        return Result.Success($"Two-factor authentication token has been successfully sent. Please check your {deliveryType}");
+        return Result.Success("Two-factor authentication token has been successfully sent");
     }
 }

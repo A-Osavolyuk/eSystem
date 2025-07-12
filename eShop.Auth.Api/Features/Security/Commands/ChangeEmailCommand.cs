@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging.Email;
+﻿using eShop.Auth.Api.Messaging.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -26,31 +26,35 @@ public sealed class RequestChangeEmailCommandHandler(
 
         var oldEmailCode = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Current, cancellationToken);
         var newEmailCode = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.New, cancellationToken);
-
-        await messageService.SendMessageAsync(SenderType.Email, "email-change",
-            new
+        
+        var stepOneMessage = new ChangeEmailMessage()
+        {
+            Credentials = new ()
             {
-                Code = oldEmailCode,
-                NewEmail = request.Request.NewEmail,
-            },
-            new EmailCredentials()
+                { "To", user.Email },
+                { "Subject", "Email change (step one)" },
+                { "UserName", user.UserName },
+            }, 
+            UserName = user.UserName,
+            Code = oldEmailCode,
+            NewEmail = request.Request.NewEmail,
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Email, stepOneMessage, cancellationToken);
+        
+        var stepTwoMessage = new VerifyEmailMessage()
+        {
+            Credentials = new ()
             {
-                To = user.Email,
-                Subject = "Email change (step one)",
-                UserName = user.UserName,
-            }, cancellationToken);
-
-        await messageService.SendMessageAsync(SenderType.Email, "email-verify",
-            new
-            {
-                Code = newEmailCode,
-            },
-            new EmailCredentials()
-            {
-                To = request.Request.NewEmail,
-                Subject = "Email verification (step two)",
-                UserName = user.UserName,
-            }, cancellationToken);
+                { "To", request.Request.NewEmail },
+                { "Subject", "Email verification (step two)" },
+                { "UserName", request.Request.NewEmail },
+            }, 
+            UserName = user.UserName,
+            Code = newEmailCode
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Email, stepTwoMessage, cancellationToken);
 
         return Result.Success();
     }

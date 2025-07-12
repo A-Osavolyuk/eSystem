@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging.Email;
+﻿using eShop.Auth.Api.Messaging.Email;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
@@ -28,17 +28,19 @@ public sealed class ForgotPasswordCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "password-reset", 
-            new
+        var message = new ResetPasswordEmailMessage()
+        {
+            Credentials = new ()
             {
-                Code = code,
-            },
-            new EmailCredentials()
-            {
-                To = request.Request.Email,
-                Subject = "Email verification",
-                UserName = user.UserName!
-            }, cancellationToken);
+                { "To", user.Email },
+                { "Subject", "Password reset" },
+                { "UserName", user.UserName },
+            }, 
+            UserName = user.UserName,
+            Code = code,
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
         var response = new ForgotPasswordResponse()
         {

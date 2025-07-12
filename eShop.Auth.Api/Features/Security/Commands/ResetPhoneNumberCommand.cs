@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging.Email;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -24,18 +23,8 @@ public class ResetPhoneNumberCommandHandler(
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Reset, cancellationToken);
-
-        await messageService.SendMessageAsync(SenderType.Email, "phone-number-reset",
-            new
-            {
-                Code = code
-            },
-            new EmailCredentials()
-            {
-                To = request.Request.NewPhoneNumber,
-                UserName = user.UserName,
-                Subject = "Email reset"
-            }, cancellationToken);
+        
+        //TODO: Reset phone number SMS message
 
         return Result.Success();
     }

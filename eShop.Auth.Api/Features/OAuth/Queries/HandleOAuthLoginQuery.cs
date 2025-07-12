@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using eShop.Domain.Abstraction.Messaging.Email;
+using eShop.Auth.Api.Messaging.Email;
 
 namespace eShop.Auth.Api.Features.OAuth.Queries;
 
@@ -98,19 +98,23 @@ public sealed class HandleOAuthLoginQueryHandler(
             }
 
             var provider = request.Principal.Identity!.AuthenticationType!;
-
-            await messageService.SendMessageAsync(SenderType.Email, "oauth-login",
-                new
-                {
-                    TempPassword = tempPassword,
-                    ProviderName = provider!,
-                },
-                new EmailCredentials()
-                {
-                    To = email,
-                    Subject = $"Account registered with {provider}",
-                    UserName = email,
-                }, cancellationToken);
+            
+            var credentials = new Dictionary<string, string>()
+            {
+                { "To", email },
+                { "Subject", $"Account registered with {provider}" },
+                { "UserName", email },
+            };
+        
+            var message = new OAuthLoginEmailMessage()
+            {
+                Credentials = credentials, 
+                UserName = user.UserName,
+                ProviderName = provider,
+                TempPassword = tempPassword
+            };
+        
+            await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
             var link = await GenerateLinkAsync(user, request.ReturnUri!, cancellationToken);
 

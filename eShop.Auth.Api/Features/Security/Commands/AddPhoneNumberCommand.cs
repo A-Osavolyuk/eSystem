@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging.Sms;
+﻿using eShop.Auth.Api.Messaging.Sms;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -36,9 +36,19 @@ public class AddPhoneNumberCommandHandler(
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Verify, cancellationToken);
-
-        await messageService.SendMessageAsync(SenderType.Sms, "phone-number-verify", new { Code = code },
-            new SmsCredentials() { PhoneNumber = request.Request.PhoneNumber }, cancellationToken);
+        
+        var credentials = new Dictionary<string, string>()
+        {
+            { "PhoneNumber", request.Request.PhoneNumber },
+        };
+        
+        var message = new VerifyPhoneNumberSmsMessage()
+        {
+            Credentials = credentials, 
+            Code = code
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
 
         return Result.Success();
     }

@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging.Email;
+﻿using eShop.Auth.Api.Messaging.Email;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -38,17 +38,19 @@ public sealed class ResendEmailVerificationCodeCommandHandler(
             code = entity.Code;
         }
 
-        await messageService.SendMessageAsync(SenderType.Email, "email-verify", 
-            new
+        var message = new VerifyEmailMessage()
+        {
+            Credentials = new ()
             {
-                Code = code,
-            },
-            new EmailCredentials()
-            {
-                To = request.Request.Email,
-                Subject = "Email verification",
-                UserName = user.UserName!
-            }, cancellationToken);
+                { "To", user!.Email },
+                { "Subject", "Email verification" },
+                { "UserName", user.Email },
+            }, 
+            UserName = user.UserName,
+            Code = code,
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
         return Result.Success("Verification code was successfully resend");
     }

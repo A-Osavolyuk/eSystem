@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging.Sms;
+﻿using eShop.Auth.Api.Messaging.Sms;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -27,13 +27,25 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         var oldPhoneNumberCode = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Current, cancellationToken);
         var newPhoneNumberCode = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.New, cancellationToken);
 
-        var credentials = new SmsCredentials() { PhoneNumber = request.Request.NewPhoneNumber };
+        var stepOneMessage = new ChangePhoneNumberSmsMessage()
+        {
+            Credentials = new ()
+            {
+                { "PhoneNumber", user.PhoneNumber },
+            }, 
+            Code = oldPhoneNumberCode,
+        };
         
-        await messageService.SendMessageAsync(SenderType.Email, "phone-number-change",
-            new { Code = oldPhoneNumberCode, }, credentials, cancellationToken);
-
-        await messageService.SendMessageAsync(SenderType.Email, "phone-number-verify",
-            new { Code = newPhoneNumberCode, }, credentials, cancellationToken);
+        await messageService.SendMessageAsync(SenderType.Sms, stepOneMessage, cancellationToken);
+        
+        var stepTwoMessage = new VerifyPhoneNumberSmsMessage()
+        {
+            Credentials = new ()
+            {
+                { "PhoneNumber", request.Request.NewPhoneNumber },
+            }, 
+            Code = newPhoneNumberCode
+        };
 
         return Result.Success();
     }

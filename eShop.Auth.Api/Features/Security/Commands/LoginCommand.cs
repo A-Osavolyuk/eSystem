@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging.Email;
+﻿using eShop.Auth.Api.Messaging.Email;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
@@ -72,16 +72,20 @@ public sealed class LoginCommandHandler(
                     }
                     
                     var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Recover, cancellationToken);
-                    var payload = new { Code = code };
-                    var credentials = new EmailCredentials()
+                    
+                    var message = new AccountRecoveryEmailMessage()
                     {
-                        Subject = "Account Recovery",
-                        To = user.Email,
-                        UserName = user.UserName
+                        Credentials = new ()
+                        {
+                            { "To", user.Email },
+                            { "Subject", "Account recovery" },
+                            { "UserName", user.UserName },
+                        }, 
+                        UserName = user.UserName,
+                        Code = code,
                     };
-                
-                    await messageService.SendMessageAsync(SenderType.Email, "account-recovery",
-                        payload, credentials, cancellationToken);
+        
+                    await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
                 }
 
                 var response = new LoginResponse()

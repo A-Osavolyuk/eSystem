@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Abstraction.Messaging.Email;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -25,17 +24,7 @@ public class ResetEmailCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, cancellationToken);
 
-        await messageService.SendMessageAsync(SenderType.Email, "email-reset",
-            new
-            {
-                Code = code
-            },
-            new EmailCredentials()
-            {
-                To = request.Request.NewEmail,
-                UserName = user.UserName,
-                Subject = "Email reset"
-            }, cancellationToken);
+        //TODO: Reset email message
 
         return Result.Success();
     }
