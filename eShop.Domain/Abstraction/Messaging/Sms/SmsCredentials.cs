@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Abstraction.Messaging;
+﻿namespace eShop.Domain.Abstraction.Messaging.Sms;
 
 public class SmsCredentials : MessageCredentials
 {

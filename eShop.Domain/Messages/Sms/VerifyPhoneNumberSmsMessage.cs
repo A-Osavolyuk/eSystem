@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Abstraction.Messaging;
+using eShop.Domain.Abstraction.Messaging.Sms;
 
 namespace eShop.Domain.Messages.Sms;
 

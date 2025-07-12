@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using eShop.Domain.Abstraction.Messaging.Email;
 
 namespace eShop.Auth.Api.Features.OAuth.Queries;
 

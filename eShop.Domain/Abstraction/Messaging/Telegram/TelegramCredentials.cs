@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Abstraction.Messaging;
+﻿namespace eShop.Domain.Abstraction.Messaging.Telegram;
 
 public class TelegramCredentials : MessageCredentials
 {
