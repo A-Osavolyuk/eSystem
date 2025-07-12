@@ -56,15 +56,7 @@ public static class HostApplicationBuilderExtensions
             {
                 var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
                 cfg.Host(connectionString);
-
-                cfg.ReceiveEndpoint("sms:phone-number-verify", e => e.ConfigureConsumer<VerifyPhoneNumberConsumer>(context));
-                cfg.ReceiveEndpoint("sms:phone-number-change", e => e.ConfigureConsumer<ChangePhoneNumberConsumer>(context));
-                cfg.ReceiveEndpoint("sms:2fa-token", e => e.ConfigureConsumer<TwoFactorTokenConsumer>(context));
             });
-
-            x.AddConsumer<VerifyPhoneNumberConsumer>();
-            x.AddConsumer<ChangePhoneNumberConsumer>();
-            x.AddConsumer<TwoFactorTokenConsumer>();
         });
     }
 }

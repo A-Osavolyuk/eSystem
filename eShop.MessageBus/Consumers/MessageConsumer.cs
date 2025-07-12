@@ -14,17 +14,17 @@ public class MessageConsumer(
 
     public async Task Consume(ConsumeContext<MessageRequest> context)
     {
-        var request = context.Message;
-        var queueName = $"{request.Type.ToString().ToLower()}:{request.Queue}";
-        var configuration = registry.GetByQueueName(queueName);
-
-        if (configuration is null)
-        {
-            throw new NotSupportedException($"Queue {request.Queue} not supported");
-        }
-
-        var message = MapTo(configuration.MessageType, request.Payload, request.Credentials);
-        await SendAsync(configuration.QueueName, message);
+        // var request = context.Message;
+        // var queueName = $"{request.Type.ToString().ToLower()}:{request.Queue}";
+        // var configuration = registry.GetByQueueName(queueName);
+        //
+        // if (configuration is null)
+        // {
+        //     throw new NotSupportedException($"Queue {request.Queue} not supported");
+        // }
+        //
+        // var message = MapTo(configuration.MessageType, request.Payload, request.Credentials);
+        // await SendAsync(configuration.QueueName, message);
     }
 
     private async Task SendAsync(string queue, object message, CancellationToken cancellationToken = default)

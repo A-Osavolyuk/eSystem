@@ -1,7 +1,4 @@
 ﻿using eShop.Application.Extensions;
-using eShop.Domain.Enums;
-using eShop.Domain.Messages.Email;
-using eShop.Domain.Messages.Sms;
 using eShop.MessageBus.Consumers;
 using eShop.ServiceDefaults;
 using MassTransit;
@@ -20,20 +17,6 @@ public static class HostApplicationBuilderExtension
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)
     {
-        builder.AddMessageBus(cfg =>
-        {
-            cfg.AddQueue<ChangeEmailMessage>("email-change", SenderType.Email);
-            cfg.AddQueue<VerifyEmailMessage>("email-verify", SenderType.Email);
-            cfg.AddQueue<OAuthLoginEmailMessage>("oauth-login", SenderType.Email);
-            cfg.AddQueue<ResetPasswordEmailMessage>("password-reset", SenderType.Email);
-            cfg.AddQueue<TwoFactorTokenEmailMessage>("2fa-token", SenderType.Email);
-            cfg.AddQueue<AccountRecoveryEmailMessage>("account-recovery", SenderType.Email);
-            
-            cfg.AddQueue<ChangePhoneNumberSmsMessage>("phone-number-change", SenderType.Sms);
-            cfg.AddQueue<VerifyPhoneNumberSmsMessage>("phone-number-verify", SenderType.Sms);
-            cfg.AddQueue<TwoFactorTokenSmsMessage>("2fa-token", SenderType.Sms);
-        });
-        
         builder.Services.AddMassTransit(x =>
         {
             x.UsingRabbitMq((context, cfg) =>

@@ -1,9 +1,7 @@
 ﻿// Global using directives
 
-global using eShop.Domain.Messages.Email;
 global using eShop.EmailSender.Api.Extensions;
 global using eShop.EmailSender.Api.Interfaces;
-global using eShop.EmailSender.Api.Mapping;
 global using eShop.EmailSender.Api.Options;
 global using eShop.ServiceDefaults;
 global using MailKit.Net.Smtp;
