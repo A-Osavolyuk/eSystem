@@ -1,5 +1,4 @@
 ﻿using eShop.Domain.Common.Messaging;
-using eShop.Domain.Requests.API.Sms;
 using eShop.SmsSender.Api.Interfaces;
 
 namespace eShop.SmsSender.Api.Consumers;
