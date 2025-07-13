@@ -22,7 +22,8 @@ public class ConfirmResetEmailHandler(
 
         var code = request.Request.Code;
         
-        var codeResult = await codeManager.VerifyAsync(user, code, SenderType.Email, CodeType.Reset, cancellationToken);
+        var codeResult = await codeManager.VerifyAsync(user, code, SenderType.Email, 
+            CodeType.Reset, CodeResource.Email, cancellationToken);
 
         if (!codeResult.Succeeded)
         {

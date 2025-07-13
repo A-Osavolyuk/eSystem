@@ -22,7 +22,7 @@ public sealed class VerifyCodeCommandHandler(
         }
         
         var result = await codeManager.VerifyAsync(user, request.Request.Code, request.Request.Sender, 
-            request.Request.Type, cancellationToken);
+            request.Request.Type, request.Request.Resource, cancellationToken);
 
         return result;
     }

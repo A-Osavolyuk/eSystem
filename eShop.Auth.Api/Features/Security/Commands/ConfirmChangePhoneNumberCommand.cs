@@ -29,7 +29,7 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
         var newPhoneNumberCode = request.Request.NewPhoneNumberCode;
         
         var currentPhoneNumberResult = await codeManager.VerifyAsync(user, currentPhoneNumberCode, 
-            SenderType.Sms, CodeType.Current, cancellationToken);
+            SenderType.Sms, CodeType.Current, CodeResource.PhoneNumber, cancellationToken);
 
         if (!currentPhoneNumberResult.Succeeded)
         {
@@ -37,7 +37,7 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
         }
         
         var newPhoneNumberResult = await codeManager.VerifyAsync(user, newPhoneNumberCode, 
-            SenderType.Sms, CodeType.New, cancellationToken);
+            SenderType.Sms, CodeType.New, CodeResource.PhoneNumber, cancellationToken);
 
         if (!newPhoneNumberResult.Succeeded)
         {

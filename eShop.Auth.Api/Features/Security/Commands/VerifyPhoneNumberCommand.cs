@@ -22,7 +22,7 @@ public sealed class VerifyPhoneNumberCommandHandler(
         }
         
         var result = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Sms, 
-            CodeType.Verify, cancellationToken);
+            CodeType.Verify, CodeResource.PhoneNumber, cancellationToken);
 
         if (!result.Succeeded)
         {

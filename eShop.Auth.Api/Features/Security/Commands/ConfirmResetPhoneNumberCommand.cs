@@ -22,7 +22,8 @@ public class ConfirmResetPhoneNumberCommandHandler(
 
         var code = request.Request.Code;
         
-        var codeResult = await codeManager.VerifyAsync(user, code, SenderType.Sms, CodeType.Reset, cancellationToken);
+        var codeResult = await codeManager.VerifyAsync(user, code, SenderType.Sms, 
+            CodeType.Reset, CodeResource.PhoneNumber, cancellationToken);
 
         if (!codeResult.Succeeded)
         {

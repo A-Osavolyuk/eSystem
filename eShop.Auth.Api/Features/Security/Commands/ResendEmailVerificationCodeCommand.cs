@@ -27,11 +27,13 @@ public sealed class ResendEmailVerificationCodeCommandHandler(
 
         string code;
 
-        var entity = await codeManager.FindAsync(user, SenderType.Email, CodeType.Verify, cancellationToken);
+        var entity = await codeManager.FindAsync(user, SenderType.Email, 
+            CodeType.Verify, CodeResource.Email, cancellationToken);
 
         if (entity is null || entity.ExpireDate < DateTime.UtcNow)
         {
-            code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Verify, CodeResource.Email, cancellationToken);
+            code = await codeManager.GenerateAsync(user, SenderType.Email, 
+                CodeType.Verify, CodeResource.Email, cancellationToken);
         }
         else
         {

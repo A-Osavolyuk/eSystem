@@ -28,6 +28,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
             Code = code,
             Type = type,
             Sender = sender,
+            Resource = resource,
             CreateDate = DateTime.UtcNow,
             ExpireDate = DateTime.UtcNow.AddMinutes(10)
         }, cancellationToken);
@@ -37,24 +38,26 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
     }
 
     public async ValueTask<CodeEntity?> FindAsync(UserEntity user, SenderType sender, CodeType type,
-        CancellationToken cancellationToken = default)
+        CodeResource resource, CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes
             .FirstOrDefaultAsync(c => c.UserId == user.Id 
                                       && c.Type == type 
-                                      && c.Sender == sender, cancellationToken);
+                                      && c.Sender == sender 
+                                      && c.Resource == resource, cancellationToken);
 
         return entity;
     }
 
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, CodeType type,
-        CancellationToken cancellationToken = default)
+        CodeResource resource, CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes
             .SingleOrDefaultAsync(x => x.UserId == user.Id
                                        && x.Code == code
                                        && x.Type == type
                                        && x.Sender == sender
+                                       && x.Resource == resource
                                        && x.ExpireDate > DateTime.UtcNow, cancellationToken: cancellationToken);
 
         if (entity is null)

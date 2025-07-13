@@ -24,7 +24,7 @@ public sealed class VerifyEmailCommandHandler(
         }
         
         var result = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Email, 
-            CodeType.Verify, cancellationToken);
+            CodeType.Verify, CodeResource.Email, cancellationToken);
 
         if (!result.Succeeded)
         {

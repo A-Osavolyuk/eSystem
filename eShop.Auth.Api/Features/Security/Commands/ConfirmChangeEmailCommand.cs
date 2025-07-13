@@ -26,7 +26,7 @@ public sealed class ConfirmChangeEmailCommandHandler(
         }
 
         var currentEmailResult = await codeManager.VerifyAsync(user, request.Request.CurrentEmailCode, 
-            SenderType.Email, CodeType.Current, cancellationToken);
+            SenderType.Email, CodeType.Current, CodeResource.Email, cancellationToken);
 
         if (!currentEmailResult.Succeeded)
         {
@@ -34,7 +34,7 @@ public sealed class ConfirmChangeEmailCommandHandler(
         }
         
         var newEmailResult = await codeManager.VerifyAsync(user, request.Request.NewEmailCode, 
-            SenderType.Email, CodeType.New, cancellationToken);
+            SenderType.Email, CodeType.New, CodeResource.Email, cancellationToken);
         
         if (!newEmailResult.Succeeded)
         {
