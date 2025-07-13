@@ -11,3 +11,4 @@ global using eShop.SmsSender.Api.Services;
 global using MassTransit;
 global using Microsoft.AspNetCore.Mvc;
 global using Response = eShop.Domain.Common.API.Response;
+global using Results = eShop.Domain.Common.API.Results;

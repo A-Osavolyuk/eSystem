@@ -1,9 +1,8 @@
-﻿using eShop.Domain.Requests.API.Sms;
-using eShop.Domain.Responses.API.Sms;
+﻿using eShop.Domain.Common.API;
 
 namespace eShop.SmsSender.Api.Interfaces;
 
 public interface ISmsService
 {
-    public Task<SingleMessageResponse> SendSingleMessage(SingleMessageRequest request);
+    public Task<Result> SendMessageAsync(string phoneNumber, string message);
 }

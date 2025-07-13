@@ -20,8 +20,4 @@
       <ProjectReference Include="..\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Consumers\" />
-    </ItemGroup>
-
 </Project>

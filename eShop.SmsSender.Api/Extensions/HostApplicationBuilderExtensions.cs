@@ -1,4 +1,5 @@
-﻿using eShop.SmsSender.Api.Interfaces;
+﻿using eShop.SmsSender.Api.Consumers;
+using eShop.SmsSender.Api.Interfaces;
 using FluentValidation;
 
 namespace eShop.SmsSender.Api.Extensions;
@@ -56,7 +57,11 @@ public static class HostApplicationBuilderExtensions
             {
                 var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
                 cfg.Host(connectionString);
+                
+                cfg.ReceiveEndpoint("sms-message", (e) => e.ConfigureConsumer<SmsConsumer>(context));
             });
+
+            x.AddConsumer<SmsConsumer>();
         });
     }
 }
