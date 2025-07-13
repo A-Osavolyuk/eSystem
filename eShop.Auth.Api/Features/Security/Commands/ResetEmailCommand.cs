@@ -24,7 +24,8 @@ public class ResetEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, cancellationToken);
+        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, 
+            CodeResource.Email, cancellationToken);
 
         var credentials = new Dictionary<string, string>()
         {

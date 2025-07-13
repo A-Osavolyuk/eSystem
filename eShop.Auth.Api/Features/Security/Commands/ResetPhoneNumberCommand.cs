@@ -23,7 +23,8 @@ public class ResetPhoneNumberCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Reset, cancellationToken);
+        var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Reset, 
+            CodeResource.PhoneNumber, cancellationToken);
         
         var credentials = new Dictionary<string, string>()
         {

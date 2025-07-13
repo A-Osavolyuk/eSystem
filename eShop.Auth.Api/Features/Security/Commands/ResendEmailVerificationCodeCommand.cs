@@ -31,7 +31,7 @@ public sealed class ResendEmailVerificationCodeCommandHandler(
 
         if (entity is null || entity.ExpireDate < DateTime.UtcNow)
         {
-            code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Verify, cancellationToken);
+            code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Verify, CodeResource.Email, cancellationToken);
         }
         else
         {

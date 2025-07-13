@@ -61,7 +61,8 @@ public sealed class RegisterCommandHandler(
         
         user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
-        var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Verify, cancellationToken);
+        var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Verify, 
+            CodeResource.Email, cancellationToken);
         
         var message = new VerifyEmailMessage()
         {

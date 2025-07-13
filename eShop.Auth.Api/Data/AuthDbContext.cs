@@ -46,6 +46,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Code).HasMaxLength(6);
             entity.Property(x => x.Type).HasEnumConversion();
             entity.Property(x => x.Sender).HasEnumConversion();
+            entity.Property(x => x.Resource).HasEnumConversion();
         });
 
         builder.Entity<UserRoleEntity>(entity =>

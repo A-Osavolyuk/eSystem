@@ -71,7 +71,8 @@ public sealed class LoginCommandHandler(
                         return lockoutResult;
                     }
                     
-                    var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Recover, cancellationToken);
+                    var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Recover, 
+                        CodeResource.Account, cancellationToken);
                     
                     var message = new AccountRecoveryEmailMessage()
                     {
