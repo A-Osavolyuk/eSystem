@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Extensions;
+using eShop.EmailSender.Api.Consumers;
 using eShop.EmailSender.Api.Services;
 
 namespace eShop.EmailSender.Api.Extensions;
@@ -36,7 +37,11 @@ public static class HostApplicationBuilderExtensions
             {
                 var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
                 cfg.Host(connectionString);
+                
+                cfg.ReceiveEndpoint("email-message", (e) => e.ConfigureConsumer<EmailConsumer>(context));
             });
+
+            x.AddConsumer<EmailConsumer>();
         });
     }
 }
