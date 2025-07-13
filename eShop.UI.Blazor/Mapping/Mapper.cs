@@ -107,7 +107,7 @@ public static class Mapper
     {
         return new()
         {
-            Id = source.Id,
+            UserId = source.Id,
             UserName = source.UserName
         };
     }
@@ -116,7 +116,7 @@ public static class Mapper
     {
         return new()
         {
-            Id = source.Id,
+            UserId = source.Id,
             FirstName = source.FirstName,
             LastName = source.LastName,
             BirthDate = source.BirthDate,
@@ -140,7 +140,7 @@ public static class Mapper
     {
         return new()
         {
-            Id = source.Id,
+            UserId = source.Id,
             Gender = source.Gender,
             BirthDate = source.BirthDate!.Value,
             FirstName = source.FirstName,
@@ -152,7 +152,7 @@ public static class Mapper
     {
         return new()
         {
-            Id = source.Id,
+            UserId = source.Id,
             CurrentPassword = source.CurrentPassword,
             NewPassword = source.NewPassword,
             ConfirmNewPassword = source.ConfirmNewPassword,
@@ -165,7 +165,7 @@ public static class Mapper
         {
             NewPassword = source.NewPassword,
             ConfirmNewPassword = source.ConfirmNewPassword,
-            Id = source.Id
+            UserId = source.Id
         };
     }
 }

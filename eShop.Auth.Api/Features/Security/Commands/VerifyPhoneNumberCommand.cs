@@ -14,11 +14,11 @@ public sealed class VerifyPhoneNumberCommandHandler(
     public async Task<Result> Handle(VerifyPhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.Id, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with ID ${request.Request.Id}");
+            return Results.NotFound($"Cannot find user with ID ${request.Request.UserId}");
         }
         
         var result = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Sms, 

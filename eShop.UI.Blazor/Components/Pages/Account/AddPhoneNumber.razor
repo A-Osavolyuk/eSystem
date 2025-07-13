@@ -149,7 +149,7 @@
             var userId = await LocalStorage.GetAsync<Guid>("userId");
             var request = new AddPhoneNumberRequest()
             {
-                Id = userId, 
+                UserId = userId, 
                 PhoneNumber = AddPhoneNumberModel.PhoneNumber
             };
         
@@ -176,7 +176,7 @@
             var request = new VerifyPhoneNumberRequest()
             {
                 Code = VerifyCodeModel.Code,
-                Id = userId
+                UserId = userId
             };
         
             var result = await SecurityService.VerifyPhoneNumberAsync(request);

@@ -2,6 +2,6 @@
 
 public class SubscribeProviderRequest
 {
-    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public string Provider { get; set; } = string.Empty;
 }

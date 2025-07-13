@@ -2,6 +2,6 @@
 
 public class ResetEmailRequest
 {
-    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public string NewEmail { get; set; } = string.Empty;
 }

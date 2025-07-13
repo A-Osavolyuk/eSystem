@@ -2,6 +2,6 @@
 
 public class AddPhoneNumberRequest
 {
-    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public string PhoneNumber { get; set; } = string.Empty;
 }

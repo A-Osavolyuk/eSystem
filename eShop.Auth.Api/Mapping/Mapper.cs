@@ -11,7 +11,7 @@ public static class Mapper
         return new PersonalDataEntity()
         {
             Id = Guid.CreateVersion7(),
-            UserId = source.Id,
+            UserId = source.UserId,
             FirstName = source.FirstName,
             LastName = source.LastName,
             Gender = source.Gender,

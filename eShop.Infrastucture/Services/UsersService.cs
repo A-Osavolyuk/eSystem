@@ -36,16 +36,16 @@ public class UsersService(
 
     public async ValueTask<Response> ChangeUsernameAsync(ChangeUserNameRequest request) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.Id}/username", Method = HttpMethod.Patch, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/username", Method = HttpMethod.Patch, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
     
     public async ValueTask<Response> ChangePersonalDataAsync(ChangePersonalDataRequest request) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.Id}/personal-data", Method = HttpMethod.Put, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal-data", Method = HttpMethod.Put, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> AddPersonalDataAsync(AddPersonalDataRequest request) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.Id}/personal-data", Method = HttpMethod.Post, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal-data", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 }

@@ -374,7 +374,7 @@
 
     private async Task OnTwoFactorStateChangeAsync()
     {
-        var request = new ChangeTwoFactorStateRequest() { Id = UserModel.Id };
+        var request = new ChangeTwoFactorStateRequest() { UserId = UserModel.Id };
         var result = await TwoFactorService.ChangeStateAsync(request);
 
         if (result.Success)
@@ -396,7 +396,7 @@
 
     private async Task OnSubscribeAsync(string provider)
     {
-        var request = new SubscribeProviderRequest() { Id = UserModel.Id, Provider = provider };
+        var request = new SubscribeProviderRequest() { UserId = UserModel.Id, Provider = provider };
         var result = await ProvidersService.SubscribeProviderAsync(request);
 
         if (result.Success)
@@ -412,7 +412,7 @@
 
     private async Task OnUnsubscribeAsync(string provider)
     {
-        var request = new UnsubscribeProviderRequest() { Id = UserModel.Id, Provider = provider };
+        var request = new UnsubscribeProviderRequest() { UserId = UserModel.Id, Provider = provider };
         var result = await ProvidersService.UnsubscribeProviderAsync(request);
 
         if (result.Success)

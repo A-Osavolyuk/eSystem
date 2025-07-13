@@ -155,7 +155,7 @@
         {
             var request = new ResetPhoneNumberRequest()
             {
-                Id = userId,
+                UserId = userId,
                 NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber
             };
 
@@ -180,7 +180,7 @@
         {
             var request = new ConfirmResetPhoneNumberRequest()
             {
-                Id = userId,
+                UserId = userId,
                 NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
                 Code = ConfirmResetPhoneNumberModel.Code
             };

@@ -14,7 +14,7 @@ public sealed class UpdatePersonalDataCommandHandler(
     public async Task<Result> Handle(ChangePersonalDataCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.Id, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
@@ -22,7 +22,7 @@ public sealed class UpdatePersonalDataCommandHandler(
             {
                 Code = ErrorCode.NotFound,
                 Message = "Not found",
-                Details = $"Cannot find user with ID {request.Request.Id}."
+                Details = $"Cannot find user with ID {request.Request.UserId}."
             });
         }
         
@@ -30,7 +30,7 @@ public sealed class UpdatePersonalDataCommandHandler(
 
         if (personalData is null)
         {
-            return Results.NotFound($"Cannot find personal data of user with ID {request.Request.Id}");
+            return Results.NotFound($"Cannot find personal data of user with ID {request.Request.UserId}");
         }
         
         personalData.FirstName = request.Request.FirstName;

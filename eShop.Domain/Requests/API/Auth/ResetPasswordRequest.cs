@@ -2,7 +2,7 @@
 
 public record ResetPasswordRequest
 {
-    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public string NewPassword { get; set; } = string.Empty;
     public string ConfirmNewPassword { get; set; } = string.Empty;
 }

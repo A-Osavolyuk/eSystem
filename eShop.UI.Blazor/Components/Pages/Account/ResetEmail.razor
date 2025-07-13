@@ -155,7 +155,7 @@
         {
             var request = new ResetEmailRequest()
             {
-                Id = userId,
+                UserId = userId,
                 NewEmail = ResetEmailModel.NewEmail
             };
 
@@ -180,7 +180,7 @@
         {
             var request = new ConfirmResetEmailRequest()
             {
-                Id = userId,
+                UserId = userId,
                 NewEmail = ResetEmailModel.NewEmail,
                 Code = ConfirmResetEmailModel.Code
             };
