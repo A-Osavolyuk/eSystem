@@ -14,7 +14,7 @@ public class OAuthLoginEmailMessage : Message
                          <head>
                              <meta charset="UTF-8">
                              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                             <title>Google sign in</title>
+                             <title>{ProviderName} sign in</title>
                          </head>
                          <body>
                          <div style="border: 1px solid rgb(190, 189, 189); width: 800px; margin: auto; padding: 1px;">

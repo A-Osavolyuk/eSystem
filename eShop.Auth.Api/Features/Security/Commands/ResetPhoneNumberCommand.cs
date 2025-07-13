@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Auth.Api.Messages.Sms;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -24,7 +25,18 @@ public class ResetPhoneNumberCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Reset, cancellationToken);
         
-        //TODO: Reset phone number SMS message
+        var credentials = new Dictionary<string, string>()
+        {
+            { "PhoneNumber", user.PhoneNumber },
+        };
+        
+        var message = new ResetPhoneNumberSmsMessage()
+        {
+            Code = code, 
+            Credentials = credentials
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Sms,  message, cancellationToken);
 
         return Result.Success();
     }

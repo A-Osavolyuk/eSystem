@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Auth.Api.Messages.Email;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -15,6 +16,7 @@ public class ResetEmailCommandHandler(
 
     public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
     {
+        var newEmail = request.Request.NewEmail;
         var user = await userManager.FindByIdAsync(request.Request.Id, cancellationToken);
 
         if (user is null)
@@ -24,7 +26,21 @@ public class ResetEmailCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, cancellationToken);
 
-        //TODO: Reset email message
+        var credentials = new Dictionary<string, string>()
+        {
+            { "To", newEmail },
+            { "Subject", "Email reset" },
+            { "UserName", user.UserName },
+        };
+        
+        var message = new ResetEmailMessage
+        {
+            Code = code, 
+            UserName = user.UserName, 
+            Credentials = credentials
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Email,  message, cancellationToken);
 
         return Result.Success();
     }
