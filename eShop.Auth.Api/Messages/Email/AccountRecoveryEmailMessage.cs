@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Messaging.Email;
+﻿namespace eShop.Auth.Api.Messages.Email;
 
 public class AccountRecoveryEmailMessage : Message
 {

@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Messaging.Sms;
+﻿namespace eShop.Auth.Api.Messages.Sms;
 
 public class ChangePhoneNumberSmsMessage : Message
 {

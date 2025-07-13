@@ -1,9 +1,9 @@
-﻿namespace eShop.Auth.Api.Messaging.Email;
+﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class ResetPasswordEmailMessage : Message
+public class TwoFactorTokenEmailMessage : Message
 {
     public required string UserName { get; set; }
-    public required string Code { get; set; }
+    public required string Token { get; set; }
     
     public override string Build()
     {
@@ -13,7 +13,7 @@ public class ResetPasswordEmailMessage : Message
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Password reset</title>
+                        <title>Two-factor authentication</title>
                     </head>
                     <body>
                     <div style="border: 1px solid rgb(190, 189, 189); width: 800px; margin: auto; padding: 1px;">
@@ -22,23 +22,17 @@ public class ResetPasswordEmailMessage : Message
                         </div>
                         <div style="border: 1px solid rgb(190, 189, 189); width: 100%;"></div>
                         <div style="padding: 50px 100px; margin: auto;">
-                            <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Password reset</h1>
+                            <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Two-factor authentication</h1>
                             <p style="font: 16px Arial, sans-serif; margin:0;">Hello, {UserName}!.</p>
                             <br>
                             <p style="font: 16px Arial, sans-serif; margin: 0;">
-                                We received a request to reset your password. To reset password, please enter code below.
+                                 We received a request to sign in with 2-fa.
                             </p>
                             <br>
-                            <p style="font: 16px Arial, sans-serif; margin: 0;"> 
-                                Your password reset code: {Code}. Will expire in: 10 mins.
-                            </p>
+                            <p style="font: 16px Arial, sans-serif; margin: 0;"> Your 2-fa code: {Token}. Will expire in: 10 mins.</p>
                             <br>
                             <p style="font: 16px Arial, sans-serif; margin: 0;">
-                                Please do not give this code to anyone under any circumstances.
-                            </p>
-                            <br>
-                            <p style="font: 16px Arial, sans-serif; margin: 0;">
-                                If you didn't request a password reset, then you can ignore this letter.
+                                 Please do not give this code to anyone under any circumstances.
                             </p>
                             <br>
                             <p style="font: 16px Arial, sans-serif; margin: 0;">eShop Team.</p>

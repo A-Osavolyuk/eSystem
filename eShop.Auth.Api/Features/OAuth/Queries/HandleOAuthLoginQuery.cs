@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using eShop.Auth.Api.Messaging.Email;
+using eShop.Auth.Api.Messages.Email;
 
 namespace eShop.Auth.Api.Features.OAuth.Queries;
 

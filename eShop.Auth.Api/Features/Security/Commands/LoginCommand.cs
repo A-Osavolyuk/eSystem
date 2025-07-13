@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Messaging.Email;
+﻿using eShop.Auth.Api.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
