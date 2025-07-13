@@ -36,9 +36,12 @@ public sealed class ForgotPasswordCommandHandler(
                 { "To", user.Email },
                 { "Subject", "Password reset" },
                 { "UserName", user.UserName },
-            }, 
-            UserName = user.UserName,
-            Code = code,
+            },
+            Payload = new()
+            {
+                { "Code", code },
+                { "UserName", user.UserName }
+            }
         };
         
         await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);

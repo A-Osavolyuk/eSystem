@@ -98,22 +98,23 @@ public sealed class HandleOAuthLoginQueryHandler(
             }
 
             var provider = request.Principal.Identity!.AuthenticationType!;
-            
-            var credentials = new Dictionary<string, string>()
-            {
-                { "To", email },
-                { "Subject", $"Account registered with {provider}" },
-                { "UserName", email },
-            };
-        
+
             var message = new OAuthLoginEmailMessage()
             {
-                Credentials = credentials, 
-                UserName = user.UserName,
-                ProviderName = provider,
-                TempPassword = tempPassword
+                Credentials = new Dictionary<string, string>()
+                {
+                    { "To", email },
+                    { "Subject", $"Account registered with {provider}" },
+                    { "UserName", email },
+                },
+                Payload = new()
+                {
+                    { "UserName", user.UserName },
+                    { "ProviderName", provider },
+                    { "TempPassword", tempPassword }
+                }
             };
-        
+
             await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
             var link = await GenerateLinkAsync(user, request.ReturnUri!, cancellationToken);
@@ -122,7 +123,8 @@ public sealed class HandleOAuthLoginQueryHandler(
         }
     }
 
-    private async Task<string> GenerateLinkAsync(UserEntity user, string returnUri, CancellationToken cancellationToken = default)
+    private async Task<string> GenerateLinkAsync(UserEntity user, string returnUri,
+        CancellationToken cancellationToken = default)
     {
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);

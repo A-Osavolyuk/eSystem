@@ -26,19 +26,20 @@ public class ResetEmailCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, 
             CodeResource.Email, cancellationToken);
-
-        var credentials = new Dictionary<string, string>()
-        {
-            { "To", newEmail },
-            { "Subject", "Email reset" },
-            { "UserName", user.UserName },
-        };
         
         var message = new ResetEmailMessage
         {
-            Code = code, 
-            UserName = user.UserName, 
-            Credentials = credentials
+            Payload = new()
+            {
+                { "Code", code },
+                { "UserName", user.UserName },
+            },
+            Credentials = new Dictionary<string, string>()
+            {
+                { "To", newEmail },
+                { "Subject", "Email reset" },
+                { "UserName", user.UserName },
+            }
         };
         
         await messageService.SendMessageAsync(SenderType.Email,  message, cancellationToken);

@@ -82,8 +82,11 @@ public sealed class LoginCommandHandler(
                             { "Subject", "Account recovery" },
                             { "UserName", user.UserName },
                         }, 
-                        UserName = user.UserName,
-                        Code = code,
+                        Payload = new()
+                        {
+                            { "UserName", user.UserName },
+                            {"Code", code },
+                        }
                     };
         
                     await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);

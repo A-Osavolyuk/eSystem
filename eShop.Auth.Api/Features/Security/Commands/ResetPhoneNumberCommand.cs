@@ -26,15 +26,16 @@ public class ResetPhoneNumberCommandHandler(
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Reset, 
             CodeResource.PhoneNumber, cancellationToken);
         
-        var credentials = new Dictionary<string, string>()
-        {
-            { "PhoneNumber", user.PhoneNumber },
-        };
-        
         var message = new ResetPhoneNumberSmsMessage()
         {
-            Code = code, 
-            Credentials = credentials
+            Payload = new()
+            {
+                { "Code", code },
+            },
+            Credentials = new Dictionary<string, string>()
+            {
+                { "PhoneNumber", user.PhoneNumber },
+            }
         };
         
         await messageService.SendMessageAsync(SenderType.Sms,  message, cancellationToken);

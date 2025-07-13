@@ -2,9 +2,6 @@
 
 public class ResetPasswordEmailMessage : Message
 {
-    public required string UserName { get; set; }
-    public required string Code { get; set; }
-    
     public override string Build()
     {
         return $"""
@@ -23,14 +20,14 @@ public class ResetPasswordEmailMessage : Message
                         <div style="border: 1px solid rgb(190, 189, 189); width: 100%;"></div>
                         <div style="padding: 50px 100px; margin: auto;">
                             <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Password reset</h1>
-                            <p style="font: 16px Arial, sans-serif; margin:0;">Hello, {UserName}!.</p>
+                            <p style="font: 16px Arial, sans-serif; margin:0;">Hello, {Payload["UserName"]}!.</p>
                             <br>
                             <p style="font: 16px Arial, sans-serif; margin: 0;">
                                 We received a request to reset your password. To reset password, please enter code below.
                             </p>
                             <br>
                             <p style="font: 16px Arial, sans-serif; margin: 0;"> 
-                                Your password reset code: {Code}. Will expire in: 10 mins.
+                                Your password reset code: {Payload["Code"]}. Will expire in: 10 mins.
                             </p>
                             <br>
                             <p style="font: 16px Arial, sans-serif; margin: 0;">

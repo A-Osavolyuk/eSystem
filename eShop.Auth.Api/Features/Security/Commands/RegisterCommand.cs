@@ -71,9 +71,12 @@ public sealed class RegisterCommandHandler(
                 { "To", user!.Email },
                 { "Subject", "Email verification" },
                 { "UserName", user.Email },
-            }, 
-            UserName = user.UserName,
-            Code = code,
+            },
+            Payload = new()
+            {
+                { "Code", code },
+                { "UserName", user.UserName },
+            }
         };
         
         await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);

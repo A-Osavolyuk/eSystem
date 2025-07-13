@@ -36,10 +36,13 @@ public sealed class RequestChangeEmailCommandHandler(
                 { "To", user.Email },
                 { "Subject", "Email change (step one)" },
                 { "UserName", user.UserName },
-            }, 
-            UserName = user.UserName,
-            Code = oldEmailCode,
-            NewEmail = request.Request.NewEmail,
+            },
+            Payload = new()
+            {
+                { "Code", oldEmailCode },
+                { "NewEmail", request.Request.NewEmail },
+                { "UserName", user.UserName },
+            }
         };
         
         await messageService.SendMessageAsync(SenderType.Email, stepOneMessage, cancellationToken);
@@ -52,8 +55,11 @@ public sealed class RequestChangeEmailCommandHandler(
                 { "Subject", "Email verification (step two)" },
                 { "UserName", request.Request.NewEmail },
             }, 
-            UserName = user.UserName,
-            Code = newEmailCode
+            Payload = new()
+            {
+                { "Code", newEmailCode },
+                { "UserName", user.UserName },
+            }
         };
         
         await messageService.SendMessageAsync(SenderType.Email, stepTwoMessage, cancellationToken);

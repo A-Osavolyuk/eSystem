@@ -48,8 +48,11 @@ public class SendTwoFactorTokenCommandHandler(
                         { "Subject", "Two-factor authentication" },
                         { "UserName", user.Email },
                     }, 
-                    UserName = user.UserName,
-                    Token = token
+                    Payload = new()
+                    {
+                        { "UserName", user.UserName },
+                        { "Code", token },
+                    },
                 };
         
                 await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
@@ -64,7 +67,10 @@ public class SendTwoFactorTokenCommandHandler(
                     {
                         { "PhoneNumber", user!.PhoneNumber },
                     }, 
-                    Token = token
+                    Payload = new()
+                    {
+                        { "Code", token },
+                    },
                 };
         
                 await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);

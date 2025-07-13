@@ -35,7 +35,10 @@ public sealed class RequestChangePhoneNumberCommandHandler(
             {
                 { "PhoneNumber", user.PhoneNumber },
             }, 
-            Code = oldPhoneNumberCode,
+            Payload = new()
+            {
+                { "Code", oldPhoneNumberCode }
+            },
         };
         
         await messageService.SendMessageAsync(SenderType.Sms, stepOneMessage, cancellationToken);
@@ -46,7 +49,10 @@ public sealed class RequestChangePhoneNumberCommandHandler(
             {
                 { "PhoneNumber", request.Request.NewPhoneNumber },
             }, 
-            Code = newPhoneNumberCode
+            Payload = new()
+            {
+                { "Code", newPhoneNumberCode }
+            }
         };
 
         return Result.Success();

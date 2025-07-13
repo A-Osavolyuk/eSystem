@@ -38,15 +38,16 @@ public class AddPhoneNumberCommandHandler(
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Verify, 
             CodeResource.PhoneNumber, cancellationToken);
         
-        var credentials = new Dictionary<string, string>()
-        {
-            { "PhoneNumber", request.Request.PhoneNumber },
-        };
-        
         var message = new VerifyPhoneNumberSmsMessage()
         {
-            Credentials = credentials, 
-            Code = code
+            Credentials = new Dictionary<string, string>()
+            {
+                { "PhoneNumber", request.Request.PhoneNumber },
+            }, 
+            Payload = new()
+            {
+                { "Code", code }
+            }
         };
         
         await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
