@@ -167,7 +167,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             
-            _ => throw new NotImplementedException()
+            _ => throw new NotSupportedException("Not supported resend code case")
         };
 
         await messageService.SendMessageAsync(sender, message, cancellationToken);
