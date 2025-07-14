@@ -52,7 +52,7 @@
                             Class="mt-3"
                             FullWidth
                             Disabled="@(Model.Code.Length <= 5)"
-                            OnClick="async () => await VerifyEmailAsync()">
+                            OnClick="@(async () => await VerifyEmailAsync())">
                             Verify
                         </MudLoadingButton>
                     </MudItem>
@@ -70,8 +70,10 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
     [SupplyParameterFromQuery(Name = "email")] private string Email { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "id")] private Guid Id { get; set; }
+    
+    [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
 
     private MudForm form = new();
     
@@ -97,8 +99,15 @@
 
     private async Task ResendCodeAsync()
     {
-        var request = new ResendEmailVerificationCodeRequest() { Email = Email };
-        var response = await SecurityService.ResendVerificationCodeAsync(request);
+        var request = new ResendCodeRequest()
+        {
+            UserId = Id,
+            CodeResource = CodeResource.Email,
+            CodeType = CodeType.Verify,
+            Sender = SenderType.Email
+        };
+        
+        var response = await SecurityService.ResendCodeAsync(request);
 
         if (response.Success)
         {

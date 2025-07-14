@@ -21,7 +21,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new LoginCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
 
@@ -36,7 +36,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new RegisterCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -50,7 +50,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new RefreshTokenCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -65,7 +65,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new RecoverAccountCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -81,7 +81,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ChangePasswordCommand(changePasswordRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
 
@@ -96,7 +96,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ForgotPasswordCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -112,7 +112,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ResetPasswordCommand(resetPasswordRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
 
@@ -128,7 +128,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ChangeEmailCommand(changeEmailRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -144,7 +144,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ConfirmChangeEmailCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -160,7 +160,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new VerifyEmailCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -176,7 +176,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ResetEmailCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -192,7 +192,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ConfirmResetEmailCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -207,7 +207,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new AddPhoneNumberCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -222,7 +222,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new VerifyPhoneNumberCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
 
@@ -238,7 +238,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ChangePhoneNumberCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -254,7 +254,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ConfirmChangePhoneNumberCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -270,7 +270,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ResetPhoneNumberCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -286,7 +286,7 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new ConfirmResetPhoneNumberCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
     
@@ -301,22 +301,22 @@ public class SecurityController(ISender sender) : ControllerBase
         var result = await sender.Send(new VerifyCodeCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Resend verification code")]
-    [EndpointDescription("Resends verification code")]
+    [EndpointSummary("Resend code")]
+    [EndpointDescription("Resends code")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("code/resend")]
     public async ValueTask<ActionResult<Response>> ResendVerificationCode(
-        [FromBody] ResendEmailVerificationCodeRequest request)
+        [FromBody] ResendCodeRequest request)
     {
-        var result = await sender.Send(new ResendEmailVerificationCodeCommand(request));
+        var result = await sender.Send(new ResendCodeCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
 }
