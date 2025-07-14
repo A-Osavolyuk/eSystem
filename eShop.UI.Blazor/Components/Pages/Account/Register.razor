@@ -8,58 +8,58 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="12" sm="10" md="8" lg="6" xl="4" Style="margin-top: 150px">
-        <MudStack Spacing="1">
+        <MudStack Spacing="1" Justify="Justify.Center">
             <MudPaper Outlined Class="pa-3">
-            <MudText Align="Align.Center" Typo="Typo.h4">
-                Register
-            </MudText>
-        </MudPaper>
-        <MudPaper Outlined Class="pa-3">
-            <MudForm 
-                @ref="form" 
-                Model="Model" 
-                Validation="Validator.ValidateValue">
-                <MudTextField
-                    @bind-Value="Model.Email"
-                    For="(() => Model.Email)"
-                    InputType="InputType.Email"
-                    Label="Email"
-                    Immediate
-                    Variant="Variant.Outlined"/>
-                <MudPasswordField
-                    PasswordMode="true"
-                    @bind-Value="Model.Password"
-                    For="(() => Model.Password)"
-                    Label="Password"
-                    InputType="InputType.Password"
-                    Immediate
-                    Variant="Variant.Outlined"/>
-                <MudPasswordField
-                    PasswordMode="true"
-                    @bind-Value="Model.ConfirmPassword"
-                    For="(() => Model.ConfirmPassword)"
-                    Label="Confirm Password"
-                    InputType="InputType.Password"
-                    Immediate
-                    Variant="Variant.Outlined"/>
-
-                <MudLoadingButton
-                    ButtonType="ButtonType.Button"
-                    StartIcon="@Icons.Material.Filled.AppRegistration"
-                    Variant="Variant.Filled"
-                    Color="Color.Primary"
-                    Class="mt-3"
-                    FullWidth
-                    OnClick="@(async () => await OnRegisterAsync())">
+                <MudText Align="Align.Center" Typo="Typo.h4">
                     Register
-                </MudLoadingButton>
-            </MudForm>
-        </MudPaper>
-        <MudPaper Outlined Class="pa-3">
-            <MudText Align="Align.Center">Already have an account?
-                <MudLink Href="account/login">Log In</MudLink>
-            </MudText>
-        </MudPaper>
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudForm
+                    @ref="form"
+                    Model="Model"
+                    Validation="Validator.ValidateValue">
+                    <MudTextField
+                        @bind-Value="Model.Email"
+                        For="(() => Model.Email)"
+                        InputType="InputType.Email"
+                        Label="Email"
+                        Immediate
+                        Variant="Variant.Outlined"/>
+                    <MudPasswordField
+                        PasswordMode="true"
+                        @bind-Value="Model.Password"
+                        For="(() => Model.Password)"
+                        Label="Password"
+                        InputType="InputType.Password"
+                        Immediate
+                        Variant="Variant.Outlined"/>
+                    <MudPasswordField
+                        PasswordMode="true"
+                        @bind-Value="Model.ConfirmPassword"
+                        For="(() => Model.ConfirmPassword)"
+                        Label="Confirm Password"
+                        InputType="InputType.Password"
+                        Immediate
+                        Variant="Variant.Outlined"/>
+
+                    <MudLoadingButton
+                        ButtonType="ButtonType.Button"
+                        StartIcon="@Icons.Material.Filled.AppRegistration"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        Class="mt-3"
+                        FullWidth
+                        OnClick="@(async () => await OnRegisterAsync())">
+                        Register
+                    </MudLoadingButton>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center">Already have an account?
+                    <MudLink Href="account/login">Log In</MudLink>
+                </MudText>
+            </MudPaper>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -81,7 +81,7 @@
             if (result.Success)
             {
                 var response = result.Get<RegistrationResponse>()!;
-                
+
                 Snackbar.Add(result.Message, Severity.Success);
                 NavigationManager.NavigateTo($"/account/email/verify?id={response.UserId}");
             }

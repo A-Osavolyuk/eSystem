@@ -20,44 +20,46 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="6">
-                                <MudStack Spacing="1">
+                                <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center" Typo="Typo.h4">
-                                        Phone number add
-                                    </MudText>
-                                </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudForm
-                                        @ref="addPhoneNumberForm"
-                                        Model="AddPhoneNumberModel"
-                                        Validation="AddPhoneNumberValidator.ValidateValue">
-                                        <MudGrid Spacing="1" Justify="Justify.Center">
-                                            <MudItem xs="12">
-                                                <MudText Align="Align.Center" Typo="Typo.body1"
-                                                         Style="width: 55ch; margin: auto">
-                                                    To add phone number, please enter the phone number, you want to add.
-                                                    We will the send SMS with 6-digit code to this phone number
-                                                </MudText>
-                                                <br/>
-                                                <MudTextField Label="Phone number"
-                                                              Class="mt-2"
-                                                              For="@(() => AddPhoneNumberModel.PhoneNumber)"
-                                                              Variant="Variant.Outlined"
-                                                              Immediate
-                                                              @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
-                                            </MudItem>
-                                            <MudItem xs="12">
-                                                <MudLoadingButton Size="Size.Large" FullWidth Variant="Variant.Filled"
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Phone number add
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudForm
+                                            @ref="addPhoneNumberForm"
+                                            Model="AddPhoneNumberModel"
+                                            Validation="AddPhoneNumberValidator.ValidateValue">
+                                            <MudGrid Spacing="1" Justify="Justify.Center">
+                                                <MudItem xs="12">
+                                                    <MudText Align="Align.Center" Typo="Typo.body1"
+                                                             Style="width: 55ch; margin: auto">
+                                                        To add phone number, please enter the phone number, you want to
+                                                        add.
+                                                        We will the send SMS with 6-digit code to this phone number
+                                                    </MudText>
+                                                    <br/>
+                                                    <MudTextField Label="Phone number"
                                                                   Class="mt-2"
-                                                                  Color="Color.Primary"
-                                                                  ButtonType="ButtonType.Button"
-                                                                  OnClick="@(async () => await OnAddPhoneNumberAsync())">
-                                                    Send code
-                                                </MudLoadingButton>
-                                            </MudItem>
-                                        </MudGrid>
-                                    </MudForm>
-                                </MudPaper>
+                                                                  For="@(() => AddPhoneNumberModel.PhoneNumber)"
+                                                                  Variant="Variant.Outlined"
+                                                                  Immediate
+                                                                  @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudLoadingButton Size="Size.Large" FullWidth
+                                                                      Variant="Variant.Filled"
+                                                                      Class="mt-2"
+                                                                      Color="Color.Primary"
+                                                                      ButtonType="ButtonType.Button"
+                                                                      OnClick="@(async () => await OnAddPhoneNumberAsync())">
+                                                        Send code
+                                                    </MudLoadingButton>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudForm>
+                                    </MudPaper>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -67,7 +69,7 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="6">
-                                <MudStack Spacing="1">
+                                <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center" Typo="Typo.h4">
                                             Phone number verification

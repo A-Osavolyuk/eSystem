@@ -19,46 +19,46 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
-                                <MudStack Spacing="1">
+                                <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center" Typo="Typo.h4">
-                                        Email reset
-                                    </MudText>
-                                </MudPaper>
-                                <MudPaper Outlined="true" Class="pa-3">
-                                    <MudForm
-                                        @ref="resetEmailForm"
-                                        Model="ResetEmailModel"
-                                        Validation="ResetEmailValidator.ValidateValue">
-                                        <MudGrid Justify="Justify.Center">
-                                            <MudItem xs="12">
-                                                <MudText Class="mb-1" Align="Align.Center">
-                                                    To reset email address, you should enter new email address.
-                                                    Please, enter new email address.
-                                                </MudText>
-                                            </MudItem>
-                                            <MudItem xs="12">
-                                                <MudTextField
-                                                    @bind-Value="ResetEmailModel.NewEmail"
-                                                    For="() => ResetEmailModel.NewEmail"
-                                                    Label="New email"
-                                                    Variant="Variant.Outlined"
-                                                    Immediate="true"
-                                                    Clearable="true"/>
-                                            </MudItem>
-                                            <MudItem xs="12">
-                                                <MudLoadingButton
-                                                    FullWidth="true"
-                                                    Variant="Variant.Filled"
-                                                    Color="Color.Primary"
-                                                    ButtonType="ButtonType.Button"
-                                                    OnClick="@(async () => await OnResetEmailAsync())">
-                                                    Change
-                                                </MudLoadingButton>
-                                            </MudItem>
-                                        </MudGrid>
-                                    </MudForm>
-                                </MudPaper>
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Email reset
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudForm
+                                            @ref="resetEmailForm"
+                                            Model="ResetEmailModel"
+                                            Validation="ResetEmailValidator.ValidateValue">
+                                            <MudGrid Justify="Justify.Center">
+                                                <MudItem xs="12">
+                                                    <MudText Class="mb-1" Align="Align.Center">
+                                                        To reset email address, you should enter new email address.
+                                                        Please, enter new email address.
+                                                    </MudText>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudTextField
+                                                        @bind-Value="ResetEmailModel.NewEmail"
+                                                        For="() => ResetEmailModel.NewEmail"
+                                                        Label="New email"
+                                                        Variant="Variant.Outlined"
+                                                        Immediate="true"
+                                                        Clearable="true"/>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnResetEmailAsync())">
+                                                        Change
+                                                    </MudLoadingButton>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudForm>
+                                    </MudPaper>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -68,49 +68,50 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
-                                <MudStack Spacing="1">
+                                <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center" Typo="Typo.h4">
-                                        Email verification
-                                    </MudText>
-                                </MudPaper>
-                                <MudPaper Outlined="true" Class="pa-3">
-                                    <MudForm
-                                        @ref="confirmResetEmailForm"
-                                        Model="ConfirmResetEmailModel"
-                                        Validation="ConfirmChangeEmailValidator.ValidateValue">
-                                        <MudGrid Justify="Justify.Center">
-                                            <MudItem xs="12">
-                                                <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from the letter we sent you
-                                                    to: <strong>@ResetEmailModel.NewEmail</strong>
-                                                </MudText>
-                                            </MudItem>
-                                            <MudItem xs="7">
-                                                <MudCodeInput
-                                                    Count="6"
-                                                    Margin="Margin.Normal" Spacing="1"
-                                                    @bind-Value="ConfirmResetEmailModel.Code"
-                                                    Variant="Variant.Outlined"/>
-                                            </MudItem>
-                                            <MudItem xs="12">
-                                                <MudLoadingButton
-                                                    FullWidth="true"
-                                                    Variant="Variant.Filled"
-                                                    Color="Color.Primary"
-                                                    ButtonType="ButtonType.Button"
-                                                    OnClick="@(async () => await OnConfirmResetEmailAsync())">
-                                                    Verify
-                                                </MudLoadingButton>
-                                            </MudItem>
-                                        </MudGrid>
-                                    </MudForm>
-                                </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center">Didn't received a SMS?
-                                        <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
-                                    </MudText>
-                                </MudPaper>
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Email verification
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudForm
+                                            @ref="confirmResetEmailForm"
+                                            Model="ConfirmResetEmailModel"
+                                            Validation="ConfirmChangeEmailValidator.ValidateValue">
+                                            <MudGrid Justify="Justify.Center">
+                                                <MudItem xs="12">
+                                                    <MudText Class="mb-2" Align="Align.Center">
+                                                        Enter code from the letter we sent you
+                                                        to: <strong>@ResetEmailModel.NewEmail</strong>
+                                                    </MudText>
+                                                </MudItem>
+                                                <MudItem xs="7">
+                                                    <MudCodeInput
+                                                        Count="6"
+                                                        Margin="Margin.Normal" Spacing="1"
+                                                        @bind-Value="ConfirmResetEmailModel.Code"
+                                                        Variant="Variant.Outlined"/>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnConfirmResetEmailAsync())">
+                                                        Verify
+                                                    </MudLoadingButton>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received a SMS?
+                                            <strong @onclick="async () => await ResendCodeAsync()"
+                                                    class="cursor-pointer">Resend</strong>
+                                        </MudText>
+                                    </MudPaper>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>

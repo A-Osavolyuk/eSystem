@@ -19,7 +19,8 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
-                                <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
                                     <MudText Align="Align.Center" Typo="Typo.h4">
                                         Phone number reset
                                     </MudText>
@@ -51,13 +52,14 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await OnResetPhoneNumberAsync()">
+                                                    OnClick="@(async () => await OnResetPhoneNumberAsync())">
                                                     Change
                                                 </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>
                                 </MudPaper>
+                                </MudStack>
                             </MudItem>
                         </MudGrid>
                     </ChildContent>
@@ -66,49 +68,50 @@
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
-                                <MudStack Spacing="1">
+                                <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center" Typo="Typo.h4">
-                                        Phone number verification
-                                    </MudText>
-                                </MudPaper>
-                                <MudPaper Outlined="true" Class="pa-3">
-                                    <MudForm
-                                        @ref="confirmResetPhoneNumberForm"
-                                        Model="ConfirmResetPhoneNumberModel"
-                                        Validation="ConfirmResetPhoneNumberValidator.ValidateValue">
-                                        <MudGrid Justify="Justify.Center">
-                                            <MudItem xs="12">
-                                                <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from the SMS we sent you
-                                                    to: <strong>@ResetPhoneNumberModel.NewPhoneNumber</strong>
-                                                </MudText>
-                                            </MudItem>
-                                            <MudItem xs="7">
-                                                <MudCodeInput
-                                                    Count="6"
-                                                    Margin="Margin.Normal" Spacing="1"
-                                                    @bind-Value="ConfirmResetPhoneNumberModel.Code"
-                                                    Variant="Variant.Outlined"/>
-                                            </MudItem>
-                                            <MudItem xs="12">
-                                                <MudLoadingButton
-                                                    FullWidth="true"
-                                                    Variant="Variant.Filled"
-                                                    Color="Color.Primary"
-                                                    ButtonType="ButtonType.Button"
-                                                    OnClick="@(async () => await OnConfirmResetPhoneNumberAsync())">
-                                                    Verify
-                                                </MudLoadingButton>
-                                            </MudItem>
-                                        </MudGrid>
-                                    </MudForm>
-                                </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center">Didn't received a SMS?
-                                        <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
-                                    </MudText>
-                                </MudPaper>
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Phone number verification
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudForm
+                                            @ref="confirmResetPhoneNumberForm"
+                                            Model="ConfirmResetPhoneNumberModel"
+                                            Validation="ConfirmResetPhoneNumberValidator.ValidateValue">
+                                            <MudGrid Justify="Justify.Center">
+                                                <MudItem xs="12">
+                                                    <MudText Class="mb-2" Align="Align.Center">
+                                                        Enter code from the SMS we sent you
+                                                        to: <strong>@ResetPhoneNumberModel.NewPhoneNumber</strong>
+                                                    </MudText>
+                                                </MudItem>
+                                                <MudItem xs="7">
+                                                    <MudCodeInput
+                                                        Count="6"
+                                                        Margin="Margin.Normal" Spacing="1"
+                                                        @bind-Value="ConfirmResetPhoneNumberModel.Code"
+                                                        Variant="Variant.Outlined"/>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnConfirmResetPhoneNumberAsync())">
+                                                        Verify
+                                                    </MudLoadingButton>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received a SMS?
+                                            <strong @onclick="async () => await ResendCodeAsync()"
+                                                    class="cursor-pointer">Resend</strong>
+                                        </MudText>
+                                    </MudPaper>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
