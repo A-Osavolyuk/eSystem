@@ -1,5 +1,6 @@
 ﻿using eShop.Auth.Api.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -69,8 +70,7 @@ public sealed class RegisterCommandHandler(
             Credentials = new ()
             {
                 { "To", user!.Email },
-                { "Subject", "Email verification" },
-                { "UserName", user.Email },
+                { "Subject", "Email verification" }
             },
             Payload = new()
             {
@@ -81,8 +81,13 @@ public sealed class RegisterCommandHandler(
         
         await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
-        return Result.Success($"Your account have been successfully registered. " +
-                              $"Now you have to confirm you email address to log in. " +
-                              $"We have sent an email with instructions to your email address.");
+        var response = new RegistrationResponse()
+        {
+            UserId = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+        };
+
+        return Result.Success(response, "Your account have been successfully registered.");
     }
 }
