@@ -50,7 +50,7 @@
                                                            Class="mt-2"
                                                            Color="Color.Primary"
                                                            ButtonType="ButtonType.Button"
-                                                           OnClick="async () => await OnAddPhoneNumberAsync()">Send code
+                                                           OnClick="@(async () => await OnAddPhoneNumberAsync())">Send code
                                                 </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
@@ -92,15 +92,20 @@
                                             </MudItem>
                                             <MudItem xs="12">
                                                 <MudLoadingButton Size="Size.Large" FullWidth Variant="Variant.Filled"
-                                                           Class="mt-2"
-                                                           Color="Color.Primary"
-                                                           Disabled="@(VerifyCodeModel.Code.Length <= 5)"
-                                                           ButtonType="ButtonType.Button"
-                                                           OnClick="async () => await OnVerifyCodeAsync()">Confirm
+                                                                  Class="mt-2"
+                                                                  Color="Color.Primary"
+                                                                  Disabled="@(VerifyCodeModel.Code.Length <= 5)"
+                                                                  ButtonType="ButtonType.Button"
+                                                                  OnClick="@(async () => await OnVerifyCodeAsync())">Confirm
                                                 </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3 mt-1">
+                                    <MudText Align="Align.Center">Didn't received a SMS?
+                                        <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
+                                    </MudText>
                                 </MudPaper>
                             </MudItem>
                         </MudGrid>
@@ -137,6 +142,30 @@
         if (completed)
         {
             await OnCompleteAsync();
+        }
+    }
+    
+    private async Task ResendCodeAsync()
+    {
+        var userId = await LocalStorage.GetAsync<Guid>("userId");
+        
+        var request = new ResendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.PhoneNumber,
+            CodeType = CodeType.Verify,
+            Sender = SenderType.Sms
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
         }
     }
 

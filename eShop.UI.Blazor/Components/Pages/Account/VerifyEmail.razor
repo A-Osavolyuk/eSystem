@@ -15,9 +15,9 @@
             </MudText>
         </MudPaper>
         <MudPaper Outlined Class="pa-3">
-            <MudForm 
+            <MudForm
                 @ref="form"
-                Model="Model" 
+                Model="Model"
                 Validation="Validator.ValidateValue">
                 <MudGrid Spacing="2" Justify="Justify.Center">
                     <MudItem xs="12">
@@ -60,23 +60,25 @@
             </MudForm>
         </MudPaper>
         <MudPaper Outlined Class="pa-3 mt-1">
-            <MudItem xs="12" Style="margin: 10px 0">
-                <MudText Align="Align.Center">Didn't received an email?
-                    <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
-                </MudText>
-            </MudItem>
+            <MudText Align="Align.Center">Didn't received an email?
+                <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
+            </MudText>
         </MudPaper>
     </MudItem>
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "email")] private string Email { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "id")] private Guid Id { get; set; }
-    
+
+    [SupplyParameterFromQuery(Name = "email")]
+    private string Email { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "id")]
+    private Guid Id { get; set; }
+
     [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
 
     private MudForm form = new();
-    
+
     private async Task OnVerifyEmailAsync()
     {
         await form.Validate();
@@ -88,7 +90,7 @@
                 UserId = Id,
                 Code = Model.Code
             };
-            
+
             var result = await SecurityService.VerifyEmailAsync(request);
 
             if (result.Success)
@@ -110,7 +112,7 @@
             CodeType = CodeType.Verify,
             Sender = SenderType.Email
         };
-        
+
         var response = await SecurityService.ResendCodeAsync(request);
 
         if (response.Success)

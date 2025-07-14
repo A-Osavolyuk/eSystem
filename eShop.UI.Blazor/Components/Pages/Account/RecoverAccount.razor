@@ -38,12 +38,17 @@
                             Color="Color.Primary"
                             Variant="Variant.Filled"
                             ButtonType="ButtonType.Button"
-                            OnClick="async () => await OnRecoverAsync()">
+                            OnClick="@(async () => await OnRecoverAsync())">
                             Recover
                         </MudLoadingButton>
                     </MudItem>
                 </MudGrid>
             </MudForm>
+        </MudPaper>
+        <MudPaper Outlined Class="pa-3 mt-1">
+            <MudText Align="Align.Center">Didn't received an email?
+                <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
+            </MudText>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -80,6 +85,28 @@
             {
                 Snackbar.Add(result.Message, Severity.Error);
             }
+        }
+    }
+    
+    private async Task ResendCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = UserId,
+            CodeResource = CodeResource.Account,
+            CodeType = CodeType.Recover,
+            Sender = SenderType.Email
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
         }
     }
 

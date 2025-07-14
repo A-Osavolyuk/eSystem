@@ -53,7 +53,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await OnChangeEmailAsync()">
+                                                    OnClick="@(async () => await OnChangeEmailAsync())">
                                                     Change
                                                 </MudLoadingButton>
                                             </MudItem>
@@ -94,12 +94,17 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await StepNextAsync()">
+                                                    OnClick="@(async () => await StepNextAsync())">
                                                     Confirm
                                                 </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3 mt-1">
+                                    <MudText Align="Align.Center">Didn't received an email?
+                                        <strong @onclick="async () => await ResendCurrentEmailCodeAsync()" class="cursor-pointer">Resend</strong>
+                                    </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined Class="pa-3 mt-1">
                                     <MudText Align="Align.Center">
@@ -146,12 +151,17 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await OnConfirmEmailChangeAsync()">
+                                                    OnClick="@(async () => await OnConfirmEmailChangeAsync())">
                                                     Verify
                                                 </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3 mt-1">
+                                    <MudText Align="Align.Center">Didn't received an email?
+                                        <strong @onclick="async () => await ResendNewEmailCodeAsync()" class="cursor-pointer">Resend</strong>
+                                    </MudText>
                                 </MudPaper>
                             </MudItem>
                         </MudGrid>
@@ -197,6 +207,50 @@
         if (completed)
         {
             await OnCompleteAsync();
+        }
+    }
+    
+    private async Task ResendCurrentEmailCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.Email,
+            CodeType = CodeType.Current,
+            Sender = SenderType.Email
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
+        }
+    }
+    
+    private async Task ResendNewEmailCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.Email,
+            CodeType = CodeType.New,
+            Sender = SenderType.Email
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
         }
     }
 

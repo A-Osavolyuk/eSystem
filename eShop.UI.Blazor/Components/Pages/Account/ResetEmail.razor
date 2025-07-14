@@ -25,9 +25,9 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm 
-                                        @ref="resetEmailForm" 
-                                        Model="ResetEmailModel" 
+                                    <MudForm
+                                        @ref="resetEmailForm"
+                                        Model="ResetEmailModel"
                                         Validation="ResetEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
@@ -51,7 +51,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await OnResetEmailAsync()">
+                                                    OnClick="@(async () => await OnResetEmailAsync())">
                                                     Change
                                                 </MudLoadingButton>
                                             </MudItem>
@@ -72,9 +72,9 @@
                                     </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined="true" Class="pa-5">
-                                    <MudForm 
-                                        @ref="confirmResetEmailForm" 
-                                        Model="ConfirmResetEmailModel" 
+                                    <MudForm
+                                        @ref="confirmResetEmailForm"
+                                        Model="ConfirmResetEmailModel"
                                         Validation="ConfirmChangeEmailValidator.ValidateValue">
                                         <MudGrid Justify="Justify.Center">
                                             <MudItem xs="12">
@@ -96,12 +96,17 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await OnConfirmResetEmailAsync()">
+                                                    OnClick="@(async () => await OnConfirmResetEmailAsync())">
                                                     Verify
                                                 </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3 mt-1">
+                                    <MudText Align="Align.Center">Didn't received a SMS?
+                                        <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
+                                    </MudText>
                                 </MudPaper>
                             </MudItem>
                         </MudGrid>
@@ -144,6 +149,28 @@
         if (completed)
         {
             await OnCompleteAsync();
+        }
+    }
+
+    private async Task ResendCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.Email,
+            CodeType = CodeType.Reset,
+            Sender = SenderType.Sms
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
         }
     }
 
@@ -203,14 +230,14 @@
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
-        
+
         if (stepper.IsAllStepsCompleted())
         {
             completed = true;
             StateHasChanged();
         }
     }
-    
+
     private async Task OnCompleteAsync()
     {
         await Task.Delay(TimeSpan.FromMicroseconds(5));

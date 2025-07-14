@@ -52,7 +52,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await OnChangePhoneNumberAsync()">
+                                                    OnClick="@(async () => await OnChangePhoneNumberAsync())">
                                                     Change
                                                 </MudLoadingButton>
                                             </MudItem>
@@ -93,12 +93,21 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await StepNextAsync()">
+                                                    OnClick="@(async () => await StepNextAsync())">
                                                     Confirm
                                                 </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3 mt-1">
+                                    <MudText Align="Align.Center">Didn't received a SMS?
+                                        <strong
+                                            @onclick="async () => await ResendCurrentPhoneNumberCodeAsync()"
+                                            class="cursor-pointer">
+                                            Resend
+                                        </strong>
+                                    </MudText>
                                 </MudPaper>
                                 <MudPaper Outlined Class="pa-3 mt-1">
                                     <MudText Align="Align.Center">
@@ -146,12 +155,21 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="async () => await OnConfirmChangePhoneNumberAsync()">
+                                                    OnClick="@(async () => await OnConfirmChangePhoneNumberAsync())">
                                                     Verify
                                                 </MudLoadingButton>
                                             </MudItem>
                                         </MudGrid>
                                     </MudForm>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3 mt-1">
+                                    <MudText Align="Align.Center">Didn't received a SMS?
+                                        <strong
+                                            @onclick="async () => await ResendNewPhoneNumberCodeAsync()"
+                                            class="cursor-pointer">
+                                            Resend
+                                        </strong>
+                                    </MudText>
                                 </MudPaper>
                             </MudItem>
                         </MudGrid>
@@ -194,6 +212,50 @@
         if (completed)
         {
             await OnCompleteAsync();
+        }
+    }
+    
+    private async Task ResendCurrentPhoneNumberCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.PhoneNumber,
+            CodeType = CodeType.Current,
+            Sender = SenderType.Sms
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
+        }
+    }
+    
+    private async Task ResendNewPhoneNumberCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.PhoneNumber,
+            CodeType = CodeType.New,
+            Sender = SenderType.Sms
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
         }
     }
 
