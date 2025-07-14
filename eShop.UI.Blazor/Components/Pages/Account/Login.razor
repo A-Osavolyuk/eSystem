@@ -11,7 +11,8 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="12" sm="10" md="8" lg="6" xl="4" Style="margin-top: 150px">
-        <MudPaper Outlined Class="pa-3" Style="margin-bottom: 10px">
+        <MudStack Spacing="1">
+            <MudPaper Outlined Class="pa-3">
             <MudText Align="Align.Center" Typo="Typo.h4">
                 Log in
             </MudText>
@@ -39,7 +40,7 @@
                 <MudLoadingButton
                     LoadingAdornment="Adornment.End"
                     ButtonType="ButtonType.Button"
-                    OnClick="async () => await OnSubmitAsync()"
+                    OnClick="@(async () => await OnSubmitAsync())"
                     StartIcon="@Icons.Material.Filled.Login"
                     Disabled="@(string.IsNullOrEmpty(Model.Password) || string.IsNullOrEmpty(Model.Email))"
                     Variant="Variant.Filled"
@@ -50,7 +51,7 @@
                 </MudLoadingButton>
             </MudForm>
         </MudPaper>
-        <MudPaper Outlined Class="mt-3 pa-3">
+        <MudPaper Outlined Class="pa-3">
             <MudGrid Spacing="1">
                 <MudItem xs="6">
                     <MudButton
@@ -98,18 +99,19 @@
                 </MudItem>
             </MudGrid>
         </MudPaper>
-        <MudPaper Outlined Class="mt-3 pa-3">
+        <MudPaper Outlined Class="pa-3">
             <MudText Align="Align.Center">
                 Do not have an account?
                 <MudLink Href="account/register">Register</MudLink>
             </MudText>
         </MudPaper>
-        <MudPaper Outlined Class="mt-3 pa-3">
+        <MudPaper Outlined Class="pa-3">
             <MudText Align="Align.Center">
                 Forget your password?
                 <MudLink Href="account/password/reset">Reset password</MudLink>
             </MudText>
         </MudPaper>
+        </MudStack>
     </MudItem>
 </MudGrid>
 

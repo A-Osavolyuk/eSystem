@@ -8,7 +8,8 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="12" sm="10" md="8" lg="6" xl="4" Style="margin-top: 150px">
-        <MudPaper Outlined Class="pa-3" Style="margin-bottom: 10px">
+        <MudStack Spacing="1">
+            <MudPaper Outlined Class="pa-3">
             <MudText Align="Align.Center" Typo="Typo.h4">
                 Register
             </MudText>
@@ -52,14 +53,14 @@
                     OnClick="@(async () => await OnRegisterAsync())">
                     Register
                 </MudLoadingButton>
-
             </MudForm>
         </MudPaper>
-        <MudPaper Outlined Class="mt-3 pa-3">
+        <MudPaper Outlined Class="pa-3">
             <MudText Align="Align.Center">Already have an account?
                 <MudLink Href="account/login">Log In</MudLink>
             </MudText>
         </MudPaper>
+        </MudStack>
     </MudItem>
 </MudGrid>
 

@@ -19,8 +19,14 @@
                             ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
             <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Info" Title="Send code">
                 <ChildContent>
+                    <MudStack Spacing="1">
+                        <MudPaper Outlined Class="pa-3">
+                        <MudText Align="Align.Center" Typo="Typo.h4">
+                            Two-factor verification
+                        </MudText>
+                    </MudPaper>
                     <MudPaper Outlined Class="pa-3">
-                        <MudForm 
+                        <MudForm
                             @ref="sendTwoFactorTokenForm"
                             Model="SendTwoFactorTokenModel">
                             <MudGrid>
@@ -56,7 +62,7 @@
                                     <MudLoadingButton
                                         ButtonType="ButtonType.Button"
                                         StartIcon="@Icons.Material.Filled.NavigateNext"
-                                        OnClick="async () => await OnSendTokenAsync()"
+                                        OnClick="@(async () => await OnSendTokenAsync())"
                                         Variant="Variant.Filled"
                                         Color="Color.Primary"
                                         FullWidth>
@@ -66,70 +72,78 @@
                             </MudGrid>
                         </MudForm>
                     </MudPaper>
+                    </MudStack>
                 </ChildContent>
             </MudStepExtended>
             <MudStepExtended Icon="@Icons.Material.Filled.Login" Title="Code verification" Order="2">
                 <ChildContent>
-                    <MudPaper Outlined Class="pa-3">
-                        <MudForm 
-                            @ref="twoFactorForm"
-                            Model="TwoFactorLoginModel" 
-                            Validation="TwoFactorLoginValidator.ValidateValue">
-                        @switch (SendTwoFactorTokenModel.Provider)
-                        {
-                            case ProviderTypes.Email:
-                            {
-                                <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
-                                         Style="width: 50ch; margin: auto">
-                                    Now enter the 6-digit code we sent to your email address.
-                                    If you don't receive the code, check your spam folder.
-                                    If you still don't receive the code, click the send button again.
-                                </MudText>
-                                break;
-                            }
-                            case ProviderTypes.Sms:
-                            {
-                                <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
-                                         Style="width: 50ch; margin: auto">
-                                    Now enter the 6-digit code we sent to your mobile phone.
-                                    If you don't receive the code, check your spam folder.
-                                    If you still don't receive the code, click the send button again.
-                                </MudText>
-                                break;
-                            }
-                            case ProviderTypes.Authenticator:
-                            {
-                                <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
-                                         Style="width: 50ch; margin: auto">
-                                    Now enter the 6-digit code we sent to your authenticator app.
-                                </MudText>
-                                break;
-                            }
-                        }
-                        <MudGrid Justify="Justify.Center" Spacing="1">
-                            <MudItem xs="7">
-                                <br>
-                                <MudCodeInput
-                                    Count="6"
-                                    Margin="Margin.Normal"
-                                    @bind-Value="TwoFactorLoginModel.Code"
-                                    Variant="Variant.Outlined"/>
-                            </MudItem>
-                            <MudItem xs="12">
-                                <MudLoadingButton
-                                    ButtonType="ButtonType.Button"
-                                    Disabled="TwoFactorLoginModel.Code.Length <= 5"
-                                    StartIcon="@Icons.Material.Filled.Login"
-                                    OnClick="async () => await OnVerifyTokenAsync()"
-                                    Variant="Variant.Filled"
-                                    Color="Color.Primary"
-                                    FullWidth>
-                                    Verify
-                                </MudLoadingButton>
-                            </MudItem>
-                        </MudGrid>
-                    </MudForm>
+                    <MudStack Spacing="1">
+                        <MudPaper Outlined Class="pa-3">
+                        <MudText Align="Align.Center" Typo="Typo.h4">
+                            Code verification
+                        </MudText>
                     </MudPaper>
+                    <MudPaper Outlined Class="pa-3">
+                        <MudForm
+                            @ref="twoFactorForm"
+                            Model="TwoFactorLoginModel"
+                            Validation="TwoFactorLoginValidator.ValidateValue">
+                            @switch (SendTwoFactorTokenModel.Provider)
+                            {
+                                case ProviderTypes.Email:
+                                {
+                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
+                                             Style="width: 50ch; margin: auto">
+                                        Now enter the 6-digit code we sent to your email address.
+                                        If you don't receive the code, check your spam folder.
+                                        If you still don't receive the code, click the send button again.
+                                    </MudText>
+                                    break;
+                                }
+                                case ProviderTypes.Sms:
+                                {
+                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
+                                             Style="width: 50ch; margin: auto">
+                                        Now enter the 6-digit code we sent to your mobile phone.
+                                        If you don't receive the code, check your spam folder.
+                                        If you still don't receive the code, click the send button again.
+                                    </MudText>
+                                    break;
+                                }
+                                case ProviderTypes.Authenticator:
+                                {
+                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
+                                             Style="width: 50ch; margin: auto">
+                                        Now enter the 6-digit code we sent to your authenticator app.
+                                    </MudText>
+                                    break;
+                                }
+                            }
+                            <MudGrid Justify="Justify.Center" Spacing="1">
+                                <MudItem xs="7">
+                                    <br>
+                                    <MudCodeInput
+                                        Count="6"
+                                        Margin="Margin.Normal"
+                                        @bind-Value="TwoFactorLoginModel.Code"
+                                        Variant="Variant.Outlined"/>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudLoadingButton
+                                        ButtonType="ButtonType.Button"
+                                        Disabled="TwoFactorLoginModel.Code.Length <= 5"
+                                        StartIcon="@Icons.Material.Filled.Login"
+                                        OnClick="@(async () => await OnVerifyTokenAsync())"
+                                        Variant="Variant.Filled"
+                                        Color="Color.Primary"
+                                        FullWidth>
+                                        Verify
+                                    </MudLoadingButton>
+                                </MudItem>
+                            </MudGrid>
+                        </MudForm>
+                    </MudPaper>
+                    </MudStack>
                 </ChildContent>
             </MudStepExtended>
         </MudStepperExtended>

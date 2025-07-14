@@ -9,47 +9,50 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="4">
-        <MudPaper Outlined="true" Class="pa-3" Style="margin-bottom: 15px">
-            <MudText Align="Align.Center" Typo="Typo.h4"> Account recovery</MudText>
-        </MudPaper>
-        <MudPaper Outlined="true" Class="pa-5">
-            <MudForm 
-                @ref="form" 
-                Model="Model" 
-                Validation="RecoverAccountValidator.ValidateValue">
-                <MudGrid Justify="Justify.Center">
-                    <MudItem xs="12">
-                        <MudText Align="Align.Center" Class="mb-2">
-                            Your account was locked out due to reason: 'Too many failed login attempts'.
-                            To recover access to your account, please check your email address, we sent you the letter
-                            with recovery code.
-                        </MudText>
-                    </MudItem>
-                    <MudItem xs="7">
-                        <MudCodeInput
-                            Count="6"
-                            Margin="Margin.Normal" Spacing="1"
-                            @bind-Value="Model.Code"
-                            Variant="Variant.Outlined"/>
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudLoadingButton
-                            FullWidth="true"
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            ButtonType="ButtonType.Button"
-                            OnClick="@(async () => await OnRecoverAsync())">
-                            Recover
-                        </MudLoadingButton>
-                    </MudItem>
-                </MudGrid>
-            </MudForm>
-        </MudPaper>
-        <MudPaper Outlined Class="pa-3 mt-1">
-            <MudText Align="Align.Center">Didn't received an email?
-                <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
-            </MudText>
-        </MudPaper>
+        <MudStack Spacing="1">
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4"> Account recovery</MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudForm
+                    @ref="form"
+                    Model="Model"
+                    Validation="RecoverAccountValidator.ValidateValue">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="12">
+                            <MudText Align="Align.Center" Class="mb-2">
+                                Your account was locked out due to reason: 'Too many failed login attempts'.
+                                To recover access to your account, please check your email address, we sent you the
+                                letter
+                                with recovery code.
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="7">
+                            <MudCodeInput
+                                Count="6"
+                                Margin="Margin.Normal" Spacing="1"
+                                @bind-Value="Model.Code"
+                                Variant="Variant.Outlined"/>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudLoadingButton
+                                FullWidth="true"
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnRecoverAsync())">
+                                Recover
+                            </MudLoadingButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center">Didn't received an email?
+                    <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
+                </MudText>
+            </MudPaper>
+        </MudStack>
     </MudItem>
 </MudGrid>
 
@@ -87,7 +90,7 @@
             }
         }
     }
-    
+
     private async Task ResendCodeAsync()
     {
         var request = new ResendCodeRequest()
