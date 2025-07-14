@@ -34,7 +34,7 @@ public class ResetPhoneNumberCommandHandler(
             },
             Credentials = new Dictionary<string, string>()
             {
-                { "PhoneNumber", user.PhoneNumber },
+                { "PhoneNumber", request.Request.NewPhoneNumber },
             }
         };
         

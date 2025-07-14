@@ -45,8 +45,7 @@ public class SendTwoFactorTokenCommandHandler(
                     Credentials = new ()
                     {
                         { "To", user!.Email },
-                        { "Subject", "Two-factor authentication" },
-                        { "UserName", user.Email },
+                        { "Subject", "Two-factor authentication" }
                     }, 
                     Payload = new()
                     {

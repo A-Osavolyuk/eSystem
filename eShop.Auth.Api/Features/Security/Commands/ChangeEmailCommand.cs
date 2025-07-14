@@ -34,8 +34,7 @@ public sealed class RequestChangeEmailCommandHandler(
             Credentials = new ()
             {
                 { "To", user.Email },
-                { "Subject", "Email change (step one)" },
-                { "UserName", user.UserName },
+                { "Subject", "Email change (step one)" }
             },
             Payload = new()
             {
@@ -52,8 +51,7 @@ public sealed class RequestChangeEmailCommandHandler(
             Credentials = new ()
             {
                 { "To", request.Request.NewEmail },
-                { "Subject", "Email verification (step two)" },
-                { "UserName", request.Request.NewEmail },
+                { "Subject", "Email verification (step two)" }
             }, 
             Payload = new()
             {

@@ -37,8 +37,7 @@ public class ResetEmailCommandHandler(
             Credentials = new Dictionary<string, string>()
             {
                 { "To", newEmail },
-                { "Subject", "Email reset" },
-                { "UserName", user.UserName },
+                { "Subject", "Email reset" }
             }
         };
         

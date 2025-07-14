@@ -49,7 +49,7 @@
                     Color="Color.Primary"
                     Class="mt-3"
                     FullWidth
-                    OnClick="async () => await RegisterUserAsync()">
+                    OnClick="@(async () => await OnRegisterAsync())">
                     Register
                 </MudLoadingButton>
 
@@ -68,7 +68,7 @@
 
     private MudForm form = new();
 
-    private async Task RegisterUserAsync()
+    private async Task OnRegisterAsync()
     {
         await form.Validate();
 
@@ -79,15 +79,15 @@
 
             if (result.Success)
             {
+                var response = result.Get<RegistrationResponse>()!;
+                
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/email/verify?email={Model.Email}");
+                NavigationManager.NavigateTo($"/account/email/verify?email={response.Email}&id={response.UserId}");
             }
             else
             {
                 Snackbar.Add(result.Message, Severity.Error);
             }
-
-            Model = new();
         }
     }
 

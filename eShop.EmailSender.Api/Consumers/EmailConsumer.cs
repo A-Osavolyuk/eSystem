@@ -13,7 +13,6 @@ public class EmailConsumer(IEmailService emailService) : IConsumer<MessageReques
         {
             Subject = message.Credentials["Subject"],
             To = message.Credentials["To"],
-            UserName = message.Credentials["UserName"],
         };
         
         await emailService.SendMessageAsync(message.Body, options);

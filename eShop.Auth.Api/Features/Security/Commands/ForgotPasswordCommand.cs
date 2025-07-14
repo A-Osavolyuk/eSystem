@@ -34,8 +34,7 @@ public sealed class ForgotPasswordCommandHandler(
             Credentials = new ()
             {
                 { "To", user.Email },
-                { "Subject", "Password reset" },
-                { "UserName", user.UserName },
+                { "Subject", "Password reset" }
             },
             Payload = new()
             {

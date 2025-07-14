@@ -105,7 +105,6 @@ public sealed class HandleOAuthLoginQueryHandler(
                 {
                     { "To", email },
                     { "Subject", $"Account registered with {provider}" },
-                    { "UserName", email },
                 },
                 Payload = new()
                 {

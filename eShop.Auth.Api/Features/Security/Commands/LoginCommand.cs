@@ -79,8 +79,7 @@ public sealed class LoginCommandHandler(
                         Credentials = new ()
                         {
                             { "To", user.Email },
-                            { "Subject", "Account recovery" },
-                            { "UserName", user.UserName },
+                            { "Subject", "Account recovery" }
                         }, 
                         Payload = new()
                         {
