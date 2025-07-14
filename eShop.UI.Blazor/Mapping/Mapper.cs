@@ -34,15 +34,6 @@ public static class Mapper
         };
     }
 
-    public static VerifyEmailRequest Map(VerifyEmailModel source)
-    {
-        return new VerifyEmailRequest()
-        {
-            Email = source.Email,
-            Code = source.Code
-        };
-    }
-
     public static SendTwoFactorTokenRequest Map(SendTwoFactorTokenModel source)
     {
         return new SendTwoFactorTokenRequest()

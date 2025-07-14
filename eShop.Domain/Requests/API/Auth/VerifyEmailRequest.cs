@@ -2,6 +2,6 @@
 
 public record VerifyEmailRequest
 {
-    public string Email { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
     public string Code { get; set; } = string.Empty;
 }

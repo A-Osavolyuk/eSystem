@@ -16,11 +16,11 @@ public sealed class VerifyEmailCommandHandler(
     public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
         
         var result = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Email, 

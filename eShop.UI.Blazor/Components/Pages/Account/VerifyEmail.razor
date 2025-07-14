@@ -52,7 +52,7 @@
                             Class="mt-3"
                             FullWidth
                             Disabled="@(Model.Code.Length <= 5)"
-                            OnClick="@(async () => await VerifyEmailAsync())">
+                            OnClick="@(async () => await OnVerifyEmailAsync())">
                             Verify
                         </MudLoadingButton>
                     </MudItem>
@@ -77,14 +77,18 @@
 
     private MudForm form = new();
     
-    private async Task VerifyEmailAsync()
+    private async Task OnVerifyEmailAsync()
     {
         await form.Validate();
 
         if (form.IsValid)
         {
-            var request = Mapper.Map(Model);
-            request.Email = Email;
+            var request = new VerifyEmailRequest()
+            {
+                UserId = Id,
+                Code = Model.Code
+            };
+            
             var result = await SecurityService.VerifyEmailAsync(request);
 
             if (result.Success)
