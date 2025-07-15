@@ -36,47 +36,43 @@ public class SendTwoFactorTokenCommandHandler(
         
         var token = await loginTokenManager.GenerateAsync(user, provider, cancellationToken);
 
-        switch (provider.Name)
+        var sender = provider.Name switch
         {
-            case ProviderTypes.Email:
+            ProviderTypes.Email => SenderType.Email,
+            ProviderTypes.Sms => SenderType.Sms,
+            _ => throw new NotSupportedException($"Provider type {provider.Name} is not supported.")
+        };
+
+        Message message = provider.Name switch
+        {
+            ProviderTypes.Email => new TwoFactorTokenEmailMessage()
             {
-                var message = new TwoFactorTokenEmailMessage()
+                Credentials = new ()
                 {
-                    Credentials = new ()
-                    {
-                        { "To", user!.Email },
-                        { "Subject", "Two-factor authentication" }
-                    }, 
-                    Payload = new()
-                    {
-                        { "UserName", user.UserName },
-                        { "Code", token },
-                    },
-                };
-        
-                await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-                
-                break;
-            }
-            case ProviderTypes.Sms:
+                    { "To", user!.Email },
+                    { "Subject", "Two-factor authentication" }
+                }, 
+                Payload = new()
+                {
+                    { "UserName", user.UserName },
+                    { "Code", token },
+                },
+            },
+            ProviderTypes.Sms => new TwoFactorTokenSmsMessage()
             {
-                var message = new TwoFactorTokenSmsMessage()
+                Credentials = new ()
                 {
-                    Credentials = new ()
-                    {
-                        { "PhoneNumber", user!.PhoneNumber },
-                    }, 
-                    Payload = new()
-                    {
-                        { "Code", token },
-                    },
-                };
+                    { "PhoneNumber", user!.PhoneNumber },
+                }, 
+                Payload = new()
+                {
+                    { "Code", token },
+                },
+            },
+            _ => throw new NotSupportedException($"Provider type {provider.Name} is not supported.")
+        };
         
-                await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
-                
-                break;
-            }
-        }
+        await messageService.SendMessageAsync(sender, message, cancellationToken);
         
         return Result.Success("Two-factor authentication token has been successfully sent");
     }
