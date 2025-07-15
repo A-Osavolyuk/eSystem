@@ -5,8 +5,8 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, CodeType type, CodeResource resource,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
+        CodeType type, CodeResource resource, CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes
             .FirstOrDefaultAsync(x => x.UserId == user.Id 

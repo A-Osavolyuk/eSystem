@@ -48,6 +48,16 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
+    public async ValueTask<Result> ConfirmRecoveryEmailAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        user.RecoveryEmailConfirmed = true;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
     public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         user.PhoneNumberConfirmed = true;
@@ -127,6 +137,19 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber, CancellationToken cancellationToken = default)
     {
         user.PhoneNumber = phoneNumber;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> AddRecoveryEmailAsync(UserEntity user, string recoveryEmail, CancellationToken cancellationToken = default)
+    {
+        user.RecoveryEmail = recoveryEmail;
+        user.NormalizedRecoveryEmail = recoveryEmail.ToUpperInvariant();
+        user.RecoveryEmailChangeDate = null;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);

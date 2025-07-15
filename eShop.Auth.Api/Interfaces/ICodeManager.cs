@@ -2,7 +2,12 @@
 
 public interface ICodeManager
 {
-    public ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, CodeType codeType, CodeResource resource, CancellationToken cancellationToken = default);
-    public ValueTask<CodeEntity?> FindAsync(UserEntity user, SenderType sender, CodeType type, CodeResource resource, CancellationToken cancellationToken = default);
-    public ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, CodeType type, CodeResource resource, CancellationToken cancellationToken = default);
+    public ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, CodeType codeType, CodeResource resource,
+        CancellationToken cancellationToken = default);
+
+    public ValueTask<CodeEntity?> FindAsync(UserEntity user, SenderType sender, CodeType type, CodeResource resource,
+        CancellationToken cancellationToken = default);
+
+    public ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, CodeType type,
+        CodeResource resource, CancellationToken cancellationToken = default);
 }
