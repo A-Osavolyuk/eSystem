@@ -3,6 +3,7 @@
 public enum CodeResource
 {
     Email,
+    RecoveryEmail,
     PhoneNumber,
     Account,
     Password

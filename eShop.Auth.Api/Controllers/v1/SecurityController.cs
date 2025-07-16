@@ -16,7 +16,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [AllowAnonymous]
     [HttpPost("login")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> Login([FromBody] LoginRequest request)
+    public async ValueTask<ActionResult<Response>> LoginAsync([FromBody] LoginRequest request)
     {
         var result = await sender.Send(new LoginCommand(request));
 
@@ -31,7 +31,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [AllowAnonymous]
     [HttpPost("register")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> Register([FromBody] RegistrationRequest request)
+    public async ValueTask<ActionResult<Response>> RegisterAsync([FromBody] RegistrationRequest request)
     {
         var result = await sender.Send(new RegisterCommand(request));
 
@@ -75,7 +75,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("password/change")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> ChangePassword(
+    public async ValueTask<ActionResult<Response>> ChangePasswordAsync(
         [FromBody] ChangePasswordRequest changePasswordRequest)
     {
         var result = await sender.Send(new ChangePasswordCommand(changePasswordRequest));
@@ -91,7 +91,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [AllowAnonymous]
     [HttpPost("password/forgot")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> ForgotPasswordRequest(ForgotPasswordRequest request)
+    public async ValueTask<ActionResult<Response>> ForgotPasswordRequestAsync(ForgotPasswordRequest request)
     {
         var result = await sender.Send(new ForgotPasswordCommand(request));
 
@@ -106,7 +106,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [AllowAnonymous]
     [HttpPost("password/reset")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> ConfirmResetPassword(
+    public async ValueTask<ActionResult<Response>> ConfirmResetPasswordAsync(
         [FromBody] ResetPasswordRequest resetPasswordRequest)
     {
         var result = await sender.Send(new ResetPasswordCommand(resetPasswordRequest));
@@ -122,7 +122,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("email/request-change")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> RequestChangeEmail(
+    public async ValueTask<ActionResult<Response>> RequestChangeEmailAsync(
         [FromBody] ChangeEmailRequest changeEmailRequest)
     {
         var result = await sender.Send(new ChangeEmailCommand(changeEmailRequest));
@@ -138,7 +138,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("email/confirm-change")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> ConfirmChangeEmail(
+    public async ValueTask<ActionResult<Response>> ConfirmChangeEmailAsync(
         [FromBody] ConfirmChangeEmailRequest request)
     {
         var result = await sender.Send(new ConfirmChangeEmailCommand(request));
@@ -154,7 +154,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [AllowAnonymous]
     [HttpPost("email/verify")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> ConfirmEmail(
+    public async ValueTask<ActionResult<Response>> VerifyEmailAsync(
         [FromBody] VerifyEmailRequest request)
     {
         var result = await sender.Send(new VerifyEmailCommand(request));
@@ -190,6 +190,38 @@ public class SecurityController(ISender sender) : ControllerBase
         [FromBody] ConfirmResetEmailRequest request)
     {
         var result = await sender.Send(new ConfirmResetEmailCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Add recovery email")]
+    [EndpointDescription("Add recovery email")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("recovery-email/add")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> AddRecoveryEmailAsync(
+        [FromBody] AddRecoveryEmailRequest request)
+    {
+        var result = await sender.Send(new AddRecoveryEmailCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Verify recovery email")]
+    [EndpointDescription("Verify recovery email")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("recovery-email/verify")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> VerifyRecoveryEmailAsync(
+        [FromBody] VerifyRecoveryEmailRequest request)
+    {
+        var result = await sender.Send(new VerifyRecoveryEmailCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -232,7 +264,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [Authorize(Policy = "UpdateAccountPolicy")]
     [HttpPost("phone-number/request-change")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> RequestChangePhoneNumber(
+    public async ValueTask<ActionResult<Response>> RequestChangePhoneNumberAsync(
         [FromBody] ChangePhoneNumberRequest request)
     {
         var result = await sender.Send(new ChangePhoneNumberCommand(request));
@@ -310,7 +342,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("code/resend")]
-    public async ValueTask<ActionResult<Response>> ResendVerificationCode(
+    public async ValueTask<ActionResult<Response>> ResendCodeAsync(
         [FromBody] ResendCodeRequest request)
     {
         var result = await sender.Send(new ResendCodeCommand(request));
