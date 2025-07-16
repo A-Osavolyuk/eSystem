@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class UserEntity : IEntity
+public class UserEntity : Entity
 {
     public Guid Id { get; init; }
     
@@ -27,9 +27,6 @@ public class UserEntity : IEntity
     public int FailedLoginAttempts { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
     public DateTimeOffset? PasswordChangeDate { get; set; }
-    public DateTimeOffset? CreateDate { get; set; }
-    public DateTimeOffset? UpdateDate { get; set; }
-    
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
 }

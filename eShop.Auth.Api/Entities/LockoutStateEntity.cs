@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class LockoutStateEntity : IEntity
+public class LockoutStateEntity : Entity
 {
     public Guid Id { get; init; }
     public Guid UserId { get; set; }
@@ -13,9 +13,5 @@ public class LockoutStateEntity : IEntity
     
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
-    
-    public DateTimeOffset? CreateDate { get; set; }
-    public DateTimeOffset? UpdateDate { get; set; }
-
     public UserEntity User { get; set; } = null!;
 }

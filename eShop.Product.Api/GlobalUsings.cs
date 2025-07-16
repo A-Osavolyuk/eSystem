@@ -2,13 +2,13 @@
 global using eShop.Application.Extensions;
 global using eShop.Application.Utilities;
 global using eShop.Domain.Abstraction.Data;
+global using eShop.Domain.Abstraction.Data.Entities;
 global using eShop.Domain.Common.API;
 global using eShop.Domain.Enums;
 global using eShop.Product.Api.Behaviours;
 global using eShop.Product.Api.Data;
 global using eShop.Product.Api.Entities;
 global using eShop.Product.Api.Extensions;
-global using eShop.Product.Api.Features.Product;
 global using eShop.Product.Api.Interfaces;
 global using eShop.Product.Api.Mapping;
 global using eShop.ServiceDefaults;

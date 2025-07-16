@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class CodeEntity : IEntity, IExpireable
+public class CodeEntity : Entity, IExpireable
 {
     public Guid Id { get; init; } = Guid.CreateVersion7();
     
@@ -9,11 +9,7 @@ public class CodeEntity : IEntity, IExpireable
     public CodeType Type { get; init; }
     public SenderType Sender { get; init; }
     public CodeResource Resource { get; init; }
-    
     public DateTimeOffset ExpireDate { get; set; } = DateTime.UtcNow.AddMinutes(10);
-    public DateTimeOffset? CreateDate { get; set; }
-    public DateTimeOffset? UpdateDate { get; set; }
-    
 
     public UserEntity? User { get; init; }
 }

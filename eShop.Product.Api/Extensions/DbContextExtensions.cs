@@ -1,4 +1,5 @@
 ﻿using eShop.Product.Api.Data.Seed;
+using eShop.Product.Api.Data.Seeding;
 
 namespace eShop.Product.Api.Extensions;
 

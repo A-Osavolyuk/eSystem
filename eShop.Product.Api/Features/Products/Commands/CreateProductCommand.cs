@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using eShop.Domain.Requests.API.Product;
 
-namespace eShop.Product.Api.Features.Product.Commands;
+namespace eShop.Product.Api.Features.Products.Commands;
 
 public record CreateProductCommand(CreateProductRequest Request) : IRequest<Result>;
 

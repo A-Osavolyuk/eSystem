@@ -1,4 +1,4 @@
-﻿namespace eShop.Product.Api.Features.ProductType.Queries;
+﻿namespace eShop.Product.Api.Features.ProductTypes.Queries;
 
 public record GetProductTypesQuery() : IRequest<Result>;
 

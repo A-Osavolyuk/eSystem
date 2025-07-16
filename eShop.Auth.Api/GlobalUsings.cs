@@ -13,6 +13,7 @@ global using eShop.Auth.Api.Mapping;
 global using eShop.Auth.Api.Options;
 global using eShop.Auth.Api.Utilities;
 global using eShop.Domain.Abstraction.Data;
+global using eShop.Domain.Abstraction.Data.Entities;
 global using eShop.Domain.Abstraction.Messaging;
 global using eShop.Domain.Abstraction.Validation;
 global using eShop.Domain.Common.API;

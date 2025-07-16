@@ -1,4 +1,4 @@
-﻿using eShop.Product.Api.Features.ProductType.Queries;
+﻿using eShop.Product.Api.Features.ProductTypes.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Data.Seed;
+﻿using eShop.Auth.Api.Data.Seeding;
 
 namespace eShop.Auth.Api.Extensions;
 

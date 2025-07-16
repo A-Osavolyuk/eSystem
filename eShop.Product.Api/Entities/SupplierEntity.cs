@@ -1,6 +1,6 @@
 ﻿namespace eShop.Product.Api.Entities;
 
-public class SupplierEntity : IEntity
+public class SupplierEntity : Entity
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -9,7 +9,4 @@ public class SupplierEntity : IEntity
     public string? PhoneNumber { get; set; } = string.Empty;
     public string? WebsiteUrl { get; set; } = string.Empty;
     public string? Address { get; set; } = string.Empty;
-    
-    public DateTimeOffset? CreateDate { get; set; }
-    public DateTimeOffset? UpdateDate { get; set; }
 }
