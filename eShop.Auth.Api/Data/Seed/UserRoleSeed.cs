@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Data.Seed;
+﻿using eShop.Domain.Abstraction.Data.Seeding;
+
+namespace eShop.Auth.Api.Data.Seed;
 
 public class UserRoleSeed : Seed<UserRoleEntity>
 {

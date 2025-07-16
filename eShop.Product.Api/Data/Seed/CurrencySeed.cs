@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Data.Seed;
+﻿using eShop.Domain.Abstraction.Data.Seeding;
+
+namespace eShop.Product.Api.Data.Seed;
 
 public class CurrencySeed : Seed<CurrencyEntity>
 {
