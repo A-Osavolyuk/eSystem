@@ -67,6 +67,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(p => p.Id);
             entity.Property(x => x.Gender).HasEnumConversion();
+            entity.Property(x => x.FirstName).HasMaxLength(64);
+            entity.Property(x => x.LastName).HasMaxLength(64);
 
             entity.HasOne(p => p.User)
                 .WithOne()
@@ -101,7 +103,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<RefreshTokenEntity>(entity =>
         {
             entity.HasKey(k => k.Id);
-            entity.Property(x => x.Token).HasColumnType("NVARCHAR(MAX)");
+            entity.Property(x => x.Token).HasMaxLength(3000);
 
             entity.HasOne(t => t.UserEntity)
                 .WithOne()
