@@ -4,7 +4,8 @@ namespace eShop.BlazorWebUI.Models;
 
 public class LockoutModel
 {
-    public LockoutReason Reason { get; set; }
+    public string? Reason { get; set; }
+    public string? Code { get; set; }
     public string? Description { get; set; }
     public bool Enabled { get; set; }
     public bool Permanent { get; set; }

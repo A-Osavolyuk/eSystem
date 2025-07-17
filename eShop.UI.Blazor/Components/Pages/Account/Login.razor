@@ -170,12 +170,7 @@
                     }
                     else
                     {
-                        var redirectUri = response.Reason switch
-                        {
-                            LockoutReason.TooManyFailedLoginAttempts => $"/account/recover?id={userId}",
-                            _ => $"/account/locked-out?id={userId}"
-                        };
-
+                        var redirectUri = $"/account/locked-out?id={userId}";
                         Snackbar.Add(result.Message, Severity.Error);
                         NavigationManager.NavigateTo(redirectUri);
                     }

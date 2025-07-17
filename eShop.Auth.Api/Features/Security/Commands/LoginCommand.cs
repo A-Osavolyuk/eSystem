@@ -43,6 +43,7 @@ public sealed class LoginCommandHandler(
                 UserId = user.Id,
                 IsLockedOut = lockoutState.IsActive,
                 Reason = lockoutState.Reason,
+                Code = lockoutState.Code
             });
         }
 
@@ -103,7 +104,7 @@ public sealed class LoginCommandHandler(
                     FailedLoginAttempts = user.FailedLoginAttempts,
                     IsLockedOut = true,
                     UserId = user.Id,
-                    Reason = LockoutReason.TooManyFailedLoginAttempts,
+                    Reason = "Two many failed login attempts",
                 });
         }
 

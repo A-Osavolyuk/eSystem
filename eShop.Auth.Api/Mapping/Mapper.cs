@@ -105,6 +105,8 @@ public static class Mapper
     {
         return new()
         {
+            Code = source.Code,
+            IsActive = source.IsActive,
             Enabled = source.Enabled,
             Permanent = source.Permanent,
             Description = source.Description,

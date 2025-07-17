@@ -165,7 +165,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Reason = LockoutReason.None,
+            Reason = string.Empty,
+            Code = string.Empty,
+            Description = string.Empty,
             Enabled = false,
             CreateDate = DateTimeOffset.UtcNow,
         };

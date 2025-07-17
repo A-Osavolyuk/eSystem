@@ -52,6 +52,7 @@ public static class Mapper
             EndDate = source.EndDate,
             Permanent = source.Permanent,
             Reason = source.Reason,
+            Code = source.Code,
             StartDate = source.StartDate
         };
     }
