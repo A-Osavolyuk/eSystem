@@ -40,7 +40,7 @@ public sealed class HandleOAuthLoginQueryHandler(
         {
             var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
-            if (lockoutState.IsActive)
+            if (lockoutState.Enabled)
             {
                 return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
             }

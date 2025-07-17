@@ -31,4 +31,5 @@ public class UserEntity : Entity
     
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
+    public LockoutStateEntity LockoutState { get; set; } = null!;
 }

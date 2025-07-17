@@ -36,14 +36,14 @@ public sealed class LoginCommandHandler(
 
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
-        if (lockoutState.IsActive)
+        if (lockoutState.Enabled)
         {
             return Results.BadRequest("Account is locked out", new LoginResponse()
             {
                 UserId = user.Id,
-                IsLockedOut = lockoutState.IsActive,
-                Reason = lockoutState.Reason,
-                Code = lockoutState.Code
+                IsLockedOut = lockoutState.Enabled,
+                Reason = lockoutState.Reason?.Name,
+                Code = lockoutState.Reason?.Code
             });
         }
 
@@ -71,13 +71,7 @@ public sealed class LoginCommandHandler(
                     });
             }
 
-            var lockoutResult = await lockoutManager.LockoutAsync(user, LockoutReason.TooManyFailedLoginAttempts,
-                "Too many failed login attempts", LockoutPeriod.Permanent, cancellationToken: cancellationToken);
-
-            if (!lockoutResult.Succeeded)
-            {
-                return lockoutResult;
-            }
+            //TODO: Lockout for too many failed login attempts
 
             var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Recover,
                 CodeResource.Account, cancellationToken);
@@ -123,7 +117,7 @@ public sealed class LoginCommandHandler(
         {
             return Result.Success(new LoginResponse()
             {
-                IsLockedOut = lockoutState.IsActive,
+                IsLockedOut = lockoutState.Enabled,
                 TwoFactorEnabled = true,
                 UserId = user.Id
             });
@@ -139,7 +133,7 @@ public sealed class LoginCommandHandler(
             UserId = user.Id,
             Message = "Successfully logged in.",
             TwoFactorEnabled = user.TwoFactorEnabled,
-            IsLockedOut = lockoutState.IsActive,
+            IsLockedOut = lockoutState.Enabled,
         });
     }
 }

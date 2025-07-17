@@ -31,7 +31,7 @@ public sealed class LoginWith2FaCommandHandler(
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
-        if (lockoutState.IsActive)
+        if (lockoutState.Enabled)
         {
             return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
         }
@@ -60,7 +60,7 @@ public sealed class LoginWith2FaCommandHandler(
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             Message = "Successfully logged in.",
-            IsLockedOut = lockoutState.IsActive,
+            IsLockedOut = lockoutState.Enabled,
         });
     }
 }

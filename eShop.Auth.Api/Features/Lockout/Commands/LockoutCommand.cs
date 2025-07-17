@@ -19,10 +19,9 @@ public class LockoutCommandHandler(
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
+        
+        //TODO: Refactor lockout flow
 
-        var result = await lockoutManager.LockoutAsync(user, request.Request.Reason, request.Request.Description,
-            request.Request.Period, request.Request.EndDate, cancellationToken);
-
-        return result;
+        return Result.Success();
     }
 }

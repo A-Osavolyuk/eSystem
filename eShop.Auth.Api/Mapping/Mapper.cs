@@ -105,12 +105,11 @@ public static class Mapper
     {
         return new()
         {
-            Code = source.Code,
-            IsActive = source.IsActive,
+            Code = source.Reason?.Code,
+            Reason = source.Reason?.Name,
             Enabled = source.Enabled,
             Permanent = source.Permanent,
             Description = source.Description,
-            Reason = source.Reason,
             EndDate = source.EndDate,
             StartDate = source.StartDate
         };

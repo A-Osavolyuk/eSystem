@@ -165,9 +165,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Reason = string.Empty,
-            Code = string.Empty,
-            Description = string.Empty,
+            ReasonId = null,
             Enabled = false,
             CreateDate = DateTimeOffset.UtcNow,
         };
@@ -191,7 +189,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         
         await context.Users.AddAsync(user, cancellationToken);
         await context.UserProvider.AddRangeAsync(providers, cancellationToken);
-        await context.LockoutState.AddAsync(lockoutState, cancellationToken);
+        await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

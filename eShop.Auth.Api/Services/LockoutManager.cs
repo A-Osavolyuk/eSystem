@@ -8,68 +8,31 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
     public async ValueTask<LockoutStateEntity> FindAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.LockoutState.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
+        var entity = await context.LockoutStates.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
         return entity;
     }
 
-    public async ValueTask<Result> LockoutAsync(UserEntity userEntity, LockoutReason reason, string description,
-        LockoutPeriod period, DateTimeOffset? endDate = null, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> LockoutAsync(UserEntity userEntity,
+        LockoutReasonEntity lockoutReason, string description, bool permanent = false,
+        TimeSpan? duration = null, DateTimeOffset? endDate = null, CancellationToken cancellationToken = default)
     {
-        var entity = await context.LockoutState.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
-
-        var lockoutEndDate = period switch
-        {
-            LockoutPeriod.Day => DateTimeOffset.UtcNow.AddDays(1),
-            LockoutPeriod.Week => DateTimeOffset.UtcNow.AddDays(7),
-            LockoutPeriod.Month => DateTimeOffset.UtcNow.AddMonths(1),
-            LockoutPeriod.Quarter => DateTimeOffset.UtcNow.AddMonths(3),
-            LockoutPeriod.Year => DateTimeOffset.UtcNow.AddYears(1),
-            LockoutPeriod.Permanent or LockoutPeriod.None => null,
-            LockoutPeriod.Custom => endDate,
-            _ => throw new NotSupportedException("Not supported period")
-        };
-
-        var reasonName = reason switch
-        {
-            LockoutReason.AccountCompromised => "Account is compromised",
-            LockoutReason.TooManyFailedLoginAttempts => "Too many failed login attempts",
-            LockoutReason.AutomatedSecurityFlag => "Automated security flag",
-            LockoutReason.BillingIssue => "Billing issue",
-            LockoutReason.InactivityTimeout => "Inactivity timeout",
-            LockoutReason.LegalHold => "Legal hold",
-            LockoutReason.SuspiciousActivity => "Suspicious activity",
-            LockoutReason.ManualAdminLockout => "Manual admin lockout",
-            LockoutReason.TemporaryLockout => "Temporary lockout",
-            LockoutReason.TermsOfServiceViolation => "Terms of service violation",
-            LockoutReason.UserRequestedLockout => "User requested lockout",
-            _  => null
-        };
-
-        var code = reason switch
-        {
-            LockoutReason.AccountCompromised => "ACCOUNT_COMPROMISED",
-            LockoutReason.TooManyFailedLoginAttempts => "TOO_MANY_FAILED_LOGIN_ATTEMPTS",
-            LockoutReason.AutomatedSecurityFlag => "AUTOMATED_SECURITY_FLAG",
-            LockoutReason.BillingIssue => "BILLING_ISSUE",
-            LockoutReason.InactivityTimeout => "INACTIVITY_TIMEOUT",
-            LockoutReason.LegalHold => "LEGAL_HOLD",
-            LockoutReason.SuspiciousActivity => "SUSPICIOUS_ACTIVITY",
-            LockoutReason.ManualAdminLockout => "MANUAL_ADMIN_LOCKOUT",
-            LockoutReason.TemporaryLockout => "TEMPORARY_LOCKOUT",
-            LockoutReason.TermsOfServiceViolation => "TERMS_OF_SERVICE_VIOLATION",
-            LockoutReason.UserRequestedLockout => "USER_REQUESTED_LOCKOUT",
-            _ => null
-        };
+        var entity = await context.LockoutStates.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
         
-        entity.Enabled = true;
-        entity.Reason = reasonName;
-        entity.Code = code;
-        entity.Description = description;
-        entity.UpdateDate = DateTime.UtcNow;
-        entity.Permanent = period is LockoutPeriod.Permanent;
-        entity.EndDate = lockoutEndDate;
+        var startDate = DateTimeOffset.UtcNow;
 
-        context.LockoutState.Update(entity);
+        if (duration.HasValue)
+        {
+            entity.Duration = duration.Value;
+            entity.EndDate = startDate.Add(duration.Value);
+        }
+
+        entity.StartDate = startDate;
+        entity.Enabled = true;
+        entity.Permanent = permanent;
+        entity.ReasonId = lockoutReason.Id;
+        entity.Description = description;
+
+        context.LockoutStates.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -77,16 +40,19 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
 
     public async ValueTask<Result> UnlockAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
-        var entity = await context.LockoutState.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
+        var entity = await context.LockoutStates.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
 
         entity.Enabled = false;
-        entity.Reason = string.Empty;
-        entity.Code = string.Empty;
-        entity.Description = string.Empty;
-        entity.EndDate = null;
-        entity.UpdateDate = DateTime.UtcNow;
+        entity.Permanent = false;
+        entity.UpdateDate = DateTimeOffset.UtcNow;
+        entity.ReasonId = null;
+        entity.Reason = null;
+        entity.StartDate = DateTimeOffset.UtcNow;
+        entity.EndDate = DateTimeOffset.UtcNow;
+        entity.Duration = null;
+        entity.Description = null;
 
-        context.LockoutState.Update(entity);
+        context.LockoutStates.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
