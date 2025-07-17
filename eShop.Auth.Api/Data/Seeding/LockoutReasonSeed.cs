@@ -15,8 +15,7 @@ public class LockoutReasonSeed : Seed<LockoutReasonEntity>
                 Period = LockoutPeriod.Permanent,
                 Code = "TOO_MANY_FAILED_LOGIN_ATTEMPTS",
                 Name = "Too many failed login attempts",
-                Description =
-                    "The account was locked due to multiple unsuccessful login attempts exceeding the allowed limit.",
+                Description = "The account was locked due to multiple unsuccessful login attempts exceeding the allowed limit (5).",
             },
             new LockoutReasonEntity()
             {
@@ -43,8 +42,7 @@ public class LockoutReasonSeed : Seed<LockoutReasonEntity>
                 Period = LockoutPeriod.Permanent,
                 Code = "ACCOUNT_COMPROMISED",
                 Name = "Account compromised",
-                Description =
-                    "The account was locked because it was suspected to be compromised or accessed by unauthorized parties.",
+                Description = "The account was locked because it was suspected to be compromised or accessed by unauthorized parties.",
             },
             new LockoutReasonEntity()
             {
@@ -80,8 +78,7 @@ public class LockoutReasonSeed : Seed<LockoutReasonEntity>
                 Period = LockoutPeriod.Day,
                 Code = "AUTOMATED_SECURITY_FLAG",
                 Name = "Automated security flag",
-                Description =
-                    "The account was automatically locked by the system due to suspicious or flagged behavior.",
+                Description = "The account was automatically locked by the system due to suspicious or flagged behavior.",
             },
             new LockoutReasonEntity()
             {
