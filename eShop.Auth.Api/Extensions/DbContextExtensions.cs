@@ -66,10 +66,15 @@ public static class DbContextExtensions
             await context.RolePermissions.AddRangeAsync(seed.Get(), cancellationToken);
         }
         
-        if (!await context.LockoutState.AnyAsync(cancellationToken))
+        if (!await context.LockoutStates.AnyAsync(cancellationToken))
         {
             var seed = new LockoutSeed();
-            await context.LockoutState.AddRangeAsync(seed.Get(), cancellationToken);
+            await context.LockoutStates.AddRangeAsync(seed.Get(), cancellationToken);
+        }
+        if (!await context.LockoutReasons.AnyAsync(cancellationToken))
+        {
+            var seed = new LockoutReasonSeed();
+            await context.LockoutReasons.AddRangeAsync(seed.Get(), cancellationToken);
         }
         
         await context.SaveChangesAsync(cancellationToken);

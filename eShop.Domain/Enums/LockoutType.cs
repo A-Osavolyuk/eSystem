@@ -3,7 +3,7 @@
 /// <summary>
 /// Specifies the reason why a user account has been locked out.
 /// </summary>
-public enum LockoutReason
+public enum LockoutType
 {
     /// <summary>
     /// The account has been locked due to exceeding the allowed number of failed login attempts.
