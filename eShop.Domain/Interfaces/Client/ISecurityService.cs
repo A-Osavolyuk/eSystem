@@ -13,9 +13,8 @@ public interface ISecurityService
     public ValueTask<Response> ConfirmResetEmailAsync(ConfirmResetEmailRequest request);
     public ValueTask<Response> ResetPhoneNumberAsync(ResetPhoneNumberRequest request);
     public ValueTask<Response> ConfirmResetPhoneNumberAsync(ConfirmResetPhoneNumberRequest request);
-    public ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request);
-    public ValueTask<Response> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request);
     public ValueTask<Response> AddPhoneNumberAsync(AddPhoneNumberRequest request);
+    public ValueTask<Response> AddRecoveryEmailAsync(AddRecoveryEmailRequest request);
     public ValueTask<Response> ChangeEmailAsync(ChangeEmailRequest request);
     public ValueTask<Response> ConfirmChangeEmailAsync(ConfirmChangeEmailRequest request);
     public ValueTask<Response> ChangePasswordAsync(ChangePasswordRequest request);
@@ -24,5 +23,8 @@ public interface ISecurityService
     public ValueTask<Response> ConfirmChangePhoneNumberAsync(ConfirmChangePhoneNumberRequest request);
     public ValueTask<Response> ResendCodeAsync(ResendCodeRequest request);
     public ValueTask<Response> VerifyCodeAsync(VerifyCodeRequest request);
+    public ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request);
+    public ValueTask<Response> VerifyRecoveryEmailAsync(VerifyRecoveryEmailRequest request);
+    public ValueTask<Response> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request);
     public ValueTask<Response> RecoverAccountAsync(RecoverAccountRequest request);
 }
