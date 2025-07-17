@@ -22,11 +22,13 @@ public class UserEntity : Entity
     public bool PhoneNumberConfirmed { get; set; }
     public DateTimeOffset? PhoneNumberChangeDate { get; set; }
     
+    public string PasswordHash { get; set; } = string.Empty;
+    public DateTimeOffset? PasswordChangeDate { get; set; }
+    
     public bool AccountConfirmed { get; set; }
     public bool TwoFactorEnabled { get; set; }
     public int FailedLoginAttempts { get; set; }
-    public string PasswordHash { get; set; } = string.Empty;
-    public DateTimeOffset? PasswordChangeDate { get; set; }
+    
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
 }
