@@ -33,7 +33,7 @@ public sealed class LoginCommandHandler(
         {
             return Results.BadRequest("The email address is not confirmed.");
         }
-        
+
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
         if (lockoutState.IsActive)
@@ -59,61 +59,52 @@ public sealed class LoginCommandHandler(
                 return updateResult;
             }
 
-            if (user.FailedLoginAttempts >= MaxLoginAttempts)
+            if (user.FailedLoginAttempts < MaxLoginAttempts)
             {
-                if (!lockoutState.IsActive)
+                return Results.BadRequest("The password is not valid.",
+                    new LoginResponse()
+                    {
+                        FailedLoginAttempts = user.FailedLoginAttempts,
+                        IsLockedOut = false,
+                        UserId = user.Id,
+                    });
+            }
+
+            var lockoutResult = await lockoutManager.LockoutAsync(user, LockoutReason.TooManyFailedLoginAttempts,
+                "Too many failed login attempts", LockoutPeriod.Permanent, cancellationToken: cancellationToken);
+
+            if (!lockoutResult.Succeeded)
+            {
+                return lockoutResult;
+            }
+
+            var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Recover,
+                CodeResource.Account, cancellationToken);
+
+            var message = new AccountRecoveryEmailMessage()
+            {
+                Credentials = new()
                 {
-                    var lockoutResult = await lockoutManager.LockoutAsync(user, LockoutReason.TooManyFailedLoginAttempts,
-                        "Too many failed login attempts", LockoutPeriod.Permanent, cancellationToken: cancellationToken);
-
-                    if (!lockoutResult.Succeeded)
-                    {
-                        return lockoutResult;
-                    }
-                    
-                    var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Recover, 
-                        CodeResource.Account, cancellationToken);
-                    
-                    var message = new AccountRecoveryEmailMessage()
-                    {
-                        Credentials = new ()
-                        {
-                            { "To", user.Email },
-                            { "Subject", "Account recovery" }
-                        }, 
-                        Payload = new()
-                        {
-                            { "UserName", user.UserName },
-                            {"Code", code },
-                        }
-                    };
-        
-                    await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+                    { "To", user.Email },
+                    { "Subject", "Account recovery" }
+                },
+                Payload = new()
+                {
+                    { "UserName", user.UserName },
+                    { "Code", code },
                 }
+            };
 
-                var response = new LoginResponse()
+            await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+
+            return Results.BadRequest("Account is locked out due to too many failed login attempts",
+                new LoginResponse()
                 {
                     FailedLoginAttempts = user.FailedLoginAttempts,
                     IsLockedOut = true,
                     UserId = user.Id,
                     Reason = LockoutReason.TooManyFailedLoginAttempts,
-                };
-                
-                return Results.BadRequest(
-                    @"Account is locked out due to too many failed login attempts. 
-                            We sent letter with instruction to your email address", response);
-            }
-            else
-            {
-                var response = new LoginResponse()
-                {
-                    FailedLoginAttempts = user.FailedLoginAttempts,
-                    IsLockedOut = false,
-                    UserId = user.Id,
-                };
-
-                return Results.BadRequest("The password is not valid.", response);
-            }
+                });
         }
 
         if (user.FailedLoginAttempts > 0)
