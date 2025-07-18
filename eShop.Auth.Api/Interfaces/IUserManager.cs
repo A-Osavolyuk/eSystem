@@ -19,7 +19,7 @@ public interface IUserManager
     public ValueTask<Result> AddRecoveryEmailAsync(UserEntity user, string recoveryEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> CreateAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
     public ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<Result> ChangeUserNameAsync(UserEntity user, string userName, CancellationToken cancellationToken = default);
+    public ValueTask<Result> ChangeNameAsync(UserEntity user, string userName, CancellationToken cancellationToken = default);
     public ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangePasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default);
     public ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);

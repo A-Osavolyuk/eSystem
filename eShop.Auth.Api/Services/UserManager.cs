@@ -203,7 +203,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> ChangeUserNameAsync(UserEntity user, string userName,
+    public async ValueTask<Result> ChangeNameAsync(UserEntity user, string userName,
         CancellationToken cancellationToken = default)
     {
         user.UserName = userName;
