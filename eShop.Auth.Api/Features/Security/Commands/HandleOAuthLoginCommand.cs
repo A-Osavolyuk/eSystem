@@ -1,20 +1,20 @@
 ﻿using System.Security.Claims;
 using eShop.Auth.Api.Messages.Email;
 
-namespace eShop.Auth.Api.Features.Security.Queries;
+namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record HandleOAuthLoginQuery(
+public sealed record HandleOAuthLoginCommand(
     ClaimsPrincipal Principal,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
 
-public sealed class HandleOAuthLoginQueryHandler(
+public sealed class HandleOAuthLoginCommandHandler(
     IPermissionManager permissionManager,
     ITokenManager tokenManager,
     IUserManager userManager,
     IMessageService messageService,
     IRoleManager roleManager,
-    ILockoutManager lockoutManager) : IRequestHandler<HandleOAuthLoginQuery, Result>
+    ILockoutManager lockoutManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly ITokenManager tokenManager = tokenManager;
@@ -23,7 +23,7 @@ public sealed class HandleOAuthLoginQueryHandler(
     private readonly IRoleManager roleManager = roleManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
 
-    public async Task<Result> Handle(HandleOAuthLoginQuery request,
+    public async Task<Result> Handle(HandleOAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
         var email = request.Principal.Claims

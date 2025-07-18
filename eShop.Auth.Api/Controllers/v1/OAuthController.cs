@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Features.Security.Queries;
-using eShop.Auth.Api.Security.Schemes;
+﻿using eShop.Auth.Api.Security.Schemes;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -20,7 +19,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [HttpGet("login/{provider}")]
     public async ValueTask<ActionResult<Response>> OAuthLoginAsync(string provider, string? returnUri = null)
     {
-        var result = await sender.Send(new OAuthLoginQuery(provider, returnUri));
+        var result = await sender.Send(new OAuthLoginCommand(provider, returnUri));
 
         return result.Match(
             s =>
@@ -41,7 +40,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     {
         var principal = await signInManager.AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
         
-        var result = await sender.Send(new HandleOAuthLoginQuery(principal, remoteError, returnUri));
+        var result = await sender.Send(new HandleOAuthLoginCommand(principal, remoteError, returnUri));
         return result.Match(s => Redirect(s.Message), ErrorHandler.Handle);
     }
 }

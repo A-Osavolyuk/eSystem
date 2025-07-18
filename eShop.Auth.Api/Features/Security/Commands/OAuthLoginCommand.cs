@@ -1,15 +1,15 @@
 ﻿using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.Security.Queries;
+namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record OAuthLoginQuery(string Provider, string? ReturnUri) : IRequest<Result>;
+public sealed record OAuthLoginCommand(string Provider, string? ReturnUri) : IRequest<Result>;
 
-public sealed class OAuthLoginQueryHandler(
-    ISignInManager signInManager) : IRequestHandler<OAuthLoginQuery, Result>
+public sealed class OAuthLoginCommandHandler(
+    ISignInManager signInManager) : IRequestHandler<OAuthLoginCommand, Result>
 {
     private readonly ISignInManager signInManager = signInManager;
 
-    public async Task<Result> Handle(OAuthLoginQuery request,
+    public async Task<Result> Handle(OAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
         var providers = await signInManager.GetOAuthSchemasAsync(cancellationToken);
