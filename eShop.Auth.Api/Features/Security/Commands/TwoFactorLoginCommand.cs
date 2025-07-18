@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.TwoFactor.Commands;
+namespace eShop.Auth.Api.Features.Security.Commands;
 
 public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
     : IRequest<Result>;

@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Features.TwoFactor.Commands;
+﻿using eShop.Auth.Api.Features.Users.Commands;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;

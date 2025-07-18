@@ -32,7 +32,7 @@ public class UsersController(ISender sender) : ControllerBase
     [HttpGet("{id:guid}/roles")]
     public async ValueTask<ActionResult<Response>> GetUserRolesAsync(Guid id)
     {
-        var result = await sender.Send(new GetRolesQuery(id));
+        var result = await sender.Send(new GetUserRolesQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
@@ -91,7 +91,7 @@ public class UsersController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(Guid id)
     {
-        var result = await sender.Send(new GetProvidersQuery(id));
+        var result = await sender.Send(new GetUserProvidersQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder()

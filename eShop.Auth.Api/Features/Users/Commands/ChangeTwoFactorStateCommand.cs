@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.TwoFactor.Commands;
+namespace eShop.Auth.Api.Features.Users.Commands;
 
 public sealed record ChangeTwoFactorStateCommand(ChangeTwoFactorStateRequest Request)
     : IRequest<Result>;
