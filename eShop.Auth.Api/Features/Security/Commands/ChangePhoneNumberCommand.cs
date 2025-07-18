@@ -23,6 +23,13 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
+        
+        var isTaken = await userManager.CheckPhoneNumberAsync(request.Request.NewPhoneNumber, cancellationToken);
+
+        if (isTaken)
+        {
+            return Results.BadRequest("This phone number is already taken");
+        }
 
         var oldPhoneNumberCode = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Current, 
             CodeResource.PhoneNumber, cancellationToken);

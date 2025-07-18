@@ -257,6 +257,12 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return result;
     }
 
+    public async ValueTask<bool> CheckPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken = default)
+    {
+        var result = await context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+        return result;
+    }
+
     public string GenerateRandomPassword(int length)
     {
         const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!-_";
