@@ -6,29 +6,50 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="4">
-        <MudPaper Outlined="true" Class="pa-5" Style="margin-top: 150px">
-            <MudGrid>
-                <MudItem xs="12" Class="mb-2">
-                    @if (Model.Permanent)
-                    {
-                        <MudText Typo="Typo.h6" Align="Align.Center"> You account is locked out permanently </MudText>
-                    }
-                    else
-                    {
-                        <MudText Typo="Typo.h6" Align="Align.Center"> You account is locked out until: @Model.EndDate </MudText>
-                    }
+        <MudGrid Justify="Justify.Center" Spacing="1">
+            @if (Model.Reason is not null)
+            {
+                <MudItem xs="12" Style="margin-top: 150px">
+                    <MudPaper Outlined="true" Class="pa-3">
+                        <MudText Typo="Typo.h6">
+                            @Model.Reason.Name
+                        </MudText>
+                    </MudPaper>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudText Typo="Typo.subtitle1"> Reason: @Model.Reason.ToString() </MudText>
-                    <MudText Typo="Typo.subtitle1"> Reason: @Model.Description </MudText>
+                    <MudPaper Outlined="true" Class="pa-3">
+                        <MudGrid Justify="Justify.Center" Spacing="1">
+                            <MudItem xs="12">
+                                <MudText Typo="Typo.subtitle1">
+                                    @Model.Description
+                                </MudText>
+                            </MudItem>
+                            <MudItem xs="12">
+                                @if (Model.Permanent)
+                                {
+                                    <MudText Typo="Typo.subtitle1" Align="Align.Center">
+                                        Locked out permanently
+                                    </MudText>
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.subtitle1" Align="Align.Center">
+                                        Locked out until: @Model.EndDate
+                                    </MudText>
+                                }
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
                 </MudItem>
-            </MudGrid>
-        </MudPaper>
+            }
+        </MudGrid>
     </MudItem>
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "id")] public Guid Id { get; set; }
+
+    [SupplyParameterFromQuery(Name = "id")]
+    public Guid Id { get; set; }
 
     private LockoutModel Model { get; set; } = new();
 
