@@ -11,13 +11,15 @@ public sealed class LoginCommandHandler(
     IUserManager userManager,
     ILockoutManager lockoutManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<LoginCommand, Result>
+    IMessageService messageService,
+    IReasonManager reasonManager) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
+    private readonly IReasonManager reasonManager = reasonManager;
     private const int MaxLoginAttempts = 5;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -71,10 +73,22 @@ public sealed class LoginCommandHandler(
                     });
             }
 
-            //TODO: Lockout for too many failed login attempts
+            var reason = await reasonManager.FindByTypeAsync(LockoutType.TooManyFailedLoginAttempts, cancellationToken);
 
-            var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Recover,
-                CodeResource.Account, cancellationToken);
+            if (reason is null)
+            {
+                return Results.NotFound($"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
+            }
+            
+            var lockoutResult = await lockoutManager.LockoutAsync(user, reason, permanent: true, cancellationToken: cancellationToken);
+
+            if (!lockoutResult.Succeeded)
+            {
+                return lockoutResult;
+            }
+
+            var code = await codeManager.GenerateAsync(user, SenderType.Email, 
+                CodeType.Recover, CodeResource.Account, cancellationToken);
 
             var message = new AccountRecoveryEmailMessage()
             {
