@@ -6,10 +6,12 @@ public record LockoutCommand(LockoutRequest Request) : IRequest<Result>;
 
 public class LockoutCommandHandler(
     IUserManager userManager,
-    ILockoutManager lockoutManager) : IRequestHandler<LockoutCommand, Result>
+    ILockoutManager lockoutManager,
+    IReasonManager reasonManager) : IRequestHandler<LockoutCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
+    private readonly IReasonManager reasonManager = reasonManager;
 
     public async Task<Result> Handle(LockoutCommand request, CancellationToken cancellationToken)
     {
@@ -19,9 +21,22 @@ public class LockoutCommandHandler(
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
-        
-        //TODO: Refactor lockout flow
 
-        return Result.Success();
+        var reason = await reasonManager.FindByIdAsync(request.Request.ReasonId, cancellationToken);
+
+        if (reason is null)
+        {
+            return Results.NotFound($"Cannot find reason with ID {request.Request.ReasonId}.");
+        }
+        
+        var description = request.Request.Description;
+        var isPermanent = request.Request.IsPermanent;
+        var duration = request.Request.Duration;
+        var endDate = request.Request.EndDate;
+        
+        var result = await lockoutManager.LockoutAsync(user, reason, description, 
+            isPermanent, duration, endDate, cancellationToken);
+        
+        return result;
     }
 }
