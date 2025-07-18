@@ -5,20 +5,28 @@ public class RollbackManager(AuthDbContext context) : IRollbackManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<RollbackEntity?> FindAsync(UserEntity user, string code, RollbackField field, RollbackAction action,
-        CancellationToken cancellationToken)
+    public async ValueTask<RollbackEntity?> FindAsync(UserEntity user, string code, 
+        RollbackField field, CancellationToken cancellationToken)
     {
         var rollback = await context.Rollback.FirstOrDefaultAsync(x => x.UserId == user.Id 
-            && x.Field == field && x.Action == action && x.Code == code, cancellationToken);
+            && x.Field == field && x.Code == code, cancellationToken);
 
         return rollback;
     }
 
-    public async ValueTask<Result> SaveAsync(UserEntity user, string value, RollbackField field, RollbackAction action,
-        CancellationToken cancellationToken)
+    public async ValueTask<RollbackEntity?> FindAsync(UserEntity user, RollbackField field, CancellationToken cancellationToken)
+    {
+        var rollback = await context.Rollback.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Field == field, cancellationToken);
+
+        return rollback;
+    }
+
+    public async ValueTask<RollbackEntity?> SaveAsync(UserEntity user, string value, 
+        RollbackField field, CancellationToken cancellationToken)
     {
         var rollback = await context.Rollback.FirstOrDefaultAsync(x => x.UserId == user.Id 
-            && x.Field == field && x.Action == action && x.Value == value, cancellationToken);
+            && x.Field == field && x.Value == value, cancellationToken);
 
         if (rollback is not null)
         {
@@ -33,7 +41,6 @@ public class RollbackManager(AuthDbContext context) : IRollbackManager
             UserId = user.Id,
             Code = code,
             Value = user.PasswordHash,
-            Action = RollbackAction.Reset,
             Field = RollbackField.Password,
             CreateDate = DateTimeOffset.UtcNow,
         };
@@ -41,7 +48,7 @@ public class RollbackManager(AuthDbContext context) : IRollbackManager
         await context.Rollback.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return rollback;
     }
 
     public async ValueTask<Result> RemoveAsync(RollbackEntity entity, CancellationToken cancellationToken)

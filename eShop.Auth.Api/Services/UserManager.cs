@@ -2,11 +2,9 @@
 
 [Injectable(typeof(IUserManager), ServiceLifetime.Scoped)]
 public sealed class UserManager(
-    AuthDbContext context,
-    IRollbackManager rollbackManager) : IUserManager
+    AuthDbContext context) : IUserManager
 {
     private readonly AuthDbContext context = context;
-    private readonly IRollbackManager rollbackManager = rollbackManager;
 
     public async ValueTask<List<UserEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -74,14 +72,6 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var rollbackResult = await rollbackManager.SaveAsync(user, user.PasswordHash, 
-            RollbackField.Password, RollbackAction.Reset, cancellationToken);
-
-        if (!rollbackResult.Succeeded)
-        {
-            return rollbackResult;
-        }
-        
         var passwordHash = PasswordHasher.HashPassword(newPassword);
 
         user.PasswordHash = passwordHash;
@@ -96,14 +86,6 @@ public sealed class UserManager(
 
     public async ValueTask<Result> ResetEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default)
     {
-        var rollbackResult = await rollbackManager.SaveAsync(user, user.Email, 
-            RollbackField.Email, RollbackAction.Reset, cancellationToken);
-
-        if (!rollbackResult.Succeeded)
-        {
-            return rollbackResult;
-        }
-        
         user.Email = newEmail;
         user.EmailConfirmed = true;
         user.EmailChangeDate = DateTimeOffset.UtcNow;
@@ -118,14 +100,6 @@ public sealed class UserManager(
 
     public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default)
     {
-        var rollbackResult = await rollbackManager.SaveAsync(user, user.PhoneNumber, 
-            RollbackField.PhoneNumber, RollbackAction.Reset, cancellationToken);
-
-        if (!rollbackResult.Succeeded)
-        {
-            return rollbackResult;
-        }
-        
         user.PhoneNumber = newPhoneNumber;
         user.PhoneNumberConfirmed = true;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
@@ -188,14 +162,6 @@ public sealed class UserManager(
 
     public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default)
     {
-        var rollbackResult = await rollbackManager.SaveAsync(user, user.Email, 
-            RollbackField.Email, RollbackAction.Change, cancellationToken);
-
-        if (!rollbackResult.Succeeded)
-        {
-            return rollbackResult;
-        }
-        
         user.Email = newEmail;
         user.NormalizedEmail = newEmail.ToUpperInvariant();
         user.EmailChangeDate = DateTimeOffset.UtcNow;
@@ -209,14 +175,6 @@ public sealed class UserManager(
 
     public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default)
     {
-        var rollbackResult = await rollbackManager.SaveAsync(user, user.PhoneNumber, 
-            RollbackField.PhoneNumber, RollbackAction.Change, cancellationToken);
-
-        if (!rollbackResult.Succeeded)
-        {
-            return rollbackResult;
-        }
-        
         user.PhoneNumber = newPhoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
@@ -325,14 +283,6 @@ public sealed class UserManager(
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default)
     {
-        var rollbackResult = await rollbackManager.SaveAsync(user, user.PasswordHash, 
-            RollbackField.Password, RollbackAction.Change, cancellationToken);
-
-        if (!rollbackResult.Succeeded)
-        {
-            return rollbackResult;
-        }
-        
         var newPasswordHash = PasswordHasher.HashPassword(newPassword);
         
         user.PasswordHash = newPasswordHash;

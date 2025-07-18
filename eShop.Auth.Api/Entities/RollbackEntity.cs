@@ -9,7 +9,6 @@ public class RollbackEntity : Entity
     public string Code { get; set; } = string.Empty;
     
     public RollbackField Field { get; set; }
-    public RollbackAction Action { get; set; }
 
     public UserEntity User { get; set; } = null!;
 }

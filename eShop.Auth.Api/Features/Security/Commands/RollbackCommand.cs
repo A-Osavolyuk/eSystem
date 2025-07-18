@@ -21,10 +21,9 @@ public class RollbackCommandHandler(
         }
         
         var code = request.Request.Code;
-        var action = request.Request.Action;
         var field = request.Request.Field;
         
-        var rollback = await rollbackManager.FindAsync(user, code, field, action, cancellationToken);
+        var rollback = await rollbackManager.FindAsync(user, code, field, cancellationToken);
 
         if (rollback is null)
         {

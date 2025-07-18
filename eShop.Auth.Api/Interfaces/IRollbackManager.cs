@@ -3,10 +3,13 @@
 public interface IRollbackManager
 {
     public ValueTask<RollbackEntity?> FindAsync(UserEntity user, string code,
-        RollbackField field, RollbackAction action, CancellationToken cancellationToken);
+        RollbackField field, CancellationToken cancellationToken);
     
-    public ValueTask<Result> SaveAsync(UserEntity user, string value, 
-        RollbackField field, RollbackAction action, CancellationToken cancellationToken);
+    public ValueTask<RollbackEntity?> FindAsync(UserEntity user,
+        RollbackField field, CancellationToken cancellationToken);
+    
+    public ValueTask<RollbackEntity?> SaveAsync(UserEntity user, string value, 
+        RollbackField field, CancellationToken cancellationToken);
     
     public ValueTask<Result> RemoveAsync(RollbackEntity entity, CancellationToken cancellationToken);
 }
