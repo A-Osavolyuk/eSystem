@@ -19,6 +19,13 @@ public class ConfirmResetEmailHandler(
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
+        
+        var isEmailTaken = await userManager.CheckEmailAsync(request.Request.NewEmail, cancellationToken);
+
+        if (isEmailTaken)
+        {
+            return Results.BadRequest("This email address is already taken");
+        }
 
         var code = request.Request.Code;
         

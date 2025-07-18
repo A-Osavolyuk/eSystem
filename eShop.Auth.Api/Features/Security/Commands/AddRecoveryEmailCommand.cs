@@ -23,6 +23,13 @@ public class AddRecoveryEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
         
+        var isEmailTaken = await userManager.CheckEmailAsync(request.Request.RecoveryEmail, cancellationToken);
+
+        if (isEmailTaken)
+        {
+            return Results.BadRequest("This email address is already taken");
+        }
+        
         var result = await userManager.AddRecoveryEmailAsync(user, request.Request.RecoveryEmail, cancellationToken);
 
         if (!result.Succeeded)

@@ -24,6 +24,13 @@ public sealed class ConfirmChangeEmailCommandHandler(
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
+        
+        var isEmailTaken = await userManager.CheckEmailAsync(request.Request.NewEmail, cancellationToken);
+
+        if (isEmailTaken)
+        {
+            return Results.BadRequest("This email address is already taken");
+        }
 
         var currentEmailResult = await codeManager.VerifyAsync(user, request.Request.CurrentEmailCode, 
             SenderType.Email, CodeType.Current, CodeResource.Email, cancellationToken);
