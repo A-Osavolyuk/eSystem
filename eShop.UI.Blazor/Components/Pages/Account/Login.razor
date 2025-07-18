@@ -141,14 +141,13 @@
                 if (response!.TwoFactorEnabled)
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    NavigationManager.NavigateTo($"/account/2fa/login?email={Model.Email}&id={response.UserId}");
+                    NavigationManager.NavigateTo($"/account/2fa/login?id={response.UserId}");
                 }
                 else
                 {
                     await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
                     NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
                     Snackbar.Add(result.Message, Severity.Success);
-                    Model = new();
                 }
             }
             else
