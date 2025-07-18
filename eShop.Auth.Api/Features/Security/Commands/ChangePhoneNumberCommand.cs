@@ -61,6 +61,8 @@ public sealed class RequestChangePhoneNumberCommandHandler(
                 { "Code", newPhoneNumberCode }
             }
         };
+        
+        await messageService.SendMessageAsync(SenderType.Sms, stepTwoMessage, cancellationToken);
 
         return Result.Success();
     }
