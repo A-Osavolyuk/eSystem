@@ -36,7 +36,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         var newPhoneNumberCode = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.New, 
             CodeResource.PhoneNumber, cancellationToken);
 
-        var stepOneMessage = new ChangePhoneNumberSmsMessage()
+        var stepOneMessage = new ChangePhoneNumberMessage()
         {
             Credentials = new ()
             {
@@ -50,7 +50,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         
         await messageService.SendMessageAsync(SenderType.Sms, stepOneMessage, cancellationToken);
         
-        var stepTwoMessage = new VerifyPhoneNumberSmsMessage()
+        var stepTwoMessage = new VerifyPhoneNumberMessage()
         {
             Credentials = new ()
             {

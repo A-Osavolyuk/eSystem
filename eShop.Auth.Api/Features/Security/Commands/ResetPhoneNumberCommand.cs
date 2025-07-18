@@ -33,7 +33,7 @@ public class ResetPhoneNumberCommandHandler(
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Reset, 
             CodeResource.PhoneNumber, cancellationToken);
         
-        var message = new ResetPhoneNumberSmsMessage()
+        var message = new ResetPhoneNumberMessage()
         {
             Payload = new()
             {

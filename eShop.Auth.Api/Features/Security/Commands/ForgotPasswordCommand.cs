@@ -29,7 +29,7 @@ public sealed class ForgotPasswordCommandHandler(
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, 
             CodeResource.Password, cancellationToken);
 
-        var message = new ResetPasswordEmailMessage()
+        var message = new ResetPasswordMessage()
         {
             Credentials = new ()
             {

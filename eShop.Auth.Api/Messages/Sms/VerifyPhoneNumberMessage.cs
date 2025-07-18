@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Sms;
 
-public class VerifyPhoneNumberSmsMessage : Message
+public class VerifyPhoneNumberMessage : Message
 {
     public override string Build()
     {

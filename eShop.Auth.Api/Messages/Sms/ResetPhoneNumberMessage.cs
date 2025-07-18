@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Sms;
 
-public class ResetPhoneNumberSmsMessage : Message
+public class ResetPhoneNumberMessage : Message
 {
     public override string Build()
     {

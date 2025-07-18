@@ -99,7 +99,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             var provider = request.Principal.Identity!.AuthenticationType!;
 
-            var message = new OAuthLoginEmailMessage()
+            var message = new OAuthLoginMessage()
             {
                 Credentials = new Dictionary<string, string>()
                 {

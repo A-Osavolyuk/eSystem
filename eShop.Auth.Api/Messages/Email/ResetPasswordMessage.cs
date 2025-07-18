@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class ResetPasswordEmailMessage : Message
+public class ResetPasswordMessage : Message
 {
     public override string Build()
     {

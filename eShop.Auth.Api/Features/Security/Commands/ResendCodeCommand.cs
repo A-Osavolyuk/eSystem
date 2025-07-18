@@ -91,7 +91,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.Account, CodeType: CodeType.Recover, Sender: SenderType.Email } =>
-                new AccountRecoveryEmailMessage()
+                new AccountRecoveryMessage()
                 {
                     Credentials = new()
                     {
@@ -105,7 +105,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.Password, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
-                new ResetPasswordEmailMessage()
+                new ResetPasswordMessage()
                 {
                     Credentials = new()
                     {
@@ -119,7 +119,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Verify, Sender: SenderType.Email } =>
-                new VerifyPhoneNumberSmsMessage()
+                new VerifyPhoneNumberMessage()
                 {
                     Credentials = new()
                     {
@@ -131,7 +131,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.New, Sender: SenderType.Email } =>
-                new VerifyPhoneNumberSmsMessage()
+                new VerifyPhoneNumberMessage()
                 {
                     Credentials = new()
                     {
@@ -143,7 +143,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Current, Sender: SenderType.Email } =>
-                new ChangePhoneNumberSmsMessage()
+                new ChangePhoneNumberMessage()
                 {
                     Credentials = new()
                     {
@@ -155,7 +155,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
-                new ResetPhoneNumberSmsMessage()
+                new ResetPhoneNumberMessage()
                 {
                     Credentials = new()
                     {

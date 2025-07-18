@@ -89,7 +89,7 @@ public sealed class LoginCommandHandler(
             var code = await codeManager.GenerateAsync(user, SenderType.Email, 
                 CodeType.Recover, CodeResource.Account, cancellationToken);
 
-            var message = new AccountRecoveryEmailMessage()
+            var message = new AccountRecoveryMessage()
             {
                 Credentials = new()
                 {
