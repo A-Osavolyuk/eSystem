@@ -12,7 +12,7 @@ public class ChangePasswordValidator : Validator<ChangePasswordModel>
 
         RuleFor(p => p.NewPassword)
             .NotEqual(x => x.CurrentPassword).WithMessage("New password cannot be the same with old one.")
-            .SetValidator(new PhoneNumberValidator());
+            .SetValidator(new PasswordValidator());
 
         RuleFor(p => p.ConfirmNewPassword)
             .NotEmpty().WithMessage("You must confirm your new password.")
