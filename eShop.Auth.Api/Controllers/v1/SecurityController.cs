@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
 
@@ -48,6 +49,20 @@ public class SecurityController(ISender sender) : ControllerBase
     public async ValueTask<ActionResult<Response>> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
     {
         var result = await sender.Send(new RefreshTokenCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Rollback")]
+    [EndpointDescription("Rollback")]
+    [ProducesResponseType(200)]
+    [Authorize]
+    [HttpPost("rollback")]
+    public async ValueTask<ActionResult<Response>> RollbackAsync([FromBody] RollbackRequest request)
+    {
+        var result = await sender.Send(new RollbackCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Enums;
+﻿namespace eShop.Domain.Enums;
 
 public enum RollbackAction
 {
