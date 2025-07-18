@@ -244,7 +244,14 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         
         return Result.Success();
     }
-    
+
+    public async ValueTask<bool> CheckUserNameAsync(string userName, CancellationToken cancellationToken = default)
+    {
+        var result = await context.Users.AnyAsync(u => u.UserName == userName, cancellationToken);
+        
+        return result;
+    }
+
     public string GenerateRandomPassword(int length)
     {
         const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!-_";

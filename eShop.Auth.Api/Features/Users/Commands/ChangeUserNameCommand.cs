@@ -17,6 +17,13 @@ public class ChangeUserNameCommandHandler(IUserManager userManager) : IRequestHa
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
         
+        var isNameTaken = await userManager.CheckUserNameAsync(request.Request.UserName, cancellationToken);
+
+        if (isNameTaken)
+        {
+            return Results.BadRequest("This name is already taken");
+        }
+        
         var result = await userManager.ChangeUsernameAsync(user, request.Request.UserName, cancellationToken);
         
         return result;
