@@ -64,6 +64,46 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("Codes");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.LockoutReasonEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Period")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LockoutReasons");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.LockoutStateEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -86,9 +126,8 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<bool>("Permanent")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ReasonId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("StartDate")
                         .HasColumnType("datetimeoffset");
@@ -101,10 +140,12 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ReasonId");
+
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("LockoutState");
+                    b.ToTable("LockoutStates");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.LoginTokenEntity", b =>
@@ -189,7 +230,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Gender")
                         .IsRequired()
@@ -197,7 +239,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
@@ -249,7 +292,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR(MAX)");
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
@@ -532,11 +576,17 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.LockoutStateEntity", b =>
                 {
+                    b.HasOne("eShop.Auth.Api.Entities.LockoutReasonEntity", "Reason")
+                        .WithMany()
+                        .HasForeignKey("ReasonId");
+
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithOne()
+                        .WithOne("LockoutState")
                         .HasForeignKey("eShop.Auth.Api.Entities.LockoutStateEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Reason");
 
                     b.Navigation("User");
                 });
@@ -689,6 +739,9 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
+                    b.Navigation("LockoutState")
+                        .IsRequired();
+
                     b.Navigation("Permissions");
 
                     b.Navigation("Roles");

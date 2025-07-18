@@ -12,6 +12,24 @@ namespace eShop.Auth.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "LockoutReasons",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Period = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LockoutReasons", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Providers",
                 columns: table => new
                 {
@@ -63,17 +81,21 @@ namespace eShop.Auth.Api.Migrations
                     NormalizedEmail = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     EmailChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    RecoveryEmail = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    NormalizedRecoveryEmail = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    RecoveryEmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    RecoveryEmailChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     UserNameChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: false),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PhoneNumberChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    PasswordHash = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    PasswordChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     AccountConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    PasswordChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -113,6 +135,7 @@ namespace eShop.Auth.Api.Migrations
                     Code = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Sender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Resource = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
@@ -129,12 +152,12 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LockoutState",
+                name: "LockoutStates",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReasonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
                     Permanent = table.Column<bool>(type: "bit", nullable: false),
@@ -145,9 +168,14 @@ namespace eShop.Auth.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LockoutState", x => x.Id);
+                    table.PrimaryKey("PK_LockoutStates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LockoutState_Users_UserId",
+                        name: "FK_LockoutStates_LockoutReasons_ReasonId",
+                        column: x => x.ReasonId,
+                        principalTable: "LockoutReasons",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_LockoutStates_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -189,8 +217,8 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -213,7 +241,7 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Token = table.Column<string>(type: "NVARCHAR(MAX)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
@@ -361,8 +389,13 @@ namespace eShop.Auth.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LockoutState_UserId",
-                table: "LockoutState",
+                name: "IX_LockoutStates_ReasonId",
+                table: "LockoutStates",
+                column: "ReasonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LockoutStates_UserId",
+                table: "LockoutStates",
                 column: "UserId",
                 unique: true);
 
@@ -429,7 +462,7 @@ namespace eShop.Auth.Api.Migrations
                 name: "Codes");
 
             migrationBuilder.DropTable(
-                name: "LockoutState");
+                name: "LockoutStates");
 
             migrationBuilder.DropTable(
                 name: "LoginTokens");
@@ -454,6 +487,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserSecret");
+
+            migrationBuilder.DropTable(
+                name: "LockoutReasons");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
