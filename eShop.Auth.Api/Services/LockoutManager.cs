@@ -26,7 +26,6 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
 
         if (duration.HasValue)
         {
-            entity.Duration = duration.Value;
             entity.EndDate = startDate.Add(duration.Value);
         }
 
@@ -58,7 +57,6 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         entity.Reason = null;
         entity.StartDate = DateTimeOffset.UtcNow;
         entity.EndDate = DateTimeOffset.UtcNow;
-        entity.Duration = null;
         entity.Description = null;
 
         context.LockoutStates.Update(entity);

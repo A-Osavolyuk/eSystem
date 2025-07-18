@@ -112,7 +112,6 @@ public static class Mapper
             Description = source.Description,
             EndDate = source.EndDate,
             StartDate = source.StartDate,
-            Duration = source.Duration,
         };
     }
 

@@ -54,7 +54,6 @@ public static class Mapper
             Permanent = source.Permanent,
             Reason = Map(source.Reason),
             StartDate = source.StartDate,
-            Duration = source.Duration
         };
     }
 

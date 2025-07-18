@@ -11,5 +11,4 @@ public class LockoutModel
     public LockoutReasonModel? Reason { get; set; }
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
-    public TimeSpan? Duration { get; set; }
 }

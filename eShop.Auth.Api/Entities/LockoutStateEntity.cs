@@ -8,8 +8,6 @@ public class LockoutStateEntity : Entity
     public string? Description { get; set; }
     public bool Enabled { get; set; }
     public bool Permanent { get; set; }
-    
-    public TimeSpan? Duration { get; set; }
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
     
