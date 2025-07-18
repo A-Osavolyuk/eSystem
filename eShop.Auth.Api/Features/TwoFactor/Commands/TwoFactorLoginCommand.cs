@@ -22,11 +22,11 @@ public sealed class LoginWith2FaCommandHandler(
     public async Task<Result> Handle(TwoFactorLoginCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);

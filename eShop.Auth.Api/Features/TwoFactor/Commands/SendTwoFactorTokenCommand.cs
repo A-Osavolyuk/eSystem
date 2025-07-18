@@ -20,11 +20,11 @@ public class SendTwoFactorTokenCommandHandler(
 
     public async Task<Result> Handle(SendTwoFactorTokenCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
         var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);

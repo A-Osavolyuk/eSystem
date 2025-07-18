@@ -19,7 +19,6 @@ public static class Mapper
     {
         return new TwoFactorLoginRequest()
         {
-            Email = source.Email,
             Token = source.Code
         };
     }
@@ -38,7 +37,6 @@ public static class Mapper
     {
         return new SendTwoFactorTokenRequest()
         {
-            Email = source.Email,
             Provider = source.Provider
         };
     }

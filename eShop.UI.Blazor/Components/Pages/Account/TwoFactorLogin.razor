@@ -1,7 +1,5 @@
 ﻿@page "/account/2fa/login"
 
-@using Size = MudBlazor.Size
-
 @inherits PageBase
 
 @inject ITwoFactorService TwoFactorService
@@ -164,12 +162,8 @@
 @code {
     [SupplyParameterFromForm] private SendTwoFactorTokenModel SendTwoFactorTokenModel { get; set; } = new();
     [SupplyParameterFromForm] private TwoFactorLoginModel TwoFactorLoginModel { get; set; } = new();
-
-    [SupplyParameterFromQuery(Name = "email")]
-    public string Email { get; set; } = string.Empty;
-
-    [SupplyParameterFromQuery(Name = "id")]
-    public Guid Id { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "id")] public Guid Id { get; set; }
 
     private MudForm sendTwoFactorTokenForm = new();
     private MudForm twoFactorForm = new();
@@ -185,9 +179,6 @@
         {
             SendTwoFactorTokenModel.Provider = providers.First().Name;
         }
-
-        SendTwoFactorTokenModel.Email = Email;
-        TwoFactorLoginModel.Email = Email;
     }
 
     private async Task LoadProvidersAsync()
@@ -217,6 +208,8 @@
             else
             {
                 var request = Mapper.Map(SendTwoFactorTokenModel);
+                request.UserId = Id;
+                
                 var result = await TwoFactorService.SendTwoFactorTokenAsync(request);
 
                 if (result.Success)
@@ -240,6 +233,7 @@
             var request = Mapper.Map(TwoFactorLoginModel);
 
             request.Provider = SendTwoFactorTokenModel.Provider;
+            request.UserId = Id;
 
             var result = await TwoFactorService.TwoFactorLoginAsync(request);
 
