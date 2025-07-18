@@ -24,7 +24,7 @@ public class ChangeUserNameCommandHandler(IUserManager userManager) : IRequestHa
             return Results.BadRequest("This name is already taken");
         }
         
-        var result = await userManager.ChangeUsernameAsync(user, request.Request.UserName, cancellationToken);
+        var result = await userManager.ChangeUserNameAsync(user, request.Request.UserName, cancellationToken);
         
         return result;
     }
