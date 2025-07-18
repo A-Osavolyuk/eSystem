@@ -47,13 +47,29 @@ public static class Mapper
     {
         return new LockoutModel()
         {
+            Id = source.Id,
             Description = source.Description,
             Enabled = source.Enabled,
             EndDate = source.EndDate,
             Permanent = source.Permanent,
-            Reason = source.Reason,
+            Reason = Map(source.Reason),
+            StartDate = source.StartDate,
+            Duration = source.Duration
+        };
+    }
+
+    public static LockoutReasonModel Map(LockoutReasonDto? source)
+    {
+        if (source is null) return new();
+        
+        return new LockoutReasonModel()
+        {
+            Description = source.Description,
+            Id = source.Id,
+            Name = source.Name,
+            Period = source.Period,
+            Type = source.Type,
             Code = source.Code,
-            StartDate = source.StartDate
         };
     }
 

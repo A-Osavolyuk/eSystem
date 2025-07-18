@@ -54,13 +54,14 @@ public sealed class LoginWith2FaCommandHandler(
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
-        return Result.Success(new LoginResponse()
+        var response = new LoginResponse()
         {
             UserId = user.Id,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            Message = "Successfully logged in.",
             IsLockedOut = lockoutState.Enabled,
-        });
+        };
+        
+        return Result.Success(response, "Successfully logged in.");
     }
 }

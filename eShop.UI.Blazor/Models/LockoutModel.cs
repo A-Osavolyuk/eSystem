@@ -4,13 +4,12 @@ namespace eShop.BlazorWebUI.Models;
 
 public class LockoutModel
 {
-    public string? Reason { get; set; }
-    public string? Code { get; set; }
+    public Guid Id { get; set; }
     public string? Description { get; set; }
     public bool Enabled { get; set; }
     public bool Permanent { get; set; }
-    public bool IsActive => Enabled && EndDate > DateTimeOffset.UtcNow || Permanent;
-    
+    public LockoutReasonModel? Reason { get; set; }
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
+    public TimeSpan? Duration { get; set; }
 }

@@ -44,8 +44,7 @@ public sealed class LoginCommandHandler(
             {
                 UserId = user.Id,
                 IsLockedOut = lockoutState.Enabled,
-                Reason = lockoutState.Reason?.Name,
-                Code = lockoutState.Reason?.Code
+                Reason = Mapper.Map(lockoutState.Reason),
             });
         }
 
@@ -109,10 +108,10 @@ public sealed class LoginCommandHandler(
             return Results.BadRequest("Account is locked out due to too many failed login attempts",
                 new LoginResponse()
                 {
-                    FailedLoginAttempts = user.FailedLoginAttempts,
-                    IsLockedOut = true,
                     UserId = user.Id,
-                    Reason = "Two many failed login attempts",
+                    IsLockedOut = true,
+                    FailedLoginAttempts = user.FailedLoginAttempts,
+                    Reason = Mapper.Map(reason)
                 });
         }
 
@@ -140,14 +139,15 @@ public sealed class LoginCommandHandler(
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
-        return Result.Success(new LoginResponse()
+        var response = new LoginResponse()
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             UserId = user.Id,
-            Message = "Successfully logged in.",
             TwoFactorEnabled = user.TwoFactorEnabled,
             IsLockedOut = lockoutState.Enabled,
-        });
+        };
+        
+        return Result.Success(response, "Successfully logged in.");
     }
 }

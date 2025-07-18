@@ -8,7 +8,11 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
     public async ValueTask<LockoutStateEntity> FindAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.LockoutStates.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
+        var entity = await context.LockoutStates
+            .Where(x => x.UserId == userEntity.Id)
+            .Include(x => x.Reason)
+            .FirstAsync(cancellationToken);
+        
         return entity;
     }
 

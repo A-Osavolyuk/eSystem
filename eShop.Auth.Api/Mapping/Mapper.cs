@@ -105,18 +105,21 @@ public static class Mapper
     {
         return new()
         {
-            Code = source.Reason?.Code,
-            Reason = source.Reason?.Name,
+            Id = source.Id,
+            Reason = Map(source.Reason),
             Enabled = source.Enabled,
             Permanent = source.Permanent,
             Description = source.Description,
             EndDate = source.EndDate,
-            StartDate = source.StartDate
+            StartDate = source.StartDate,
+            Duration = source.Duration,
         };
     }
 
-    public static LockoutReasonDto Map(LockoutReasonEntity source)
+    public static LockoutReasonDto Map(LockoutReasonEntity? source)
     {
+        if (source is null) return new();
+        
         return new()
         {
             Id = source.Id,
