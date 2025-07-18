@@ -258,6 +258,29 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Rollback",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Field = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rollback", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Rollback_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserProvider",
                 columns: table => new
                 {
@@ -434,6 +457,11 @@ namespace eShop.Auth.Api.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Rollback_UserId",
+                table: "Rollback",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserPermissions_PermissionId",
                 table: "UserPermissions",
                 column: "PermissionId");
@@ -475,6 +503,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
+
+            migrationBuilder.DropTable(
+                name: "Rollback");
 
             migrationBuilder.DropTable(
                 name: "UserPermissions");

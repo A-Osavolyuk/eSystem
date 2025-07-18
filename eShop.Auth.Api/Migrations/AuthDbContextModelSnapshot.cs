@@ -379,6 +379,42 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("RolePermissions");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.RollbackEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Field")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Rollback");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -660,6 +696,17 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.RollbackEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>
