@@ -26,9 +26,9 @@ public sealed class PermissionHandler : AuthorizationHandler<PermissionRequireme
 
     private bool HasAll(string permissionName)
     {
-        var permissionNameParts = permissionName.Split(':');
+        var permissionNameParts = permissionName.Split('_');
         var resource = permissionNameParts[0];
-        var allAccessPermission = $"{resource}:All";
+        var allAccessPermission = $"{resource}:ALL";
         return permissionName == allAccessPermission;
     }
 }
