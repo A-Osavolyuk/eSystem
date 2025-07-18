@@ -26,6 +26,11 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
             entity.EndDate = startDate.Add(duration.Value);
         }
 
+        if (endDate.HasValue)
+        {
+            entity.EndDate = endDate.Value;
+        }
+
         entity.StartDate = startDate;
         entity.Enabled = true;
         entity.Permanent = permanent;
