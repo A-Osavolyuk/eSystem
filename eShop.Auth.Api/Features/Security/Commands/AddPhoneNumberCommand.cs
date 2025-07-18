@@ -34,6 +34,13 @@ public class AddPhoneNumberCommandHandler(
         {
             return result;
         }
+        
+        var isTaken = await userManager.CheckPhoneNumberAsync(request.Request.PhoneNumber, cancellationToken);
+
+        if (isTaken)
+        {
+            return Results.BadRequest("This phone number is already taken");
+        }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Verify, 
             CodeResource.PhoneNumber, cancellationToken);

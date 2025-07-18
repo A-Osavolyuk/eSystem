@@ -24,9 +24,9 @@ public class ResetEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
         
-        var isEmailTaken = await userManager.CheckEmailAsync(newEmail, cancellationToken);
+        var isTaken = await userManager.CheckEmailAsync(newEmail, cancellationToken);
 
-        if (isEmailTaken)
+        if (isTaken)
         {
             return Results.BadRequest("This email address is already taken");
         }

@@ -6,11 +6,9 @@ public sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<R
 
 public sealed class VerifyEmailCommandHandler(
     IUserManager userManager,
-    IMessageService messageService,
     ICodeManager codeManager) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(VerifyEmailCommand request,
