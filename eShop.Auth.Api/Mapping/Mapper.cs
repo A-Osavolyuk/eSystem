@@ -114,4 +114,17 @@ public static class Mapper
             StartDate = source.StartDate
         };
     }
+
+    public static LockoutReasonDto Map(LockoutReasonEntity source)
+    {
+        return new()
+        {
+            Id = source.Id,
+            Code = source.Code,
+            Description = source.Description,
+            Name = source.Name,
+            Period = source.Period,
+            Type = source.Type
+        };
+    }
 }

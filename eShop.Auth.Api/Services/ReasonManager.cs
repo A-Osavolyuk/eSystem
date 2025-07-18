@@ -5,9 +5,9 @@ public class ReasonManager(AuthDbContext context) : IReasonManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<List<LockoutStateEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<List<LockoutReasonEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var entities = await context.LockoutStates.ToListAsync(cancellationToken);
+        var entities = await context.LockoutReasons.ToListAsync(cancellationToken);
         return entities;
     }
 

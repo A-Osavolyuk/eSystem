@@ -1,4 +1,5 @@
 ﻿using eShop.Auth.Api.Features.Lockout.Commands;
+using eShop.Auth.Api.Features.Lockout.Query;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -10,6 +11,19 @@ namespace eShop.Auth.Api.Controllers.v1;
 public class LockoutController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
+    
+    [EndpointSummary("Get all reasons")]
+    [EndpointDescription("Get all reasons")]
+    [ProducesResponseType(200)]
+    [HttpPost("reasons")]
+    [AllowAnonymous]
+    public async ValueTask<ActionResult<Response>> GetReasonsAsync()
+    {
+        var result = await sender.Send(new GetReasonsQuery());
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
     
     [EndpointSummary("Lockout")]
     [EndpointDescription("Lockout")]
