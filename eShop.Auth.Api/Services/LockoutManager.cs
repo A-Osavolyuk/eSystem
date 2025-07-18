@@ -13,7 +13,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
     }
 
     public async ValueTask<Result> LockoutAsync(UserEntity userEntity,
-        LockoutReasonEntity lockoutReason, string description, bool permanent = false,
+        LockoutReasonEntity lockoutReason, string? description = null, bool permanent = false,
         TimeSpan? duration = null, DateTimeOffset? endDate = null, CancellationToken cancellationToken = default)
     {
         var entity = await context.LockoutStates.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
@@ -30,7 +30,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         entity.Enabled = true;
         entity.Permanent = permanent;
         entity.ReasonId = lockoutReason.Id;
-        entity.Description = description;
+        entity.Description = description ?? lockoutReason.Description;
 
         context.LockoutStates.Update(entity);
         await context.SaveChangesAsync(cancellationToken);

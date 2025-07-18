@@ -8,7 +8,7 @@ public interface ILockoutManager
     public ValueTask<Result> LockoutAsync(
         UserEntity userEntity,
         LockoutReasonEntity lockoutReason, 
-        string description, 
+        string? description = null, 
         bool permanent = false,
         TimeSpan? duration = null, 
         DateTimeOffset? endDate = null, 
