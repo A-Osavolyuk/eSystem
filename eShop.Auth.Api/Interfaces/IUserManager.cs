@@ -21,9 +21,9 @@ public interface IUserManager
     public ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName, CancellationToken cancellationToken = default);
     public ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangePasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default);
-    public ValueTask<bool> CheckUsernameAsync(string userName, CancellationToken cancellationToken = default);
+    public ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
+    public ValueTask<bool> CheckUserNameAsync(string userName, CancellationToken cancellationToken = default);
     public ValueTask<bool> CheckEmailAsync(string email, CancellationToken cancellationToken = default);
     public ValueTask<bool> CheckPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken = default);
     public string GenerateRandomPassword(int length);
