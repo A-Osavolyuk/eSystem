@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Auth.Api.Messages.Email;
+using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -9,11 +10,15 @@ public sealed record ConfirmChangeEmailCommand(ConfirmChangeEmailRequest Request
 public sealed class ConfirmChangeEmailCommandHandler(
     IUserManager userManager,
     ITokenManager tokenManager,
-    ICodeManager codeManager) : IRequestHandler<ConfirmChangeEmailCommand, Result>
+    ICodeManager codeManager,
+    IRollbackManager rollbackManager,
+    IMessageService messageService) : IRequestHandler<ConfirmChangeEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly ICodeManager codeManager = codeManager;
+    private readonly IRollbackManager rollbackManager = rollbackManager;
+    private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(ConfirmChangeEmailCommand request,
         CancellationToken cancellationToken)
@@ -48,19 +53,36 @@ public sealed class ConfirmChangeEmailCommandHandler(
             return newEmailResult;
         }
         
+        var rollback = await rollbackManager.SaveAsync(user, user.Email, 
+            RollbackField.Email, cancellationToken);
+
+        if (rollback is null)
+        {
+            return Results.InternalServerError("Cannot change email, rollback was not created.");
+        }
+        
         var result = await userManager.ChangeEmailAsync(user, request.Request.NewEmail, cancellationToken);
 
         if (!result.Succeeded)
         {
             return result;
         }
-        
-        user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        
-        if (user is null)
+
+        var message = new EmailChangedMessage()
         {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        }
+            Credentials = new()
+            {
+                { "Subject", "Email changed" },
+                { "To", rollback.Value }
+            },
+            Payload = new()
+            {
+                { "UserName", rollback.Value },
+                { "Code", rollback.Code },
+            }
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
         
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
