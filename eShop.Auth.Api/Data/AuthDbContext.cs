@@ -19,6 +19,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<LockoutStateEntity> LockoutStates { get; set; }
     public DbSet<LockoutReasonEntity> LockoutReasons { get; set; }
     public DbSet<RollbackEntity> Rollback { get; set; }
+    public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -159,6 +160,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Name).HasMaxLength(64);
+
+            entity.HasOne(x => x.Owner)
+                .WithMany()
+                .HasForeignKey(x => x.OwnerId);
         });
 
         builder.Entity<RolePermissionEntity>(entity =>
@@ -211,6 +216,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.User)
                 .WithMany()
                 .HasForeignKey(x => x.UserId);
+        });
+
+        builder.Entity<ResourceOwnerEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(64);
         });
     }
 }

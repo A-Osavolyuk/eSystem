@@ -30,6 +30,12 @@ public static class DbContextExtensions
             await context.UserProvider.AddRangeAsync(seed.Get(), cancellationToken);
         }
         
+        if (!await context.ResourceOwners.AnyAsync(cancellationToken))
+        {
+            var seed = new ResourceOwnerSeed();
+            await context.ResourceOwners.AddRangeAsync(seed.Get(), cancellationToken);
+        }
+        
         if (!await context.Resources.AnyAsync(cancellationToken))
         {
             var seed = new ResourceSeed();
