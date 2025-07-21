@@ -111,55 +111,6 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> RollbackEmailAsync(UserEntity user, string email, CancellationToken cancellationToken = default)
-    {
-        user.Email = email;
-        user.EmailChangeDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-        
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> RollbackRecoveryEmailAsync(UserEntity user, string recoveryEmail,
-        CancellationToken cancellationToken = default)
-    {
-        user.RecoveryEmail = recoveryEmail;
-        user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-        
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> RollbackPhoneNumberAsync(UserEntity user, string phoneNumber, CancellationToken cancellationToken = default)
-    {
-        user.PhoneNumber = phoneNumber;
-        user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-        
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> RollbackPasswordAsync(UserEntity user, string passwordHash, CancellationToken cancellationToken = default)
-    {
-        user.PasswordHash = passwordHash;
-        user.PasswordChangeDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-        
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success();
-    }
-
     public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default)
     {
         user.Email = newEmail;

@@ -44,7 +44,7 @@ public class ConfirmResetPhoneNumberCommandHandler(
         
         var newPhoneNumber = request.Request.NewPhoneNumber;
         
-        var rollback = await rollbackManager.SaveAsync(user, user.PhoneNumber, RollbackField.PhoneNumber, cancellationToken);
+        var rollback = await rollbackManager.CommitAsync(user, user.PhoneNumber, RollbackField.PhoneNumber, cancellationToken);
 
         if (rollback is null)
         {

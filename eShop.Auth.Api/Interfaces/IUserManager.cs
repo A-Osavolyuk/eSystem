@@ -13,10 +13,6 @@ public interface IUserManager
     public ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default);
     public ValueTask<Result> ResetEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RollbackEmailAsync(UserEntity user, string email, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RollbackRecoveryEmailAsync(UserEntity user, string recoveryEmail, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RollbackPhoneNumberAsync(UserEntity user, string phoneNumber, CancellationToken cancellationToken = default);
-    public ValueTask<Result> RollbackPasswordAsync(UserEntity user, string passwordHash, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default);
     public ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber, CancellationToken cancellationToken = default);

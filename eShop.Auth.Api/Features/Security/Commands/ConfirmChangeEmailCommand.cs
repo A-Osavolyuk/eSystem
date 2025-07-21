@@ -53,7 +53,7 @@ public sealed class ConfirmChangeEmailCommandHandler(
             return newEmailResult;
         }
         
-        var rollback = await rollbackManager.SaveAsync(user, user.Email, 
+        var rollback = await rollbackManager.CommitAsync(user, user.Email, 
             RollbackField.Email, cancellationToken);
 
         if (rollback is null)

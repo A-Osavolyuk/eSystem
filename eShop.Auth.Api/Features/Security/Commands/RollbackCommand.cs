@@ -22,30 +22,9 @@ public class RollbackCommandHandler(
         
         var code = request.Request.Code;
         var field = request.Request.Field;
-        
-        var rollback = await rollbackManager.FindAsync(user, code, field, cancellationToken);
 
-        if (rollback is null)
-        {
-            return Results.NotFound($"Cannot find rollback.");
-        }
+        var result = await rollbackManager.RollbackAsync(user, code, field, cancellationToken);
 
-        var rollbackResult = field switch
-        {
-            RollbackField.Email => await userManager.RollbackEmailAsync(user, rollback.Value, cancellationToken),
-            RollbackField.RecoveryEmail => await userManager.RollbackRecoveryEmailAsync(user, rollback.Value, cancellationToken),
-            RollbackField.PhoneNumber => await userManager.RollbackPhoneNumberAsync(user, rollback.Value, cancellationToken),
-            RollbackField.Password => await userManager.RollbackPasswordAsync(user, rollback.Value, cancellationToken),
-            _ => throw new NotSupportedException("Rollback is not supported.")
-        };
-
-        if (rollbackResult.Succeeded)
-        {
-            return rollbackResult;
-        }
-        
-        var result = await rollbackManager.RemoveAsync(rollback, cancellationToken);
-        
         return result;
     }
 }

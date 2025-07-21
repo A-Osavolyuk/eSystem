@@ -4,26 +4,9 @@
 public class RollbackManager(AuthDbContext context) : IRollbackManager
 {
     private readonly AuthDbContext context = context;
-
-    public async ValueTask<RollbackEntity?> FindAsync(UserEntity user, string code, 
-        RollbackField field, CancellationToken cancellationToken)
-    {
-        var rollback = await context.Rollback.FirstOrDefaultAsync(x => x.UserId == user.Id 
-            && x.Field == field && x.Code == code, cancellationToken);
-
-        return rollback;
-    }
-
-    public async ValueTask<RollbackEntity?> FindAsync(UserEntity user, RollbackField field, CancellationToken cancellationToken)
-    {
-        var rollback = await context.Rollback.FirstOrDefaultAsync(
-            x => x.UserId == user.Id && x.Field == field, cancellationToken);
-
-        return rollback;
-    }
-
-    public async ValueTask<RollbackEntity?> SaveAsync(UserEntity user, string value, 
-        RollbackField field, CancellationToken cancellationToken)
+    
+    public async ValueTask<RollbackEntity?> CommitAsync(UserEntity user, string value, 
+        RollbackField field, CancellationToken cancellationToken = default)
     {
         var rollback = await context.Rollback.FirstOrDefaultAsync(
             x => x.UserId == user.Id && x.Field == field, cancellationToken);
@@ -51,9 +34,54 @@ public class RollbackManager(AuthDbContext context) : IRollbackManager
         return entity;
     }
 
-    public async ValueTask<Result> RemoveAsync(RollbackEntity entity, CancellationToken cancellationToken)
+    public async ValueTask<Result> RollbackAsync(UserEntity user, string code, RollbackField field,
+        CancellationToken cancellationToken = default)
     {
-        context.Rollback.Remove(entity);
+        var rollback = await context.Rollback.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Field == field && x.Code == code, cancellationToken);
+
+        if (rollback is null)
+        {
+            return Results.NotFound($"Cannot rollback {field}, rollback was not found");
+        }
+
+        switch (field)
+        {
+            case RollbackField.Password:
+            {
+                user.PasswordHash = rollback.Value;
+                user.PasswordChangeDate = DateTimeOffset.UtcNow;
+                
+                break;
+            }
+            case RollbackField.Email:
+            {
+                user.Email = rollback.Value;
+                user.EmailChangeDate = DateTimeOffset.UtcNow;
+                
+                break;
+            }
+            case RollbackField.RecoveryEmail:
+            {
+                user.RecoveryEmail = rollback.Value;
+                user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
+                
+                break;
+            }
+            case RollbackField.PhoneNumber:
+            {
+                user.PhoneNumber = rollback.Value;
+                user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
+                
+                break;
+            }
+            default: throw new NotSupportedException("Rollback field is not supported");
+        }
+        
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        context.Rollback.Remove(rollback);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();

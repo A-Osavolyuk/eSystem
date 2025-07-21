@@ -31,7 +31,7 @@ public sealed class ChangePasswordCommandHandler(
             return Results.BadRequest($"Wrong password.");
         }
 
-        var rollback = await rollbackManager.SaveAsync(user, user.PasswordHash, RollbackField.Password, cancellationToken);
+        var rollback = await rollbackManager.CommitAsync(user, user.PasswordHash, RollbackField.Password, cancellationToken);
 
         if (rollback is null)
         {

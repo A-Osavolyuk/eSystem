@@ -24,7 +24,7 @@ public sealed class ResetPasswordCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        var rollback = await rollbackManager.SaveAsync(user, user.PasswordHash, RollbackField.Password, cancellationToken);
+        var rollback = await rollbackManager.CommitAsync(user, user.PasswordHash, RollbackField.Password, cancellationToken);
 
         if (rollback is null)
         {
