@@ -13,7 +13,7 @@ public sealed class SecretManager(AuthDbContext context) : ISecretManager
         return userSecret;
     }
 
-    public async ValueTask<string> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<UserSecretEntity> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var secretKey = KeyGeneration.GenerateRandomKey(20);
         var base32Secret = Base32Encoding.ToString(secretKey);
@@ -30,7 +30,7 @@ public sealed class SecretManager(AuthDbContext context) : ISecretManager
         await context.UserSecret.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
-        return base32Secret;
+        return entity;
     }
 
     public async ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default)

@@ -40,7 +40,7 @@ public sealed class TwoFactorManager(
         if (secretEntity is null)
         {
             var secret = await secretManager.GenerateAsync(user, cancellationToken);
-            var qrCode = GenerateQrCode(user.Email, secret, issuer);
+            var qrCode = GenerateQrCode(user.Email, secret.Secret, issuer);
             return qrCode;
         }
         else
