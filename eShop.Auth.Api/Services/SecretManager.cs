@@ -1,12 +1,17 @@
-﻿using OtpNet;
+﻿using eShop.Auth.Api.Security.Protection;
+using Microsoft.AspNetCore.DataProtection;
+using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ISecretManager), ServiceLifetime.Scoped)]
-public sealed class SecretManager(AuthDbContext context) : ISecretManager
+public sealed class SecretManager(
+    AuthDbContext context,
+    SecretProtector protector) : ISecretManager
 {
     private readonly AuthDbContext context = context;
-    
+    private readonly SecretProtector protector = protector;
+
     public async ValueTask<UserSecretEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var userSecret = await context.UserSecret.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
@@ -17,11 +22,12 @@ public sealed class SecretManager(AuthDbContext context) : ISecretManager
     {
         var secretKey = KeyGeneration.GenerateRandomKey(20);
         var base32Secret = Base32Encoding.ToString(secretKey);
+        var protectedSecret = protector.Protect(base32Secret);
         
         var entity = new UserSecretEntity()
         {
             Id = Guid.CreateVersion7(),
-            Secret = base32Secret,
+            Secret = protectedSecret,
             UserId = user.Id,
             CreateDate = DateTime.UtcNow,
             UpdateDate = null

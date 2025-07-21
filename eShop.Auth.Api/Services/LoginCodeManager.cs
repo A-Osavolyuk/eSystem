@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Security;
+﻿using eShop.Auth.Api.Security.Protection;
+using eShop.Domain.Common.Security;
 using OtpNet;
 
 namespace eShop.Auth.Api.Services;
@@ -6,6 +7,7 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(ILoginTokenManager), ServiceLifetime.Scoped)]
 public sealed class LoginCodeManager(
     AuthDbContext context,
+    SecretProtector protector,
     ISecretManager secretManager) : ILoginTokenManager
 {
     private readonly AuthDbContext context = context;
@@ -24,18 +26,11 @@ public sealed class LoginCodeManager(
             context.LoginCodes.Remove(existingCode);
             await context.SaveChangesAsync(cancellationToken);
         }
-
-        var userSecret = await secretManager.FindAsync(user, cancellationToken);
         
-        if (userSecret is null)
-        {
-            throw new Exception("Secret not generated");
-        }
-        
-        var secretBytes = Base32Encoding.ToBytes(userSecret.Secret);
-        var code = new Totp(secretBytes).ComputeTotp();
+        var rnd = new Random();
+        var code = rnd.Next(0, 999_999).ToString("D6");
         var hash = Pbkdf2Hasher.Hash(code);
-
+        
         var entity = new LoginCodeEntity()
         {
             Id = Guid.CreateVersion7(),
@@ -64,20 +59,27 @@ public sealed class LoginCodeManager(
         {
             return Results.NotFound("Not found code");
         }
-        
-        var userSecret = await secretManager.FindAsync(user, cancellationToken);
 
-        if (userSecret is null)
+        if (provider.Name == ProviderTypes.Authenticator)
         {
-            return Results.NotFound("Not found user secret");
-        }
+            var userSecret = await secretManager.FindAsync(user, cancellationToken);
 
-        var secretBytes = Base32Encoding.ToBytes(userSecret.Secret);
-        var totp = new Totp(secretBytes);
-        var isVerifiedCode = totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
+            if (userSecret is null)
+            {
+                return Results.NotFound("Not found user secret");
+            }
+
+            var unprotectedSecret = protector.Unprotect(userSecret.Secret);
+            var secretBytes = Base32Encoding.ToBytes(unprotectedSecret);
+            var totp = new Totp(secretBytes);
+            var isVerifiedCode = totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
+
+            return isVerifiedCode ? Results.BadRequest("Invalid code") : Result.Success();
+        }
+        
         var isValidHash = Pbkdf2Hasher.VerifyHash(code, entity.Hash);
 
-        if (!isValidHash || isVerifiedCode)
+        if (!isValidHash)
         {
             return Results.BadRequest("Invalid code");
         }

@@ -1,26 +1,22 @@
-﻿using OtpNet;
+﻿using eShop.Auth.Api.Security.Protection;
+using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ITwoFactorManager), ServiceLifetime.Scoped)]
 public sealed class TwoFactorManager(
     AuthDbContext context,
+    SecretProtector protector,
     ISecretManager secretManager) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
+    private readonly SecretProtector protector = protector;
     private readonly ISecretManager secretManager = secretManager;
     private const int ExpirationMinutes = 30;
 
     public async ValueTask<Result> EnableAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
-        var secret = await secretManager.FindAsync(user, cancellationToken);
-        
-        if (secret is null)
-        {
-            await secretManager.GenerateAsync(user, cancellationToken);
-        }
-        
         user.TwoFactorEnabled = true;
         user.UpdateDate = DateTime.UtcNow;
         context.Users.Update(user);
@@ -46,13 +42,17 @@ public sealed class TwoFactorManager(
 
         if (secret is null)
         {
-            throw new Exception("Secret not generated");
+            secret = await secretManager.GenerateAsync(user, cancellationToken);
+            var unprotectedSecret = protector.Unprotect(secret.Secret);
+            var qrCode = GenerateQrCode(user.Email, unprotectedSecret, issuer);
+            return qrCode;
         }
-        
-        var qrCode = GenerateQrCode(user.Email, secret.Secret, issuer);
-        return qrCode;
-        
-        return qrCode;
+        else
+        {
+            var unprotectedSecret = protector.Unprotect(secret.Secret);
+            var qrCode = GenerateQrCode(user.Email, unprotectedSecret, issuer);
+            return qrCode;
+        }
     }
     
     private string GenerateQrCode(string email, string secret, string issuer)
