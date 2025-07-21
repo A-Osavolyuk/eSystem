@@ -1,4 +1,5 @@
-﻿using eShop.Auth.Api.Security.Protection;
+﻿using eShop.Auth.Api.Security.Hashing;
+using eShop.Auth.Api.Security.Protection;
 using eShop.Domain.Common.Security;
 using OtpNet;
 
@@ -8,10 +9,12 @@ namespace eShop.Auth.Api.Services;
 public sealed class LoginCodeManager(
     AuthDbContext context,
     SecretProtector protector,
-    ISecretManager secretManager) : ILoginTokenManager
+    ISecretManager secretManager,
+    Hasher hasher) : ILoginTokenManager
 {
     private readonly AuthDbContext context = context;
     private readonly ISecretManager secretManager = secretManager;
+    private readonly Hasher hasher = hasher;
     private const int ExpirationMinutes = 30;
 
     public async ValueTask<string> GenerateAsync(UserEntity user, 
@@ -29,7 +32,7 @@ public sealed class LoginCodeManager(
         
         var rnd = new Random();
         var code = rnd.Next(0, 999_999).ToString("D6");
-        var hash = Pbkdf2Hasher.Hash(code);
+        var hash = hasher.Hash(code);
         
         var entity = new LoginCodeEntity()
         {
@@ -77,7 +80,7 @@ public sealed class LoginCodeManager(
             return isVerifiedCode ? Results.BadRequest("Invalid code") : Result.Success();
         }
         
-        var isValidHash = Pbkdf2Hasher.VerifyHash(code, entity.Hash);
+        var isValidHash = hasher.VerifyHash(code, entity.Hash);
 
         if (!isValidHash)
         {

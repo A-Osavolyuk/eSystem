@@ -1,10 +1,14 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Auth.Api.Security.Hashing;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IUserManager), ServiceLifetime.Scoped)]
 public sealed class UserManager(
-    AuthDbContext context) : IUserManager
+    AuthDbContext context,
+    Hasher hasher) : IUserManager
 {
     private readonly AuthDbContext context = context;
+    private readonly Hasher hasher = hasher;
 
     public async ValueTask<List<UserEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -72,7 +76,7 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var passwordHash = Pbkdf2Hasher.Hash(newPassword);
+        var passwordHash = hasher.Hash(newPassword);
 
         user.PasswordHash = passwordHash;
         user.PasswordChangeDate = DateTimeOffset.UtcNow;
@@ -181,7 +185,7 @@ public sealed class UserManager(
             })
             .ToListAsync(cancellationToken);
 
-        var passwordHash = Pbkdf2Hasher.Hash(password);
+        var passwordHash = hasher.Hash(password);
 
         user.PasswordHash = passwordHash;
         user.NormalizedEmail = user.Email.ToUpper();
@@ -228,13 +232,13 @@ public sealed class UserManager(
 
     public async ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default)
     {
-        var result = Pbkdf2Hasher.VerifyHash(password, user.PasswordHash);
+        var result = hasher.VerifyHash(password, user.PasswordHash);
         return await Task.FromResult(result);
     }
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default)
     {
-        var newPasswordHash = Pbkdf2Hasher.Hash(newPassword);
+        var newPasswordHash = hasher.Hash(newPassword);
         
         user.PasswordHash = newPasswordHash;
         user.PasswordChangeDate = DateTimeOffset.UtcNow;

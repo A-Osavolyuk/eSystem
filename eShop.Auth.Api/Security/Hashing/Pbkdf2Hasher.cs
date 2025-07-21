@@ -1,14 +1,14 @@
 ﻿using System.Security.Cryptography;
 
-namespace eShop.Auth.Api.Utilities;
+namespace eShop.Auth.Api.Security.Hashing;
 
-public class Pbkdf2Hasher
+public class Pbkdf2Hasher : Hasher
 {
     private const int SaltSize = 16;
     private const int KeySize = 32;
     private const int Iterations = 10000;
     
-    public static string Hash(string value)
+    public override string Hash(string value)
     {
         using var rng = RandomNumberGenerator.Create();
         var salt = new byte[SaltSize];
@@ -26,7 +26,7 @@ public class Pbkdf2Hasher
         return Convert.ToBase64String(hashBytes);
     }
 
-    public static bool VerifyHash(string value, string hash)
+    public override bool VerifyHash(string value, string hash)
     {
         var hashBytes = Convert.FromBase64String(hash);
 

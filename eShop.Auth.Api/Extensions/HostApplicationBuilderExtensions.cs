@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Security.Authorization.Requirements;
+using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.Schemes;
 using MassTransit;
@@ -23,14 +24,20 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
-        builder.AddDataProtection();
+        builder.AddEncryption();
+        builder.AddHashing();
         builder.Services.AddControllers();
     }
 
-    private static void AddDataProtection(this IHostApplicationBuilder builder)
+    private static void AddEncryption(this IHostApplicationBuilder builder)
     {
         builder.Services.AddDataProtection();
         builder.Services.AddSingleton<SecretProtector>();
+    }
+
+    private static void AddHashing(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<Hasher, Pbkdf2Hasher>();
     }
 
     private static void AddValidation(this IHostApplicationBuilder builder)

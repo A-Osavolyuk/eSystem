@@ -1,10 +1,15 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Auth.Api.Security.Hashing;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IRecoverManager), ServiceLifetime.Scoped)]
-public class RecoverManager(AuthDbContext context) : IRecoverManager
+public class RecoverManager(
+    AuthDbContext context,
+    Hasher hasher) : IRecoverManager
 {
     private readonly AuthDbContext context = context;
-    
+    private readonly Hasher hasher = hasher;
+
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var existingEntities = await context.RecoveryCodes
@@ -24,7 +29,7 @@ public class RecoverManager(AuthDbContext context) : IRecoverManager
         for (var i = 0; i < 10; i++)
         {
             var code = rnd.Next(0, 999_999).ToString().PadLeft(6, '0');
-            var hash = Pbkdf2Hasher.Hash(code);
+            var hash = hasher.Hash(code);
 
             codes.Add(code);
             
@@ -56,7 +61,7 @@ public class RecoverManager(AuthDbContext context) : IRecoverManager
             return Results.BadRequest("Recovery codes not generated or already used.");
         }
 
-        var entity = entities.FirstOrDefault(x => Pbkdf2Hasher.VerifyHash(code, x.Hash));
+        var entity = entities.FirstOrDefault(x => hasher.VerifyHash(code, x.Hash));
 
         if (entity is null)
         {

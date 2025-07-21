@@ -1,0 +1,7 @@
+﻿namespace eShop.Auth.Api.Security.Hashing;
+
+public abstract class Hasher
+{
+    public abstract string Hash(string value);
+    public abstract bool VerifyHash(string value, string hash);
+}
