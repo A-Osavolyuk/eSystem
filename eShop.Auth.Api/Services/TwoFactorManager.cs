@@ -14,6 +14,13 @@ public sealed class TwoFactorManager(
     public async ValueTask<Result> EnableAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
+        var secret = await secretManager.FindAsync(user, cancellationToken);
+        
+        if (secret is null)
+        {
+            await secretManager.GenerateAsync(user, cancellationToken);
+        }
+        
         user.TwoFactorEnabled = true;
         user.UpdateDate = DateTime.UtcNow;
         context.Users.Update(user);
@@ -35,19 +42,17 @@ public sealed class TwoFactorManager(
     public async ValueTask<string> GenerateQrCodeAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         const string issuer = "eShop";
-        var secretEntity = await secretManager.FindAsync(user, cancellationToken);
+        var secret = await secretManager.FindAsync(user, cancellationToken);
 
-        if (secretEntity is null)
+        if (secret is null)
         {
-            var secret = await secretManager.GenerateAsync(user, cancellationToken);
-            var qrCode = GenerateQrCode(user.Email, secret.Secret, issuer);
-            return qrCode;
+            throw new Exception("Secret not generated");
         }
-        else
-        {
-            var qrCode = GenerateQrCode(user.Email, secretEntity.Secret, issuer);
-            return qrCode;
-        }
+        
+        var qrCode = GenerateQrCode(user.Email, secret.Secret, issuer);
+        return qrCode;
+        
+        return qrCode;
     }
     
     private string GenerateQrCode(string email, string secret, string issuer)

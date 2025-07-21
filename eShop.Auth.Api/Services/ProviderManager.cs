@@ -3,12 +3,9 @@
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IProviderManager), ServiceLifetime.Scoped)]
-public sealed class ProviderManager(
-    AuthDbContext context,
-    ISecretManager secretManager) : IProviderManager
+public sealed class ProviderManager(AuthDbContext context) : IProviderManager
 {
     private readonly AuthDbContext context = context;
-    private readonly ISecretManager secretManager = secretManager;
 
     public async ValueTask<List<ProviderEntity>> GetProvidersAsync(CancellationToken cancellationToken = default)
     {
@@ -46,14 +43,6 @@ public sealed class ProviderManager(
         }
         
         userProvider.Subscribed = true;
-
-        if (provider.Name == ProviderTypes.Authenticator)
-        {
-            if (!await context.UserSecret.AnyAsync(x => x.UserId == user.Id, cancellationToken))
-            {
-                await secretManager.GenerateAsync(user, cancellationToken);
-            }
-        }
 
         context.UserProvider.Update(userProvider);
         await context.SaveChangesAsync(cancellationToken);

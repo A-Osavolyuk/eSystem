@@ -24,12 +24,12 @@ public sealed class LoginCodeManager(
             context.LoginCodes.Remove(existingCode);
             await context.SaveChangesAsync(cancellationToken);
         }
-        
-        var userSecret = await secretManager.FindAsync(user, cancellationToken);
 
+        var userSecret = await secretManager.FindAsync(user, cancellationToken);
+        
         if (userSecret is null)
         {
-            userSecret = await secretManager.GenerateAsync(user, cancellationToken);
+            throw new Exception("Secret not generated");
         }
         
         var secretBytes = Base32Encoding.ToBytes(userSecret.Secret);
