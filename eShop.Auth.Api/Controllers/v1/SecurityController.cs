@@ -99,21 +99,6 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Load recovery codes")]
-    [EndpointDescription("Load recovery codes")]
-    [ProducesResponseType(200)]
-    [Authorize]
-    [HttpPost("recovery-code/load")]
-    [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> LoadRecoveryCodes([FromBody] LoadRecoveryCodesRequest request)
-    {
-        var result = await sender.Send(new LoadRecoveryCodesCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Change password")]
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
