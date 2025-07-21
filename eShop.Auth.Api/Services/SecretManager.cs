@@ -32,19 +32,4 @@ public sealed class SecretManager(AuthDbContext context) : ISecretManager
         
         return entity;
     }
-
-    public async ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        var userSecret = await context.UserSecret.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
-        
-        if (userSecret is null)
-        {
-            return Results.NotFound("Not found user secret");
-        }
-        
-        context.UserSecret.Remove(userSecret);
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success();
-    }
 }
