@@ -31,7 +31,7 @@ public class RecoverManager(AuthDbContext context) : IRecoverManager
 
         for (var i = 0; i < 10; i++)
         {
-            var code = rnd.Next(0, 99_999_999).ToString().PadLeft(8, '0');
+            var code = rnd.Next(0, 999_999).ToString().PadLeft(6, '0');
 
             var entity = new RecoveryCodeEntity()
             {
