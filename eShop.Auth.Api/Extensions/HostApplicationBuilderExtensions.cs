@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Security.Authorization.Requirements;
+using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.Schemes;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -22,7 +23,14 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
+        builder.AddDataProtection();
         builder.Services.AddControllers();
+    }
+
+    private static void AddDataProtection(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddDataProtection();
+        builder.Services.AddSingleton<SecretProtector>();
     }
 
     private static void AddValidation(this IHostApplicationBuilder builder)
