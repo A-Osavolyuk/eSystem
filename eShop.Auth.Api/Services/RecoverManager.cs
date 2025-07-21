@@ -7,12 +7,22 @@ public class RecoverManager(AuthDbContext context) : IRecoverManager
 
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
+        var existingEntities = await context.RecoveryCodes
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+
+        if (existingEntities.Count > 0)
+        {
+            context.RecoveryCodes.RemoveRange(existingEntities);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        
         var entities = new List<RecoveryCodeEntity>();
         var rnd = new Random();
 
         for (var i = 0; i < 10; i++)
         {
-            var code = rnd.Next(0, 10_000_000).ToString().PadLeft(8, '0');
+            var code = rnd.Next(0, 99_999_999).ToString().PadLeft(8, '0');
 
             var entity = new RecoveryCodeEntity()
             {
