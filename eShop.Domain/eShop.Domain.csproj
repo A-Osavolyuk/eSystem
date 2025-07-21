@@ -9,14 +9,14 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.6" />
-    <PackageReference Include="MongoDB.Bson" Version="3.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.7" />
+    <PackageReference Include="MongoDB.Bson" Version="3.4.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.1" />
   </ItemGroup>
 

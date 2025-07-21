@@ -11,23 +11,23 @@
 	<ItemGroup>
 		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.3.1" />
 		<PackageReference Include="Aspire.StackExchange.Redis" Version="9.3.1" />
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.24.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="MediatR" Version="13.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.7">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
-		<PackageReference Include="MassTransit.RabbitMQ" Version="8.5.0" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.5.1" />
 		<PackageReference Include="Grpc.Tools" Version="2.72.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Scalar.AspNetCore" Version="2.5.3" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.6.3" />
 	</ItemGroup>
 
 	<ItemGroup>

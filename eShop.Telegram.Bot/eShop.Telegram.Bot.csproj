@@ -14,8 +14,8 @@
     <ItemGroup>
       <PackageReference Include="Aspire.StackExchange.Redis" Version="9.3.1" />
       <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
-      <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.0" />
-      <PackageReference Include="Scalar.AspNetCore" Version="2.5.3" />
+      <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.1" />
+      <PackageReference Include="Scalar.AspNetCore" Version="2.6.3" />
       <PackageReference Include="Telegram.Bot" Version="22.6.0" />
     </ItemGroup>
 
