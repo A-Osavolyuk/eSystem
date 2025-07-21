@@ -70,8 +70,8 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/refresh-token", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
     
-    public async ValueTask<Response> RecoverAccountAsync(RecoverAccountRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/account/recover", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<Response> UnlockAccountAsync(UnlockAccountRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/account/unlock", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
     
     public async ValueTask<Response> ChangePhoneNumberAsync(ChangePhoneNumberRequest request) => await ApiClient.SendAsync(

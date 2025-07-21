@@ -90,8 +90,8 @@ public class ResendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.Account, CodeType: CodeType.Recover, Sender: SenderType.Email } =>
-                new AccountRecoveryMessage()
+            { CodeResource: CodeResource.Account, CodeType: CodeType.Unlock, Sender: SenderType.Email } =>
+                new AccountUnlockMessage()
                 {
                     Credentials = new()
                     {

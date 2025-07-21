@@ -3,7 +3,7 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Validation;
 
-public class RecoverAccountValidator : Validator<RecoverAccountRequest>
+public class RecoverAccountValidator : Validator<UnlockAccountRequest>
 {
     public RecoverAccountValidator()
     {

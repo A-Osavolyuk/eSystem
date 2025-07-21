@@ -87,9 +87,9 @@ public sealed class LoginCommandHandler(
             }
 
             var code = await codeManager.GenerateAsync(user, SenderType.Email, 
-                CodeType.Recover, CodeResource.Account, cancellationToken);
+                CodeType.Unlock, CodeResource.Account, cancellationToken);
 
-            var message = new AccountRecoveryMessage()
+            var message = new AccountUnlockMessage()
             {
                 Credentials = new()
                 {

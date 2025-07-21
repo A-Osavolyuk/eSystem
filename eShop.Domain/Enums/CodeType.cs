@@ -30,5 +30,5 @@ public enum CodeType
     /// <summary>
     /// Represent a recovery code for account recover
     /// </summary>
-    Recover = 5
+    Unlock = 5
 }

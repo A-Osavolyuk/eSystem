@@ -69,15 +69,15 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Recover account")]
-    [EndpointDescription("Recover account")]
+    [EndpointSummary("Unlock account")]
+    [EndpointDescription("Unlock account")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("account/recover")]
+    [HttpPost("account/unlock")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> RecoverAsync([FromBody] RecoverAccountRequest request)
+    public async ValueTask<ActionResult<Response>> UnlockAsync([FromBody] UnlockAccountRequest request)
     {
-        var result = await sender.Send(new RecoverAccountCommand(request));
+        var result = await sender.Send(new UnlockAccountCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

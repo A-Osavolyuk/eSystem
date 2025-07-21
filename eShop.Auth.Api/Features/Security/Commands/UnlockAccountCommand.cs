@@ -2,18 +2,18 @@
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public record RecoverAccountCommand(RecoverAccountRequest Request) : IRequest<Result>;
+public record UnlockAccountCommand(UnlockAccountRequest Request) : IRequest<Result>;
 
 public class RecoverAccountCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    ILockoutManager lockoutManager) : IRequestHandler<RecoverAccountCommand, Result>
+    ILockoutManager lockoutManager) : IRequestHandler<UnlockAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
 
-    public async Task<Result> Handle(RecoverAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UnlockAccountCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
@@ -24,7 +24,7 @@ public class RecoverAccountCommandHandler(
 
         var code = request.Request.Code;
         var verificationResult = await codeManager.VerifyAsync(user, code, SenderType.Email, 
-            CodeType.Recover, CodeResource.Account, cancellationToken);
+            CodeType.Unlock, CodeResource.Account, cancellationToken);
 
         if (!verificationResult.Succeeded)
         {

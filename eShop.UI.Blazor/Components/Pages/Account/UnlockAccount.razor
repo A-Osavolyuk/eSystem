@@ -71,13 +71,13 @@
 
         if (form.IsValid)
         {
-            var request = new RecoverAccountRequest()
+            var request = new UnlockAccountRequest()
             {
                 Code = Model.Code,
                 UserId = UserId
             };
 
-            var result = await SecurityService.RecoverAccountAsync(request);
+            var result = await SecurityService.UnlockAccountAsync(request);
 
             if (result.Success)
             {
@@ -97,7 +97,7 @@
         {
             UserId = UserId,
             CodeResource = CodeResource.Account,
-            CodeType = CodeType.Recover,
+            CodeType = CodeType.Unlock,
             Sender = SenderType.Email
         };
 
