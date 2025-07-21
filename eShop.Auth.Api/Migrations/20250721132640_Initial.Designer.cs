@@ -12,8 +12,8 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250721114546_RefactorEntities")]
-    partial class RefactorEntities
+    [Migration("20250721132640_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -639,8 +639,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<string>("Secret")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");

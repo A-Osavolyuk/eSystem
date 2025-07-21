@@ -636,8 +636,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<string>("Secret")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");

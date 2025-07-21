@@ -44,7 +44,7 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Resources",
+                name: "ResourceOwners",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -54,7 +54,7 @@ namespace eShop.Auth.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Resources", x => x.Id);
+                    table.PrimaryKey("PK_ResourceOwners", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -105,23 +105,22 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Permissions",
+                name: "Resources",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    ResourceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                    table.PrimaryKey("PK_Resources", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Permissions_Resources_ResourceId",
-                        column: x => x.ResourceId,
-                        principalTable: "Resources",
+                        name: "FK_Resources_ResourceOwners_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "ResourceOwners",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -183,28 +182,28 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LoginTokens",
+                name: "LoginCodes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    Hash = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoginTokens", x => x.Id);
+                    table.PrimaryKey("PK_LoginCodes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LoginTokens_Providers_ProviderId",
+                        name: "FK_LoginCodes_Providers_ProviderId",
                         column: x => x.ProviderId,
                         principalTable: "Providers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LoginTokens_Users_UserId",
+                        name: "FK_LoginCodes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -229,6 +228,27 @@ namespace eShop.Auth.Api.Migrations
                     table.PrimaryKey("PK_PersonalData", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PersonalData_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecoveryCodes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Hash = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecoveryCodes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecoveryCodes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -263,7 +283,7 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Field = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -339,7 +359,7 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Secret = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Secret = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -350,6 +370,28 @@ namespace eShop.Auth.Api.Migrations
                         name: "FK_UserSecret_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Permissions_Resources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalTable: "Resources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -423,14 +465,14 @@ namespace eShop.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LoginTokens_ProviderId",
-                table: "LoginTokens",
+                name: "IX_LoginCodes_ProviderId",
+                table: "LoginCodes",
                 column: "ProviderId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LoginTokens_UserId",
-                table: "LoginTokens",
+                name: "IX_LoginCodes_UserId",
+                table: "LoginCodes",
                 column: "UserId",
                 unique: true);
 
@@ -446,10 +488,20 @@ namespace eShop.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecoveryCodes_UserId",
+                table: "RecoveryCodes",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
                 table: "RefreshTokens",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Resources_OwnerId",
+                table: "Resources",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RolePermissions_PermissionId",
@@ -493,10 +545,13 @@ namespace eShop.Auth.Api.Migrations
                 name: "LockoutStates");
 
             migrationBuilder.DropTable(
-                name: "LoginTokens");
+                name: "LoginCodes");
 
             migrationBuilder.DropTable(
                 name: "PersonalData");
+
+            migrationBuilder.DropTable(
+                name: "RecoveryCodes");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
@@ -536,6 +591,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Resources");
+
+            migrationBuilder.DropTable(
+                name: "ResourceOwners");
         }
     }
 }
