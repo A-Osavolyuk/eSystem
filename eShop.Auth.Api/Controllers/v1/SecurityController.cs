@@ -84,6 +84,7 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Generate recovery codes")]
     [EndpointDescription("Generate recovery codes")]
     [ProducesResponseType(200)]
     [Authorize]
