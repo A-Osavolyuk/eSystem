@@ -57,7 +57,7 @@ public sealed class LoginCodeManager(
         CancellationToken cancellationToken = default)
     {
         var entity = await context.LoginCodes
-            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id && x.Hash == code)
+            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (entity is null)
