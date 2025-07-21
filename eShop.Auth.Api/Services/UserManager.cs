@@ -72,7 +72,7 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var passwordHash = PasswordHasher.HashPassword(newPassword);
+        var passwordHash = Pbkdf2Hasher.Hash(newPassword);
 
         user.PasswordHash = passwordHash;
         user.PasswordChangeDate = DateTimeOffset.UtcNow;
@@ -181,7 +181,7 @@ public sealed class UserManager(
             })
             .ToListAsync(cancellationToken);
 
-        var passwordHash = PasswordHasher.HashPassword(password);
+        var passwordHash = Pbkdf2Hasher.Hash(password);
 
         user.PasswordHash = passwordHash;
         user.NormalizedEmail = user.Email.ToUpper();
@@ -228,13 +228,13 @@ public sealed class UserManager(
 
     public async ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default)
     {
-        var result = PasswordHasher.VerifyPassword(password, user.PasswordHash);
+        var result = Pbkdf2Hasher.VerifyHash(password, user.PasswordHash);
         return await Task.FromResult(result);
     }
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default)
     {
-        var newPasswordHash = PasswordHasher.HashPassword(newPassword);
+        var newPasswordHash = Pbkdf2Hasher.Hash(newPassword);
         
         user.PasswordHash = newPasswordHash;
         user.PasswordChangeDate = DateTimeOffset.UtcNow;

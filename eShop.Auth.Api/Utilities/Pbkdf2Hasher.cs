@@ -1,20 +1,20 @@
-﻿namespace eShop.Auth.Api.Utilities;
+﻿using System.Security.Cryptography;
 
-using System.Security.Cryptography;
+namespace eShop.Auth.Api.Utilities;
 
-public static class PasswordHasher
+public class Pbkdf2Hasher
 {
     private const int SaltSize = 16;
     private const int KeySize = 32;
     private const int Iterations = 10000;
-
-    public static string HashPassword(string password)
+    
+    public static string Hash(string value)
     {
         using var rng = RandomNumberGenerator.Create();
         var salt = new byte[SaltSize];
         rng.GetBytes(salt);
 
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA256);
+        using var pbkdf2 = new Rfc2898DeriveBytes(value, salt, Iterations, HashAlgorithmName.SHA256);
         var hash = pbkdf2.GetBytes(KeySize);
 
         var hashBytes = new byte[1 + 4 + SaltSize + KeySize];
@@ -26,9 +26,9 @@ public static class PasswordHasher
         return Convert.ToBase64String(hashBytes);
     }
 
-    public static bool VerifyPassword(string password, string storedHash)
+    public static bool VerifyHash(string value, string hash)
     {
-        var hashBytes = Convert.FromBase64String(storedHash);
+        var hashBytes = Convert.FromBase64String(hash);
 
         if (hashBytes[0] != 0x01)
             throw new FormatException("Unsupported hash format");
@@ -39,7 +39,7 @@ public static class PasswordHasher
         Array.Copy(hashBytes, 5, salt, 0, SaltSize);
         Array.Copy(hashBytes, 5 + SaltSize, storedSubkey, 0, KeySize);
 
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA256);
+        using var pbkdf2 = new Rfc2898DeriveBytes(value, salt, iterations, HashAlgorithmName.SHA256);
         var computedSubkey = pbkdf2.GetBytes(KeySize);
 
         return CryptographicOperations.FixedTimeEquals(storedSubkey, computedSubkey);
