@@ -5,6 +5,15 @@ public class RecoverManager(AuthDbContext context) : IRecoverManager
 {
     private readonly AuthDbContext context = context;
 
+    public async ValueTask<List<RecoveryCodeEntity>> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        var entities = await context.RecoveryCodes
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+
+        return entities;
+    }
+
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var existingEntities = await context.RecoveryCodes
