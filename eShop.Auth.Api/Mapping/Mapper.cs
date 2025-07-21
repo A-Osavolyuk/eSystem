@@ -100,14 +100,6 @@ public static class Mapper
             Name = source.Name
         };
     }
-    
-    public static RecoveryCodeDto Map(RecoveryCodeEntity source)
-    {
-        return new RecoveryCodeDto()
-        {
-            Code = source.Hash,
-        };
-    }
 
     public static LockoutStateDto Map(LockoutStateEntity source)
     {
