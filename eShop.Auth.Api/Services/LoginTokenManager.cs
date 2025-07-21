@@ -15,7 +15,9 @@ public sealed class LoginTokenManager(
     public async ValueTask<string> GenerateAsync(UserEntity user, 
         ProviderEntity provider, CancellationToken cancellationToken = default)
     {
-        var existingToken = await FindAsync(user, provider, cancellationToken);
+        var existingToken = await context.LoginCodes
+            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (existingToken is not null)
         {
@@ -27,14 +29,15 @@ public sealed class LoginTokenManager(
             await DeleteAsync(existingToken, cancellationToken);
         }
 
-        var token = GenerateToken();
+        var rnd = new Random();
+        var code = rnd.Next(0, 999999).ToString().PadLeft(6, '0');
 
         var entity = new LoginCodeEntity()
         {
             Id = Guid.CreateVersion7(),
             ProviderId = provider.Id,
             UserId = user.Id,
-            Code = token,
+            Code = code,
             ExpireDate = DateTime.UtcNow.AddMinutes(ExpirationMinutes),
             CreateDate = DateTime.UtcNow,
             UpdateDate = null,
@@ -43,7 +46,7 @@ public sealed class LoginTokenManager(
         await context.LoginCodes.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return token;
+        return code;
     }
 
     public async ValueTask<Result> VerifyAsync(UserEntity user, ProviderEntity provider, string code,
@@ -58,21 +61,23 @@ public sealed class LoginTokenManager(
                 return Results.NotFound("Not found user secret");
             }
 
-            var isTokenVerified = VerifyToken(userSecret.Secret, code);
+            var isTokenVerified = VerifyCode(userSecret.Secret, code);
 
             return !isTokenVerified ? Results.BadRequest("Invalid token") : Result.Success();
         }
 
-        var entity = await FindAsync(user, provider, cancellationToken);
+        var entity = await context.LoginCodes
+            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id && x.Code == code)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (entity is null)
         {
-            return Results.NotFound("Not found token");
+            return Results.NotFound("Not found code");
         }
 
         if (entity.ExpireDate < DateTime.UtcNow)
         {
-            return Results.BadRequest("Token expired");
+            return Results.BadRequest("Code expired");
         }
 
         await DeleteAsync(entity, cancellationToken);
@@ -88,23 +93,7 @@ public sealed class LoginTokenManager(
         return Result.Success();
     }
     
-    private async ValueTask<LoginCodeEntity?> FindAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default)
-    {
-        var entity = await context.LoginCodes
-            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        return entity;
-    }
-    
-    private string GenerateToken()
-    {
-        var randomCode = new Random().Next(0, 999999).ToString();
-        var token = randomCode.PadLeft(6, '0');
-        return token;
-    }
-    
-    private bool VerifyToken(string secret, string token)
+    private bool VerifyCode(string secret, string token)
     {
         var secretBytes = Base32Encoding.ToBytes(secret);
         var totp = new Totp(secretBytes);
