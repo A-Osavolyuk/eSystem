@@ -19,7 +19,7 @@ public static class Mapper
     {
         return new TwoFactorLoginRequest()
         {
-            Token = source.Code
+            Code = source.Code
         };
     }
 

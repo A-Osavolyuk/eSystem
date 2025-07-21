@@ -11,7 +11,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<CodeEntity> Codes { get; set; }
     public DbSet<ProviderEntity> Providers { get; set; }
-    public DbSet<LoginTokenEntity> LoginTokens { get; set; }
+    public DbSet<LoginCodeEntity> LoginCodes { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
     public DbSet<UserProviderEntity> UserProvider { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
@@ -120,18 +120,18 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Name).HasMaxLength(64);
         });
 
-        builder.Entity<LoginTokenEntity>(entity =>
+        builder.Entity<LoginCodeEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Token).HasMaxLength(6);
+            entity.Property(x => x.Code).HasMaxLength(6);
 
             entity.HasOne(x => x.User)
                 .WithOne()
-                .HasForeignKey<LoginTokenEntity>(x => x.UserId);
+                .HasForeignKey<LoginCodeEntity>(x => x.UserId);
 
             entity.HasOne(x => x.Provider)
                 .WithOne()
-                .HasForeignKey<LoginTokenEntity>(x => x.ProviderId);
+                .HasForeignKey<LoginCodeEntity>(x => x.ProviderId);
         });
         
         builder.Entity<UserSecretEntity>(entity =>

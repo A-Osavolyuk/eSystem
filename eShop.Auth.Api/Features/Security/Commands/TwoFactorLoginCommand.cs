@@ -11,13 +11,15 @@ public sealed class LoginWith2FaCommandHandler(
     IUserManager userManager,
     ILoginTokenManager loginTokenManager,
     IProviderManager providerManager,
-    ILockoutManager lockoutManager) : IRequestHandler<TwoFactorLoginCommand, Result>
+    ILockoutManager lockoutManager,
+    IRecoverManager recoverManager) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
     private readonly IProviderManager providerManager = providerManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
+    private readonly IRecoverManager recoverManager = recoverManager;
 
     public async Task<Result> Handle(TwoFactorLoginCommand request,
         CancellationToken cancellationToken)
@@ -43,12 +45,17 @@ public sealed class LoginWith2FaCommandHandler(
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         }
 
-        var token = request.Request.Token;
-        var result = await loginTokenManager.VerifyAsync(user, provider, token, cancellationToken);
+        var code = request.Request.Code;
+        var result = await loginTokenManager.VerifyAsync(user, provider, code, cancellationToken);
 
         if (!result.Succeeded)
         {
-            return Results.BadRequest($"Invalid two-factor token {request.Request.Token}.");
+            var recoveryCodeResult = await recoverManager.VerifyAsync(user, code, cancellationToken);
+
+            if (!recoveryCodeResult.Succeeded)
+            {
+                return Results.BadRequest($"Invalid two-factor code {request.Request.Code}.");
+            }
         }
 
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);

@@ -7,6 +7,6 @@ public class TwoFactorLoginValidator : Validator<TwoFactorLoginRequest>
 {
     public TwoFactorLoginValidator()
     {
-        RuleFor(x => x.Token).SetValidator(new CodeValidator());
+        RuleFor(x => x.Code).SetValidator(new CodeValidator());
     }
 }
