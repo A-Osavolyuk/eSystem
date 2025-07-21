@@ -20,6 +20,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<LockoutReasonEntity> LockoutReasons { get; set; }
     public DbSet<RollbackEntity> Rollback { get; set; }
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
+    public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -222,6 +223,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Name).HasMaxLength(64);
+        });
+
+        builder.Entity<RecoveryCodeEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Code).HasMaxLength(8);
+            
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.RecoveryCodes)
+                .HasForeignKey(x => x.UserId);
         });
     }
 }
