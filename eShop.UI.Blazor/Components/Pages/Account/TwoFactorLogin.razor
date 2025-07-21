@@ -32,42 +32,24 @@
                                         <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                                  Style="width: 50ch; margin: auto">
                                             Your account has enabled 2-FA (Two-factor authentication).
-                                            To verify a log in attempt, please select the provider and click the send
-                                            button.
+                                            To verify a log in attempt, please select the provider.
                                             You will receive a 6-digit code from the selected provider.
                                         </MudText>
                                     </MudItem>
-                                    <MudItem xs="12">
-                                        <MudSelect
-                                            Variant="Variant.Outlined"
-                                            Label="Providers"
-                                            @bind-Value="SendTwoFactorTokenModel.Provider"
-                                            For="() => SendTwoFactorTokenModel.Provider"
-                                            Disabled="@(string.IsNullOrEmpty(SendTwoFactorTokenModel.Provider))"
-                                            Immediate="true"
-                                            Clearable="true"
-                                            Required="true"
-                                            RequiredError="Select a provider">
-                                            @if (providers.Any())
-                                            {
-                                                foreach (var provider in providers.Where(x => x.Subscribed))
-                                                {
-                                                    <MudSelectItem Value="@provider.Name">@provider.Name</MudSelectItem>
-                                                }
-                                            }
-                                        </MudSelect>
-                                    </MudItem>
-                                    <MudItem xs="12">
-                                        <MudLoadingButton
-                                            ButtonType="ButtonType.Button"
-                                            StartIcon="@Icons.Material.Filled.NavigateNext"
-                                            OnClick="@(async () => await OnSendTokenAsync())"
-                                            Variant="Variant.Filled"
-                                            Color="Color.Primary"
-                                            FullWidth>
-                                            Send
-                                        </MudLoadingButton>
-                                    </MudItem>
+                                    @foreach (var provider in providers)
+                                    {
+                                        <MudItem xs="12">
+                                            <MudLoadingButton
+                                                ButtonType="ButtonType.Button"
+                                                StartIcon="@Icons.Material.Filled.NavigateNext"
+                                                OnClick="@(async () => await OnSendTokenAsync(provider.Name))"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                FullWidth>
+                                                Send with @provider.Name
+                                            </MudLoadingButton>
+                                        </MudItem>
+                                    }
                                 </MudGrid>
                             </MudForm>
                         </MudPaper>
@@ -195,8 +177,10 @@
         }
     }
 
-    private async Task OnSendTokenAsync()
+    private async Task OnSendTokenAsync(string provider)
     {
+        SendTwoFactorTokenModel.Provider = provider;
+        
         await sendTwoFactorTokenForm.Validate();
 
         if (sendTwoFactorTokenForm.IsValid)
