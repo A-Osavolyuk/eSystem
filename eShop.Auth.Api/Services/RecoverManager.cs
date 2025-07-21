@@ -30,4 +30,20 @@ public class RecoverManager(AuthDbContext context) : IRecoverManager
         
         return entities.Select(entity => entity.Code).ToList();
     }
+
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CancellationToken cancellationToken = default)
+    {
+        var entity = await context.RecoveryCodes.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Code == code, cancellationToken);
+
+        if (entity is null)
+        {
+            return Results.BadRequest("Recovery code not exists or already used.");
+        }
+        
+        context.RecoveryCodes.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
 }
