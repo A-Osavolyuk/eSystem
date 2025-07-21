@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.DTOs;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -21,7 +22,8 @@ public class GenerateRecoveryCodesCommandHandler(
         }
 
         var codes = await recoverManager.GenerateAsync(user, cancellationToken);
-
-        return Result.Success(codes);
+        var result = codes.Select(code => new RecoveryCodeDto(){ Code = code }).ToList();
+        
+        return Result.Success(result);
     }
 }
