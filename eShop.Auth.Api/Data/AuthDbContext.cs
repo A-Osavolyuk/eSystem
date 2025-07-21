@@ -228,7 +228,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<RecoveryCodeEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Code).HasMaxLength(6);
+            entity.Property(x => x.Hash).HasMaxLength(200);
             
             entity.HasOne(x => x.User)
                 .WithMany(x => x.RecoveryCodes)

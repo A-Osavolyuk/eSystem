@@ -4,16 +4,7 @@
 public class RecoverManager(AuthDbContext context) : IRecoverManager
 {
     private readonly AuthDbContext context = context;
-
-    public async ValueTask<List<RecoveryCodeEntity>> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        var entities = await context.RecoveryCodes
-            .Where(x => x.UserId == user.Id)
-            .ToListAsync(cancellationToken);
-
-        return entities;
-    }
-
+    
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var existingEntities = await context.RecoveryCodes
@@ -27,17 +18,21 @@ public class RecoverManager(AuthDbContext context) : IRecoverManager
         }
         
         var entities = new List<RecoveryCodeEntity>();
+        var codes = new List<string>();
         var rnd = new Random();
 
         for (var i = 0; i < 10; i++)
         {
             var code = rnd.Next(0, 999_999).ToString().PadLeft(6, '0');
+            var hash = Pbkdf2Hasher.Hash(code);
 
+            codes.Add(code);
+            
             var entity = new RecoveryCodeEntity()
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                Code = code,
+                Hash = hash,
                 CreateDate = DateTimeOffset.UtcNow
             };
             
@@ -46,18 +41,26 @@ public class RecoverManager(AuthDbContext context) : IRecoverManager
         
         await context.RecoveryCodes.AddRangeAsync(entities, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
-        return entities.Select(entity => entity.Code).ToList();
+
+        return codes;
     }
 
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CancellationToken cancellationToken = default)
     {
-        var entity = await context.RecoveryCodes.FirstOrDefaultAsync(
-            x => x.UserId == user.Id && x.Code == code, cancellationToken);
+        var entities = await context.RecoveryCodes
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+
+        if (entities.Count == 0)
+        {
+            return Results.BadRequest("Recovery codes not generated or already used.");
+        }
+
+        var entity = entities.FirstOrDefault(x => Pbkdf2Hasher.VerifyHash(code, x.Hash));
 
         if (entity is null)
         {
-            return Results.BadRequest("Recovery code not exists or already used.");
+            return Results.BadRequest("Invalid recovery code.");
         }
         
         context.RecoveryCodes.Remove(entity);

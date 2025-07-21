@@ -105,7 +105,7 @@ public static class Mapper
     {
         return new RecoveryCodeDto()
         {
-            Code = source.Code,
+            Code = source.Hash,
         };
     }
 

@@ -46,6 +46,7 @@ public sealed class LoginWith2FaCommandHandler(
         }
 
         var code = request.Request.Code;
+        
         var result = await loginTokenManager.VerifyAsync(user, provider, code, cancellationToken);
 
         if (!result.Succeeded)
