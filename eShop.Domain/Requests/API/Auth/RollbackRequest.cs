@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Requests;
+﻿namespace eShop.Domain.Requests.API.Auth;
 
 public class RollbackRequest
 {
