@@ -33,7 +33,7 @@ public class ProvidersController(ISender sender) : ControllerBase
     [EndpointDescription("Subscribe provider")]
     [ProducesResponseType(200)]
     [HttpPost("subscribe")]
-    [Authorize(Policy = "UpdateUsersPolicy")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> SubscribeProviderAsync(
         [FromBody] SubscribeProviderRequest request)
     {
@@ -48,7 +48,7 @@ public class ProvidersController(ISender sender) : ControllerBase
     [EndpointDescription("Unsubscribe provider")]
     [ProducesResponseType(200)]
     [HttpPost("unsubscribe")]
-    [Authorize(Policy = "UpdateUsersPolicy")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> UnsubscribeProviderAsync(
         [FromBody] UnsubscribeProviderRequest request)
     {

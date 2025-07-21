@@ -28,7 +28,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user roles")]
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ReadRolesPolicy")]
+    [Authorize]
     [HttpGet("{id:guid}/roles")]
     public async ValueTask<ActionResult<Response>> GetUserRolesAsync(Guid id)
     {
@@ -104,7 +104,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Create user account")]
     [EndpointDescription("Create a user account")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "CreateUserPolicy")]
+    [Authorize]
     [HttpPost]
     public async ValueTask<ActionResult<Response>> CreateUserAccount([FromBody] CreateUserAccountRequest request)
     {

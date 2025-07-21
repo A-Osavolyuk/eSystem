@@ -29,7 +29,7 @@ public class LockoutController(ISender sender) : ControllerBase
     [EndpointDescription("Lockout")]
     [ProducesResponseType(200)]
     [HttpPost("lockout")]
-    [Authorize(Policy = "LockoutUsersPolicy")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> LockoutAsync([FromBody] LockoutRequest request)
     {
         var result = await sender.Send(new LockoutCommand(request));
@@ -42,7 +42,7 @@ public class LockoutController(ISender sender) : ControllerBase
     [EndpointDescription("Unlock")]
     [ProducesResponseType(200)]
     [HttpPost("unlock")]
-    [Authorize(Policy = "UnlockUsersPolicy")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> UnlockAsync([FromBody] UnlockRequest request)
     {
         var result = await sender.Send(new UnlockCommand(request));

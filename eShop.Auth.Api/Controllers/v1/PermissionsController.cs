@@ -15,7 +15,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [EndpointSummary("Get permissions")]
     [EndpointDescription("Gets all permissions")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "ReadPermissionsPolicy")]
+    [Authorize]
     [HttpGet]
     public async ValueTask<ActionResult<Response>> GetPermissionsAsync()
     {
@@ -29,7 +29,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [EndpointSummary("Grant permissions")]
     [EndpointDescription("Grant permission")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "GrantPermissionsPolicy")]
+    [Authorize]
     [HttpPost("grant")]
     public async ValueTask<ActionResult<Response>> GrantAsync([FromBody] GrantPermissionRequest request)
     {
@@ -42,7 +42,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [EndpointSummary("Revoke permission")]
     [EndpointDescription("Revoke permission")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = "RevokePermissionPolicy")]
+    [Authorize]
     [HttpPost("revoke")]
     public async ValueTask<ActionResult<Response>> RevokeAsync(
         [FromBody] RevokePermissionRequest request)

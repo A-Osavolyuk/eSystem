@@ -31,7 +31,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Changes two-factor state")]
     [ProducesResponseType(200)]
     [HttpPost("change-state")]
-    [Authorize(Policy = "UpdateUsersPolicy")]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> ChangeTwoFactorAuthentication(
         [FromBody] ChangeTwoFactorStateRequest request)
     {
