@@ -16,13 +16,13 @@ public class UsersService(
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
     public async ValueTask<Response> GetTwoFactorProvidersAsync(Guid id) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor-providers", Method = HttpMethod.Get }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor/providers", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
     
     public async ValueTask<Response> GetTwoFactorStateAsync(Guid id) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor-state", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor/state", Method = HttpMethod.Get }, 
+            new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
     
     public async ValueTask<Response> GetLockoutStateAsync(Guid id) =>
         await ApiClient.SendAsync(

@@ -70,8 +70,8 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get two-factor state")]
     [EndpointDescription("Get two-factor state")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/two-factor-state")]
-    [Authorize]
+    [HttpGet("{id:guid}/two-factor/state")]
+    [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(Guid id)
     {
         var result = await sender.Send(new GetTwoFactorStateQuery(id));
@@ -87,7 +87,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user two-factor providers")]
     [EndpointDescription("Get user two-factor providers")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/two-factor-providers")]
+    [HttpGet("{id:guid}/two-factor/providers")]
     [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(Guid id)
     {
