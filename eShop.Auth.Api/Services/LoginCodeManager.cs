@@ -4,7 +4,7 @@ using OtpNet;
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ILoginTokenManager), ServiceLifetime.Scoped)]
-public sealed class LoginTokenManager(
+public sealed class LoginCodeManager(
     AuthDbContext context,
     ISecretManager secretManager) : ILoginTokenManager
 {
@@ -61,9 +61,11 @@ public sealed class LoginTokenManager(
                 return Results.NotFound("Not found user secret");
             }
 
-            var isTokenVerified = VerifyCode(userSecret.Secret, code);
+            var secretBytes = Base32Encoding.ToBytes(userSecret.Secret);
+            var totp = new Totp(secretBytes);
+            var verified = totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
 
-            return !isTokenVerified ? Results.BadRequest("Invalid token") : Result.Success();
+            return !verified ? Results.BadRequest("Invalid token") : Result.Success();
         }
 
         var entity = await context.LoginCodes
@@ -91,13 +93,5 @@ public sealed class LoginTokenManager(
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
-    }
-    
-    private bool VerifyCode(string secret, string token)
-    {
-        var secretBytes = Base32Encoding.ToBytes(secret);
-        var totp = new Totp(secretBytes);
-        
-        return totp.VerifyTotp(token, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
     }
 }
