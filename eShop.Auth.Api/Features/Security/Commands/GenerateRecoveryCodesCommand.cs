@@ -22,8 +22,7 @@ public class GenerateRecoveryCodesCommandHandler(
         }
 
         var codes = await recoverManager.GenerateAsync(user, cancellationToken);
-        var result = codes.Select(code => new RecoveryCodeDto(){ Code = code }).ToList();
         
-        return Result.Success(result);
+        return Result.Success(codes);
     }
 }
