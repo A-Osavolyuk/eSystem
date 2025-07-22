@@ -320,6 +320,22 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Verify new phone number on change")]
+    [EndpointDescription("Verify new phone number on change")]
+    [ProducesResponseType(200)]
+    [Authorize]
+    [HttpPost("phone-number/verify-new")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> VerifyNewPhoneNumberAsync(
+        [FromBody] VerifyNewPhoneNumberRequest request)
+    {
+        var result = await sender.Send(new VerifyNewPhoneNumberCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Confirm change phone number")]
     [EndpointDescription("Confirm a phone number change")]
     [ProducesResponseType(200)]

@@ -3,19 +3,18 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request) : IRequest<Result>;
+public record VerifyNewPhoneNumberCommand(VerifyNewPhoneNumberRequest Request) : IRequest<Result>;
 
-public sealed class RequestChangePhoneNumberCommandHandler(
-    IMessageService messageService,
+public class VerifyNewPhoneNumberHandler(
+    IUserManager userManager,
     ICodeManager codeManager,
-    IUserManager userManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
+    IMessageService messageService) : IRequestHandler<VerifyNewPhoneNumberCommand, Result>
 {
-    private readonly IMessageService messageService = messageService;
-    private readonly ICodeManager codeManager = codeManager;
     private readonly IUserManager userManager = userManager;
+    private readonly ICodeManager codeManager = codeManager;
+    private readonly IMessageService messageService = messageService;
 
-    public async Task<Result> Handle(ChangePhoneNumberCommand request,
-        CancellationToken cancellationToken)
+    public async Task<Result> Handle(VerifyNewPhoneNumberCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
@@ -30,20 +29,28 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         {
             return Results.BadRequest("This phone number is already taken");
         }
+        
+        var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, 
+            SenderType.Sms, CodeType.Current, CodeResource.PhoneNumber, cancellationToken);
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Current, 
+        if (!codeResult.Succeeded)
+        {
+            return codeResult;
+        }
+
+        var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.New, 
             CodeResource.PhoneNumber, cancellationToken);
-
-        var message = new ChangePhoneNumberMessage()
+        
+        var message = new VerifyPhoneNumberMessage()
         {
             Credentials = new ()
             {
-                { "PhoneNumber", user.PhoneNumber },
+                { "PhoneNumber", request.Request.NewPhoneNumber },
             }, 
             Payload = new()
             {
                 { "Code", code }
-            },
+            }
         };
         
         await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);

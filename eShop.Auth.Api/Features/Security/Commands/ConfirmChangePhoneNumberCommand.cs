@@ -36,24 +36,15 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
         {
             return Results.BadRequest("This phone number is already taken");
         }
-
-        var currentPhoneNumberCode = request.Request.CurrentPhoneNumberCode;
-        var newPhoneNumberCode = request.Request.NewPhoneNumberCode;
         
-        var currentPhoneNumberResult = await codeManager.VerifyAsync(user, currentPhoneNumberCode, 
-            SenderType.Sms, CodeType.Current, CodeResource.PhoneNumber, cancellationToken);
-
-        if (!currentPhoneNumberResult.Succeeded)
-        {
-            return currentPhoneNumberResult;
-        }
+        var code = request.Request.NewPhoneNumberCode;
         
-        var newPhoneNumberResult = await codeManager.VerifyAsync(user, newPhoneNumberCode, 
+        var codeResult = await codeManager.VerifyAsync(user, code, 
             SenderType.Sms, CodeType.New, CodeResource.PhoneNumber, cancellationToken);
 
-        if (!newPhoneNumberResult.Succeeded)
+        if (!codeResult.Succeeded)
         {
-            return newPhoneNumberResult;
+            return codeResult;
         }
 
         var rollback = await rollbackManager.CommitAsync(user, user.PhoneNumber, RollbackField.PhoneNumber, cancellationToken);
