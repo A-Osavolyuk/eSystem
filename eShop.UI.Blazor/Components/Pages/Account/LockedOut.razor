@@ -38,7 +38,8 @@
                 </MudPaper>
                 <MudPaper Class="pa-3" Outlined="true">
                     <MudText Align="Align.Center">
-                        Want to unlock my account? <MudLink Href="/account/locked-out/unlock">Unlock</MudLink>
+                        Want to unlock my account? 
+                        <MudLink Href="@($"/account/unlock?id={UserId}")">Unlock</MudLink>
                     </MudText>
                 </MudPaper>
             }
@@ -48,14 +49,13 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "id")]
-    public Guid Id { get; set; }
-
+    [SupplyParameterFromQuery(Name = "id")] public Guid UserId { get; set; }
+    
     private LockoutModel Model { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await UsersService.GetLockoutStateAsync(Id);
+        var result = await UsersService.GetLockoutStateAsync(UserId);
 
         if (result.Success)
         {
