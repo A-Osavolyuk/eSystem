@@ -78,6 +78,16 @@ public static class HostApplicationBuilderExtensions
             options.Password.RequireDigit = true;
             options.Password.RequireNonAlphanumeric = true;
             options.Password.RequireUniqueChars = false;
+            
+            options.Account.RequireUniqueEmail = true;
+            options.Account.RequireUniqueRecoveryEmail = true;
+            options.Account.RequireUniquePhoneNumber = true;
+            options.Account.RequireUniqueUserName = true;
+            
+            options.SignIn.AllowUserNameLogin = true;
+            options.SignIn.AllowEmailLogin = true;
+            options.SignIn.RequireConfirmedAccount = true;
+            options.SignIn.RequireConfirmedEmail = true;
         });
 
         builder.Services.AddAuthentication(options =>
