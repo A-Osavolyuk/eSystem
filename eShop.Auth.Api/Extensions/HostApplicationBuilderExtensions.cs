@@ -31,7 +31,7 @@ public static class HostApplicationBuilderExtensions
     {
         builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
-    
+
     private static void AddRedisCache(this IHostApplicationBuilder builder)
     {
         builder.AddRedisClient("redis");
@@ -39,18 +39,12 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddMediatR(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-        });
+        builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>(); });
     }
 
     private static void AddGrpc(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddGrpc(options =>
-        {
-            options.EnableDetailedErrors = true;
-        });
+        builder.Services.AddGrpc(options => { options.EnableDetailedErrors = true; });
     }
 
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)
@@ -71,6 +65,10 @@ public static class HostApplicationBuilderExtensions
         var configuration = builder.Configuration;
 
         builder.Services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
+
+        builder.Services.AddAuthorization();
+        builder.Services.AddEncryption();
+        builder.Services.AddHashing();
         
         builder.Services.AddIdentity(options =>
         {
@@ -79,8 +77,7 @@ public static class HostApplicationBuilderExtensions
             options.Password.RequireLowercase = true;
             options.Password.RequireDigit = true;
             options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequireUniqueChars = true;
-            options.Password.RequiredUniqueChars = 4;
+            options.Password.RequireUniqueChars = false;
         });
 
         builder.Services.AddAuthentication(options =>
@@ -145,66 +142,74 @@ public static class HostApplicationBuilderExtensions
                     IssuerSigningKey = symmetricSecurityKey
                 };
             });
-
-        builder.Services.AddAuthorization();
-        builder.Services.AddEncryption();
-        builder.Services.AddHashing();
     }
 
-    private static IServiceCollection AddIdentity(this IServiceCollection services, Action<IdentityOptions> configure)
+    private static IServiceCollection AddIdentity(this IServiceCollection services, Action<IdentityOptions> configureOptions)
     {
         var options = new IdentityOptions();
-        configure(options);
-        
+        configureOptions(options);
+
         services.AddSingleton(options);
 
         return services;
     }
-    
+
     private static IServiceCollection AddEncryption(this IServiceCollection services)
     {
         services.AddDataProtection();
         services.AddSingleton<SecretProtector>();
-        
+
         return services;
     }
 
     private static IServiceCollection AddHashing(this IServiceCollection services)
     {
         services.AddScoped<Hasher, Pbkdf2Hasher>();
-        
+
         return services;
     }
 
     private static IServiceCollection AddAuthorization(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
-            .AddPolicy("DeleteAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("DELETE_ACCOUNT")))
-            .AddPolicy("CreateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("CREATE_ACCOUNT")))
-            .AddPolicy("UpdateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("UPDATE_ACCOUNT")))
-            .AddPolicy("ReadAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("READ_ACCOUNT")))
+            .AddPolicy("DeleteAccountPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("DELETE_ACCOUNT")))
+            .AddPolicy("CreateAccountPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("CREATE_ACCOUNT")))
+            .AddPolicy("UpdateAccountPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("UPDATE_ACCOUNT")))
+            .AddPolicy("ReadAccountPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("READ_ACCOUNT")))
             .AddPolicy("DeleteUserPolicy", policy => policy.Requirements.Add(new PermissionRequirement("DELETE_USER")))
             .AddPolicy("CreateUserPolicy", policy => policy.Requirements.Add(new PermissionRequirement("CREATE_USER")))
             .AddPolicy("UpdateUserPolicy", policy => policy.Requirements.Add(new PermissionRequirement("UPDATE_USER")))
             .AddPolicy("ReadUserPolicy", policy => policy.Requirements.Add(new PermissionRequirement("READ_USER")))
-            .AddPolicy("LockoutUserPolicy", policy => policy.Requirements.Add(new PermissionRequirement("LOCKOUT_USER")))
+            .AddPolicy("LockoutUserPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("LOCKOUT_USER")))
             .AddPolicy("UnlockUserPolicy", policy => policy.Requirements.Add(new PermissionRequirement("UNLOCK_USER")))
             .AddPolicy("DeleteRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("DELETE_ROLE")))
             .AddPolicy("CreateRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("CREATE_ROLE")))
             .AddPolicy("UpdateRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("UPDATE_ROLE")))
             .AddPolicy("ReadRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("READ_ROLE")))
             .AddPolicy("AssignRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("ASSIGN_ROLE")))
-            .AddPolicy("UnassignRolePolicy", policy => policy.Requirements.Add(new PermissionRequirement("UNASSIGN_ROLE")))
-            .AddPolicy("DeletePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("DELETE_PERMISSION")))
-            .AddPolicy("CreatePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("CREATE_PERMISSION")))
-            .AddPolicy("UpdatePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("UPDATE_PERMISSION")))
-            .AddPolicy("ReadPermissionPolicy",policy => policy.Requirements.Add(new PermissionRequirement("READ_PERMISSIONS")))
-            .AddPolicy("GrantPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("GRANT_PERMISSIONS")))
-            .AddPolicy("RevokePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("REVOKE_PERMISSIONS")));
+            .AddPolicy("UnassignRolePolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("UNASSIGN_ROLE")))
+            .AddPolicy("DeletePermissionPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("DELETE_PERMISSION")))
+            .AddPolicy("CreatePermissionPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("CREATE_PERMISSION")))
+            .AddPolicy("UpdatePermissionPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("UPDATE_PERMISSION")))
+            .AddPolicy("ReadPermissionPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("READ_PERMISSIONS")))
+            .AddPolicy("GrantPermissionPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("GRANT_PERMISSIONS")))
+            .AddPolicy("RevokePermissionPolicy",
+                policy => policy.Requirements.Add(new PermissionRequirement("REVOKE_PERMISSIONS")));
 
         return services;
     }
-    
+
     private static void AddMessageBus(this IHostApplicationBuilder builder)
     {
         builder.Services.AddMassTransit(x =>

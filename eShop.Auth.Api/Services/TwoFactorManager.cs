@@ -17,6 +17,22 @@ public sealed class TwoFactorManager(
     public async ValueTask<Result> EnableAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
+        if (!await context.Users.AnyAsync(u => u.Email == user.Email, cancellationToken))
+        {
+            var providers = await context.Providers
+                .Select(p => new UserProviderEntity()
+                {
+                    UserId = user.Id, 
+                    ProviderId = p.Id, 
+                    Subscribed = false, 
+                    CreateDate = DateTimeOffset.UtcNow
+                })
+                .ToListAsync(cancellationToken);
+            
+            await context.UserProvider.AddRangeAsync(providers, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        
         user.TwoFactorEnabled = true;
         user.UpdateDate = DateTime.UtcNow;
         context.Users.Update(user);

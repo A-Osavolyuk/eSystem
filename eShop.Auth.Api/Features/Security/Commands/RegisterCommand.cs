@@ -22,15 +22,15 @@ public sealed class RegisterCommandHandler(
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var isTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
 
-        if (user is not null)
+        if (isTaken)
         {
             return Results.NotFound("User already exists");
         }
 
-        var newUser = Mapper.Map(request.Request);
-        var registrationResult = await userManager.CreateAsync(newUser, request.Request.Password, cancellationToken);
+        var user = Mapper.Map(request.Request);
+        var registrationResult = await userManager.CreateAsync(user, request.Request.Password, cancellationToken);
 
         if (!registrationResult.Succeeded)
         {
@@ -44,7 +44,7 @@ public sealed class RegisterCommandHandler(
             return Results.NotFound("Cannot find role with name User");
         }
             
-        var assignRoleResult = await roleManager.AssignAsync(newUser, role, cancellationToken);
+        var assignRoleResult = await roleManager.AssignAsync(user, role, cancellationToken);
 
         if (!assignRoleResult.Succeeded)
         {
@@ -53,14 +53,12 @@ public sealed class RegisterCommandHandler(
 
         var permissions = role.Permissions.Select(x => x.Permission).ToList();
             
-        var grantPermissionsResult = await permissionManager.GrantAsync(newUser, permissions, cancellationToken);
+        var grantPermissionsResult = await permissionManager.GrantAsync(user, permissions, cancellationToken);
 
         if (!grantPermissionsResult.Succeeded)
         {
             return grantPermissionsResult;
         }
-        
-        user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
 
         var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Verify, 
             CodeResource.Email, cancellationToken);

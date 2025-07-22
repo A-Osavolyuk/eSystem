@@ -23,7 +23,7 @@ public class VerifyNewPhoneNumberHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
         
-        var isTaken = await userManager.CheckPhoneNumberAsync(request.Request.NewPhoneNumber, cancellationToken);
+        var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
 
         if (isTaken)
         {

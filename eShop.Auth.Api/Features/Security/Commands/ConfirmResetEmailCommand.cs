@@ -25,7 +25,7 @@ public class ConfirmResetEmailHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
         
-        var isEmail = await userManager.CheckEmailAsync(request.Request.NewEmail, cancellationToken);
+        var isEmail = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
 
         if (isEmail)
         {

@@ -10,14 +10,14 @@ public sealed class LoginCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
     ILockoutManager lockoutManager,
-    IReasonManager reasonManager) : IRequestHandler<LoginCommand, Result>
+    IReasonManager reasonManager,
+    IdentityOptions identityOptions) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IReasonManager reasonManager = reasonManager;
-    private const int MaxLoginAttempts = 5;
-
+    private readonly IdentityOptions identityOptions = identityOptions;
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
@@ -27,7 +27,7 @@ public sealed class LoginCommandHandler(
             return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
         }
 
-        if (!user.EmailConfirmed)
+        if (identityOptions.SignIn.RequireConfirmedEmail && !user.EmailConfirmed)
         {
             return Results.BadRequest("The email address is not confirmed.");
         }
@@ -57,7 +57,7 @@ public sealed class LoginCommandHandler(
                 return updateResult;
             }
 
-            if (user.FailedLoginAttempts < MaxLoginAttempts)
+            if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
             {
                 return Results.BadRequest("The password is not valid.",
                     new LoginResponse()

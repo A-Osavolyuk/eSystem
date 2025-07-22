@@ -5,9 +5,11 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(IUserManager), ServiceLifetime.Scoped)]
 public sealed class UserManager(
     AuthDbContext context,
+    IdentityOptions identityOptions,
     Hasher hasher) : IUserManager
 {
     private readonly AuthDbContext context = context;
+    private readonly IdentityOptions identityOptions = identityOptions;
     private readonly Hasher hasher = hasher;
 
     public async ValueTask<List<UserEntity>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -231,16 +233,6 @@ public sealed class UserManager(
             CreateDate = DateTimeOffset.UtcNow,
         };
         
-        var providers = await context.Providers
-            .Select(p => new UserProviderEntity()
-            {
-                UserId = user.Id, 
-                ProviderId = p.Id, 
-                Subscribed = false, 
-                CreateDate = DateTimeOffset.UtcNow
-            })
-            .ToListAsync(cancellationToken);
-
         var passwordHash = hasher.Hash(password);
 
         user.PasswordHash = passwordHash;
@@ -249,7 +241,6 @@ public sealed class UserManager(
         user.CreateDate = DateTimeOffset.UtcNow;
         
         await context.Users.AddAsync(user, cancellationToken);
-        await context.UserProvider.AddRangeAsync(providers, cancellationToken);
         await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -306,21 +297,36 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<bool> CheckNameAsync(string userName, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> IsUserNameTakenAsync(string userName, CancellationToken cancellationToken = default)
     {
-        var result = await context.Users.AnyAsync(u => u.UserName == userName, cancellationToken);
-        return result;
+        if (identityOptions.Account.RequireUniqueEmail)
+        {
+            var result = await context.Users.AnyAsync(u => u.UserName == userName, cancellationToken);
+            return result;
+        }
+
+        return false;
     }
 
-    public async ValueTask<bool> CheckEmailAsync(string email, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken = default)
     {
-        var result = await context.Users.AnyAsync(u => u.Email == email || u.RecoveryEmail == email, cancellationToken);
-        return result;
+        if (identityOptions.Account.RequireUniqueEmail || identityOptions.Account.RequireUniqueRecoveryEmail)
+        {
+            var result = await context.Users.AnyAsync(u => u.Email == email || u.RecoveryEmail == email, cancellationToken);
+            return result;
+        }
+        
+        return false;
     }
 
-    public async ValueTask<bool> CheckPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber, CancellationToken cancellationToken = default)
     {
-        var result = await context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
-        return result;
+        if (identityOptions.Account.RequireUniquePhoneNumber)
+        {
+            var result = await context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+            return result;
+        }
+        
+        return false;
     }
 }

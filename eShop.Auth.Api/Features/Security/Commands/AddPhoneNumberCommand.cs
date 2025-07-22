@@ -35,7 +35,7 @@ public class AddPhoneNumberCommandHandler(
             return result;
         }
         
-        var isTaken = await userManager.CheckPhoneNumberAsync(request.Request.PhoneNumber, cancellationToken);
+        var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
 
         if (isTaken)
         {
