@@ -22,18 +22,18 @@ public sealed class RegisterCommandHandler(
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);
-        
-        if (isUserNameTaken)
-        {
-            return Results.NotFound("Username is already taken");
-        }
-        
         var isEmailTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
 
         if (isEmailTaken)
         {
             return Results.NotFound("User with same email address already exists");
+        }
+        
+        var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);
+        
+        if (isUserNameTaken)
+        {
+            return Results.NotFound("Username is already taken");
         }
 
         var user = Mapper.Map(request.Request);
