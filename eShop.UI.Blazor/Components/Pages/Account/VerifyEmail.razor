@@ -29,7 +29,6 @@
 
                         <MudItem xs="12" Style="display: flex; justify-content: center">
                             <MudText
-                                Typo="Typo.caption"
                                 Align="Align.Center">
                                 We have sent code to email: <strong>@Email</strong>
                             </MudText>
@@ -71,11 +70,8 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "email")]
-    private string Email { get; set; } = string.Empty;
-
-    [SupplyParameterFromQuery(Name = "id")]
-    private Guid Id { get; set; }
+    [SupplyParameterFromQuery(Name = "email")] private string Email { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "id")] private Guid Id { get; set; }
 
     [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
 
