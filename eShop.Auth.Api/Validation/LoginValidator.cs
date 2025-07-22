@@ -6,7 +6,7 @@ public class LoginValidator : Validator<LoginRequest>
 {
     public LoginValidator()
     {
-        RuleFor(p => p.Email)
+        RuleFor(p => p.Login)
             .NotEmpty().WithMessage("Email is must.")
             .EmailAddress().WithMessage("Invalid format of email address.");
 

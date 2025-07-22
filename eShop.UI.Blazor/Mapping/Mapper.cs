@@ -10,7 +10,7 @@ public static class Mapper
     {
         return new LoginRequest()
         {
-            Email = source.Email,
+            Login = source.Login,
             Password = source.Password
         };
     }

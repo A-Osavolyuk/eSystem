@@ -23,10 +23,9 @@
                     Model="Model"
                     Validation="Validator.ValidateValue">
                     <MudTextField
-                        @bind-Value="Model.Email"
-                        For="(() => Model.Email)"
-                        InputType="InputType.Email"
-                        Label="Email"
+                        @bind-Value="Model.Login"
+                        For="(() => Model.Login)"
+                        Label="Login"
                         Immediate
                         Variant="Variant.Outlined"/>
                     <MudPasswordField
@@ -42,7 +41,7 @@
                         ButtonType="ButtonType.Button"
                         OnClick="@(async () => await OnSubmitAsync())"
                         StartIcon="@Icons.Material.Filled.Login"
-                        Disabled="@(string.IsNullOrEmpty(Model.Password) || string.IsNullOrEmpty(Model.Email))"
+                        Disabled="@(string.IsNullOrEmpty(Model.Password) || string.IsNullOrEmpty(Model.Login))"
                         Variant="Variant.Filled"
                         Color="Color.Primary"
                         Class="mt-3"

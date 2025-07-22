@@ -30,7 +30,7 @@ public sealed class UserManager(
         return user;
     }
 
-    public async ValueTask<UserEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default)
+    public async ValueTask<UserEntity?> FindByUserNameAsync(string name, CancellationToken cancellationToken = default)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == name,
             cancellationToken: cancellationToken);

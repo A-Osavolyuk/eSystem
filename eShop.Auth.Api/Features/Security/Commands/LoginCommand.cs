@@ -20,11 +20,21 @@ public sealed class LoginCommandHandler(
     private readonly IdentityOptions identityOptions = identityOptions;
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        UserEntity? user = null;
+        
+        if (identityOptions.SignIn.AllowUserNameLogin)
+        {
+            user = await userManager.FindByUserNameAsync(request.Request.Login, cancellationToken);
+        }
+
+        if (user is null && identityOptions.SignIn.AllowEmailLogin)
+        {
+            user = await userManager.FindByEmailAsync(request.Request.Login, cancellationToken);
+        }
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+            return Results.NotFound($"Cannot find user with login {request.Request.Login}.");
         }
 
         if (identityOptions.SignIn.RequireConfirmedEmail && !user.EmailConfirmed)
