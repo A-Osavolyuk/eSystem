@@ -3,9 +3,9 @@ using eShop.BlazorWebUI.Models;
 
 namespace eShop.BlazorWebUI.Validation;
 
-public class ConfirmChangeEmailValidator : Validator<ConfirmChangeEmailModel>
+public class VerifyNewEmailValidator : Validator<VerifyNewEmailModel>
 {
-    public ConfirmChangeEmailValidator()
+    public VerifyNewEmailValidator()
     {
         RuleFor(x => x.Code).SetValidator(new CodeValidator());
     }

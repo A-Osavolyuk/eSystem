@@ -5,6 +5,7 @@
 @using Size = MudBlazor.Size
 
 @inject ChangeEmailValidator ChangeEmailValidator
+@inject VerifyNewEmailValidator VerifyNewEmailValidator
 @inject ConfirmChangeEmailValidator ConfirmChangeEmailValidator
 @inject AuthenticationManager AuthenticationManager
 @inject ISecurityService SecurityService
@@ -77,7 +78,10 @@
                                         </MudText>
                                     </MudPaper>
                                     <MudPaper Outlined="true" Class="pa-5">
-                                        <MudForm Model="ConfirmChangeEmailModel">
+                                        <MudForm 
+                                            @ref="verifyNewEmailForm" 
+                                            Model="VerifyNewEmailModel"
+                                            Validation="VerifyNewEmailValidator.ValidateValue">
                                             <MudGrid Justify="Justify.Center">
                                                 <MudItem xs="12">
                                                     <MudText Class="mb-2" Align="Align.Center">
@@ -88,7 +92,7 @@
                                                     <MudCodeInput
                                                         Count="6"
                                                         Margin="Margin.Normal" Spacing="1"
-                                                        @bind-Value="ConfirmChangeEmailModel.CurrentEmailCode"
+                                                        @bind-Value="VerifyNewEmailModel.Code"
                                                         Variant="Variant.Outlined"/>
                                                 </MudItem>
                                                 <MudItem xs="12">
@@ -97,7 +101,7 @@
                                                         Variant="Variant.Filled"
                                                         Color="Color.Primary"
                                                         ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await StepNextAsync())">
+                                                        OnClick="@(async () => await OnVerifyNewEmailAsync())">
                                                         Confirm
                                                     </MudLoadingButton>
                                                 </MudItem>
@@ -149,7 +153,7 @@
                                                     <MudCodeInput
                                                         Count="6"
                                                         Margin="Margin.Normal" Spacing="1"
-                                                        @bind-Value="ConfirmChangeEmailModel.NewEmailCode"
+                                                        @bind-Value="ConfirmChangeEmailModel.Code"
                                                         Variant="Variant.Outlined"/>
                                                 </MudItem>
                                                 <MudItem xs="12">
@@ -196,11 +200,13 @@
 
 @code {
     [SupplyParameterFromForm] private ChangeEmailModel ChangeEmailModel { get; set; } = new();
+    [SupplyParameterFromForm] private VerifyNewEmailModel VerifyNewEmailModel { get; set; } = new();
     [SupplyParameterFromForm] private ConfirmChangeEmailModel ConfirmChangeEmailModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
 
     private MudForm changeEmailForm = new();
+    private MudForm verifyNewEmailForm = new();
     private MudForm confirmChangeEmailForm = new();
 
     private Guid userId;
@@ -279,7 +285,32 @@
 
             if (result.Success)
             {
-                Snackbar.Add("Confirmation codes were send", Severity.Success);
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+    
+    private async Task OnVerifyNewEmailAsync()
+    {
+        await verifyNewEmailForm.Validate();
+
+        if (verifyNewEmailForm.IsValid)
+        {
+            var request = new VerifyNewEmailRequest()
+            {
+                UserId = userId,
+                NewEmail = ChangeEmailModel.NewEmail,
+                Code = VerifyNewEmailModel.Code
+            };
+
+            var result = await SecurityService.VerifyNewEmailAsync(request);
+
+            if (result.Success)
+            {
                 await StepNextAsync();
             }
             else
@@ -297,8 +328,7 @@
         {
             var request = new ConfirmChangeEmailRequest()
             {
-                CurrentEmailCode = ConfirmChangeEmailModel.CurrentEmailCode,
-                NewEmailCode = ConfirmChangeEmailModel.NewEmailCode,
+                Code = ConfirmChangeEmailModel.Code,
                 NewEmail = ConfirmChangeEmailModel.NewEmail,
                 UserId = userId
             };

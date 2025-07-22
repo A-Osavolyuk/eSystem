@@ -46,6 +46,10 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<Response> VerifyNewEmailAsync(VerifyNewEmailRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/verify-new", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<Response> VerifyRecoveryEmailAsync(VerifyRecoveryEmailRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/recovery-email/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });

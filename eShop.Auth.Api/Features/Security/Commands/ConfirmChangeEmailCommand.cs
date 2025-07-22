@@ -37,7 +37,7 @@ public sealed class ConfirmChangeEmailCommandHandler(
             return Results.BadRequest("This email address is already taken");
         }
         
-        var codeResult = await codeManager.VerifyAsync(user, request.Request.NewEmailCode, 
+        var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, 
             SenderType.Email, CodeType.New, CodeResource.Email, cancellationToken);
         
         if (!codeResult.Succeeded)
