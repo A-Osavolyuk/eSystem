@@ -90,7 +90,7 @@
                 var response = result.Get<RegistrationResponse>()!;
 
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/email/verify?id={response.UserId}");
+                NavigationManager.NavigateTo($"/account/email/verify?id={response.UserId}&email={Model.Email}");
             }
             else
             {
