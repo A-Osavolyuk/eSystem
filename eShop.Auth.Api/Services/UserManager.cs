@@ -340,22 +340,8 @@ public sealed class UserManager(
         {
             var normalizedEmail = email.ToUpper();
             var result = await context.Users.AnyAsync(
-                u => u.NormalizedEmail == normalizedEmail, cancellationToken);
-            
-            return result;
-        }
-        
-        return false;
-    }
-    
-    public async ValueTask<bool> IsRecoveryEmailTakenAsync(string recoveryEmail, 
-        CancellationToken cancellationToken = default)
-    {
-        if (identityOptions.Account.RequireUniqueRecoveryEmail)
-        {
-            var normalizedRecoveryEmail = recoveryEmail.ToUpper();
-            var result = await context.Users.AnyAsync(
-                u => u.NormalizedRecoveryEmail == normalizedRecoveryEmail, cancellationToken);
+                u => u.NormalizedEmail == normalizedEmail
+                || u.NormalizedRecoveryEmail == normalizedEmail, cancellationToken);
             
             return result;
         }
