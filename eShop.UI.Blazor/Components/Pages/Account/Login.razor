@@ -120,7 +120,7 @@
     public string ReturnUri { get; set; } = string.Empty;
 
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
-    
+
     private MudForm form = new();
 
     private async Task OnSubmitAsync()
@@ -153,24 +153,26 @@
                 if (result.Result is null)
                 {
                     Snackbar.Add(result.Message, Severity.Error);
+                    return;
+                }
+
+                var response = result.Get<LoginResponse>()!;
+                var userId = response.UserId;
+
+                if (response.FailedLoginAttempts < response.MaxFailedLoginAttempts && !response.IsLockedOut)
+                {
+                    var attemptsLeft = response.MaxFailedLoginAttempts - response.FailedLoginAttempts;
+                    var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
+                    Snackbar.Add(message, Severity.Error);
+                }
+                if (response is { FailedLoginAttempts: 0, IsLockedOut: false })
+                {
+                    Snackbar.Add(result.Message, Severity.Error);
                 }
                 else
                 {
-                    var response = result.Get<LoginResponse>()!;
-                    var userId = response.UserId;
-
-                    if (response.FailedLoginAttempts < response.MaxFailedLoginAttempts && !response.IsLockedOut)
-                    {
-                        var attemptsLeft = response.MaxFailedLoginAttempts - response.FailedLoginAttempts;
-                        var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
-                        Snackbar.Add(message, Severity.Error);
-                    }
-                    else
-                    {
-                        var redirectUri = $"/account/locked-out?id={userId}";
-                        Snackbar.Add(result.Message, Severity.Error);
-                        NavigationManager.NavigateTo(redirectUri);
-                    }
+                    var redirectUri = $"/account/locked-out?id={userId}";
+                    NavigationManager.NavigateTo(redirectUri);
                 }
             }
         }
