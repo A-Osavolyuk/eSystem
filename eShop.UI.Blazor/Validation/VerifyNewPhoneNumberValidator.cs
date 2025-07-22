@@ -3,9 +3,9 @@ using eShop.BlazorWebUI.Models;
 
 namespace eShop.BlazorWebUI.Validation;
 
-public class ConfirmChangePhoneNumberValidator : Validator<ConfirmChangePhoneNumberModel>
+public class VerifyNewPhoneNumberValidator : Validator<VerifyNewPhoneNumberModel>
 {
-    public ConfirmChangePhoneNumberValidator()
+    public VerifyNewPhoneNumberValidator()
     {
         RuleFor(x => x.Code).SetValidator(new CodeValidator());
     }

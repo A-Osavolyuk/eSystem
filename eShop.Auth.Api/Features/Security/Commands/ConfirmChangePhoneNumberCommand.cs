@@ -37,10 +37,8 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
             return Results.BadRequest("This phone number is already taken");
         }
         
-        var code = request.Request.NewPhoneNumberCode;
-        
-        var codeResult = await codeManager.VerifyAsync(user, code, 
-            SenderType.Sms, CodeType.New, CodeResource.PhoneNumber, cancellationToken);
+        var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Sms, 
+            CodeType.New, CodeResource.PhoneNumber, cancellationToken);
 
         if (!codeResult.Succeeded)
         {

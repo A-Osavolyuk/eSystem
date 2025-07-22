@@ -6,6 +6,7 @@
 @inject ISecurityService SecurityService
 @inject AuthenticationManager AuthenticationManager
 @inject ChangePhoneNumberValidator ChangePhoneNumberValidator
+@inject VerifyNewPhoneNumberValidator VerifyNewPhoneNumberValidator
 @inject ConfirmChangePhoneNumberValidator ConfirmChangePhoneNumberValidator
 
 <Title Text="Change phone number"></Title>
@@ -76,7 +77,10 @@
                                         </MudText>
                                     </MudPaper>
                                     <MudPaper Outlined="true" Class="pa-5">
-                                        <MudForm Model="ConfirmChangePhoneNumberModel">
+                                        <MudForm 
+                                            @ref="verifyNewPhoneNumberForm"
+                                            Validation="VerifyNewPhoneNumberValidator.ValidateValue"
+                                            Model="ConfirmChangePhoneNumberModel">
                                             <MudGrid Justify="Justify.Center">
                                                 <MudItem xs="12">
                                                     <MudText Class="mb-2" Align="Align.Center">
@@ -87,7 +91,7 @@
                                                     <MudCodeInput
                                                         Count="6"
                                                         Margin="Margin.Normal" Spacing="1"
-                                                        @bind-Value="ConfirmChangePhoneNumberModel.CurrentPhoneNumberCode"
+                                                        @bind-Value="VerifyNewPhoneNumberModel.Code"
                                                         Variant="Variant.Outlined"/>
                                                 </MudItem>
                                                 <MudItem xs="12">
@@ -96,7 +100,7 @@
                                                         Variant="Variant.Filled"
                                                         Color="Color.Primary"
                                                         ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await StepNextAsync())">
+                                                        OnClick="@(async () => await OnVerifyNewPhoneNumberAsync())">
                                                         Confirm
                                                     </MudLoadingButton>
                                                 </MudItem>
@@ -151,7 +155,7 @@
                                                     <MudCodeInput
                                                         Count="6"
                                                         Margin="Margin.Normal" Spacing="1"
-                                                        @bind-Value="ConfirmChangePhoneNumberModel.NewPhoneNumberCode"
+                                                        @bind-Value="ConfirmChangePhoneNumberModel.Code"
                                                         Variant="Variant.Outlined"/>
                                                 </MudItem>
                                                 <MudItem xs="12">
@@ -200,10 +204,12 @@
 
 @code {
     [SupplyParameterFromForm] private ChangePhoneNumberModel ChangePhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private VerifyNewPhoneNumberModel VerifyNewPhoneNumberModel { get; set; } = new();
     [SupplyParameterFromForm] private ConfirmChangePhoneNumberModel ConfirmChangePhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm changePhoneNumberForm = new();
+    private MudForm verifyNewPhoneNumberForm = new();
     private MudForm confirmChangePhoneNumberForm = new();
     private Guid userId;
     private bool completed = false;
@@ -281,7 +287,32 @@
 
             if (result.Success)
             {
-                Snackbar.Add("Codes were sent", Severity.Success);
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+    
+    private async Task OnVerifyNewPhoneNumberAsync()
+    {
+        await verifyNewPhoneNumberForm.Validate();
+
+        if (verifyNewPhoneNumberForm.IsValid)
+        {
+            var request = new VerifyNewPhoneNumberRequest()
+            {
+                UserId = userId,
+                NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
+                Code = VerifyNewPhoneNumberModel.Code
+            };
+
+            var result = await SecurityService.VerifyNewPhoneNumberAsync(request);
+
+            if (result.Success)
+            {
                 await StepNextAsync();
             }
             else
@@ -301,8 +332,7 @@
             {
                 UserId = userId,
                 NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
-                CurrentPhoneNumberCode = ConfirmChangePhoneNumberModel.CurrentPhoneNumberCode,
-                NewPhoneNumberCode = ConfirmChangePhoneNumberModel.NewPhoneNumberCode,
+                Code = ConfirmChangePhoneNumberModel.Code,
             };
 
             var result = await SecurityService.ConfirmChangePhoneNumberAsync(request);

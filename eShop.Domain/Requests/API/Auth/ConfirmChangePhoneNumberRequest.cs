@@ -4,6 +4,5 @@ public record ConfirmChangePhoneNumberRequest
 {
     public Guid UserId { get; set; }
     public string NewPhoneNumber { get; set; } = string.Empty;
-    public string CurrentPhoneNumberCode { get; set; } = string.Empty;
-    public string NewPhoneNumberCode { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
 }

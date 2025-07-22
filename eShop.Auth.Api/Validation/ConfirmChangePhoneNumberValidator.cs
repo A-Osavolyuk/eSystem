@@ -7,7 +7,6 @@ public class ConfirmChangePhoneNumberValidator : Validator<ConfirmChangePhoneNum
 {
     public ConfirmChangePhoneNumberValidator()
     {
-        RuleFor(x => x.CurrentPhoneNumberCode).SetValidator(new CodeValidator());
-        RuleFor(x => x.NewPhoneNumberCode).SetValidator(new CodeValidator());
+        RuleFor(x => x.Code).SetValidator(new CodeValidator());
     }
 }

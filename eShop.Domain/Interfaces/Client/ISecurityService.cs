@@ -27,5 +27,6 @@ public interface ISecurityService
     public ValueTask<Response> VerifyNewEmailAsync(VerifyNewEmailRequest request);
     public ValueTask<Response> VerifyRecoveryEmailAsync(VerifyRecoveryEmailRequest request);
     public ValueTask<Response> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request);
+    public ValueTask<Response> VerifyNewPhoneNumberAsync(VerifyNewPhoneNumberRequest request);
     public ValueTask<Response> UnlockAccountAsync(UnlockAccountRequest request);
 }
