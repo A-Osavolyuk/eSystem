@@ -3,19 +3,18 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<Result>;
+public record VerifyNewEmailCommand(VerifyNewEmailRequest Request) : IRequest<Result>;
 
-public sealed class RequestChangeEmailCommandHandler(
-    IMessageService messageService,
+public class VerifyNewEmailCommandHandler(
+    IUserManager userManager,
     ICodeManager codeManager,
-    IUserManager userManager) : IRequestHandler<ChangeEmailCommand, Result>
+    IMessageService messageService) : IRequestHandler<VerifyNewEmailCommand, Result>
 {
-    private readonly IMessageService messageService = messageService;
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
+    private readonly IMessageService messageService = messageService;
 
-    public async Task<Result> Handle(ChangeEmailCommand request,
-        CancellationToken cancellationToken)
+    public async Task<Result> Handle(VerifyNewEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
@@ -30,21 +29,28 @@ public sealed class RequestChangeEmailCommandHandler(
         {
             return Results.BadRequest("This email address is already taken");
         }
-
-        var code = await codeManager.GenerateAsync(user, SenderType.Email, 
-            CodeType.Current, CodeResource.Email, cancellationToken);
         
-        var message = new ChangeEmailMessage()
+        var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, 
+            SenderType.Email, CodeType.Current, CodeResource.Email, cancellationToken);
+
+        if (!codeResult.Succeeded)
+        {
+            return codeResult;
+        }
+        
+        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.New, 
+            CodeResource.Email, cancellationToken);
+        
+        var message = new VerifyEmailMessage()
         {
             Credentials = new ()
             {
-                { "To", user.Email },
-                { "Subject", "Email change (step one)" }
-            },
+                { "To", request.Request.NewEmail },
+                { "Subject", "Email verification (step two)" }
+            }, 
             Payload = new()
             {
                 { "Code", code },
-                { "NewEmail", request.Request.NewEmail },
                 { "UserName", user.UserName },
             }
         };

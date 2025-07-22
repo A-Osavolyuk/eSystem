@@ -162,6 +162,22 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Verify new email on change")]
+    [EndpointDescription("Verify new email on change")]
+    [ProducesResponseType(200)]
+    [Authorize]
+    [HttpPost("email/verify-new")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> VerifyNewEmailAsync(
+        [FromBody] VerifyNewEmailRequest changeEmailRequest)
+    {
+        var result = await sender.Send(new VerifyNewEmailCommand(changeEmailRequest));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Confirm change email")]
     [EndpointDescription("Confirms an email change")]
     [ProducesResponseType(200)]

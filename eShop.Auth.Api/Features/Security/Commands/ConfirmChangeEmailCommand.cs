@@ -36,25 +36,16 @@ public sealed class ConfirmChangeEmailCommandHandler(
         {
             return Results.BadRequest("This email address is already taken");
         }
-
-        var currentEmailResult = await codeManager.VerifyAsync(user, request.Request.CurrentEmailCode, 
-            SenderType.Email, CodeType.Current, CodeResource.Email, cancellationToken);
-
-        if (!currentEmailResult.Succeeded)
-        {
-            return currentEmailResult;
-        }
         
-        var newEmailResult = await codeManager.VerifyAsync(user, request.Request.NewEmailCode, 
+        var codeResult = await codeManager.VerifyAsync(user, request.Request.NewEmailCode, 
             SenderType.Email, CodeType.New, CodeResource.Email, cancellationToken);
         
-        if (!newEmailResult.Succeeded)
+        if (!codeResult.Succeeded)
         {
-            return newEmailResult;
+            return codeResult;
         }
         
-        var rollback = await rollbackManager.CommitAsync(user, user.Email, 
-            RollbackField.Email, cancellationToken);
+        var rollback = await rollbackManager.CommitAsync(user, user.Email, RollbackField.Email, cancellationToken);
 
         if (rollback is null)
         {
