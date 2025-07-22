@@ -29,5 +29,6 @@ public interface IUserManager
     public ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsUserNameTakenAsync(string userName, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken = default);
+    public ValueTask<bool> IsRecoveryEmailTakenAsync(string recoveryEmail, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber, CancellationToken cancellationToken = default);
 }
