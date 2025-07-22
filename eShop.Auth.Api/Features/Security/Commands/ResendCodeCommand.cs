@@ -96,7 +96,7 @@ public class ResendCodeCommandHandler(
                     Credentials = new()
                     {
                         { "To", user.Email },
-                        { "Subject", "Account recovery" },
+                        { "Subject", "Account unlock" },
                     },
                     Payload = new()
                     {
