@@ -38,9 +38,9 @@ public static class Mapper
         {
             Id = Guid.CreateVersion7(),
             Email = source.Email,
-            UserName = source.Email,
             NormalizedEmail = source.Email.ToUpper(),
-            NormalizedUserName = source.Email.ToUpper(),
+            UserName = source.UserName,
+            NormalizedUserName = source.UserName.ToUpper(),
         };
     }
 

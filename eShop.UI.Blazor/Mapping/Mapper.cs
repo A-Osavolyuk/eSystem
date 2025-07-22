@@ -27,6 +27,7 @@ public static class Mapper
     {
         return new RegistrationRequest()
         {
+            UserName = source.UserName,
             Email = source.Email,
             Password = source.Password,
             ConfirmPassword = source.ConfirmPassword

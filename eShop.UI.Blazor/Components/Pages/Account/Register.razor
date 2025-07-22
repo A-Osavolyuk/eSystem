@@ -26,6 +26,13 @@
                         Label="Email"
                         Immediate
                         Variant="Variant.Outlined"/>
+                    <MudTextField
+                        @bind-Value="Model.UserName"
+                        For="(() => Model.UserName)"
+                        InputType="InputType.Email"
+                        Label="Username"
+                        Immediate
+                        Variant="Variant.Outlined"/>
                     <MudPasswordField
                         PasswordMode="true"
                         @bind-Value="Model.Password"
