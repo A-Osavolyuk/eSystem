@@ -7,10 +7,9 @@ public class LoginValidator : Validator<LoginRequest>
     public LoginValidator()
     {
         RuleFor(p => p.Login)
-            .NotEmpty().WithMessage("Email is must.")
-            .EmailAddress().WithMessage("Invalid format of email address.");
+            .NotEmpty().WithMessage("Field is required.");
 
         RuleFor(p => p.Password)
-            .NotEmpty().WithMessage("Password is must.");
+            .NotEmpty().WithMessage("Field is required.");
     }
 }
