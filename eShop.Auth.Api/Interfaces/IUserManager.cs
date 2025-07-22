@@ -12,9 +12,13 @@ public interface IUserManager
     public ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default);
     public ValueTask<Result> ResetEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default);
+    public ValueTask<Result> ResetRecoveryEmailAsync(UserEntity user, string newRecoveryEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default);
+    public ValueTask<Result> RemovePhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> RemoveRecoveryEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default);
+    public ValueTask<Result> ChangeRecoveryEmailAsync(UserEntity user, string newRecoveryEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber, CancellationToken cancellationToken = default);
     public ValueTask<Result> AddRecoveryEmailAsync(UserEntity user, string recoveryEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> CreateAsync(UserEntity user, string password, CancellationToken cancellationToken = default);

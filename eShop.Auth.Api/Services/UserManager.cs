@@ -102,11 +102,53 @@ public sealed class UserManager(
         return Result.Success();
     }
 
+    public async ValueTask<Result> ResetRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
+        CancellationToken cancellationToken = default)
+    {
+        user.RecoveryEmail = newRecoveryEmail;
+        user.RecoveryEmailConfirmed = true;
+        user.NormalizedRecoveryEmail = newRecoveryEmail.ToUpper();
+        user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
     public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string newPhoneNumber, CancellationToken cancellationToken = default)
     {
         user.PhoneNumber = newPhoneNumber;
         user.PhoneNumberConfirmed = true;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> RemovePhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        user.PhoneNumber = null;
+        user.PhoneNumberConfirmed = false;
+        user.PhoneNumberChangeDate = null;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> RemoveRecoveryEmailAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        user.RecoveryEmail = null;
+        user.RecoveryEmailConfirmed = false;
+        user.NormalizedRecoveryEmail = null;
+        user.RecoveryEmailChangeDate = null;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
@@ -136,6 +178,20 @@ public sealed class UserManager(
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> ChangeRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
+        CancellationToken cancellationToken = default)
+    {
+        user.RecoveryEmail = newRecoveryEmail;
+        user.RecoveryEmailConfirmed = true;
+        user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
         return Result.Success();
     }
 

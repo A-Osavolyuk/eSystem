@@ -9,8 +9,8 @@ public class UserEntity : Entity
     public bool EmailConfirmed { get; set; }
     public DateTimeOffset? EmailChangeDate { get; set; }
     
-    public string RecoveryEmail { get; set; } = string.Empty;
-    public string NormalizedRecoveryEmail { get; set; } = string.Empty;
+    public string? RecoveryEmail { get; set; } = string.Empty;
+    public string? NormalizedRecoveryEmail { get; set; } = string.Empty;
     public bool RecoveryEmailConfirmed { get; set; }
     public DateTimeOffset? RecoveryEmailChangeDate { get; set; }
     
@@ -18,7 +18,7 @@ public class UserEntity : Entity
     public string NormalizedUserName { get; set; } = string.Empty;
     public DateTimeOffset? UserNameChangeDate { get; set; }
     
-    public string PhoneNumber { get; set; } = string.Empty;
+    public string? PhoneNumber { get; set; } = string.Empty;
     public bool PhoneNumberConfirmed { get; set; }
     public DateTimeOffset? PhoneNumberChangeDate { get; set; }
     
