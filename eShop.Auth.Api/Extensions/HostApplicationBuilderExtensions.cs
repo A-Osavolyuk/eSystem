@@ -15,7 +15,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddMessageBus();
         builder.AddValidation();
         builder.AddServiceDefaults();
-        builder.AddIdentity();
+        builder.AddSecurity();
         builder.AddServices<IAssemblyMarker>();
         builder.AddRedisCache();
         builder.AddMediatR();
@@ -24,20 +24,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
-        builder.AddEncryption();
-        builder.AddHashing();
         builder.Services.AddControllers();
-    }
-
-    private static void AddEncryption(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddDataProtection();
-        builder.Services.AddSingleton<SecretProtector>();
-    }
-
-    private static void AddHashing(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddScoped<Hasher, Pbkdf2Hasher>();
     }
 
     private static void AddValidation(this IHostApplicationBuilder builder)
@@ -79,11 +66,22 @@ public static class HostApplicationBuilderExtensions
             });
     }
 
-    private static void AddIdentity(this IHostApplicationBuilder builder)
+    private static void AddSecurity(this IHostApplicationBuilder builder)
     {
         var configuration = builder.Configuration;
 
         builder.Services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
+        
+        builder.Services.AddIdentity(options =>
+        {
+            options.Password.RequiredLength = 8;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireDigit = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequireUniqueChars = true;
+            options.Password.RequiredUniqueChars = 4;
+        });
 
         builder.Services.AddAuthentication(options =>
             {
@@ -148,12 +146,39 @@ public static class HostApplicationBuilderExtensions
                 };
             });
 
-        builder.AddAuthorization();
+        builder.Services.AddAuthorization();
+        builder.Services.AddEncryption();
+        builder.Services.AddHashing();
     }
 
-    private static void AddAuthorization(this IHostApplicationBuilder builder)
+    private static IServiceCollection AddIdentity(this IServiceCollection services, Action<IdentityOptions> configure)
     {
-        builder.Services.AddAuthorizationBuilder()
+        var options = new IdentityOptions();
+        configure(options);
+        
+        services.AddSingleton(options);
+
+        return services;
+    }
+    
+    private static IServiceCollection AddEncryption(this IServiceCollection services)
+    {
+        services.AddDataProtection();
+        services.AddSingleton<SecretProtector>();
+        
+        return services;
+    }
+
+    private static IServiceCollection AddHashing(this IServiceCollection services)
+    {
+        services.AddScoped<Hasher, Pbkdf2Hasher>();
+        
+        return services;
+    }
+
+    private static IServiceCollection AddAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorizationBuilder()
             .AddPolicy("DeleteAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("DELETE_ACCOUNT")))
             .AddPolicy("CreateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("CREATE_ACCOUNT")))
             .AddPolicy("UpdateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("UPDATE_ACCOUNT")))
@@ -176,6 +201,8 @@ public static class HostApplicationBuilderExtensions
             .AddPolicy("ReadPermissionPolicy",policy => policy.Requirements.Add(new PermissionRequirement("READ_PERMISSIONS")))
             .AddPolicy("GrantPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("GRANT_PERMISSIONS")))
             .AddPolicy("RevokePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("REVOKE_PERMISSIONS")));
+
+        return services;
     }
     
     private static void AddMessageBus(this IHostApplicationBuilder builder)
