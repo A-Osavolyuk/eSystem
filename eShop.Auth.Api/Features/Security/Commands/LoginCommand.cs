@@ -10,15 +10,11 @@ public sealed class LoginCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
     ILockoutManager lockoutManager,
-    ICodeManager codeManager,
-    IMessageService messageService,
     IReasonManager reasonManager) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
     private readonly IReasonManager reasonManager = reasonManager;
     private const int MaxLoginAttempts = 5;
 
@@ -85,25 +81,6 @@ public sealed class LoginCommandHandler(
             {
                 return lockoutResult;
             }
-
-            var code = await codeManager.GenerateAsync(user, SenderType.Email, 
-                CodeType.Unlock, CodeResource.Account, cancellationToken);
-
-            var message = new AccountUnlockMessage()
-            {
-                Credentials = new()
-                {
-                    { "To", user.Email },
-                    { "Subject", "Account recovery" }
-                },
-                Payload = new()
-                {
-                    { "UserName", user.UserName },
-                    { "Code", code },
-                }
-            };
-
-            await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
             return Results.BadRequest("Account is locked out due to too many failed login attempts",
                 new LoginResponse()
