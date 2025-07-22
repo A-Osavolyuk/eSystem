@@ -30,5 +30,4 @@ public interface IUserManager
     public ValueTask<bool> CheckNameAsync(string userName, CancellationToken cancellationToken = default);
     public ValueTask<bool> CheckEmailAsync(string email, CancellationToken cancellationToken = default);
     public ValueTask<bool> CheckPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken = default);
-    public string GenerateRandomPassword(int length);
 }

@@ -66,7 +66,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 EmailConfirmed = true
             };
 
-            var tempPassword = userManager.GenerateRandomPassword(18);
+            var tempPassword = PasswordGenerator.Generate(18);
             var result = await userManager.CreateAsync(user, tempPassword, cancellationToken);
 
             if (!result.Succeeded)

@@ -30,7 +30,7 @@ public sealed class CreateUserAccountCommandHandler(
             PhoneNumberConfirmed = true,
         };
 
-        var password = userManager.GenerateRandomPassword(18);
+        var password = PasswordGenerator.Generate(18);
         var accountResult = await userManager.CreateAsync(user, password, cancellationToken);
 
         if (!accountResult.Succeeded)

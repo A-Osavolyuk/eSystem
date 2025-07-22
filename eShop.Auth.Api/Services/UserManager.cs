@@ -323,19 +323,4 @@ public sealed class UserManager(
         var result = await context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
         return result;
     }
-
-    public string GenerateRandomPassword(int length)
-    {
-        const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!-_";
-        var sb = new StringBuilder();
-        var random = new Random();
-
-        for (var i = 0; i < length; i++)
-        {
-            var randomIndex = random.Next(validChars.Length);
-            sb.Append(validChars[randomIndex]);
-        }
-
-        return "0" + sb.ToString();
-    }
 }
