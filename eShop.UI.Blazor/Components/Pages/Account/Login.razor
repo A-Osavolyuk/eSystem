@@ -120,8 +120,7 @@
     public string ReturnUri { get; set; } = string.Empty;
 
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
-
-    private const int MaxLoginAttempts = 5;
+    
     private MudForm form = new();
 
     private async Task OnSubmitAsync()
@@ -160,9 +159,9 @@
                     var response = result.Get<LoginResponse>()!;
                     var userId = response.UserId;
 
-                    if (response is { FailedLoginAttempts: < MaxLoginAttempts, IsLockedOut: false })
+                    if (response.FailedLoginAttempts < response.MaxFailedLoginAttempts && !response.IsLockedOut)
                     {
-                        var attemptsLeft = MaxLoginAttempts - response.FailedLoginAttempts;
+                        var attemptsLeft = response.MaxFailedLoginAttempts - response.FailedLoginAttempts;
                         var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
                         Snackbar.Add(message, Severity.Error);
                     }

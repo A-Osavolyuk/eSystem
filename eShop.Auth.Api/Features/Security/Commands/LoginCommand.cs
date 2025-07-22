@@ -73,6 +73,7 @@ public sealed class LoginCommandHandler(
                     new LoginResponse()
                     {
                         FailedLoginAttempts = user.FailedLoginAttempts,
+                        MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
                         IsLockedOut = false,
                         UserId = user.Id,
                     });
@@ -98,6 +99,7 @@ public sealed class LoginCommandHandler(
                     UserId = user.Id,
                     IsLockedOut = true,
                     FailedLoginAttempts = user.FailedLoginAttempts,
+                    MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
                     Reason = Mapper.Map(reason)
                 });
         }
