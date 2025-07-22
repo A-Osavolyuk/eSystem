@@ -33,7 +33,7 @@ public sealed class RegisterCommandHandler(
 
         if (isEmailTaken)
         {
-            return Results.NotFound("User with this email address already exists");
+            return Results.NotFound("User with same email address already exists");
         }
 
         var user = Mapper.Map(request.Request);
