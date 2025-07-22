@@ -7,7 +7,7 @@ public class SignInOptions
     public bool RequireConfirmedPhoneNumber { get; set; } = false;
     public bool RequireConfirmedAccount { get; set; } = true;
     
-    public bool AllowUserNameLogin { get; set; } = false;
+    public bool AllowUserNameLogin { get; set; } = true;
     public bool AllowEmailLogin { get; set; } = true;
     public int MaxFailedLoginAttempts { get; set; } = 5;
     public TimeSpan LockoutDuration { get; set; } = TimeSpan.FromMinutes(15);
