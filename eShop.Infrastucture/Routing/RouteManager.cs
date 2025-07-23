@@ -26,20 +26,23 @@ public class RouteManager(
         if (route is null)
         {
             NotFound();
+            return;
         }
 
         var state = await authenticationManager.GetStateAsync();
         
-        if (route!.RequireAuthorization && !state.IsAuthenticated)
+        if (route!.RequireAuthorization && (state is null || !state.IsAuthenticated))
         {
             NotAuthorized(returnUri ?? returnPath);
+            return;
         }
 
         if (route is { RequiredRoles.Count: > 0 } or { RequiredPermissions.Count: > 0 })
         {
-            if (!state.HasRole(route.RequiredRoles) || !state.HasPermission(route.RequiredPermissions))
+            if (!state!.HasRole(route.RequiredRoles) || !state.HasPermission(route.RequiredPermissions))
             {
                 Forbidden(returnUri ?? returnPath);
+                return;
             }
         }
 
