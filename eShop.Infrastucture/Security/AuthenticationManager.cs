@@ -15,24 +15,28 @@ public class AuthenticationManager(
     {
         await (authenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(accessToken, refreshToken);
     }
-    
+
     public async Task LogOutAsync()
     {
         await (authenticationStateProvider as JwtAuthenticationStateProvider)!.LogOutAsync();
     }
-    
+
     public async Task ReauthenticateAsync(string accessToken, string refreshToken)
     {
-        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.ReauthenticateAsync(accessToken, refreshToken);
+        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.ReauthenticateAsync(accessToken,
+            refreshToken);
     }
 
-    public async Task<JwtAuthenticationState> GetStateAsync()
+    public async Task<JwtAuthenticationState?> GetStateAsync()
     {
         var token = await tokenProvider.GetTokenAsync();
+
+        if (string.IsNullOrEmpty(token)) return null;
+
         var rawToken = tokenHandler.ReadToken(token);
         var claims = rawToken!.Claims.ToList();
         var state = new JwtAuthenticationState() { Claims = claims };
-        
+
         return state;
     }
 }
