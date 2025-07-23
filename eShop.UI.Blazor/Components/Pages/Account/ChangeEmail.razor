@@ -117,7 +117,7 @@
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">
                                             Loose access to your current email address?
-                                            <MudLink Href="account/email/reset">
+                                            <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/email/reset"))">
                                                 Reset it
                                             </MudLink>
                                         </MudText>
@@ -342,7 +342,7 @@
 
                 Snackbar.Add("Email address was successfully changed", Severity.Success);
                 await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
-                NavigationManager.NavigateTo("/account/login");
+                await RouteManager.NavigateAsync("/account/login");
             }
             else
             {
@@ -366,7 +366,7 @@
     private async Task OnCompleteAsync()
     {
         await Task.Delay(TimeSpan.FromMicroseconds(5));
-        NavigationManager.NavigateTo("account/login");
+        await RouteManager.NavigateAsync("account/login");
     }
 
 }

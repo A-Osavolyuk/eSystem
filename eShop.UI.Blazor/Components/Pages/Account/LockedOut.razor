@@ -39,7 +39,9 @@
                 <MudPaper Class="pa-3" Outlined="true">
                     <MudText Align="Align.Center">
                         Want to unlock my account? 
-                        <MudLink Href="@($"/account/unlock?id={UserId}")">Unlock</MudLink>
+                        <MudLink OnClick="@(async () => await RouteManager.NavigateAsync($"/account/unlock?id={UserId}"))">
+                            Unlock
+                        </MudLink>
                     </MudText>
                 </MudPaper>
             }

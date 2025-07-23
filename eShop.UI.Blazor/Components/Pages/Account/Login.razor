@@ -57,7 +57,7 @@
                             ButtonType="ButtonType.Button"
                             StartIcon="@Icons.Custom.Brands.Google"
                             Variant="Variant.Filled"
-                            OnClick="@(() => OnExternalLogin("Google"))"
+                            OnClick="@(async () => await OnExternalLoginAsync("Google"))"
                             Color="Color.Primary"
                             FullWidth="true">
                             Google
@@ -68,7 +68,7 @@
                             ButtonType="ButtonType.Button"
                             StartIcon="@Icons.Custom.Brands.Facebook"
                             Variant="Variant.Filled"
-                            OnClick="@(() => OnExternalLogin("Facebook"))"
+                            OnClick="@(async () => await OnExternalLoginAsync("Facebook"))"
                             Color="Color.Primary"
                             FullWidth="true">
                             Facebook
@@ -79,7 +79,7 @@
                             ButtonType="ButtonType.Button"
                             StartIcon="@Icons.Custom.Brands.Microsoft"
                             Variant="Variant.Filled"
-                            OnClick="@(() => OnExternalLogin("Microsoft"))"
+                            OnClick="@(async () => await OnExternalLoginAsync("Microsoft"))"
                             Color="Color.Primary"
                             FullWidth="true">
                             Microsoft
@@ -90,7 +90,7 @@
                             ButtonType="ButtonType.Button"
                             StartIcon="@Icons.Custom.Brands.Twitter"
                             Variant="Variant.Filled"
-                            OnClick="@(() => OnExternalLogin("Twitter"))"
+                            OnClick="@(async () => await OnExternalLoginAsync("Twitter"))"
                             Color="Color.Primary"
                             FullWidth="true">
                             Twitter
@@ -101,13 +101,17 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account?
-                    <MudLink Href="account/register">Register</MudLink>
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/register"))">
+                        Register
+                    </MudLink>
                 </MudText>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Forget your password?
-                    <MudLink Href="account/password/reset">Reset password</MudLink>
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/password/reset"))">
+                        Reset password
+                    </MudLink>
                 </MudText>
             </MudPaper>
         </MudStack>
@@ -139,12 +143,12 @@
                 if (response!.TwoFactorEnabled)
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    NavigationManager.NavigateTo($"/account/2fa/login?id={response.UserId}");
+                    await RouteManager.NavigateAsync($"/account/2fa/login?id={response.UserId}");
                 }
                 else
                 {
                     await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
-                    NavigationManager.NavigateTo((string.IsNullOrEmpty(ReturnUri) ? "products" : ReturnUri));
+                    await RouteManager.NavigateAsync((string.IsNullOrEmpty(ReturnUri) ? "/products" : ReturnUri));
                     Snackbar.Add(result.Message, Severity.Success);
                 }
             }
@@ -172,18 +176,18 @@
                 else
                 {
                     var redirectUri = $"/account/locked-out?id={userId}";
-                    NavigationManager.NavigateTo(redirectUri);
+                    await RouteManager.NavigateAsync(redirectUri);
                 }
             }
         }
     }
 
-    private void OnExternalLogin(string providerName)
+    private async Task OnExternalLoginAsync(string providerName)
     {
         var gatewayUri = Configuration["Configuration:Services:Proxy:Gateway:Uri"]!;
-        var returnUri = NavigationManager.BaseUri + "account/oauth/login";
+        var returnUri = RouteManager.BaseUri + "account/oauth/login";
         var authUrl = $"{gatewayUri}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}";
-        NavigationManager.NavigateTo(authUrl);
+        await RouteManager.NavigateAsync(authUrl);
     }
 
 }

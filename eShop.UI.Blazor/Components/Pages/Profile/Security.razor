@@ -48,7 +48,7 @@
                                         Icon="@(UserModel.TwoFactorEnabled.Value
                                                   ? Icons.Material.Filled.Close
                                                   : Icons.Material.Filled.Check)"
-                                        OnClick="async () => await OnTwoFactorStateChangeAsync()"/>
+                                        OnClick="@(async () => await OnTwoFactorStateChangeAsync())"/>
                                 </MudTooltip>
                             }
                         </MudItem>
@@ -82,14 +82,14 @@
                                                         Variant="Variant.Filled"
                                                         ButtonType="ButtonType.Button"
                                                         Icon="@Icons.Material.Filled.QrCode"
-                                                        OnClick="async () => await OnShowQrCodeAsync()"/>
+                                                        OnClick="@(async () => await OnShowQrCodeAsync())"/>
                                                 </MudTooltip>
                                             }
                                             @if (provider.Subscribed)
                                             {
                                                 <MudTooltip Text="Disable">
                                                     <MudIconButton
-                                                        OnClick="async () => await OnUnsubscribeAsync(provider.Name)"
+                                                        OnClick="@(async () => await OnUnsubscribeAsync(provider.Name))"
                                                         Color="Color.Error"
                                                         Variant="Variant.Filled"
                                                         ButtonType="ButtonType.Button"
@@ -100,7 +100,7 @@
                                             {
                                                 <MudTooltip Text="Enable">
                                                     <MudIconButton
-                                                        OnClick="async () => await OnSubscribeAsync(provider.Name)"
+                                                        OnClick="@(async () => await OnSubscribeAsync(provider.Name))"
                                                         Color="Color.Success"
                                                         Variant="Variant.Filled"
                                                         ButtonType="ButtonType.Button"
@@ -141,14 +141,14 @@
                                 Color="Color.Primary"
                                 Variant="Variant.Filled"
                                 ButtonType="ButtonType.Button"
-                                OnClick="async () => await OnChangePasswordAsync()">
+                                OnClick="@(async () => await OnChangePasswordAsync())">
                                 Change password
                             </MudLoadingButton>
                             <MudLoadingButton
                                 Color="Color.Error"
                                 Variant="Variant.Outlined"
                                 ButtonType="ButtonType.Button"
-                                OnClick="async () => await OnResetPasswordAsync()">
+                                OnClick="@(async () => await OnResetPasswordAsync())">
                                 Reset password
                             </MudLoadingButton>
                         </MudItem>
@@ -179,14 +179,14 @@
                                 Color="Color.Primary"
                                 Variant="Variant.Filled"
                                 ButtonType="ButtonType.Button"
-                                Href="/account/email/change">
+                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/change"))">
                                 Change email
                             </MudLoadingButton>
                             <MudLoadingButton
                                 Color="Color.Error"
                                 Variant="Variant.Outlined"
                                 ButtonType="ButtonType.Button"
-                                Href="/account/email/reset">
+                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/reset"))">
                                 Reset email
                             </MudLoadingButton>
                         </MudItem>
@@ -221,7 +221,7 @@
                                         Color="Color.Primary"
                                         Variant="Variant.Filled"
                                         ButtonType="ButtonType.Button"
-                                        Href="/account/phone-number/add">
+                                        OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/add"))">
                                         Add phone number
                                     </MudLoadingButton>
                                 </MudItem>
@@ -251,14 +251,14 @@
                                         Color="Color.Primary"
                                         Variant="Variant.Filled"
                                         ButtonType="ButtonType.Button"
-                                        Href="/account/phone-number/change">
+                                        OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/change"))">
                                         Change phone number
                                     </MudLoadingButton>
                                     <MudLoadingButton
                                         Color="Color.Error"
                                         Variant="Variant.Outlined"
                                         ButtonType="ButtonType.Button"
-                                        Href="/account/phone-number/reset">
+                                        OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/reset"))">
                                         Reset phone number
                                     </MudLoadingButton>
                                 </MudItem>

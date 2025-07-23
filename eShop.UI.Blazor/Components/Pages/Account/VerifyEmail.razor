@@ -94,7 +94,7 @@
             if (result.Success)
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo("/account/login");
+                await RouteManager.NavigateAsync("/account/login");
             }
             else
                 Snackbar.Add(result.Message, Severity.Error);

@@ -1,5 +1,6 @@
 ﻿@page "/account/phone-number/add"
 
+@using Router = eShop.Infrastructure.Routing.RouteManager
 @using Size = MudBlazor.Size
 @inherits PageBase
 
@@ -224,7 +225,7 @@
             if (result.Success)
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo("/account/profile");
+                await RouteManager.NavigateAsync("/account/profile");
                 await StepNextAsync();
             }
             else
@@ -249,7 +250,7 @@
     private async Task OnCompleteAsync()
     {
         await Task.Delay(TimeSpan.FromMicroseconds(5));
-        NavigationManager.NavigateTo("account/login");
+        await RouteManager.NavigateAsync("account/login");
     }
 
 }

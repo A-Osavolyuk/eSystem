@@ -64,7 +64,9 @@
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">Already have an account?
-                    <MudLink Href="account/login">Log In</MudLink>
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/login"))">
+                        Log In
+                    </MudLink>
                 </MudText>
             </MudPaper>
         </MudStack>
@@ -90,7 +92,7 @@
                 var response = result.Get<RegistrationResponse>()!;
 
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/email/verify?id={response.UserId}&email={Model.Email}");
+                await RouteManager.NavigateAsync($"/account/email/verify?id={response.UserId}&email={Model.Email}");
             }
             else
             {

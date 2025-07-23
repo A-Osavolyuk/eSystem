@@ -246,7 +246,7 @@
     private async Task OnCompleteAsync()
     {
         await Task.Delay(TimeSpan.FromMicroseconds(5));
-        NavigationManager.NavigateTo("/account/profile");
+        await RouteManager.NavigateAsync("/account/profile");
     }
 
 }

@@ -1,6 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using Router = eShop.Infrastructure.Routing.RouteManager
+@inherits LayoutComponentBase
 
-@inject NavigationManager NavigationManager
+@inject Router RouteManager
 
 <MudThemeProvider IsDarkMode/>
 <MudDialogProvider/>
@@ -18,7 +19,7 @@
             Align="Align.Center"
             Typo="Typo.h5"
             Class="ml-3 cursor-pointer"
-            @onclick="@(() => NavigationManager.NavigateTo("/products"))">
+            @onclick="@(async () => await RouteManager.NavigateAsync("/products1"))">
             eShop
         </MudText>
         <MudSpacer/>
@@ -27,13 +28,13 @@
                 <MudButton
                     StartIcon="@Icons.Material.Filled.Login"
                     Color="Color.Primary"
-                    Href="/account/login">
+                    OnClick="@(async () => await RouteManager.NavigateAsync("/account/login"))">
                     Log In
                 </MudButton>
                 <MudButton
                     StartIcon="@Icons.Material.Filled.AppRegistration"
                     Color="Color.Primary"
-                    Href="/account/register"
+                    OnClick="@(async () => await RouteManager.NavigateAsync("/account/register"))"
                     Class="ml-3">
                     Register
                 </MudButton>

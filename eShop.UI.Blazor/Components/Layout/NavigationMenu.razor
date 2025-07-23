@@ -1,7 +1,12 @@
-﻿@inject NavigationManager NavigationManager
+﻿@using eShop.Infrastructure.Routing
+@inject RouteManager RouteManager
 
 <MudNavMenu Color="Color.Primary" Bordered="true" Class="pa-2">
-    <MudNavLink Icon="@Icons.Material.Filled.Store" Href="products"> Products </MudNavLink>
+    <MudNavLink
+        Icon="@Icons.Material.Filled.Store"
+        OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
+        Products
+    </MudNavLink>
 </MudNavMenu>
 
 @code {

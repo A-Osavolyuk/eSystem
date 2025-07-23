@@ -1,6 +1,6 @@
 ﻿@page "/Error"
 
-@layout ErrorLayout
+@inherits PageBase
 
 <Title Text="Error" />
 
@@ -27,7 +27,7 @@
                 <MudText Align="Align.Center" Typo="Typo.h4">Not authorized</MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">Sorry, you have to be authorized to navigate this page.</MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">Log in your account to come back to this page.</MudText>
-                <MudLink Style="text-align:center" Class="d-block" Typo="Typo.h5" Href="@ToLoginPage()">Go to Login</MudLink>
+                <MudLink Style="text-align:center" Class="d-block" Typo="Typo.h5" OnClick="@(async() => await ToLoginPage())">Go to Login</MudLink>
                 break;
             }
         }
@@ -38,10 +38,8 @@
     [SupplyParameterFromQuery(Name = "code")] public int Code { get; set; }
     [SupplyParameterFromQuery(Name = "returnUri")] public string? ReturnUri { get; set; }
 
-    private string ToLoginPage()
+    private async Task ToLoginPage()
     {
-        var builder = new StringBuilder("/account/login");
-
-        return !string.IsNullOrEmpty(ReturnUri) ? builder.Append($"?returnUri={ReturnUri}").ToString() : builder.ToString(); 
+        await RouteManager.NavigateAsync("/account/login", ReturnUri);
     }
 }

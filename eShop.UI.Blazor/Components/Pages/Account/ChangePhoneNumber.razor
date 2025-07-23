@@ -119,7 +119,7 @@
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">
                                             Loose access to your current phone number?
-                                            <MudLink Href="account/phone-number/reset">
+                                            <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/phone-number/reset"))">
                                                 Reset it
                                             </MudLink>
                                         </MudText>
@@ -344,7 +344,7 @@
 
                 Snackbar.Add("Phone number was successfully changed", Severity.Success);
                 await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
-                NavigationManager.NavigateTo("/profile");
+                await RouteManager.NavigateAsync("/profile");
             }
             else
             {
@@ -368,7 +368,7 @@
     private async Task OnCompleteAsync()
     {
         await Task.Delay(TimeSpan.FromMicroseconds(5));
-        NavigationManager.NavigateTo("account/login");
+        await RouteManager.NavigateAsync("account/login");
     }
 
 }

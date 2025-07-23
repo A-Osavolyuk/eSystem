@@ -1,6 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using eShop.Infrastructure.Routing
+@inherits LayoutComponentBase
 
-@inject NavigationManager NavigationManager
+@inject RouteManager RouteManager
 
 <MudThemeProvider IsDarkMode/>
 <MudDialogProvider/>
@@ -18,7 +19,7 @@
             Align="Align.Center"
             Typo="Typo.h5"
             Class="ml-3 cursor-pointer"
-            @onclick="@(() => NavigationManager.NavigateTo("/products"))">
+            @onclick="@(async () => await RouteManager.NavigateAsync("/products"))">
             eShop
         </MudText>
     </MudAppBar>

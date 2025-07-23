@@ -1,7 +1,8 @@
-﻿@using Size = MudBlazor.Size
+﻿@using Router = eShop.Infrastructure.Routing.RouteManager
+@using Size = MudBlazor.Size
 
 @inject AuthenticationManager AuthenticationManager
-@inject NavigationManager NavigationManager
+@inject Router RouteManager
 @inject TokenHandler TokenHandler
 @inject UserState UserState
 @inject ISnackbar Snackbar
@@ -42,31 +43,31 @@
     </MudDrawerHeader>
     <MudNavMenu Color="Color.Primary" Class="px-3">
         <MudNavLink
-            Href="/account/profile"
+            OnClick="@(async () => await NavigateAsync("/account/profile"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.AccountBox">
             Profile
         </MudNavLink>
         <MudNavLink
-            Href="/account/security"
+            OnClick="@(async () => await NavigateAsync("/account/security"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Security">
             Security
         </MudNavLink>
         <MudNavLink
-            Href="/account/orders"
+            OnClick="@(async () => await NavigateAsync("/account/orders"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.ShoppingCart">
             Orders
         </MudNavLink>
         <MudNavLink
-            Href="/account/orders-history"
+            OnClick="@(async () => await NavigateAsync("/account/orders-history"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.History">
             Order History
         </MudNavLink>
         <MudNavLink
-            Href="/account/settings"
+            OnClick="@(async () => await NavigateAsync("/account/settings"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Settings">
             Settings
@@ -110,7 +111,7 @@
     {
         await AuthenticationManager.LogOutAsync();
         Snackbar.Add("Successfully logged out.", Severity.Success);
-        NavigationManager.NavigateTo("/account/login");
+        await RouteManager.NavigateAsync("/account/login");
     }
 
     private async Task LoadAsync()
@@ -122,6 +123,12 @@
     }
 
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
+
+    private async Task NavigateAsync(string uri)
+    {
+        await RouteManager.NavigateAsync(uri);
+        DrawerToggle();
+    }
 
     public void Dispose()
     {
