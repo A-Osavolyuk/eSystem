@@ -6,7 +6,7 @@ public class CookieManager(IJSRuntime jsRuntime) : ICookieManager
 {
     private readonly IJSRuntime jsRuntime = jsRuntime;
     
-    public async Task<string> GetAsync(string key)
+    public async Task<string?> GetAsync(string key)
     {
         var value = await jsRuntime.InvokeAsync<string>("getCookie", key);
         return value;
