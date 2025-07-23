@@ -32,14 +32,14 @@ public static class HostApplicationBuilderExtensions
         
         builder.AddRouting(cfg =>
         {
-            cfg.NotFoundPageUri = "/error?code=404";
-            cfg.ForbiddenPageUri = "/error?code=403";
-            cfg.NotAuthorizedPageUri = "/error?code=401";
+            cfg.OnNotFound = "/error?code=404";
+            cfg.OnForbidden = "/error?code=403";
+            cfg.OnNotAuthorized = "/error?code=401";
 
             cfg.Pages =
             [
                 new() { Routes = ["/products"] },
-                new() { Routes = ["/products/create"] },
+                new() { Routes = ["/products/create"], RequiredRoles = ["Seller"]},
                 new() { Routes = ["/account/login"] },
                 new() { Routes = ["/account/oauth/login"] },
                 new() { Routes = ["/account/2fa/login"] },

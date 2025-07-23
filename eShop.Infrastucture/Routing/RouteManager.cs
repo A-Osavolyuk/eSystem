@@ -90,13 +90,13 @@ public class RouteManager(
         return null;
     }
 
-    private void NotFound() => navigationManager.NavigateTo(router.NotFoundPageUri);
+    private void NotFound() => navigationManager.NavigateTo(router.OnNotFound);
 
     private void Forbidden(string? returnUri)
     {
         var uri = string.IsNullOrEmpty(returnUri) 
-            ? router.ForbiddenPageUri
-            : $"{router.ForbiddenPageUri}&returnUri=/{returnUri}";
+            ? router.OnForbidden
+            : $"{router.OnForbidden}&returnUri=/{returnUri}";
         
         navigationManager.NavigateTo(uri);
     }
@@ -104,8 +104,8 @@ public class RouteManager(
     private void NotAuthorized(string? returnUri)
     {
         var uri = string.IsNullOrEmpty(returnUri) 
-            ? router.NotAuthorizedPageUri
-            : $"{router.NotAuthorizedPageUri}&returnUri=/{returnUri}";
+            ? router.OnNotAuthorized
+            : $"{router.OnNotAuthorized}&returnUri=/{returnUri}";
         
         navigationManager.NavigateTo(uri);
     }
