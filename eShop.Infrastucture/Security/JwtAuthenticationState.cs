@@ -4,17 +4,21 @@ namespace eShop.Infrastructure.Security;
 
 public class JwtAuthenticationState
 {
+    public Guid UserId
+    {
+        get
+        {
+            var value = Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Id)?.Value!;
+            return Guid.Parse(value);
+        }
+    }
+
     public required List<Claim> Claims { get; init; }
     public bool IsAuthenticated => Claims.Count > 0;
 
-    public Guid? GetId()
-    {
-        var id = Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Id)?.Value;
-        return string.IsNullOrEmpty(id) ? null : Guid.Parse(id);
-    }
-
     public bool HasRole(string role)
     {
+        if (Claims.Count == 0) return false;
         if (string.IsNullOrEmpty(role)) return true;
 
         var roleClaims = Claims.Where(c => c.Type == AppClaimTypes.Role).ToList();
@@ -23,6 +27,7 @@ public class JwtAuthenticationState
 
     public bool HasRole(List<string> roles)
     {
+        if (Claims.Count == 0) return false;
         if (roles.Count == 0) return true;
 
         var roleClaims = Claims.Where(c => c.Type == AppClaimTypes.Role).ToList();
@@ -31,6 +36,7 @@ public class JwtAuthenticationState
 
     public bool HasPermission(string permission)
     {
+        if (Claims.Count == 0) return false;
         if (string.IsNullOrEmpty(permission)) return true;
 
         var permissionClaims = Claims.Where(c => c.Type == AppClaimTypes.Permission).ToList();
@@ -39,6 +45,7 @@ public class JwtAuthenticationState
 
     public bool HasPermission(List<string> permissions)
     {
+        if (Claims.Count == 0) return false;
         if (permissions.Count == 0) return true;
 
         var permissionClaims = Claims.Where(c => c.Type == AppClaimTypes.Permission).ToList();
