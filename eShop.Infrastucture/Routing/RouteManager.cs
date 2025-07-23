@@ -17,11 +17,9 @@ public class RouteManager(
     public string Uri => navigationManager.Uri;
     public string BaseUri => navigationManager.BaseUri;
 
-    public async Task NavigateAsync(string url, string? returnUri = null)
+    public async Task NavigateAsync(string uri)
     {
-        var returnPath = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
-        
-        var route = MatchPattern(url, router.Pages);
+        var route = MatchPattern(uri, router.Pages);
 
         if (route is null)
         {
@@ -33,7 +31,7 @@ public class RouteManager(
         
         if (route!.RequireAuthorization && (state is null || !state.IsAuthenticated))
         {
-            NotAuthorized(returnUri ?? returnPath);
+            NotAuthorized(uri);
             return;
         }
 
@@ -41,12 +39,14 @@ public class RouteManager(
         {
             if (!state!.HasRole(route.RequiredRoles) || !state.HasPermission(route.RequiredPermissions))
             {
-                Forbidden(returnUri ?? returnPath);
+                var returnUri = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
+                
+                Forbidden(returnUri);
                 return;
             }
         }
 
-        navigationManager.NavigateTo(url);
+        navigationManager.NavigateTo(uri);
     }
 
     private Regex BuildExpression(string pattern)

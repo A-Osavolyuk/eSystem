@@ -58,7 +58,7 @@
 
     private async Task ToLoginPage()
     {
-        await RouteManager.NavigateAsync("/account/login", ReturnUri);
+        await RouteManager.NavigateAsync($"/account/login?returnUri={ReturnUri}");
     }
 
 }
