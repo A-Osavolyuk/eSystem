@@ -12,14 +12,26 @@
             {
                 <MudText Align="Align.Center" Typo="Typo.h4">Page not found</MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">Sorry, the page you are looking for does not exist.</MudText>
-                <MudLink Style="text-align:center" Class="d-block" Typo="Typo.h5" Href="/products">Go to Home</MudLink>
+                <MudLink
+                    Style="text-align:center"
+                    Class="d-block"
+                    Typo="Typo.h5"
+                    OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
+                    Go to Home
+                </MudLink>
                 break;
             }
             case StatusCodes.Status403Forbidden:
             {
                 <MudText Align="Align.Center" Typo="Typo.h4">Access denied</MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">You do not have access to this resource.</MudText>
-                <MudLink Style="text-align:center" Class="d-block" Typo="Typo.h5" Href="/products">Go to Home</MudLink>
+                <MudLink
+                    Style="text-align:center"
+                    Class="d-block"
+                    Typo="Typo.h5"
+                    OnClick="@(async () => await RouteManager.NavigateAsync(ReturnUri ?? "/products"))">
+                    Go back
+                </MudLink>
                 break;
             }
             case StatusCodes.Status401Unauthorized:
@@ -27,7 +39,13 @@
                 <MudText Align="Align.Center" Typo="Typo.h4">Not authorized</MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">Sorry, you have to be authorized to navigate this page.</MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">Log in your account to come back to this page.</MudText>
-                <MudLink Style="text-align:center" Class="d-block" Typo="Typo.h5" OnClick="@(async() => await ToLoginPage())">Go to Login</MudLink>
+                <MudLink
+                    Style="text-align:center"
+                    Class="d-block"
+                    Typo="Typo.h5"
+                    OnClick="@(async () => await ToLoginPage())">
+                    Go to Login
+                </MudLink>
                 break;
             }
         }
@@ -42,4 +60,5 @@
     {
         await RouteManager.NavigateAsync("/account/login", ReturnUri);
     }
+
 }
