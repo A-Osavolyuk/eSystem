@@ -1,7 +1,7 @@
-﻿using eShop.Infrastructure.Security;
+﻿using eShop.Infrastructure.Routing;
+using eShop.Infrastructure.Security;
 using eShop.Infrastructure.State;
 using eShop.Infrastructure.Storage;
-using AuthenticationManager = eShop.Infrastructure.Security.AuthenticationManager;
 
 namespace eShop.Infrastructure;
 
@@ -12,7 +12,7 @@ public static class Extensions
         builder.AddState();
         builder.AddDependencyInjection();
         builder.AddJwtAuthentication();
-        
+
         builder.Services.AddBlazoredLocalStorage();
         builder.Services.AddHttpContextAccessor();
     }
@@ -38,14 +38,14 @@ public static class Extensions
         builder.Services.AddScoped<IStorage, LocalStorage>();
         builder.Services.AddScoped<ICookieManager, CookieManager>();
     }
-    
+
     private static void AddJwtAuthentication(this IHostApplicationBuilder builder)
     {
         builder.Services.AddAuthorization();
         builder.Services.AddAuthentication()
             .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(
                 JwtBearerDefaults.AuthenticationScheme, options => { });
-        
+
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<TokenHandler>();
         builder.Services.AddScoped<AuthenticationManager>();
@@ -59,4 +59,12 @@ public static class Extensions
         builder.Services.AddScoped<ProductState>();
     }
 
+    public static void AddRouting(this IHostApplicationBuilder builder, Action<Router> configureRouter)
+    {
+        var router = new Router();
+        configureRouter(router);
+
+        builder.Services.AddSingleton(router);
+        builder.Services.AddScoped<RouteManager>();
+    }
 }
