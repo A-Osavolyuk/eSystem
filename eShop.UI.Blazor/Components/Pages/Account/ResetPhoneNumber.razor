@@ -6,6 +6,7 @@
 @inject ISecurityService SecurityService
 @inject ResetPhoneNumberValidator ResetPhoneNumberValidator
 @inject ConfirmResetPhoneNumberValidator ConfirmResetPhoneNumberValidator
+@inject AuthenticationManager AuthenticationManager
 
 <Title Text="Reset phone number"></Title>
 
@@ -148,7 +149,8 @@
     {
         if (firstRender)
         {
-            userId = await LocalStorage.GetAsync<Guid>("userId");
+            var state = await AuthenticationManager.GetStateAsync();
+            userId = state.UserId;
         }
 
         if (completed)

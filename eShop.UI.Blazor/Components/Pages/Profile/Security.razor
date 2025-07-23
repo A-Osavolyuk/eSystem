@@ -7,6 +7,8 @@
 @inject ITwoFactorService TwoFactorService
 @inject IProvidersService ProvidersService
 
+@inject AuthenticationManager AuthenticationManager
+
 @attribute [Authorize]
 
 <Title Text="Security"></Title>
@@ -289,8 +291,8 @@
 
     private async Task LoadUserAsync()
     {
-        var userId = await LocalStorage.GetAsync<Guid>("userId");
-        var result = await UsersService.GetUserAsync(userId);
+        var state = await AuthenticationManager.GetStateAsync();
+        var result = await UsersService.GetUserAsync(state.UserId);
 
         if (result.Success)
         {
@@ -307,8 +309,8 @@
 
     private async Task LoadProvidersAsync()
     {
-        var userId = await LocalStorage.GetAsync<Guid>("userId");
-        var result = await UsersService.GetTwoFactorProvidersAsync(userId);
+        var state = await AuthenticationManager.GetStateAsync();
+        var result = await UsersService.GetTwoFactorProvidersAsync(state.UserId);
 
         if (result.Success)
         {

@@ -6,6 +6,7 @@
 @inject ISecurityService SecurityService
 @inject ResetEmailValidator ResetEmailValidator
 @inject ConfirmChangeEmailValidator ConfirmChangeEmailValidator
+@inject AuthenticationManager AuthenticationManager
 
 <Title Text="Reset email"></Title>
 
@@ -148,7 +149,8 @@
     {
         if (firstRender)
         {
-            userId = await LocalStorage.GetAsync<Guid>("userId");
+            var state = await AuthenticationManager.GetStateAsync();
+            userId = state.UserId;
         }
 
         if (completed)

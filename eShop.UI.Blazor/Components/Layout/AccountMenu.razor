@@ -116,8 +116,8 @@
 
     private async Task LoadAsync()
     {
-        var userId = await Storage.GetAsync<Guid>("userId");
-        var result = await UsersService.GetUserAsync(userId);
+        var state = await AuthenticationManager.GetStateAsync();
+        var result = await UsersService.GetUserAsync(state.UserId);
         var user = result.Get<UserDto>()!;
         model = Mapper.Map(user);
     }

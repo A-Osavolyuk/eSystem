@@ -5,6 +5,7 @@
 @attribute [Authorize]
 
 @inject UserState UserState
+@inject AuthenticationManager AuthenticationManager
 @inject IUsersService UsersService
 @inject IDialogService DialogService
 
@@ -292,8 +293,8 @@
 
     private async Task LoadUserAsync()
     {
-        var userId = await LocalStorage.GetAsync<Guid>("userId");
-        var result = await UsersService.GetUserAsync(userId);
+        var state = await AuthenticationManager.GetStateAsync();
+        var result = await UsersService.GetUserAsync(state.UserId);
 
         if (result.Success)
         {
