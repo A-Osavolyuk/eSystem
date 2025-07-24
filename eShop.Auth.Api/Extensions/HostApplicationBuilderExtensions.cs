@@ -55,7 +55,7 @@ public static class HostApplicationBuilderExtensions
                 cfg.UseAsyncSeeding(async (ctx, _, ct) =>
                 {
                     var context = (ctx as AuthDbContext)!;
-                    await context.SeedAsync(ct);
+                    await context.SeedAsync<Entity>(ct);
                 });
             });
     }

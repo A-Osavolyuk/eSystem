@@ -1,9 +1,51 @@
-﻿using eShop.Auth.Api.Data.Seeding;
+﻿using System.Reflection;
+using eShop.Auth.Api.Data.Seeding;
+using eShop.Domain.Abstraction.Data.Seeding;
 
 namespace eShop.Auth.Api.Extensions;
 
 public static class DbContextExtensions
 {
+    public static async Task SeedAsync<TEntity>(this AuthDbContext context, CancellationToken cancellationToken = default)
+        where TEntity : Entity
+    {
+        var baseType = typeof(Seed<Entity>);
+        var assembly = context.GetType().Assembly;
+        
+        var implementations = assembly
+            .GetTypes()
+            .Where(t =>
+                t is { IsAbstract: false, IsInterface: false, IsClass: true, BaseType.IsGenericType: true } &&
+                t.BaseType.GetGenericTypeDefinition() == baseType);
+
+        foreach (var implType in implementations)
+        {
+            var seedInstance = Activator.CreateInstance(implType) as Seed<TEntity>;
+
+            if (seedInstance is null)
+            {
+                continue;
+            }
+
+            var entities = seedInstance.Get();
+
+            if (!await context.AnyExistsAsync(entities[0], cancellationToken))
+            {
+                await context.AddRangeAsync(entities, cancellationToken);
+            }
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task<bool> AnyExistsAsync<TEntity>(this AuthDbContext context, TEntity entity,
+        CancellationToken cancellationToken = default) where TEntity : class
+    {
+        var dbSet = context.Set<TEntity>();
+        
+        return await dbSet.AnyAsync(cancellationToken);
+    }
+    
     public static async Task SeedAsync(this AuthDbContext context, CancellationToken cancellationToken = default)
     {
         if (!await context.Providers.AnyAsync(cancellationToken))
