@@ -1,5 +1,6 @@
 ﻿@page "/Error"
 
+@using System.Web
 @using eShop.Infrastructure.Routing
 @inherits PageBase
 
@@ -18,7 +19,7 @@
                     Class="d-block"
                     Typo="Typo.h5"
                     OnClick="@(async () => await RouteManager.NavigateAsync("/products", true))">
-                    Go to Home
+                    To main page
                 </MudLink>
                 break;
             }
@@ -26,14 +27,14 @@
             {
                 <MudText Align="Align.Center" Typo="Typo.h4">Access denied</MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">You do not have access to this resource.</MudText>
-                if (string.IsNullOrEmpty(ReturnUri))
+                if (string.IsNullOrEmpty(ReturnUrl))
                 {
                     <MudLink
                         Style="text-align:center"
                         Class="d-block"
                         Typo="Typo.h5"
                         OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
-                        Go back
+                        To main page
                     </MudLink>
                 }
                 else
@@ -42,7 +43,7 @@
                         Style="text-align:center"
                         Class="d-block"
                         Typo="Typo.h5"
-                        OnClick="@(async () => await RouteManager.NavigateAsync(ReturnUri, true))">
+                        OnClick="@(async () => await RouteManager.NavigateAsync(ReturnUrl, true))">
                         Go back
                     </MudLink>
                 }
@@ -68,11 +69,12 @@
 
 @code {
     [SupplyParameterFromQuery(Name = "code")] public int Code { get; set; }
-    [SupplyParameterFromQuery(Name = "returnUri")] public string? ReturnUri { get; set; }
+    [SupplyParameterFromQuery(Name = "returnUrl")] public string? ReturnUrl { get; set; }
 
     private async Task ToLoginPage()
     {
-        await RouteManager.NavigateAsync($"/account/login?returnUri={ReturnUri}");
+        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
+        await RouteManager.NavigateAsync($"/account/login?returnUrl={returnUrl}");
     }
 
 }

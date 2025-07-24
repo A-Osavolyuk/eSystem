@@ -120,7 +120,7 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "returnUri")] public string? ReturnUri { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "returnUrl")] public string? ReturnUrl { get; set; } = string.Empty;
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
 
     private MudForm form = new();
@@ -147,13 +147,13 @@
                 {
                     await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
 
-                    if (string.IsNullOrEmpty(ReturnUri))
+                    if (string.IsNullOrEmpty(ReturnUrl))
                     {
                         await RouteManager.NavigateAsync("/products");
                     }
                     else
                     {
-                        await RouteManager.NavigateAsync(ReturnUri, true);
+                        await RouteManager.NavigateAsync(ReturnUrl, true);
                     }
                     
                     Snackbar.Add(result.Message, Severity.Success);
@@ -193,7 +193,7 @@
     {
         var gatewayUri = Configuration["Configuration:Services:Proxy:Gateway:Uri"]!;
         var returnUri = RouteManager.BaseUri + "account/oauth/login";
-        var authUrl = $"{gatewayUri}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}";
+        var authUrl = $"{gatewayUri}/api/v1/OAuth/login/{providerName}?returnUrl={returnUri}";
         await RouteManager.NavigateAsync(authUrl);
     }
 
