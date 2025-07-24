@@ -17,7 +17,7 @@ public class RollbackManager(AuthDbContext context) : IRollbackManager
             await context.SaveChangesAsync(cancellationToken);
         }
         
-        var code = GenerateCode();
+        var code = CodeGenerator.Generate(6);
         var entity = new RollbackEntity()
         {
             Id = Guid.CreateVersion7(),
@@ -85,13 +85,5 @@ public class RollbackManager(AuthDbContext context) : IRollbackManager
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
-    }
-
-    private string GenerateCode()
-    {
-        var random = new Random();
-        var code = random.Next(100_000, 999_999).ToString();
-        
-        return code;
     }
 }

@@ -30,8 +30,7 @@ public sealed class LoginCodeManager(
             await context.SaveChangesAsync(cancellationToken);
         }
         
-        var rnd = new Random();
-        var code = rnd.Next(0, 999_999).ToString("D6");
+        var code = CodeGenerator.Generate(6);
         var hash = hasher.Hash(code);
         
         var entity = new LoginCodeEntity()

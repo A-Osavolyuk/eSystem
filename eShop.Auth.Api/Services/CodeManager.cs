@@ -19,7 +19,7 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
             await context.SaveChangesAsync(cancellationToken);
         }
 
-        var code = new Random().Next(100000, 999999).ToString();
+        var code = CodeGenerator.Generate(6);
 
         await context.Codes.AddAsync(new CodeEntity()
         {

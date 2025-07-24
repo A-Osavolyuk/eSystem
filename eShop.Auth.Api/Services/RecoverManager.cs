@@ -24,11 +24,10 @@ public class RecoverManager(
         
         var entities = new List<RecoveryCodeEntity>();
         var codes = new List<string>();
-        var rnd = new Random();
 
         for (var i = 0; i < 10; i++)
         {
-            var code = rnd.Next(0, 999_999).ToString().PadLeft(6, '0');
+            var code = CodeGenerator.Generate(6);
             var hash = hasher.Hash(code);
 
             codes.Add(code);
