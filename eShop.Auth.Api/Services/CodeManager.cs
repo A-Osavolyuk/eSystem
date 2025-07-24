@@ -37,18 +37,6 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         return code;
     }
 
-    public async ValueTask<CodeEntity?> FindAsync(UserEntity user, SenderType sender, CodeType type,
-        CodeResource resource, CancellationToken cancellationToken = default)
-    {
-        var entity = await context.Codes
-            .FirstOrDefaultAsync(c => c.UserId == user.Id 
-                                      && c.Type == type 
-                                      && c.Sender == sender 
-                                      && c.Resource == resource, cancellationToken);
-
-        return entity;
-    }
-
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, CodeType type,
         CodeResource resource, CancellationToken cancellationToken = default)
     {
