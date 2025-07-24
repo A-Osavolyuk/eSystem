@@ -45,11 +45,13 @@ public sealed class TokenManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> VerifyAsync(UserEntity userEntity, string refreshToken, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string token,
+        CancellationToken cancellationToken = default)
     {
         var entity = await context.RefreshTokens
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id && x.Token == refreshToken, cancellationToken: cancellationToken);
-        
+            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.Token == token,
+                cancellationToken: cancellationToken);
+
         if (entity is null)
         {
             return Results.NotFound("Token not found");
@@ -59,25 +61,19 @@ public sealed class TokenManager(
         {
             return Results.BadRequest("Token already expired");
         }
-        
+
         context.RefreshTokens.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async Task<string> GenerateAsync(UserEntity userEntity, TokenType type, CancellationToken cancellationToken = default)
+    public async Task<string> GenerateAsync(UserEntity user, TokenType type,
+        CancellationToken cancellationToken = default)
     {
         var key = Encoding.UTF8.GetBytes(options.Secret);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
-        
-        var token = await GenerateTokenAsync(signingCredentials, userEntity, type);
 
-        return token;
-    }
-
-    private async Task<string> GenerateTokenAsync(SigningCredentials signingCredentials, UserEntity user, TokenType type)
-    {
         var expirationDate = type switch
         {
             TokenType.Access => DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes),
@@ -88,7 +84,7 @@ public sealed class TokenManager(
         var claims = await GetClaimsAsync(user);
         var jti = Guid.NewGuid();
         var jtiClaim = new Claim(JwtRegisteredClaimNames.Jti, jti.ToString());
-        
+
         var securityToken = new JwtSecurityToken(
             audience: options.Audience,
             issuer: options.Issuer,
@@ -101,11 +97,12 @@ public sealed class TokenManager(
 
         if (type is TokenType.Refresh)
         {
-            var entity = await context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.Id);
+            var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
+                x => x.UserId == user.Id, cancellationToken: cancellationToken);
 
-            if (entity is null)
+            if (existingEntity is null)
             {
-                entity = new RefreshTokenEntity()
+                var entity = new RefreshTokenEntity()
                 {
                     Id = jti,
                     UserId = user.Id,
@@ -115,11 +112,11 @@ public sealed class TokenManager(
                     UpdateDate = null
                 };
 
-                await context.RefreshTokens.AddAsync(entity);
+                await context.RefreshTokens.AddAsync(entity, cancellationToken);
             }
             else
             {
-                var newEntity = new RefreshTokenEntity()
+                var entity = new RefreshTokenEntity()
                 {
                     Id = jti,
                     UserId = user.Id,
@@ -128,14 +125,14 @@ public sealed class TokenManager(
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null
                 };
-                
-                context.RefreshTokens.Remove(entity);
-                await context.RefreshTokens.AddAsync(newEntity);
+
+                context.RefreshTokens.Remove(existingEntity);
+                await context.RefreshTokens.AddAsync(entity, cancellationToken);
             }
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
-        
+
         return token;
     }
 
@@ -145,12 +142,12 @@ public sealed class TokenManager(
         {
             new(AppClaimTypes.Id, userEntity.Id.ToString()),
         };
-        
+
         var roles = await roleManager.GetByUserAsync(userEntity);
         var permissions = await permissionManager.GetByUserAsync(userEntity);
-        
-        claims.AddRange(roles.Select(x => new Claim(AppClaimTypes.Role, x.Name!)));;
-        claims.AddRange(permissions.Select(x => new Claim(AppClaimTypes.Permission, x.Name!)));;
+
+        claims.AddRange(roles.Select(x => new Claim(AppClaimTypes.Role, x.Name!)));
+        claims.AddRange(permissions.Select(x => new Claim(AppClaimTypes.Permission, x.Name!)));
 
         return claims;
     }
