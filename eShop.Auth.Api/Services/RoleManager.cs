@@ -16,7 +16,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         return roles;
     }
 
-    public async ValueTask<List<RoleEntity>> GetByUserAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<List<RoleEntity>> GetAllAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var roles = await context.UserRoles
             .Where(x => x.UserId == user.Id)

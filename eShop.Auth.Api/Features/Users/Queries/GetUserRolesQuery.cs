@@ -21,7 +21,7 @@ public sealed class GetUserRolesQueryHandler(
             return Results.NotFound($"Cannot find user with ID {request.Id}.");
         }
 
-        var roles = await roleManager.GetByUserAsync(user, cancellationToken);
+        var roles = await roleManager.GetAllAsync(user, cancellationToken);
 
         if (!roles.Any())
         {

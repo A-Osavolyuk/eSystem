@@ -143,7 +143,7 @@ public sealed class TokenManager(
             new(AppClaimTypes.Id, userEntity.Id.ToString()),
         };
 
-        var roles = await roleManager.GetByUserAsync(userEntity);
+        var roles = await roleManager.GetAllAsync(userEntity);
         var permissions = await permissionManager.GetByUserAsync(userEntity);
 
         claims.AddRange(roles.Select(x => new Claim(AppClaimTypes.Role, x.Name!)));
