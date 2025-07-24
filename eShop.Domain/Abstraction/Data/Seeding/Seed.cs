@@ -1,6 +1,8 @@
-﻿namespace eShop.Domain.Abstraction.Data.Seeding;
+﻿using eShop.Domain.Abstraction.Data.Entities;
 
-public abstract class Seed<TEntity>
+namespace eShop.Domain.Abstraction.Data.Seeding;
+
+public abstract class Seed<TEntity> where TEntity : Entity
 {
     public abstract List<TEntity> Get();
 }

@@ -14,9 +14,7 @@ public static class DbContextExtensions
         
         var implementations = assembly
             .GetTypes()
-            .Where(t =>
-                t is { IsAbstract: false, IsInterface: false, IsClass: true, BaseType.IsGenericType: true } &&
-                t.BaseType.GetGenericTypeDefinition() == baseType);
+            .Where(t => t is { BaseType.IsGenericType: true } && t.BaseType.GetGenericTypeDefinition() == baseType);
 
         foreach (var implType in implementations)
         {
