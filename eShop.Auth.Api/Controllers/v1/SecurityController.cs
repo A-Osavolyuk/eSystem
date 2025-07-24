@@ -44,7 +44,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Refresh token")]
     [EndpointDescription("Refresh token")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("refresh-token")]
     public async ValueTask<ActionResult<Response>> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
     {
@@ -58,7 +57,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Rollback")]
     [EndpointDescription("Rollback")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("rollback")]
     public async ValueTask<ActionResult<Response>> RollbackAsync([FromBody] RollbackRequest request)
     {
@@ -87,7 +85,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Generate recovery codes")]
     [EndpointDescription("Generate recovery codes")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("recovery-code/generate")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> GenerateRecoveryCodes([FromBody] GenerateRecoveryCodesRequest request)
@@ -102,7 +99,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Change password")]
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("password/change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangePasswordAsync(
@@ -149,7 +145,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Request change email")]
     [EndpointDescription("Request an email change")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("email/request-change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangeEmailAsync(
@@ -165,7 +160,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Verify new email on change")]
     [EndpointDescription("Verify new email on change")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("email/verify-new")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> VerifyNewEmailAsync(
@@ -181,7 +175,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Confirm change email")]
     [EndpointDescription("Confirms an email change")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("email/confirm-change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmChangeEmailAsync(
@@ -213,7 +206,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Reset email")]
     [EndpointDescription("Reset email")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("email/request-reset")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ResetEmailAsync(
@@ -229,7 +221,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Confirm email reset")]
     [EndpointDescription("Confirm email reset")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("email/confirm-reset")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmEmailResetAsync(
@@ -277,7 +268,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Add phone number")]
     [EndpointDescription("Add phone number change")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("phone-number/add")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> AddPhoneNumberAsync([FromBody] AddPhoneNumberRequest request)
@@ -292,7 +282,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Verify phone number")]
     [EndpointDescription("Verify phone number change")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("phone-number/verify")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> VerifyPhoneNumberAsync([FromBody] VerifyPhoneNumberRequest request)
@@ -307,7 +296,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Request change phone number")]
     [EndpointDescription("Request a phone number change")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("phone-number/request-change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> RequestChangePhoneNumberAsync(
@@ -323,7 +311,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Verify new phone number on change")]
     [EndpointDescription("Verify new phone number on change")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("phone-number/verify-new")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> VerifyNewPhoneNumberAsync(
@@ -339,7 +326,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Confirm change phone number")]
     [EndpointDescription("Confirm a phone number change")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("phone-number/confirm-change")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmChangePhoneNumberAsync(
@@ -355,7 +341,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Reset phone number")]
     [EndpointDescription("Reset phone number")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("phone-number/request-reset")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ResetPhoneNumberAsync(
@@ -371,7 +356,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Confirm phone number reset")]
     [EndpointDescription("Confirm phone number reset")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("phone-number/confirm-reset")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ConfirmPhoneNumberResetAsync(

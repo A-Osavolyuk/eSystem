@@ -31,7 +31,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Changes two-factor state")]
     [ProducesResponseType(200)]
     [HttpPost("change-state")]
-    [Authorize]
     public async ValueTask<ActionResult<Response>> ChangeTwoFactorAuthentication(
         [FromBody] ChangeTwoFactorStateRequest request)
     {
@@ -61,7 +60,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Generate QR code")]
     [ProducesResponseType(200)]
     [HttpPost("generate-qr-code")]
-    [Authorize]
     public async ValueTask<ActionResult<Response>> GenerateQrCodeAsync(
         [FromBody] GenerateQrCodeRequest request)
     {

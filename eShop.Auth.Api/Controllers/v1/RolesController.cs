@@ -16,7 +16,6 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointSummary("Get roles")]
     [EndpointDescription("Gets all roles")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpGet]
     public async ValueTask<ActionResult<Response>> GetRolesAsync()
     {
@@ -30,7 +29,6 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointSummary("Assign role")]
     [EndpointDescription("Assigns role to user")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("assign")]
     public async ValueTask<ActionResult<Response>> AssignAsync([FromBody] AssignRoleRequest request)
     {
@@ -43,7 +41,6 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointSummary("Unassign roles")]
     [EndpointDescription("Unassign roles")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost("unassign")]
     public async ValueTask<ActionResult<Response>> UnassignAsync([FromBody] UnassignRolesRequest request)
     {
@@ -56,7 +53,6 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointSummary("Create role")]
     [EndpointDescription("Creates a role")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPost]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> CreateAsync([FromBody] CreateRoleRequest request)
@@ -70,7 +66,6 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointSummary("Delete role")]
     [EndpointDescription("Deletes role")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPut("{id:guid}")]
     public async ValueTask<ActionResult<Response>> UpdateAsync([FromBody] UpdateRoleRequest request)
     {
@@ -83,7 +78,6 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointSummary("Delete role")]
     [EndpointDescription("Deletes role")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpDelete("{id:guid}")]
     public async ValueTask<ActionResult<Response>> DeleteAsync(Guid id)
     {

@@ -7,6 +7,7 @@ namespace eShop.Auth.Api.Controllers.v1;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
+[Authorize]
 public class UsersController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
@@ -14,7 +15,6 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user")]
     [EndpointDescription("Gets user")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpGet("{id:guid}")]
     public async ValueTask<ActionResult<Response>> GetUserAsync(Guid id)
     {
@@ -28,7 +28,6 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user roles")]
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpGet("{id:guid}/roles")]
     public async ValueTask<ActionResult<Response>> GetUserRolesAsync(Guid id)
     {
@@ -43,7 +42,6 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Get personal data")]
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}/personal-data")]
-    [Authorize]
     public async ValueTask<ActionResult<Response>> GetPersonalDataAsync(Guid id)
     {
         var result = await sender.Send(new GetPersonalDataQuery(id));
@@ -104,7 +102,6 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Change username")]
     [EndpointDescription("Change username")]
     [ProducesResponseType(200)]
-    [Authorize]
     [HttpPatch("{id:guid}/username")]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangeUsernameAsync([FromBody] ChangeUserNameRequest request)
@@ -119,7 +116,6 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Add personal data")]
     [ProducesResponseType(200)]
     [HttpPost("{id:guid}/personal-data")]
-    [Authorize]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> AddPersonalDataAsync([FromBody] AddPersonalDataRequest request)
     {
@@ -134,7 +130,6 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Change personal data")]
     [ProducesResponseType(200)]
     [HttpPut("{id:guid}/personal-data")]
-    [Authorize]
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
     {

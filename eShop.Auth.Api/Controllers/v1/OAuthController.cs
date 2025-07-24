@@ -15,7 +15,6 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointSummary("OAuth login")]
     [EndpointDescription("OAuth login")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
     [HttpGet("login/{provider}")]
     public async ValueTask<ActionResult<Response>> OAuthLoginAsync(string provider, string? returnUri = null)
     {
@@ -33,7 +32,6 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointSummary("Handle OAuth login")]
     [EndpointDescription("Handles OAuth login")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
     [HttpGet("handle-login")]
     public async ValueTask<ActionResult<Response>> HandleOAuthLoginAsync(string? remoteError = null,
         string? returnUri = null)
