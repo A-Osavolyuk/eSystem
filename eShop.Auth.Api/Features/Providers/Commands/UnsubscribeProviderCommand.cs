@@ -20,7 +20,7 @@ public class UnsubscribeProviderCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
         
-        var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);
+        var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         
         if (provider is null)
         {

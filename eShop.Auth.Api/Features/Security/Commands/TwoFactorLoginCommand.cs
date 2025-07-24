@@ -38,7 +38,7 @@ public sealed class LoginWith2FaCommandHandler(
             return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
         }
 
-        var provider = await providerManager.FindAsync(request.Request.Provider, cancellationToken);
+        var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
 
         if (provider is null)
         {

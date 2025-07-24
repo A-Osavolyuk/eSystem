@@ -24,7 +24,7 @@ public sealed class ProviderManager(AuthDbContext context) : IProviderManager
         return providers;
     }
 
-    public async ValueTask<ProviderEntity?> FindAsync(string providerName,
+    public async ValueTask<ProviderEntity?> FindByNameAsync(string providerName,
         CancellationToken cancellationToken = default)
     {
         var provider = await context.Providers.FirstOrDefaultAsync(x => x.Name == providerName, cancellationToken);
