@@ -13,6 +13,7 @@ public class JwtAuthenticationState
         }
     }
 
+    public required string AuthenticationType { get; init; }
     public required List<Claim> Claims { get; init; }
     public bool IsAuthenticated => Claims.Count > 0;
 

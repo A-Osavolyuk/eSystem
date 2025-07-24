@@ -35,7 +35,11 @@ public class AuthenticationManager(
 
         var rawToken = tokenHandler.ReadToken(token);
         var claims = rawToken!.Claims.ToList();
-        var state = new JwtAuthenticationState() { Claims = claims };
+        var state = new JwtAuthenticationState()
+        {
+            Claims = claims, 
+            AuthenticationType = JwtBearerDefaults.AuthenticationScheme
+        };
 
         return state;
     }
