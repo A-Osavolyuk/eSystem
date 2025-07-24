@@ -34,7 +34,7 @@ public static class HostApplicationBuilderExtensions
         {
             cfg.OnNotFound = "/error?code=404";
             cfg.OnForbidden = "/error?code=403";
-            cfg.OnNotAuthorized = "/error?code=401";
+            cfg.OnUnauthorized = "/error?code=401";
 
             cfg.Pages =
             [
