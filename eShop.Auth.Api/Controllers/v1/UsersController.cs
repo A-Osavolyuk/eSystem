@@ -101,19 +101,6 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Create user account")]
-    [EndpointDescription("Create a user account")]
-    [ProducesResponseType(200)]
-    [Authorize]
-    [HttpPost]
-    public async ValueTask<ActionResult<Response>> CreateUserAccount([FromBody] CreateUserAccountRequest request)
-    {
-        var result = await sender.Send(new CreateUserAccountCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Change username")]
     [EndpointDescription("Change username")]
     [ProducesResponseType(200)]
@@ -155,19 +142,6 @@ public class UsersController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Delete user account")]
-    [EndpointDescription("Deletes user account")]
-    [ProducesResponseType(200)]
-    [Authorize(Policy = "DeleteUsersPolicy")]
-    [HttpDelete("{id:guid}")]
-    public async ValueTask<ActionResult<Response>> DeleteUserAccountAsync(Guid id)
-    {
-        var result = await sender.Send(new DeleteUserAccountCommand(id));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
 }
