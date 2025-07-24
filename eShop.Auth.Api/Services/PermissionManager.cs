@@ -108,13 +108,6 @@ public sealed class PermissionManager(AuthDbContext context) : IPermissionManage
         return Result.Success();
     }
 
-    public async ValueTask<bool> ExistsAsync(string name, CancellationToken cancellationToken = default)
-    {
-        return await context.Permissions
-            .AsNoTracking()
-            .AnyAsync(x => x.Name == name, cancellationToken: cancellationToken);
-    }
-
     public async ValueTask<bool> HasAsync(UserEntity userEntity, string name,
         CancellationToken cancellationToken = default)
     {
