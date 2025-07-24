@@ -24,7 +24,7 @@ public class RouteManager(
 
         if (route is null)
         {
-            NotFound(forceLoad);
+            OnError(ErrorCode.NotFound, forceLoad: forceLoad); 
             return;
         }
 
@@ -32,9 +32,7 @@ public class RouteManager(
 
         if (route!.RequireAuthorization && (state is null || !state.IsAuthenticated))
         {
-            var returnUrl = HttpUtility.UrlEncode(url);
-
-            NotAuthorized(returnUrl, forceLoad);
+            OnError(ErrorCode.Unauthorized, url, forceLoad); 
             return;
         }
 
@@ -42,10 +40,9 @@ public class RouteManager(
         {
             if (!state!.HasRole(route.RequiredRoles) || !state.HasPermission(route.RequiredPermissions))
             {
-                var path = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
-                var returnUrl = HttpUtility.UrlEncode(path);
+                var returnUrl = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
 
-                Forbidden(returnUrl, forceLoad);
+                OnError(ErrorCode.Forbidden, returnUrl, forceLoad); 
                 return;
             }
         }
@@ -58,6 +55,27 @@ public class RouteManager(
         }
 
         navigationManager.NavigateTo(url, forceLoad);
+    }
+    
+    private void OnError(ErrorCode errorCode, string? returnUrl = null, bool forceLoad = false)
+    {
+        var baseUrl = errorCode switch
+        {
+            ErrorCode.NotFound => router.OnNotFound,
+            ErrorCode.Forbidden => router.OnForbidden,
+            ErrorCode.Unauthorized => router.OnUnauthorized,
+            _ => throw new NotSupportedException("Unsupported error code"),
+        };
+        
+        var url = new StringBuilder(baseUrl);
+
+        if (!string.IsNullOrEmpty(returnUrl))
+        {
+            var encodedUrl = HttpUtility.UrlEncode(returnUrl);
+            url.Append("?returnUrl=").Append(encodedUrl);
+        }
+        
+        navigationManager.NavigateTo(url.ToString(), forceLoad);
     }
 
     private Regex BuildExpression(string pattern)
@@ -99,25 +117,5 @@ public class RouteManager(
         }
 
         return null;
-    }
-
-    private void NotFound(bool forceLoad = false) => navigationManager.NavigateTo(router.OnNotFound, forceLoad);
-
-    private void Forbidden(string? returnUrl, bool forceLoad = false)
-    {
-        var uri = string.IsNullOrEmpty(returnUrl)
-            ? router.OnForbidden
-            : $"{router.OnForbidden}&returnUri=/{returnUrl}";
-
-        navigationManager.NavigateTo(uri, forceLoad);
-    }
-
-    private void NotAuthorized(string? returnUrl, bool forceLoad = false)
-    {
-        var uri = string.IsNullOrEmpty(returnUrl)
-            ? router.OnNotAuthorized
-            : $"{router.OnNotAuthorized}&returnUri=/{returnUrl}";
-
-        navigationManager.NavigateTo(uri, forceLoad);
     }
 }
