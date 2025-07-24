@@ -120,9 +120,7 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "returnUri")]
-    public string ReturnUri { get; set; } = string.Empty;
-
+    [SupplyParameterFromQuery(Name = "returnUri")] public string? ReturnUri { get; set; } = string.Empty;
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
 
     private MudForm form = new();
@@ -148,7 +146,16 @@
                 else
                 {
                     await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
-                    await RouteManager.NavigateAsync((string.IsNullOrEmpty(ReturnUri) ? "/products" : ReturnUri));
+
+                    if (string.IsNullOrEmpty(ReturnUri))
+                    {
+                        await RouteManager.NavigateAsync("/products");
+                    }
+                    else
+                    {
+                        await RouteManager.NavigateAsync(ReturnUri, true);
+                    }
+                    
                     Snackbar.Add(result.Message, Severity.Success);
                 }
             }

@@ -1,5 +1,6 @@
 ﻿@page "/Error"
 
+@using eShop.Infrastructure.Routing
 @inherits PageBase
 
 <Title Text="Error" />
@@ -16,7 +17,7 @@
                     Style="text-align:center"
                     Class="d-block"
                     Typo="Typo.h5"
-                    OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
+                    OnClick="@(async () => await RouteManager.NavigateAsync("/products", true))">
                     Go to Home
                 </MudLink>
                 break;
@@ -25,13 +26,26 @@
             {
                 <MudText Align="Align.Center" Typo="Typo.h4">Access denied</MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">You do not have access to this resource.</MudText>
-                <MudLink
-                    Style="text-align:center"
-                    Class="d-block"
-                    Typo="Typo.h5"
-                    OnClick="@(async () => await RouteManager.NavigateAsync(ReturnUri ?? "/products"))">
-                    Go back
-                </MudLink>
+                if (string.IsNullOrEmpty(ReturnUri))
+                {
+                    <MudLink
+                        Style="text-align:center"
+                        Class="d-block"
+                        Typo="Typo.h5"
+                        OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
+                        Go back
+                    </MudLink>
+                }
+                else
+                {
+                    <MudLink
+                        Style="text-align:center"
+                        Class="d-block"
+                        Typo="Typo.h5"
+                        OnClick="@(async () => await RouteManager.NavigateAsync(ReturnUri, true))">
+                        Go back
+                    </MudLink>
+                }
                 break;
             }
             case StatusCodes.Status401Unauthorized:

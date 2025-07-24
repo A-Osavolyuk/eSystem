@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Web;
 using eShop.Domain.Common.Security;
 using eShop.Infrastructure.Security;
 using Microsoft.AspNetCore.Components;
@@ -17,21 +18,23 @@ public class RouteManager(
     public string Uri => navigationManager.Uri;
     public string BaseUri => navigationManager.BaseUri;
 
-    public async Task NavigateAsync(string uri)
+    public async Task NavigateAsync(string url, bool isRedirect = false, bool forceLoad = false)
     {
-        var route = MatchPattern(uri, router.Pages);
+        var route = MatchRoute(url, router.Pages);
 
         if (route is null)
         {
-            NotFound();
+            NotFound(forceLoad);
             return;
         }
 
         var state = await authenticationManager.GetStateAsync();
-        
+
         if (route!.RequireAuthorization && (state is null || !state.IsAuthenticated))
         {
-            NotAuthorized(uri);
+            var returnUrl = HttpUtility.UrlEncode(url);
+
+            NotAuthorized(returnUrl, forceLoad);
             return;
         }
 
@@ -39,14 +42,22 @@ public class RouteManager(
         {
             if (!state!.HasRole(route.RequiredRoles) || !state.HasPermission(route.RequiredPermissions))
             {
-                var returnUri = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
-                
-                Forbidden(returnUri);
+                var path = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
+                var returnUrl = HttpUtility.UrlEncode(path);
+
+                Forbidden(returnUrl, forceLoad);
                 return;
             }
         }
 
-        navigationManager.NavigateTo(uri);
+        if (isRedirect)
+        {
+            var encodedUri = HttpUtility.UrlDecode(url);
+            navigationManager.NavigateTo(encodedUri, forceLoad);
+            return;
+        }
+
+        navigationManager.NavigateTo(url, forceLoad);
     }
 
     private Regex BuildExpression(string pattern)
@@ -72,7 +83,7 @@ public class RouteManager(
         return new Regex("^" + regex + "$", RegexOptions.Compiled);
     }
 
-    private PageRoute? MatchPattern(string route, List<PageRoute> patters)
+    private PageRoute? MatchRoute(string route, List<PageRoute> patters)
     {
         var path = route.Split('?').First();
 
@@ -90,23 +101,23 @@ public class RouteManager(
         return null;
     }
 
-    private void NotFound() => navigationManager.NavigateTo(router.OnNotFound);
+    private void NotFound(bool forceLoad = false) => navigationManager.NavigateTo(router.OnNotFound, forceLoad);
 
-    private void Forbidden(string? returnUri)
+    private void Forbidden(string? returnUrl, bool forceLoad = false)
     {
-        var uri = string.IsNullOrEmpty(returnUri) 
+        var uri = string.IsNullOrEmpty(returnUrl)
             ? router.OnForbidden
-            : $"{router.OnForbidden}&returnUri=/{returnUri}";
-        
-        navigationManager.NavigateTo(uri);
+            : $"{router.OnForbidden}&returnUri=/{returnUrl}";
+
+        navigationManager.NavigateTo(uri, forceLoad);
     }
 
-    private void NotAuthorized(string? returnUri)
+    private void NotAuthorized(string? returnUrl, bool forceLoad = false)
     {
-        var uri = string.IsNullOrEmpty(returnUri) 
+        var uri = string.IsNullOrEmpty(returnUrl)
             ? router.OnNotAuthorized
-            : $"{router.OnNotAuthorized}&returnUri=/{returnUri}";
-        
-        navigationManager.NavigateTo(uri);
+            : $"{router.OnNotAuthorized}&returnUri=/{returnUrl}";
+
+        navigationManager.NavigateTo(uri, forceLoad);
     }
 }
