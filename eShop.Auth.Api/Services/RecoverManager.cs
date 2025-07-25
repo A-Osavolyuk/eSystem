@@ -36,7 +36,7 @@ public class RecoverManager(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                Hash = hash,
+                CodeHash = hash,
                 CreateDate = DateTimeOffset.UtcNow
             };
             
@@ -60,7 +60,7 @@ public class RecoverManager(
             return Results.BadRequest("Recovery codes not generated or already used.");
         }
 
-        var entity = entities.FirstOrDefault(x => hasher.VerifyHash(code, x.Hash));
+        var entity = entities.FirstOrDefault(x => hasher.VerifyHash(code, x.CodeHash));
 
         if (entity is null)
         {

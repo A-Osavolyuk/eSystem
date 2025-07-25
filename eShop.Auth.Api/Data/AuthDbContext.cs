@@ -49,7 +49,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<CodeEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Code).HasMaxLength(6);
+            entity.Property(x => x.CodeHash).HasMaxLength(200);
             entity.Property(x => x.Type).HasEnumConversion();
             entity.Property(x => x.Sender).HasEnumConversion();
             entity.Property(x => x.Resource).HasEnumConversion();
@@ -122,7 +122,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<LoginCodeEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Hash).HasMaxLength(200);
+            entity.Property(x => x.CodeHash).HasMaxLength(200);
 
             entity.HasOne(x => x.User)
                 .WithOne()
@@ -227,7 +227,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<RecoveryCodeEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Hash).HasMaxLength(200);
+            entity.Property(x => x.CodeHash).HasMaxLength(200);
             
             entity.HasOne(x => x.User)
                 .WithMany(x => x.RecoveryCodes)

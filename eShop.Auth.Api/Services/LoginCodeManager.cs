@@ -38,7 +38,7 @@ public sealed class LoginCodeManager(
             Id = Guid.CreateVersion7(),
             ProviderId = provider.Id,
             UserId = user.Id,
-            Hash = hash,
+            CodeHash = hash,
             ExpireDate = DateTime.UtcNow.AddMinutes(ExpirationMinutes),
             CreateDate = DateTime.UtcNow,
             UpdateDate = null,
@@ -79,7 +79,7 @@ public sealed class LoginCodeManager(
             return isVerifiedCode ? Results.BadRequest("Invalid code") : Result.Success();
         }
         
-        var isValidHash = hasher.VerifyHash(code, entity.Hash);
+        var isValidHash = hasher.VerifyHash(code, entity.CodeHash);
 
         if (!isValidHash)
         {
