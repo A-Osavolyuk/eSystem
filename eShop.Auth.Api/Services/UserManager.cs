@@ -86,6 +86,15 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
+        var changesEntity = new UserChangesEntity()
+        {
+            Id = user.Id,
+            UserId = user.Id,
+            Field = ChangeField.Password,
+            Value = user.PasswordHash,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         var passwordHash = hasher.Hash(newPassword);
 
         user.PasswordHash = passwordHash;
@@ -93,6 +102,7 @@ public sealed class UserManager(
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
+        await context.UserChanges.AddAsync(changesEntity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -101,6 +111,15 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetEmailAsync(UserEntity user, 
         string newEmail, CancellationToken cancellationToken = default)
     {
+        var changesEntity = new UserChangesEntity()
+        {
+            Id = user.Id,
+            UserId = user.Id,
+            Field = ChangeField.Email,
+            Value = user.Email,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         user.Email = newEmail;
         user.EmailConfirmed = true;
         user.EmailChangeDate = DateTimeOffset.UtcNow;
@@ -108,6 +127,7 @@ public sealed class UserManager(
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
+        await context.UserChanges.AddAsync(changesEntity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
@@ -116,6 +136,15 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
         CancellationToken cancellationToken = default)
     {
+        var changesEntity = new UserChangesEntity()
+        {
+            Id = user.Id,
+            UserId = user.Id,
+            Field = ChangeField.RecoveryEmail,
+            Value = user.RecoveryEmail,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         user.RecoveryEmail = newRecoveryEmail;
         user.RecoveryEmailConfirmed = true;
         user.NormalizedRecoveryEmail = newRecoveryEmail.ToUpper();
@@ -123,6 +152,7 @@ public sealed class UserManager(
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
+        await context.UserChanges.AddAsync(changesEntity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
@@ -131,12 +161,22 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, 
         string newPhoneNumber, CancellationToken cancellationToken = default)
     {
+        var changesEntity = new UserChangesEntity()
+        {
+            Id = user.Id,
+            UserId = user.Id,
+            Field = ChangeField.PhoneNumber,
+            Value = user.PhoneNumber,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         user.PhoneNumber = newPhoneNumber;
         user.PhoneNumberConfirmed = true;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
+        await context.UserChanges.AddAsync(changesEntity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
@@ -174,12 +214,23 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, 
         CancellationToken cancellationToken = default)
     {
+        var changesEntity = new UserChangesEntity()
+        {
+            Id = user.Id,
+            UserId = user.Id,
+            Field = ChangeField.Email,
+            Value = user.Email,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         user.Email = newEmail;
         user.NormalizedEmail = newEmail.ToUpperInvariant();
         user.EmailChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.UserName = newEmail;
+        
         context.Users.Update(user);
+        await context.UserChanges.AddAsync(changesEntity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -188,10 +239,21 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, 
         string newPhoneNumber, CancellationToken cancellationToken = default)
     {
+        var changesEntity = new UserChangesEntity()
+        {
+            Id = user.Id,
+            UserId = user.Id,
+            Field = ChangeField.PhoneNumber,
+            Value = user.PhoneNumber,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         user.PhoneNumber = newPhoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
+        
         context.Users.Update(user);
+        await context.UserChanges.AddAsync(changesEntity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -200,6 +262,15 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangeRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
         CancellationToken cancellationToken = default)
     {
+        var changesEntity = new UserChangesEntity()
+        {
+            Id = user.Id,
+            UserId = user.Id,
+            Field = ChangeField.RecoveryEmail,
+            Value = user.RecoveryEmail,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         user.RecoveryEmail = newRecoveryEmail;
         user.NormalizedRecoveryEmail = newRecoveryEmail.ToUpper();
         user.RecoveryEmailConfirmed = true;
@@ -207,6 +278,7 @@ public sealed class UserManager(
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
+        await context.UserChanges.AddAsync(changesEntity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
@@ -276,12 +348,22 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangeNameAsync(UserEntity user, string userName,
         CancellationToken cancellationToken = default)
     {
+        var changesEntity = new UserChangesEntity()
+        {
+            Id = user.Id,
+            UserId = user.Id,
+            Field = ChangeField.Username,
+            Value = user.UserName,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         user.UserName = userName;
         user.NormalizedUserName = userName.ToUpper();
         user.UserNameChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
+        await context.UserChanges.AddAsync(changesEntity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
