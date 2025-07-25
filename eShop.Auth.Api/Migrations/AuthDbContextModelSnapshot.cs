@@ -28,10 +28,10 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Code")
+                    b.Property<string>("CodeHash")
                         .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
@@ -154,16 +154,16 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Hash")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
@@ -280,13 +280,13 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Hash")
+                    b.Property<string>("CodeHash")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
@@ -429,16 +429,11 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.RollbackEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserChangesEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
@@ -454,15 +449,20 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Version")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Version"));
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Rollback");
+                    b.ToTable("UserChanges");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
@@ -767,7 +767,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.RollbackEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserChangesEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
                         .WithMany()
