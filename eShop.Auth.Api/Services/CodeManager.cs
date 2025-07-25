@@ -1,9 +1,14 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Auth.Api.Security.Hashing;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ICodeManager), ServiceLifetime.Scoped)]
-public sealed class CodeManager(AuthDbContext context) : ICodeManager
+public sealed class CodeManager(
+    AuthDbContext context,
+    Hasher hasher) : ICodeManager
 {
     private readonly AuthDbContext context = context;
+    private readonly Hasher hasher = hasher;
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
         CodeType type, CodeResource resource, CancellationToken cancellationToken = default)
@@ -20,12 +25,13 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         }
 
         var code = CodeGenerator.Generate(6);
+        var codeHash = hasher.Hash(code);
 
         await context.Codes.AddAsync(new CodeEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Code = code,
+            CodeHash = codeHash,
             Type = type,
             Sender = sender,
             Resource = resource,
@@ -42,7 +48,6 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
     {
         var entity = await context.Codes
             .SingleOrDefaultAsync(x => x.UserId == user.Id
-                                       && x.Code == code
                                        && x.Type == type
                                        && x.Sender == sender
                                        && x.Resource == resource
@@ -51,6 +56,13 @@ public sealed class CodeManager(AuthDbContext context) : ICodeManager
         if (entity is null)
         {
             return Results.NotFound("Code not found");
+        }
+        
+        var isValidHash = hasher.VerifyHash(code, entity.CodeHash);
+
+        if (!isValidHash)
+        {
+            return Results.BadRequest("Invalid code");
         }
 
         context.Codes.Remove(entity);

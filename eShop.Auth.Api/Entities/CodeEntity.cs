@@ -5,7 +5,7 @@ public class CodeEntity : Entity, IExpireable
     public Guid Id { get; init; } = Guid.CreateVersion7();
     
     public Guid UserId { get; init; }
-    public string Code { get; init; } = string.Empty;
+    public string CodeHash { get; init; } = string.Empty;
     public CodeType Type { get; init; }
     public SenderType Sender { get; init; }
     public CodeResource Resource { get; init; }
