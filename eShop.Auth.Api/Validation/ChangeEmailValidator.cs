@@ -7,6 +7,6 @@ public class ChangeEmailValidator : Validator<ChangeEmailRequest>
 {
     public ChangeEmailValidator()
     {
-        RuleFor(x => x.NewEmail).SetValidator(new CodeValidator());
+        RuleFor(x => x.NewEmail).EmailAddress();
     }
 }
