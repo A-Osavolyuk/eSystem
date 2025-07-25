@@ -26,13 +26,6 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
         
-        var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
-
-        if (isTaken)
-        {
-            return Results.BadRequest("This phone number is already taken");
-        }
-        
         var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Sms, 
             CodeType.New, CodeResource.PhoneNumber, cancellationToken);
 
