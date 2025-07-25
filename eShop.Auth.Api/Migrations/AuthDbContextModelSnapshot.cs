@@ -453,10 +453,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Version")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Version"));
 
                     b.HasKey("Id");
 

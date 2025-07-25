@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250725100724_Initial")]
+    [Migration("20250725113445_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -456,10 +456,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Version")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Version"));
 
                     b.HasKey("Id");
 

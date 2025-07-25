@@ -44,7 +44,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Value).HasMaxLength(500);
             entity.Property(x => x.Field).HasEnumConversion();
-            entity.Property(x => x.Version).ValueGeneratedOnAdd();
 
             entity.HasOne(x => x.User)
                 .WithMany()

@@ -283,8 +283,7 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Version = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Version = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Field = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
