@@ -20,6 +20,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<LockoutReasonEntity> LockoutReasons { get; set; }
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
     public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
+    public DbSet<UserChangesEntity> UserChanges { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -36,6 +37,17 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.NormalizedUserName).HasMaxLength(64);
             entity.Property(x => x.PhoneNumber).HasMaxLength(18);
             entity.Property(x => x.PasswordHash).HasMaxLength(1000);
+        });
+
+        builder.Entity<UserChangesEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Value).HasMaxLength(500);
+            entity.Property(x => x.Field).HasEnumConversion();
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
         });
         
         builder.Entity<RoleEntity>(entity =>
