@@ -50,10 +50,12 @@ public static class Mapper
         {
             Id = source.Id,
             Email = source.Email,
+            RecoveryEmail = source.RecoveryEmail,
             PhoneNumber = source.PhoneNumber,
             Username = source.UserName,
             TwoFactorEnabled = source.TwoFactorEnabled,
             EmailChangeDate = source.EmailChangeDate,
+            RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             UserNameChangeDate = source.UserNameChangeDate,
             PasswordChangeDate = source.PasswordChangeDate
