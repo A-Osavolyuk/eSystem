@@ -28,7 +28,12 @@ public enum CodeType
     Reset = 4,
     
     /// <summary>
-    /// Represent a recovery code for account recover
+    /// Represents a recovery code for account recover
     /// </summary>
-    Unlock = 5
+    Unlock = 5,
+    
+    /// <summary>
+    /// Represents a user field rollback code
+    /// </summary>
+    Rollback = 6
 }
