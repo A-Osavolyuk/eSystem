@@ -106,7 +106,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ValidationFilter]
     public async ValueTask<ActionResult<Response>> ForgotPasswordRequestAsync(ForgotPasswordRequest request)
     {
-        var result = await sender.Send(new ForgotPasswordCommand(request));
+        var result = await sender.Send(new ResetPasswordCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -122,7 +122,7 @@ public class SecurityController(ISender sender) : ControllerBase
     public async ValueTask<ActionResult<Response>> ConfirmResetPasswordAsync(
         [FromBody] ResetPasswordRequest resetPasswordRequest)
     {
-        var result = await sender.Send(new ResetPasswordCommand(resetPasswordRequest));
+        var result = await sender.Send(new ConfirmResetPasswordCommand(resetPasswordRequest));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
