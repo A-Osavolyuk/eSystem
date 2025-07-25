@@ -34,8 +34,7 @@ public static class HostApplicationBuilderExtensions
             {
                 cfg.UseAsyncSeeding(async (ctx,  _, ct) =>
                 {
-                    var context = (ctx as AppDbContext)!;
-                    await context.SeedAsync(ct);
+                    await ctx.SeedAsync<IAssemblyMarker>(ct);
                 });
             });
     }

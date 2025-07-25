@@ -54,8 +54,7 @@ public static class HostApplicationBuilderExtensions
             {
                 cfg.UseAsyncSeeding(async (ctx, _, ct) =>
                 {
-                    var context = (ctx as AuthDbContext)!;
-                    await context.SeedAsync(ct);
+                    await ctx.SeedAsync<IAssemblyMarker>(ct);
                 });
             });
     }
@@ -69,7 +68,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddAuthorization();
         builder.Services.AddEncryption();
         builder.Services.AddHashing();
-        
+
         builder.Services.AddIdentity(options =>
         {
             options.Password.RequiredLength = 8;
@@ -78,12 +77,12 @@ public static class HostApplicationBuilderExtensions
             options.Password.RequireDigit = true;
             options.Password.RequireNonAlphanumeric = true;
             options.Password.RequireUniqueChars = false;
-            
+
             options.Account.RequireUniqueEmail = true;
             options.Account.RequireUniqueRecoveryEmail = true;
             options.Account.RequireUniquePhoneNumber = true;
             options.Account.RequireUniqueUserName = true;
-            
+
             options.SignIn.AllowUserNameLogin = true;
             options.SignIn.AllowEmailLogin = true;
             options.SignIn.RequireConfirmedAccount = true;
@@ -154,7 +153,8 @@ public static class HostApplicationBuilderExtensions
             });
     }
 
-    private static IServiceCollection AddIdentity(this IServiceCollection services, Action<IdentityOptions> configureOptions)
+    private static IServiceCollection AddIdentity(this IServiceCollection services,
+        Action<IdentityOptions> configureOptions)
     {
         var options = new IdentityOptions();
         configureOptions(options);
