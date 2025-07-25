@@ -7,14 +7,10 @@ public record ConfirmResetPhoneNumberCommand(ConfirmResetPhoneNumberRequest Requ
 
 public class ConfirmResetPhoneNumberCommandHandler(
     ICodeManager codeManager,
-    IUserManager userManager,
-    IRollbackManager rollbackManager,
-    IMessageService messageService) : IRequestHandler<ConfirmResetPhoneNumberCommand, Result>
+    IUserManager userManager) : IRequestHandler<ConfirmResetPhoneNumberCommand, Result>
 {
     private readonly ICodeManager codeManager = codeManager;
     private readonly IUserManager userManager = userManager;
-    private readonly IRollbackManager rollbackManager = rollbackManager;
-    private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(ConfirmResetPhoneNumberCommand request, CancellationToken cancellationToken)
     {
@@ -44,28 +40,7 @@ public class ConfirmResetPhoneNumberCommandHandler(
         
         var newPhoneNumber = request.Request.NewPhoneNumber;
         
-        var rollback = await rollbackManager.CommitAsync(user, user.PhoneNumber, RollbackField.PhoneNumber, cancellationToken);
-
-        if (rollback is null)
-        {
-            return Results.InternalServerError("Cannot reset phone number, rollback was not created");
-        }
-        
         var result = await userManager.ResetPhoneNumberAsync(user, newPhoneNumber, cancellationToken);
-        
-        var message = new PhoneNumberChangedMessage()
-        {
-            Credentials = new()
-            {
-                { "PhoneNumber", rollback.Value }
-            },
-            Payload = new()
-            {
-                { "Code", rollback.Code },
-            }
-        };
-        
-        await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
         
         return result;
     }

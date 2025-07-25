@@ -7,14 +7,10 @@ public record ConfirmResetEmailCommand(ConfirmResetEmailRequest Request) : IRequ
 
 public class ConfirmResetEmailHandler(
     IUserManager userManager,
-    ICodeManager codeManager,
-    IRollbackManager rollbackManager,
-    IMessageService messageService) : IRequestHandler<ConfirmResetEmailCommand, Result>
+    ICodeManager codeManager) : IRequestHandler<ConfirmResetEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
-    private readonly IRollbackManager rollbackManager = rollbackManager;
-    private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(ConfirmResetEmailCommand request, CancellationToken cancellationToken)
     {
@@ -44,30 +40,7 @@ public class ConfirmResetEmailHandler(
         
         var newEmail = request.Request.NewEmail;
         
-        var rollback = await rollbackManager.CommitAsync(user, user.Email, RollbackField.Email, cancellationToken);
-
-        if (rollback is null)
-        {
-            return Results.InternalServerError("Cannot reset email address, rollback was not created.");
-        }
-        
         var result = await userManager.ResetEmailAsync(user, newEmail, cancellationToken);
-        
-        var message = new EmailChangedMessage()
-        {
-            Credentials = new()
-            {
-                { "Subject", "Email changed" },
-                { "To", rollback.Value }
-            },
-            Payload = new()
-            {
-                { "UserName", rollback.Value },
-                { "Code", rollback.Code },
-            }
-        };
-        
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
         
         return result;
     }

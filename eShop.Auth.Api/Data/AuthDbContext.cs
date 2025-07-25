@@ -18,7 +18,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<LockoutStateEntity> LockoutStates { get; set; }
     public DbSet<LockoutReasonEntity> LockoutReasons { get; set; }
-    public DbSet<RollbackEntity> Rollback { get; set; }
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
     public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
 
@@ -203,19 +202,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Code).HasMaxLength(64);
             entity.Property(x => x.Type).HasEnumConversion();
             entity.Property(x => x.Period).HasEnumConversion();
-        });
-
-        builder.Entity<RollbackEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            
-            entity.Property(x => x.Value).HasMaxLength(1000);
-            entity.Property(x => x.Code).HasMaxLength(64);
-            entity.Property(x => x.Field).HasEnumConversion();
-            
-            entity.HasOne(x => x.User)
-                .WithMany()
-                .HasForeignKey(x => x.UserId);
         });
 
         builder.Entity<ResourceOwnerEntity>(entity =>

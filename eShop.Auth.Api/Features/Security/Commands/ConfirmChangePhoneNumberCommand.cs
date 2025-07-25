@@ -9,16 +9,12 @@ public sealed record ConfirmChangePhoneNumberCommand(ConfirmChangePhoneNumberReq
 public sealed class ConfirmChangePhoneNumberCommandHandler(
     IUserManager userManager,
     ITokenManager tokenManager,
-    ICodeManager codeManager,
-    IRollbackManager rollbackManager,
-    IMessageService messageService)
+    ICodeManager codeManager)
     : IRequestHandler<ConfirmChangePhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly ICodeManager codeManager = codeManager;
-    private readonly IRollbackManager rollbackManager = rollbackManager;
-    private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(ConfirmChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
@@ -44,13 +40,6 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
         {
             return codeResult;
         }
-
-        var rollback = await rollbackManager.CommitAsync(user, user.PhoneNumber, RollbackField.PhoneNumber, cancellationToken);
-
-        if (rollback is null)
-        {
-            return Results.InternalServerError("Cannot change phone number, rollback was not created.");
-        }
         
         var result = await userManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber, cancellationToken);
 
@@ -58,20 +47,6 @@ public sealed class ConfirmChangePhoneNumberCommandHandler(
         {
             return result;
         }
-        
-        var message = new PhoneNumberChangedMessage()
-        {
-            Credentials = new()
-            {
-                { "PhoneNumber", rollback.Value }
-            },
-            Payload = new()
-            {
-                { "Code", rollback.Code },
-            }
-        };
-        
-        await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
         
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
