@@ -115,6 +115,72 @@
                                         <MudDivider/>
                                     </MudItem>
                                 }
+                                
+                                @if (!string.IsNullOrEmpty(UserModel.RecoveryEmail))
+                                {
+                                    <MudItem xs="3" Class="mt-2">
+                                        <MudText>
+                                            Recovery email address
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="8" Class="mt-2">
+                                        <MudText>
+                                            @UserModel.RecoveryEmail
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="text-end">
+                                        <MudTooltip Text="Change recovery email">
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Edit"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/recovery-email/change"))"/>
+                                        </MudTooltip>
+                                    </MudItem>
+                                    if (UserModel.RecoveryEmailChangeDate is not null)
+                                    {
+                                        <MudItem xs="12" Style="padding-top: 0">
+                                            <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                                                Last change: @UserModel.RecoveryEmailChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                            </MudText>
+                                        </MudItem>
+                                        <MudItem xs="12" Style="padding-top: 0">
+                                            <MudDivider/>
+                                        </MudItem>
+                                    }
+                                    else
+                                    {
+                                        <MudItem xs="12">
+                                            <MudDivider/>
+                                        </MudItem>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudItem xs="11" Class="mt-2">
+                                        <MudText>
+                                            Recovery email number
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="text-end">
+                                        <MudTooltip Text="Add recovery email">
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Add"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/recovery-email/add"))"/>
+                                        </MudTooltip>
+                                    </MudItem>
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Style="opacity: 0.5" Typo="Typo.caption">
+                                            Recovery email was not added. You can add it by click button right.
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
+                                
                                 @if (!string.IsNullOrEmpty(UserModel.PhoneNumber))
                                 {
                                     <MudItem xs="3" Class="mt-2">
@@ -390,4 +456,5 @@
             StateHasChanged();
         }
     }
+
 }
