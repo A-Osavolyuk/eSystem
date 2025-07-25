@@ -1,8 +1,9 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.BlazorWebUI.Models;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.BlazorWebUI.Validation;
 
-public class ChangeEmailValidator : Validator<ChangeEmailRequest>
+public class ChangeEmailValidator : Validator<ChangeEmailModel>
 {
     public ChangeEmailValidator()
     {
