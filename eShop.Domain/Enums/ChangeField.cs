@@ -1,9 +1,10 @@
 ﻿namespace eShop.Domain.Enums;
 
-public enum RollbackField
+public enum ChangeField
 {
     Email,
     RecoveryEmail,
     PhoneNumber,
-    Password
+    Password,
+    Username
 }
