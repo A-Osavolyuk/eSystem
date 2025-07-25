@@ -226,50 +226,6 @@
         }
     }
 
-    private async Task ResendCurrentEmailCodeAsync()
-    {
-        var request = new ResendCodeRequest()
-        {
-            UserId = userId,
-            CodeResource = CodeResource.Email,
-            CodeType = CodeType.Current,
-            Sender = SenderType.Email
-        };
-
-        var response = await SecurityService.ResendCodeAsync(request);
-
-        if (response.Success)
-        {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
-    }
-
-    private async Task ResendNewEmailCodeAsync()
-    {
-        var request = new ResendCodeRequest()
-        {
-            UserId = userId,
-            CodeResource = CodeResource.Email,
-            CodeType = CodeType.New,
-            Sender = SenderType.Email
-        };
-
-        var response = await SecurityService.ResendCodeAsync(request);
-
-        if (response.Success)
-        {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
-    }
-
     private async Task OnChangeEmailAsync()
     {
         await changeEmailForm.Validate();
@@ -349,6 +305,50 @@
             {
                 Snackbar.Add(result.Message, Severity.Error);
             }
+        }
+    }
+    
+    private async Task ResendCurrentEmailCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.Email,
+            CodeType = CodeType.Current,
+            Sender = SenderType.Email
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
+        }
+    }
+
+    private async Task ResendNewEmailCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.Email,
+            CodeType = CodeType.New,
+            Sender = SenderType.Email
+        };
+
+        var response = await SecurityService.ResendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
         }
     }
 
