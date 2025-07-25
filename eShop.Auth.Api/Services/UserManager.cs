@@ -88,7 +88,7 @@ public sealed class UserManager(
     {
         var changesEntity = new UserChangesEntity()
         {
-            Id = user.Id,
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Field = ChangeField.Password,
             Value = user.PasswordHash,
@@ -113,7 +113,7 @@ public sealed class UserManager(
     {
         var changesEntity = new UserChangesEntity()
         {
-            Id = user.Id,
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Field = ChangeField.Email,
             Value = user.Email,
@@ -138,7 +138,7 @@ public sealed class UserManager(
     {
         var changesEntity = new UserChangesEntity()
         {
-            Id = user.Id,
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Field = ChangeField.RecoveryEmail,
             Value = user.RecoveryEmail,
@@ -163,7 +163,7 @@ public sealed class UserManager(
     {
         var changesEntity = new UserChangesEntity()
         {
-            Id = user.Id,
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Field = ChangeField.PhoneNumber,
             Value = user.PhoneNumber,
@@ -216,7 +216,7 @@ public sealed class UserManager(
     {
         var changesEntity = new UserChangesEntity()
         {
-            Id = user.Id,
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Field = ChangeField.Email,
             Value = user.Email,
@@ -241,7 +241,7 @@ public sealed class UserManager(
     {
         var changesEntity = new UserChangesEntity()
         {
-            Id = user.Id,
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Field = ChangeField.PhoneNumber,
             Value = user.PhoneNumber,
@@ -264,7 +264,7 @@ public sealed class UserManager(
     {
         var changesEntity = new UserChangesEntity()
         {
-            Id = user.Id,
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Field = ChangeField.RecoveryEmail,
             Value = user.RecoveryEmail,
@@ -350,7 +350,7 @@ public sealed class UserManager(
     {
         var changesEntity = new UserChangesEntity()
         {
-            Id = user.Id,
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Field = ChangeField.Username,
             Value = user.UserName,
