@@ -1,4 +1,7 @@
-﻿@using eShop.BlazorWebUI.Models.Products
+﻿@using eShop.BlazorWebUI.Validation.Products
+@using eShop.BlazorWebUI.Models.Products
+
+@inject BerryPropertiesValidator Validator
 
 @if (Model.Properties is BerryPropertiesModel properties)
 {
@@ -7,6 +10,8 @@
             <MudTextField
                 T="string"
                 @bind-Value="properties.Color"
+                For="() => properties.Color"
+                Validation="Validator.ValidateValue"
                 Label="Color"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -17,6 +22,8 @@
             <MudTextField
                 T="string"
                 @bind-Value="properties.Variety"
+                For="() => properties.Variety"
+                Validation="Validator.ValidateValue"
                 Label="Variety"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -27,6 +34,8 @@
             <MudTextField
                 T="string"
                 @bind-Value="properties.Grade"
+                For="() => properties.Grade"
+                Validation="Validator.ValidateValue"
                 Label="Grade"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -37,6 +46,8 @@
             <MudTextField
                 T="string"
                 @bind-Value="properties.CountryOfOrigin"
+                For="() => properties.CountryOfOrigin"
+                Validation="Validator.ValidateValue"
                 Label="Country of origin"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -47,6 +58,8 @@
             <MudSelect
                 T="string"
                 @bind-Value="properties.RipenessStage"
+                For="() => properties.RipenessStage"
+                Validation="Validator.ValidateValue"
                 Label="Ripeness stage"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -61,6 +74,8 @@
             <MudTextField
                 T="string"
                 @bind-Value="properties.StorageTemperature"
+                For="() => properties.StorageTemperature"
+                Validation="Validator.ValidateValue"
                 Label="Storage temperature"
                 Variant="Variant.Outlined"
                 Immediate="true"
