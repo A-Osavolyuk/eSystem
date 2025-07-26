@@ -1,4 +1,6 @@
-﻿namespace eShop.BlazorWebUI.Models;
+﻿using eShop.BlazorWebUI.Models.Products;
+
+namespace eShop.BlazorWebUI.Models;
 
 public class ProductModel
 {
@@ -11,6 +13,6 @@ public class ProductModel
     public PriceTypeModel PriceType { get; set; } = new();
     public CategoryModel Category { get; set; } = new();
     public CurrencyModel Currency { get; set; } = new();
-    public Dictionary<string, object> Properties { get; set; } = [];
+    public ProductPropertiesModel? Properties { get; set; }
     public List<ImageModel> Images { get; set; } = [];
 }

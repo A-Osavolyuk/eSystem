@@ -1,14 +1,12 @@
-﻿@inject ProductValidator Validator
+﻿@using eShop.BlazorWebUI.Models.Products
 
-@if (Model.Properties.Count > 0)
+@if (Model.Properties is FruitPropertiesModel properties)
 {
     <MudGrid Spacing="1" Justify="Justify.Center">
         <MudItem xs="12">
             <MudTextField
                 T="string"
-                Value="@Model.Properties["Color"].ToString()"
-                ValueChanged="@(value => OnChange("Color", value))"
-                Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "Color")))"
+                @bind-Value="properties.Color"
                 Label="Color"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -18,9 +16,7 @@
         <MudItem xs="12">
             <MudTextField
                 T="string"
-                Value="@Model.Properties["Variety"].ToString()"
-                ValueChanged="@(value => OnChange("Variety", value))"
-                Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "Variety")))"
+                @bind-Value="properties.Variety"
                 Label="Variety"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -30,9 +26,7 @@
         <MudItem xs="12">
             <MudTextField
                 T="string"
-                Value="@Model.Properties["Grade"].ToString()"
-                ValueChanged="@(value => OnChange("Grade", value))"
-                Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "Grade")))"
+                @bind-Value="properties.Grade"
                 Label="Grade"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -42,9 +36,7 @@
         <MudItem xs="12">
             <MudTextField
                 T="string"
-                Value="@Model.Properties["CountryOfOrigin"].ToString()"
-                ValueChanged="@(value => OnChange("CountryOfOrigin", value))"
-                Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "CountryOfOrigin")))"
+                @bind-Value="properties.CountryOfOrigin"
                 Label="Country of origin"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -54,9 +46,7 @@
         <MudItem xs="12">
             <MudSelect
                 T="string"
-                Value="@Model.Properties["RipenessStage"].ToString()"
-                ValueChanged="@(value => OnChange("RipenessStage", value))"
-                Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "RipenessStage")))"
+                @bind-Value="properties.RipenessStage"
                 Label="Ripeness stage"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -70,9 +60,7 @@
         <MudItem xs="12">
             <MudTextField
                 T="string"
-                Value="@Model.Properties["StorageTemperature"].ToString()"
-                ValueChanged="@(value => OnChange("StorageTemperature", value))"
-                Validation="@(new Func<string, IEnumerable<string>>(_ => Validator.Validate(Model, "StorageTemperature")))"
+                @bind-Value="properties.StorageTemperature"
                 Label="Storage temperature"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -81,26 +69,22 @@
         </MudItem>
         <MudItem xs="6" Class="text-start">
             <MudCheckBox
-                Value="@Convert.ToBoolean(Model.Properties["RequiresRefrigeration"])"
-                @onclick="@(() => OnChange("RequiresRefrigeration"))"
+                @bind-Value="properties.RequiresRefrigeration"
                 Label="Requires refrigeration"/>
         </MudItem>
         <MudItem xs="6" Class="text-start">
             <MudCheckBox
-                Value="@Convert.ToBoolean(Model.Properties["ContainsSeeds"])"
-                @onclick="@(() => OnChange("ContainsSeeds"))"
+                @bind-Value="properties.ContainsSeeds"
                 Label="Contains seeds"/>
         </MudItem>
         <MudItem xs="6" Class="text-start">
             <MudCheckBox
-                Value="@Convert.ToBoolean(Model.Properties["IsTropical"])"
-                @onclick="@(() => OnChange("IsTropical"))"
+                @bind-Value="properties.IsTropical"
                 Label="Tropical"/>
         </MudItem>
         <MudItem xs="6" Class="text-start">
             <MudCheckBox
-                Value="@Convert.ToBoolean(Model.Properties["IsOrganic"])"
-                @onclick="@(() => OnChange("IsOrganic"))"
+                @bind-Value="properties.IsOrganic"
                 Label="Organic"/>
         </MudItem>
     </MudGrid>
@@ -113,38 +97,6 @@
 
     protected override void OnInitialized()
     {
-        Model.Properties = new()
-        {
-            { "Color", string.Empty },
-            { "Variety", string.Empty },
-            { "CountryOfOrigin", string.Empty },
-            { "RipenessStage", string.Empty },
-            { "StorageTemperature", string.Empty },
-            { "Grade", string.Empty },
-            { "RequiresRefrigeration", false },
-            { "ContainsSeeds", false },
-            { "IsTropical", false },
-            { "IsOrganic", false },
-        };
+        Model.Properties = new FruitPropertiesModel();
     }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (Model.Properties.Count > 0 && firstRender)
-        {
-            StateHasChanged();
-        }
-    }
-
-    private void OnChange(string code, object value)
-    {
-        Model.Properties[code] = value;
-    }
-
-    private void OnChange(string code)
-    {
-        var value = Convert.ToBoolean(Model.Properties[code]);
-        Model.Properties[code] = !value;
-    }
-
 }

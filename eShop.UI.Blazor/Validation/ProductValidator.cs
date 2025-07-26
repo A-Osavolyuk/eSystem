@@ -37,38 +37,4 @@ public class ProductValidator : Validator<ProductModel>
         RuleFor(x => x.Unit)
             .NotEmpty().WithMessage("Field is required");
     }
-
-    public IEnumerable<string> Validate(ProductModel model, string key)
-    {
-        if (model.Properties.Count == 0 
-            || string.IsNullOrEmpty(key) 
-            || !model.Properties.TryGetValue(key, out var value)) return [];
-
-        var validator = GetValidator(key);
-        var result = Validate(validator, (string)value);
-        return result;
-    }
-
-    private IValidator? GetValidator(string key)
-    {
-        return key switch
-        {
-            "Color" => new ColorValidator(),
-            "Variety" => new VarietyValidator(),
-            "Grade" => new GradeValidator(),
-            "CountryOfOrigin" => new OriginCountryValidator(),
-            "RipenessStage" => new RipenessStageValidator(),
-            "StorageTemperature" => new StorageTemperatureValidator(),
-            _ => null
-        };
-    }
-
-    private IEnumerable<string> Validate(IValidator? validator, string value)
-    {
-        if (validator is null) return [];
-        
-        var context = new ValidationContext<string>(value);
-        var result = validator.Validate(context);
-        return result.Errors.Select(x => x.ErrorMessage);
-    }
 }
