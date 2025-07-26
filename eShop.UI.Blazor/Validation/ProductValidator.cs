@@ -1,5 +1,4 @@
 ﻿using eShop.BlazorWebUI.Models;
-using eShop.BlazorWebUI.Validation.Properties;
 
 namespace eShop.BlazorWebUI.Validation;
 
