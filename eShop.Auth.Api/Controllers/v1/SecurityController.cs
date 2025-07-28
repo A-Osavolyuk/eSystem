@@ -69,20 +69,6 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Generate recovery codes")]
-    [EndpointDescription("Generate recovery codes")]
-    [ProducesResponseType(200)]
-    [HttpPost("recovery-code/generate")]
-    [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> GenerateRecoveryCodes([FromBody] GenerateRecoveryCodesRequest request)
-    {
-        var result = await sender.Send(new GenerateRecoveryCodesCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Change password")]
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
