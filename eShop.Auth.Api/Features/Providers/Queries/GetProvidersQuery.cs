@@ -8,7 +8,7 @@ public class GetProvidersQueryHandler(IProviderManager providerManager) : IReque
 
     public async Task<Result> Handle(GetProvidersQuery request, CancellationToken cancellationToken)
     {
-        var providers = await providerManager.GetProvidersAsync(cancellationToken);
+        var providers = await providerManager.GetAllAsync(cancellationToken);
         var result = providers.Select(Mapper.Map).ToList();
         return Result.Success(result);
     }

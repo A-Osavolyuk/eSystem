@@ -7,13 +7,13 @@ public sealed class ProviderManager(AuthDbContext context) : IProviderManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<List<ProviderEntity>> GetProvidersAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<List<ProviderEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var providers = await context.Providers.ToListAsync(cancellationToken);
         return providers;
     }
 
-    public async ValueTask<List<UserProviderEntity>> GetProvidersAsync(UserEntity user,
+    public async ValueTask<List<UserProviderEntity>> GetAllAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         var providers = await context.UserProvider
