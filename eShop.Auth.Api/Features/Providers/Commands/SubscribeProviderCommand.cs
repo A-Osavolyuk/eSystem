@@ -1,5 +1,6 @@
 ﻿using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Messages.Sms;
+using eShop.Auth.Api.Security.Protection;
 using eShop.Domain.Common.Security;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
@@ -13,13 +14,16 @@ public class SubscribeProviderCommandHandler(
     IProviderManager providerManager,
     ILoginCodeManager loginCodeManager,
     IMessageService messageService,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<SubscribeProviderCommand, Result>
+    ISecretManager secretManager,
+    SecretProtector protector) : IRequestHandler<SubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IProviderManager providerManager = providerManager;
     private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
+    private readonly ISecretManager secretManager = secretManager;
     private readonly IMessageService messageService = messageService;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
+    private readonly SecretProtector protector = protector;
+    private const string QrCodeIssuer = "eShop";
 
     public async Task<Result> Handle(SubscribeProviderCommand request, CancellationToken cancellationToken)
     {
@@ -46,7 +50,15 @@ public class SubscribeProviderCommandHandler(
 
         if (provider.Name == ProviderTypes.Authenticator)
         {
-            var qrCode = await twoFactorManager.GenerateQrCodeAsync(user, cancellationToken);
+            var secret = await secretManager.FindAsync(user, cancellationToken);
+
+            if (secret is null)
+            {
+                secret = await secretManager.GenerateAsync(user, cancellationToken);
+            }
+
+            var unprotectedSecret = protector.Unprotect(secret.Secret);
+            var qrCode = QrCodeGenerator.Generate(user.Email, unprotectedSecret, QrCodeIssuer);
             
             var response = new SubscribeProviderResponse() { QrCode = qrCode };
             
