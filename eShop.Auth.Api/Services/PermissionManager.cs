@@ -67,23 +67,31 @@ public sealed class PermissionManager(AuthDbContext context) : IPermissionManage
     public async ValueTask<Result> GrantAsync(UserEntity user, PermissionEntity permission,
         CancellationToken cancellationToken = default)
     {
+        var hasPermission = await context.UserPermissions.AnyAsync(
+            x => x.UserId == user.Id && x.PermissionId == permission.Id, cancellationToken);
+        
+        if (hasPermission)
+        {
+            return Result.Success();
+        }
+        
         var entity = new UserPermissionsEntity() { UserId = user.Id, PermissionId = permission!.Id };
         await context.UserPermissions.AddAsync( entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 
-    public async ValueTask<Result> RevokeAsync(UserEntity userEntity,
+    public async ValueTask<Result> RevokeAsync(UserEntity user,
         PermissionEntity permissionEntity,
         CancellationToken cancellationToken = default)
     {
         var userPermission = await context.UserPermissions
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id && x.PermissionId == permissionEntity.Id,
+            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.PermissionId == permissionEntity.Id,
                 cancellationToken: cancellationToken);
 
         if (userPermission is null)
         {
-            return Results.NotFound($"Cannot find permission {permissionEntity.Name} for user with ID {userEntity.Id}");
+            return Results.NotFound($"Cannot find permission {permissionEntity.Name} for user with ID {user.Id}");
         }
 
         context.UserPermissions.Remove(userPermission);
@@ -92,11 +100,11 @@ public sealed class PermissionManager(AuthDbContext context) : IPermissionManage
         return Result.Success();
     }
 
-    public async ValueTask<Result> RevokeAsync(UserEntity userEntity,
+    public async ValueTask<Result> RevokeAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         var userPermissions = await context.UserPermissions
-            .Where(x => x.UserId == userEntity.Id)
+            .Where(x => x.UserId == user.Id)
             .ToListAsync(cancellationToken: cancellationToken);
 
         if (userPermissions.Any())

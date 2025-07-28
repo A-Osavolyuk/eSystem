@@ -60,12 +60,15 @@ public sealed class RegisterCommandHandler(
         }
 
         var permissions = role.Permissions.Select(x => x.Permission).ToList();
-            
-        var grantPermissionsResult = await permissionManager.GrantAsync(user, permissions, cancellationToken);
 
-        if (!grantPermissionsResult.Succeeded)
+        foreach (var permission in permissions)
         {
-            return grantPermissionsResult;
+            var grantResult = await permissionManager.GrantAsync(user, permission, cancellationToken);
+
+            if (!grantResult.Succeeded)
+            {
+                return grantResult;
+            }
         }
 
         var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Verify, 
