@@ -7,17 +7,19 @@ namespace eShop.Auth.Api.Services;
 public sealed class TwoFactorManager(
     AuthDbContext context,
     SecretProtector protector,
-    ISecretManager secretManager) : ITwoFactorManager
+    ISecretManager secretManager,
+    IUserManager userManager) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
     private readonly SecretProtector protector = protector;
     private readonly ISecretManager secretManager = secretManager;
+    private readonly IUserManager userManager = userManager;
     private const int ExpirationMinutes = 30;
 
     public async ValueTask<Result> EnableAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
-        if (!await context.Users.AnyAsync(u => u.Email == user.Email, cancellationToken))
+        if (!await context.UserProvider.AnyAsync(u => u.UserId == user.Id, cancellationToken))
         {
             var providers = await context.Providers
                 .Select(p => new UserProviderEntity()
@@ -34,21 +36,19 @@ public sealed class TwoFactorManager(
         }
         
         user.TwoFactorEnabled = true;
-        user.UpdateDate = DateTime.UtcNow;
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
+        
+        var result = await userManager.UpdateAsync(user, cancellationToken);
 
-        return Result.Success();
+        return result;
     }
 
     public async ValueTask<Result> DisableAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         user.TwoFactorEnabled = false;
-        user.UpdateDate = DateTime.UtcNow;
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
+        
+        var result = await userManager.UpdateAsync(user, cancellationToken);
 
-        return Result.Success();
+        return result;
     }
 
     public async ValueTask<string> GenerateQrCodeAsync(UserEntity user, CancellationToken cancellationToken = default)

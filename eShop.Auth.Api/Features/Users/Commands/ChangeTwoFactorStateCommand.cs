@@ -34,15 +34,13 @@ public sealed class ChangeTwoFactorAuthenticationStateCommandHandler(
                 TwoFactorAuthenticationState = false
             });
         }
-        else
-        {
-            await twoFactorManager.EnableAsync(user, cancellationToken);
+
+        await twoFactorManager.EnableAsync(user, cancellationToken);
             
-            return Result.Success(new ChangeTwoFactorStateResponse()
-            {
-                Message = $"Two factor authentication was successfully enabled.",
-                TwoFactorAuthenticationState = true,
-            });
-        }
+        return Result.Success(new ChangeTwoFactorStateResponse()
+        {
+            Message = $"Two factor authentication was successfully enabled.",
+            TwoFactorAuthenticationState = true,
+        });
     }
 }
