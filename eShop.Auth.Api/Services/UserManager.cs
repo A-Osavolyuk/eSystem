@@ -23,23 +23,55 @@ public sealed class UserManager(
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToUpper();
-        var user = await context.Users.FirstOrDefaultAsync(
-            x => x.NormalizedEmail == normalizedEmail, cancellationToken);
+        var user = await context.Users.Where(x => x.Email == email)
+            .Include(x => x.Roles)
+            .ThenInclude(x => x.Role)
+            .Include(x => x.Permissions)
+            .ThenInclude(x => x.Permission)
+            .Include(x => x.Providers)
+            .ThenInclude(x => x.Provider)
+            .Include(x => x.Changes)
+            .Include(x => x.RecoveryCodes)
+            .Include(x => x.PersonalData)
+            .Include(x => x.LockoutState)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
         
         return user;
     }
 
     public async ValueTask<UserEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var user = await context.Users.Where(x => x.Id == id)
+            .Include(x => x.Roles)
+            .ThenInclude(x => x.Role)
+            .Include(x => x.Permissions)
+            .ThenInclude(x => x.Permission)
+            .Include(x => x.Providers)
+            .ThenInclude(x => x.Provider)
+            .Include(x => x.Changes)
+            .Include(x => x.RecoveryCodes)
+            .Include(x => x.PersonalData)
+            .Include(x => x.LockoutState)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        
         return user;
     }
 
     public async ValueTask<UserEntity?> FindByUserNameAsync(string name, CancellationToken cancellationToken = default)
     {
         var normalizedUserName = name.ToUpper();
-        var user = await context.Users.FirstOrDefaultAsync(
-            x => x.NormalizedUserName == normalizedUserName, cancellationToken);
+        var user = await context.Users.Where(x => x.NormalizedUserName == name)
+            .Include(x => x.Roles)
+            .ThenInclude(x => x.Role)
+            .Include(x => x.Permissions)
+            .ThenInclude(x => x.Permission)
+            .Include(x => x.Providers)
+            .ThenInclude(x => x.Provider)
+            .Include(x => x.Changes)
+            .Include(x => x.RecoveryCodes)
+            .Include(x => x.PersonalData)
+            .Include(x => x.LockoutState)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
         
         return user;
     }
@@ -47,8 +79,19 @@ public sealed class UserManager(
     public async ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
         CancellationToken cancellationToken = default)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber,
-            cancellationToken: cancellationToken);
+        var user = await context.Users.Where(x => x.PhoneNumber == phoneNumber)
+            .Include(x => x.Roles)
+            .ThenInclude(x => x.Role)
+            .Include(x => x.Permissions)
+            .ThenInclude(x => x.Permission)
+            .Include(x => x.Providers)
+            .ThenInclude(x => x.Provider)
+            .Include(x => x.Changes)
+            .Include(x => x.RecoveryCodes)
+            .Include(x => x.PersonalData)
+            .Include(x => x.LockoutState)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        
         return user;
     }
 
