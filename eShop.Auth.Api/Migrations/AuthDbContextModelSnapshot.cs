@@ -704,7 +704,7 @@ namespace eShop.Auth.Api.Migrations
             modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithOne()
+                        .WithOne("PersonalData")
                         .HasForeignKey("eShop.Auth.Api.Entities.PersonalDataEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -767,7 +767,7 @@ namespace eShop.Auth.Api.Migrations
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserChangesEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
+                        .WithMany("Changes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -803,7 +803,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
+                        .WithMany("Providers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -852,10 +852,17 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
+                    b.Navigation("Changes");
+
                     b.Navigation("LockoutState")
                         .IsRequired();
 
                     b.Navigation("Permissions");
+
+                    b.Navigation("PersonalData")
+                        .IsRequired();
+
+                    b.Navigation("Providers");
 
                     b.Navigation("RecoveryCodes");
 
