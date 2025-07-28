@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.Users.Commands;
+namespace eShop.Auth.Api.Features.Roles.Commands;
 
 public sealed record UnassignRolesCommand(UnassignRolesRequest Request)
     : IRequest<Result>;

@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.Users.Commands;
+namespace eShop.Auth.Api.Features.Permissions.Commands;
 
 public sealed record GrantPermissionCommand(GrantPermissionRequest Request)
     : IRequest<Result>;
