@@ -15,81 +15,81 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6">
-        <MudGrid Spacing="2" Justify="Justify.Center">
-            <MudItem xs="12">
-                <MudPaper Outlined="true" Class="pa-5">
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12">
-                            <MudText Typo="Typo.h6">
-                                Password
+        <MudStack Spacing="2" Justify="Justify.Center">
+            <MudCard Outlined="true" Class="pa-3">
+                <MudCardHeader Class="e-card-header">
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h6">
+                            Password
+                        </MudText>
+                        @if (UserModel.PasswordChangeDate is not null)
+                        {
+                            <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;" Class="mb-2">
+                                Last change: @UserModel.PasswordChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
-                            @if (UserModel.PasswordChangeDate is not null)
-                            {
-                                <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;" Class="mb-2">
-                                    Last change: @UserModel.PasswordChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
-                                </MudText>
-                            }
-                        </MudItem>
-                        <MudItem xs="12">
-                            <MudLoadingButton
-                                Color="Color.Primary"
-                                Variant="Variant.Filled"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnChangePasswordAsync())">
-                                Change password
-                            </MudLoadingButton>
-                            <MudLoadingButton
-                                Color="Color.Error"
-                                Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnResetPasswordAsync())">
-                                Reset password
-                            </MudLoadingButton>
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12">
-                <MudPaper Outlined="true" Class="pa-5">
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12">
-                            <MudText Typo="Typo.h6">
-                                Email
+                        }
+                    </MudStack>
+                </MudCardHeader>
+                <MudCardActions>
+                    <MudStack Row="true" Spacing="1">
+                        <MudLoadingButton
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await OnChangePasswordAsync())">
+                            Change password
+                        </MudLoadingButton>
+                        <MudLoadingButton
+                            Color="Color.Error"
+                            Variant="Variant.Outlined"
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await OnResetPasswordAsync())">
+                            Reset password
+                        </MudLoadingButton>
+                    </MudStack>
+                </MudCardActions>
+            </MudCard>
+            <MudCard Outlined="true" Class="pa-3">
+                <MudCardHeader Class="e-card-header">
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h6">
+                            Email
+                        </MudText>
+                        @if (UserModel.EmailChangeDate is not null)
+                        {
+                            <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;" Class="mb-2">
+                                Last change: @UserModel.EmailChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
-                            @if (UserModel.EmailChangeDate is not null)
-                            {
-                                <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;" Class="mb-2">
-                                    Last change: @UserModel.EmailChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
-                                </MudText>
-                            }
-                        </MudItem>
-                        <MudItem xs="12" Style="padding-top: 10px">
-                            <MudText>
-                                @UserModel.Email
-                            </MudText>
-                        </MudItem>
-                        <MudItem xs="12">
-                            <MudLoadingButton
-                                Color="Color.Primary"
-                                Variant="Variant.Filled"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/change"))">
-                                Change email
-                            </MudLoadingButton>
-                            <MudLoadingButton
-                                Color="Color.Error"
-                                Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/reset"))">
-                                Reset email
-                            </MudLoadingButton>
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12">
-                <MudPaper Outlined="true" Class="pa-5">
-                    <MudGrid Justify="Justify.Center">
+                        }
+                    </MudStack>
+                </MudCardHeader>
+                <MudCardContent Class="e-card-content">
+                    <MudText>
+                        @UserModel.Email
+                    </MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudStack Spacing="1" Row="true">
+                        <MudLoadingButton
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/change"))">
+                            Change email
+                        </MudLoadingButton>
+                        <MudLoadingButton
+                            Color="Color.Error"
+                            Variant="Variant.Outlined"
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/reset"))">
+                            Reset email
+                        </MudLoadingButton>
+                    </MudStack>
+                </MudCardActions>
+            </MudCard>
+            <MudCard Outlined="true" Class="pa-3">
+                <MudCardHeader Class="e-card-header">
+                    <MudStack Spacing="0">
                         @if (isLoading)
                         {
                             <MudItem xs="12">
@@ -102,68 +102,84 @@
                         {
                             if (string.IsNullOrEmpty(UserModel.PhoneNumber))
                             {
-                                <MudItem xs="12">
-                                    <MudText Typo="Typo.h6">
-                                        Phone number
-                                    </MudText>
-                                    <MudText Style="opacity: 0.5" Typo="Typo.caption">
-                                        Phone number was not added. You can add it by click button below.
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudLoadingButton
-                                        Color="Color.Primary"
-                                        Variant="Variant.Filled"
-                                        ButtonType="ButtonType.Button"
-                                        OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/add"))">
-                                        Add phone number
-                                    </MudLoadingButton>
-                                </MudItem>
+                                <MudText Typo="Typo.h6">
+                                    Phone number
+                                </MudText>
+                                <MudText Style="opacity: 0.5" Typo="Typo.caption">
+                                    Phone number was not added. You can add it by click button below.
+                                </MudText>
                             }
                             else
                             {
-                                <MudItem xs="12">
-                                    <MudText Typo="Typo.h6">
-                                        Phone number
+                                <MudText Typo="Typo.h6">
+                                    Phone number
+                                </MudText>
+                                @if (UserModel.PhoneNumberChangeDate is not null)
+                                {
+                                    <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;"
+                                             Class="mb-2">
+                                        Last
+                                        change: @UserModel.PhoneNumberChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
                                     </MudText>
-                                    @if (UserModel.PhoneNumberChangeDate is not null)
-                                    {
-                                        <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;"
-                                                 Class="mb-2">
-                                            Last
-                                            change: @UserModel.PhoneNumberChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
-                                        </MudText>
-                                    }
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudText>
-                                        @UserModel.PhoneNumber
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudLoadingButton
-                                        Color="Color.Primary"
-                                        Variant="Variant.Filled"
-                                        ButtonType="ButtonType.Button"
-                                        OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/change"))">
-                                        Change phone number
-                                    </MudLoadingButton>
-                                    <MudLoadingButton
-                                        Color="Color.Error"
-                                        Variant="Variant.Outlined"
-                                        ButtonType="ButtonType.Button"
-                                        OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/reset"))">
-                                        Reset phone number
-                                    </MudLoadingButton>
-                                </MudItem>
+                                }
                             }
                         }
-                    </MudGrid>
-                </MudPaper>
-            </MudItem>
-        </MudGrid>
+                    </MudStack>
+                </MudCardHeader>
+                @if (!string.IsNullOrEmpty(UserModel.PhoneNumber))
+                {
+                    <MudCardContent Class="e-card-content">
+                        <MudText>
+                            @UserModel.PhoneNumber
+                        </MudText>
+                    </MudCardContent>
+                }
+                <MudCardActions>
+                    @if (string.IsNullOrEmpty(UserModel.PhoneNumber))
+                    {
+                        <MudLoadingButton
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/add"))">
+                            Add phone number
+                        </MudLoadingButton>
+                    }
+                    else
+                    {
+                        <MudStack Spacing="1" Row="true">
+                            <MudLoadingButton
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/change"))">
+                                Change phone number
+                            </MudLoadingButton>
+                            <MudLoadingButton
+                                Color="Color.Error"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/reset"))">
+                                Reset phone number
+                            </MudLoadingButton>
+                        </MudStack>
+                    }
+                </MudCardActions>
+            </MudCard>
+        </MudStack>
     </MudItem>
 </MudGrid>
+
+<style>
+    .e-card-header {
+        padding-left: 8px;
+        padding-top: 0;
+    }
+    .e-card-content {
+        padding-left: 8px;
+        padding-top: 0;
+    }
+</style>
 
 @code {
     private UserModel UserModel { get; set; } = new();
