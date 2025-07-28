@@ -32,10 +32,25 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("send-code")]
     [AllowAnonymous]
-    public async ValueTask<ActionResult<Response>> SendTokenAsync(
+    public async ValueTask<ActionResult<Response>> SendCodeAsync(
         [FromBody] SendTwoFactorCodeRequest request)
     {
         var result = await sender.Send(new SendTwoFactorCodeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Verify 2FA code")]
+    [EndpointDescription("Verify 2FA code")]
+    [ProducesResponseType(200)]
+    [HttpPost("verify-code")]
+    [AllowAnonymous]
+    public async ValueTask<ActionResult<Response>> VerifyCodeAsync(
+        [FromBody] VerifyTwoFactorCodeRequest request)
+    {
+        var result = await sender.Send(new VerifyTwoFactorCodeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
