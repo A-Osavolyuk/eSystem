@@ -6,8 +6,8 @@ namespace eShop.Domain.Interfaces.Client;
 public interface ITwoFactorService
 {
     public ValueTask<Response> GetProvidersAsync();
-    public ValueTask<Response> ChangeStateAsync(ChangeTwoFactorStateRequest request);
-    public ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request);
-    public ValueTask<Response> SendTwoFactorCodeAsync(SendTwoFactorCodeRequest request);
+    public ValueTask<Response> LoginAsync(TwoFactorLoginRequest request);
+    public ValueTask<Response> SendCodeAsync(SendTwoFactorCodeRequest request);
+    public ValueTask<Response> VerifyCodeAsync(VerifyTwoFactorCodeRequest request);
     public ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request);
 }

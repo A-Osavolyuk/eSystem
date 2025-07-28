@@ -15,24 +15,23 @@ public class TwoFactorService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Providers/", Method = HttpMethod.Get }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> TwoFactorLoginAsync(TwoFactorLoginRequest request) =>
+    public async ValueTask<Response> LoginAsync(TwoFactorLoginRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> SendTwoFactorCodeAsync(SendTwoFactorCodeRequest request) =>
+    public async ValueTask<Response> SendCodeAsync(SendTwoFactorCodeRequest request) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/send-code", Method = HttpMethod.Post, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/send", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
+    
+    public async ValueTask<Response> VerifyCodeAsync(VerifyTwoFactorCodeRequest request) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/verify", Method = HttpMethod.Post, Data = request }, 
+            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/generate-qr-code", Method = HttpMethod.Post, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/qr-code/generate", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<Response> ChangeStateAsync(ChangeTwoFactorStateRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/change-state", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
-
 }
