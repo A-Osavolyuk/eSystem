@@ -27,20 +27,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Change two-factor state")]
-    [EndpointDescription("Changes two-factor state")]
-    [ProducesResponseType(200)]
-    [HttpPost("change-state")]
-    public async ValueTask<ActionResult<Response>> ChangeTwoFactorAuthentication(
-        [FromBody] ChangeTwoFactorStateRequest request)
-    {
-        var result = await sender.Send(new ChangeTwoFactorStateCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Send two-factor token")]
     [EndpointDescription("Send two-factor token")]
     [ProducesResponseType(200)]

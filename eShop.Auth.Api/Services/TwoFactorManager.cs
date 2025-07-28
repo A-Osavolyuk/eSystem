@@ -16,41 +16,6 @@ public sealed class TwoFactorManager(
     private readonly IUserManager userManager = userManager;
     private const int ExpirationMinutes = 30;
 
-    public async ValueTask<Result> EnableAsync(UserEntity user,
-        CancellationToken cancellationToken = default)
-    {
-        if (!await context.UserProvider.AnyAsync(u => u.UserId == user.Id, cancellationToken))
-        {
-            var providers = await context.Providers
-                .Select(p => new UserProviderEntity()
-                {
-                    UserId = user.Id, 
-                    ProviderId = p.Id, 
-                    Subscribed = false, 
-                    CreateDate = DateTimeOffset.UtcNow
-                })
-                .ToListAsync(cancellationToken);
-            
-            await context.UserProvider.AddRangeAsync(providers, cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        
-        user.TwoFactorEnabled = true;
-        
-        var result = await userManager.UpdateAsync(user, cancellationToken);
-
-        return result;
-    }
-
-    public async ValueTask<Result> DisableAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        user.TwoFactorEnabled = false;
-        
-        var result = await userManager.UpdateAsync(user, cancellationToken);
-
-        return result;
-    }
-
     public async ValueTask<string> GenerateQrCodeAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         const string issuer = "eShop";
