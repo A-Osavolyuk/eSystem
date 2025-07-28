@@ -34,15 +34,15 @@
                 </MudPaper>
             </MudItem>
             <MudItem xs="9">
-                <MudStack Spacing="1" Justify="Justify.Center">
-                    <MudCard Outlined="true" Class="pa-3">
-                        <MudCardHeader Class="e-card-header">
-                            <MudText Typo="Typo.h6">
-                                Account information
-                            </MudText>
-                        </MudCardHeader>
-                        <MudCardContent Class="e-card-content">
+                <MudGrid Spacing="2">
+                    <MudItem xs="12">
+                        <MudPaper Outlined="true" Class="pa-5">
                             <MudGrid Spacing="3">
+                                <MudItem xs="12">
+                                    <MudText Class="mb-2" Typo="Typo.h6">
+                                        Account information
+                                    </MudText>
+                                </MudItem>
                                 <MudItem xs="3" Class="mt-2">
                                     <MudText>
                                         User name
@@ -115,7 +115,7 @@
                                         <MudDivider/>
                                     </MudItem>
                                 }
-
+                                
                                 @if (!string.IsNullOrEmpty(UserModel.RecoveryEmail))
                                 {
                                     <MudItem xs="3" Class="mt-2">
@@ -141,8 +141,7 @@
                                     {
                                         <MudItem xs="12" Style="padding-top: 0">
                                             <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
-                                                Last
-                                                change: @UserModel.RecoveryEmailChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                                Last change: @UserModel.RecoveryEmailChangeDate?.ToString("MM/dd/yyyy HH:mm")
                                             </MudText>
                                         </MudItem>
                                         <MudItem xs="12" Style="padding-top: 0">
@@ -181,7 +180,7 @@
                                         <MudDivider/>
                                     </MudItem>
                                 }
-
+                                
                                 @if (!string.IsNullOrEmpty(UserModel.PhoneNumber))
                                 {
                                     <MudItem xs="3" Class="mt-2">
@@ -237,15 +236,15 @@
                                     </MudItem>
                                 }
                             </MudGrid>
-                        </MudCardContent>
-                    </MudCard>
-                    <MudCard Outlined="true" Class="pa-3">
-                        <MudCardHeader Class="e-card-header">
-                            <MudGrid Justify="Justify.Center">
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudPaper Outlined="true" Class="pa-5">
+                            <MudGrid Spacing="3">
                                 @if (UserModel.PersonalData is null)
                                 {
                                     <MudItem xs="11">
-                                        <MudText Typo="Typo.h6">
+                                        <MudText Class="mb-2" Typo="Typo.h6">
                                             Personal information
                                         </MudText>
                                     </MudItem>
@@ -287,81 +286,64 @@
                                                 OnClick="@(async () => await OnChangePersonalDataAsync())"/>
                                         </MudTooltip>
                                     </MudItem>
+                                    <MudItem xs="3">
+                                        <MudText>
+                                            First name
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText>
+                                            @UserModel.PersonalData.FirstName
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                    <MudItem xs="3">
+                                        <MudText>
+                                            Last name
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText>
+                                            @UserModel.PersonalData.LastName
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                    <MudItem xs="3">
+                                        <MudText>
+                                            Birth date
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText>
+                                            @UserModel.PersonalData.BirthDate.ToString("D", new CultureInfo("en-GB"))
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                    <MudItem xs="3">
+                                        <MudText>
+                                            Gender
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText>
+                                            @UserModel.PersonalData.Gender.ToString()
+                                        </MudText>
+                                    </MudItem>
                                 }
                             </MudGrid>
-                        </MudCardHeader>
-                        @if (UserModel.PersonalData is not null)
-                        {
-                            <MudCardContent Class="e-card-content">
-                                <MudItem xs="3">
-                                    <MudText>
-                                        First name
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="9">
-                                    <MudText>
-                                        @UserModel.PersonalData.FirstName
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudDivider/>
-                                </MudItem>
-                                <MudItem xs="3">
-                                    <MudText>
-                                        Last name
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="9">
-                                    <MudText>
-                                        @UserModel.PersonalData.LastName
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudDivider/>
-                                </MudItem>
-                                <MudItem xs="3">
-                                    <MudText>
-                                        Birth date
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="9">
-                                    <MudText>
-                                        @UserModel.PersonalData.BirthDate.ToString("D", new CultureInfo("en-GB"))
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudDivider/>
-                                </MudItem>
-                                <MudItem xs="3">
-                                    <MudText>
-                                        Gender
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="9">
-                                    <MudText>
-                                        @UserModel.PersonalData.Gender.ToString()
-                                    </MudText>
-                                </MudItem>
-                            </MudCardContent>
-                        }
-                    </MudCard>
-                </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
             </MudItem>
         </MudGrid>
     </MudItem>
 </MudGrid>
-
-<style>
-    .e-card-header {
-        padding-left: 8px;
-        padding-top: 0;
-    }
-
-    .e-card-content {
-        padding-left: 8px;
-        padding-top: 0;
-    }
-</style>
 
 @code {
     private UserModel UserModel { get; set; } = new();
