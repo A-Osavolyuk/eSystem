@@ -46,7 +46,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Field).HasEnumConversion();
 
             entity.HasOne(x => x.User)
-                .WithMany()
+                .WithMany(x => x.Changes)
                 .HasForeignKey(x => x.UserId);
         });
         
@@ -86,7 +86,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.LastName).HasMaxLength(64);
 
             entity.HasOne(p => p.User)
-                .WithOne()
+                .WithOne(u => u.PersonalData)
                 .HasForeignKey<PersonalDataEntity>(p => p.UserId);
         });
 
@@ -159,7 +159,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => new { x.UserId, x.ProviderId });
 
             entity.HasOne(x => x.User)
-                .WithMany()
+                .WithMany(x => x.Providers)
                 .HasForeignKey(x => x.UserId);
 
             entity.HasOne(x => x.Provider)
