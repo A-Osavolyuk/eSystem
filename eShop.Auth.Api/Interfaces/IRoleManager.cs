@@ -3,7 +3,6 @@
 public interface IRoleManager
 {
     public ValueTask<List<RoleEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-    public ValueTask<List<RoleEntity>> GetAllAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<RoleEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
     public ValueTask<RoleEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
     public ValueTask<Result> DeleteAsync(RoleEntity entity, CancellationToken cancellationToken = default);

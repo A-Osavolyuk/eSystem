@@ -3,7 +3,6 @@
 public interface IPermissionManager
 {
     public ValueTask<List<PermissionEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-    public ValueTask<List<PermissionEntity>> GetByUserAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<PermissionEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
     public ValueTask<PermissionEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
     public ValueTask<Result> GrantAsync(UserEntity user, PermissionEntity permission, CancellationToken cancellationToken = default);

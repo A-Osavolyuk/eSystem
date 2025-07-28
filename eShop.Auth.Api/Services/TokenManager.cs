@@ -81,7 +81,7 @@ public sealed class TokenManager(
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
-        var claims = await GetClaimsAsync(user);
+        var claims = GetClaims(user);
         var jti = Guid.NewGuid();
         var jtiClaim = new Claim(JwtRegisteredClaimNames.Jti, jti.ToString());
 
@@ -95,56 +95,58 @@ public sealed class TokenManager(
         var handler = new JwtSecurityTokenHandler();
         var token = handler.WriteToken(securityToken);
 
-        if (type is TokenType.Refresh)
+        if (type is TokenType.Access)
         {
-            var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
-                x => x.UserId == user.Id, cancellationToken: cancellationToken);
-
-            if (existingEntity is null)
-            {
-                var entity = new RefreshTokenEntity()
-                {
-                    Id = jti,
-                    UserId = user.Id,
-                    Token = token,
-                    ExpireDate = expirationDate,
-                    CreateDate = DateTime.UtcNow,
-                    UpdateDate = null
-                };
-
-                await context.RefreshTokens.AddAsync(entity, cancellationToken);
-            }
-            else
-            {
-                var entity = new RefreshTokenEntity()
-                {
-                    Id = jti,
-                    UserId = user.Id,
-                    Token = token,
-                    ExpireDate = expirationDate,
-                    CreateDate = DateTime.UtcNow,
-                    UpdateDate = null
-                };
-
-                context.RefreshTokens.Remove(existingEntity);
-                await context.RefreshTokens.AddAsync(entity, cancellationToken);
-            }
-
-            await context.SaveChangesAsync(cancellationToken);
+            return token;
         }
+        
+        var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
+            x => x.UserId == user.Id, cancellationToken: cancellationToken);
+
+        if (existingEntity is null)
+        {
+            var entity = new RefreshTokenEntity()
+            {
+                Id = jti,
+                UserId = user.Id,
+                Token = token,
+                ExpireDate = expirationDate,
+                CreateDate = DateTime.UtcNow,
+                UpdateDate = null
+            };
+
+            await context.RefreshTokens.AddAsync(entity, cancellationToken);
+        }
+        else
+        {
+            var entity = new RefreshTokenEntity()
+            {
+                Id = jti,
+                UserId = user.Id,
+                Token = token,
+                ExpireDate = expirationDate,
+                CreateDate = DateTime.UtcNow,
+                UpdateDate = null
+            };
+
+            context.RefreshTokens.Remove(existingEntity);
+            await context.RefreshTokens.AddAsync(entity, cancellationToken);
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
 
         return token;
     }
 
-    private async Task<List<Claim>> GetClaimsAsync(UserEntity userEntity)
+    private List<Claim> GetClaims(UserEntity user)
     {
         var claims = new List<Claim>()
         {
-            new(AppClaimTypes.Id, userEntity.Id.ToString()),
+            new(AppClaimTypes.Id, user.Id.ToString()),
         };
 
-        var roles = await roleManager.GetAllAsync(userEntity);
-        var permissions = await permissionManager.GetByUserAsync(userEntity);
+        var roles = user.Roles.Select(x => x.Role);
+        var permissions = user.Permissions.Select(x => x.Permission);
 
         claims.AddRange(roles.Select(x => new Claim(AppClaimTypes.Role, x.Name!)));
         claims.AddRange(permissions.Select(x => new Claim(AppClaimTypes.Permission, x.Name!)));
