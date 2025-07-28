@@ -21,35 +21,28 @@ public sealed class RecoverManager(
             context.RecoveryCodes.RemoveRange(existingEntities);
             await context.SaveChangesAsync(cancellationToken);
         }
-        
-        var entities = new List<RecoveryCodeEntity>();
-        var codes = new List<string>();
 
-        for (var i = 0; i < 10; i++)
-        {
-            var code = CodeGenerator.Generate(6);
-            var hash = hasher.Hash(code);
+        var codes = CodeGenerator.GenerateMany(6);
 
-            codes.Add(code);
-            
-            var entity = new RecoveryCodeEntity()
+        var entities = codes
+            .Select(code => hasher.Hash(code))
+            .Select(hash => new RecoveryCodeEntity()
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
                 CodeHash = hash,
                 CreateDate = DateTimeOffset.UtcNow
-            };
-            
-            entities.Add(entity);
-        }
-        
+            })
+            .ToList();
+
         await context.RecoveryCodes.AddRangeAsync(entities, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return codes;
     }
 
-    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string code,
+        CancellationToken cancellationToken = default)
     {
         var entities = await context.RecoveryCodes
             .Where(x => x.UserId == user.Id)
@@ -66,10 +59,10 @@ public sealed class RecoverManager(
         {
             return Results.BadRequest("Invalid recovery code.");
         }
-        
+
         context.RecoveryCodes.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 }
