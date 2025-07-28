@@ -23,13 +23,13 @@ public sealed class RemoveUserRolesCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
 
-        foreach (var role in request.Request.Roles)
+        foreach (var roleName in request.Request.Roles)
         {
-            var isInRole = await roleManager.IsInRoleAsync(user, role, cancellationToken);
+            var role = await roleManager.FindByNameAsync(roleName, cancellationToken);
 
-            if (!isInRole)
+            if (role is null)
             {
-                return Results.BadRequest($"User with ID {request.Request.UserId} is not in role {role}.");
+                return Results.NotFound($"Cannot find role with name {roleName}.");
             }
 
             var result = await roleManager.UnassignAsync(user, role, cancellationToken);

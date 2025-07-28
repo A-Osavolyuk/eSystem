@@ -148,6 +148,14 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
     public async ValueTask<Result> AssignAsync(UserEntity user, RoleEntity role,
         CancellationToken cancellationToken = default)
     {
+        var hasRole = await context.UserRoles.AnyAsync(
+            x => x.UserId == user.Id && x.RoleId == role.Id, cancellationToken);
+
+        if (hasRole)
+        {
+            return Result.Success();
+        }
+        
         var userRole = new UserRoleEntity()
         {
             UserId = user.Id,
