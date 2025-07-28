@@ -9,14 +9,14 @@ public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
 public sealed class LoginWith2FaCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
-    ILoginTokenManager loginTokenManager,
+    ILoginCodeManager loginCodeManager,
     IProviderManager providerManager,
     ILockoutManager lockoutManager,
     IRecoverManager recoverManager) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
-    private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
+    private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
     private readonly IProviderManager providerManager = providerManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IRecoverManager recoverManager = recoverManager;
@@ -47,7 +47,7 @@ public sealed class LoginWith2FaCommandHandler(
 
         var code = request.Request.Code;
         
-        var result = await loginTokenManager.VerifyAsync(user, provider, code, cancellationToken);
+        var result = await loginCodeManager.VerifyAsync(user, provider, code, cancellationToken);
 
         if (!result.Succeeded)
         {

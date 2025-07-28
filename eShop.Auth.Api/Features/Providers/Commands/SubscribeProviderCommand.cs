@@ -10,12 +10,12 @@ public record SubscribeProviderCommand(SubscribeProviderRequest Request) : IRequ
 public class SubscribeProviderCommandHandler(
     IUserManager userManager,
     IProviderManager providerManager,
-    ILoginTokenManager loginTokenManager,
+    ILoginCodeManager loginCodeManager,
     IMessageService messageService) : IRequestHandler<SubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IProviderManager providerManager = providerManager;
-    private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
+    private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
     private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(SubscribeProviderCommand request, CancellationToken cancellationToken)
@@ -41,7 +41,7 @@ public class SubscribeProviderCommandHandler(
             return result;
         }
         
-        var code = await loginTokenManager.GenerateAsync(user, provider, cancellationToken);
+        var code = await loginCodeManager.GenerateAsync(user, provider, cancellationToken);
 
         var sender = provider.Name switch
         {

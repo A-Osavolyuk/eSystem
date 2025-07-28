@@ -5,12 +5,12 @@ using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
-[Injectable(typeof(ILoginTokenManager), ServiceLifetime.Scoped)]
+[Injectable(typeof(ILoginCodeManager), ServiceLifetime.Scoped)]
 public sealed class LoginCodeManager(
     AuthDbContext context,
     SecretProtector protector,
     ISecretManager secretManager,
-    Hasher hasher) : ILoginTokenManager
+    Hasher hasher) : ILoginCodeManager
 {
     private readonly AuthDbContext context = context;
     private readonly ISecretManager secretManager = secretManager;

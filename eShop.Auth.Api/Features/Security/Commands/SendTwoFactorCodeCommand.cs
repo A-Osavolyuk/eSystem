@@ -9,12 +9,12 @@ public record SendTwoFactorCodeCommand(SendTwoFactorCodeRequest Request) : IRequ
 
 public class SendTwoFactorCodeCommandHandler(
     IUserManager userManager,
-    ILoginTokenManager loginTokenManager,
+    ILoginCodeManager loginCodeManager,
     IProviderManager providerManager,
     IMessageService messageService) : IRequestHandler<SendTwoFactorCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
+    private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
     private readonly IMessageService messageService = messageService;
     private readonly IProviderManager providerManager = providerManager;
 
@@ -34,7 +34,7 @@ public class SendTwoFactorCodeCommandHandler(
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         }
         
-        var code = await loginTokenManager.GenerateAsync(user, provider, cancellationToken);
+        var code = await loginCodeManager.GenerateAsync(user, provider, cancellationToken);
 
         var sender = provider.Name switch
         {

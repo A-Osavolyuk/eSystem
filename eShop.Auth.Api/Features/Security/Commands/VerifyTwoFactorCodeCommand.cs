@@ -6,11 +6,11 @@ public record VerifyTwoFactorCodeCommand(VerifyTwoFactorCodeRequest Request) : I
 
 public class VerifyTwoFactorCodeCommandHandler(
     IUserManager userManager,
-    ILoginTokenManager loginTokenManager,
+    ILoginCodeManager loginCodeManager,
     IProviderManager providerManager) : IRequestHandler<VerifyTwoFactorCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
+    private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
     private readonly IProviderManager providerManager = providerManager;
 
     public async Task<Result> Handle(VerifyTwoFactorCodeCommand request, CancellationToken cancellationToken)
@@ -29,7 +29,7 @@ public class VerifyTwoFactorCodeCommandHandler(
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         }
         
-        var result = await loginTokenManager.VerifyAsync(user, provider, request.Request.Code, cancellationToken);
+        var result = await loginCodeManager.VerifyAsync(user, provider, request.Request.Code, cancellationToken);
         
         return result;
     }
