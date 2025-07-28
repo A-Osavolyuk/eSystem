@@ -3,7 +3,7 @@
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IRecoverManager), ServiceLifetime.Scoped)]
-public class RecoverManager(
+public sealed class RecoverManager(
     AuthDbContext context,
     Hasher hasher) : IRecoverManager
 {

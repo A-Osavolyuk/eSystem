@@ -1,7 +1,7 @@
 ﻿namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IRollbackManager), ServiceLifetime.Scoped)]
-public class RollbackManager(AuthDbContext context) : IRollbackManager
+public sealed class RollbackManager(AuthDbContext context) : IRollbackManager
 {
     private readonly AuthDbContext context = context;
 }

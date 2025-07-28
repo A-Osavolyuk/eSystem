@@ -1,7 +1,7 @@
 ﻿namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IReasonManager),  ServiceLifetime.Scoped)]
-public class ReasonManager(AuthDbContext context) : IReasonManager
+public sealed class ReasonManager(AuthDbContext context) : IReasonManager
 {
     private readonly AuthDbContext context = context;
 
