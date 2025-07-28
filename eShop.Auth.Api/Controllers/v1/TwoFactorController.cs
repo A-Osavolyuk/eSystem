@@ -46,7 +46,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Verify 2FA code")]
     [ProducesResponseType(200)]
     [HttpPost("code/verify")]
-    [AllowAnonymous]
+    [Authorize]
     public async ValueTask<ActionResult<Response>> VerifyCodeAsync(
         [FromBody] VerifyTwoFactorCodeRequest request)
     {
