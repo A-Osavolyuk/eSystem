@@ -5,11 +5,6 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<bool> ExistsAsync(string name, CancellationToken cancellationToken = default)
-    {
-        return await context.Roles.AnyAsync(x => x.Name == name, cancellationToken);
-    }
-
     public async ValueTask<List<RoleEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var roles = await context.Roles.ToListAsync(cancellationToken);
@@ -120,30 +115,6 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         
         return Result.Success();
     }
-    
-    public async ValueTask<Result> AssignAsync(UserEntity user, string roleName,
-        CancellationToken cancellationToken = default)
-    {
-        var role = await context.Roles.FirstOrDefaultAsync(x => x.Name == roleName || x.NormalizedName == roleName,
-            cancellationToken);
-
-        if (role is null)
-        {
-            return Results.NotFound("Role not found");
-        }
-
-        var userRole = new UserRoleEntity()
-        {
-            UserId = user.Id,
-            RoleId = role.Id,
-            CreateDate = DateTime.UtcNow
-        };
-
-        await context.UserRoles.AddAsync(userRole, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
 
     public async ValueTask<Result> AssignAsync(UserEntity user, RoleEntity role,
         CancellationToken cancellationToken = default)
@@ -167,14 +138,5 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
-    }
-    
-    public async ValueTask<bool> IsInRoleAsync(UserEntity user, string roleName,
-        CancellationToken cancellationToken = default)
-    {
-        var isInRole = await context.UserRoles
-            .AnyAsync(x => x.UserId == user.Id && x.Role.Name == roleName, cancellationToken: cancellationToken);
-
-        return isInRole;
     }
 }

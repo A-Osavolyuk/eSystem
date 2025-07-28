@@ -91,48 +91,12 @@ public sealed class PermissionManager(AuthDbContext context) : IPermissionManage
 
         if (userPermission is null)
         {
-            return Results.NotFound($"Cannot find permission {permissionEntity.Name} for user with ID {user.Id}");
+            return Results.NotFound($"User doesn't have permission {permissionEntity.Name}");
         }
 
         context.UserPermissions.Remove(userPermission);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
-    }
-
-    public async ValueTask<Result> RevokeAsync(UserEntity user,
-        CancellationToken cancellationToken = default)
-    {
-        var userPermissions = await context.UserPermissions
-            .Where(x => x.UserId == user.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
-
-        if (userPermissions.Any())
-        {
-            context.UserPermissions.RemoveRange(userPermissions);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-
-        return Result.Success();
-    }
-
-    public async ValueTask<bool> HasAsync(UserEntity userEntity, string name,
-        CancellationToken cancellationToken = default)
-    {
-        var permission = await context.Permissions
-            .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Name == name, cancellationToken: cancellationToken);
-
-        if (permission is null)
-        {
-            return false;
-        }
-
-        var hasUserPermission = await context.UserPermissions
-            .AsNoTracking()
-            .AnyAsync(x => x.UserId == userEntity.Id && x.PermissionId == permission.Id,
-                cancellationToken: cancellationToken);
-
-        return hasUserPermission;
     }
 }

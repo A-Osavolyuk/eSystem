@@ -38,16 +38,11 @@ public sealed class IssuePermissionCommandHandler(
 
         foreach (var permission in permissions)
         {
-            var hasPermission = await permissionManager.HasAsync(user, permission.Name, cancellationToken);
+            var result = await permissionManager.GrantAsync(user, permission, cancellationToken);
 
-            if (!hasPermission)
+            if (!result.Succeeded)
             {
-                var result = await permissionManager.GrantAsync(user, permission, cancellationToken);
-
-                if (!result.Succeeded)
-                {
-                    return result;
-                }
+                return result;
             }
         }
 
