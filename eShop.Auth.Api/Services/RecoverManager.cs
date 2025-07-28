@@ -12,13 +12,9 @@ public sealed class RecoverManager(
 
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var existingEntities = await context.RecoveryCodes
-            .Where(x => x.UserId == user.Id)
-            .ToListAsync(cancellationToken);
-
-        if (existingEntities.Count > 0)
+        if (user.RecoveryCodes.Count > 0)
         {
-            context.RecoveryCodes.RemoveRange(existingEntities);
+            context.RecoveryCodes.RemoveRange(user.RecoveryCodes);
             await context.SaveChangesAsync(cancellationToken);
         }
 
@@ -44,16 +40,12 @@ public sealed class RecoverManager(
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code,
         CancellationToken cancellationToken = default)
     {
-        var entities = await context.RecoveryCodes
-            .Where(x => x.UserId == user.Id)
-            .ToListAsync(cancellationToken);
-
-        if (entities.Count == 0)
+        if (user.RecoveryCodes.Count == 0)
         {
             return Results.BadRequest("Recovery codes not generated or already used.");
         }
 
-        var entity = entities.FirstOrDefault(x => hasher.VerifyHash(code, x.CodeHash));
+        var entity = user.RecoveryCodes.FirstOrDefault(x => hasher.VerifyHash(code, x.CodeHash));
 
         if (entity is null)
         {
