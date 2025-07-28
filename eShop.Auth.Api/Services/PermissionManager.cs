@@ -42,28 +42,6 @@ public sealed class PermissionManager(AuthDbContext context) : IPermissionManage
         return permissions;
     }
 
-    public async ValueTask<Result> GrantAsync(UserEntity user, List<PermissionEntity> collection,
-        CancellationToken cancellationToken = default)
-    {
-        var permissions = collection.ToList();
-
-        if (!permissions.Any())
-        {
-            return Results.NotFound("Cannot add permissions. Empty permission list.");
-        }
-
-        var entities = permissions.Select(x =>
-            new UserPermissionsEntity()
-            {
-                UserId = user.Id,
-                PermissionId = x.Id
-            });
-
-        await context.UserPermissions.AddRangeAsync(entities, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-        return Result.Success();
-    }
-
     public async ValueTask<Result> GrantAsync(UserEntity user, PermissionEntity permission,
         CancellationToken cancellationToken = default)
     {
