@@ -30,7 +30,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Send 2FA code")]
     [EndpointDescription("Send 2FA code")]
     [ProducesResponseType(200)]
-    [HttpPost("send-code")]
+    [HttpPost("code/send")]
     [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> SendCodeAsync(
         [FromBody] SendTwoFactorCodeRequest request)
@@ -45,7 +45,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Verify 2FA code")]
     [EndpointDescription("Verify 2FA code")]
     [ProducesResponseType(200)]
-    [HttpPost("verify-code")]
+    [HttpPost("code/verify")]
     [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> VerifyCodeAsync(
         [FromBody] VerifyTwoFactorCodeRequest request)
@@ -60,7 +60,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Generate QR code")]
     [EndpointDescription("Generate QR code")]
     [ProducesResponseType(200)]
-    [HttpPost("generate-qr-code")]
+    [HttpPost("qr-code/generate")]
     public async ValueTask<ActionResult<Response>> GenerateQrCodeAsync(
         [FromBody] GenerateQrCodeRequest request)
     {
