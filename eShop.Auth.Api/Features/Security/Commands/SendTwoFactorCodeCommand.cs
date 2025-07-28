@@ -5,20 +5,20 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public record SendTwoFactorTokenCommand(SendTwoFactorTokenRequest Request) : IRequest<Result>;
+public record SendTwoFactorCodeCommand(SendTwoFactorCodeRequest Request) : IRequest<Result>;
 
-public class SendTwoFactorTokenCommandHandler(
+public class SendTwoFactorCodeCommandHandler(
     IUserManager userManager,
     ILoginTokenManager loginTokenManager,
     IProviderManager providerManager,
-    IMessageService messageService) : IRequestHandler<SendTwoFactorTokenCommand, Result>
+    IMessageService messageService) : IRequestHandler<SendTwoFactorCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILoginTokenManager loginTokenManager = loginTokenManager;
     private readonly IMessageService messageService = messageService;
     private readonly IProviderManager providerManager = providerManager;
 
-    public async Task<Result> Handle(SendTwoFactorTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SendTwoFactorCodeCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
@@ -62,7 +62,7 @@ public class SendTwoFactorTokenCommandHandler(
             {
                 Credentials = new ()
                 {
-                    { "PhoneNumber", user!.PhoneNumber },
+                    { "PhoneNumber", user.PhoneNumber! },
                 }, 
                 Payload = new()
                 {
@@ -74,6 +74,6 @@ public class SendTwoFactorTokenCommandHandler(
         
         await messageService.SendMessageAsync(sender, message, cancellationToken);
         
-        return Result.Success("Two-factor authentication token has been successfully sent");
+        return Result.Success("Two-factor authentication code has been successfully sent");
     }
 }

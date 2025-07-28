@@ -252,7 +252,7 @@
                 var request = Mapper.Map(SendTwoFactorTokenModel);
                 request.UserId = Id;
 
-                var result = await TwoFactorService.SendTwoFactorTokenAsync(request);
+                var result = await TwoFactorService.SendTwoFactorCodeAsync(request);
 
                 if (result.Success)
                 {

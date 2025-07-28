@@ -20,9 +20,9 @@ public class TwoFactorService(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> SendTwoFactorTokenAsync(SendTwoFactorTokenRequest request) =>
+    public async ValueTask<Response> SendTwoFactorCodeAsync(SendTwoFactorCodeRequest request) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/send-token", Method = HttpMethod.Post, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/send-code", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>

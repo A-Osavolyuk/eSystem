@@ -34,9 +34,9 @@ public static class Mapper
         };
     }
 
-    public static SendTwoFactorTokenRequest Map(SendTwoFactorTokenModel source)
+    public static SendTwoFactorCodeRequest Map(SendTwoFactorTokenModel source)
     {
-        return new SendTwoFactorTokenRequest()
+        return new SendTwoFactorCodeRequest()
         {
             Provider = source.Provider
         };

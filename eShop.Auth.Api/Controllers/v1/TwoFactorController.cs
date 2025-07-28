@@ -27,15 +27,15 @@ public class TwoFactorController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Send two-factor token")]
-    [EndpointDescription("Send two-factor token")]
+    [EndpointSummary("Send 2FA code")]
+    [EndpointDescription("Send 2FA code")]
     [ProducesResponseType(200)]
-    [HttpPost("send-token")]
+    [HttpPost("send-code")]
     [AllowAnonymous]
     public async ValueTask<ActionResult<Response>> SendTokenAsync(
-        [FromBody] SendTwoFactorTokenRequest request)
+        [FromBody] SendTwoFactorCodeRequest request)
     {
-        var result = await sender.Send(new SendTwoFactorTokenCommand(request));
+        var result = await sender.Send(new SendTwoFactorCodeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
