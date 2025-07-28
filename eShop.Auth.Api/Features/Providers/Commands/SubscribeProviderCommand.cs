@@ -2,6 +2,7 @@
 using eShop.Auth.Api.Messages.Sms;
 using eShop.Domain.Common.Security;
 using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Providers.Commands;
 
@@ -11,12 +12,14 @@ public class SubscribeProviderCommandHandler(
     IUserManager userManager,
     IProviderManager providerManager,
     ILoginCodeManager loginCodeManager,
-    IMessageService messageService) : IRequestHandler<SubscribeProviderCommand, Result>
+    IMessageService messageService,
+    ITwoFactorManager twoFactorManager) : IRequestHandler<SubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IProviderManager providerManager = providerManager;
     private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
     private readonly IMessageService messageService = messageService;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(SubscribeProviderCommand request, CancellationToken cancellationToken)
     {
@@ -39,6 +42,15 @@ public class SubscribeProviderCommandHandler(
         if (!result.Succeeded)
         {
             return result;
+        }
+
+        if (provider.Name == ProviderTypes.Authenticator)
+        {
+            var qrCode = await twoFactorManager.GenerateQrCodeAsync(user, cancellationToken);
+            
+            var response = new SubscribeProviderResponse() { QrCode = qrCode };
+            
+            return Result.Success(response);
         }
         
         var code = await loginCodeManager.GenerateAsync(user, provider, cancellationToken);
