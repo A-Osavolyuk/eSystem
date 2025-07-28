@@ -34,7 +34,7 @@ public class SendTwoFactorCodeCommandHandler(
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         }
         
-        var token = await loginTokenManager.GenerateAsync(user, provider, cancellationToken);
+        var code = await loginTokenManager.GenerateAsync(user, provider, cancellationToken);
 
         var sender = provider.Name switch
         {
@@ -55,7 +55,7 @@ public class SendTwoFactorCodeCommandHandler(
                 Payload = new()
                 {
                     { "UserName", user.UserName },
-                    { "Code", token },
+                    { "Code", code },
                 },
             },
             ProviderTypes.Sms => new TwoFactorTokenSmsMessage()
@@ -66,7 +66,7 @@ public class SendTwoFactorCodeCommandHandler(
                 }, 
                 Payload = new()
                 {
-                    { "Code", token },
+                    { "Code", code },
                 },
             },
             _ => throw new NotSupportedException($"Provider type {provider.Name} is not supported.")
