@@ -5,9 +5,9 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(IUserManager), ServiceLifetime.Scoped)]
 public sealed class UserManager(
     AuthDbContext context,
-    IChangeManager changeManager,
     IdentityOptions identityOptions,
-    Hasher hasher) : IUserManager
+    Hasher hasher,
+    IChangeManager changeManager) : IUserManager
 {
     private readonly AuthDbContext context = context;
     private readonly IChangeManager changeManager = changeManager;
@@ -246,7 +246,7 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangeRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
         CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.RecoveryEmail, cancellationToken);
+        var result = await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.RecoveryEmail!, cancellationToken);
 
         if (!result.Succeeded)
         {
@@ -320,6 +320,8 @@ public sealed class UserManager(
     public async ValueTask<Result> UpdateAsync(UserEntity user, 
         CancellationToken cancellationToken = default)
     {
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
         
