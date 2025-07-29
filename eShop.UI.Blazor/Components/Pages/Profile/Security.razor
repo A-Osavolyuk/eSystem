@@ -23,7 +23,7 @@
                     </MudText>
                     <MudSpacer />
                     <MudIconButton
-                        Style="padding-right: 0;"
+                        Class="pr-0"
                         Icon="@Icons.Material.Filled.Settings"
                         ButtonType="ButtonType.Button"/>
                 </MudCardHeader>
@@ -46,7 +46,7 @@
                                         Enabled at: 07.28.2025 10:39
                                     </MudText>
                                 </MudItem>
-                                <MudItem Style="padding-top: 0" xs="12">
+                                <MudItem Class="pt-0" xs="12">
                                     <MudDivider />
                                 </MudItem>
                             </MudGrid>
@@ -59,18 +59,26 @@
                                 <MudItem xs="9">
                                     <MudText Color="Color.Error"> Disabled </MudText>
                                 </MudItem>
-                                <MudItem xs="12" Style="padding-top: 0">
+                                <MudItem xs="12" Class="pt-0">
                                     <MudText Class="opacity-50" Typo="Typo.caption">
                                         Disabled at: 07.28.2025 10:39
                                     </MudText>
                                 </MudItem>
-                                <MudItem xs="12" Style="padding-top: 0">
+                                <MudItem xs="12" Class="pt-0">
                                     <MudDivider/>
                                 </MudItem>
                             </MudGrid>
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>
+                <MudCardActions>
+                    <MudButton
+                        Color="Color.Error"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button">
+                        Disable 2FA
+                    </MudButton>
+                </MudCardActions>
             </MudCard>
             <MudCard Outlined="true" Class="pa-3">
                 <MudCardHeader Class="e-card-header">
