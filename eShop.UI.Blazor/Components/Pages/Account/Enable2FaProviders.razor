@@ -1,0 +1,214 @@
+﻿@page "/account/2fa/provider"
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject AuthenticationManager AuthenticationManager
+@inject IProvidersService ProvidersService
+@inject ITwoFactorService TwoFactorService
+
+<Title Text="2FA with providers" />
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6" Style="margin-top: 100px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            Animation="true"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Info" Title="Code send">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            2FA code send
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-5">
+                                        <MudStack Spacing="3" Justify="Justify.Center">
+                                            <MudText Class="mb-2" Align="Align.Center">
+                                                To enhance the security of your account, we offer Two-Factor
+                                                Authentication (2FA) using 2FA code providers.
+                                                This adds an extra layer of protection by requiring
+                                                not just your password, but also a one-time code
+                                                generated and sent to 2FA providers (SMS or Email).
+                                                Your select 2FA code provider is: <strong></strong>
+                                            </MudText>
+                                            @if (Provider == ProviderTypes.Email)
+                                            {
+                                                <MudButton
+                                                    StartIcon="@Icons.Material.Filled.Email"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await OnSubscribeProviderAsync())">
+                                                    Send code with Email
+                                                </MudButton>
+                                            }
+                                            else if (Provider == ProviderTypes.Sms)
+                                            {
+                                                <MudButton
+                                                    StartIcon="@Icons.Material.Filled.Sms"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await OnSubscribeProviderAsync())">
+                                                    Send code with SMS
+                                                </MudButton>
+                                            }
+                                        </MudStack>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Verified" Title="Code verification">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Authenticator app verification
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-5">
+                                        <MudForm
+                                            @ref="form"
+                                            Model="VerifyProviderModel">
+                                            <MudGrid Justify="Justify.Center">
+                                                <MudItem xs="12">
+                                                    <MudText Align="Align.Center">
+                                                        Enter 6-digit code from @Provider
+                                                    </MudText>
+                                                </MudItem>
+                                                <MudItem xs="7">
+                                                    <MudCodeInput
+                                                        Count="6"
+                                                        Margin="Margin.Normal" Spacing="1"
+                                                        @bind-Value="VerifyProviderModel.Code"
+                                                        Variant="Variant.Outlined"/>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnVerifyCodeAsync())">
+                                                        Verify
+                                                    </MudLoadingButton>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudForm>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Result Step" IsResultStep="true">
+                    <ChildContent>
+                        <div class="d-flex flex-column align-center justify-center" style="height: 200px">
+                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
+                                           Variant="Variant.Filled" Color="Color.Success"/>
+                            <MudText Style="width: 55ch; margin: auto" Align="Align.Center">
+                                2FA with @Provider code provider was successfully enabled. 
+                                You will be automatically redirected to back security page in 5 seconds
+                            </MudText>
+                        </div>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "type")] private string Provider { get; set; } = string.Empty;
+    [SupplyParameterFromForm] private VerifyProviderModel VerifyProviderModel { get; set; } = new();
+    
+    private MudStepperExtended stepper = new();
+    private MudForm form = new();
+    
+    private bool completed = false;
+    private Guid userId;
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var state = await AuthenticationManager.GetStateAsync();
+            userId = state!.UserId;
+        }
+
+        if (completed)
+        {
+            await OnCompleteAsync();
+        }
+    }
+
+    private async Task OnSubscribeProviderAsync()
+    {
+        var request = new SubscribeProviderRequest()
+        {
+            UserId = userId,
+            Provider = Provider
+        };
+
+        var result = await ProvidersService.SubscribeAsync(request);
+
+        if (result.Success)
+        {
+            await StepNextAsync();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnVerifyCodeAsync()
+    {
+        var request = new VerifyTwoFactorCodeRequest()
+        {
+            UserId = userId,
+            Code = VerifyProviderModel.Code,
+            Provider = Provider
+        };
+
+        var result = await TwoFactorService.VerifyCodeAsync(request);
+
+        if (result.Success)
+        {
+            await StepNextAsync();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+
+        if (stepper.IsAllStepsCompleted())
+        {
+            completed = true;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task OnCompleteAsync()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(5));
+        await RouteManager.NavigateAsync("/account/security");
+    }
+}
