@@ -36,18 +36,32 @@
                             {
                                 <MudItem xs="12" Class="mt-2">
                                     <MudGrid Spacing="1">
-                                        <MudItem xs="3">
+                                        <MudItem xs="3" Class="pt-1 position-relative">
                                             <MudText> With @provider.Name</MudText>
+                                            @if (provider is { Subscribed: true, SubscribedDate: not null })
+                                            {
+                                                <MudText Class="opacity-50 position-absolute" Style="bottom: -18px" Typo="Typo.caption">
+                                                    Enabled at: @provider.SubscribedDate?.ToString("MM/dd/yyyy HH:mm")
+                                                </MudText>
+                                            }
+                                            else if (provider is { Subscribed: false, UnsubscribedDate: not null })
+                                            {
+                                                <MudText Class="opacity-50 position-absolute" Style="bottom: -18px" Typo="Typo.caption">
+                                                    Disabled
+                                                    at: @provider.UnsubscribedDate?.ToString("MM/dd/yyyy HH:mm")
+                                                </MudText>
+                                            }
                                         </MudItem>
-                                        <MudItem xs="9">
+                                        <MudItem xs="9" Class="pt-0">
                                             @if (provider.Subscribed)
                                             {
                                                 <MudStack Row="true">
-                                                    <MudText Color="Color.Success">Enabled</MudText>
+                                                    <MudText Class="pt-1" Color="Color.Success">Enabled</MudText>
                                                     <MudSpacer />
                                                     <MudTooltip Text="Disable">
                                                         <MudIconButton 
                                                             Color="Color.Error"
+                                                            Class="pt-1"
                                                             Icon="@Icons.Material.Filled.Close"
                                                             Variant="Variant.Outlined"
                                                             ButtonType="ButtonType.Button"
@@ -58,32 +72,18 @@
                                             else
                                             {
                                                 <MudStack Row="true">
-                                                    <MudText Color="Color.Error">Disabled</MudText>
+                                                    <MudText Class="pt-1" Color="Color.Error">Disabled</MudText>
                                                     <MudSpacer />
                                                     <MudTooltip Text="Enable">
                                                         <MudIconButton 
                                                             Color="Color.Primary"
+                                                            Class="pt-1"
                                                             Icon="@Icons.Material.Filled.Check"
                                                             Variant="Variant.Filled"
                                                             ButtonType="ButtonType.Button"
                                                             OnClick="@(async () => await OnSubscribeAsync(provider.Name))"/>
                                                     </MudTooltip>
                                                 </MudStack>
-                                            }
-                                        </MudItem>
-                                        <MudItem xs="12" Style="padding-top: 0">
-                                            @if (provider is { Subscribed: true, SubscribedDate: not null })
-                                            {
-                                                <MudText Class="opacity-50" Typo="Typo.caption">
-                                                    Enabled at: @provider.SubscribedDate?.ToString("MM/dd/yyyy HH:mm")
-                                                </MudText>
-                                            }
-                                            else if (provider is { Subscribed: false, UnsubscribedDate: not null })
-                                            {
-                                                <MudText Class="opacity-50" Typo="Typo.caption">
-                                                    Disabled
-                                                    at: @provider.UnsubscribedDate?.ToString("MM/dd/yyyy HH:mm")
-                                                </MudText>
                                             }
                                         </MudItem>
                                         @if (!provider.SubscribedDate.HasValue && !provider.UnsubscribedDate.HasValue)
@@ -94,7 +94,7 @@
                                         }
                                         else
                                         {
-                                            <MudItem Class="pt-0" xs="12">
+                                            <MudItem Class="pt-4" xs="12">
                                                 <MudDivider/>
                                             </MudItem>
                                         }
