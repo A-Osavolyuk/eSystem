@@ -25,16 +25,9 @@
                 <MudCardContent Class="e-card-content">
                     <MudGrid Spacing="3">
                         <MudItem xs="12">
-                            <MudStack Row="true">
-                                <MudText Class="pt-2" Typo="Typo.h6">
-                                    Providers
-                                </MudText>
-                                <MudSpacer/>
-                                <MudIconButton
-                                    Icon="@Icons.Material.Filled.Settings"
-                                    ButtonType="ButtonType.Button"
-                                    OnClick="@(async () => await RouteManager.NavigateAsync("/account/2fa"))"/>
-                            </MudStack>
+                            <MudText Class="pt-2" Typo="Typo.h6">
+                                Providers
+                            </MudText>
                             <MudDivider/>
                         </MudItem>
                         @if (UserModel.Providers.Count > 0)
@@ -49,11 +42,33 @@
                                         <MudItem xs="9">
                                             @if (provider.Subscribed)
                                             {
-                                                <MudText Color="Color.Success">Enabled</MudText>
+                                                <MudStack Row="true">
+                                                    <MudText Color="Color.Success">Enabled</MudText>
+                                                    <MudSpacer />
+                                                    <MudTooltip Text="Disable">
+                                                        <MudIconButton 
+                                                            Color="Color.Error"
+                                                            Icon="@Icons.Material.Filled.Close"
+                                                            Variant="Variant.Outlined"
+                                                            ButtonType="ButtonType.Button"
+                                                            OnClick="@(async () => await OnUnsubscribeAsync(provider.Name))"/>
+                                                    </MudTooltip>
+                                                </MudStack>
                                             }
                                             else
                                             {
-                                                <MudText Color="Color.Error">Disabled</MudText>
+                                                <MudStack Row="true">
+                                                    <MudText Color="Color.Error">Disabled</MudText>
+                                                    <MudSpacer />
+                                                    <MudTooltip Text="Enable">
+                                                        <MudIconButton 
+                                                            Color="Color.Primary"
+                                                            Icon="@Icons.Material.Filled.Check"
+                                                            Variant="Variant.Filled"
+                                                            ButtonType="ButtonType.Button"
+                                                            OnClick="@(async () => await OnSubscribeAsync(provider.Name))"/>
+                                                    </MudTooltip>
+                                                </MudStack>
                                             }
                                         </MudItem>
                                         <MudItem xs="12" Style="padding-top: 0">
@@ -66,7 +81,8 @@
                                             else if (provider is { Subscribed: false, UnsubscribedDate: not null })
                                             {
                                                 <MudText Class="opacity-50" Typo="Typo.caption">
-                                                    Disabled at: @provider.UnsubscribedDate?.ToString("MM/dd/yyyy HH:mm")
+                                                    Disabled
+                                                    at: @provider.UnsubscribedDate?.ToString("MM/dd/yyyy HH:mm")
                                                 </MudText>
                                             }
                                         </MudItem>
@@ -352,6 +368,23 @@
             await LoadUserAsync();
             StateHasChanged();
         }
+    }
+
+    private async Task OnSubscribeAsync(string provider)
+    {
+        if (provider == ProviderTypes.Authenticator)
+        {
+            await RouteManager.NavigateAsync("/account/2fa/authenticator");
+        }
+        else
+        {
+            await RouteManager.NavigateAsync($"/account/2fa/provider?type={provider}");
+        }
+    }
+    
+    private async Task OnUnsubscribeAsync(string provider)
+    {
+        
     }
 
 }
