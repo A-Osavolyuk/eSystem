@@ -1,8 +1,10 @@
 ﻿@page "/account/phone-number/add"
 
-@using Router = eShop.Infrastructure.Routing.RouteManager
 @using Size = MudBlazor.Size
+
 @inherits PageBase
+
+@attribute [Authorize]
 
 @inject ISecurityService SecurityService
 @inject AddPhoneNumberValidator AddPhoneNumberValidator
