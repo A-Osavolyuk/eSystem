@@ -29,9 +29,4 @@ public class TwoFactorService(
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/verify", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/qr-code/generate", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 }
