@@ -14,11 +14,11 @@ public class ProvidersService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Providers", Method = HttpMethod.Get },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> SubscribeProviderAsync(SubscribeProviderRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> SubscribeAsync(SubscribeProviderRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Providers/subscribe", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> UnsubscribeProviderAsync(UnsubscribeProviderRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> UnsubscribeAsync(UnsubscribeProviderRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Providers/unsubscribe", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 }
