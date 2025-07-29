@@ -53,15 +53,6 @@ public sealed class LoginCodeManager(
     public async ValueTask<Result> VerifyAsync(UserEntity user, ProviderEntity provider, string code,
         CancellationToken cancellationToken = default)
     {
-        var entity = await context.LoginCodes
-            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (entity is null)
-        {
-            return Results.NotFound("Not found code");
-        }
-
         if (provider.Name == ProviderTypes.Authenticator)
         {
             var userSecret = await secretManager.FindAsync(user, cancellationToken);
@@ -76,7 +67,16 @@ public sealed class LoginCodeManager(
             var totp = new Totp(secretBytes);
             var isVerifiedCode = totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
 
-            return isVerifiedCode ? Results.BadRequest("Invalid code") : Result.Success();
+            return !isVerifiedCode ? Results.BadRequest("Invalid code") : Result.Success();
+        }
+        
+        var entity = await context.LoginCodes
+            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (entity is null)
+        {
+            return Results.NotFound("Not found code");
         }
         
         var isValidHash = hasher.VerifyHash(code, entity.CodeHash);
