@@ -38,19 +38,6 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Get personal data")]
-    [EndpointDescription("Get personal data")]
-    [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/personal-data")]
-    public async ValueTask<ActionResult<Response>> GetPersonalDataAsync(Guid id)
-    {
-        var result = await sender.Send(new GetPersonalDataQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Get lockout state")]
     [EndpointDescription("Get lockout state")]
     [ProducesResponseType(200)]
@@ -62,23 +49,6 @@ public class UsersController(ISender sender) : ControllerBase
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Get two-factor state")]
-    [EndpointDescription("Get two-factor state")]
-    [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/two-factor/state")]
-    [AllowAnonymous]
-    public async ValueTask<ActionResult<Response>> GetTwoFactorAuthenticationState(Guid id)
-    {
-        var result = await sender.Send(new GetTwoFactorStateQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder()
-                .Succeeded()
-                .WithResult(s.Value!)
-                .Build()),
             ErrorHandler.Handle);
     }
     

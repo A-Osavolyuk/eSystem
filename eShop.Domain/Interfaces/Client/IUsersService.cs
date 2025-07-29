@@ -7,9 +7,7 @@ public interface IUsersService
 {
     public ValueTask<Response> GetUserAsync(Guid id);
     public ValueTask<Response> GetTwoFactorProvidersAsync(Guid id);
-    public ValueTask<Response> GetTwoFactorStateAsync(Guid id);
     public ValueTask<Response> GetLockoutStateAsync(Guid id);
-    public ValueTask<Response> GetPersonalDataAsync(Guid id);
     public ValueTask<Response> ChangeUsernameAsync(ChangeUserNameRequest request);
     public ValueTask<Response> ChangePersonalDataAsync(ChangePersonalDataRequest request);
     public ValueTask<Response> AddPersonalDataAsync(AddPersonalDataRequest request);
