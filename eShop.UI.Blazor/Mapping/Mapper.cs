@@ -106,6 +106,7 @@ public static class Mapper
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
             TwoFactorEnabled = source.TwoFactorEnabled,
+            Providers = source.Providers
         };
     }
 

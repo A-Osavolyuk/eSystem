@@ -17,6 +17,7 @@ public class UserDto
     public DateTimeOffset? PhoneNumberChangeDate { get; set; }
     
     public bool TwoFactorEnabled { get; set; }
+    public List<UserProviderDto> Providers { get; set; } = [];
     public DateTimeOffset? PasswordChangeDate { get; set; }
     
     public PersonalDataDto? PersonalData { get; set; }

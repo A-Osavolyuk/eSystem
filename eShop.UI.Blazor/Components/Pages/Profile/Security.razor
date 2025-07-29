@@ -246,7 +246,6 @@
 
 @code {
     private UserModel UserModel { get; set; } = new();
-    private SecurityModel SecurityModel { get; set; } = new();
 
     private bool isLoading = true;
 
@@ -255,7 +254,6 @@
         if (firstRender)
         {
             await LoadUserAsync();
-            await LoadProvidersAsync();
             StateHasChanged();
         }
     }
@@ -271,21 +269,6 @@
             var model = Mapper.Map(response);
             UserModel = model;
             isLoading = false;
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task LoadProvidersAsync()
-    {
-        var state = await AuthenticationManager.GetStateAsync();
-        var result = await UsersService.GetTwoFactorProvidersAsync(state.UserId);
-
-        if (result.Success)
-        {
-            SecurityModel.Providers = result.Get<List<UserProviderDto>>()!;
         }
         else
         {

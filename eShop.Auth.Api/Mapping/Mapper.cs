@@ -58,7 +58,8 @@ public static class Mapper
             RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             UserNameChangeDate = source.UserNameChangeDate,
-            PasswordChangeDate = source.PasswordChangeDate
+            PasswordChangeDate = source.PasswordChangeDate,
+            Providers = source.Providers.Select(Map).ToList(),
         };
     }
 
