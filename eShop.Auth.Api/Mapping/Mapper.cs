@@ -91,7 +91,9 @@ public static class Mapper
         {
             Id = source.Provider.Id,
             Name = source.Provider.Name,
-            Subscribed = source.Subscribed
+            Subscribed = source.Subscribed,
+            SubscribedDate = source.SubscribedDate,
+            UnsubscribedDate = source.UnsubscribedDate
         };
     }
     

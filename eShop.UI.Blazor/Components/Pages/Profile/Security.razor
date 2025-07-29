@@ -18,66 +18,91 @@
         <MudStack Spacing="2" Justify="Justify.Center">
             <MudCard Outlined="true" Class="pa-3">
                 <MudCardHeader Class="e-card-header">
-                    <MudText Typo="Typo.h6">
+                    <MudText Typo="Typo.h5">
                         Two-factor authentication (2FA)
                     </MudText>
-                    <MudSpacer />
-                    <MudIconButton
-                        Class="pr-0"
-                        Icon="@Icons.Material.Filled.Settings"
-                        ButtonType="ButtonType.Button"/>
                 </MudCardHeader>
                 <MudCardContent Class="e-card-content">
                     <MudGrid Spacing="3">
                         <MudItem xs="12">
-                            <MudText>Providers</MudText>
-                            <MudDivider />
+                            <MudStack Row="true">
+                                <MudText Class="pt-2" Typo="Typo.h6">
+                                    Providers
+                                </MudText>
+                                <MudSpacer/>
+                                <MudIconButton
+                                    Icon="@Icons.Material.Filled.Settings"
+                                    ButtonType="ButtonType.Button"
+                                    OnClick="@(async () => await RouteManager.NavigateAsync("/account/2fa"))"/>
+                            </MudStack>
+                            <MudDivider/>
                         </MudItem>
-                        <MudItem xs="12" Class="mt-2">
-                            <MudGrid Spacing="1">
-                                <MudItem xs="3">
-                                    <MudText> With Email </MudText>
+                        @if (UserModel.Providers.Count > 0)
+                        {
+                            foreach (var provider in UserModel.Providers)
+                            {
+                                <MudItem xs="12" Class="mt-2">
+                                    <MudGrid Spacing="1">
+                                        <MudItem xs="3">
+                                            <MudText> With @provider.Name</MudText>
+                                        </MudItem>
+                                        <MudItem xs="9">
+                                            @if (provider.Subscribed)
+                                            {
+                                                <MudText Color="Color.Success">Enabled</MudText>
+                                            }
+                                            else
+                                            {
+                                                <MudText Color="Color.Error">Disabled</MudText>
+                                            }
+                                        </MudItem>
+                                        <MudItem xs="12" Style="padding-top: 0">
+                                            @if (provider is { Subscribed: true, SubscribedDate: not null })
+                                            {
+                                                <MudText Class="opacity-50" Typo="Typo.caption">
+                                                    Enabled at: @provider.SubscribedDate?.ToString("MM/dd/yyyy HH:mm")
+                                                </MudText>
+                                            }
+                                            else if (provider is { Subscribed: false, UnsubscribedDate: not null })
+                                            {
+                                                <MudText Class="opacity-50" Typo="Typo.caption">
+                                                    Disabled at: @provider.UnsubscribedDate?.ToString("MM/dd/yyyy HH:mm")
+                                                </MudText>
+                                            }
+                                        </MudItem>
+                                        @if (!provider.SubscribedDate.HasValue && !provider.UnsubscribedDate.HasValue)
+                                        {
+                                            <MudItem xs="12" Class="pt-4">
+                                                <MudDivider/>
+                                            </MudItem>
+                                        }
+                                        else
+                                        {
+                                            <MudItem Class="pt-0" xs="12">
+                                                <MudDivider/>
+                                            </MudItem>
+                                        }
+                                    </MudGrid>
                                 </MudItem>
-                                <MudItem xs="9">
-                                    <MudText Color="Color.Success"> Enabled </MudText>
-                                </MudItem>
-                                <MudItem xs="12" Style="padding-top: 0">
-                                    <MudText Class="opacity-50" Typo="Typo.caption">
-                                        Enabled at: 07.28.2025 10:39
-                                    </MudText>
-                                </MudItem>
-                                <MudItem Class="pt-0" xs="12">
-                                    <MudDivider />
-                                </MudItem>
-                            </MudGrid>
-                        </MudItem>
-                        <MudItem xs="12" Class="mt-2">
-                            <MudGrid Spacing="1">
-                                <MudItem xs="3">
-                                    <MudText> With SMS </MudText>
-                                </MudItem>
-                                <MudItem xs="9">
-                                    <MudText Color="Color.Error"> Disabled </MudText>
-                                </MudItem>
-                                <MudItem xs="12" Class="pt-0">
-                                    <MudText Class="opacity-50" Typo="Typo.caption">
-                                        Disabled at: 07.28.2025 10:39
-                                    </MudText>
-                                </MudItem>
-                                <MudItem xs="12" Class="pt-0">
-                                    <MudDivider/>
-                                </MudItem>
-                            </MudGrid>
-                        </MudItem>
+                            }
+                        }
                     </MudGrid>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton
-                        Color="Color.Error"
-                        Variant="Variant.Outlined"
-                        ButtonType="ButtonType.Button">
-                        Disable 2FA
-                    </MudButton>
+                    <MudStack Spacing="1" Row="true">
+                        <MudButton
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            ButtonType="ButtonType.Button">
+                            Generate recovery codes
+                        </MudButton>
+                        <MudButton
+                            Color="Color.Error"
+                            Variant="Variant.Outlined"
+                            ButtonType="ButtonType.Button">
+                            Disable 2FA
+                        </MudButton>
+                    </MudStack>
                 </MudCardActions>
             </MudCard>
             <MudCard Outlined="true" Class="pa-3">
@@ -89,7 +114,7 @@
                         @if (UserModel.PasswordChangeDate is not null)
                         {
                             <MudText Align="Align.Start" Typo="Typo.caption" Class="opacity-50 mb-2">
-                                Last change: @UserModel.PasswordChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
+                                Last change: @UserModel.PasswordChangeDate?.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
                         }
                     </MudStack>
@@ -238,6 +263,7 @@
         padding-left: 8px;
         padding-top: 0;
     }
+
     .e-card-content {
         padding-left: 8px;
         padding-top: 0;
@@ -327,4 +353,5 @@
             StateHasChanged();
         }
     }
+
 }
