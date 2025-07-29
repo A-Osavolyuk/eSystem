@@ -32,6 +32,8 @@ public sealed class ProviderManager(AuthDbContext context) : IProviderManager
         }
         
         userProvider.Subscribed = true;
+        userProvider.SubscribedDate = DateTimeOffset.UtcNow;
+        userProvider.UpdateDate = DateTimeOffset.UtcNow;
 
         context.UserProvider.Update(userProvider);
         await context.SaveChangesAsync(cancellationToken);
@@ -51,6 +53,8 @@ public sealed class ProviderManager(AuthDbContext context) : IProviderManager
         }
 
         userProvider.Subscribed = false;
+        userProvider.UnsubscribedDate = DateTimeOffset.UtcNow;
+        userProvider.UpdateDate = DateTimeOffset.UtcNow;
         
         context.UserProvider.Update(userProvider);
         await context.SaveChangesAsync(cancellationToken);
