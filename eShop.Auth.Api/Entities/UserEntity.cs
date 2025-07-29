@@ -26,7 +26,6 @@ public class UserEntity : Entity
     public DateTimeOffset? PasswordChangeDate { get; set; }
     
     public bool AccountConfirmed { get; set; }
-    public bool TwoFactorEnabled { get; set; }
     public int FailedLoginAttempts { get; set; }
     
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;

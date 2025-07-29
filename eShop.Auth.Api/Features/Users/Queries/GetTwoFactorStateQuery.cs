@@ -28,7 +28,7 @@ public sealed class GetTwoFactorAuthenticationStateQueryHandler(
                 return Results.NotFound($"Cannot find user with ID {request.Id}.");
             }
 
-            state = new TwoFactorStateDto() { Enabled = user.TwoFactorEnabled };
+            state = new TwoFactorStateDto() { Enabled = user.Providers.Any(x => x.Subscribed) };
             await cacheService.SetAsync(key, state, TimeSpan.FromHours(6));
         }
         

@@ -53,7 +53,7 @@ public static class Mapper
             RecoveryEmail = source.RecoveryEmail,
             PhoneNumber = source.PhoneNumber,
             Username = source.UserName,
-            TwoFactorEnabled = source.TwoFactorEnabled,
+            TwoFactorEnabled = source.Providers.Any(x => x.Subscribed),
             EmailChangeDate = source.EmailChangeDate,
             RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,

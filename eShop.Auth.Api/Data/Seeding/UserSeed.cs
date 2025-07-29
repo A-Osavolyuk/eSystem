@@ -17,7 +17,6 @@ public class UserSeed : Seed<UserEntity>
                 NormalizedUserName = "PIPIDASTR".ToUpper(),
                 PasswordHash = "ARAnAAAl1FoQrHhNWGK51c8k0FFv1BuyOTZvNXrRWI7EVVDW5ScOzlWykcg+O8MKwnwzJEs=",
                 EmailConfirmed = true,
-                TwoFactorEnabled = false,
                 AccountConfirmed = true,
             }
         ];

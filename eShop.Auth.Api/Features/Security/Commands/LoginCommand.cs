@@ -115,7 +115,7 @@ public sealed class LoginCommandHandler(
             }
         }
 
-        if (user.TwoFactorEnabled)
+        if (user.Providers.Any(x => x.Subscribed))
         {
             return Result.Success(new LoginResponse()
             {
@@ -133,7 +133,7 @@ public sealed class LoginCommandHandler(
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             UserId = user.Id,
-            TwoFactorEnabled = user.TwoFactorEnabled,
+            TwoFactorEnabled = user.Providers.Any(x => x.Subscribed),
             IsLockedOut = lockoutState.Enabled,
         };
         
