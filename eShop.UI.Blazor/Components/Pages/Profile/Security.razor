@@ -4,8 +4,6 @@
 
 @inject IUsersService UsersService
 @inject IDialogService DialogService
-@inject ITwoFactorService TwoFactorService
-@inject IProvidersService ProvidersService
 
 @inject AuthenticationManager AuthenticationManager
 
@@ -384,7 +382,28 @@
     
     private async Task OnUnsubscribeAsync(string provider)
     {
-        
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge,
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters<Disable2FaProviderDialog>()
+        {
+            { x => x.UserId, UserModel.Id },
+            { x => x.Provider, provider }
+        };
+
+        var dialog = await DialogService.ShowAsync<Disable2FaProviderDialog>("Disable 2FA provider", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
     }
 
 }
