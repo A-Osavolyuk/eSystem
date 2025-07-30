@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class TwoFactorTokenEmailMessage : Message
+public class TwoFactorCodeEmailMessage : Message
 {
     public override string Build()
     {

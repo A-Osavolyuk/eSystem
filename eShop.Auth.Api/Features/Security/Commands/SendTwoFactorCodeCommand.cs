@@ -45,7 +45,7 @@ public class SendTwoFactorCodeCommandHandler(
 
         Message message = provider.Name switch
         {
-            ProviderTypes.Email => new TwoFactorTokenEmailMessage()
+            ProviderTypes.Email => new TwoFactorCodeEmailMessage()
             {
                 Credentials = new ()
                 {
@@ -58,7 +58,7 @@ public class SendTwoFactorCodeCommandHandler(
                     { "Code", code },
                 },
             },
-            ProviderTypes.Sms => new TwoFactorTokenSmsMessage()
+            ProviderTypes.Sms => new TwoFactorCodeSmsMessage()
             {
                 Credentials = new ()
                 {
