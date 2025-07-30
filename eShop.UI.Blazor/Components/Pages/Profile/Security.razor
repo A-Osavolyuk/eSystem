@@ -5,6 +5,7 @@
 @inject IUsersService UsersService
 @inject IDialogService DialogService
 @inject ITwoFactorService TwoFactorService
+@inject IProvidersService ProvidersService
 
 @inject AuthenticationManager AuthenticationManager
 
@@ -39,13 +40,15 @@
                                             <MudText> With @provider.Name</MudText>
                                             @if (provider is { Subscribed: true, SubscribedDate: not null })
                                             {
-                                                <MudText Class="opacity-50 position-absolute" Style="bottom: -18px" Typo="Typo.caption">
+                                                <MudText Class="opacity-50 position-absolute" Style="bottom: -18px"
+                                                         Typo="Typo.caption">
                                                     Enabled at: @provider.SubscribedDate?.ToString("MM/dd/yyyy HH:mm")
                                                 </MudText>
                                             }
                                             else if (provider is { Subscribed: false, UnsubscribedDate: not null })
                                             {
-                                                <MudText Class="opacity-50 position-absolute" Style="bottom: -18px" Typo="Typo.caption">
+                                                <MudText Class="opacity-50 position-absolute" Style="bottom: -18px"
+                                                         Typo="Typo.caption">
                                                     Disabled
                                                     at: @provider.UnsubscribedDate?.ToString("MM/dd/yyyy HH:mm")
                                                 </MudText>
@@ -56,9 +59,9 @@
                                             {
                                                 <MudStack Row="true">
                                                     <MudText Class="pt-1" Color="Color.Success">Enabled</MudText>
-                                                    <MudSpacer />
+                                                    <MudSpacer/>
                                                     <MudTooltip Text="Disable">
-                                                        <MudIconButton 
+                                                        <MudIconButton
                                                             Color="Color.Error"
                                                             Class="pt-1"
                                                             Icon="@Icons.Material.Filled.Close"
@@ -72,9 +75,9 @@
                                             {
                                                 <MudStack Row="true">
                                                     <MudText Class="pt-1" Color="Color.Error">Disabled</MudText>
-                                                    <MudSpacer />
+                                                    <MudSpacer/>
                                                     <MudTooltip Text="Enable">
-                                                        <MudIconButton 
+                                                        <MudIconButton
                                                             Color="Color.Primary"
                                                             Class="pt-1"
                                                             Icon="@Icons.Material.Filled.Check"
@@ -85,17 +88,20 @@
                                                 </MudStack>
                                             }
                                         </MudItem>
-                                        @if (!provider.SubscribedDate.HasValue && !provider.UnsubscribedDate.HasValue)
+                                        @if (provider != UserModel.Providers.Last())
                                         {
-                                            <MudItem xs="12" Class="pt-4">
-                                                <MudDivider/>
-                                            </MudItem>
-                                        }
-                                        else
-                                        {
-                                            <MudItem Class="pt-4" xs="12">
-                                                <MudDivider/>
-                                            </MudItem>
+                                            if (!provider.SubscribedDate.HasValue && !provider.UnsubscribedDate.HasValue)
+                                            {
+                                                <MudItem xs="12" Class="pt-4">
+                                                    <MudDivider/>
+                                                </MudItem>
+                                            }
+                                            else
+                                            {
+                                                <MudItem Class="pt-4" xs="12">
+                                                    <MudDivider/>
+                                                </MudItem>
+                                            }
                                         }
                                     </MudGrid>
                                 </MudItem>
@@ -103,29 +109,30 @@
                         }
                     </MudGrid>
                 </MudCardContent>
-                <MudCardActions>
-                    <MudStack Spacing="1" Row="true">
-                        @if (UserModel.Providers.Any(x => x is { Name: ProviderTypes.Authenticator, Subscribed: true }))
-                        {
-                            <MudButton
-                                Color="Color.Primary"
-                                Variant="Variant.Filled"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnGenerateRecoveryCodesAsync())">
-                                Generate recovery codes
-                            </MudButton>
-                        }
-                        @if (UserModel.Providers.Any(x => x.Subscribed))
-                        {
+                @if (UserModel.Providers.Any(x => x.Subscribed))
+                {
+                    <MudCardActions>
+                        <MudStack Spacing="1" Row="true">
+                            @if (UserModel.Providers.Any(x => x is { Name: ProviderTypes.Authenticator, Subscribed: true }))
+                            {
+                                <MudButton
+                                    Color="Color.Primary"
+                                    Variant="Variant.Filled"
+                                    ButtonType="ButtonType.Button"
+                                    OnClick="@(async () => await OnGenerateRecoveryCodesAsync())">
+                                    Generate recovery codes
+                                </MudButton>
+                            }
                             <MudButton
                                 Color="Color.Error"
                                 Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button">
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnDisable2FaAsync())">
                                 Disable 2FA
                             </MudButton>
-                        }
-                    </MudStack>
-                </MudCardActions>
+                        </MudStack>
+                    </MudCardActions>
+                }
             </MudCard>
             <MudCard Outlined="true" Class="pa-3">
                 <MudCardHeader Class="e-card-header">
@@ -387,7 +394,7 @@
             await RouteManager.NavigateAsync($"/account/2fa/provider/{provider}");
         }
     }
-    
+
     private async Task OnUnsubscribeAsync(string provider)
     {
         var options = new DialogOptions()
@@ -428,7 +435,7 @@
         {
             Snackbar.Add(result.Message, Severity.Error);
         }
-        
+
         var options = new DialogOptions()
         {
             BackdropClick = true,
@@ -451,4 +458,25 @@
             StateHasChanged();
         }
     }
+
+    private async Task OnDisable2FaAsync()
+    {
+        var request = new UnsubscribeProvidersRequest()
+        {
+            UserId = UserModel.Id
+        };
+
+        var result = await ProvidersService.UnsubscribeAllAsync(request);
+
+        if (result.Success)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
 }

@@ -8,4 +8,5 @@ public interface IProvidersService
     public ValueTask<Response> GetProvidersAsync();
     public ValueTask<Response> SubscribeAsync(SubscribeProviderRequest request);
     public ValueTask<Response> UnsubscribeAsync(UnsubscribeProviderRequest request);
+    public ValueTask<Response> UnsubscribeAllAsync(UnsubscribeProvidersRequest request);
 }
