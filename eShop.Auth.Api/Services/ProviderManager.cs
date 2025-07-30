@@ -64,7 +64,12 @@ public sealed class ProviderManager(AuthDbContext context) : IProviderManager
 
     public async ValueTask<Result> UnsubscribeAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        user.Providers.ToList().ForEach(x => x.Subscribed = false);
+        user.Providers.ToList().ForEach(x =>
+        {
+            x.Subscribed = false;
+            x.UnsubscribedDate = DateTimeOffset.UtcNow;
+            x.UpdateDate = DateTimeOffset.UtcNow;
+        });
         
         context.UserProvider.UpdateRange(user.Providers);
         await context.SaveChangesAsync(cancellationToken);
