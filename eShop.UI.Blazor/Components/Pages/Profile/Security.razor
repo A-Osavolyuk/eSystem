@@ -4,6 +4,7 @@
 
 @inject IUsersService UsersService
 @inject IDialogService DialogService
+@inject ITwoFactorService TwoFactorService
 
 @inject AuthenticationManager AuthenticationManager
 
@@ -107,7 +108,8 @@
                         <MudButton
                             Color="Color.Primary"
                             Variant="Variant.Filled"
-                            ButtonType="ButtonType.Button">
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await OnGenerateRecoveryCodesAsync())">
                             Generate recovery codes
                         </MudButton>
                         <MudButton
@@ -406,4 +408,41 @@
         }
     }
 
+    private async Task OnGenerateRecoveryCodesAsync()
+    {
+        var recoveryCodes = new List<string>();
+        var request = new GenerateRecoveryCodesRequest() { UserId = UserModel.Id };
+        var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
+
+        if (result.Success)
+        {
+            recoveryCodes = result.Get<List<string>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+        
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge,
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters<GenerateRecoveryCodesDialog>()
+        {
+            { x => x.Codes, recoveryCodes }
+        };
+
+        var dialog = await DialogService.ShowAsync<GenerateRecoveryCodesDialog>("Generate 2FA recovery codes", parameters, options);
+        var dialogResult = await dialog.Result;
+
+        if (!dialogResult!.Canceled)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+    }
 }

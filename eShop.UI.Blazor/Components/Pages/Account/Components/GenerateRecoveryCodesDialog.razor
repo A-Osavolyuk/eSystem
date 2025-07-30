@@ -1,0 +1,44 @@
+﻿<MudDialog Style="width: 400px">
+    <TitleContent>
+        2FA recovery codes
+    </TitleContent>
+    <DialogContent>
+        <MudGrid Justify="Justify.Center">
+            @if (Codes.Count > 0)
+            {
+                <MudItem xs="5">
+                    @foreach (var recoveryCode in Codes.Take(5))
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center">
+                            @recoveryCode
+                        </MudText>
+                    }
+                </MudItem>
+                <MudItem xs="5">
+                    @foreach (var recoveryCode in Codes.Skip(5).Take(5))
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center">
+                            @recoveryCode
+                        </MudText>
+                    }
+                </MudItem>
+            }
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton
+            Color="Color.Error"
+            Variant="Variant.Outlined"
+            ButtonType="ButtonType.Button"
+            OnClick="@(() => OnClose())">
+            Close
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
+    [Parameter] public List<string> Codes { get; set; } = new();
+
+    private void OnClose() => Dialog?.Cancel();
+}
