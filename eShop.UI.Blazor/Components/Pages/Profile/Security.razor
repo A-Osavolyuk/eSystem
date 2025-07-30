@@ -105,19 +105,25 @@
                 </MudCardContent>
                 <MudCardActions>
                     <MudStack Spacing="1" Row="true">
-                        <MudButton
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            ButtonType="ButtonType.Button"
-                            OnClick="@(async () => await OnGenerateRecoveryCodesAsync())">
-                            Generate recovery codes
-                        </MudButton>
-                        <MudButton
-                            Color="Color.Error"
-                            Variant="Variant.Outlined"
-                            ButtonType="ButtonType.Button">
-                            Disable 2FA
-                        </MudButton>
+                        @if (UserModel.Providers.Any(x => x is { Name: ProviderTypes.Authenticator, Subscribed: true }))
+                        {
+                            <MudButton
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnGenerateRecoveryCodesAsync())">
+                                Generate recovery codes
+                            </MudButton>
+                        }
+                        @if (UserModel.Providers.Any(x => x.Subscribed))
+                        {
+                            <MudButton
+                                Color="Color.Error"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button">
+                                Disable 2FA
+                            </MudButton>
+                        }
                     </MudStack>
                 </MudCardActions>
             </MudCard>
