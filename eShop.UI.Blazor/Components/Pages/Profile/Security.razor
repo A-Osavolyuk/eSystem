@@ -114,13 +114,6 @@
                                     Generate recovery codes
                                 </MudButton>
                             }
-                            <MudButton
-                                Color="Color.Error"
-                                Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnDisable2FaAsync())">
-                                Disable 2FA
-                            </MudButton>
                         </MudStack>
                     </MudCardActions>
                 }
@@ -449,25 +442,4 @@
             StateHasChanged();
         }
     }
-
-    private async Task OnDisable2FaAsync()
-    {
-        var request = new UnsubscribeProvidersRequest()
-        {
-            UserId = UserModel.Id
-        };
-
-        var result = await ProvidersService.UnsubscribeAllAsync(request);
-
-        if (result.Success)
-        {
-            await LoadUserAsync();
-            StateHasChanged();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
 }

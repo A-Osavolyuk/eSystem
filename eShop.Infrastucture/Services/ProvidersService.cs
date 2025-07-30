@@ -21,8 +21,4 @@ public class ProvidersService(
     public async ValueTask<Response> UnsubscribeAsync(UnsubscribeProviderRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Providers/unsubscribe", Method = HttpMethod.Post, Data = request },
         new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<Response> UnsubscribeAllAsync(UnsubscribeProvidersRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Providers/unsubscribe-all", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
 }
