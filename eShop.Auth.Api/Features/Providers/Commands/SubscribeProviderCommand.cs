@@ -76,7 +76,7 @@ public class SubscribeProviderCommandHandler(
 
         Message message = provider.Name switch
         {
-            ProviderTypes.Email => new TwoFactorTokenEmailMessage()
+            ProviderTypes.Email => new VerifyProviderEmailMessage()
             {
                 Credentials = new ()
                 {
@@ -89,7 +89,7 @@ public class SubscribeProviderCommandHandler(
                     { "Code", code },
                 },
             },
-            ProviderTypes.Sms => new TwoFactorTokenSmsMessage()
+            ProviderTypes.Sms => new VerifyProviderSmsMessage()
             {
                 Credentials = new ()
                 {
