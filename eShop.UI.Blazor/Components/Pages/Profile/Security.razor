@@ -90,18 +90,9 @@
                                         </MudItem>
                                         @if (provider != UserModel.Providers.Last())
                                         {
-                                            if (!provider.SubscribedDate.HasValue && !provider.UnsubscribedDate.HasValue)
-                                            {
-                                                <MudItem xs="12" Class="pt-4">
-                                                    <MudDivider/>
-                                                </MudItem>
-                                            }
-                                            else
-                                            {
-                                                <MudItem Class="pt-4" xs="12">
-                                                    <MudDivider/>
-                                                </MudItem>
-                                            }
+                                            <MudItem xs="12" Class="pt-4">
+                                                <MudDivider/>
+                                            </MudItem>
                                         }
                                     </MudGrid>
                                 </MudItem>
