@@ -56,4 +56,18 @@ public class ProvidersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Unsubscribe all providers")]
+    [EndpointDescription("Unsubscribe all providers")]
+    [ProducesResponseType(200)]
+    [HttpPost("unsubscribe-all")]
+    public async ValueTask<ActionResult<Response>> UnsubscribeProvidersAsync(
+        [FromBody] UnsubscribeProvidersRequest request)
+    {
+        var result = await sender.Send(new UnsubscribeProvidersCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
 }
