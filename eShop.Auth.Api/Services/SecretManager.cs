@@ -38,4 +38,20 @@ public sealed class SecretManager(
         
         return entity;
     }
+
+    public async ValueTask<Result> RemoveAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        var secret = await context.UserSecret.FirstOrDefaultAsync(
+            x => x.UserId == user.Id, cancellationToken);
+
+        if (secret is null)
+        {
+            return Results.NotFound("Cannot find user secret or doesn't exists");
+        }
+        
+        context.UserSecret.Remove(secret);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
 }

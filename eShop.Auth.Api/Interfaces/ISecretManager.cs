@@ -4,4 +4,5 @@ public interface ISecretManager
 {
     public ValueTask<UserSecretEntity?> FindAsync (UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<UserSecretEntity> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> RemoveAsync(UserEntity user, CancellationToken cancellationToken = default);
 }
