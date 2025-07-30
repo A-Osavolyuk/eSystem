@@ -44,7 +44,7 @@ public static class HostApplicationBuilderExtensions
                 new() { Routes = ["/account/oauth/login"] },
                 new() { Routes = ["/account/2fa/login"] },
                 new() { Routes = ["/account/2fa/authenticator"], RequireAuthorization = true },
-                new() { Routes = ["/account/2fa/provider"], RequireAuthorization = true },
+                new() { Routes = ["/account/2fa/provider/{type}"], RequireAuthorization = true },
                 new() { Routes = ["/account/locked-out"], RequireAuthorization = true },
                 new() { Routes = ["/account/unlock"], RequireAuthorization = true },
                 new() { Routes = ["/account/register"] },

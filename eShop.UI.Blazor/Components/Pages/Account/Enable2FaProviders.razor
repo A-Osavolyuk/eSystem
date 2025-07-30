@@ -1,4 +1,4 @@
-﻿@page "/account/2fa/enable-provider"
+﻿@page "/account/2fa/provider/{provider}"
 
 @inherits PageBase
 
@@ -130,7 +130,8 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "type")] private string Provider { get; set; } = string.Empty;
+    [Parameter] public string Provider { get; set; } = string.Empty;
+    
     [SupplyParameterFromForm] private VerifyProviderModel VerifyProviderModel { get; set; } = new();
     
     private MudStepperExtended stepper = new();
