@@ -73,9 +73,13 @@ public static class HostApplicationBuilderExtensions
         {
             options.Password.RequiredLength = 8;
             options.Password.RequireUppercase = true;
+            options.Password.RequiredUppercase = 1;
             options.Password.RequireLowercase = true;
+            options.Password.RequiredLowercase = 1;
             options.Password.RequireDigit = true;
+            options.Password.RequiredDigits = 1;
             options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredNonAlphanumeric = 1;
             options.Password.RequireUniqueChars = false;
 
             options.Account.RequireUniqueEmail = true;
