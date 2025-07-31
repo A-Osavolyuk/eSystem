@@ -1,15 +1,19 @@
 ﻿using eShop.Domain.Common.Security;
+using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Infrastructure.Security;
 
 public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage localStorage,
+    ISecurityService securityService,
     TokenHandler tokenHandler) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage localStorage = localStorage;
+    private readonly ISecurityService securityService = securityService;
     private readonly TokenHandler tokenHandler = tokenHandler;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -17,33 +21,33 @@ public class JwtAuthenticationStateProvider(
         try
         {
             var token = await tokenProvider.GetTokenAsync();
-            
+
             if (string.IsNullOrEmpty(token))
             {
                 return await UnauthorizeAsync();
             }
-            
+
             var valid = tokenHandler.Validate(token);
 
             if (!valid)
             {
-                return await LogOutAsync();
+                return await RefreshTokenAsync(token);
             }
 
-            var rowToken = tokenHandler.ReadToken(token);
+            var rawToken = tokenHandler.ReadToken(token);
 
-            if (rowToken is null || !rowToken.Claims.Any())
+            if (rawToken is null || !rawToken.Claims.Any())
             {
                 return await UnauthorizeAsync();
             }
 
-            var claims = tokenHandler.ReadClaims(rowToken);
+            var claims = tokenHandler.ReadClaims(rawToken);
 
             if (claims.Count == 0)
             {
                 return await UnauthorizeAsync();
             }
-            
+
             return await Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(
                     new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme))));
@@ -59,13 +63,8 @@ public class JwtAuthenticationStateProvider(
         if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
         {
             await tokenProvider.SetTokenAsync(refreshToken);
+            var authenticationState = Authorized(refreshToken);
 
-            var rawToken = tokenHandler.ReadToken(accessToken)!;
-            var claims = tokenHandler.ReadClaims(rawToken);
-            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-            var authenticationState = new AuthenticationState(claimsPrincipal);
-            
             NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
         else
@@ -86,9 +85,9 @@ public class JwtAuthenticationStateProvider(
             var claimsPrincipal = new ClaimsPrincipal(identity);
             var authenticationState = new AuthenticationState(claimsPrincipal);
 
-            var userId = Map(claims);
+            var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value);
             await localStorage.SetAsync("userId", userId);
-            
+
             NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
         else
@@ -117,10 +116,38 @@ public class JwtAuthenticationStateProvider(
         }
     }
 
-
-    private Guid Map(List<Claim> claims)
+    private async Task<AuthenticationState> RefreshTokenAsync(string token)
     {
+        var rawToken = tokenHandler.ReadToken(token)!;
+        var claims = tokenHandler.ReadClaims(rawToken);
         var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value);
-        return userId;
+
+        var request = new RefreshTokenRequest()
+        {
+            Token = token,
+            UserId = userId
+        };
+
+        var result = await securityService.RefreshTokenAsync(request);
+
+        if (!result.Success)
+        {
+            return await LogOutAsync();
+        }
+        
+        var response = result.Get<RefreshTokenResponse>()!;
+        
+        return Authorized(response.RefreshToken);
+    }
+
+    private AuthenticationState Authorized(string token)
+    {
+        var rawToken = tokenHandler.ReadToken(token)!;
+        var claims = tokenHandler.ReadClaims(rawToken);
+        var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
+        var claimsPrincipal = new ClaimsPrincipal(identity);
+        var authenticationState = new AuthenticationState(claimsPrincipal);
+        
+        return authenticationState;
     }
 }

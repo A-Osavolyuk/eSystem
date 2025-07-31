@@ -10,16 +10,12 @@ namespace eShop.Infrastructure.Services;
 
 public class ApiClient(
     AuthenticationManager authenticationManager,
-    TokenHandler tokenHandler,
     IHttpClientFactory clientFactory,
-    ITokenProvider tokenProvider,
-    IConfiguration configuration)
+    ITokenProvider tokenProvider)
     : IApiClient
 {
     private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");
     private readonly ITokenProvider tokenProvider = tokenProvider;
-    private readonly TokenHandler tokenHandler = tokenHandler;
-    private readonly IConfiguration configuration = configuration;
     private readonly AuthenticationManager authenticationManager = authenticationManager;
     private const string Key = "services:proxy:http:0";
 
@@ -42,30 +38,7 @@ public class ApiClient(
                         .Build();
                 }
 
-                var valid = tokenHandler.Validate(token);
-
-                if (valid)
-                {
-                    message.Headers.Add("Authorization", $"Bearer {token}");
-                }
-                else
-                {
-                    var result = await RefreshAsync(token);
-
-                    if (result.Success)
-                    {
-                        var tokenResponse = result.Get<RefreshTokenResponse>()!;
-                        await authenticationManager.ReauthenticateAsync(tokenResponse.AccessToken, tokenResponse.RefreshToken);
-                        message.Headers.Add("Authorization", $"Bearer {tokenResponse.RefreshToken}");
-                    }
-                    else
-                    {
-                        return new ResponseBuilder()
-                            .Failed()
-                            .WithMessage(result.Message)
-                            .Build();
-                    }
-                }
+                message.Headers.Add("Authorization", $"Bearer {token}");
             }
 
             message.RequestUri = new Uri(httpRequest.Url);
@@ -129,37 +102,5 @@ public class ApiClient(
 
             return response;
         }
-    }
-
-    private async Task<Response> RefreshAsync(string token)
-    {
-        var state = await authenticationManager.GetStateAsync();
-
-        if (state is null)
-        {
-            await authenticationManager.LogOutAsync();
-            return new ResponseBuilder()
-                .Failed()
-                .WithMessage("Unauthorized")
-                .Build();
-        }
-
-        var gatewayUrl = configuration[Key]!;
-        var url = $"{gatewayUrl}/api/v1/auth/refresh-token";
-
-        var options = new HttpOptions() { Type = DataType.Text, WithBearer = false };
-        var request = new HttpRequest()
-        {
-            Url = url,
-            Method = HttpMethod.Post,
-            Data = new RefreshTokenRequest()
-            {
-                Token = token,
-                UserId = state.UserId
-            },
-        };
-
-        var response = await SendAsync(request, options);
-        return response;
     }
 }
