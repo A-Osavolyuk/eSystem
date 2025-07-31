@@ -5,8 +5,6 @@
 @inject IUsersService UsersService
 @inject IDialogService DialogService
 @inject ITwoFactorService TwoFactorService
-@inject IProvidersService ProvidersService
-
 @inject AuthenticationManager AuthenticationManager
 
 @attribute [Authorize]
@@ -157,122 +155,6 @@
                     </MudStack>
                 </MudCardActions>
             </MudCard>
-            <MudCard Outlined="true" Class="pa-3">
-                <MudCardHeader Class="e-card-header">
-                    <MudStack Spacing="0">
-                        <MudText Typo="Typo.h6">
-                            Email
-                        </MudText>
-                        @if (UserModel.EmailChangeDate is not null)
-                        {
-                            <MudText Align="Align.Start" Typo="Typo.caption" Class="mb-2 opacity-50">
-                                Last change: @UserModel.EmailChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
-                            </MudText>
-                        }
-                    </MudStack>
-                </MudCardHeader>
-                <MudCardContent Class="e-card-content">
-                    <MudText>
-                        @UserModel.Email
-                    </MudText>
-                </MudCardContent>
-                <MudCardActions>
-                    <MudStack Spacing="1" Row="true">
-                        <MudLoadingButton
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            ButtonType="ButtonType.Button"
-                            OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/change"))">
-                            Change email
-                        </MudLoadingButton>
-                        <MudLoadingButton
-                            Color="Color.Error"
-                            Variant="Variant.Outlined"
-                            ButtonType="ButtonType.Button"
-                            OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/reset"))">
-                            Reset email
-                        </MudLoadingButton>
-                    </MudStack>
-                </MudCardActions>
-            </MudCard>
-            <MudCard Outlined="true" Class="pa-3">
-                <MudCardHeader Class="e-card-header">
-                    <MudStack Spacing="0">
-                        @if (isLoading)
-                        {
-                            <MudItem xs="12">
-                                <MudText Typo="Typo.h6">
-                                    Phone number
-                                </MudText>
-                            </MudItem>
-                        }
-                        else
-                        {
-                            if (string.IsNullOrEmpty(UserModel.PhoneNumber))
-                            {
-                                <MudText Typo="Typo.h6">
-                                    Phone number
-                                </MudText>
-                                <MudText Style="opacity: 0.5" Typo="Typo.caption">
-                                    Phone number was not added. You can add it by click button below.
-                                </MudText>
-                            }
-                            else
-                            {
-                                <MudText Typo="Typo.h6">
-                                    Phone number
-                                </MudText>
-                                @if (UserModel.PhoneNumberChangeDate is not null)
-                                {
-                                    <MudText Align="Align.Start" Typo="Typo.caption" Class="mb-2 opacity-50">
-                                        Last
-                                        change: @UserModel.PhoneNumberChangeDate.Value.ToString("MM/dd/yyyy HH:mm")
-                                    </MudText>
-                                }
-                            }
-                        }
-                    </MudStack>
-                </MudCardHeader>
-                @if (!string.IsNullOrEmpty(UserModel.PhoneNumber))
-                {
-                    <MudCardContent Class="e-card-content">
-                        <MudText>
-                            @UserModel.PhoneNumber
-                        </MudText>
-                    </MudCardContent>
-                }
-                <MudCardActions>
-                    @if (string.IsNullOrEmpty(UserModel.PhoneNumber))
-                    {
-                        <MudLoadingButton
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            ButtonType="ButtonType.Button"
-                            OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/add"))">
-                            Add phone number
-                        </MudLoadingButton>
-                    }
-                    else
-                    {
-                        <MudStack Spacing="1" Row="true">
-                            <MudLoadingButton
-                                Color="Color.Primary"
-                                Variant="Variant.Filled"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/change"))">
-                                Change phone number
-                            </MudLoadingButton>
-                            <MudLoadingButton
-                                Color="Color.Error"
-                                Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/reset"))">
-                                Reset phone number
-                            </MudLoadingButton>
-                        </MudStack>
-                    }
-                </MudCardActions>
-            </MudCard>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -291,8 +173,6 @@
 
 @code {
     private UserModel UserModel { get; set; } = new();
-
-    private bool isLoading = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -313,7 +193,6 @@
             var response = result.Get<UserDto>()!;
             var model = Mapper.Map(response);
             UserModel = model;
-            isLoading = false;
         }
         else
         {
