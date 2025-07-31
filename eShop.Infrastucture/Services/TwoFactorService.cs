@@ -13,25 +13,25 @@ public class TwoFactorService(
     public async ValueTask<Response> GetProvidersAsync() =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Providers/", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> LoginAsync(TwoFactorLoginRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> SendCodeAsync(SendTwoFactorCodeRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/send", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
+            new HttpOptions { WithBearer = false, Type = DataType.Text });
     
     public async ValueTask<Response> VerifyCodeAsync(VerifyTwoFactorCodeRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/verify", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/recovery-code/generate", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
 }

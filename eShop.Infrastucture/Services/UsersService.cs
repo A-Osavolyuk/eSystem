@@ -13,29 +13,29 @@ public class UsersService(
     public async ValueTask<Response> GetUserAsync(Guid id)=>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
     public async ValueTask<Response> GetTwoFactorProvidersAsync(Guid id) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor/providers", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
+            new HttpOptions { WithBearer = false, Type = DataType.Text });
     
     public async ValueTask<Response> GetLockoutStateAsync(Guid id) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/lockout-state", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
+            new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> ChangeUsernameAsync(ChangeUserNameRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/username", Method = HttpMethod.Patch, Data = request }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
     
     public async ValueTask<Response> ChangePersonalDataAsync(ChangePersonalDataRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal-data", Method = HttpMethod.Put, Data = request }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> AddPersonalDataAsync(AddPersonalDataRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal-data", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { ValidateToken = true, WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
 }

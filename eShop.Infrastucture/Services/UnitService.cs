@@ -12,5 +12,5 @@ public class UnitService(
     public async ValueTask<Response> GetAllAsync() =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Units/", Method = HttpMethod.Get }, 
-            new HttpOptions { ValidateToken = false, WithBearer = false, Type = DataType.Text });
+            new HttpOptions { WithBearer = false, Type = DataType.Text });
 }
