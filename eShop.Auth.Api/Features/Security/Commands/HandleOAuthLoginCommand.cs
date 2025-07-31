@@ -45,13 +45,6 @@ public sealed class HandleOAuthLoginCommandHandler(
                 return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
             }
 
-            var securityToken = await tokenManager.FindAsync(user, cancellationToken);
-
-            if (securityToken is not null)
-            {
-                await tokenManager.RemoveAsync(user, cancellationToken);
-            }
-
             var link = await GenerateLinkAsync(user, request.ReturnUri!, cancellationToken);
 
             return Result.Success(link);

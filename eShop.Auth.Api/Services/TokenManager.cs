@@ -28,23 +28,6 @@ public sealed class TokenManager(
         return entity;
     }
 
-    public async ValueTask<Result> RemoveAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
-    {
-        var token = await context.RefreshTokens
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
-
-        if (token is null)
-        {
-            return Results.NotFound("Token not found");
-        }
-
-        context.RefreshTokens.Remove(token);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
     public async ValueTask<Result> VerifyAsync(UserEntity user, string token,
         CancellationToken cancellationToken = default)
     {
