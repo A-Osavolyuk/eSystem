@@ -7,14 +7,16 @@ using HttpRequest = eShop.Domain.Common.API.HttpRequest;
 namespace eShop.Infrastructure.Services;
 
 public class ApiClient(
-    IHttpClientFactory clientFactory, 
+    IHttpClientFactory clientFactory,
     ITokenProvider tokenProvider,
-    TokenHandler tokenHandler)
+    TokenHandler tokenHandler,
+    AuthenticationManager authenticationManager)
     : IApiClient
 {
     private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly TokenHandler tokenHandler = tokenHandler;
+    private readonly AuthenticationManager authenticationManager = authenticationManager;
 
     public async ValueTask<Response> SendAsync(HttpRequest httpRequest, HttpOptions options)
     {
@@ -26,25 +28,27 @@ public class ApiClient(
             {
                 var token = await tokenProvider.GetTokenAsync();
 
-                if (options.ValidateToken)
+                if (string.IsNullOrEmpty(token))
                 {
-                    var valid = tokenHandler.Validate(token);
-
-                    if (valid)
-                    {
-                        message.Headers.Add("Authorization", $"Bearer {token}");
-                    }
-                    else
-                    {
-                        //TODO: refresh token on invalid
-                    }
+                    await authenticationManager.LogOutAsync();
+                    return new ResponseBuilder()
+                        .Failed()
+                        .WithMessage("Unauthorized")
+                        .Build();
                 }
-                else
+
+                var valid = tokenHandler.Validate(token);
+
+                if (valid)
                 {
                     message.Headers.Add("Authorization", $"Bearer {token}");
                 }
+                else
+                {
+                    //TODO: refresh token
+                }
             }
-            
+
             message.RequestUri = new Uri(httpRequest.Url);
             message.Method = httpRequest.Method;
 
@@ -53,19 +57,19 @@ public class ApiClient(
                 case DataType.Text:
                 {
                     message.Headers.Add("Accept", "application/json");
-                    
+
                     if (httpRequest.Data is not null)
                     {
                         message.Content = new StringContent(JsonConvert.SerializeObject(httpRequest.Data),
                             Encoding.UTF8, "application/json");
                     }
-                    
+
                     break;
                 }
                 case DataType.File:
                 {
                     message.Headers.Add("Accept", "multipart/form-data");
-                    
+
                     var content = new MultipartFormDataContent();
 
                     if (httpRequest.Data is not null)
@@ -79,29 +83,32 @@ public class ApiClient(
                                 content.Add(fileContent, "files", file.Name);
                             }
                         }
-                        
+
                         var metadata = JsonConvert.SerializeObject(httpRequest.Metadata);
                         content.Add(new StringContent(metadata), "metadata");
 
                         message.Content = content;
                     }
-                    
+
                     break;
                 }
+                default: throw new NotSupportedException("Unsupported request type");
             }
-            
+
             var httpResponse = await httpClient.SendAsync(message);
-            var json = await httpResponse.Content.ReadAsStringAsync();
-            var response = JsonConvert.DeserializeObject<Response>(json)!;
-            
+            var responseJson = await httpResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<Response>(responseJson)!;
+
             return response;
         }
         catch (Exception ex)
         {
-            return new ResponseBuilder()
+            var response = new ResponseBuilder()
                 .Failed()
                 .WithMessage(ex.Message)
                 .Build();
+
+            return response;
         }
     }
 }
