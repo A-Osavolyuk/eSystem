@@ -37,24 +37,24 @@ public class TokenHandler
             return false;
         }
         
-        var rowToken = ReadToken(token);
+        var rawToken = ReadToken(token);
         
-        if (rowToken is null || !rowToken.Claims.Any())
+        if (rawToken is null || rawToken.Claims.Any())
         {
             return false;
         }
         
-        var valid = Validate(rowToken);
+        var isExpired = IsExpired(rawToken);
 
-        return valid;
+        return !isExpired;
     }
     
-    private bool Validate(JwtSecurityToken token)
+    private bool IsExpired(JwtSecurityToken token)
     {
         var expValue = token.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp)!.Value;
         var expMilliseconds = Convert.ToInt64(expValue);
         var expData = DateTimeOffset.FromUnixTimeSeconds(expMilliseconds);
 
-        return DateTimeOffset.Now < expData;
+        return DateTimeOffset.Now > expData;
     }
 }
