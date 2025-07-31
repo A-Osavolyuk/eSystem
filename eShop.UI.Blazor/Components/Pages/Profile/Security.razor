@@ -38,20 +38,26 @@
                                     <MudGrid Spacing="1">
                                         <MudItem xs="3" Class="pt-1 position-relative">
                                             <MudText> With @provider.Name</MudText>
-                                            @if (provider is { Subscribed: true, SubscribedDate: not null })
+                                            @if (provider.UpdateDate.HasValue)
                                             {
-                                                <MudText Class="opacity-50 position-absolute" Style="bottom: -18px"
-                                                         Typo="Typo.caption">
-                                                    Enabled at: @provider.SubscribedDate?.ToString("MM/dd/yyyy HH:mm")
-                                                </MudText>
-                                            }
-                                            else if (provider is { Subscribed: false, UnsubscribedDate: not null })
-                                            {
-                                                <MudText Class="opacity-50 position-absolute" Style="bottom: -18px"
-                                                         Typo="Typo.caption">
-                                                    Disabled
-                                                    at: @provider.UnsubscribedDate?.ToString("MM/dd/yyyy HH:mm")
-                                                </MudText>
+                                                if (provider.Subscribed)
+                                                {
+                                                    <MudText 
+                                                        Class="opacity-50 position-absolute" 
+                                                        Style="bottom: -18px"
+                                                        Typo="Typo.caption">
+                                                        Enabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
+                                                    </MudText>
+                                                }
+                                                else
+                                                {
+                                                    <MudText 
+                                                        Class="opacity-50 position-absolute" 
+                                                        Style="bottom: -18px"
+                                                        Typo="Typo.caption">
+                                                        Disabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
+                                                    </MudText>
+                                                }
                                             }
                                         </MudItem>
                                         <MudItem xs="9" Class="pt-0">
