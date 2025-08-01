@@ -105,7 +105,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.Password, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
-                new ResetPasswordMessage()
+                new ForgotPasswordMessage()
                 {
                     Credentials = new()
                     {

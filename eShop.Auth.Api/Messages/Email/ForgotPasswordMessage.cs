@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class ResetPasswordMessage : Message
+public class ForgotPasswordMessage : Message
 {
     public override string Build()
     {
@@ -10,7 +10,7 @@ public class ResetPasswordMessage : Message
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Password reset</title>
+                        <title>Forgot password</title>
                     </head>
                     <body>
                     <div style="border: 1px solid rgb(190, 189, 189); width: 800px; margin: auto; padding: 1px;">
@@ -19,11 +19,12 @@ public class ResetPasswordMessage : Message
                         </div>
                         <div style="border: 1px solid rgb(190, 189, 189); width: 100%;"></div>
                         <div style="padding: 50px 100px; margin: auto;">
-                            <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Password reset</h1>
+                            <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Forgot password</h1>
                             <p style="font: 16px Arial, sans-serif; margin:0;">Hello, {Payload["UserName"]}!.</p>
                             <br>
                             <p style="font: 16px Arial, sans-serif; margin: 0;">
-                                We received a request to reset your password. To reset password, please enter code below.
+                                We received a request to reset your password. 
+                                To reset password, please enter 6-digit code from below.
                             </p>
                             <br>
                             <p style="font: 16px Arial, sans-serif; margin: 0;"> 
