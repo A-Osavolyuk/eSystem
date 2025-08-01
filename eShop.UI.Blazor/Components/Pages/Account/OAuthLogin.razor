@@ -1,4 +1,4 @@
-﻿@page "/account/oauth/login/"
+﻿@page "/account/oauth/sign-in/"
 
 @inherits PageBase
 
@@ -18,12 +18,12 @@
         if (Type == "signIn")
         {
             NavigationManager.NavigateTo(("/products"));
-            Snackbar.Add($"Successfully logged in with {Provider}.", Severity.Success);
+            Snackbar.Add($"Successfully signed in with {Provider}.", Severity.Success);
         }
         else if(Type == "signUp")
         {
             NavigationManager.NavigateTo(("/account/oauth/signed-up"));
-            Snackbar.Add($"Successfully logged in with {Provider}.", Severity.Success);
+            Snackbar.Add($"Successfully signed up with {Provider}.", Severity.Success);
         }
     }
 }
