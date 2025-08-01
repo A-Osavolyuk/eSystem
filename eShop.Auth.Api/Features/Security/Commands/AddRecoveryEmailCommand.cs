@@ -8,11 +8,13 @@ public record AddRecoveryEmailCommand(AddRecoveryEmailRequest Request) : IReques
 public class AddRecoveryEmailCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
-    ICodeManager codeManager) : IRequestHandler<AddRecoveryEmailCommand, Result>
+    ICodeManager codeManager,
+    IdentityOptions identityOptions) : IRequestHandler<AddRecoveryEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(AddRecoveryEmailCommand request, CancellationToken cancellationToken)
     {
@@ -22,12 +24,15 @@ public class AddRecoveryEmailCommandHandler(
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
-        
-        var isTaken = await userManager.IsEmailTakenAsync(request.Request.RecoveryEmail, cancellationToken);
 
-        if (isTaken)
+        if (identityOptions.Account.RequireUniqueRecoveryEmail)
         {
-            return Results.BadRequest("This email address is already taken");
+            var isTaken = await userManager.IsEmailTakenAsync(request.Request.RecoveryEmail, cancellationToken);
+
+            if (isTaken)
+            {
+                return Results.BadRequest("This email address is already taken");
+            }
         }
         
         var result = await userManager.AddRecoveryEmailAsync(user, request.Request.RecoveryEmail, cancellationToken);

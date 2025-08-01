@@ -8,11 +8,13 @@ public record VerifyNewEmailCommand(VerifyNewEmailRequest Request) : IRequest<Re
 public class VerifyNewEmailCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<VerifyNewEmailCommand, Result>
+    IMessageService messageService,
+    IdentityOptions identityOptions) : IRequestHandler<VerifyNewEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(VerifyNewEmailCommand request, CancellationToken cancellationToken)
     {
@@ -23,11 +25,14 @@ public class VerifyNewEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
         
-        var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
-
-        if (isTaken)
+        if (identityOptions.Account.RequireUniqueEmail)
         {
-            return Results.BadRequest("This email address is already taken");
+            var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
+
+            if (isTaken)
+            {
+                return Results.BadRequest("This email address is already taken");
+            }
         }
         
         var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, 

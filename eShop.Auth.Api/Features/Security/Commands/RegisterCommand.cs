@@ -11,22 +11,27 @@ public sealed class RegisterCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
     ICodeManager codeManager,
-    IRoleManager roleManager) : IRequestHandler<RegisterCommand, Result>
+    IRoleManager roleManager,
+    IdentityOptions identityOptions) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IRoleManager roleManager = roleManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        var isEmailTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
-
-        if (isEmailTaken)
+        if (identityOptions.Account.RequireUniqueEmail)
         {
-            return Results.NotFound("User with same email address already exists");
+            var isTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
+
+            if (isTaken)
+            {
+                return Results.BadRequest("This email address is already taken");
+            }
         }
         
         var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);

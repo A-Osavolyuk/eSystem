@@ -468,17 +468,12 @@ public sealed class UserManager(
     public async ValueTask<bool> IsEmailTakenAsync(string email,
         CancellationToken cancellationToken = default)
     {
-        if (identityOptions.Account.RequireUniqueEmail)
-        {
-            var normalizedEmail = email.ToUpper();
-            var result = await context.Users.AnyAsync(
-                u => u.NormalizedEmail == normalizedEmail
-                     || u.NormalizedRecoveryEmail == normalizedEmail, cancellationToken);
+        var normalizedEmail = email.ToUpper();
+        var result = await context.Users.AnyAsync(
+            u => u.NormalizedEmail == normalizedEmail
+                 || u.NormalizedRecoveryEmail == normalizedEmail, cancellationToken);
 
-            return result;
-        }
-
-        return false;
+        return result;
     }
 
     public async ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber,

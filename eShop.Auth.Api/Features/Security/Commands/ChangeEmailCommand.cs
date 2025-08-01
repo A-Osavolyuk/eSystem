@@ -8,10 +8,12 @@ public sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<R
 public sealed class RequestChangeEmailCommandHandler(
     IMessageService messageService,
     ICodeManager codeManager,
-    IUserManager userManager) : IRequestHandler<ChangeEmailCommand, Result>
+    IUserManager userManager,
+    IdentityOptions identityOptions) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly IMessageService messageService = messageService;
     private readonly IUserManager userManager = userManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
     private readonly ICodeManager codeManager = codeManager;
 
     public async Task<Result> Handle(ChangeEmailCommand request,
@@ -24,11 +26,14 @@ public sealed class RequestChangeEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
         
-        var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
-
-        if (isTaken)
+        if (identityOptions.Account.RequireUniqueEmail)
         {
-            return Results.BadRequest("This email address is already taken");
+            var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
+
+            if (isTaken)
+            {
+                return Results.BadRequest("This email address is already taken");
+            }
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, 

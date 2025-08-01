@@ -8,11 +8,13 @@ public record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
 public class ResetEmailCommandHandler(
     ICodeManager codeManager,
     IMessageService messageService,
-    IUserManager userManager) : IRequestHandler<ResetEmailCommand, Result>
+    IUserManager userManager,
+    IdentityOptions identityOptions) : IRequestHandler<ResetEmailCommand, Result>
 {
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
     private readonly IUserManager userManager = userManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
     {
@@ -24,11 +26,14 @@ public class ResetEmailCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
         
-        var isTaken = await userManager.IsEmailTakenAsync(newEmail, cancellationToken);
-
-        if (isTaken)
+        if (identityOptions.Account.RequireUniqueEmail)
         {
-            return Results.BadRequest("This email address is already taken");
+            var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
+
+            if (isTaken)
+            {
+                return Results.BadRequest("This email address is already taken");
+            }
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, 
