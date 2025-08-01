@@ -89,6 +89,12 @@
                                             </MudButton>
                                         </MudStack>
                                     </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">QR didn't generated??
+                                            <strong @onclick="async () => await GenerateQrCodeAsync()"
+                                                    class="cursor-pointer">Regenerate</strong>
+                                        </MudText>
+                                    </MudPaper>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -218,6 +224,26 @@
         if (result.Success)
         {
             await StepNextAsync();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task GenerateQrCodeAsync()
+    {
+        var request = new GenerateQrCodeRequest()
+        {
+            UserId = userId
+        };
+
+        var result = await TwoFactorService.GenerateQrCodeAsync(request);
+
+        if (result.Success)
+        {
+            var response = result.Get<GenerateQrCodeResponse>()!;
+            QrCodeModel.QrCode = response.QrCode;
         }
         else
         {
