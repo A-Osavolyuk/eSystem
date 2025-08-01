@@ -3,20 +3,20 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public record VerifyNewEmailCommand(VerifyNewEmailRequest Request) : IRequest<Result>;
+public record VerifyCurrentEmailCommand(VerifyCurrentEmailRequest Request) : IRequest<Result>;
 
-public class VerifyNewEmailCommandHandler(
+public class VerifyCurrentEmailCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
     IMessageService messageService,
-    IdentityOptions identityOptions) : IRequestHandler<VerifyNewEmailCommand, Result>
+    IdentityOptions identityOptions) : IRequestHandler<VerifyCurrentEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
     private readonly IdentityOptions identityOptions = identityOptions;
 
-    public async Task<Result> Handle(VerifyNewEmailCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(VerifyCurrentEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 

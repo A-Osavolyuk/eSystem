@@ -46,7 +46,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> VerifyNewEmailAsync(VerifyNewEmailRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> VerifyCurrentEmailAsync(VerifyCurrentEmailRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/verify-new", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
@@ -74,7 +74,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/refresh-token", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
-    public async ValueTask<Response> VerifyNewPhoneNumberAsync(VerifyNewPhoneNumberRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> VerifyCurrentPhoneNumberAsync(VerifyCurrentPhoneNumberRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/verify-new", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 

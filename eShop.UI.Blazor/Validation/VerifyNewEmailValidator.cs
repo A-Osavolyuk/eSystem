@@ -3,7 +3,7 @@ using eShop.BlazorWebUI.Models;
 
 namespace eShop.BlazorWebUI.Validation;
 
-public class VerifyNewEmailValidator : Validator<VerifyNewEmailModel>
+public class VerifyNewEmailValidator : Validator<VerifyCurrentEmailModel>
 {
     public VerifyNewEmailValidator()
     {

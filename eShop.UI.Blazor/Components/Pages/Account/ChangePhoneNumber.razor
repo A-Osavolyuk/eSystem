@@ -94,7 +94,7 @@
                                                     <MudCodeInput
                                                         Count="6"
                                                         Margin="Margin.Normal" Spacing="1"
-                                                        @bind-Value="VerifyNewPhoneNumberModel.Code"
+                                                        @bind-Value="VerifyCurrentPhoneNumberModel.Code"
                                                         Variant="Variant.Outlined"/>
                                                 </MudItem>
                                                 <MudItem xs="12">
@@ -207,7 +207,7 @@
 
 @code {
     [SupplyParameterFromForm] private ChangePhoneNumberModel ChangePhoneNumberModel { get; set; } = new();
-    [SupplyParameterFromForm] private VerifyNewPhoneNumberModel VerifyNewPhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private VerifyCurrentPhoneNumberModel VerifyCurrentPhoneNumberModel { get; set; } = new();
     [SupplyParameterFromForm] private ConfirmChangePhoneNumberModel ConfirmChangePhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -306,14 +306,14 @@
 
         if (verifyNewPhoneNumberForm.IsValid)
         {
-            var request = new VerifyNewPhoneNumberRequest()
+            var request = new VerifyCurrentPhoneNumberRequest()
             {
                 UserId = userId,
                 NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
-                Code = VerifyNewPhoneNumberModel.Code
+                Code = VerifyCurrentPhoneNumberModel.Code
             };
 
-            var result = await SecurityService.VerifyNewPhoneNumberAsync(request);
+            var result = await SecurityService.VerifyCurrentPhoneNumberAsync(request);
 
             if (result.Success)
             {

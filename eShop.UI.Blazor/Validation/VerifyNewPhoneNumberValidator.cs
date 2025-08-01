@@ -3,7 +3,7 @@ using eShop.BlazorWebUI.Models;
 
 namespace eShop.BlazorWebUI.Validation;
 
-public class VerifyNewPhoneNumberValidator : Validator<VerifyNewPhoneNumberModel>
+public class VerifyNewPhoneNumberValidator : Validator<VerifyCurrentPhoneNumberModel>
 {
     public VerifyNewPhoneNumberValidator()
     {

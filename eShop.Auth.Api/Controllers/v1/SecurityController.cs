@@ -131,15 +131,15 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Verify new email on change")]
-    [EndpointDescription("Verify new email on change")]
+    [EndpointSummary("Verify current email on change")]
+    [EndpointDescription("Verify current email on change")]
     [ProducesResponseType(200)]
-    [HttpPost("email/verify-new")]
+    [HttpPost("email/verify-current")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> VerifyNewEmailAsync(
-        [FromBody] VerifyNewEmailRequest changeEmailRequest)
+    public async ValueTask<ActionResult<Response>> VerifyCurrentEmailAsync(
+        [FromBody] VerifyCurrentEmailRequest changeEmailRequest)
     {
-        var result = await sender.Send(new VerifyNewEmailCommand(changeEmailRequest));
+        var result = await sender.Send(new VerifyCurrentEmailCommand(changeEmailRequest));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -312,15 +312,15 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Verify new phone number on change")]
-    [EndpointDescription("Verify new phone number on change")]
+    [EndpointSummary("Verify current phone number on change")]
+    [EndpointDescription("Verify current phone number on change")]
     [ProducesResponseType(200)]
-    [HttpPost("phone-number/verify-new")]
+    [HttpPost("phone-number/verify-current")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> VerifyNewPhoneNumberAsync(
-        [FromBody] VerifyNewPhoneNumberRequest request)
+    public async ValueTask<ActionResult<Response>> VerifyCurrentPhoneNumberAsync(
+        [FromBody] VerifyCurrentPhoneNumberRequest request)
     {
-        var result = await sender.Send(new VerifyNewPhoneNumberCommand(request));
+        var result = await sender.Send(new VerifyCurrentPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

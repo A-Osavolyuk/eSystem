@@ -3,20 +3,20 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public record VerifyNewPhoneNumberCommand(VerifyNewPhoneNumberRequest Request) : IRequest<Result>;
+public record VerifyCurrentPhoneNumberCommand(VerifyCurrentPhoneNumberRequest Request) : IRequest<Result>;
 
-public class VerifyNewPhoneNumberHandler(
+public class VerifyCurrentPhoneNumberCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
     IMessageService messageService,
-    IdentityOptions identityOptions) : IRequestHandler<VerifyNewPhoneNumberCommand, Result>
+    IdentityOptions identityOptions) : IRequestHandler<VerifyCurrentPhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
     private readonly IdentityOptions identityOptions = identityOptions;
 
-    public async Task<Result> Handle(VerifyNewPhoneNumberCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(VerifyCurrentPhoneNumberCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 

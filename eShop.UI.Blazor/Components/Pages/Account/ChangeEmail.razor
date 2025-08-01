@@ -82,7 +82,7 @@
                                     <MudPaper Outlined="true" Class="pa-5">
                                         <MudForm 
                                             @ref="verifyNewEmailForm" 
-                                            Model="VerifyNewEmailModel"
+                                            Model="VerifyCurrentEmailModel"
                                             Validation="VerifyNewEmailValidator.ValidateValue">
                                             <MudGrid Justify="Justify.Center">
                                                 <MudItem xs="12">
@@ -94,7 +94,7 @@
                                                     <MudCodeInput
                                                         Count="6"
                                                         Margin="Margin.Normal" Spacing="1"
-                                                        @bind-Value="VerifyNewEmailModel.Code"
+                                                        @bind-Value="VerifyCurrentEmailModel.Code"
                                                         Variant="Variant.Outlined"/>
                                                 </MudItem>
                                                 <MudItem xs="12">
@@ -202,7 +202,7 @@
 
 @code {
     [SupplyParameterFromForm] private ChangeEmailModel ChangeEmailModel { get; set; } = new();
-    [SupplyParameterFromForm] private VerifyNewEmailModel VerifyNewEmailModel { get; set; } = new();
+    [SupplyParameterFromForm] private VerifyCurrentEmailModel VerifyCurrentEmailModel { get; set; } = new();
     [SupplyParameterFromForm] private ConfirmChangeEmailModel ConfirmChangeEmailModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -259,14 +259,14 @@
 
         if (verifyNewEmailForm.IsValid)
         {
-            var request = new VerifyNewEmailRequest()
+            var request = new VerifyCurrentEmailRequest()
             {
                 UserId = userId,
                 NewEmail = ChangeEmailModel.NewEmail,
-                Code = VerifyNewEmailModel.Code
+                Code = VerifyCurrentEmailModel.Code
             };
 
-            var result = await SecurityService.VerifyNewEmailAsync(request);
+            var result = await SecurityService.VerifyCurrentEmailAsync(request);
 
             if (result.Success)
             {
