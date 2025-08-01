@@ -253,6 +253,20 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Remove phone number")]
+    [EndpointDescription("Remove phone number change")]
+    [ProducesResponseType(200)]
+    [HttpPost("phone-number/remove")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> RemovePhoneNumberAsync([FromBody] RemovePhoneNumberRequest request)
+    {
+        var result = await sender.Send(new RemovePhoneNumberCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Verify phone number")]
     [EndpointDescription("Verify phone number change")]
     [ProducesResponseType(200)]
