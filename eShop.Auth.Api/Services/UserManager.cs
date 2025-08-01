@@ -453,16 +453,11 @@ public sealed class UserManager(
     public async ValueTask<bool> IsUserNameTakenAsync(string userName,
         CancellationToken cancellationToken = default)
     {
-        if (identityOptions.Account.RequireUniqueUserName)
-        {
-            var normalizedUserName = userName.ToUpper();
-            var result = await context.Users.AnyAsync(
-                u => u.NormalizedUserName == normalizedUserName, cancellationToken);
+        var normalizedUserName = userName.ToUpper();
+        var result = await context.Users.AnyAsync(
+            u => u.NormalizedUserName == normalizedUserName, cancellationToken);
 
-            return result;
-        }
-
-        return false;
+        return result;
     }
 
     public async ValueTask<bool> IsEmailTakenAsync(string email,

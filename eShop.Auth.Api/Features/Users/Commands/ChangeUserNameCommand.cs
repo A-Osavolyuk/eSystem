@@ -4,9 +4,12 @@ namespace eShop.Auth.Api.Features.Users.Commands;
 
 public record ChangeUserNameCommand(ChangeUserNameRequest Request) : IRequest<Result>;
 
-public class ChangeUserNameCommandHandler(IUserManager userManager) : IRequestHandler<ChangeUserNameCommand, Result>
+public class ChangeUserNameCommandHandler(
+    IUserManager userManager,
+    IdentityOptions identityOptions) : IRequestHandler<ChangeUserNameCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(ChangeUserNameCommand request, CancellationToken cancellationToken)
     {
@@ -17,11 +20,14 @@ public class ChangeUserNameCommandHandler(IUserManager userManager) : IRequestHa
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
         
-        var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);
-
-        if (isUserNameTaken)
+        if (identityOptions.Account.RequireUniqueUserName)
         {
-            return Results.BadRequest("This name is already taken");
+            var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);
+        
+            if (isUserNameTaken)
+            {
+                return Results.NotFound("Username is already taken");
+            }
         }
         
         var result = await userManager.ChangeNameAsync(user, request.Request.UserName, cancellationToken);

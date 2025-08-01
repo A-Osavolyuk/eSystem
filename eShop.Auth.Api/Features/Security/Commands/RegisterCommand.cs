@@ -33,12 +33,15 @@ public sealed class RegisterCommandHandler(
                 return Results.BadRequest("This email address is already taken");
             }
         }
-        
-        var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);
-        
-        if (isUserNameTaken)
+
+        if (identityOptions.Account.RequireUniqueUserName)
         {
-            return Results.NotFound("Username is already taken");
+            var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);
+        
+            if (isUserNameTaken)
+            {
+                return Results.NotFound("Username is already taken");
+            }
         }
 
         var user = Mapper.Map(request.Request);
