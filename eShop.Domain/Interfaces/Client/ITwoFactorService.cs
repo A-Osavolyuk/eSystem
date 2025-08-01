@@ -10,4 +10,5 @@ public interface ITwoFactorService
     public ValueTask<Response> SendCodeAsync(SendTwoFactorCodeRequest request);
     public ValueTask<Response> VerifyCodeAsync(VerifyTwoFactorCodeRequest request);
     public ValueTask<Response> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request);
+    public ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request);
 }
