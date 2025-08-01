@@ -21,10 +21,18 @@ public class OAuthLoginMessage : Message
                              <div style="padding: 50px 100px; margin: auto;">
                                  <p style="font: 16px Arial, sans-serif; margin:0;">Hello, {Payload["UserName"]}!.</p>
                                  <br>
-                                 <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Sign in with {Payload["ProviderName"]}</h1>
-                                 <p style="font: 16px Arial, sans-serif; margin: 1px;">Your account was registered with {Payload["ProviderName"]}.</p>
-                                 <p style="font: 16px Arial, sans-serif; margin: 1px;">Your temporary password: {Payload["TempPassword"]}</p>
-                                 <p style="font: 16px Arial, sans-serif; margin: 1px;">To change password, navigate to: Profile &#x27A1; Security &#x27A1; Change password</p>
+                                 <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">
+                                    Sign in with {Payload["ProviderName"]}
+                                 </h1>
+                                 <p style="font: 16px Arial, sans-serif; margin: 1px;">
+                                    Your account was registered with {Payload["ProviderName"]}.
+                                 </p>
+                                 <p style="font: 16px Arial, sans-serif; margin: 1px;">
+                                    Your temporary password: {Payload["TempPassword"]}
+                                 </p>
+                                 <p style="font: 16px Arial, sans-serif; margin: 1px;">
+                                    To change password, navigate to: Profile &#x27A1; Security &#x27A1; Change password
+                                 </p>
                                  <br>
                                  <p style="font: 16px Arial, sans-serif; margin: 0;">eShop Team.</p>
                                  <div style="border: 1px solid rgb(190, 189, 189); width: 100%; margin-top: 40px;"></div>
