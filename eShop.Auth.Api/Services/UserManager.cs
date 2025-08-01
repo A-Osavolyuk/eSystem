@@ -218,6 +218,13 @@ public sealed class UserManager(
     public async ValueTask<Result> RemovePhoneNumberAsync(UserEntity user, 
         CancellationToken cancellationToken = default)
     {
+        var result = await changeManager.CreateAsync(user, ChangeField.PhoneNumber, user.PhoneNumber!, cancellationToken);
+        
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+        
         user.PhoneNumber = null;
         user.PhoneNumberConfirmed = false;
         user.PhoneNumberChangeDate = null;
@@ -232,6 +239,13 @@ public sealed class UserManager(
     public async ValueTask<Result> RemoveRecoveryEmailAsync(UserEntity user, 
         CancellationToken cancellationToken = default)
     {
+        var result = await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.PhoneNumber!, cancellationToken);
+        
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+        
         user.RecoveryEmail = null;
         user.RecoveryEmailConfirmed = false;
         user.NormalizedRecoveryEmail = null;
