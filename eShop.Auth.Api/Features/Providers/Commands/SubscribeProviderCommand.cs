@@ -15,7 +15,8 @@ public class SubscribeProviderCommandHandler(
     ILoginCodeManager loginCodeManager,
     IMessageService messageService,
     ISecretManager secretManager,
-    SecretProtector protector) : IRequestHandler<SubscribeProviderCommand, Result>
+    SecretProtector protector,
+    IdentityOptions identityOptions) : IRequestHandler<SubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IProviderManager providerManager = providerManager;
@@ -23,6 +24,7 @@ public class SubscribeProviderCommandHandler(
     private readonly ISecretManager secretManager = secretManager;
     private readonly IMessageService messageService = messageService;
     private readonly SecretProtector protector = protector;
+    private readonly IdentityOptions identityOptions = identityOptions;
     private const string QrCodeIssuer = "eShop";
 
     public async Task<Result> Handle(SubscribeProviderCommand request, CancellationToken cancellationToken)
@@ -39,6 +41,22 @@ public class SubscribeProviderCommandHandler(
         if (provider is null)
         {
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
+        }
+        
+        if (provider.Name == ProviderTypes.Email && identityOptions.SignIn.RequireConfirmedEmail)
+        {
+            if (!user.EmailConfirmed)
+            {
+                return Results.BadRequest("You need to confirm your email before.");
+            }
+        }
+        
+        if (provider.Name == ProviderTypes.Sms && identityOptions.SignIn.RequireConfirmedPhoneNumber)
+        {
+            if (!user.PhoneNumberConfirmed)
+            {
+                return Results.BadRequest("You need to confirm your phone number before.");
+            }
         }
         
         var result = await providerManager.SubscribeAsync(user, provider, cancellationToken);
