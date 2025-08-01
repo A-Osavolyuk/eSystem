@@ -8,8 +8,10 @@ public record AddPhoneNumberCommand(AddPhoneNumberRequest Request) : IRequest<Re
 public class AddPhoneNumberCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<AddPhoneNumberCommand, Result>
+    IMessageService messageService,
+    IdentityOptions identityOptions) : IRequestHandler<AddPhoneNumberCommand, Result>
 {
+    public IdentityOptions IdentityOptions { get; } = identityOptions;
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
@@ -34,12 +36,15 @@ public class AddPhoneNumberCommandHandler(
         {
             return result;
         }
-        
-        var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
 
-        if (isTaken)
+        if (identityOptions.Account.RequireUniquePhoneNumber)
         {
-            return Results.BadRequest("This phone number is already taken");
+            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
+
+            if (isTaken)
+            {
+                return Results.BadRequest("This phone number is already taken");
+            }
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Verify, 

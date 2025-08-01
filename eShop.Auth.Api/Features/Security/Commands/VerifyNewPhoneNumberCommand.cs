@@ -8,11 +8,13 @@ public record VerifyNewPhoneNumberCommand(VerifyNewPhoneNumberRequest Request) :
 public class VerifyNewPhoneNumberHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<VerifyNewPhoneNumberCommand, Result>
+    IMessageService messageService,
+    IdentityOptions identityOptions) : IRequestHandler<VerifyNewPhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(VerifyNewPhoneNumberCommand request, CancellationToken cancellationToken)
     {
@@ -23,11 +25,14 @@ public class VerifyNewPhoneNumberHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
         
-        var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
-
-        if (isTaken)
+        if (identityOptions.Account.RequireUniquePhoneNumber)
         {
-            return Results.BadRequest("This phone number is already taken");
+            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
+
+            if (isTaken)
+            {
+                return Results.BadRequest("This phone number is already taken");
+            }
         }
         
         var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, 

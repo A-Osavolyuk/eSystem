@@ -23,7 +23,7 @@ public sealed class UserManager(
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToUpper();
-        var user = await context.Users.Where(x => x.Email == email)
+        var user = await context.Users.Where(x => x.NormalizedEmail == normalizedEmail)
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -35,7 +35,7 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        
+
         return user;
     }
 
@@ -53,14 +53,14 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        
+
         return user;
     }
 
     public async ValueTask<UserEntity?> FindByUserNameAsync(string name, CancellationToken cancellationToken = default)
     {
         var normalizedUserName = name.ToUpper();
-        var user = await context.Users.Where(x => x.NormalizedUserName == name)
+        var user = await context.Users.Where(x => x.NormalizedUserName == normalizedUserName)
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -72,7 +72,7 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        
+
         return user;
     }
 
@@ -91,11 +91,11 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        
+
         return user;
     }
 
-    public async ValueTask<Result> ConfirmEmailAsync(UserEntity user, 
+    public async ValueTask<Result> ConfirmEmailAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         user.EmailConfirmed = true;
@@ -106,7 +106,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ConfirmRecoveryEmailAsync(UserEntity user, 
+    public async ValueTask<Result> ConfirmRecoveryEmailAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         user.RecoveryEmailConfirmed = true;
@@ -117,7 +117,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user, 
+    public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         user.PhoneNumberConfirmed = true;
@@ -137,20 +137,20 @@ public sealed class UserManager(
         {
             return result;
         }
-        
+
         var passwordHash = hasher.Hash(newPassword);
 
         user.PasswordHash = passwordHash;
         user.PasswordChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> ResetEmailAsync(UserEntity user, 
+    public async ValueTask<Result> ResetEmailAsync(UserEntity user,
         string newEmail, CancellationToken cancellationToken = default)
     {
         var result = await changeManager.CreateAsync(user, ChangeField.Email, user.Email, cancellationToken);
@@ -159,106 +159,110 @@ public sealed class UserManager(
         {
             return result;
         }
-        
+
         user.Email = newEmail;
         user.EmailConfirmed = true;
         user.EmailChangeDate = DateTimeOffset.UtcNow;
         user.NormalizedEmail = newEmail.ToUpper();
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
     public async ValueTask<Result> ResetRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
         CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.RecoveryEmail!, cancellationToken);
+        var result =
+            await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.RecoveryEmail!, cancellationToken);
 
         if (!result.Succeeded)
         {
             return result;
         }
-        
+
         user.RecoveryEmail = newRecoveryEmail;
         user.RecoveryEmailConfirmed = true;
         user.NormalizedRecoveryEmail = newRecoveryEmail.ToUpper();
         user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, 
+    public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user,
         string newPhoneNumber, CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, ChangeField.PhoneNumber, user.PhoneNumber!, cancellationToken);
+        var result =
+            await changeManager.CreateAsync(user, ChangeField.PhoneNumber, user.PhoneNumber!, cancellationToken);
 
         if (!result.Succeeded)
         {
             return result;
         }
-        
+
         user.PhoneNumber = newPhoneNumber;
         user.PhoneNumberConfirmed = true;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<Result> RemovePhoneNumberAsync(UserEntity user, 
+    public async ValueTask<Result> RemovePhoneNumberAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, ChangeField.PhoneNumber, user.PhoneNumber!, cancellationToken);
-        
+        var result =
+            await changeManager.CreateAsync(user, ChangeField.PhoneNumber, user.PhoneNumber!, cancellationToken);
+
         if (!result.Succeeded)
         {
             return result;
         }
-        
+
         user.PhoneNumber = null;
         user.PhoneNumberConfirmed = false;
         user.PhoneNumberChangeDate = null;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<Result> RemoveRecoveryEmailAsync(UserEntity user, 
+    public async ValueTask<Result> RemoveRecoveryEmailAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.PhoneNumber!, cancellationToken);
-        
+        var result =
+            await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.PhoneNumber!, cancellationToken);
+
         if (!result.Succeeded)
         {
             return result;
         }
-        
+
         user.RecoveryEmail = null;
         user.RecoveryEmailConfirmed = false;
         user.NormalizedRecoveryEmail = null;
         user.RecoveryEmailChangeDate = null;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail, 
+    public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail,
         CancellationToken cancellationToken = default)
     {
         var result = await changeManager.CreateAsync(user, ChangeField.Email, user.Email, cancellationToken);
@@ -267,33 +271,34 @@ public sealed class UserManager(
         {
             return result;
         }
-        
+
         user.Email = newEmail;
         user.NormalizedEmail = newEmail.ToUpperInvariant();
         user.EmailChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.UserName = newEmail;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, 
+    public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user,
         string newPhoneNumber, CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, ChangeField.PhoneNumber, user.PhoneNumber!, cancellationToken);
+        var result =
+            await changeManager.CreateAsync(user, ChangeField.PhoneNumber, user.PhoneNumber!, cancellationToken);
 
         if (!result.Succeeded)
         {
             return result;
         }
-        
+
         user.PhoneNumber = newPhoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -303,48 +308,49 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangeRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
         CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.RecoveryEmail!, cancellationToken);
+        var result =
+            await changeManager.CreateAsync(user, ChangeField.RecoveryEmail, user.RecoveryEmail!, cancellationToken);
 
         if (!result.Succeeded)
         {
             return result;
         }
-        
+
         user.RecoveryEmail = newRecoveryEmail;
         user.NormalizedRecoveryEmail = newRecoveryEmail.ToUpper();
         user.RecoveryEmailConfirmed = true;
         user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user, 
+    public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user,
         string phoneNumber, CancellationToken cancellationToken = default)
     {
         user.PhoneNumber = phoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddRecoveryEmailAsync(UserEntity user, 
+    public async ValueTask<Result> AddRecoveryEmailAsync(UserEntity user,
         string recoveryEmail, CancellationToken cancellationToken = default)
     {
         user.RecoveryEmail = recoveryEmail;
         user.NormalizedRecoveryEmail = recoveryEmail.ToUpperInvariant();
         user.RecoveryEmailChangeDate = null;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
@@ -359,14 +365,14 @@ public sealed class UserManager(
             Enabled = false,
             CreateDate = DateTimeOffset.UtcNow,
         };
-        
+
         var passwordHash = hasher.Hash(password);
 
         user.PasswordHash = passwordHash;
         user.NormalizedEmail = user.Email.ToUpper();
         user.NormalizedUserName = user.UserName.ToUpper();
         user.CreateDate = DateTimeOffset.UtcNow;
-        
+
         await context.Users.AddAsync(user, cancellationToken);
         await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
@@ -374,14 +380,14 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> UpdateAsync(UserEntity user, 
+    public async ValueTask<Result> UpdateAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
@@ -394,35 +400,35 @@ public sealed class UserManager(
         {
             return result;
         }
-        
+
         user.UserName = userName;
         user.NormalizedUserName = userName.ToUpper();
         user.UserNameChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> DeleteAsync(UserEntity user, 
+    public async ValueTask<Result> DeleteAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         context.Users.Remove(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<bool> CheckPasswordAsync(UserEntity user, 
+    public async ValueTask<bool> CheckPasswordAsync(UserEntity user,
         string password, CancellationToken cancellationToken = default)
     {
         var result = hasher.VerifyHash(password, user.PasswordHash);
         return await Task.FromResult(result);
     }
 
-    public async ValueTask<Result> ChangePasswordAsync(UserEntity user, 
+    public async ValueTask<Result> ChangePasswordAsync(UserEntity user,
         string newPassword, CancellationToken cancellationToken = default)
     {
         var result = await changeManager.CreateAsync(user, ChangeField.Password, user.PasswordHash, cancellationToken);
@@ -431,20 +437,20 @@ public sealed class UserManager(
         {
             return result;
         }
-        
+
         var newPasswordHash = hasher.Hash(newPassword);
-        
+
         user.PasswordHash = newPasswordHash;
         user.PasswordChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<bool> IsUserNameTakenAsync(string userName, 
+    public async ValueTask<bool> IsUserNameTakenAsync(string userName,
         CancellationToken cancellationToken = default)
     {
         if (identityOptions.Account.RequireUniqueUserName)
@@ -452,14 +458,14 @@ public sealed class UserManager(
             var normalizedUserName = userName.ToUpper();
             var result = await context.Users.AnyAsync(
                 u => u.NormalizedUserName == normalizedUserName, cancellationToken);
-            
+
             return result;
         }
 
         return false;
     }
 
-    public async ValueTask<bool> IsEmailTakenAsync(string email, 
+    public async ValueTask<bool> IsEmailTakenAsync(string email,
         CancellationToken cancellationToken = default)
     {
         if (identityOptions.Account.RequireUniqueEmail)
@@ -467,23 +473,18 @@ public sealed class UserManager(
             var normalizedEmail = email.ToUpper();
             var result = await context.Users.AnyAsync(
                 u => u.NormalizedEmail == normalizedEmail
-                || u.NormalizedRecoveryEmail == normalizedEmail, cancellationToken);
-            
+                     || u.NormalizedRecoveryEmail == normalizedEmail, cancellationToken);
+
             return result;
         }
-        
+
         return false;
     }
 
-    public async ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber, 
+    public async ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber,
         CancellationToken cancellationToken = default)
     {
-        if (identityOptions.Account.RequireUniquePhoneNumber)
-        {
-            var result = await context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
-            return result;
-        }
-        
-        return false;
+        var result = await context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+        return result;
     }
 }

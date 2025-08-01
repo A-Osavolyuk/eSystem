@@ -8,11 +8,13 @@ public sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request) 
 public sealed class RequestChangePhoneNumberCommandHandler(
     IMessageService messageService,
     ICodeManager codeManager,
-    IUserManager userManager) : IRequestHandler<ChangePhoneNumberCommand, Result>
+    IUserManager userManager,
+    IdentityOptions identityOptions) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IUserManager userManager = userManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
@@ -24,11 +26,14 @@ public sealed class RequestChangePhoneNumberCommandHandler(
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
         
-        var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
-
-        if (isTaken)
+        if (identityOptions.Account.RequireUniquePhoneNumber)
         {
-            return Results.BadRequest("This phone number is already taken");
+            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
+
+            if (isTaken)
+            {
+                return Results.BadRequest("This phone number is already taken");
+            }
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Current, 
