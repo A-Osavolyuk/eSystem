@@ -85,8 +85,39 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
+    [EndpointSummary("Forgot password")]
+    [EndpointDescription("Forgot password")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("password/forgot")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> ForgotPasswordAsync(ForgotPasswordRequest request)
+    {
+        var result = await sender.Send(new ForgotPasswordCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Confirm forgot password")]
+    [EndpointDescription("Confirm forgot password")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("password/confirm-forgot")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> ConfirmForgotPasswordAsync(
+        [FromBody] ConfirmForgotPasswordRequest confirmForgotPasswordRequest)
+    {
+        var result = await sender.Send(new ConfirmForgotPasswordCommand(confirmForgotPasswordRequest));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Reset password")]
-    [EndpointDescription("Request password reset")]
+    [EndpointDescription("Reset password")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("password/reset")]
@@ -94,22 +125,6 @@ public class SecurityController(ISender sender) : ControllerBase
     public async ValueTask<ActionResult<Response>> ResetPasswordAsync(ResetPasswordRequest request)
     {
         var result = await sender.Send(new ResetPasswordCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Confirm password reset")]
-    [EndpointDescription("Confirm password reset")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpPost("password/confirm-reset")]
-    [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> ConfirmResetPasswordAsync(
-        [FromBody] ConfirmResetPasswordRequest confirmResetPasswordRequest)
-    {
-        var result = await sender.Send(new ConfirmResetPasswordCommand(confirmResetPasswordRequest));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -366,21 +381,6 @@ public class SecurityController(ISender sender) : ControllerBase
         [FromBody] ConfirmResetPhoneNumberRequest request)
     {
         var result = await sender.Send(new ConfirmResetPhoneNumberCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Verify code")]
-    [EndpointDescription("Verifies code")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpPost("code/verify")]
-    [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
-    {
-        var result = await sender.Send(new VerifyCodeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

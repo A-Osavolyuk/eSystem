@@ -7,8 +7,9 @@ public interface ISecurityService
 {
     public ValueTask<Response> LoginAsync(LoginRequest request);
     public ValueTask<Response> RegisterAsync(RegistrationRequest request);
+    public ValueTask<Response> ForgotPasswordAsync(ForgotPasswordRequest request);
+    public ValueTask<Response> ConfirmForgotPasswordAsync(ConfirmForgotPasswordRequest request);
     public ValueTask<Response> ResetPasswordAsync(ResetPasswordRequest request);
-    public ValueTask<Response> ConfirmResetPasswordAsync(ConfirmResetPasswordRequest request);
     public ValueTask<Response> ResetEmailAsync(ResetEmailRequest request);
     public ValueTask<Response> ConfirmResetEmailAsync(ConfirmResetEmailRequest request);
     public ValueTask<Response> ResetPhoneNumberAsync(ResetPhoneNumberRequest request);
@@ -22,7 +23,6 @@ public interface ISecurityService
     public ValueTask<Response> ChangePhoneNumberAsync(ChangePhoneNumberRequest request);
     public ValueTask<Response> ConfirmChangePhoneNumberAsync(ConfirmChangePhoneNumberRequest request);
     public ValueTask<Response> ResendCodeAsync(ResendCodeRequest request);
-    public ValueTask<Response> VerifyCodeAsync(VerifyCodeRequest request);
     public ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request);
     public ValueTask<Response> VerifyCurrentEmailAsync(VerifyCurrentEmailRequest request);
     public ValueTask<Response> VerifyRecoveryEmailAsync(VerifyRecoveryEmailRequest request);

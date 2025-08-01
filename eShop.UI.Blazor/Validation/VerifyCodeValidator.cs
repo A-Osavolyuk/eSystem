@@ -3,7 +3,7 @@ using eShop.BlazorWebUI.Models;
 
 namespace eShop.BlazorWebUI.Validation;
 
-public class VerifyCodeValidator : Validator<VerifyCodeModel>
+public class VerifyCodeValidator : Validator<ConfirmForgotPasswordModel>
 {
     public VerifyCodeValidator()
     {

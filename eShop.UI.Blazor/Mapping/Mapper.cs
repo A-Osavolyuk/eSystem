@@ -166,12 +166,11 @@ public static class Mapper
         };
     }
 
-    public static ConfirmResetPasswordRequest Map(ResetPasswordModel source)
+    public static ResetPasswordRequest Map(ResetPasswordModel source)
     {
         return new()
         {
             NewPassword = source.NewPassword,
-            ConfirmNewPassword = source.ConfirmNewPassword,
             UserId = source.Id
         };
     }

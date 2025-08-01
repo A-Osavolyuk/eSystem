@@ -82,7 +82,7 @@
                                     <MudPaper Outlined Class="pa-3">
                                         <MudForm
                                             @ref="verifyCodeForm"
-                                            Model="VerifyCodeModel"
+                                            Model="ConfirmForgotPasswordModel"
                                             Validation="VerifyCodeValidator.ValidateValue">
                                             <MudGrid Spacing="1" Justify="Justify.Center">
                                                 <MudItem xs="12">
@@ -98,7 +98,7 @@
                                                                   Margin="Margin.Normal"
                                                                   Spacing="1"
                                                                   Class="mt-2"
-                                                                  @bind-Value="VerifyCodeModel.Code"
+                                                                  @bind-Value="ConfirmForgotPasswordModel.Code"
                                                                   Variant="Variant.Outlined"/>
                                                 </MudItem>
                                                 <MudItem xs="12">
@@ -106,7 +106,7 @@
                                                                       Variant="Variant.Filled"
                                                                       Class="mt-2"
                                                                       Color="Color.Primary"
-                                                                      Disabled="@(VerifyCodeModel.Code.Length <= 5)"
+                                                                      Disabled="@(ConfirmForgotPasswordModel.Code.Length <= 5)"
                                                                       ButtonType="ButtonType.Button"
                                                                       OnClick="@(async () => await OnVerifyCodeAsync())">
                                                         Confirm
@@ -145,7 +145,7 @@
 
 @code {
     [SupplyParameterFromForm] private AddPhoneNumberModel AddPhoneNumberModel { get; set; } = new();
-    [SupplyParameterFromForm] private VerifyCodeModel VerifyCodeModel { get; set; } = new();
+    [SupplyParameterFromForm] private ConfirmForgotPasswordModel ConfirmForgotPasswordModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm addPhoneNumberForm = new();
@@ -219,7 +219,7 @@
             var state = await AuthenticationManager.GetStateAsync();
             var request = new VerifyPhoneNumberRequest()
             {
-                Code = VerifyCodeModel.Code,
+                Code = ConfirmForgotPasswordModel.Code,
                 UserId = state.UserId
             };
 

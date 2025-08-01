@@ -1,55 +1,24 @@
-﻿using eShop.Auth.Api.Messages.Email;
-using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record ResetPasswordCommand(ResetPasswordRequest Request)
-    : IRequest<Result>;
+public sealed record ResetPasswordCommand(ResetPasswordRequest Request) : IRequest<Result>;
 
-public sealed class ResetPasswordCommandHandler(
-    IUserManager userManager,
-    IMessageService messageService,
-    ICodeManager codeManager) : IRequestHandler<ResetPasswordCommand, Result>
+public sealed class ResetPasswordCommandHandler(IUserManager userManager) : IRequestHandler<ResetPasswordCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IMessageService messageService = messageService;
-    private readonly ICodeManager codeManager = codeManager;
 
-    public async Task<Result> Handle(ResetPasswordCommand request,
-        CancellationToken cancellationToken)
+    public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         }
-
-        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, 
-            CodeResource.Password, cancellationToken);
-
-        var message = new ResetPasswordMessage()
-        {
-            Credentials = new ()
-            {
-                { "To", user.Email },
-                { "Subject", "Password reset" }
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "UserName", user.UserName }
-            }
-        };
         
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-
-        var response = new ForgotPasswordResponse()
-        {
-            UserId = user.Id
-        };
-
-        return Result.Success(response);
+        var resetResult = await userManager.ResetPasswordAsync(user, request.Request.NewPassword, cancellationToken);
+        
+        return resetResult;
     }
 }
