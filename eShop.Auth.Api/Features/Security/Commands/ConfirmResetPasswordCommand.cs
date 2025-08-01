@@ -3,7 +3,7 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record ConfirmResetPasswordCommand(ResetPasswordRequest Request) : IRequest<Result>;
+public sealed record ConfirmResetPasswordCommand(ConfirmResetPasswordRequest Request) : IRequest<Result>;
 
 public sealed class ConfirmResetPasswordCommandHandler(
     IUserManager userManager) : IRequestHandler<ConfirmResetPasswordCommand, Result>

@@ -166,7 +166,7 @@ public static class Mapper
         };
     }
 
-    public static ResetPasswordRequest Map(ResetPasswordModel source)
+    public static ConfirmResetPasswordRequest Map(ResetPasswordModel source)
     {
         return new()
         {

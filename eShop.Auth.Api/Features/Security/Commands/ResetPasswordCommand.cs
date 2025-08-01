@@ -4,7 +4,7 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record ResetPasswordCommand(ForgotPasswordRequest Request)
+public sealed record ResetPasswordCommand(ResetPasswordRequest Request)
     : IRequest<Result>;
 
 public sealed class ResetPasswordCommandHandler(

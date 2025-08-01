@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Validation;
 
-public class ForgotPasswordValidator : Validator<ForgotPasswordRequest>
+public class ForgotPasswordValidator : Validator<ResetPasswordRequest>
 {
     public ForgotPasswordValidator()
     {
