@@ -34,7 +34,7 @@ public class ResendCodeCommandHandler(
         Message message = request.Request switch
         {
             { CodeResource: CodeResource.Email, CodeType: CodeType.Verify, Sender: SenderType.Email } =>
-                new VerifyEmailMessage
+                new AccountRegisteredMessage
                 {
                     Credentials = new()
                     {
@@ -63,7 +63,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.Email, CodeType: CodeType.New, Sender: SenderType.Email } =>
-                new VerifyEmailMessage()
+                new AccountRegisteredMessage()
                 {
                     Credentials = new()
                     {

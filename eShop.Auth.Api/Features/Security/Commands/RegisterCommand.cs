@@ -82,7 +82,7 @@ public sealed class RegisterCommandHandler(
         var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Verify, 
             CodeResource.Email, cancellationToken);
         
-        var message = new VerifyEmailMessage()
+        var message = new AccountRegisteredMessage()
         {
             Credentials = new ()
             {

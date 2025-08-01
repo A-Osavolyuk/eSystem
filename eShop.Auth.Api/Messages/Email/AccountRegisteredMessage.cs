@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class VerifyEmailMessage : Message
+public class AccountRegisteredMessage : Message
 {
     public override string Build()
     {
@@ -10,7 +10,7 @@ public class VerifyEmailMessage : Message
                      <head>
                          <meta charset="UTF-8">
                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                         <title>Email verification</title>
+                         <title>Account registered</title>
                      </head>
                      <body>
                      <div style="border: 1px solid rgb(190, 189, 189); width: 800px; margin: auto; padding: 1px;">
@@ -19,11 +19,12 @@ public class VerifyEmailMessage : Message
                          </div>
                          <div style="border: 1px solid rgb(190, 189, 189); width: 100%;"></div>
                          <div style="padding: 50px 100px; margin: auto;">
-                             <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Email verification</h1>
+                             <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Account registered</h1>
                              <p style="font: 16px Arial, sans-serif; margin:0;">Hello, {Payload["UserName"]}!.</p>
                              <br>
                              <p style="font: 16px Arial, sans-serif; margin: 0;">
-                                 To verify your email address, please enter verification code from below.
+                                 To complete account registration, you need to verify your email address.
+                                 To verify your email addrees, please enter 6-digit verification code from below.
                              </p>
                              <br>
                              <p style="font: 16px Arial, sans-serif; margin: 0;"> Your verification code: {Payload["Code"]}. Will expire in: 10 mins.</p>

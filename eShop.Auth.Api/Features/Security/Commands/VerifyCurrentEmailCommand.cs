@@ -46,7 +46,7 @@ public class VerifyCurrentEmailCommandHandler(
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.New, 
             CodeResource.Email, cancellationToken);
         
-        var message = new VerifyEmailMessage()
+        var message = new AccountRegisteredMessage()
         {
             Credentials = new ()
             {
