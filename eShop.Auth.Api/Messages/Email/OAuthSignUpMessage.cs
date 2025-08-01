@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class OAuthLoginMessage : Message
+public class OAuthSignUpMessage : Message
 {
     public override string Build()
     {
