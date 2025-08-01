@@ -380,6 +380,28 @@ public sealed class UserManager(
         return Result.Success();
     }
 
+    public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        var lockoutState = new LockoutStateEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            ReasonId = null,
+            Enabled = false,
+            CreateDate = DateTimeOffset.UtcNow,
+        };
+        
+        user.NormalizedEmail = user.Email.ToUpper();
+        user.NormalizedUserName = user.UserName.ToUpper();
+        user.CreateDate = DateTimeOffset.UtcNow;
+
+        await context.Users.AddAsync(user, cancellationToken);
+        await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
     public async ValueTask<Result> UpdateAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
