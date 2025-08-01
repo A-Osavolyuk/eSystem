@@ -106,6 +106,12 @@
                                             </MudGrid>
                                         </MudForm>
                                     </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received an @Provider?
+                                            <strong @onclick="async () => await ResendCodeAsync()"
+                                                    class="cursor-pointer">Resend</strong>
+                                        </MudText>
+                                    </MudPaper>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -188,6 +194,26 @@
         if (result.Success)
         {
             await StepNextAsync();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task ResendCodeAsync()
+    {
+        var request = new SendTwoFactorCodeRequest()
+        {
+            UserId = userId,
+            Provider = Provider
+        };
+
+        var result = await TwoFactorService.SendCodeAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add($"2FA code was resend via {Provider}", Severity.Success);
         }
         else
         {
