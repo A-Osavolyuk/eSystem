@@ -223,6 +223,22 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Remove recovery email")]
+    [EndpointDescription("Remove recovery email")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("recovery-email/remove")]
+    [ValidationFilter]
+    public async ValueTask<ActionResult<Response>> RemoveRecoveryEmailAsync(
+        [FromBody] RemoveRecoveryEmailRequest request)
+    {
+        var result = await sender.Send(new RemoveRecoveryEmailCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Verify recovery email")]
     [EndpointDescription("Verify recovery email")]
     [ProducesResponseType(200)]
