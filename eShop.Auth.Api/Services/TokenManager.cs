@@ -8,13 +8,9 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(ITokenManager), ServiceLifetime.Scoped)]
 public sealed class TokenManager(
     AuthDbContext context,
-    IRoleManager roleManager,
-    IPermissionManager permissionManager,
     IOptions<JwtOptions> options) : ITokenManager
 {
     private readonly AuthDbContext context = context;
-    private readonly IRoleManager roleManager = roleManager;
-    private readonly IPermissionManager permissionManager = permissionManager;
     private readonly JwtOptions options = options.Value;
     private const int AccessTokenExpirationMinutes = 30;
     private const string Algorithm = SecurityAlgorithms.HmacSha256Signature;
