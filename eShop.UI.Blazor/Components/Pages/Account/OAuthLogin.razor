@@ -1,17 +1,29 @@
 ﻿@page "/account/oauth/login/"
+
+@inherits PageBase
+
 @inject NavigationManager NavigationManager
 @inject AuthenticationManager AuthenticationManager
-@inject ISnackbar Snackbar
 
 @code {
     [SupplyParameterFromQuery(Name = "accessToken")] public string AccessToken { get; set; } = string.Empty;
     [SupplyParameterFromQuery(Name = "refreshToken")] public string RefreshToken { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "type")] public string Type { get; set; } = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await AuthenticationManager.LogInAsync(AccessToken, RefreshToken);
-        NavigationManager.NavigateTo(("/products"));
 
-        Snackbar.Add("Successfully logged in.", Severity.Success);
+        if (Type == "signIn")
+        {
+            NavigationManager.NavigateTo(("/products"));
+            Snackbar.Add($"Successfully logged in with {Provider}.", Severity.Success);
+        }
+        else if(Type == "signUp")
+        {
+            NavigationManager.NavigateTo(("/account/oauth/signed-up"));
+            Snackbar.Add($"Successfully logged in with {Provider}.", Severity.Success);
+        }
     }
 }

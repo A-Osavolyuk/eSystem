@@ -26,8 +26,9 @@ public sealed class HandleOAuthLoginCommandHandler(
     public async Task<Result> Handle(HandleOAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
-        var email = request.Principal.Claims
-            .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        var provider = request.Principal.Identity!.AuthenticationType!;
+        var email = request.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        string type;
 
         if (email is null)
         {
@@ -45,11 +46,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                 return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
             }
 
-            var link = await GenerateLinkAsync(user, request.ReturnUri!, cancellationToken);
-
-            return Result.Success(link);
+            type = "signIn";
         }
-
+        else
         {
             user = new UserEntity()
             {
@@ -58,9 +57,8 @@ public sealed class HandleOAuthLoginCommandHandler(
                 UserName = email,
                 EmailConfirmed = true
             };
-
-            var tempPassword = PasswordGenerator.Generate(18);
-            var result = await userManager.CreateAsync(user, tempPassword, cancellationToken);
+            
+            var result = await userManager.CreateAsync(user, cancellationToken);
 
             if (!result.Succeeded)
             {
@@ -93,9 +91,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 }
             }
 
-            var provider = request.Principal.Identity!.AuthenticationType!;
-
-            var message = new OAuthLoginMessage()
+            var message = new OAuthSignUpMessage()
             {
                 Credentials = new Dictionary<string, string>()
                 {
@@ -105,26 +101,33 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Payload = new()
                 {
                     { "UserName", user.UserName },
-                    { "ProviderName", provider },
-                    { "TempPassword", tempPassword }
+                    { "ProviderName", provider }
                 }
             };
+            
+            user = await userManager.FindByIdAsync(user.Id, cancellationToken);
+
+            if (user is null)
+            {
+                return Results.InternalServerError("Failure on user registration via OAuth");
+            }
 
             await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
-            var link = await GenerateLinkAsync(user, request.ReturnUri!, cancellationToken);
-
-            return Result.Success(link);
+            type = "signUp";
         }
-    }
-
-    private async Task<string> GenerateLinkAsync(UserEntity user, string returnUri,
-        CancellationToken cancellationToken = default)
-    {
+        
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
-        var link = UrlGenerator.ActionLink(returnUri, new { accessToken, refreshToken });
+            
+        var link = UrlGenerator.ActionLink(request.ReturnUri!, new
+        {
+            accessToken, 
+            refreshToken, 
+            provider, 
+            type
+        });
 
-        return link;
+        return Result.Success(link);
     }
 }
