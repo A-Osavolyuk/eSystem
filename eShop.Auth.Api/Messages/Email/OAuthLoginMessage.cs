@@ -28,9 +28,6 @@ public class OAuthLoginMessage : Message
                                     Your account was registered with {Payload["ProviderName"]}.
                                  </p>
                                  <p style="font: 16px Arial, sans-serif; margin: 1px;">
-                                    Your temporary password: {Payload["TempPassword"]}
-                                 </p>
-                                 <p style="font: 16px Arial, sans-serif; margin: 1px;">
                                     To change password, navigate to: Profile &#x27A1; Security &#x27A1; Change password
                                  </p>
                                  <br>
