@@ -63,7 +63,7 @@ public class ResendCodeCommandHandler(
                     }
                 },
             { CodeResource: CodeResource.Email, CodeType: CodeType.New, Sender: SenderType.Email } =>
-                new AccountRegisteredMessage()
+                new VerifyEmailMessage()
                 {
                     Credentials = new()
                     {
