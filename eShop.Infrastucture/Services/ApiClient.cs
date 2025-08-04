@@ -9,14 +9,12 @@ using HttpRequest = eShop.Domain.Common.API.HttpRequest;
 namespace eShop.Infrastructure.Services;
 
 public class ApiClient(
-    AuthenticationManager authenticationManager,
     IHttpClientFactory clientFactory,
     ITokenProvider tokenProvider)
     : IApiClient
 {
     private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");
     private readonly ITokenProvider tokenProvider = tokenProvider;
-    private readonly AuthenticationManager authenticationManager = authenticationManager;
     private const string Key = "services:proxy:http:0";
 
     public async ValueTask<Response> SendAsync(HttpRequest httpRequest, HttpOptions options)
@@ -31,7 +29,6 @@ public class ApiClient(
 
                 if (string.IsNullOrEmpty(token))
                 {
-                    await authenticationManager.LogOutAsync();
                     return new ResponseBuilder()
                         .Failed()
                         .WithMessage("Unauthorized")
