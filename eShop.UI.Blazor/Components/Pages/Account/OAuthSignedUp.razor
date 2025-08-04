@@ -1,0 +1,39 @@
+﻿@page "/account/oauth/signed-up"
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4">
+        <MudStack Justify="Justify.Center" Spacing="1">
+            <MudPaper Outlined="true" Class="pa-5">
+                <MudText Typo="Typo.h6" Align="Align.Center">
+                    Signed up with @Provider
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-5">
+                <MudText Align="Align.Center">
+                    Your account was successfully signed up with @Provider.
+                    Now you need to add password, to be able to sing in with login, but it's
+                    optional and you still able to sign in with @Provider or any other OAuth provider anyway.
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-5">
+                <MudText Align="Align.Center">
+                    To add password, please click 
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/password/add"))">
+                        here.
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "provider")]
+    public string Provider { get; set; } = string.Empty;
+
+}
