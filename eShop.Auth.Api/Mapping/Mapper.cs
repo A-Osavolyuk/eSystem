@@ -101,7 +101,7 @@ public static class Mapper
         return new ProviderDto()
         {
             Id = source.Id,
-            Name = source.Name
+            Name = source.Name,
         };
     }
 

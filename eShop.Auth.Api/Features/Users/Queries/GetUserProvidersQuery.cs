@@ -15,7 +15,7 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
             return Results.NotFound($"Cannot find user with ID {request.Id}.");
         }
 
-        var providers = user.Providers.Select(x => x.Provider).ToList();
+        var providers = user.Providers.ToList();
         var result = providers.Select(Mapper.Map).ToList();
         return Result.Success(result);
     }

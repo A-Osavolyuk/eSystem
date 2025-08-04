@@ -22,7 +22,7 @@
         }
         else if(Type == "signUp")
         {
-            NavigationManager.NavigateTo(("/account/oauth/signed-up"));
+            NavigationManager.NavigateTo(($"/account/oauth/signed-up?provider={Provider}"));
             Snackbar.Add($"Successfully signed up with {Provider}.", Severity.Success);
         }
     }
