@@ -121,7 +121,7 @@ public sealed class TokenManager(
     {
         var claims = new List<Claim>()
         {
-            new(AppClaimTypes.Id, user.Id.ToString()),
+            new(AppClaimTypes.Subject, user.Id.ToString()),
         };
 
         var roles = user.Roles.Select(x => x.Role);

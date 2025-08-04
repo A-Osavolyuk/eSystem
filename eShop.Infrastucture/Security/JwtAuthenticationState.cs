@@ -8,7 +8,7 @@ public class JwtAuthenticationState
     {
         get
         {
-            var value = Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Id)?.Value!;
+            var value = Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Subject)?.Value!;
             return Guid.Parse(value);
         }
     }

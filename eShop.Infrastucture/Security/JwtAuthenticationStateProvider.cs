@@ -85,8 +85,13 @@ public class JwtAuthenticationStateProvider(
             var claimsPrincipal = new ClaimsPrincipal(identity);
             var authenticationState = new AuthenticationState(claimsPrincipal);
 
-            var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value);
-            await localStorage.SetAsync("userId", userId);
+            var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Subject).Value);
+            var jti = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Jti).Value);
+            var exp = long.Parse(claims.First(x => x.Type == AppClaimTypes.Exp).Value);
+            
+            await storage.SetAsync("userId", userId);
+            await storage.SetAsync("jti", jti);
+            await storage.SetAsync("exp", exp);
 
             NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
