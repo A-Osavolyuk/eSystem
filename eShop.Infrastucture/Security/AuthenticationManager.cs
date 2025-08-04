@@ -5,12 +5,10 @@ namespace eShop.Infrastructure.Security;
 
 public class AuthenticationManager(
     AuthenticationStateProvider authenticationStateProvider,
-    RouteManager routeManager,
     TokenHandler tokenHandler,
     ITokenProvider tokenProvider)
 {
     private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
-    private readonly RouteManager routeManager = routeManager;
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly ITokenProvider tokenProvider = tokenProvider;
 
@@ -22,7 +20,6 @@ public class AuthenticationManager(
     public async Task LogOutAsync()
     {
         await (authenticationStateProvider as JwtAuthenticationStateProvider)!.LogOutAsync();
-        await routeManager.NavigateAsync("/account/login");
     }
 
     public async Task ReauthenticateAsync(string accessToken, string refreshToken)
