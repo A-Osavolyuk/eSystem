@@ -3,7 +3,6 @@
 @inherits PageBase
 
 @inject NavigationManager NavigationManager
-@inject AuthenticationManager AuthenticationManager
 
 @code {
     [SupplyParameterFromQuery(Name = "accessToken")] public string AccessToken { get; set; } = string.Empty;
@@ -22,7 +21,7 @@
         }
         else if(Type == "signUp")
         {
-            NavigationManager.NavigateTo(($"/account/oauth/signed-up?provider={Provider}"));
+            NavigationManager.NavigateTo(("/account/oauth/signed-up"));
             Snackbar.Add($"Successfully signed up with {Provider}.", Severity.Success);
         }
     }
