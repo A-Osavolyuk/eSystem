@@ -8,21 +8,19 @@ public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage storage,
     ISecurityService securityService,
-    TokenHandler tokenHandler,
-    JwtTokenStorage jwtTokenStorage) : AuthenticationStateProvider
+    TokenHandler tokenHandler) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage storage = storage;
     private readonly ISecurityService securityService = securityService;
     private readonly TokenHandler tokenHandler = tokenHandler;
-    private readonly JwtTokenStorage jwtTokenStorage = jwtTokenStorage;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         try
         {
-            var token = jwtTokenStorage.Token;
+            var token = await tokenProvider.GetTokenAsync();
 
             if (string.IsNullOrEmpty(token))
             {
@@ -31,7 +29,7 @@ public class JwtAuthenticationStateProvider(
 
             var valid = tokenHandler.Validate(token);
 
-            if (valid)
+            if (!valid)
             {
                 return await RefreshTokenAsync(token);
             }
@@ -44,12 +42,7 @@ public class JwtAuthenticationStateProvider(
             }
 
             var claims = rawToken.Claims.ToList();
-
-            if (claims.Count == 0)
-            {
-                return await UnauthorizeAsync();
-            }
-
+            
             return await Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(
                     new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme))));
