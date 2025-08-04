@@ -9,10 +9,12 @@ public class JwtAuthenticationHandler(
     IOptionsMonitor<JwtAuthenticationOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder,
-    TokenHandler tokenHandler)
+    TokenHandler tokenHandler,
+    JwtTokenStorage jwtTokenStorage)
     : AuthenticationHandler<JwtAuthenticationOptions>(options, logger, encoder)
 {
     private readonly TokenHandler tokenHandler = tokenHandler;
+    private readonly JwtTokenStorage jwtTokenStorage = jwtTokenStorage;
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -24,6 +26,8 @@ public class JwtAuthenticationHandler(
             {
                 return Task.FromResult(AuthenticateResult.NoResult());
             }
+            
+            jwtTokenStorage.Token = token;
 
             var rawToken = tokenHandler.ReadToken(token)!;
             var claims = rawToken.Claims.ToList();
