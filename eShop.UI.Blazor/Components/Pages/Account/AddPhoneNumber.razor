@@ -9,7 +9,6 @@
 @inject ISecurityService SecurityService
 @inject AddPhoneNumberValidator AddPhoneNumberValidator
 @inject VerifyCodeValidator VerifyCodeValidator
-@inject AuthenticationManager AuthenticationManager
 
 <Title Text="Add phone number"></Title>
 
@@ -162,11 +161,11 @@
 
     private async Task ResendCodeAsync()
     {
-        var state = await AuthenticationManager.GetStateAsync();;
+        var state = await AuthenticationStateManager.GetStateAsync();;
 
         var request = new ResendCodeRequest()
         {
-            UserId = state.UserId,
+            UserId = state!.UserId,
             CodeResource = CodeResource.PhoneNumber,
             CodeType = CodeType.Verify,
             Sender = SenderType.Sms
@@ -190,10 +189,10 @@
 
         if (addPhoneNumberForm.IsValid)
         {
-            var state = await AuthenticationManager.GetStateAsync();
+            var state = await AuthenticationStateManager.GetStateAsync();
             var request = new AddPhoneNumberRequest()
             {
-                UserId = state.UserId,
+                UserId = state!.UserId,
                 PhoneNumber = AddPhoneNumberModel.PhoneNumber
             };
 
@@ -216,11 +215,11 @@
 
         if (verifyCodeForm.IsValid)
         {
-            var state = await AuthenticationManager.GetStateAsync();
+            var state = await AuthenticationStateManager.GetStateAsync();
             var request = new VerifyPhoneNumberRequest()
             {
                 Code = ConfirmForgotPasswordModel.Code,
-                UserId = state.UserId
+                UserId = state!.UserId
             };
 
             var result = await SecurityService.VerifyPhoneNumberAsync(request);

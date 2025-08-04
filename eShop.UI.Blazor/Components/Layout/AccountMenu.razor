@@ -2,12 +2,10 @@
 @using Size = MudBlazor.Size
 
 @inject AuthenticationManager AuthenticationManager
+@inject AuthenticationStateManager AuthenticationStateManager
 @inject Router RouteManager
-@inject TokenHandler TokenHandler
 @inject UserState UserState
 @inject ISnackbar Snackbar
-@inject ITokenProvider TokenProvider
-@inject IStorage Storage
 @inject IUsersService UsersService
 
 @implements IDisposable
@@ -116,8 +114,8 @@
 
     private async Task LoadAsync()
     {
-        var state = await AuthenticationManager.GetStateAsync();
-        var result = await UsersService.GetUserAsync(state.UserId);
+        var state = await AuthenticationStateManager.GetStateAsync();
+        var result = await UsersService.GetUserAsync(state!.UserId);
         var user = result.Get<UserDto>()!;
         model = Mapper.Map(user);
     }

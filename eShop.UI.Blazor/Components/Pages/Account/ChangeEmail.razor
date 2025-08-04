@@ -9,7 +9,6 @@
 @inject ChangeEmailValidator ChangeEmailValidator
 @inject VerifyNewEmailValidator VerifyNewEmailValidator
 @inject ConfirmChangeEmailValidator ConfirmChangeEmailValidator
-@inject AuthenticationManager AuthenticationManager
 @inject ISecurityService SecurityService
 
 <Title Text="Change email"></Title>
@@ -218,8 +217,8 @@
     {
         if (firstRender)
         {
-            var state = await AuthenticationManager.GetStateAsync();
-            userId = state.UserId;
+            var state = await AuthenticationStateManager.GetStateAsync();
+            userId = state!.UserId;
         }
 
         if (completed)

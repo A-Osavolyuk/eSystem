@@ -9,7 +9,6 @@
 @inject ISecurityService SecurityService
 @inject ResetPhoneNumberValidator ResetPhoneNumberValidator
 @inject ConfirmResetPhoneNumberValidator ConfirmResetPhoneNumberValidator
-@inject AuthenticationManager AuthenticationManager
 
 <Title Text="Reset phone number"></Title>
 
@@ -152,7 +151,7 @@
     {
         if (firstRender)
         {
-            var state = await AuthenticationManager.GetStateAsync();
+            var state = await AuthenticationStateManager.GetStateAsync();
             userId = state.UserId;
         }
 

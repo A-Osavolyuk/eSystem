@@ -4,7 +4,6 @@
 
 @attribute [Authorize]
 
-@inject AuthenticationManager AuthenticationManager
 @inject IProvidersService ProvidersService
 @inject ITwoFactorService TwoFactorService
 
@@ -150,7 +149,7 @@
     {
         if (firstRender)
         {
-            var state = await AuthenticationManager.GetStateAsync();
+            var state = await AuthenticationStateManager.GetStateAsync();
             userId = state!.UserId;
         }
 
