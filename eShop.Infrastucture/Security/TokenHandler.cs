@@ -19,14 +19,9 @@ public class TokenHandler
     
     public bool Validate(string token)
     {
-        if (string.IsNullOrEmpty(token))
-        {
-            return false;
-        }
-        
         var rawToken = ReadToken(token);
         
-        if (rawToken is null || rawToken.Claims.Any())
+        if (rawToken is null || !rawToken.Claims.Any())
         {
             return false;
         }
