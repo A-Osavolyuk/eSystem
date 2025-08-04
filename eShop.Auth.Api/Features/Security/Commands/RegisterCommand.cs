@@ -67,15 +67,18 @@ public sealed class RegisterCommandHandler(
             return assignRoleResult;
         }
 
-        var permissions = role.Permissions.Select(x => x.Permission).ToList();
-
-        foreach (var permission in permissions)
+        if (role.Permissions.Count > 0)
         {
-            var grantResult = await permissionManager.GrantAsync(user, permission, cancellationToken);
+            var permissions = role.Permissions.Select(x => x.Permission).ToList();
 
-            if (!grantResult.Succeeded)
+            foreach (var permission in permissions)
             {
-                return grantResult;
+                var grantResult = await permissionManager.GrantAsync(user, permission, cancellationToken);
+
+                if (!grantResult.Succeeded)
+                {
+                    return grantResult;
+                }
             }
         }
 
