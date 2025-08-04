@@ -21,6 +21,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
     public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
     public DbSet<UserChangesEntity> UserChanges { get; set; }
+    public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -230,6 +231,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.User)
                 .WithMany(x => x.RecoveryCodes)
                 .HasForeignKey(x => x.UserId);
+        });
+
+        builder.Entity<OAuthProviderEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(64);
         });
     }
 }
