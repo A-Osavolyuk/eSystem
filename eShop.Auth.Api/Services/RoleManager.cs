@@ -7,16 +7,9 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
 
     public async ValueTask<List<RoleEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var roles = await context.Roles.ToListAsync(cancellationToken);
-        return roles;
-    }
-
-    public async ValueTask<List<RoleEntity>> GetAllAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        var roles = await context.UserRoles
-            .Where(x => x.UserId == user.Id)
-            .Include(x => x.Role)
-            .Select(x => x.Role)
+        var roles = await context.Roles
+            .Include(x => x.Permissions)
+            .ThenInclude(x => x.Permission)
             .ToListAsync(cancellationToken);
         
         return roles;
