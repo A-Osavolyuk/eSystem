@@ -151,8 +151,7 @@
     {
         if (firstRender)
         {
-            var state = await AuthenticationStateManager.GetStateAsync();
-            userId = state.UserId;
+            userId = await LocalStorage.GetAsync<Guid>("userId")!;
         }
 
         if (completed)

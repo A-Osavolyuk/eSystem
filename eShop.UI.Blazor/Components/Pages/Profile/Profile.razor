@@ -358,8 +358,8 @@
 
     private async Task LoadUserAsync()
     {
-        var state = await AuthenticationStateManager.GetStateAsync();
-        var result = await UsersService.GetUserAsync(state.UserId);
+        var userId = await LocalStorage.GetAsync<Guid>("userId")!;
+        var result = await UsersService.GetUserAsync(userId);
 
         if (result.Success)
         {

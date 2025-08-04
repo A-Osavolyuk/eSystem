@@ -7,6 +7,7 @@
 @inject UserState UserState
 @inject ISnackbar Snackbar
 @inject IUsersService UsersService
+@inject IStorage Storage
 
 @implements IDisposable
 
@@ -114,8 +115,8 @@
 
     private async Task LoadAsync()
     {
-        var state = await AuthenticationStateManager.GetStateAsync();
-        var result = await UsersService.GetUserAsync(state!.UserId);
+        var userId = await Storage.GetAsync<Guid>("userId")!;
+        var result = await UsersService.GetUserAsync(userId);
         var user = result.Get<UserDto>()!;
         model = Mapper.Map(user);
     }
