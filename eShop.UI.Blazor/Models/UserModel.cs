@@ -19,7 +19,10 @@ public class UserModel
     
     public bool? TwoFactorEnabled  { get; set; }
     public List<UserProviderDto> Providers { get; set; } = [];
+    
+    public bool HasPassword { get; set; }
     public DateTimeOffset? PasswordChangeDate { get; set; }
+    
     public string? AvatarUri { get; set; } = string.Empty;
     
     public PersonalDataModel? PersonalData { get; set; }

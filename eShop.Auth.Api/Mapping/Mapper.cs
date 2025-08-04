@@ -60,6 +60,7 @@ public static class Mapper
             UserNameChangeDate = source.UserNameChangeDate,
             PasswordChangeDate = source.PasswordChangeDate,
             Providers = source.Providers.Select(Map).ToList(),
+            HasPassword = !string.IsNullOrEmpty(source.PasswordHash)
         };
     }
 
