@@ -62,7 +62,7 @@ public sealed class TokenManager(
 
         var claims = GetClaims(user);
         var jti = Guid.NewGuid();
-        var jtiClaim = new Claim(JwtRegisteredClaimNames.Jti, jti.ToString());
+        var jtiClaim = new Claim(AppClaimTypes.Jti, jti.ToString());
 
         var securityToken = new JwtSecurityToken(
             audience: options.Audience,

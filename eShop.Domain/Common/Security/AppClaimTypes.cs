@@ -3,6 +3,7 @@
 public static class AppClaimTypes
 {
     public const string Id = "id";
+    public const string Jti = "jti";
     public const string Email = "email";
     public const string PhoneNumber = "phoneNumber";
     public const string UserName = "username";
