@@ -32,6 +32,7 @@ public class UserEntity : Entity
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
     public ICollection<RecoveryCodeEntity> RecoveryCodes { get; init; } = null!;
     public ICollection<UserProviderEntity> Providers { get; init; } = null!;
+    public ICollection<UserOAuthProviderEntity> OAuthProviders { get; init; } = null!;
     public ICollection<UserChangesEntity> Changes { get; init; } = null!;
     public LockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity PersonalData { get; set; } = null!;

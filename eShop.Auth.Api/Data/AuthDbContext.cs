@@ -238,5 +238,18 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Name).HasMaxLength(64);
         });
+
+        builder.Entity<UserOAuthProviderEntity>(entity =>
+        {
+            entity.HasKey(x => new { x.UserId, x.ProviderId });
+            
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.OAuthProviders)
+                .HasForeignKey(x => x.UserId);
+            
+            entity.HasOne(x => x.Provider)
+                .WithMany()
+                .HasForeignKey(x => x.ProviderId);
+        });
     }
 }
