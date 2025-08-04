@@ -9,10 +9,10 @@ namespace eShop.Infrastructure.Routing;
 public class RouteManager(
     NavigationManager navigationManager,
     Router router,
-    AuthenticationManager authenticationManager)
+    AuthenticationStateManager authenticationStateManager)
 {
     private readonly NavigationManager navigationManager = navigationManager;
-    private readonly AuthenticationManager authenticationManager = authenticationManager;
+    private readonly AuthenticationStateManager authenticationStateManager = authenticationStateManager;
     private readonly Router router = router;
 
     public string Uri => navigationManager.Uri;
@@ -28,7 +28,7 @@ public class RouteManager(
             return;
         }
 
-        var state = await authenticationManager.GetStateAsync();
+        var state = await authenticationStateManager.GetStateAsync();
 
         if (route!.RequireAuthorization && (state is null || !state.IsAuthenticated))
         {
