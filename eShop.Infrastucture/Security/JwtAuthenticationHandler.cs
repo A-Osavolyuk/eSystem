@@ -26,7 +26,7 @@ public class JwtAuthenticationHandler(
             }
 
             var rawToken = tokenHandler.ReadToken(token)!;
-            var claims = tokenHandler.ReadClaims(rawToken);
+            var claims = rawToken.Claims.ToList();
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, JwtBearerDefaults.AuthenticationScheme);

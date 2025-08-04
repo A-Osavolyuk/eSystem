@@ -16,19 +16,6 @@ public class TokenHandler
         var rawToken = handler.ReadJwtToken(token);
         return rawToken;
     }
-
-    public List<Claim> ReadClaims(JwtSecurityToken token)
-    {
-        var claims = new List<Claim>()
-        {
-            new(AppClaimTypes.Id, token.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Id)!.Value),
-        };
-
-        claims.AddRange(token.Claims.Where(x => x.Type == AppClaimTypes.Role));
-        claims.AddRange(token.Claims.Where(x => x.Type == AppClaimTypes.Permission));
-
-        return claims;
-    }
     
     public bool Validate(string token)
     {

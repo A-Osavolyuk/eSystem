@@ -6,13 +6,13 @@ namespace eShop.Infrastructure.Security;
 
 public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
-    IStorage localStorage,
+    IStorage storage,
     ISecurityService securityService,
     TokenHandler tokenHandler) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
-    private readonly IStorage localStorage = localStorage;
+    private readonly IStorage storage = storage;
     private readonly ISecurityService securityService = securityService;
     private readonly TokenHandler tokenHandler = tokenHandler;
 
@@ -41,7 +41,7 @@ public class JwtAuthenticationStateProvider(
                 return await UnauthorizeAsync();
             }
 
-            var claims = tokenHandler.ReadClaims(rawToken);
+            var claims = rawToken.Claims.ToList();
 
             if (claims.Count == 0)
             {
@@ -80,7 +80,7 @@ public class JwtAuthenticationStateProvider(
             await tokenProvider.SetTokenAsync(refreshToken);
 
             var rawToken = tokenHandler.ReadToken(accessToken)!;
-            var claims = tokenHandler.ReadClaims(rawToken);
+            var claims = rawToken.Claims.ToList();
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(identity);
             var authenticationState = new AuthenticationState(claimsPrincipal);
@@ -99,7 +99,7 @@ public class JwtAuthenticationStateProvider(
     public async Task<AuthenticationState> LogOutAsync()
     {
         await tokenProvider.RemoveAsync();
-        await localStorage.ClearAsync();
+        await storage.ClearAsync();
         return await UnauthorizeAsync();
     }
 
@@ -119,8 +119,8 @@ public class JwtAuthenticationStateProvider(
     private async Task<AuthenticationState> RefreshTokenAsync(string token)
     {
         var rawToken = tokenHandler.ReadToken(token)!;
-        var claims = tokenHandler.ReadClaims(rawToken);
-        var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value);
+        var claims = rawToken.Claims.ToList();
+        var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Subject).Value);
 
         var request = new RefreshTokenRequest()
         {
@@ -143,7 +143,7 @@ public class JwtAuthenticationStateProvider(
     private AuthenticationState Authorized(string token)
     {
         var rawToken = tokenHandler.ReadToken(token)!;
-        var claims = tokenHandler.ReadClaims(rawToken);
+        var claims = rawToken.Claims.ToList();
         var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(identity);
         var authenticationState = new AuthenticationState(claimsPrincipal);
