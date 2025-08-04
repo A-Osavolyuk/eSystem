@@ -28,7 +28,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     {
         var provider = request.Principal.Identity!.AuthenticationType!;
         var email = request.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-        string type;
 
         if (email is null)
         {
@@ -46,7 +45,18 @@ public sealed class HandleOAuthLoginCommandHandler(
                 return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
             }
 
-            type = "signIn";
+            var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+            var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+            
+            var link = UrlGenerator.ActionLink(request.ReturnUri!, new
+            {
+                accessToken, 
+                refreshToken, 
+                provider, 
+                type = "signIn"
+            });
+
+            return Result.Success(link);
         }
         else
         {
@@ -113,21 +123,19 @@ public sealed class HandleOAuthLoginCommandHandler(
             }
 
             await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-
-            type = "signUp";
-        }
-        
-        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
-        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
             
-        var link = UrlGenerator.ActionLink(request.ReturnUri!, new
-        {
-            accessToken, 
-            refreshToken, 
-            provider, 
-            type
-        });
+            var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+            var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+            
+            var link = UrlGenerator.ActionLink(request.ReturnUri!, new
+            {
+                accessToken, 
+                refreshToken, 
+                provider, 
+                type = "signUp"
+            });
 
-        return Result.Success(link);
+            return Result.Success(link);
+        }
     }
 }
