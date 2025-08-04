@@ -7,11 +7,13 @@ namespace eShop.Infrastructure.Security;
 public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage localStorage,
+    ISecurityService securityService,
     TokenHandler tokenHandler) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage localStorage = localStorage;
+    private readonly ISecurityService securityService = securityService;
     private readonly TokenHandler tokenHandler = tokenHandler;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -29,7 +31,7 @@ public class JwtAuthenticationStateProvider(
 
             if (!valid)
             {
-                return await LogOutAsync();
+                return await RefreshTokenAsync(token);
             }
 
             var rawToken = tokenHandler.ReadToken(token);
@@ -112,6 +114,30 @@ public class JwtAuthenticationStateProvider(
         {
             return await Task.FromResult(anonymous);
         }
+    }
+
+    private async Task<AuthenticationState> RefreshTokenAsync(string token)
+    {
+        var rawToken = tokenHandler.ReadToken(token)!;
+        var claims = tokenHandler.ReadClaims(rawToken);
+        var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Id).Value);
+
+        var request = new RefreshTokenRequest()
+        {
+            Token = token,
+            UserId = userId
+        };
+
+        var result = await securityService.RefreshTokenAsync(request);
+
+        if (!result.Success)
+        {
+            return await LogOutAsync();
+        }
+        
+        var response = result.Get<RefreshTokenResponse>()!;
+        
+        return Authorized(response.RefreshToken);
     }
 
     private AuthenticationState Authorized(string token)
