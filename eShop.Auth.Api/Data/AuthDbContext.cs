@@ -22,7 +22,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
     public DbSet<UserChangesEntity> UserChanges { get; set; }
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
-
+    public DbSet<UserOAuthProviderEntity> UserOAuthProviders { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -39,7 +40,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.PhoneNumber).HasMaxLength(18);
             entity.Property(x => x.PasswordHash).HasMaxLength(1000);
         });
-
+        
         builder.Entity<UserChangesEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
