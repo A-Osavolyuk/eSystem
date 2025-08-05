@@ -30,7 +30,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     {
         OAuthSessionEntity? session;
         string? link;
-        
+
         var providerName = request.Principal.Identity!.AuthenticationType!;
 
         if (string.IsNullOrEmpty(providerName))
@@ -45,37 +45,34 @@ public sealed class HandleOAuthLoginCommandHandler(
                 CreateDate = DateTimeOffset.UtcNow,
                 ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
             };
-            
+
             await oAuthSessionManager.CreateAsync(session, cancellationToken);
-            
+
             link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
             return Result.Success(link);
         }
-        
+
         var provider = await oAuthProviderManager.FindByNameAsync(providerName, cancellationToken);
 
         if (provider is null)
         {
-            if (string.IsNullOrEmpty(providerName))
+            session = new OAuthSessionEntity()
             {
-                session = new OAuthSessionEntity()
-                {
-                    Id = Guid.CreateVersion7(),
-                    ErrorCode = ErrorCode.BadRequest,
-                    ErrorMessage = $"Provider {providerName} is not supported",
-                    SignType = OAuthSignType.None,
-                    IsSucceeded = false,
-                    CreateDate = DateTimeOffset.UtcNow,
-                    ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
-                };
-            
-                await oAuthSessionManager.CreateAsync(session, cancellationToken);
-            
-                link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
-                return Result.Success(link);
-            }
+                Id = Guid.CreateVersion7(),
+                ErrorCode = ErrorCode.BadRequest,
+                ErrorMessage = $"Provider {providerName} is not supported",
+                SignType = OAuthSignType.None,
+                IsSucceeded = false,
+                CreateDate = DateTimeOffset.UtcNow,
+                ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
+            };
+
+            await oAuthSessionManager.CreateAsync(session, cancellationToken);
+
+            link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
+            return Result.Success(link);
         }
-        
+
         if (!string.IsNullOrEmpty(request.RemoteError))
         {
             session = new OAuthSessionEntity()
@@ -88,13 +85,13 @@ public sealed class HandleOAuthLoginCommandHandler(
                 CreateDate = DateTimeOffset.UtcNow,
                 ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
             };
-            
+
             await oAuthSessionManager.CreateAsync(session, cancellationToken);
-            
+
             link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
             return Result.Success(link);
         }
-        
+
         var email = request.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
         if (email is null)
@@ -109,9 +106,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                 CreateDate = DateTimeOffset.UtcNow,
                 ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
             };
-            
+
             await oAuthSessionManager.CreateAsync(session, cancellationToken);
-            
+
             link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
             return Result.Success(link);
         }
@@ -140,6 +137,8 @@ public sealed class HandleOAuthLoginCommandHandler(
                 session = new OAuthSessionEntity()
                 {
                     Id = Guid.CreateVersion7(),
+                    UserId = user.Id,
+                    ProviderId = provider.Id,
                     SignType = OAuthSignType.SignIn,
                     IsSucceeded = true,
                     CreateDate = DateTimeOffset.UtcNow,
@@ -156,7 +155,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 UserName = email,
                 EmailConfirmed = true
             };
-            
+
             var result = await userManager.CreateAsync(user, cancellationToken);
 
             if (!result.Succeeded)
@@ -171,9 +170,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                     CreateDate = DateTimeOffset.UtcNow,
                     ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
                 };
-            
+
                 await oAuthSessionManager.CreateAsync(session, cancellationToken);
-            
+
                 link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
                 return Result.Success(link);
             }
@@ -192,9 +191,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                     CreateDate = DateTimeOffset.UtcNow,
                     ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
                 };
-            
+
                 await oAuthSessionManager.CreateAsync(session, cancellationToken);
-            
+
                 link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
                 return Result.Success(link);
             }
@@ -213,9 +212,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                     CreateDate = DateTimeOffset.UtcNow,
                     ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
                 };
-            
+
                 await oAuthSessionManager.CreateAsync(session, cancellationToken);
-            
+
                 link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
                 return Result.Success(link);
             }
@@ -229,7 +228,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                     var grantResult = await permissionManager.GrantAsync(user, permission, cancellationToken);
 
                     if (grantResult.Succeeded) continue;
-                    
+
                     session = new OAuthSessionEntity()
                     {
                         Id = Guid.CreateVersion7(),
@@ -240,9 +239,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                         CreateDate = DateTimeOffset.UtcNow,
                         ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
                     };
-            
+
                     await oAuthSessionManager.CreateAsync(session, cancellationToken);
-            
+
                     link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
                     return Result.Success(link);
                 }
@@ -263,10 +262,12 @@ public sealed class HandleOAuthLoginCommandHandler(
             };
 
             await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-            
+
             session = new OAuthSessionEntity()
             {
                 Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                ProviderId = provider.Id,
                 SignType = OAuthSignType.SignUp,
                 IsSucceeded = true,
                 CreateDate = DateTimeOffset.UtcNow,
