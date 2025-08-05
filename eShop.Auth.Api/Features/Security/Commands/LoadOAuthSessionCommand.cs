@@ -27,13 +27,7 @@ public class LoadOAuthSessionCommandHandler(
 
         if (!session.IsSucceeded)
         {
-            return session.ErrorCode switch
-            {
-                ErrorCode.BadRequest => Results.BadRequest(session.ErrorMessage!),
-                ErrorCode.NotFound => Results.NotFound(session.ErrorMessage!),
-                ErrorCode.InternalServerError => Results.InternalServerError(session.ErrorMessage!),
-                _ => throw new NotSupportedException()
-            };
+            return Results.InternalServerError(session.ErrorMessage!);
         }
 
         if (!session.UserId.HasValue)

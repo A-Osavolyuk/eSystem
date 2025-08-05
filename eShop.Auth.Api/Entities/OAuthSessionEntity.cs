@@ -8,7 +8,7 @@ public class OAuthSessionEntity : Entity
     
     public bool IsSucceeded { get; set; }
     public string? ErrorMessage { get; set; }
-    public ErrorCode ErrorCode { get; set; }
+    public OAuthErrorType ErrorType { get; set; }
 
     public OAuthSignType SignType { get; set; }
     public DateTimeOffset? ExpiredDate { get; set; }

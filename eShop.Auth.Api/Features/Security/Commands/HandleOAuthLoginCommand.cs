@@ -30,7 +30,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     {
         if (!string.IsNullOrEmpty(request.RemoteError))
         {
-            return await FailAsync(ErrorCode.InternalServerError, request.RemoteError, request.ReturnUri!, cancellationToken);
+            return await FailAsync(OAuthErrorType.RemoteError, request.RemoteError, request.ReturnUri!, cancellationToken);
         }
 
         var providerName = request.Principal.Identity!.AuthenticationType!;
@@ -38,7 +38,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         if (provider is null)
         {
-            return await FailAsync(ErrorCode.BadRequest, 
+            return await FailAsync(OAuthErrorType.UnsupportedProvider, 
                 $"Provider {providerName} is not supported", request.ReturnUri!, cancellationToken);
         }
 
@@ -46,7 +46,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         if (email is null)
         {
-            return await FailAsync(ErrorCode.BadRequest, 
+            return await FailAsync(OAuthErrorType.InvalidCredentials, 
                 "Email was not provided in credentials", request.ReturnUri!, cancellationToken);
         }
 
@@ -66,14 +66,15 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             if (!createResult.Succeeded)
             {
-                return await FailAsync(createResult, request.ReturnUri!, cancellationToken);
+                return await FailAsync(OAuthErrorType.InternalError, 
+                    createResult.GetError().Message, request.ReturnUri!, cancellationToken);
             }
 
             var role = await roleManager.FindByNameAsync("User", cancellationToken);
 
             if (role is null)
             {
-                return await FailAsync(ErrorCode.NotFound, "Cannot find role with name User", 
+                return await FailAsync(OAuthErrorType.InternalError, "Cannot find role with name User", 
                     request.ReturnUri!, cancellationToken);
             }
 
@@ -81,7 +82,8 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             if (!assignRoleResult.Succeeded)
             {
-                return await FailAsync(assignRoleResult, request.ReturnUri!, cancellationToken);
+                return await FailAsync(OAuthErrorType.InternalError, 
+                    createResult.GetError().Message, request.ReturnUri!, cancellationToken);
             }
 
             if (role.Permissions.Count > 0)
@@ -94,7 +96,8 @@ public sealed class HandleOAuthLoginCommandHandler(
 
                     if (result.Succeeded) continue;
 
-                    return await FailAsync(result, request.ReturnUri!, cancellationToken);
+                    return await FailAsync(OAuthErrorType.InternalError, 
+                        createResult.GetError().Message, request.ReturnUri!, cancellationToken);
                 }
             }
 
@@ -135,7 +138,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             if (lockoutState.Enabled)
             {
-                return await FailAsync(ErrorCode.BadRequest, 
+                return await FailAsync(OAuthErrorType.InternalError, 
                     $"This user account is locked out with reason: {lockoutState.Reason}.", 
                     request.ReturnUri!, cancellationToken);
             }
@@ -157,34 +160,14 @@ public sealed class HandleOAuthLoginCommandHandler(
         }
     }
 
-    private async Task<Result> FailAsync(ErrorCode errorCode, string errorMessage, 
+    private async Task<Result> FailAsync(OAuthErrorType errorType, string errorMessage, 
         string returnUri, CancellationToken cancellationToken = default)
     {
         var session = new OAuthSessionEntity()
         {
             Id = Guid.CreateVersion7(),
-            ErrorCode = errorCode,
+            ErrorType = errorType,
             ErrorMessage = errorMessage,
-            SignType = OAuthSignType.None,
-            IsSucceeded = false,
-            CreateDate = DateTimeOffset.UtcNow,
-            ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
-        };
-        
-        await sessionManager.CreateAsync(session, cancellationToken);
-        var link = UrlGenerator.ActionLink(returnUri, new { sessionId = session.Id });
-        return Result.Success(link);
-    }
-    
-    private async Task<Result> FailAsync(Result result, string returnUri, CancellationToken cancellationToken = default)
-    {
-        var error = result.GetError();
-        
-        var session = new OAuthSessionEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            ErrorCode = error.Code,
-            ErrorMessage = error.Message,
             SignType = OAuthSignType.None,
             IsSucceeded = false,
             CreateDate = DateTimeOffset.UtcNow,
