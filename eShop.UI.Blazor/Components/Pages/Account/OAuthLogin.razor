@@ -2,27 +2,37 @@
 
 @inherits PageBase
 
-@inject NavigationManager NavigationManager
+@inject IOAuthService OAuthService
 
 @code {
-    [SupplyParameterFromQuery(Name = "accessToken")] public string AccessToken { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "refreshToken")] public string RefreshToken { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "type")] public string Type { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "sessionId")] public string SessionId { get; set; } = string.Empty;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        await AuthenticationManager.LogInAsync(AccessToken, RefreshToken);
+        var sessionId = Guid.Parse(SessionId);
+        var request = new LoadOAuthSessionRequest() { SessionId = sessionId };
 
-        if (Type == "signIn")
+        var result = await OAuthService.LoadSessionAsync(request);
+
+        if (result.Success)
         {
-            NavigationManager.NavigateTo(("/products"));
-            Snackbar.Add($"Successfully signed in with {Provider}.", Severity.Success);
+            var response = result.Get<LoadOAuthSessionResponse>()!;
+
+            if (response.SignType == OAuthSignType.SignIn)
+            {
+                await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
+                Snackbar.Add($"Successfully signed in with {response.Provider}", Severity.Success);
+                await RouteManager.NavigateAsync("/products");
+            }
+            else if (response.SignType == OAuthSignType.SignUp)
+            {
+                await RouteManager.NavigateAsync($"/account/oauth/signed-up?provider={response.Provider}");
+            }
         }
-        else if(Type == "signUp")
+        else
         {
-            NavigationManager.NavigateTo(("/account/oauth/signed-up"));
-            Snackbar.Add($"Successfully signed up with {Provider}.", Severity.Success);
+            Snackbar.Add(result.Message, Severity.Success);
         }
     }
+
 }
