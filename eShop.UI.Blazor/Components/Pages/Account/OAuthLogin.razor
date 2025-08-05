@@ -21,10 +21,10 @@
             if (result.Success)
             {
                 var response = result.Get<LoadOAuthSessionResponse>()!;
+                await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
 
                 if (response.SignType == OAuthSignType.SignIn)
                 {
-                    await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
                     Snackbar.Add($"Successfully signed in with {response.Provider}", Severity.Success);
                     await RouteManager.NavigateAsync("/products");
                 }
