@@ -12,8 +12,8 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250804130431_AddOAuthProviderEntity")]
-    partial class AddOAuthProviderEntity
+    [Migration("20250805071734_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -571,6 +571,21 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserOAuthProviderEntity", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "ProviderId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("UserOAuthProviders");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -797,6 +812,25 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserOAuthProviderEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.OAuthProviderEntity", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany("OAuthProviders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Provider");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.PermissionEntity", "Permission")
@@ -878,6 +912,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Navigation("LockoutState")
                         .IsRequired();
+
+                    b.Navigation("OAuthProviders");
 
                     b.Navigation("Permissions");
 

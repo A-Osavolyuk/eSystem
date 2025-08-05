@@ -580,7 +580,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("UserOAuthProviderEntity");
+                    b.ToTable("UserOAuthProviders");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>
