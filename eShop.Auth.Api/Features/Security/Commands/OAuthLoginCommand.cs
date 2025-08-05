@@ -20,7 +20,7 @@ public sealed class OAuthLoginCommandHandler(
             return Results.BadRequest($"Invalid oauth provider {request.Provider}.");
         }
 
-        var redirectUri = UrlGenerator.Action("handle-login", "OAuth",
+        var redirectUri = UrlGenerator.Action("handle", "OAuth",
             new { ReturnUri = request.ReturnUri ?? "/" });
         
         var properties = signInManager.ConfigureOAuthProperties(request.Provider, redirectUri );;

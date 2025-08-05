@@ -1,4 +1,5 @@
 ﻿using eShop.Auth.Api.Security.Schemes;
+using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -32,7 +33,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointSummary("Handle OAuth login")]
     [EndpointDescription("Handles OAuth login")]
     [ProducesResponseType(200)]
-    [HttpGet("handle-login")]
+    [HttpGet("handle")]
     public async ValueTask<ActionResult<Response>> HandleOAuthLoginAsync(string? remoteError = null,
         string? returnUri = null)
     {
@@ -40,5 +41,17 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
         
         var result = await sender.Send(new HandleOAuthLoginCommand(principal, remoteError, returnUri));
         return result.Match(s => Redirect(s.Message), ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Load OAuth session")]
+    [EndpointDescription("Load OAuth session")]
+    [ProducesResponseType(200)]
+    [HttpPost("load")]
+    public async ValueTask<ActionResult<Response>> LoadOauthSessionAsync([FromBody] LoadOAuthSessionRequest request)
+    {
+        var result = await sender.Send(new LoadOAuthSessionCommand(request));
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
     }
 }
