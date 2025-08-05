@@ -620,6 +620,12 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.HasKey("UserId", "ProviderId");
 
                     b.HasIndex("ProviderId");
