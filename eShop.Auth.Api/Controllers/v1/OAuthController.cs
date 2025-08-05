@@ -51,7 +51,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     {
         var result = await sender.Send(new LoadOAuthSessionCommand(request));
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
 }
