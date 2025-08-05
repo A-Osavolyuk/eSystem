@@ -22,6 +22,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
     public DbSet<UserChangesEntity> UserChanges { get; set; }
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
+    public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<UserOAuthProviderEntity> UserOAuthProviders { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
@@ -247,6 +248,24 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.User)
                 .WithMany(x => x.OAuthProviders)
                 .HasForeignKey(x => x.UserId);
+            
+            entity.HasOne(x => x.Provider)
+                .WithMany()
+                .HasForeignKey(x => x.ProviderId);
+        });
+
+        builder.Entity<OAuthSessionEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            
+            entity.Property(x => x.ErrorMessage).HasMaxLength(250);
+            entity.Property(x => x.ErrorDescription).HasMaxLength(1000);
+            entity.Property(x => x.SignType).HasEnumConversion();
+            
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .IsRequired(false);
             
             entity.HasOne(x => x.Provider)
                 .WithMany()
