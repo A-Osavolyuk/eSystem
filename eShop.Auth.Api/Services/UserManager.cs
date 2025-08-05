@@ -14,7 +14,21 @@ public sealed class UserManager(
 
     public async ValueTask<List<UserEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await context.Users.ToListAsync(cancellationToken);
+        var users = await context.Users
+            .Include(x => x.Roles)
+            .ThenInclude(x => x.Role)
+            .Include(x => x.Permissions)
+            .ThenInclude(x => x.Permission)
+            .Include(x => x.Providers)
+            .ThenInclude(x => x.Provider)
+            .Include(x => x.OAuthProviders)
+            .ThenInclude(x => x.Provider)
+            .Include(x => x.Changes)
+            .Include(x => x.RecoveryCodes)
+            .Include(x => x.PersonalData)
+            .Include(x => x.LockoutState)
+            .ToListAsync(cancellationToken);
+        
         return users;
     }
 
