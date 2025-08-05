@@ -224,6 +224,36 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OAuthSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsSucceeded = table.Column<bool>(type: "bit", nullable: false),
+                    ErrorMessage = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    ErrorCode = table.Column<int>(type: "int", nullable: false),
+                    SignType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OAuthSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OAuthSessions_OAuthProviders_ProviderId",
+                        column: x => x.ProviderId,
+                        principalTable: "OAuthProviders",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OAuthSessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PersonalData",
                 columns: table => new
                 {
@@ -513,6 +543,16 @@ namespace eShop.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_OAuthSessions_ProviderId",
+                table: "OAuthSessions",
+                column: "ProviderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OAuthSessions_UserId",
+                table: "OAuthSessions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_ResourceId",
                 table: "Permissions",
                 column: "ResourceId");
@@ -587,6 +627,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "LoginCodes");
+
+            migrationBuilder.DropTable(
+                name: "OAuthSessions");
 
             migrationBuilder.DropTable(
                 name: "PersonalData");

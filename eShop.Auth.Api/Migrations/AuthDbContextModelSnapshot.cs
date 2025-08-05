@@ -216,16 +216,12 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int?>("ErrorCode")
+                    b.Property<int>("ErrorCode")
                         .HasColumnType("int");
 
-                    b.Property<string>("ErrorDescription")
+                    b.Property<string>("ErrorMessage")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
 
                     b.Property<DateTimeOffset?>("ExpiredDate")
                         .HasColumnType("datetimeoffset");
@@ -233,7 +229,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<bool>("IsSucceeded")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("ProviderId")
+                    b.Property<Guid?>("ProviderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SignType")
@@ -776,9 +772,7 @@ namespace eShop.Auth.Api.Migrations
                 {
                     b.HasOne("eShop.Auth.Api.Entities.OAuthProviderEntity", "Provider")
                         .WithMany()
-                        .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProviderId");
 
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
                         .WithMany()
