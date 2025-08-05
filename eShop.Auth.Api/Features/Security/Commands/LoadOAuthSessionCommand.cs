@@ -8,12 +8,10 @@ public record LoadOAuthSessionCommand(LoadOAuthSessionRequest Request) : IReques
 public class LoadOAuthSessionCommandHandler(
     IUserManager userManager,
     IOAuthSessionManager sessionManager,
-    IOAuthProviderManager providerManager,
     ITokenManager tokenManager) : IRequestHandler<LoadOAuthSessionCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
-    private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ITokenManager tokenManager = tokenManager;
 
     public async Task<Result> Handle(LoadOAuthSessionCommand request, CancellationToken cancellationToken)
@@ -42,18 +40,6 @@ public class LoadOAuthSessionCommandHandler(
             return Results.NotFound($"Cannot find user with ID {session.UserId}");
         }
         
-        if (!session.ProviderId.HasValue)
-        {
-            return Results.InternalServerError("Provider was not provided with session data");
-        }
-        
-        var provider = await providerManager.FindByIdAsync(session.ProviderId.Value, cancellationToken);
-        
-        if (provider is null)
-        {
-            return Results.NotFound($"Cannot find provider with ID {session.ProviderId}");
-        }
-        
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
@@ -62,7 +48,7 @@ public class LoadOAuthSessionCommandHandler(
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             SignType = session.SignType,
-            Provider = provider.Name,
+            Provider = session.Provider,
         };
 
         return Result.Success(response);

@@ -2,6 +2,7 @@
 
 public enum OAuthErrorType
 {
+    None,
     InternalError,
     InvalidCredentials,
     RemoteError,

@@ -259,17 +259,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => x.Id);
             
             entity.Property(x => x.ErrorMessage).HasMaxLength(1000);
+            entity.Property(x => x.Provider).HasMaxLength(64);
             entity.Property(x => x.SignType).HasEnumConversion();
-            
-            entity.HasOne(x => x.User)
-                .WithMany()
-                .HasForeignKey(x => x.UserId)
-                .IsRequired(false);
-            
-            entity.HasOne(x => x.Provider)
-                .WithMany()
-                .HasForeignKey(x => x.ProviderId)
-                .IsRequired(false);
         });
     }
 }

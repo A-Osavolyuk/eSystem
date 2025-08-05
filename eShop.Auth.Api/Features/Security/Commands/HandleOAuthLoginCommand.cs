@@ -14,7 +14,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     IMessageService messageService,
     IRoleManager roleManager,
     ILockoutManager lockoutManager,
-    IOAuthProviderManager providerManager,
     IOAuthSessionManager sessionManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
@@ -22,7 +21,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IMessageService messageService = messageService;
     private readonly IRoleManager roleManager = roleManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
-    private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
 
     public async Task<Result> Handle(HandleOAuthLoginCommand request,
@@ -33,14 +31,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             return await FailAsync(OAuthErrorType.RemoteError, request.RemoteError, request.ReturnUri!, cancellationToken);
         }
 
-        var providerName = request.Principal.Identity!.AuthenticationType!;
-        var provider = await providerManager.FindByNameAsync(providerName, cancellationToken);
-
-        if (provider is null)
-        {
-            return await FailAsync(OAuthErrorType.UnsupportedProvider, 
-                $"Provider {providerName} is not supported", request.ReturnUri!, cancellationToken);
-        }
+        var provider = request.Principal.Identity!.AuthenticationType!;
 
         var email = request.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
@@ -106,12 +97,12 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Credentials = new Dictionary<string, string>()
                 {
                     { "To", email },
-                    { "Subject", $"Account registered with {providerName}" },
+                    { "Subject", $"Account registered with {provider}" },
                 },
                 Payload = new()
                 {
                     { "UserName", user.UserName },
-                    { "ProviderName", providerName }
+                    { "ProviderName", provider }
                 }
             };
 
@@ -121,8 +112,9 @@ public sealed class HandleOAuthLoginCommandHandler(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                ProviderId = provider.Id,
+                Provider = provider,
                 SignType = OAuthSignType.SignUp,
+                ErrorType = OAuthErrorType.None,
                 IsSucceeded = true,
                 CreateDate = DateTimeOffset.UtcNow,
                 ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
@@ -147,8 +139,9 @@ public sealed class HandleOAuthLoginCommandHandler(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                ProviderId = provider.Id,
+                Provider = provider,
                 SignType = OAuthSignType.SignIn,
+                ErrorType = OAuthErrorType.None,
                 IsSucceeded = true,
                 CreateDate = DateTimeOffset.UtcNow,
                 ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
