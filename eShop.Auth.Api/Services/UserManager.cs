@@ -5,13 +5,11 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(IUserManager), ServiceLifetime.Scoped)]
 public sealed class UserManager(
     AuthDbContext context,
-    IdentityOptions identityOptions,
     Hasher hasher,
     IChangeManager changeManager) : IUserManager
 {
     private readonly AuthDbContext context = context;
     private readonly IChangeManager changeManager = changeManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
     private readonly Hasher hasher = hasher;
 
     public async ValueTask<List<UserEntity>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -30,6 +28,8 @@ public sealed class UserManager(
             .ThenInclude(x => x.Permission)
             .Include(x => x.Providers)
             .ThenInclude(x => x.Provider)
+            .Include(x => x.OAuthProviders)
+            .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
             .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
@@ -47,6 +47,8 @@ public sealed class UserManager(
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
             .Include(x => x.Providers)
+            .ThenInclude(x => x.Provider)
+            .Include(x => x.OAuthProviders)
             .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
             .Include(x => x.RecoveryCodes)
@@ -67,6 +69,8 @@ public sealed class UserManager(
             .ThenInclude(x => x.Permission)
             .Include(x => x.Providers)
             .ThenInclude(x => x.Provider)
+            .Include(x => x.OAuthProviders)
+            .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
             .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
@@ -85,6 +89,8 @@ public sealed class UserManager(
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
             .Include(x => x.Providers)
+            .ThenInclude(x => x.Provider)
+            .Include(x => x.OAuthProviders)
             .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
             .Include(x => x.RecoveryCodes)
