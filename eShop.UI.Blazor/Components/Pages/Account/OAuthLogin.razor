@@ -4,35 +4,39 @@
 
 @inject IOAuthService OAuthService
 
+<Title Text="Sign in via OAuth" />
+
 @code {
     [SupplyParameterFromQuery(Name = "sessionId")] public string SessionId { get; set; } = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var sessionId = Guid.Parse(SessionId);
-        var request = new LoadOAuthSessionRequest() { SessionId = sessionId };
-
-        var result = await OAuthService.LoadSessionAsync(request);
-
-        if (result.Success)
+        if (firstRender)
         {
-            var response = result.Get<LoadOAuthSessionResponse>()!;
+            var sessionId = Guid.Parse(SessionId);
+            var request = new LoadOAuthSessionRequest() { SessionId = sessionId };
 
-            if (response.SignType == OAuthSignType.SignIn)
+            var result = await OAuthService.LoadSessionAsync(request);
+
+            if (result.Success)
             {
-                await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
-                Snackbar.Add($"Successfully signed in with {response.Provider}", Severity.Success);
-                await RouteManager.NavigateAsync("/products");
+                var response = result.Get<LoadOAuthSessionResponse>()!;
+
+                if (response.SignType == OAuthSignType.SignIn)
+                {
+                    await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
+                    Snackbar.Add($"Successfully signed in with {response.Provider}", Severity.Success);
+                    await RouteManager.NavigateAsync("/products");
+                }
+                else
+                {
+                    await RouteManager.NavigateAsync($"/account/oauth/signed-up?provider={response.Provider}");
+                }
             }
-            else if (response.SignType == OAuthSignType.SignUp)
+            else
             {
-                await RouteManager.NavigateAsync($"/account/oauth/signed-up?provider={response.Provider}");
+                Snackbar.Add(result.Message, Severity.Success);
             }
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Success);
         }
     }
-
 }
