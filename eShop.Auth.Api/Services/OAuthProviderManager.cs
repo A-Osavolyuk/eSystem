@@ -1,0 +1,13 @@
+﻿namespace eShop.Auth.Api.Services;
+
+[Injectable(typeof(IOAuthProviderManager), ServiceLifetime.Scoped)]
+public class OAuthProviderManager(AuthDbContext context) : IOAuthProviderManager
+{
+    private readonly AuthDbContext context = context;
+
+    public async ValueTask<OAuthProviderEntity?> FindByNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        var entity = await context.OAuthProviders.FirstOrDefaultAsync(x => x.Name == name, cancellationToken);
+        return entity;
+    }
+}
