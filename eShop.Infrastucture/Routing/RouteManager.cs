@@ -18,8 +18,14 @@ public class RouteManager(
     public string Uri => navigationManager.Uri;
     public string BaseUri => navigationManager.BaseUri;
 
-    public async Task NavigateAsync(string url, bool isRedirect = false, bool forceLoad = false)
+    public async Task NavigateAsync(string url, bool isRedirect = false, bool forceLoad = false, bool isExternal = false)
     {
+        if (isExternal)
+        {
+            navigationManager.NavigateTo(url, forceLoad);
+            return;
+        }
+        
         var route = MatchRoute(url, router.Pages);
 
         if (route is null)

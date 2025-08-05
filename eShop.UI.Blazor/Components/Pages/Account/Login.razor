@@ -193,10 +193,10 @@
 
     private async Task OnExternalLoginAsync(string providerName)
     {
-        var gatewayPath = Configuration["Configuration:Services:Proxy:Gateway:Uri"]!;
+        var gatewayPath = Configuration["services:proxy:http:0"]!;
         var returnUrl = RouteManager.BaseUri + "account/oauth/sign-in";
-        var url = $"{gatewayPath}/api/v1/OAuth/sign-in/{providerName}?returnUrl={returnUrl}";
-        await RouteManager.NavigateAsync(url);
+        var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUrl}";
+        await RouteManager.NavigateAsync(url, isExternal: true);
     }
 
 }
