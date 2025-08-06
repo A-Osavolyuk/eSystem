@@ -16,6 +16,27 @@ public sealed class OAuthLoginCommandHandler(
     public async Task<Result> Handle(OAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
+        var providers = await providerManager.GetAllAsync(cancellationToken);
+
+        if (providers.Count == 0)
+        {
+            var url = UrlGenerator.Url(request.FallbackUri, new { ErrorCode = OAuthErrorType.TemporarilyUnavailable });
+            return Results.Redirect(url);
+        }
+        
+        var provider = providers.FirstOrDefault(x => x.Name == request.Provider);
+
+        if (provider is null)
+        {
+            var url = UrlGenerator.Url(request.FallbackUri, new
+            {
+                ErrorCode = OAuthErrorType.UnsupportedProvider, 
+                Provider = request.Provider
+            });
+            
+            return Results.Redirect(url);
+        }
+        
         var randomBytes = KeyGeneration.GenerateRandomKey(20);
         var token = Base32Encoding.ToString(randomBytes);
         
@@ -28,29 +49,7 @@ public sealed class OAuthLoginCommandHandler(
         };
         
         var redirectUri = UrlGenerator.Action("handle", "OAuth", new { request.ReturnUri });
-        var fallbackUri = UrlGenerator.Url(request.FallbackUri, new { sessionId = session.Id, token = session.Token });
-        
-        var providers = await providerManager.GetAllAsync(cancellationToken);
-
-        if (providers.Count == 0)
-        {
-            session.ErrorType = OAuthErrorType.Unavailable;
-            session.ErrorMessage = "Sign in with OAuth is temporary unavailable. Please try again later.";
-            await sessionManager.CreateAsync(session, cancellationToken);
-            
-            return Results.Redirect(fallbackUri);
-        }
-        
-        var provider = providers.FirstOrDefault(x => x.Name == request.Provider);
-
-        if (provider is null)
-        {
-            session.ErrorType = OAuthErrorType.UnsupportedProvider;
-            session.ErrorMessage = $"Sign in via OAuth with {request.Provider} provider is not supported.";
-            await sessionManager.CreateAsync(session, cancellationToken);
-            
-            return Results.Redirect(fallbackUri);
-        }
+        var fallbackUri = request.FallbackUri;
         
         var properties = new AuthenticationProperties
         {

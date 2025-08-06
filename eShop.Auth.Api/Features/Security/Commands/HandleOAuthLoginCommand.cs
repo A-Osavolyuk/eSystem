@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Types;
+using OtpNet;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -27,20 +28,56 @@ public sealed class HandleOAuthLoginCommandHandler(
     public async Task<Result> Handle(HandleOAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
+        var authenticationResult = request.AuthenticationResult;
+        var items = authenticationResult.Properties.Items;
+        var fallbackUri = items["fallbackUri"]!;
+        var provider = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
+        
         if (!string.IsNullOrEmpty(request.RemoteError))
         {
-            return await FailAsync(OAuthErrorType.RemoteError, request.RemoteError, request.ReturnUri!, cancellationToken);
-        }
+            var error = Uri.EscapeDataString(request.RemoteError);
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = OAuthErrorType.RemoteError,
+                Message = error,
+                Provider = provider
+            });
 
-        var provider = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
+            return Results.Redirect(url);
+        }
 
         var email = request.AuthenticationResult.Principal.Claims
             .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
         if (email is null)
         {
-            return await FailAsync(OAuthErrorType.InvalidCredentials, 
-                "Email was not provided in credentials", request.ReturnUri!, cancellationToken);
+            var error = Uri.EscapeDataString("Email was not provided to credentials");
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = OAuthErrorType.InvalidCredentials,
+                Message = error,
+                Provider = provider
+            });
+
+            return Results.Redirect(url);
+        }
+        
+        var sessionId = Guid.Parse(items["sessionId"]!);
+        var token = items["token"]!;
+        
+        var session = await sessionManager.FindAsync(sessionId, token, cancellationToken);
+
+        if (session is null)
+        {
+            var error = Uri.EscapeDataString("Invalid OAuth session");
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = OAuthErrorType.InternalError,
+                Message = error,
+                Provider = provider
+            });
+
+            return Results.Redirect(url);
         }
 
         var user = await userManager.FindByEmailAsync(email, cancellationToken);
@@ -59,24 +96,45 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             if (!createResult.Succeeded)
             {
-                return await FailAsync(OAuthErrorType.InternalError, 
-                    createResult.GetError().Message, request.ReturnUri!, cancellationToken);
+                var error = Uri.EscapeDataString(createResult.GetError().Message);
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = OAuthErrorType.InternalError,
+                    Message = error,
+                    Provider = provider
+                });
+
+                return Results.Redirect(url);
             }
 
             var role = await roleManager.FindByNameAsync("User", cancellationToken);
 
             if (role is null)
             {
-                return await FailAsync(OAuthErrorType.InternalError, "Cannot find role with name User", 
-                    request.ReturnUri!, cancellationToken);
+                var error = Uri.EscapeDataString("Cannot find role with name User");
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = OAuthErrorType.InternalError,
+                    Message = error,
+                    Provider = provider
+                });
+
+                return Results.Redirect(url);
             }
 
             var assignRoleResult = await roleManager.AssignAsync(user, role, cancellationToken);
 
             if (!assignRoleResult.Succeeded)
             {
-                return await FailAsync(OAuthErrorType.InternalError, 
-                    createResult.GetError().Message, request.ReturnUri!, cancellationToken);
+                var error = Uri.EscapeDataString(assignRoleResult.GetError().Message);
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = OAuthErrorType.InternalError,
+                    Message = error,
+                    Provider = provider
+                });
+
+                return Results.Redirect(url);
             }
 
             if (role.Permissions.Count > 0)
@@ -89,8 +147,15 @@ public sealed class HandleOAuthLoginCommandHandler(
 
                     if (result.Succeeded) continue;
 
-                    return await FailAsync(OAuthErrorType.InternalError, 
-                        createResult.GetError().Message, request.ReturnUri!, cancellationToken);
+                    var error = Uri.EscapeDataString(result.GetError().Message);
+                    var url = UrlGenerator.Url(fallbackUri, new
+                    {
+                        ErrorCode = OAuthErrorType.InternalError,
+                        Message = error,
+                        Provider = provider
+                    });
+
+                    return Results.Redirect(url);
                 }
             }
 
@@ -110,21 +175,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
-            var session = new OAuthSessionEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                UserId = user.Id,
-                Provider = provider,
-                SignType = OAuthSignType.SignUp,
-                ErrorType = OAuthErrorType.None,
-                IsSucceeded = true,
-                CreateDate = DateTimeOffset.UtcNow,
-                ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
-            };
-            
-            await sessionManager.CreateAsync(session, cancellationToken);
-            var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id });
-            return Result.Success(link);
+            session.SignType = OAuthSignType.SignUp;
         }
         else
         {
@@ -132,45 +183,25 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             if (lockoutState.Enabled)
             {
-                return await FailAsync(OAuthErrorType.InternalError, 
-                    $"This user account is locked out with reason: {lockoutState.Reason}.", 
-                    request.ReturnUri!, cancellationToken);
+                var error = Uri.EscapeDataString($"This user account is locked out with reason: {lockoutState.Reason}.");
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = OAuthErrorType.InternalError,
+                    Message = error,
+                    Provider = provider
+                });
+
+                return Results.Redirect(url);
             }
 
-            var session = new OAuthSessionEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                UserId = user.Id,
-                Provider = provider,
-                SignType = OAuthSignType.SignIn,
-                ErrorType = OAuthErrorType.None,
-                IsSucceeded = true,
-                CreateDate = DateTimeOffset.UtcNow,
-                ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
-            };
-        
-            await sessionManager.CreateAsync(session, cancellationToken);
-            var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id });
-            return Result.Success(link);
+            session.SignType = OAuthSignType.SignIn;
         }
-    }
-
-    private async Task<Result> FailAsync(OAuthErrorType errorType, string errorMessage, 
-        string returnUri, CancellationToken cancellationToken = default)
-    {
-        var session = new OAuthSessionEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            ErrorType = errorType,
-            ErrorMessage = errorMessage,
-            SignType = OAuthSignType.None,
-            IsSucceeded = false,
-            CreateDate = DateTimeOffset.UtcNow,
-            ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10)
-        };
         
-        await sessionManager.CreateAsync(session, cancellationToken);
-        var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id });
+        session.UserId = user.Id;
+            
+        await sessionManager.UpdateAsync(session, cancellationToken);
+        var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id });
+            
         return Result.Success(link);
     }
 }
