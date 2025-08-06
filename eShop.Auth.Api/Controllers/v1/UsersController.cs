@@ -16,7 +16,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Gets user")]
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}")]
-    public async ValueTask<ActionResult<Response>> GetUserAsync(Guid id)
+    public async ValueTask<IActionResult> GetUserAsync(Guid id)
     {
         var result = await sender.Send(new GetUserQuery(id));
 
@@ -29,7 +29,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}/roles")]
-    public async ValueTask<ActionResult<Response>> GetUserRolesAsync(Guid id)
+    public async ValueTask<IActionResult> GetUserRolesAsync(Guid id)
     {
         var result = await sender.Send(new GetUserRolesQuery(id));
 
@@ -43,7 +43,7 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}/lockout-state")]
     [AllowAnonymous]
-    public async ValueTask<ActionResult<Response>> GetStateAsync(Guid id)
+    public async ValueTask<IActionResult> GetStateAsync(Guid id)
     {
         var result = await sender.Send(new GetLockoutStateQuery(id));
 
@@ -57,7 +57,7 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpGet("{id:guid}/two-factor/providers")]
     [AllowAnonymous]
-    public async ValueTask<ActionResult<Response>> GetUserTwoFactorProvidersState(Guid id)
+    public async ValueTask<IActionResult> GetUserTwoFactorProvidersState(Guid id)
     {
         var result = await sender.Send(new GetUserProvidersQuery(id));
 
@@ -74,7 +74,7 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPatch("{id:guid}/username")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> ChangeUsernameAsync([FromBody] ChangeUserNameRequest request)
+    public async ValueTask<IActionResult> ChangeUsernameAsync([FromBody] ChangeUserNameRequest request)
     {
         var result = await sender.Send(new ChangeUserNameCommand(request));
         return result.Match(
@@ -87,7 +87,7 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("{id:guid}/personal-data")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> AddPersonalDataAsync([FromBody] AddPersonalDataRequest request)
+    public async ValueTask<IActionResult> AddPersonalDataAsync([FromBody] AddPersonalDataRequest request)
     {
         var result = await sender.Send(new AddPersonalDataCommand(request));
 
@@ -101,7 +101,7 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPut("{id:guid}/personal-data")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
+    public async ValueTask<IActionResult> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
     {
         var result = await sender.Send(new ChangePersonalDataCommand(request));
 

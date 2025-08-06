@@ -17,7 +17,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointDescription("OAuth login")]
     [ProducesResponseType(200)]
     [HttpGet("login/{provider}")]
-    public async ValueTask<ActionResult<Response>> OAuthLoginAsync(string provider, string? returnUri = null)
+    public async ValueTask<IActionResult> OAuthLoginAsync(string provider, string? returnUri = null)
     {
         var result = await sender.Send(new OAuthLoginCommand(provider, returnUri));
 
@@ -34,7 +34,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointDescription("Handles OAuth login")]
     [ProducesResponseType(200)]
     [HttpGet("handle")]
-    public async ValueTask<ActionResult<Response>> HandleOAuthLoginAsync(string? remoteError = null,
+    public async ValueTask<IActionResult> HandleOAuthLoginAsync(string? remoteError = null,
         string? returnUri = null)
     {
         var principal = await signInManager.AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
@@ -47,7 +47,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointDescription("Load OAuth session")]
     [ProducesResponseType(200)]
     [HttpPost("load")]
-    public async ValueTask<ActionResult<Response>> LoadOauthSessionAsync([FromBody] LoadOAuthSessionRequest request)
+    public async ValueTask<IActionResult> LoadOauthSessionAsync([FromBody] LoadOAuthSessionRequest request)
     {
         var result = await sender.Send(new LoadOAuthSessionCommand(request));
         return result.Match(

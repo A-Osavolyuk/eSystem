@@ -17,7 +17,7 @@ public class ProvidersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpGet]
     [AllowAnonymous]
-    public async ValueTask<ActionResult<Response>> GetTwoFactorProvidersState()
+    public async ValueTask<IActionResult> GetTwoFactorProvidersState()
     {
         var result = await sender.Send(new GetProvidersQuery());
 
@@ -33,7 +33,7 @@ public class ProvidersController(ISender sender) : ControllerBase
     [EndpointDescription("Subscribe provider")]
     [ProducesResponseType(200)]
     [HttpPost("subscribe")]
-    public async ValueTask<ActionResult<Response>> SubscribeProviderAsync(
+    public async ValueTask<IActionResult> SubscribeProviderAsync(
         [FromBody] SubscribeProviderRequest request)
     {
         var result = await sender.Send(new SubscribeProviderCommand(request));
@@ -47,7 +47,7 @@ public class ProvidersController(ISender sender) : ControllerBase
     [EndpointDescription("Unsubscribe provider")]
     [ProducesResponseType(200)]
     [HttpPost("unsubscribe")]
-    public async ValueTask<ActionResult<Response>> UnsubscribeProviderAsync(
+    public async ValueTask<IActionResult> UnsubscribeProviderAsync(
         [FromBody] UnsubscribeProviderRequest request)
     {
         var result = await sender.Send(new UnsubscribeProviderCommand(request));

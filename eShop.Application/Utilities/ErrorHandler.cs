@@ -4,7 +4,7 @@ namespace eShop.Application.Utilities;
 
 public static class ErrorHandler
 {
-    public static ActionResult<Response> Handle(Result result)
+    public static IActionResult Handle(Result result)
     {
         var error = result.GetError();
         var value = result.Value;

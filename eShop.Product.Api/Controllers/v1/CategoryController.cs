@@ -16,7 +16,7 @@ public class CategoryController(ISender sender) : ControllerBase
     [EndpointDescription("Get categories")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetCategoriesAsync()
+    public async ValueTask<IActionResult> GetCategoriesAsync()
     {
         var result = await sender.Send(new GetCategoriesQuery());
         

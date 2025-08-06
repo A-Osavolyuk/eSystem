@@ -17,7 +17,7 @@ public class ProductsController(ISender sender) : ControllerBase
     [EndpointDescription("Create product")]
     [ProducesResponseType(200)]
     [HttpPost]
-    public async ValueTask<ActionResult<Response>> CreateAsync([FromBody] CreateProductRequest request)
+    public async ValueTask<IActionResult> CreateAsync([FromBody] CreateProductRequest request)
     {
         var result = await sender.Send(new CreateProductCommand(request));
         

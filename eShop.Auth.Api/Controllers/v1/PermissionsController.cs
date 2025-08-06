@@ -17,7 +17,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [EndpointDescription("Gets all permissions")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetPermissionsAsync()
+    public async ValueTask<IActionResult> GetPermissionsAsync()
     {
         var result = await sender.Send(new GetPermissionsQuery());
 
@@ -30,7 +30,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [EndpointDescription("Grant permission")]
     [ProducesResponseType(200)]
     [HttpPost("grant")]
-    public async ValueTask<ActionResult<Response>> GrantAsync([FromBody] GrantPermissionRequest request)
+    public async ValueTask<IActionResult> GrantAsync([FromBody] GrantPermissionRequest request)
     {
         var result = await sender.Send(new GrantPermissionCommand(request));
         return result.Match(
@@ -42,7 +42,7 @@ public class PermissionsController(ISender sender) : ControllerBase
     [EndpointDescription("Revoke permission")]
     [ProducesResponseType(200)]
     [HttpPost("revoke")]
-    public async ValueTask<ActionResult<Response>> RevokeAsync(
+    public async ValueTask<IActionResult> RevokeAsync(
         [FromBody] RevokePermissionRequest request)
     {
         var result = await sender.Send(new RevokePermissionCommand(request));

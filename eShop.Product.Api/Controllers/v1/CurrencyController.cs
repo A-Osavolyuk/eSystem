@@ -16,7 +16,7 @@ public class CurrencyController(ISender sender) : ControllerBase
     [EndpointDescription("Get currencies")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetCurrenciesAsync()
+    public async ValueTask<IActionResult> GetCurrenciesAsync()
     {
         var result = await sender.Send(new GetCurrenciesQuery());
         

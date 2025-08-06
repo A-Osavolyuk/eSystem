@@ -17,7 +17,7 @@ public class LockoutController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("reasons")]
     [AllowAnonymous]
-    public async ValueTask<ActionResult<Response>> GetReasonsAsync()
+    public async ValueTask<IActionResult> GetReasonsAsync()
     {
         var result = await sender.Send(new GetReasonsQuery());
         return result.Match(
@@ -29,7 +29,7 @@ public class LockoutController(ISender sender) : ControllerBase
     [EndpointDescription("Lockout")]
     [ProducesResponseType(200)]
     [HttpPost("lockout")]
-    public async ValueTask<ActionResult<Response>> LockoutAsync([FromBody] LockoutRequest request)
+    public async ValueTask<IActionResult> LockoutAsync([FromBody] LockoutRequest request)
     {
         var result = await sender.Send(new LockoutCommand(request));
         return result.Match(
@@ -41,7 +41,7 @@ public class LockoutController(ISender sender) : ControllerBase
     [EndpointDescription("Unlock")]
     [ProducesResponseType(200)]
     [HttpPost("unlock")]
-    public async ValueTask<ActionResult<Response>> UnlockAsync([FromBody] UnlockRequest request)
+    public async ValueTask<IActionResult> UnlockAsync([FromBody] UnlockRequest request)
     {
         var result = await sender.Send(new UnlockCommand(request));
         return result.Match(

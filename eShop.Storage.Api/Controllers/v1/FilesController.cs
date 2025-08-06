@@ -17,7 +17,7 @@ public class FilesController(ISender sender) : ControllerBase
     [EndpointDescription("Uploads files")]
     [ProducesResponseType(200)]
     [HttpPost("upload")]
-    public async ValueTask<ActionResult<Response>> UploadFilesAsync(IFormFileCollection files, [FromForm] string metadata)
+    public async ValueTask<IActionResult> UploadFilesAsync(IFormFileCollection files, [FromForm] string metadata)
     {
         var metadataObject = JsonConvert.DeserializeObject<Metadata>(metadata)!;
         var response = await sender.Send(new UploadFilesCommand(files, metadataObject));
@@ -30,7 +30,7 @@ public class FilesController(ISender sender) : ControllerBase
     [EndpointDescription("Load files uris")]
     [ProducesResponseType(200)]
     [HttpPost("load")]
-    public async ValueTask<ActionResult<Response>> LoadFilesAsync([FromBody] LoadFilesRequest request)
+    public async ValueTask<IActionResult> LoadFilesAsync([FromBody] LoadFilesRequest request)
     {
         var response = await sender.Send(new LoadFilesCommand(request));
         return response.Match(

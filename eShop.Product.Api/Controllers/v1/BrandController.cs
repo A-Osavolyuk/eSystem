@@ -16,7 +16,7 @@ public class BrandController(ISender sender) : ControllerBase
     [EndpointDescription("Get brands")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetBrandsAsync()
+    public async ValueTask<IActionResult> GetBrandsAsync()
     {
         var result = await sender.Send(new GetBrandsQuery());
         

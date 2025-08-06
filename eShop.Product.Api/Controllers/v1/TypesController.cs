@@ -16,7 +16,7 @@ public class TypesController(ISender sender) : ControllerBase
     [EndpointDescription("Get product types")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetTypesAsync()
+    public async ValueTask<IActionResult> GetTypesAsync()
     {
         var result = await sender.Send(new GetProductTypesQuery());
         

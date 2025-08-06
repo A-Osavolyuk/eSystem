@@ -16,7 +16,7 @@ public class UnitsController(ISender sender) : ControllerBase
     [EndpointDescription("Get units")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetUnitsAsync()
+    public async ValueTask<IActionResult> GetUnitsAsync()
     {
         var result = await sender.Send(new GetUnitsQuery());
         

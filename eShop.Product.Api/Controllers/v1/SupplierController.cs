@@ -16,7 +16,7 @@ public class SupplierController(ISender sender) : ControllerBase
     [EndpointDescription("Get suppliers")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetSuppliersAsync()
+    public async ValueTask<IActionResult> GetSuppliersAsync()
     {
         var result = await sender.Send(new GetSuppliersQuery());
         

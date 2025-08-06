@@ -16,7 +16,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("login")]
     [AllowAnonymous]
-    public async ValueTask<ActionResult<Response>> LoginWithTwoFactorAuthenticationCode(
+    public async ValueTask<IActionResult> LoginWithTwoFactorAuthenticationCode(
         [FromBody] TwoFactorLoginRequest request)
     {
         var result =
@@ -32,7 +32,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("code/send")]
     [AllowAnonymous]
-    public async ValueTask<ActionResult<Response>> SendCodeAsync(
+    public async ValueTask<IActionResult> SendCodeAsync(
         [FromBody] SendTwoFactorCodeRequest request)
     {
         var result = await sender.Send(new SendTwoFactorCodeCommand(request));
@@ -47,7 +47,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("code/verify")]
     [Authorize]
-    public async ValueTask<ActionResult<Response>> VerifyCodeAsync(
+    public async ValueTask<IActionResult> VerifyCodeAsync(
         [FromBody] VerifyTwoFactorCodeRequest request)
     {
         var result = await sender.Send(new VerifyTwoFactorCodeCommand(request));
@@ -62,7 +62,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("recovery-code/generate")]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> GenerateRecoveryCodes([FromBody] GenerateRecoveryCodesRequest request)
+    public async ValueTask<IActionResult> GenerateRecoveryCodes([FromBody] GenerateRecoveryCodesRequest request)
     {
         var result = await sender.Send(new GenerateRecoveryCodesCommand(request));
 
@@ -76,7 +76,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("qr-code/generate")]
     [Authorize]
-    public async ValueTask<ActionResult<Response>> GenerateQrCodeAsync(
+    public async ValueTask<IActionResult> GenerateQrCodeAsync(
         [FromBody] GenerateQrCodeRequest request)
     {
         var result = await sender.Send(new GenerateQrCodeCommand(request));

@@ -16,7 +16,7 @@ public class PriceController(ISender sender) : ControllerBase
     [EndpointDescription("Get price types")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetPriceTypesAsync()
+    public async ValueTask<IActionResult> GetPriceTypesAsync()
     {
         var result = await sender.Send(new GetPriceTypesQuery());
         

@@ -17,7 +17,7 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointDescription("Gets all roles")]
     [ProducesResponseType(200)]
     [HttpGet]
-    public async ValueTask<ActionResult<Response>> GetRolesAsync()
+    public async ValueTask<IActionResult> GetRolesAsync()
     {
         var result = await sender.Send(new GetRolesQuery());
 
@@ -30,7 +30,7 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointDescription("Assigns role to user")]
     [ProducesResponseType(200)]
     [HttpPost("assign")]
-    public async ValueTask<ActionResult<Response>> AssignAsync([FromBody] AssignRoleRequest request)
+    public async ValueTask<IActionResult> AssignAsync([FromBody] AssignRoleRequest request)
     {
         var result = await sender.Send(new AssignRoleCommand(request));
         return result.Match(
@@ -42,7 +42,7 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointDescription("Unassign roles")]
     [ProducesResponseType(200)]
     [HttpPost("unassign")]
-    public async ValueTask<ActionResult<Response>> UnassignAsync([FromBody] UnassignRolesRequest request)
+    public async ValueTask<IActionResult> UnassignAsync([FromBody] UnassignRolesRequest request)
     {
         var result = await sender.Send(new UnassignRolesCommand(request));
         return result.Match(
@@ -55,7 +55,7 @@ public class RolesController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost]
     [ValidationFilter]
-    public async ValueTask<ActionResult<Response>> CreateAsync([FromBody] CreateRoleRequest request)
+    public async ValueTask<IActionResult> CreateAsync([FromBody] CreateRoleRequest request)
     {
         var result = await sender.Send(new CreateRoleCommand(request));
         return result.Match(
@@ -67,7 +67,7 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointDescription("Deletes role")]
     [ProducesResponseType(200)]
     [HttpPut("{id:guid}")]
-    public async ValueTask<ActionResult<Response>> UpdateAsync([FromBody] UpdateRoleRequest request)
+    public async ValueTask<IActionResult> UpdateAsync([FromBody] UpdateRoleRequest request)
     {
         var result = await sender.Send(new UpdateRoleCommand(request));
         return result.Match(
@@ -79,7 +79,7 @@ public class RolesController(ISender sender) : ControllerBase
     [EndpointDescription("Deletes role")]
     [ProducesResponseType(200)]
     [HttpDelete("{id:guid}")]
-    public async ValueTask<ActionResult<Response>> DeleteAsync(Guid id)
+    public async ValueTask<IActionResult> DeleteAsync(Guid id)
     {
         var result = await sender.Send(new DeleteRoleCommand(id));
         return result.Match(
