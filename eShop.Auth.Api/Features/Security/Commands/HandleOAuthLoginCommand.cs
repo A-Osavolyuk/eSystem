@@ -219,7 +219,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
 
-        if (sessionResult.Succeeded)
+        if (!sessionResult.Succeeded)
         {
             var error = Uri.EscapeDataString(sessionResult.GetError().Message);
             var url = UrlGenerator.Url(fallbackUri, new
@@ -247,7 +247,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             return Results.Redirect(url);
         }
 
-        var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id });
+        var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id, token });
 
         return Result.Success(link);
     }
