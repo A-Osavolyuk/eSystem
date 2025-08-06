@@ -31,4 +31,12 @@ public static class Results
             Details = details
         }, value);
     }
+
+    public static Result Redirect(string url)
+    {
+        return Result.Failure(new Error()
+        {
+            Code = ErrorCode.Found,
+        }, url);
+    }
 }

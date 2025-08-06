@@ -8,15 +8,15 @@ public static class ErrorHandler
     {
         var error = result.GetError();
         var value = result.Value;
-        
-        return new ObjectResult(
-            new ResponseBuilder()
-                .Failed()
-                .WithResult(value)
-                .WithMessage(error.Details!)
-                .Build())
+
+        return error.Code switch
         {
-            StatusCode = Convert.ToInt32(error.Code),
+            ErrorCode.Found => new RedirectResult(value?.ToString() ?? throw new ArgumentException("Redirect URL was not provided")),
+            _ => new ObjectResult(new ResponseBuilder()
+                    .Failed()
+                    .WithResult(value)
+                    .WithMessage(error.Details!)
+                    .Build()) { StatusCode = Convert.ToInt32(error.Code) }
         };
     }
 }
