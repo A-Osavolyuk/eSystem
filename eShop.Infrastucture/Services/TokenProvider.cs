@@ -5,7 +5,7 @@ public class TokenProvider(ICookieManager cookieManager) : ITokenProvider
     private readonly ICookieManager cookieManager = cookieManager;
     private const string Key = "access-token";
 
-    public async ValueTask<string?> GetTokenAsync()
+    public async ValueTask<string?> GetAsync()
     {
         var token = await cookieManager.GetAsync(Key);
         return token;
@@ -16,7 +16,7 @@ public class TokenProvider(ICookieManager cookieManager) : ITokenProvider
         await cookieManager.RemoveAsync(Key);
     }
 
-    public async ValueTask SetTokenAsync(string token)
+    public async ValueTask SetAsync(string token)
     {
         await cookieManager.SetAsync(Key, token, 30);
     }

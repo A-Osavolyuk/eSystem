@@ -25,7 +25,7 @@ public class ApiClient(
 
             if (options.WithBearer)
             {
-                var token = await tokenProvider.GetTokenAsync();
+                var token = await tokenProvider.GetAsync();
 
                 if (string.IsNullOrEmpty(token))
                 {

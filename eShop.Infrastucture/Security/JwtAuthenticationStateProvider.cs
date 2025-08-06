@@ -20,7 +20,7 @@ public class JwtAuthenticationStateProvider(
     {
         try
         {
-            var token = await tokenProvider.GetTokenAsync();
+            var token = await tokenProvider.GetAsync();
 
             if (string.IsNullOrEmpty(token))
             {
@@ -57,7 +57,7 @@ public class JwtAuthenticationStateProvider(
     {
         if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
         {
-            await tokenProvider.SetTokenAsync(refreshToken);
+            await tokenProvider.SetAsync(refreshToken);
             var authenticationState = Authorized(refreshToken);
 
             NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
@@ -72,7 +72,7 @@ public class JwtAuthenticationStateProvider(
     {
         if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
         {
-            await tokenProvider.SetTokenAsync(refreshToken);
+            await tokenProvider.SetAsync(refreshToken);
 
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
