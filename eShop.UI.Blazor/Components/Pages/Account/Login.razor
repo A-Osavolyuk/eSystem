@@ -51,52 +51,35 @@
                 </MudForm>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
-                <MudGrid Spacing="1">
-                    <MudItem xs="6">
-                        <MudButton
-                            ButtonType="ButtonType.Button"
-                            StartIcon="@Icons.Custom.Brands.Google"
-                            Variant="Variant.Filled"
-                            OnClick="@(async () => await OnExternalLoginAsync("Google"))"
-                            Color="Color.Primary"
-                            FullWidth="true">
-                            Google
-                        </MudButton>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudButton
-                            ButtonType="ButtonType.Button"
-                            StartIcon="@Icons.Custom.Brands.Facebook"
-                            Variant="Variant.Filled"
-                            OnClick="@(async () => await OnExternalLoginAsync("Facebook"))"
-                            Color="Color.Primary"
-                            FullWidth="true">
-                            Facebook
-                        </MudButton>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudButton
-                            ButtonType="ButtonType.Button"
-                            StartIcon="@Icons.Custom.Brands.Microsoft"
-                            Variant="Variant.Filled"
-                            OnClick="@(async () => await OnExternalLoginAsync("Microsoft"))"
-                            Color="Color.Primary"
-                            FullWidth="true">
-                            Microsoft
-                        </MudButton>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudButton
-                            ButtonType="ButtonType.Button"
-                            StartIcon="@Icons.Custom.Brands.Twitter"
-                            Variant="Variant.Filled"
-                            OnClick="@(async () => await OnExternalLoginAsync("Twitter"))"
-                            Color="Color.Primary"
-                            FullWidth="true">
-                            Twitter
-                        </MudButton>
-                    </MudItem>
-                </MudGrid>
+                <MudStack Spacing="1" Justify="Justify.Center">
+                    <MudButton
+                        ButtonType="ButtonType.Button"
+                        StartIcon="@Icons.Custom.Brands.Google"
+                        Variant="Variant.Filled"
+                        OnClick="@(async () => await OnExternalLoginAsync("Google"))"
+                        Color="Color.Primary"
+                        FullWidth="true">
+                        Google
+                    </MudButton>
+                    <MudButton
+                        ButtonType="ButtonType.Button"
+                        StartIcon="@Icons.Custom.Brands.Facebook"
+                        Variant="Variant.Filled"
+                        OnClick="@(async () => await OnExternalLoginAsync("Facebook"))"
+                        Color="Color.Primary"
+                        FullWidth="true">
+                        Facebook
+                    </MudButton>
+                    <MudButton
+                        ButtonType="ButtonType.Button"
+                        StartIcon="@Icons.Custom.Brands.Microsoft"
+                        Variant="Variant.Filled"
+                        OnClick="@(async () => await OnExternalLoginAsync("Microsoft"))"
+                        Color="Color.Primary"
+                        FullWidth="true">
+                        Microsoft
+                    </MudButton>
+                </MudStack>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
