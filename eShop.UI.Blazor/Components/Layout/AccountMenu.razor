@@ -115,10 +115,14 @@
 
     private async Task LoadAsync()
     {
-        var userId = await Storage.GetAsync<Guid>("userId")!;
+        var userId = await Storage.GetAsync<Guid>("userId");
         var result = await UsersService.GetUserAsync(userId);
-        var user = result.Get<UserDto>()!;
-        model = Mapper.Map(user);
+
+        if (result.Success)
+        {
+            var user = result.Get<UserDto>()!;
+            model = Mapper.Map(user);
+        }
     }
 
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
