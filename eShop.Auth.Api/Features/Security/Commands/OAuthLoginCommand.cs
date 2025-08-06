@@ -2,14 +2,16 @@
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record OAuthLoginCommand(string Provider, string? ReturnUri) : IRequest<Result>;
+public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string FallbackUri) : IRequest<Result>;
 
 public sealed class OAuthLoginCommandHandler(
     ISignInManager signInManager,
-    IOAuthProviderManager providerManager) : IRequestHandler<OAuthLoginCommand, Result>
+    IOAuthProviderManager providerManager,
+    IOAuthSessionManager sessionManager) : IRequestHandler<OAuthLoginCommand, Result>
 {
     private readonly ISignInManager signInManager = signInManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
+    private readonly IOAuthSessionManager sessionManager = sessionManager;
 
     public async Task<Result> Handle(OAuthLoginCommand request,
         CancellationToken cancellationToken)
@@ -22,10 +24,15 @@ public sealed class OAuthLoginCommandHandler(
             return Results.BadRequest($"Invalid oauth provider {request.Provider}.");
         }
 
-        var redirectUri = UrlGenerator.Action("handle", "OAuth",
-            new { ReturnUri = request.ReturnUri ?? "/" });
+        var redirectUri = UrlGenerator.Action("handle", "OAuth", new { request.ReturnUri });
+        var fallbackUri = UrlGenerator.Url(request.FallbackUri, new { sessionId = string.Empty });
         
-        var properties = signInManager.ConfigureOAuthProperties(request.Provider, redirectUri);
+        var items = new Dictionary<string, string?>()
+        {
+            { "fallbackUri", fallbackUri }
+        };
+        
+        var properties = signInManager.ConfigureAuthenticationProperties(redirectUri, items);
         
         var result = Result.Success(new OAuthLoginResponse()
         {

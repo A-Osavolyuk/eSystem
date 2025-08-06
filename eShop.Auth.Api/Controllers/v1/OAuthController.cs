@@ -19,7 +19,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [HttpGet("login/{provider}")]
     public async ValueTask<IActionResult> OAuthLoginAsync(string provider, string returnUri, string fallbackUri)
     {
-        var result = await sender.Send(new OAuthLoginCommand(provider, returnUri));
+        var result = await sender.Send(new OAuthLoginCommand(provider, returnUri, fallbackUri));
 
         return result.Match(
             s =>
