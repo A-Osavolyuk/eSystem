@@ -15,16 +15,14 @@ public sealed class SignInManager(IAuthenticationSchemeProvider schemeProvider) 
         return principal;
     }
 
-    public AuthenticationProperties ConfigureOAuthProperties(string provider, string redirectUri)
+    public AuthenticationProperties ConfigureAuthenticationProperties(string redirectUri, Dictionary<string, string?> items)
     {
-        var properties = new AuthenticationProperties
+        var properties = new AuthenticationProperties { RedirectUri = redirectUri };
+
+        foreach (var item in items)
         {
-            RedirectUri = redirectUri,
-            Items =
-            {
-                ["provider"] = provider,
-            }
-        };
+            properties.Items.Add(item.Key, item.Value);
+        }
         
         return properties;
     }
