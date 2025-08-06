@@ -32,7 +32,7 @@ public sealed class SignInManager(IAuthenticationSchemeProvider schemeProvider) 
             RedirectUri = redirectUri,
             Items =
             {
-                ["LoginProvider"] = provider,
+                ["provider"] = provider,
             }
         };
         
