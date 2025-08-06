@@ -22,4 +22,29 @@ public class OAuthProviderManager(AuthDbContext context) : IOAuthProviderManager
         var entity = await context.OAuthProviders.FirstOrDefaultAsync(x => x.Name == name, cancellationToken);
         return entity;
     }
+
+    public async ValueTask<Result> EnableAsync(UserEntity user, 
+        OAuthProviderEntity provider, CancellationToken cancellationToken = default)
+    {
+        var existedEntity = await context.UserOAuthProviders.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.ProviderId == provider.Id, cancellationToken);
+
+        if (existedEntity is not null)
+        {
+            return Result.Success();
+        }
+
+        var entity = new UserOAuthProviderEntity()
+        {
+            UserId = user.Id,
+            ProviderId = provider.Id,
+            Allowed = true,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
+        await context.UserOAuthProviders.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
 }

@@ -16,7 +16,8 @@ public sealed class HandleOAuthLoginCommandHandler(
     IMessageService messageService,
     IRoleManager roleManager,
     ILockoutManager lockoutManager,
-    IOAuthSessionManager sessionManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
+    IOAuthSessionManager sessionManager,
+    IOAuthProviderManager providerManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
@@ -24,6 +25,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IRoleManager roleManager = roleManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
+    private readonly IOAuthProviderManager providerManager = providerManager;
 
     public async Task<Result> Handle(HandleOAuthLoginCommand request,
         CancellationToken cancellationToken)
@@ -31,8 +33,8 @@ public sealed class HandleOAuthLoginCommandHandler(
         var authenticationResult = request.AuthenticationResult;
         var items = authenticationResult.Properties.Items;
         var fallbackUri = items["fallbackUri"]!;
-        var provider = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
-        
+        var providerName = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
+
         if (!string.IsNullOrEmpty(request.RemoteError))
         {
             var error = Uri.EscapeDataString(request.RemoteError);
@@ -40,7 +42,22 @@ public sealed class HandleOAuthLoginCommandHandler(
             {
                 ErrorCode = nameof(OAuthErrorType.RemoteError),
                 Message = error,
-                Provider = provider
+                Provider = providerName
+            });
+
+            return Results.Redirect(url);
+        }
+
+        var provider = await providerManager.FindByNameAsync(providerName, cancellationToken);
+
+        if (provider is null)
+        {
+            var error = Uri.EscapeDataString($"Cannot find provider {providerName}");
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = nameof(OAuthErrorType.InternalError),
+                Message = error,
+                Provider = providerName
             });
 
             return Results.Redirect(url);
@@ -56,15 +73,15 @@ public sealed class HandleOAuthLoginCommandHandler(
             {
                 ErrorCode = nameof(OAuthErrorType.InvalidCredentials),
                 Message = error,
-                Provider = provider
+                Provider = providerName
             });
 
             return Results.Redirect(url);
         }
-        
+
         var sessionId = Guid.Parse(items["sessionId"]!);
         var token = items["token"]!;
-        
+
         var session = await sessionManager.FindAsync(sessionId, token, cancellationToken);
 
         if (session is null)
@@ -74,7 +91,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             {
                 ErrorCode = nameof(OAuthErrorType.InvalidCredentials),
                 Message = error,
-                Provider = provider
+                Provider = providerName
             });
 
             return Results.Redirect(url);
@@ -101,7 +118,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 {
                     ErrorCode = nameof(OAuthErrorType.InternalError),
                     Message = error,
-                    Provider = provider
+                    Provider = providerName
                 });
 
                 return Results.Redirect(url);
@@ -116,7 +133,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 {
                     ErrorCode = nameof(OAuthErrorType.InternalError),
                     Message = error,
-                    Provider = provider
+                    Provider = providerName
                 });
 
                 return Results.Redirect(url);
@@ -131,7 +148,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 {
                     ErrorCode = nameof(OAuthErrorType.InternalError),
                     Message = error,
-                    Provider = provider
+                    Provider = providerName
                 });
 
                 return Results.Redirect(url);
@@ -152,7 +169,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                     {
                         ErrorCode = nameof(OAuthErrorType.InternalError),
                         Message = error,
-                        Provider = provider
+                        Provider = providerName
                     });
 
                     return Results.Redirect(url);
@@ -164,12 +181,12 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Credentials = new Dictionary<string, string>()
                 {
                     { "To", email },
-                    { "Subject", $"Account registered with {provider}" },
+                    { "Subject", $"Account registered with {providerName}" },
                 },
                 Payload = new()
                 {
                     { "UserName", user.UserName },
-                    { "ProviderName", provider }
+                    { "ProviderName", providerName }
                 }
             };
 
@@ -183,12 +200,13 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             if (lockoutState.Enabled)
             {
-                var error = Uri.EscapeDataString($"This user account is locked out with reason: {lockoutState.Reason}.");
+                var error = Uri.EscapeDataString(
+                    $"This user account is locked out with reason: {lockoutState.Reason}.");
                 var url = UrlGenerator.Url(fallbackUri, new
                 {
                     ErrorCode = nameof(OAuthErrorType.InternalError),
                     Message = error,
-                    Provider = provider
+                    Provider = providerName
                 });
 
                 return Results.Redirect(url);
@@ -196,12 +214,41 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             session.SignType = OAuthSignType.SignIn;
         }
-        
+
         session.UserId = user.Id;
-            
-        await sessionManager.UpdateAsync(session, cancellationToken);
+
+        var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
+
+        if (sessionResult.Succeeded)
+        {
+            var error = Uri.EscapeDataString(sessionResult.GetError().Message);
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = nameof(OAuthErrorType.InternalError),
+                Message = error,
+                Provider = providerName
+            });
+
+            return Results.Redirect(url);
+        }
+
+        var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
+
+        if (!enableResult.Succeeded)
+        {
+            var error = Uri.EscapeDataString(enableResult.GetError().Message);
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = nameof(OAuthErrorType.InternalError),
+                Message = error,
+                Provider = providerName
+            });
+
+            return Results.Redirect(url);
+        }
+
         var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id });
-            
+
         return Result.Success(link);
     }
 }
