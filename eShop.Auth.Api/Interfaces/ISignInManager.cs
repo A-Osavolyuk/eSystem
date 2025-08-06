@@ -7,6 +7,5 @@ public interface ISignInManager
 {
     public ValueTask<ClaimsPrincipal> AuthenticateAsync(HttpContext context, string scheme,
         CancellationToken cancellationToken = default);
-    public ValueTask<List<string>> GetOAuthSchemasAsync(CancellationToken cancellationToken = default);
     public AuthenticationProperties ConfigureOAuthProperties(string provider, string redirectUri);
 }

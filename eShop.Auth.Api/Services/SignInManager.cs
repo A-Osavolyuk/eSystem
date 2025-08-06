@@ -15,16 +15,6 @@ public sealed class SignInManager(IAuthenticationSchemeProvider schemeProvider) 
         return principal;
     }
 
-    public async ValueTask<List<string>> GetOAuthSchemasAsync(CancellationToken cancellationToken = default)
-    {
-        var schemes = await schemeProvider.GetAllSchemesAsync();
-        var result = schemes
-            .Where(s => !string.IsNullOrEmpty(s.DisplayName))
-            .Select(x => x.Name).ToList();
-        
-        return result;
-    }
-
     public AuthenticationProperties ConfigureOAuthProperties(string provider, string redirectUri)
     {
         var properties = new AuthenticationProperties
