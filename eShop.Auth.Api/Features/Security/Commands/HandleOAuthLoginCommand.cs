@@ -38,7 +38,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             var error = Uri.EscapeDataString(request.RemoteError);
             var url = UrlGenerator.Url(fallbackUri, new
             {
-                ErrorCode = OAuthErrorType.RemoteError,
+                ErrorCode = nameof(OAuthErrorType.RemoteError),
                 Message = error,
                 Provider = provider
             });
@@ -54,7 +54,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             var error = Uri.EscapeDataString("Email was not provided to credentials");
             var url = UrlGenerator.Url(fallbackUri, new
             {
-                ErrorCode = OAuthErrorType.InvalidCredentials,
+                ErrorCode = nameof(OAuthErrorType.InvalidCredentials),
                 Message = error,
                 Provider = provider
             });
@@ -72,7 +72,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             var error = Uri.EscapeDataString("Invalid OAuth session");
             var url = UrlGenerator.Url(fallbackUri, new
             {
-                ErrorCode = OAuthErrorType.InternalError,
+                ErrorCode = nameof(OAuthErrorType.InvalidCredentials),
                 Message = error,
                 Provider = provider
             });
@@ -99,7 +99,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 var error = Uri.EscapeDataString(createResult.GetError().Message);
                 var url = UrlGenerator.Url(fallbackUri, new
                 {
-                    ErrorCode = OAuthErrorType.InternalError,
+                    ErrorCode = nameof(OAuthErrorType.InternalError),
                     Message = error,
                     Provider = provider
                 });
@@ -114,7 +114,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 var error = Uri.EscapeDataString("Cannot find role with name User");
                 var url = UrlGenerator.Url(fallbackUri, new
                 {
-                    ErrorCode = OAuthErrorType.InternalError,
+                    ErrorCode = nameof(OAuthErrorType.InternalError),
                     Message = error,
                     Provider = provider
                 });
@@ -129,7 +129,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 var error = Uri.EscapeDataString(assignRoleResult.GetError().Message);
                 var url = UrlGenerator.Url(fallbackUri, new
                 {
-                    ErrorCode = OAuthErrorType.InternalError,
+                    ErrorCode = nameof(OAuthErrorType.InternalError),
                     Message = error,
                     Provider = provider
                 });
@@ -150,7 +150,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                     var error = Uri.EscapeDataString(result.GetError().Message);
                     var url = UrlGenerator.Url(fallbackUri, new
                     {
-                        ErrorCode = OAuthErrorType.InternalError,
+                        ErrorCode = nameof(OAuthErrorType.InternalError),
                         Message = error,
                         Provider = provider
                     });
@@ -186,7 +186,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 var error = Uri.EscapeDataString($"This user account is locked out with reason: {lockoutState.Reason}.");
                 var url = UrlGenerator.Url(fallbackUri, new
                 {
-                    ErrorCode = OAuthErrorType.InternalError,
+                    ErrorCode = nameof(OAuthErrorType.InternalError),
                     Message = error,
                     Provider = provider
                 });

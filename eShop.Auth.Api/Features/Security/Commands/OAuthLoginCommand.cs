@@ -20,7 +20,11 @@ public sealed class OAuthLoginCommandHandler(
 
         if (providers.Count == 0)
         {
-            var url = UrlGenerator.Url(request.FallbackUri, new { ErrorCode = OAuthErrorType.TemporarilyUnavailable });
+            var url = UrlGenerator.Url(request.FallbackUri, new
+            {
+                ErrorCode = nameof(OAuthErrorType.InternalError),
+                Provider = request.Provider
+            });
             return Results.Redirect(url);
         }
         
@@ -30,7 +34,7 @@ public sealed class OAuthLoginCommandHandler(
         {
             var url = UrlGenerator.Url(request.FallbackUri, new
             {
-                ErrorCode = OAuthErrorType.UnsupportedProvider, 
+                ErrorCode = nameof(OAuthErrorType.UnsupportedProvider), 
                 Provider = request.Provider
             });
             
