@@ -2,7 +2,7 @@
 
 public static class UrlGenerator
 {
-    public static string ActionLink(string uri, object values)
+    public static string Url(string uri, object values)
     {
         var query = new StringBuilder(uri);
 

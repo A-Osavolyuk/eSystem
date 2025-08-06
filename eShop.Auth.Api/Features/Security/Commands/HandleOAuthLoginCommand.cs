@@ -121,7 +121,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             };
             
             await sessionManager.CreateAsync(session, cancellationToken);
-            var link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
+            var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id });
             return Result.Success(link);
         }
         else
@@ -148,7 +148,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             };
         
             await sessionManager.CreateAsync(session, cancellationToken);
-            var link = UrlGenerator.ActionLink(request.ReturnUri!, new { sessionId = session.Id });
+            var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id });
             return Result.Success(link);
         }
     }
@@ -168,7 +168,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         };
         
         await sessionManager.CreateAsync(session, cancellationToken);
-        var link = UrlGenerator.ActionLink(returnUri, new { sessionId = session.Id });
+        var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id });
         return Result.Success(link);
     }
 }
