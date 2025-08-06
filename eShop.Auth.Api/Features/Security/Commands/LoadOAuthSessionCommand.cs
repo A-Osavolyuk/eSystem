@@ -16,16 +16,11 @@ public class LoadOAuthSessionCommandHandler(
 
     public async Task<Result> Handle(LoadOAuthSessionCommand request, CancellationToken cancellationToken)
     {
-        var session = await sessionManager.FindAsync(request.Request.SessionId, cancellationToken);
+        var session = await sessionManager.FindAsync(request.Request.Id, request.Request.Token, cancellationToken);
 
         if (session is null)
         {
             return Results.NotFound("Cannot find session");
-        }
-
-        if (!session.IsSucceeded)
-        {
-            return Results.InternalServerError(session.ErrorMessage!);
         }
 
         if (!session.UserId.HasValue)

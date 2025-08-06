@@ -2,5 +2,6 @@
 
 public class LoadOAuthSessionRequest
 {
-    public Guid SessionId { get; set; }
+    public Guid Id { get; set; }
+    public string Token { get; set; } = string.Empty;
 }

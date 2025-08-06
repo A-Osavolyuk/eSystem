@@ -14,7 +14,7 @@
         if (firstRender)
         {
             var sessionId = Guid.Parse(SessionId);
-            var request = new LoadOAuthSessionRequest() { SessionId = sessionId };
+            var request = new LoadOAuthSessionRequest() { Id = sessionId };
 
             var result = await OAuthService.LoadSessionAsync(request);
 
