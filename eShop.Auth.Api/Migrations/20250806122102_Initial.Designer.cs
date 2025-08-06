@@ -12,8 +12,8 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250806105332_AddTokenProperty")]
-    partial class AddTokenProperty
+    [Migration("20250806122102_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -219,18 +219,8 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("ErrorMessage")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("ErrorType")
-                        .HasColumnType("int");
-
                     b.Property<DateTimeOffset?>("ExpiredDate")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("IsSucceeded")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Provider")
                         .IsRequired()
@@ -243,8 +233,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
@@ -625,6 +615,9 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Allowed")
+                        .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
