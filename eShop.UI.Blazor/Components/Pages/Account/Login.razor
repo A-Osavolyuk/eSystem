@@ -1,5 +1,6 @@
 ﻿@page "/account/login"
 
+@using System.Web
 @inherits PageBase
 
 @inject ISecurityService SecurityService
@@ -56,7 +57,7 @@
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Google"
                         Variant="Variant.Filled"
-                        OnClick="@(async () => await OnExternalLoginAsync("Google"))"
+                        OnClick="@(async () => await OnOAuthAsync("Google"))"
                         Color="Color.Primary"
                         FullWidth="true">
                         Google
@@ -65,7 +66,7 @@
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Facebook"
                         Variant="Variant.Filled"
-                        OnClick="@(async () => await OnExternalLoginAsync("Facebook"))"
+                        OnClick="@(async () => await OnOAuthAsync("Facebook"))"
                         Color="Color.Primary"
                         FullWidth="true">
                         Facebook
@@ -74,7 +75,7 @@
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Custom.Brands.Microsoft"
                         Variant="Variant.Filled"
-                        OnClick="@(async () => await OnExternalLoginAsync("Microsoft"))"
+                        OnClick="@(async () => await OnOAuthAsync("Microsoft"))"
                         Color="Color.Primary"
                         FullWidth="true">
                         Microsoft
@@ -174,11 +175,14 @@
         }
     }
 
-    private async Task OnExternalLoginAsync(string providerName)
+    private async Task OnOAuthAsync(string providerName)
     {
         var gatewayPath = Configuration["services:proxy:http:0"]!;
-        var returnUrl = RouteManager.BaseUri + "account/oauth/sign-in";
-        var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUrl}";
+        var baseUri = RouteManager.BaseUri;
+        var returnUri = HttpUtility.UrlEncode($"{baseUri}account/oauth/sign-in");
+        var fallbackUri = HttpUtility.UrlEncode($"{baseUri}account/oauth/fallback");
+        
+        var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}&fallbackUri={fallbackUri}";
         await RouteManager.NavigateAsync(url, isExternal: true);
     }
 
