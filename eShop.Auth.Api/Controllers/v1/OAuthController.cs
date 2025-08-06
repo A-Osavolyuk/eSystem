@@ -37,9 +37,10 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     public async ValueTask<IActionResult> HandleOAuthLoginAsync(string? remoteError = null,
         string? returnUri = null)
     {
-        var principal = await signInManager.AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
+        var authenticationResult = await signInManager
+            .AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
         
-        var result = await sender.Send(new HandleOAuthLoginCommand(principal, remoteError, returnUri));
+        var result = await sender.Send(new HandleOAuthLoginCommand(authenticationResult, remoteError, returnUri));
         return result.Match(s => Redirect(s.Message), ErrorHandler.Handle);
     }
     

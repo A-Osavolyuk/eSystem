@@ -1,10 +1,11 @@
 ﻿using System.Security.Claims;
 using eShop.Auth.Api.Messages.Email;
+using eShop.Auth.Api.Types;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
 public sealed record HandleOAuthLoginCommand(
-    ClaimsPrincipal Principal,
+    AuthenticationResult AuthenticationResult,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
 
@@ -31,9 +32,10 @@ public sealed class HandleOAuthLoginCommandHandler(
             return await FailAsync(OAuthErrorType.RemoteError, request.RemoteError, request.ReturnUri!, cancellationToken);
         }
 
-        var provider = request.Principal.Identity!.AuthenticationType!;
+        var provider = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
 
-        var email = request.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        var email = request.AuthenticationResult.Principal.Claims
+            .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
         if (email is null)
         {

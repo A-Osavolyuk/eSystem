@@ -1,44 +1,76 @@
 ﻿using eShop.Domain.Responses.API.Auth;
+using Microsoft.AspNetCore.Authentication;
+using OtpNet;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
 public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string FallbackUri) : IRequest<Result>;
 
 public sealed class OAuthLoginCommandHandler(
-    ISignInManager signInManager,
     IOAuthProviderManager providerManager,
     IOAuthSessionManager sessionManager) : IRequestHandler<OAuthLoginCommand, Result>
 {
-    private readonly ISignInManager signInManager = signInManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
 
     public async Task<Result> Handle(OAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
-        var providers = await providerManager.GetAllAsync(cancellationToken);
-        var isValidProvider = providers.Any(x => x.Name == request.Provider);
-
-        if (!isValidProvider)
-        {
-            return Results.BadRequest($"Invalid oauth provider {request.Provider}.");
-        }
-
-        var redirectUri = UrlGenerator.Action("handle", "OAuth", new { request.ReturnUri });
-        var fallbackUri = UrlGenerator.Url(request.FallbackUri, new { sessionId = string.Empty });
+        var randomBytes = KeyGeneration.GenerateRandomKey(20);
+        var token = Base32Encoding.ToString(randomBytes);
         
-        var items = new Dictionary<string, string?>()
+        var session = new OAuthSessionEntity()
         {
-            { "fallbackUri", fallbackUri }
+            Id = Guid.NewGuid(),
+            Token = token,
+            CreateDate = DateTimeOffset.UtcNow,
+            ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10),
         };
         
-        var properties = signInManager.ConfigureAuthenticationProperties(redirectUri, items);
+        var redirectUri = UrlGenerator.Action("handle", "OAuth", new { request.ReturnUri });
+        var fallbackUri = UrlGenerator.Url(request.FallbackUri, new { sessionId = session.Id, token = session.Token });
+        
+        var providers = await providerManager.GetAllAsync(cancellationToken);
+
+        if (providers.Count == 0)
+        {
+            session.ErrorType = OAuthErrorType.Unavailable;
+            session.ErrorMessage = "Sign in with OAuth is temporary unavailable. Please try again later.";
+            await sessionManager.CreateAsync(session, cancellationToken);
+            
+            return Results.Redirect(fallbackUri);
+        }
+        
+        var provider = providers.FirstOrDefault(x => x.Name == request.Provider);
+
+        if (provider is null)
+        {
+            session.ErrorType = OAuthErrorType.UnsupportedProvider;
+            session.ErrorMessage = $"Sign in via OAuth with {request.Provider} provider is not supported.";
+            await sessionManager.CreateAsync(session, cancellationToken);
+            
+            return Results.Redirect(fallbackUri);
+        }
+        
+        var properties = new AuthenticationProperties
+        {
+            RedirectUri = redirectUri,
+            Items = 
+            {
+                { "fallbackUri", fallbackUri },
+                { "sessionId", session.Id.ToString() },
+                { "token", token },
+            }
+        };
         
         var result = Result.Success(new OAuthLoginResponse()
         {
             Provider = request.Provider,
             AuthenticationProperties = properties
         });
+        
+        session.Provider = provider.Name;
+        await sessionManager.CreateAsync(session, cancellationToken);
         
         return result;
     }
