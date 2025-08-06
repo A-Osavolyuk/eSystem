@@ -1,0 +1,9 @@
+﻿@page "/account/oauth/fallback"
+
+@inject PageBase
+
+<Title Text="OAuth fallback" />
+
+@code {
+    [SupplyParameterFromQuery(Name = "sessionId")] public string SessionId { get; set; } = string.Empty;
+}

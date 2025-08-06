@@ -43,6 +43,7 @@ public static class HostApplicationBuilderExtensions
                 new() { Routes = ["/account/login"] },
                 new() { Routes = ["/account/oauth/sign-in"] },
                 new() { Routes = ["/account/oauth/signed-up"] },
+                new() { Routes = ["/account/oauth/fallback"] },
                 new() { Routes = ["/account/2fa/login"] },
                 new() { Routes = ["/account/2fa/authenticator"], RequireAuthorization = true },
                 new() { Routes = ["/account/2fa/provider/{type}"], RequireAuthorization = true },
