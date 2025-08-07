@@ -11,7 +11,7 @@ public class AddPhoneNumberCommandHandler(
     IMessageService messageService,
     IdentityOptions identityOptions) : IRequestHandler<AddPhoneNumberCommand, Result>
 {
-    public IdentityOptions IdentityOptions { get; } = identityOptions;
+    private readonly IdentityOptions identityOptions = identityOptions;
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
