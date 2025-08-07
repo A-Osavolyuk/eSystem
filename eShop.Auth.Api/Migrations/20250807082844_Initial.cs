@@ -44,24 +44,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OAuthSessions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Provider = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    SignType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OAuthSessions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Providers",
                 columns: table => new
                 {
@@ -239,6 +221,62 @@ namespace eShop.Auth.Api.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LoginSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Provider = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    UserAgent = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Device = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LoginSessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OAuthSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Token = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    SignType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OAuthSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OAuthSessions_OAuthProviders_ProviderId",
+                        column: x => x.ProviderId,
+                        principalTable: "OAuthProviders",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OAuthSessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -534,6 +572,21 @@ namespace eShop.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_LoginSessions_UserId",
+                table: "LoginSessions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OAuthSessions_ProviderId",
+                table: "OAuthSessions",
+                column: "ProviderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OAuthSessions_UserId",
+                table: "OAuthSessions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_ResourceId",
                 table: "Permissions",
                 column: "ResourceId");
@@ -608,6 +661,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "LoginCodes");
+
+            migrationBuilder.DropTable(
+                name: "LoginSessions");
 
             migrationBuilder.DropTable(
                 name: "OAuthSessions");

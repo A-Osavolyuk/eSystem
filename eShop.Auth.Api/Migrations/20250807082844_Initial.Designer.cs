@@ -12,8 +12,8 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250807081251_AddLoginSession")]
-    partial class AddLoginSession
+    [Migration("20250807082844_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,7 +231,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -832,7 +832,9 @@ namespace eShop.Auth.Api.Migrations
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
