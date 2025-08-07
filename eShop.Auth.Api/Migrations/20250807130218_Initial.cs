@@ -224,34 +224,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LoginSessions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Provider = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    IpAddress = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    UserAgent = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Device = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    Location = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LoginSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LoginSessions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OAuthSessions",
                 columns: table => new
                 {
@@ -363,6 +335,35 @@ namespace eShop.Auth.Api.Migrations
                     table.PrimaryKey("PK_UserChanges", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserChanges_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserDevices",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsTrusted = table.Column<bool>(type: "bit", nullable: false),
+                    UserAgent = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
+                    Browser = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Device = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    OS = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    FirstSeen = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastSeen = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserDevices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserDevices_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -492,6 +493,39 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LoginSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Provider = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    UserAgent = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LoginSessions_UserDevices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "UserDevices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LoginSessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RolePermissions",
                 columns: table => new
                 {
@@ -572,6 +606,11 @@ namespace eShop.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_LoginSessions_DeviceId",
+                table: "LoginSessions",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LoginSessions_UserId",
                 table: "LoginSessions",
                 column: "UserId");
@@ -621,6 +660,11 @@ namespace eShop.Auth.Api.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UserChanges_UserId",
                 table: "UserChanges",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDevices_UserId",
+                table: "UserDevices",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -700,6 +744,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "LockoutReasons");
+
+            migrationBuilder.DropTable(
+                name: "UserDevices");
 
             migrationBuilder.DropTable(
                 name: "OAuthProviders");
