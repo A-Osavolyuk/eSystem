@@ -40,7 +40,7 @@ public sealed class LoginCommandHandler(
         }
 
         var emailResult = await CheckEmailAsync(user, request.Context, cancellationToken);
-        if(emailResult.Succeeded) return emailResult;
+        if(!emailResult.Succeeded) return emailResult;
 
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
