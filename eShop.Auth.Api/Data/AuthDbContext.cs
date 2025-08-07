@@ -288,7 +288,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithMany()
                 .HasForeignKey(x => x.UserId);
 
-            entity.HasOne(x => x.Provider)
+            entity.HasOne(x => x.Device)
                 .WithMany()
                 .HasForeignKey(x => x.DeviceId);
         });
