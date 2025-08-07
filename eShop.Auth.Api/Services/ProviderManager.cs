@@ -20,6 +20,12 @@ public sealed class ProviderManager(AuthDbContext context) : IProviderManager
         return provider;
     }
 
+    public async ValueTask<ProviderEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var provider = await context.Providers.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return provider;
+    }
+
     public async ValueTask<Result> SubscribeAsync(UserEntity user, ProviderEntity provider,
         CancellationToken cancellationToken = default)
     {

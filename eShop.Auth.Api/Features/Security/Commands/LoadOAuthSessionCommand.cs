@@ -8,19 +8,21 @@ public record LoadOAuthSessionCommand(LoadOAuthSessionRequest Request) : IReques
 public class LoadOAuthSessionCommandHandler(
     IUserManager userManager,
     IOAuthSessionManager sessionManager,
-    ITokenManager tokenManager) : IRequestHandler<LoadOAuthSessionCommand, Result>
+    ITokenManager tokenManager,
+    IProviderManager providerManager) : IRequestHandler<LoadOAuthSessionCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
     private readonly ITokenManager tokenManager = tokenManager;
+    private readonly IProviderManager providerManager = providerManager;
 
     public async Task<Result> Handle(LoadOAuthSessionCommand request, CancellationToken cancellationToken)
     {
         var session = await sessionManager.FindAsync(request.Request.Id, request.Request.Token, cancellationToken);
 
-        if (session is null)
+        if (session is null || session.ExpiredDate < DateTimeOffset.UtcNow)
         {
-            return Results.NotFound("Cannot find session");
+            return Results.NotFound("Session was not found or already expired");
         }
 
         if (!session.UserId.HasValue)
@@ -34,6 +36,18 @@ public class LoadOAuthSessionCommandHandler(
         {
             return Results.NotFound($"Cannot find user with ID {session.UserId}");
         }
+
+        if (!session.ProviderId.HasValue)
+        {
+            return Results.InternalServerError("Provider was not provided with session data");
+        }
+        
+        var provider = await providerManager.FindByIdAsync(session.ProviderId.Value, cancellationToken);
+        
+        if (provider is null)
+        {
+            return Results.NotFound($"Cannot find provider with ID {session.UserId}");
+        }
         
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
@@ -43,7 +57,7 @@ public class LoadOAuthSessionCommandHandler(
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             SignType = session.SignType,
-            Provider = session.Provider,
+            Provider = provider.Name,
         };
 
         return Result.Success(response);

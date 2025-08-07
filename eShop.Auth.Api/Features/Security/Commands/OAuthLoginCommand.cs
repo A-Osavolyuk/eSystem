@@ -72,7 +72,7 @@ public sealed class OAuthLoginCommandHandler(
             AuthenticationProperties = properties
         });
         
-        session.Provider = provider.Name;
+        session.ProviderId = provider.Id;
         await sessionManager.CreateAsync(session, cancellationToken);
         
         return result;
