@@ -39,30 +39,75 @@ public sealed class LoginCommandHandler(
             return Results.NotFound($"Cannot find user with login {request.Request.Login}.");
         }
 
-        if (identityOptions.SignIn.RequireConfirmedEmail && !user.EmailConfirmed)
-        {
-            await loginSessionManager.CreateAsync(user, request.Context, 
-                LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
-            
-            return Results.BadRequest("The email address is not confirmed.");
-        }
+        var emailResult = await CheckEmailAsync(user, request.Context, cancellationToken);
+        if(emailResult.Succeeded) return emailResult;
 
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
         if (lockoutState.Enabled)
         {
-            await loginSessionManager.CreateAsync(user, request.Context, 
-                LoginStatus.Locked, LoginType.Password, cancellationToken: cancellationToken);
-            
-            return Results.BadRequest("Account is locked out", new LoginResponse()
-            {
-                UserId = user.Id,
-                IsLockedOut = lockoutState.Enabled,
-                Reason = Mapper.Map(lockoutState.Reason),
-            });
+            return await LockedOutAsync(user, lockoutState, request.Context, cancellationToken);
         }
 
-        var isValidPassword = await userManager.CheckPasswordAsync(user, request.Request.Password, cancellationToken);
+        var validationResult = await ValidatePasswordAsync(user, request.Request.Password, request.Context, cancellationToken);
+        if (!validationResult.Succeeded) return validationResult;
+
+        if (user.FailedLoginAttempts > 0)
+        {
+            var resetResult = await ResetFailedLoginAttemptsAsync(user, cancellationToken);
+            if (!resetResult.Succeeded) return resetResult;
+        }
+        
+        if (user.Providers.Any(x => x.Subscribed))
+        {
+            return await CheckTwoFactorStateAsync(user, lockoutState, request.Context, cancellationToken);
+        }
+
+        var tokenResult = await GenerateTokensAsync(user, lockoutState, request.Context, cancellationToken);
+        return tokenResult;
+    }
+
+    private async Task<Result> LockedOutAsync(UserEntity user, LockoutStateEntity lockoutState, 
+        HttpContext context, CancellationToken cancellationToken)
+    {
+        var loginSessionResult = await loginSessionManager.CreateAsync(user, context, 
+            LoginStatus.Locked, LoginType.Password, cancellationToken: cancellationToken);
+            
+        if (!loginSessionResult.Succeeded)
+        {
+            return loginSessionResult;
+        }
+            
+        return Results.BadRequest("Account is locked out", new LoginResponse()
+        {
+            UserId = user.Id,
+            IsLockedOut = lockoutState.Enabled,
+            Reason = Mapper.Map(lockoutState.Reason),
+        });
+    }
+
+    private async Task<Result> CheckEmailAsync(UserEntity user, HttpContext context, CancellationToken cancellationToken)
+    {
+        if (identityOptions.SignIn.RequireConfirmedEmail && !user.EmailConfirmed)
+        {
+            var result = await loginSessionManager.CreateAsync(user, context, 
+                LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
+            
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+            
+            return Results.BadRequest("The email address is not confirmed.");
+        }
+        
+        return Result.Success();
+    }
+
+    private async Task<Result> ValidatePasswordAsync(UserEntity user, string password, 
+        HttpContext context, CancellationToken cancellationToken)
+    {
+        var isValidPassword = await userManager.CheckPasswordAsync(user, password, cancellationToken);
 
         if (!isValidPassword)
         {
@@ -77,8 +122,13 @@ public sealed class LoginCommandHandler(
 
             if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
             {
-                await loginSessionManager.CreateAsync(user, request.Context, 
+                var loginSessionResult = await loginSessionManager.CreateAsync(user, context, 
                     LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
+                
+                if (!loginSessionResult.Succeeded)
+                {
+                    return loginSessionResult;
+                }
                 
                 return Results.BadRequest("The password is not valid.",
                     new LoginResponse()
@@ -104,8 +154,13 @@ public sealed class LoginCommandHandler(
                 return lockoutResult;
             }
 
-            await loginSessionManager.CreateAsync(user, request.Context, 
+            var result = await loginSessionManager.CreateAsync(user, context, 
                 LoginStatus.Locked, LoginType.Password, cancellationToken: cancellationToken);
+            
+            if (!result.Succeeded)
+            {
+                return result;
+            }
             
             return Results.BadRequest("Account is locked out due to too many failed login attempts",
                 new LoginResponse()
@@ -117,31 +172,39 @@ public sealed class LoginCommandHandler(
                     Reason = Mapper.Map(reason)
                 });
         }
+        
+        return Result.Success();
+    }
 
-        if (user.FailedLoginAttempts > 0)
-        {
-            user.FailedLoginAttempts = 0;
-            var updateResult = await userManager.UpdateAsync(user, cancellationToken);
-
-            if (!updateResult.Succeeded)
-            {
-                return updateResult;
-            }
-        }
-
-        if (user.Providers.Any(x => x.Subscribed))
-        {
-            await loginSessionManager.CreateAsync(user, request.Context, 
-                LoginStatus.PendingMfa, LoginType.Password, cancellationToken: cancellationToken);
+    private async Task<Result> ResetFailedLoginAttemptsAsync(UserEntity user, CancellationToken cancellationToken)
+    {
+        user.FailedLoginAttempts = 0;
+        var result = await userManager.UpdateAsync(user, cancellationToken);
+        return result;
+    }
+    
+    private async Task<Result> CheckTwoFactorStateAsync(UserEntity user, LockoutStateEntity lockoutState, 
+        HttpContext context, CancellationToken cancellationToken)
+    {
+        var result = await loginSessionManager.CreateAsync(user, context, 
+            LoginStatus.PendingMfa, LoginType.Password, cancellationToken: cancellationToken);
             
-            return Result.Success(new LoginResponse()
-            {
-                IsLockedOut = lockoutState.Enabled,
-                TwoFactorEnabled = true,
-                UserId = user.Id
-            });
+        if (!result.Succeeded)
+        {
+            return result;
         }
-
+            
+        return Result.Success(new LoginResponse()
+        {
+            IsLockedOut = lockoutState.Enabled,
+            TwoFactorEnabled = true,
+            UserId = user.Id
+        });
+    }
+    
+    private async Task<Result> GenerateTokensAsync(UserEntity user, LockoutStateEntity lockoutState, 
+        HttpContext context, CancellationToken cancellationToken)
+    {
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
@@ -154,8 +217,13 @@ public sealed class LoginCommandHandler(
             IsLockedOut = lockoutState.Enabled,
         };
         
-        await loginSessionManager.CreateAsync(user, request.Context, 
+        var result = await loginSessionManager.CreateAsync(user, context, 
             LoginStatus.Success, LoginType.Password, cancellationToken: cancellationToken);
+        
+        if (!result.Succeeded)
+        {
+            return result;
+        }
         
         return Result.Success(response, "Successfully logged in.");
     }
