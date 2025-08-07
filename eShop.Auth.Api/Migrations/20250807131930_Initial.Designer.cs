@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250807130218_Initial")]
+    [Migration("20250807131930_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

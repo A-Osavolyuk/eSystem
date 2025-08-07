@@ -273,6 +273,22 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(x => x.ProviderId)
                 .IsRequired(false);
         });
+        
+        builder.Entity<UserDeviceEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            
+            entity.Property(x => x.Device).HasMaxLength(64);
+            entity.Property(x => x.Browser).HasMaxLength(64);
+            entity.Property(x => x.OS).HasMaxLength(64);
+            entity.Property(x => x.UserAgent).HasMaxLength(128);
+            entity.Property(x => x.Location).HasMaxLength(128);
+            entity.Property(x => x.IpAddress).HasMaxLength(15);
+            
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.Devices)
+                .HasForeignKey(x => x.UserId);
+        });
 
         builder.Entity<LoginSessionEntity>(entity =>
         {
@@ -291,22 +307,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.Device)
                 .WithMany()
                 .HasForeignKey(x => x.DeviceId);
-        });
-
-        builder.Entity<UserDeviceEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            
-            entity.Property(x => x.Device).HasMaxLength(64);
-            entity.Property(x => x.Browser).HasMaxLength(64);
-            entity.Property(x => x.OS).HasMaxLength(64);
-            entity.Property(x => x.UserAgent).HasMaxLength(128);
-            entity.Property(x => x.Location).HasMaxLength(128);
-            entity.Property(x => x.IpAddress).HasMaxLength(15);
-            
-            entity.HasOne(x => x.User)
-                .WithMany(x => x.Devices)
-                .HasForeignKey(x => x.UserId);
         });
     }
 }
