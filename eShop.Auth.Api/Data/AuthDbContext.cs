@@ -25,6 +25,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<UserOAuthProviderEntity> UserOAuthProviders { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
+    public DbSet<UserDeviceEntity> UserDevices { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -278,15 +279,33 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => x.Id);
             
             entity.Property(x => x.Provider).HasMaxLength(64);
-            entity.Property(x => x.Device).HasMaxLength(64);
             entity.Property(x => x.UserAgent).HasMaxLength(128);
-            entity.Property(x => x.Location).HasMaxLength(128);
             entity.Property(x => x.IpAddress).HasMaxLength(15);
             entity.Property(x => x.Type).HasEnumConversion();
             entity.Property(x => x.Status).HasEnumConversion();
 
             entity.HasOne(x => x.User)
                 .WithMany()
+                .HasForeignKey(x => x.UserId);
+
+            entity.HasOne(x => x.Provider)
+                .WithMany()
+                .HasForeignKey(x => x.DeviceId);
+        });
+
+        builder.Entity<UserDeviceEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            
+            entity.Property(x => x.Device).HasMaxLength(64);
+            entity.Property(x => x.Browser).HasMaxLength(64);
+            entity.Property(x => x.OS).HasMaxLength(64);
+            entity.Property(x => x.UserAgent).HasMaxLength(128);
+            entity.Property(x => x.Location).HasMaxLength(128);
+            entity.Property(x => x.IpAddress).HasMaxLength(15);
+            
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.Devices)
                 .HasForeignKey(x => x.UserId);
         });
     }
