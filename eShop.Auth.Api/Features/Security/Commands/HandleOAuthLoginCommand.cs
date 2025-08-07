@@ -232,6 +232,19 @@ public sealed class HandleOAuthLoginCommandHandler(
             return Results.Redirect(url);
         }
 
+        if (user.OAuthProviders.Any(x => x.ProviderId == provider.Id && !x.Allowed))
+        {
+            var error = Uri.EscapeDataString("OAuth provider is disallowed by user");
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = nameof(OAuthErrorType.Unavailable),
+                Message = error,
+                Provider = providerName
+            });
+
+            return Results.Redirect(url);
+        }
+
         var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
 
         if (!enableResult.Succeeded)
