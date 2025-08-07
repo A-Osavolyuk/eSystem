@@ -20,7 +20,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
         [FromBody] TwoFactorLoginRequest request)
     {
         var result =
-            await sender.Send(new TwoFactorLoginCommand(request));
+            await sender.Send(new TwoFactorLoginCommand(request, HttpContext));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),

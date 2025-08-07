@@ -6,6 +6,7 @@ using OtpNet;
 namespace eShop.Auth.Api.Features.Security.Commands;
 
 public sealed record HandleOAuthLoginCommand(
+    HttpContext Context,
     AuthenticationResult AuthenticationResult,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
@@ -17,7 +18,8 @@ public sealed class HandleOAuthLoginCommandHandler(
     IRoleManager roleManager,
     ILockoutManager lockoutManager,
     IOAuthSessionManager sessionManager,
-    IOAuthProviderManager providerManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
+    IOAuthProviderManager providerManager,
+    ILoginSessionManager loginSessionManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
@@ -26,6 +28,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
+    private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
 
     public async Task<Result> Handle(HandleOAuthLoginCommand request,
         CancellationToken cancellationToken)
@@ -193,6 +196,41 @@ public sealed class HandleOAuthLoginCommandHandler(
             await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
             session.SignType = OAuthSignType.SignUp;
+            session.UserId = user.Id;
+            
+            var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
+
+            if (!sessionResult.Succeeded)
+            {
+                var error = Uri.EscapeDataString(sessionResult.GetError().Message);
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = nameof(OAuthErrorType.InternalError),
+                    Message = error,
+                    Provider = providerName
+                });
+
+                return Results.Redirect(url);
+            }
+            
+            var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
+
+            if (!enableResult.Succeeded)
+            {
+                var error = Uri.EscapeDataString(enableResult.GetError().Message);
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = nameof(OAuthErrorType.InternalError),
+                    Message = error,
+                    Provider = providerName
+                });
+
+                return Results.Redirect(url);
+            }
+
+            var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id, token });
+
+            return Result.Success(link);
         }
         else
         {
@@ -200,8 +238,10 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             if (lockoutState.Enabled)
             {
-                var error = Uri.EscapeDataString(
-                    $"This user account is locked out with reason: {lockoutState.Reason}.");
+                await loginSessionManager.CreateAsync(user, request.Context, 
+                    LoginStatus.Locked, LoginType.OAuth, provider.Name, cancellationToken);
+                
+                var error = Uri.EscapeDataString($"This user account is locked out with reason: {lockoutState.Reason}.");
                 var url = UrlGenerator.Url(fallbackUri, new
                 {
                     ErrorCode = nameof(OAuthErrorType.InternalError),
@@ -213,55 +253,63 @@ public sealed class HandleOAuthLoginCommandHandler(
             }
 
             session.SignType = OAuthSignType.SignIn;
-        }
+            session.UserId = user.Id;
+            
+            var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
 
-        session.UserId = user.Id;
-
-        var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
-
-        if (!sessionResult.Succeeded)
-        {
-            var error = Uri.EscapeDataString(sessionResult.GetError().Message);
-            var url = UrlGenerator.Url(fallbackUri, new
+            if (!sessionResult.Succeeded)
             {
-                ErrorCode = nameof(OAuthErrorType.InternalError),
-                Message = error,
-                Provider = providerName
-            });
+                await loginSessionManager.CreateAsync(user, request.Context, 
+                    LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
+                
+                var error = Uri.EscapeDataString(sessionResult.GetError().Message);
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = nameof(OAuthErrorType.InternalError),
+                    Message = error,
+                    Provider = providerName
+                });
 
-            return Results.Redirect(url);
-        }
+                return Results.Redirect(url);
+            }
 
-        if (user.OAuthProviders.Any(x => x.ProviderId == provider.Id && !x.Allowed))
-        {
-            var error = Uri.EscapeDataString("OAuth provider is disallowed by user");
-            var url = UrlGenerator.Url(fallbackUri, new
+            if (user.OAuthProviders.Any(x => x.ProviderId == provider.Id && !x.Allowed))
             {
-                ErrorCode = nameof(OAuthErrorType.Unavailable),
-                Message = error,
-                Provider = providerName
-            });
+                await loginSessionManager.CreateAsync(user, request.Context, 
+                    LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
+                
+                var error = Uri.EscapeDataString("OAuth provider is disallowed by user");
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = nameof(OAuthErrorType.Unavailable),
+                    Message = error,
+                    Provider = providerName
+                });
 
-            return Results.Redirect(url);
-        }
+                return Results.Redirect(url);
+            }
+            
+            var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
 
-        var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
-
-        if (!enableResult.Succeeded)
-        {
-            var error = Uri.EscapeDataString(enableResult.GetError().Message);
-            var url = UrlGenerator.Url(fallbackUri, new
+            if (!enableResult.Succeeded)
             {
-                ErrorCode = nameof(OAuthErrorType.InternalError),
-                Message = error,
-                Provider = providerName
-            });
+                await loginSessionManager.CreateAsync(user, request.Context, 
+                    LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
+                
+                var error = Uri.EscapeDataString(enableResult.GetError().Message);
+                var url = UrlGenerator.Url(fallbackUri, new
+                {
+                    ErrorCode = nameof(OAuthErrorType.InternalError),
+                    Message = error,
+                    Provider = providerName
+                });
 
-            return Results.Redirect(url);
+                return Results.Redirect(url);
+            }
+
+            var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id, token });
+
+            return Result.Success(link);
         }
-
-        var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id, token });
-
-        return Result.Success(link);
     }
 }

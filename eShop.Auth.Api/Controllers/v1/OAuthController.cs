@@ -40,7 +40,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
         var authenticationResult = await signInManager
             .AuthenticateAsync(HttpContext, ExternalAuthenticationDefaults.AuthenticationScheme);
         
-        var result = await sender.Send(new HandleOAuthLoginCommand(authenticationResult, remoteError, returnUri));
+        var result = await sender.Send(new HandleOAuthLoginCommand(HttpContext, authenticationResult, remoteError, returnUri));
         return result.Match(s => Redirect(s.Message), ErrorHandler.Handle);
     }
     
