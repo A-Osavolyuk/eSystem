@@ -300,10 +300,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Type).HasEnumConversion();
             entity.Property(x => x.Status).HasEnumConversion();
 
-            entity.HasOne(x => x.User)
-                .WithMany()
-                .HasForeignKey(x => x.UserId);
-
             entity.HasOne(x => x.Device)
                 .WithMany()
                 .HasForeignKey(x => x.DeviceId);

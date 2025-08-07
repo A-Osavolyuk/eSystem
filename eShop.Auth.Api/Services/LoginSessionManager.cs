@@ -35,7 +35,6 @@ public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
             var session = new LoginSessionEntity()
             {
                 Id = Guid.CreateVersion7(),
-                UserId = user.Id,
                 DeviceId = device.Id,
                 IpAddress = ipAddress,
                 UserAgent = userAgent,
@@ -78,7 +77,6 @@ public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
             var session = new LoginSessionEntity()
             {
                 Id = Guid.CreateVersion7(),
-                UserId = user.Id,
                 DeviceId = device.Id,
                 IpAddress = ipAddress,
                 UserAgent = userAgent,
@@ -105,7 +103,6 @@ public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
             var session = new LoginSessionEntity()
             {
                 Id = Guid.CreateVersion7(),
-                UserId = user.Id,
                 DeviceId = existedDevice.Id,
                 IpAddress = ipAddress,
                 UserAgent = userAgent,

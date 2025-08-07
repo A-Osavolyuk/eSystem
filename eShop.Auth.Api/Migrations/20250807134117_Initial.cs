@@ -497,7 +497,6 @@ namespace eShop.Auth.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -515,12 +514,6 @@ namespace eShop.Auth.Api.Migrations
                         name: "FK_LoginSessions_UserDevices_DeviceId",
                         column: x => x.DeviceId,
                         principalTable: "UserDevices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LoginSessions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -609,11 +602,6 @@ namespace eShop.Auth.Api.Migrations
                 name: "IX_LoginSessions_DeviceId",
                 table: "LoginSessions",
                 column: "DeviceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LoginSessions_UserId",
-                table: "LoginSessions",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OAuthSessions_ProviderId",

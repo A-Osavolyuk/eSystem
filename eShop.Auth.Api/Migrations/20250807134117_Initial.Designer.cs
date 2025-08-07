@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250807131930_Initial")]
+    [Migration("20250807134117_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -228,14 +228,9 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("LoginSessions");
                 });
@@ -890,15 +885,7 @@ namespace eShop.Auth.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Device");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.OAuthSessionEntity", b =>
