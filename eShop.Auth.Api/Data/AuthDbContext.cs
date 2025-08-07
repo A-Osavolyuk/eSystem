@@ -282,11 +282,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.UserAgent).HasMaxLength(128);
             entity.Property(x => x.Location).HasMaxLength(128);
             entity.Property(x => x.IpAddress).HasMaxLength(15);
-            
+
             entity.HasOne(x => x.User)
                 .WithMany()
-                .HasForeignKey(x => x.UserId)
-                .IsRequired(false);
+                .HasForeignKey(x => x.UserId);
         });
     }
 }

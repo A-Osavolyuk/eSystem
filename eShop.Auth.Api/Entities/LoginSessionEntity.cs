@@ -3,7 +3,7 @@
 public class LoginSessionEntity : Entity
 {
     public Guid Id { get; set; }
-    public Guid? UserId { get; set; }
+    public Guid UserId { get; set; }
 
     public LoginStatus Status { get; set; }
     public LoginType Type { get; set; }
@@ -16,5 +16,5 @@ public class LoginSessionEntity : Entity
     
     public DateTimeOffset Timestamp { get; set; }
 
-    public UserEntity? User { get; set; }
+    public UserEntity User { get; set; } = null!;
 }
