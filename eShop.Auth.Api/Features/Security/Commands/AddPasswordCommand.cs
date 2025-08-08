@@ -1,0 +1,24 @@
+﻿using eShop.Domain.Requests.API.Auth;
+
+namespace eShop.Auth.Api.Features.Security.Commands;
+
+public record AddPasswordCommand(AddPasswordRequest Request) : IRequest<Result>;
+
+public class AddPasswordCommandHandler(IUserManager userManager) : IRequestHandler<AddPasswordCommand, Result>
+{
+    private readonly IUserManager userManager = userManager;
+
+    public async Task<Result> Handle(AddPasswordCommand request, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+
+        if (user is null)
+        {
+            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        }
+        
+        var result = await userManager.AddPasswordAsync(user, request.Request.Password, cancellationToken);
+
+        return result;
+    }
+}

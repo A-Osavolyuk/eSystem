@@ -70,6 +70,20 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Add password")]
+    [EndpointDescription("Add password")]
+    [ProducesResponseType(200)]
+    [HttpPost("password/add")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> AddPasswordAsync([FromBody] AddPasswordRequest changePasswordRequest)
+    {
+        var result = await sender.Send(new AddPasswordCommand(changePasswordRequest));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Change password")]
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]

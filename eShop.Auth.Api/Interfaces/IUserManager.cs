@@ -21,6 +21,7 @@ public interface IUserManager
     public ValueTask<Result> ChangeRecoveryEmailAsync(UserEntity user, string newRecoveryEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber, CancellationToken cancellationToken = default);
     public ValueTask<Result> AddRecoveryEmailAsync(UserEntity user, string recoveryEmail, CancellationToken cancellationToken = default);
+    public ValueTask<Result> AddPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
     public ValueTask<Result> CreateAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
     public ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default);

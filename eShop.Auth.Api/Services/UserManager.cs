@@ -374,6 +374,21 @@ public sealed class UserManager(
         return Result.Success();
     }
 
+    public async ValueTask<Result> AddPasswordAsync(UserEntity user, string password, 
+        CancellationToken cancellationToken = default)
+    {
+        var passwordHash = hasher.Hash(password);
+        
+        user.PasswordHash = passwordHash;
+        user.PasswordChangeDate = DateTimeOffset.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
     public async ValueTask<Result> CreateAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {
