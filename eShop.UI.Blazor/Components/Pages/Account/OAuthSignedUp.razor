@@ -4,30 +4,149 @@
 
 @attribute [Authorize]
 
+@inject AddPasswordValidator AddPasswordValidator
+@inject ISecurityService SecurityService
+
+<Title Text="OAuth sign up"></Title>
+
 <MudGrid Justify="Justify.Center">
-    <MudItem xs="4">
-        <MudStack Justify="Justify.Center" Spacing="1">
-            <MudPaper Outlined="true" Class="pa-3" Style="margin-top: 100px">
-                <MudText Typo="Typo.h6" Align="Align.Center">
-                    Signed up with @Provider
-                </MudText>
-            </MudPaper>
-            <MudPaper Outlined="true" Class="pa-3">
-                <MudText Align="Align.Center">
-                    Your account was successfully signed up with @Provider.
-                    Now you need to add password, to be able to sing in with login, but it's
-                    optional and you will still able to sign in with @Provider or any other OAuth provider anyway.
-                </MudText>
-            </MudPaper>
-            <MudPaper Outlined="true" Class="pa-3">
-                <MudText Align="Align.Center">
-                    To add password, please click 
-                    <MudLink Typo="Typo.h6" OnClick="@(async () => await RouteManager.NavigateAsync("/account/password/add"))">
-                        here.
-                    </MudLink>
-                </MudText>
-            </MudPaper>
-        </MudStack>
+    <MudItem xs="6" Style="margin-top: 100px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Info" Title="Info">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Successfully signed up @Provider
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudStack Spacing="3" Justify="Justify.Center">
+                                            <MudText Align="Align.Center">
+                                                Your account was successfully signed up with @Provider.
+                                                Now can provide password for login with password in future,
+                                                username and personal data. All there steps are
+                                                <strong>optional</strong>.
+                                                So you can just skip them and provide all needed data on profile or
+                                                security page.
+                                            </MudText>
+                                            <MudButton
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await StepNextAsync())">
+                                                Continue
+                                            </MudButton>
+                                        </MudStack>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Password" Title="Add password">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Add password
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudStack Spacing="2">
+                                            <MudForm
+                                            @ref="addPasswordForm"
+                                            Model="AddPasswordModel"
+                                            Validation="AddPasswordValidator.ValidateValue">
+                                            <MudPasswordField
+                                                @bind-Value="AddPasswordModel.Password"
+                                                For="() => AddPasswordModel.Password"
+                                                Label="Password"
+                                                Variant="Variant.Outlined"
+                                                Immediate="true"
+                                                Clearable="true"/>
+                                            <MudPasswordField
+                                                @bind-Value="AddPasswordModel.ConfirmPassword"
+                                                For="() => AddPasswordModel.ConfirmPassword"
+                                                Label="Confirm password"
+                                                Variant="Variant.Outlined"
+                                                Immediate="true"
+                                                Clearable="true"/>
+                                        </MudForm>
+                                        <MudStack Row="true" Spacing="1">
+                                            <MudButton
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await OnAddPasswordAsync())">
+                                                Add password
+                                            </MudButton>
+                                            <MudButton
+                                                Color="Color.Info"
+                                                Variant="Variant.Outlined"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await StepNextAsync())">
+                                                Skip
+                                            </MudButton>
+                                        </MudStack>
+                                        </MudStack>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="2" Icon="@Icons.Material.Filled.Edit" Title="Add username">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Add username
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="3" Icon="@Icons.Material.Filled.Person" Title="Add personal data">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Add personal data
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Sign up completed" IsResultStep="true">
+                    <ChildContent>
+                        <div class="d-flex flex-column align-center justify-center" style="height: 200px">
+                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
+                                           Variant="Variant.Filled" Color="Color.Success"/>
+                            <MudText Style="width: 55ch; margin: auto">
+                                Your account was successfully signed up with @Provider.
+                                Now you will be redirected to main page in a 3 seconds.
+                            </MudText>
+                        </div>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
     </MudItem>
 </MudGrid>
 
@@ -35,5 +154,69 @@
 
     [SupplyParameterFromQuery(Name = "provider")]
     public string Provider { get; set; } = string.Empty;
+
+    [SupplyParameterFromForm] public AddPasswordModel AddPasswordModel { get; set; } = new();
+
+    private MudStepperExtended stepper = new();
+    private MudForm addPasswordForm = new();
+
+    private bool completed = false;
+    private Guid userId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userId = await LocalStorage.GetAsync<Guid>("userId")!;
+        }
+
+        if (completed)
+        {
+            await OnCompleteAsync();
+        }
+    }
+
+    private async Task OnAddPasswordAsync()
+    {
+        await addPasswordForm.Validate();
+
+        if (addPasswordForm.IsValid)
+        {
+            var request = new AddPasswordRequest()
+            {
+                UserId = userId,
+                Password = AddPasswordModel.Password
+            };
+
+            var result = await SecurityService.AddPasswordAsync(request);
+
+            if (result.Success)
+            {
+                await StepNextAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+
+        if (stepper.IsAllStepsCompleted())
+        {
+            completed = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnCompleteAsync()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(5));
+        await RouteManager.NavigateAsync("account/login");
+    }
 
 }
