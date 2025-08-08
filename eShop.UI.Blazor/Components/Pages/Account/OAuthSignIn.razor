@@ -6,6 +6,12 @@
 
 <Title Text="Sign in via OAuth" />
 
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4" Style="margin-top: 150px">
+        <MudLoading Loading="true" LoaderType="LoaderType.Circular" Text="Processing OAuth session..."></MudLoading>
+    </MudItem>
+</MudGrid>
+
 @code {
     [SupplyParameterFromQuery(Name = "sessionId")] public string SessionId { get; set; } = string.Empty;
     [SupplyParameterFromQuery(Name = "token")] public string Token { get; set; } = string.Empty;
