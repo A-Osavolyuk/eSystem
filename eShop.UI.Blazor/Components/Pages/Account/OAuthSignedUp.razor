@@ -5,7 +5,9 @@
 @attribute [Authorize]
 
 @inject AddPasswordValidator AddPasswordValidator
+@inject AddUsernameValidator AddUsernameValidator
 @inject ISecurityService SecurityService
+@inject IUsersService UsersService
 
 <Title Text="OAuth sign up"></Title>
 
@@ -62,40 +64,40 @@
                                     <MudPaper Outlined="true" Class="pa-3">
                                         <MudStack Spacing="2">
                                             <MudForm
-                                            @ref="addPasswordForm"
-                                            Model="AddPasswordModel"
-                                            Validation="AddPasswordValidator.ValidateValue">
-                                            <MudPasswordField
-                                                @bind-Value="AddPasswordModel.Password"
-                                                For="() => AddPasswordModel.Password"
-                                                Label="Password"
-                                                Variant="Variant.Outlined"
-                                                Immediate="true"
-                                                Clearable="true"/>
-                                            <MudPasswordField
-                                                @bind-Value="AddPasswordModel.ConfirmPassword"
-                                                For="() => AddPasswordModel.ConfirmPassword"
-                                                Label="Confirm password"
-                                                Variant="Variant.Outlined"
-                                                Immediate="true"
-                                                Clearable="true"/>
-                                        </MudForm>
-                                        <MudStack Row="true" Spacing="1">
-                                            <MudButton
-                                                Color="Color.Primary"
-                                                Variant="Variant.Filled"
-                                                ButtonType="ButtonType.Button"
-                                                OnClick="@(async () => await OnAddPasswordAsync())">
-                                                Add password
-                                            </MudButton>
-                                            <MudButton
-                                                Color="Color.Info"
-                                                Variant="Variant.Outlined"
-                                                ButtonType="ButtonType.Button"
-                                                OnClick="@(async () => await StepNextAsync())">
-                                                Skip
-                                            </MudButton>
-                                        </MudStack>
+                                                @ref="addPasswordForm"
+                                                Model="AddPasswordModel"
+                                                Validation="AddPasswordValidator.ValidateValue">
+                                                <MudPasswordField
+                                                    @bind-Value="AddPasswordModel.Password"
+                                                    For="() => AddPasswordModel.Password"
+                                                    Label="Password"
+                                                    Variant="Variant.Outlined"
+                                                    Immediate="true"
+                                                    Clearable="true"/>
+                                                <MudPasswordField
+                                                    @bind-Value="AddPasswordModel.ConfirmPassword"
+                                                    For="() => AddPasswordModel.ConfirmPassword"
+                                                    Label="Confirm password"
+                                                    Variant="Variant.Outlined"
+                                                    Immediate="true"
+                                                    Clearable="true"/>
+                                            </MudForm>
+                                            <MudStack Row="true" Spacing="1">
+                                                <MudButton
+                                                    Color="Color.Primary"
+                                                    Variant="Variant.Filled"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await OnAddPasswordAsync())">
+                                                    Add password
+                                                </MudButton>
+                                                <MudButton
+                                                    Color="Color.Info"
+                                                    Variant="Variant.Outlined"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await StepNextAsync())">
+                                                    Skip
+                                                </MudButton>
+                                            </MudStack>
                                         </MudStack>
                                     </MudPaper>
                                 </MudStack>
@@ -112,6 +114,38 @@
                                         <MudText Align="Align.Center" Typo="Typo.h4">
                                             Add username
                                         </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudStack Spacing="2">
+                                            <MudForm
+                                                @ref="addUsernameForm"
+                                                Model="AddUsernameModel"
+                                                Validation="AddUsernameValidator.ValidateValue">
+                                                <MudTextField
+                                                    @bind-Value="AddUsernameModel.Username"
+                                                    For="() => AddUsernameModel.Username"
+                                                    Label="Username"
+                                                    Variant="Variant.Outlined"
+                                                    Immediate="true"
+                                                    Clearable="true"/>
+                                            </MudForm>
+                                            <MudStack Row="true" Spacing="1">
+                                                <MudButton
+                                                    Color="Color.Primary"
+                                                    Variant="Variant.Filled"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await OnAddUsernameAsync())">
+                                                    Add username
+                                                </MudButton>
+                                                <MudButton
+                                                    Color="Color.Info"
+                                                    Variant="Variant.Outlined"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await StepNextAsync())">
+                                                    Skip
+                                                </MudButton>
+                                            </MudStack>
+                                        </MudStack>
                                     </MudPaper>
                                 </MudStack>
                             </MudItem>
@@ -156,9 +190,11 @@
     public string Provider { get; set; } = string.Empty;
 
     [SupplyParameterFromForm] public AddPasswordModel AddPasswordModel { get; set; } = new();
+    [SupplyParameterFromForm] public AddUsernameModel AddUsernameModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm addPasswordForm = new();
+    private MudForm addUsernameForm = new();
 
     private bool completed = false;
     private Guid userId;
@@ -173,6 +209,32 @@
         if (completed)
         {
             await OnCompleteAsync();
+        }
+    }
+    
+    private async Task OnAddUsernameAsync()
+    {
+        await addUsernameForm.Validate();
+
+        if (addUsernameForm.IsValid)
+        {
+            var request = new ChangeUserNameRequest()
+            {
+                UserId = userId,
+                Username = AddUsernameModel.Username
+            };
+            
+            var result = await UsersService.ChangeUsernameAsync(request);
+
+            if (result.Success)
+            {
+                await StepNextAsync();
+                Snackbar.Add("Username was successfully added", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
     }
 
@@ -193,6 +255,7 @@
             if (result.Success)
             {
                 await StepNextAsync();
+                Snackbar.Add("Password was successfully added", Severity.Success);
             }
             else
             {

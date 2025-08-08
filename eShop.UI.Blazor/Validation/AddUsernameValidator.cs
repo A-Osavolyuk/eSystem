@@ -1,10 +1,10 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.BlazorWebUI.Models;
 
-namespace eShop.Auth.Api.Validation;
+namespace eShop.BlazorWebUI.Validation;
 
-public class ChangeUserNameValidator : Validator<ChangeUserNameRequest>
+public class AddUsernameValidator : Validator<AddUsernameModel>
 {
-    public ChangeUserNameValidator()
+    public AddUsernameValidator()
     {
         RuleFor(model => model.Username)
             .NotEmpty().WithMessage("Field is required.")

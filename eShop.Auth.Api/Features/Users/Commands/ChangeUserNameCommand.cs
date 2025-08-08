@@ -22,7 +22,7 @@ public class ChangeUserNameCommandHandler(
         
         if (identityOptions.Account.RequireUniqueUserName)
         {
-            var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);
+            var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.Username, cancellationToken);
         
             if (isUserNameTaken)
             {
@@ -30,7 +30,7 @@ public class ChangeUserNameCommandHandler(
             }
         }
         
-        var result = await userManager.ChangeNameAsync(user, request.Request.UserName, cancellationToken);
+        var result = await userManager.ChangeNameAsync(user, request.Request.Username, cancellationToken);
         
         return result;
     }

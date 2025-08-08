@@ -111,12 +111,12 @@ public static class Mapper
         };
     }
 
-    public static ChangeUserNameRequest Map(ChangeUserNameModel source)
+    public static ChangeUserNameRequest Map(ChangeUsernameModel source)
     {
         return new()
         {
             UserId = source.Id,
-            UserName = source.UserName
+            Username = source.Username
         };
     }
 

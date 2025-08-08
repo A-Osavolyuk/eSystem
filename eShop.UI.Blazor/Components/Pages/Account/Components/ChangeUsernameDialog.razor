@@ -1,6 +1,6 @@
 ﻿@inject IUsersService UsersService
 @inject ISnackbar Snackbar
-@inject ChangeUserNameValidator Validator
+@inject ChangeUsernameValidator Validator
 
 <MudDialog Style="width: 600px">
     <TitleContent>
@@ -12,8 +12,8 @@
             Model="Model" 
             Validation="Validator.ValidateValue">
             <MudTextField
-                @bind-Value="Model.UserName"
-                For="() => Model.UserName"
+                @bind-Value="Model.Username"
+                For="() => Model.Username"
                 Label="Username"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -40,7 +40,7 @@
 
 @code {
     [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
-    [Parameter] public ChangeUserNameModel Model { get; set; } = new();
+    [Parameter] public ChangeUsernameModel Model { get; set; } = new();
 
     private MudForm form = new();
 
