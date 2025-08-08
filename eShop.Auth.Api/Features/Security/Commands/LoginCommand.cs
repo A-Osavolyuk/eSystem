@@ -80,12 +80,14 @@ public sealed class LoginCommandHandler(
             return loginSessionResult;
         }
 
-        return Results.BadRequest("Account is locked out", new LoginResponse()
+        var response = new LoginResponse()
         {
             UserId = user.Id,
             IsLockedOut = lockoutState.Enabled,
             Reason = Mapper.Map(lockoutState.Reason),
-        });
+        };
+
+        return Results.BadRequest("Account is locked out", response);
     }
 
     private async Task<Result> CheckEmailAsync(UserEntity user, HttpContext context,
@@ -101,7 +103,14 @@ public sealed class LoginCommandHandler(
                 return result;
             }
 
-            return Results.BadRequest("The email address is not confirmed.");
+            var response = new LoginResponse()
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                IsEmailConfirmed = false
+            };
+            
+            return Results.BadRequest("The email address is not confirmed.", response);
         }
 
         return Result.Success();
@@ -233,7 +242,7 @@ public sealed class LoginCommandHandler(
         return Result.Success(new LoginResponse()
         {
             IsLockedOut = lockoutState.Enabled,
-            TwoFactorEnabled = true,
+            IsTwoFactorEnabled = true,
             UserId = user.Id
         });
     }
@@ -249,7 +258,7 @@ public sealed class LoginCommandHandler(
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             UserId = user.Id,
-            TwoFactorEnabled = user.Providers.Any(x => x.Subscribed),
+            IsTwoFactorEnabled = user.Providers.Any(x => x.Subscribed),
             IsLockedOut = lockoutState.Enabled,
         };
 
