@@ -12,6 +12,7 @@ public sealed class RegisterCommandHandler(
     IMessageService messageService,
     ICodeManager codeManager,
     IRoleManager roleManager,
+    IProviderManager providerManager,
     IdentityOptions identityOptions) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
@@ -19,6 +20,7 @@ public sealed class RegisterCommandHandler(
     private readonly IMessageService messageService = messageService;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IRoleManager roleManager = roleManager;
+    private readonly IProviderManager providerManager = providerManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(RegisterCommand request,
@@ -80,6 +82,14 @@ public sealed class RegisterCommandHandler(
                     return grantResult;
                 }
             }
+        }
+        
+        var providers = await providerManager.GetAllAsync(cancellationToken);
+
+        foreach (var provider in providers)
+        {
+            var providerResult = await providerManager.SubscribeAsync(user, provider, cancellationToken);
+            if (!providerResult.Succeeded) return providerResult;
         }
 
         var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Verify, 
