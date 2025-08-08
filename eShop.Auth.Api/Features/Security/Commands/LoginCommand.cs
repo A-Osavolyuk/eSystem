@@ -50,7 +50,8 @@ public sealed class LoginCommandHandler(
             return await LockedOutAsync(user, lockoutState, request.Context, cancellationToken);
         }
 
-        var passwordResult = await CheckPasswordAsync(user, request.Request.Password, request.Context, cancellationToken);
+        var passwordResult =
+            await CheckPasswordAsync(user, request.Request.Password, request.Context, cancellationToken);
         if (!passwordResult.Succeeded) return passwordResult;
 
         if (user.FailedLoginAttempts > 0)
@@ -86,6 +87,7 @@ public sealed class LoginCommandHandler(
             Reason = Mapper.Map(lockoutState.Reason),
         });
     }
+
     private async Task<Result> CheckEmailAsync(UserEntity user, HttpContext context,
         CancellationToken cancellationToken)
     {
@@ -108,6 +110,87 @@ public sealed class LoginCommandHandler(
     private async Task<Result> CheckPasswordAsync(UserEntity user, string password,
         HttpContext context, CancellationToken cancellationToken)
     {
+        var hasPasswordResult = await HasPasswordAsync(user, context, cancellationToken);
+        if (!hasPasswordResult.Succeeded) return hasPasswordResult;
+
+        var isValidPassword = await userManager.CheckPasswordAsync(user, password, cancellationToken);
+
+        if (isValidPassword) return Result.Success();
+        
+        user.FailedLoginAttempts += 1;
+
+        var updateResult = await userManager.UpdateAsync(user, cancellationToken);
+
+        if (!updateResult.Succeeded)
+        {
+            return updateResult;
+        }
+
+        if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
+        {
+            return await MaxFailedLoginAttemptsAsync(user, context, cancellationToken);
+        }
+
+        var reason = await reasonManager.FindByTypeAsync(LockoutType.TooManyFailedLoginAttempts, cancellationToken);
+
+        if (reason is null)
+        {
+            return Results.NotFound($"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
+        }
+
+        var lockoutResult = await lockoutManager.LockoutAsync(user, reason, 
+            permanent: true, cancellationToken: cancellationToken);
+
+        if (!lockoutResult.Succeeded)
+        {
+            return lockoutResult;
+        }
+
+        var result = await loginSessionManager.CreateAsync(user, context, LoginStatus.Locked, 
+            LoginType.Password, cancellationToken: cancellationToken);
+
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        return Results.BadRequest("Account is locked out due to too many failed login attempts",
+            new LoginResponse()
+            {
+                UserId = user.Id,
+                IsLockedOut = true,
+                FailedLoginAttempts = user.FailedLoginAttempts,
+                MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+                Reason = Mapper.Map(reason)
+            });
+
+    }
+
+    private async Task<Result> MaxFailedLoginAttemptsAsync(UserEntity user, HttpContext context,
+        CancellationToken cancellationToken)
+    {
+        var result = await loginSessionManager.CreateAsync(user, context,
+            LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
+
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        var response = new LoginResponse()
+        {
+            FailedLoginAttempts = user.FailedLoginAttempts,
+            MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+            IsLockedOut = false,
+            UserId = user.Id,
+        };
+        
+        return Results.BadRequest("The password is not valid.", response);
+    }
+
+    private async Task<Result> HasPasswordAsync(UserEntity user, HttpContext context,
+        CancellationToken cancellationToken)
+    {
         if (string.IsNullOrEmpty(user.PasswordHash))
         {
             var result = await loginSessionManager.CreateAsync(user, context,
@@ -124,73 +207,6 @@ public sealed class LoginCommandHandler(
                 Please, try to sign in with OAuth provider like Google, Facebook, etc. 
                 Then provide password on security page.
                 """);
-        }
-        
-        var isValidPassword = await userManager.CheckPasswordAsync(user, password, cancellationToken);
-
-        if (!isValidPassword)
-        {
-            user.FailedLoginAttempts += 1;
-
-            var updateResult = await userManager.UpdateAsync(user, cancellationToken);
-
-            if (!updateResult.Succeeded)
-            {
-                return updateResult;
-            }
-
-            if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
-            {
-                var loginSessionResult = await loginSessionManager.CreateAsync(user, context,
-                    LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
-
-                if (!loginSessionResult.Succeeded)
-                {
-                    return loginSessionResult;
-                }
-
-                return Results.BadRequest("The password is not valid.",
-                    new LoginResponse()
-                    {
-                        FailedLoginAttempts = user.FailedLoginAttempts,
-                        MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
-                        IsLockedOut = false,
-                        UserId = user.Id,
-                    });
-            }
-
-            var reason = await reasonManager.FindByTypeAsync(LockoutType.TooManyFailedLoginAttempts, cancellationToken);
-
-            if (reason is null)
-            {
-                return Results.NotFound($"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
-            }
-
-            var lockoutResult =
-                await lockoutManager.LockoutAsync(user, reason, permanent: true, cancellationToken: cancellationToken);
-
-            if (!lockoutResult.Succeeded)
-            {
-                return lockoutResult;
-            }
-
-            var result = await loginSessionManager.CreateAsync(user, context,
-                LoginStatus.Locked, LoginType.Password, cancellationToken: cancellationToken);
-
-            if (!result.Succeeded)
-            {
-                return result;
-            }
-
-            return Results.BadRequest("Account is locked out due to too many failed login attempts",
-                new LoginResponse()
-                {
-                    UserId = user.Id,
-                    IsLockedOut = true,
-                    FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
-                    Reason = Mapper.Map(reason)
-                });
         }
 
         return Result.Success();
