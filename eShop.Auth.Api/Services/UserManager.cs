@@ -389,7 +389,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> CreateAsync(UserEntity user, string password,
+    public async ValueTask<Result> CreateAsync(UserEntity user, string? password,
         CancellationToken cancellationToken = default)
     {
         var lockoutState = new LockoutStateEntity()
@@ -410,40 +410,11 @@ public sealed class UserManager(
             Subscribed = false
         }).ToList();
 
-        var passwordHash = hasher.Hash(password);
-
-        user.PasswordHash = passwordHash;
-        user.NormalizedEmail = user.Email.ToUpper();
-        user.NormalizedUserName = user.UserName.ToUpper();
-        user.CreateDate = DateTimeOffset.UtcNow;
-
-        await context.Users.AddAsync(user, cancellationToken);
-        await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
-        await context.UserProvider.AddRangeAsync(userProviders, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        var lockoutState = new LockoutStateEntity()
+        if (!string.IsNullOrEmpty(password))
         {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            ReasonId = null,
-            Enabled = false,
-            CreateDate = DateTimeOffset.UtcNow,
-        };
-        
-        var providers = await context.Providers.ToListAsync(cancellationToken);
-        var userProviders = providers.Select(x => new UserProviderEntity()
-        {
-            UserId = user.Id,
-            ProviderId = x.Id,
-            CreateDate = DateTimeOffset.UtcNow,
-            Subscribed = false
-        }).ToList();
+            var passwordHash = hasher.Hash(password);
+            user.PasswordHash = passwordHash;
+        }
         
         user.NormalizedEmail = user.Email.ToUpper();
         user.NormalizedUserName = user.UserName.ToUpper();

@@ -161,7 +161,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private async Task<Result> CreateAccountAsync(UserEntity user, OAuthProviderEntity provider,
         string fallbackUri, CancellationToken cancellationToken)
     {
-        var createResult = await userManager.CreateAsync(user, cancellationToken);
+        var createResult = await userManager.CreateAsync(user, cancellationToken: cancellationToken);
 
         if (!createResult.Succeeded)
         {
