@@ -22,6 +22,11 @@ public class OAuthProviderSeed : Seed<OAuthProviderEntity>
             {
                 Id = Guid.CreateVersion7(),
                 Name = "Facebook",
+            },
+            new OAuthProviderEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                Name = "X",
             }
         ];
     }
