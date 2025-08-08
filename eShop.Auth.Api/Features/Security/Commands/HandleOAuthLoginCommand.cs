@@ -18,8 +18,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     IRoleManager roleManager,
     ILockoutManager lockoutManager,
     IOAuthSessionManager sessionManager,
-    IOAuthProviderManager oAuthProviderManager,
-    IProviderManager providerManager,
+    IOAuthProviderManager providerManager,
     ILoginSessionManager loginSessionManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
@@ -28,8 +27,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IRoleManager roleManager = roleManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
-    private readonly IOAuthProviderManager oAuthProviderManager = oAuthProviderManager;
-    private readonly IProviderManager providerManager = providerManager;
+    private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
 
     public async Task<Result> Handle(HandleOAuthLoginCommand request,
@@ -46,7 +44,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 providerName, request.RemoteError, fallbackUri);
         }
 
-        var provider = await oAuthProviderManager.FindByNameAsync(providerName, cancellationToken);
+        var provider = await providerManager.FindByNameAsync(providerName, cancellationToken);
 
         if (provider is null)
         {
@@ -106,9 +104,6 @@ public sealed class HandleOAuthLoginCommandHandler(
                 if (!grantResult.Succeeded) return grantResult;
             }
 
-            var twoFactorResult = await AddTwoFactorProvidersAsync(user, fallbackUri, cancellationToken);
-            if (!twoFactorResult.Succeeded) return twoFactorResult;
-
             await SendMessageAsync(user, provider, cancellationToken);
 
             session.SignType = OAuthSignType.SignUp;
@@ -148,31 +143,6 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         return await SignInAsync(user, provider, session, request.Context,
             request.ReturnUri!, fallbackUri, token, cancellationToken);
-    }
-
-    private async Task<Result> AddTwoFactorProvidersAsync(UserEntity user, string fallbackUri,
-        CancellationToken cancellationToken = default)
-    {
-        var providers = await providerManager.GetAllAsync(cancellationToken);
-
-        foreach (var provider in providers)
-        {
-            var providerResult = await providerManager.SubscribeAsync(user, provider, cancellationToken);
-            if (!providerResult.Succeeded)
-            {
-                var error = Uri.EscapeDataString(providerResult.GetError().Message);
-                var url = UrlGenerator.Url(fallbackUri, new
-                {
-                    ErrorCode = OAuthErrorType.InternalError,
-                    Message = error,
-                    Provider = provider
-                });
-
-                return Results.Redirect(url);
-            }
-        }
-
-        return Result.Success();
     }
 
     private Result RedirectWithError(OAuthErrorType type, string provider, string message, string fallbackUri)
@@ -299,7 +269,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private async Task<Result> SignUpAsync(UserEntity user, OAuthProviderEntity provider, OAuthSessionEntity session,
         string returnUri, string fallbackUri, string token, CancellationToken cancellationToken)
     {
-        var enableResult = await oAuthProviderManager.EnableAsync(user, provider, cancellationToken);
+        var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
 
         if (!enableResult.Succeeded)
         {
@@ -430,7 +400,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private async Task<Result> CheckUserProviderAsync(UserEntity user, OAuthProviderEntity provider,
         HttpContext context, string fallbackUri, CancellationToken cancellationToken)
     {
-        var enableResult = await oAuthProviderManager.EnableAsync(user, provider, cancellationToken);
+        var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
 
         if (!enableResult.Succeeded)
         {

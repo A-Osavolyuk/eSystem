@@ -400,6 +400,15 @@ public sealed class UserManager(
             Enabled = false,
             CreateDate = DateTimeOffset.UtcNow,
         };
+        
+        var providers = await context.Providers.ToListAsync(cancellationToken);
+        var userProviders = providers.Select(x => new UserProviderEntity()
+        {
+            UserId = x.Id,
+            ProviderId = x.Id,
+            CreateDate = DateTimeOffset.UtcNow,
+            Subscribed = false
+        }).ToList();
 
         var passwordHash = hasher.Hash(password);
 
@@ -410,6 +419,7 @@ public sealed class UserManager(
 
         await context.Users.AddAsync(user, cancellationToken);
         await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
+        await context.UserProvider.AddRangeAsync(userProviders, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -426,12 +436,22 @@ public sealed class UserManager(
             CreateDate = DateTimeOffset.UtcNow,
         };
         
+        var providers = await context.Providers.ToListAsync(cancellationToken);
+        var userProviders = providers.Select(x => new UserProviderEntity()
+        {
+            UserId = x.Id,
+            ProviderId = x.Id,
+            CreateDate = DateTimeOffset.UtcNow,
+            Subscribed = false
+        }).ToList();
+        
         user.NormalizedEmail = user.Email.ToUpper();
         user.NormalizedUserName = user.UserName.ToUpper();
         user.CreateDate = DateTimeOffset.UtcNow;
 
         await context.Users.AddAsync(user, cancellationToken);
         await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
+        await context.UserProvider.AddRangeAsync(userProviders, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
