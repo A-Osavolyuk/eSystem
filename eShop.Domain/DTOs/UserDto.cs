@@ -19,6 +19,9 @@ public class UserDto
     public bool TwoFactorEnabled { get; set; }
     public List<UserProviderDto> Providers { get; set; } = [];
 
+    public bool HasLinkedAccounts { get; set; }
+    public List<UserOAuthProviderDto> OAuthProviders { get; set; } = [];
+
     public bool HasPassword { get; set; }
     public DateTimeOffset? PasswordChangeDate { get; set; }
     

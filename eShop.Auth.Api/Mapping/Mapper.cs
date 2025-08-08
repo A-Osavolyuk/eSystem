@@ -60,7 +60,21 @@ public static class Mapper
             UserNameChangeDate = source.UserNameChangeDate,
             PasswordChangeDate = source.PasswordChangeDate,
             Providers = source.Providers.Select(Map).ToList(),
+            OAuthProviders = source.OAuthProviders.Select(Map).ToList(),
+            HasLinkedAccounts = source.OAuthProviders.Any(),
             HasPassword = !string.IsNullOrEmpty(source.PasswordHash)
+        };
+    }
+
+    public static UserOAuthProviderDto Map(UserOAuthProviderEntity source)
+    {
+        return new UserOAuthProviderDto()
+        {
+            Id = source.Provider.Id,
+            Name = source.Provider.Name,
+            IsAllowed = source.Allowed,
+            LinkedDate = source.CreateDate,
+            DisallowedDate = source.UpdateDate,
         };
     }
 
