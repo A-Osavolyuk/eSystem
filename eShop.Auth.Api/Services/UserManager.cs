@@ -404,7 +404,7 @@ public sealed class UserManager(
         var providers = await context.Providers.ToListAsync(cancellationToken);
         var userProviders = providers.Select(x => new UserProviderEntity()
         {
-            UserId = x.Id,
+            UserId = user.Id,
             ProviderId = x.Id,
             CreateDate = DateTimeOffset.UtcNow,
             Subscribed = false
@@ -439,7 +439,7 @@ public sealed class UserManager(
         var providers = await context.Providers.ToListAsync(cancellationToken);
         var userProviders = providers.Select(x => new UserProviderEntity()
         {
-            UserId = x.Id,
+            UserId = user.Id,
             ProviderId = x.Id,
             CreateDate = DateTimeOffset.UtcNow,
             Subscribed = false
