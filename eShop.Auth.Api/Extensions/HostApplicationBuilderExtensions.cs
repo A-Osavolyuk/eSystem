@@ -93,6 +93,7 @@ public static class HostApplicationBuilderExtensions
             options.SignIn.RequireConfirmedEmail = true;
             options.SignIn.RequireConfirmedPhoneNumber = true;
             options.SignIn.RequireConfirmedRecoveryEmail = true;
+            options.SignIn.RequireTrustedDevice = true;
             options.SignIn.MaxFailedLoginAttempts = 5;
         });
 

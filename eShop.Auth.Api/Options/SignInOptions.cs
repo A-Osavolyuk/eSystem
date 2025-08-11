@@ -6,6 +6,7 @@ public class SignInOptions
     public bool RequireConfirmedRecoveryEmail { get; set; } = false;
     public bool RequireConfirmedPhoneNumber { get; set; } = false;
     public bool RequireConfirmedAccount { get; set; } = true;
+    public bool RequireTrustedDevice { get; set; } = true;
     
     public bool AllowUserNameLogin { get; set; } = true;
     public bool AllowEmailLogin { get; set; } = true;
