@@ -1,6 +1,4 @@
-﻿using UAParser;
-
-namespace eShop.Auth.Api.Services;
+﻿namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ILoginSessionManager), ServiceLifetime.Scoped)]
 public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
@@ -10,10 +8,9 @@ public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
     public async ValueTask<Result> CreateAsync(UserEntity user, HttpContext httpContext, 
         LoginStatus status, LoginType type, string? provider = null, CancellationToken cancellationToken = default)
     {
-        var parser = Parser.GetDefault();
-        var userAgent = httpContext.Request.Headers.UserAgent.ToString();
-        var ipAddress = httpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString()!;
-        var clientInfo = parser.Parse(userAgent);
+        var userAgent = RequestUtils.GetUserAgent(httpContext);
+        var ipAddress = RequestUtils.GetIpV4(httpContext);
+        var clientInfo = RequestUtils.GetClientInfo(httpContext);
 
         if (!await context.UserDevices.AnyAsync(x => x.UserId == user.Id, cancellationToken))
         {
