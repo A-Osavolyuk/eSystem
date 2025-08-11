@@ -388,12 +388,12 @@
             Username = UserModel.UserName,
         };
 
-        var parameters = new DialogParameters<ChangeUserNameDialog>()
+        var parameters = new DialogParameters<ChangeUsernameDialog>()
         {
             { x => x.Model, model }
         };
 
-        var dialog = await DialogService.ShowAsync<ChangeUserNameDialog>("Change username", parameters, options);
+        var dialog = await DialogService.ShowAsync<ChangeUsernameDialog>("Change username", parameters, options);
         var result = await dialog.Result;
 
         if (!result!.Canceled)
