@@ -6,8 +6,8 @@
 
 <Title Text="Error" />
 
-<MudGrid Justify="Justify.Center">
-    <MudItem xs="6">
+<MudPage Row="3" Column="5" Height="400">
+    <MudSection Row="2" Column="2" ColSpan="3">
         @switch (Code)
         {
             case StatusCodes.Status404NotFound:
@@ -18,7 +18,7 @@
                     Style="text-align:center"
                     Class="d-block"
                     Typo="Typo.h5"
-                    OnClick="@(async () => await RouteManager.NavigateAsync("/products", true))">
+                    OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
                     To main page
                 </MudLink>
                 break;
@@ -64,8 +64,8 @@
                 break;
             }
         }
-    </MudItem>
-</MudGrid>
+    </MudSection>
+</MudPage>
 
 @code {
     [SupplyParameterFromQuery(Name = "code")] public int Code { get; set; }
