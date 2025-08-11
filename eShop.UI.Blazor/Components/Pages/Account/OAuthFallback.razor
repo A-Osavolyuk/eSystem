@@ -4,21 +4,21 @@
 
 <Title Text="OAuth fallback"/>
 
-<MudGrid Justify="Justify.Center">
-    <MudItem xs="6">
+<MudPage Column="5" Row="3" Height="400px">
+    <MudSection Column="2" ColSpan="3" Row="2">
         <MudStack Spacing="3">
             <MudText Typo="Typo.h4" Align="Align.Center">
                 @Model.Title
             </MudText>
-            @if (string.IsNullOrEmpty(Model.Message))
+            @if (!string.IsNullOrEmpty(Model.Message))
             {
                 <MudText Typo="Typo.h6" Align="Align.Center">
                     @Model.Message
                 </MudText>
             }
         </MudStack>
-    </MudItem>
-</MudGrid>
+    </MudSection>
+</MudPage>
 
 @code {
 
