@@ -1,0 +1,210 @@
+﻿@using eShop.Infrastructure.Routing
+
+@inject RouteManager RouteManager
+
+<MudPaper Outlined="true" Class="pa-5">
+                            <MudGrid Spacing="3">
+                                <MudItem xs="12">
+                                    <MudText Class="mb-2" Typo="Typo.h6">
+                                        Account information
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="3" Class="mt-2">
+                                    <MudText>
+                                        User name
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="8" Class="mt-2">
+                                    <MudText Inline="true">
+                                        @Model.UserName
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="1" Class="text-end">
+                                    <MudTooltip Text="Change username">
+                                        <MudIconButton
+                                            Icon="@Icons.Material.Filled.Edit"
+                                            Color="Color.Primary"
+                                            Variant="Variant.Filled"
+                                            OnClick="@(async () => await OnChange.InvokeAsync())"/>
+                                    </MudTooltip>
+                                </MudItem>
+                                @if (Model.UserNameChangeDate is not null)
+                                {
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Align="Align.End" Typo="Typo.caption" Style="opacity: .5;">
+                                            Last change: @Model.UserNameChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
+                                else
+                                {
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
+                                <MudItem xs="3" Class="mt-2">
+                                    <MudText>
+                                        Email address
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="8" Class="mt-2">
+                                    <MudText>
+                                        @Model.Email
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="1" Class="text-end">
+                                    <MudTooltip Text="Change email">
+                                        <MudIconButton
+                                            Icon="@Icons.Material.Filled.Edit"
+                                            Color="Color.Primary"
+                                            Variant="Variant.Filled"
+                                            OnClick="@(async () => await RouteManager.NavigateAsync("/account/email/change"))"/>
+                                    </MudTooltip>
+                                </MudItem>
+                                @if (Model.EmailChangeDate is not null)
+                                {
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                                            Last change: @Model.EmailChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
+                                else
+                                {
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
+                                
+                                @if (!string.IsNullOrEmpty(Model.RecoveryEmail))
+                                {
+                                    <MudItem xs="3" Class="mt-2">
+                                        <MudText>
+                                            Recovery email address
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="8" Class="mt-2">
+                                        <MudText>
+                                            @Model.RecoveryEmail
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="text-end">
+                                        <MudTooltip Text="Change recovery email">
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Edit"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/recovery-email/change"))"/>
+                                        </MudTooltip>
+                                    </MudItem>
+                                    if (Model.RecoveryEmailChangeDate is not null)
+                                    {
+                                        <MudItem xs="12" Style="padding-top: 0">
+                                            <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                                                Last change: @Model.RecoveryEmailChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                            </MudText>
+                                        </MudItem>
+                                        <MudItem xs="12" Style="padding-top: 0">
+                                            <MudDivider/>
+                                        </MudItem>
+                                    }
+                                    else
+                                    {
+                                        <MudItem xs="12">
+                                            <MudDivider/>
+                                        </MudItem>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudItem xs="11" Class="mt-2">
+                                        <MudText>
+                                            Recovery email number
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="text-end">
+                                        <MudTooltip Text="Add recovery email">
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Add"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/recovery-email/add"))"/>
+                                        </MudTooltip>
+                                    </MudItem>
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Style="opacity: 0.5" Typo="Typo.caption">
+                                            Recovery email was not added. You can add it by click button right.
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudDivider/>
+                                    </MudItem>
+                                }
+                                
+                                @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                                {
+                                    <MudItem xs="3" Class="mt-2">
+                                        <MudText>
+                                            Phone number
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="8" Class="mt-2">
+                                        <MudText>
+                                            @Model.PhoneNumber
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="text-end">
+                                        <MudTooltip Text="Change phone number">
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Edit"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/change"))"/>
+                                        </MudTooltip>
+                                    </MudItem>
+
+                                    if (Model.PhoneNumberChangeDate is not null)
+                                    {
+                                        <MudItem xs="12" Style="padding-top: 0">
+                                            <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                                                Last
+                                                change: @Model.PhoneNumberChangeDate?.ToString("MM/dd/yyyy HH:mm")
+                                            </MudText>
+                                        </MudItem>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudItem xs="11" Class="mt-2">
+                                        <MudText>
+                                            Phone number
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="text-end">
+                                        <MudTooltip Text="Add phone number">
+                                            <MudIconButton
+                                                Icon="@Icons.Material.Filled.Add"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/add"))"/>
+                                        </MudTooltip>
+                                    </MudItem>
+                                    <MudItem xs="12" Style="padding-top: 0">
+                                        <MudText Style="opacity: 0.5" Typo="Typo.caption">
+                                            Phone number was not added. You can add it by click button right.
+                                        </MudText>
+                                    </MudItem>
+                                }
+                            </MudGrid>
+                        </MudPaper>
+
+@code {
+    [Parameter] public UserModel Model { get; set; } = new();
+    [Parameter] public EventCallback OnChange { get; set; }
+}

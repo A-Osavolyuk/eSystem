@@ -1,0 +1,105 @@
+﻿<MudPaper Outlined="true" Class="pa-5">
+    <MudGrid Spacing="3">
+        @if (Model.PersonalData is null)
+        {
+            <MudItem xs="11">
+                <MudText Class="mb-2" Typo="Typo.h6">
+                    Personal information
+                </MudText>
+            </MudItem>
+            <MudItem xs="1" Class="text-end">
+                <MudTooltip Text="Add personal data">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Add"
+                        Color="Color.Primary"
+                        Variant="Variant.Filled"
+                        OnClick="@(async () => await OnAdd.InvokeAsync())"/>
+                </MudTooltip>
+            </MudItem>
+            <MudItem xs="12" Style="padding-top: 0">
+                <MudText Style="opacity: 0.5" Typo="Typo.caption">
+                    Personal information was not added. You can add it by click button right.
+                </MudText>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="11">
+                <MudText Class="mb-2" Typo="Typo.h6">
+                    Personal information
+                </MudText>
+                @if (Model.PersonalData.UpdateDate is not null)
+                {
+                    <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
+                        Last
+                        change: @Model.PersonalData!.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
+                    </MudText>
+                }
+            </MudItem>
+            <MudItem xs="1" Class="text-end">
+                <MudTooltip Text="Change personal data">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Edit"
+                        Color="Color.Primary"
+                        Variant="Variant.Filled"
+                        OnClick="@(async () => await OnChange.InvokeAsync())"/>
+                </MudTooltip>
+            </MudItem>
+            <MudItem xs="3">
+                <MudText>
+                    First name
+                </MudText>
+            </MudItem>
+            <MudItem xs="9">
+                <MudText>
+                    @Model.PersonalData.FirstName
+                </MudText>
+            </MudItem>
+            <MudItem xs="12">
+                <MudDivider/>
+            </MudItem>
+            <MudItem xs="3">
+                <MudText>
+                    Last name
+                </MudText>
+            </MudItem>
+            <MudItem xs="9">
+                <MudText>
+                    @Model.PersonalData.LastName
+                </MudText>
+            </MudItem>
+            <MudItem xs="12">
+                <MudDivider/>
+            </MudItem>
+            <MudItem xs="3">
+                <MudText>
+                    Birth date
+                </MudText>
+            </MudItem>
+            <MudItem xs="9">
+                <MudText>
+                    @Model.PersonalData.BirthDate.ToString("D", new CultureInfo("en-GB"))
+                </MudText>
+            </MudItem>
+            <MudItem xs="12">
+                <MudDivider/>
+            </MudItem>
+            <MudItem xs="3">
+                <MudText>
+                    Gender
+                </MudText>
+            </MudItem>
+            <MudItem xs="9">
+                <MudText>
+                    @Model.PersonalData.Gender.ToString()
+                </MudText>
+            </MudItem>
+        }
+    </MudGrid>
+</MudPaper>
+
+@code {
+    [Parameter] public UserModel Model { get; set; } = new();
+    [Parameter] public EventCallback OnAdd { get; set; } = new();
+    [Parameter] public EventCallback OnChange { get; set; } = new();
+}
