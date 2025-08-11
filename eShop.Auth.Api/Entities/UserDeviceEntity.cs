@@ -6,6 +6,7 @@ public class UserDeviceEntity : Entity
     public Guid UserId { get; set; }
 
     public bool IsTrusted { get; set; }
+    public bool IsBlocked { get; set; }
     
     public string? UserAgent { get; set; } =  string.Empty;
     public string? IpAddress { get; set; } = string.Empty;
@@ -16,6 +17,7 @@ public class UserDeviceEntity : Entity
 
     public DateTimeOffset FirstSeen { get; set; }
     public DateTimeOffset? LastSeen { get; set; }
+    public DateTimeOffset? BlockedDate { get; set; }
 
     public UserEntity User { get; set; } = null!;
 }
