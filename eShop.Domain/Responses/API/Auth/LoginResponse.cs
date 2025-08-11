@@ -6,6 +6,7 @@ public record LoginResponse
     public string? Email { get; set; }
     public bool IsEmailConfirmed { get; set; }
     public bool IsTrustedDevice { get; set; }
+    public bool IsBlockedDevice { get; set; }
     public bool IsTwoFactorEnabled { get; set; }
     
     public string? AccessToken { get; set; }
