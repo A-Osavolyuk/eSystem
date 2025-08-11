@@ -39,8 +39,8 @@
                                             {
                                                 if (provider.Subscribed)
                                                 {
-                                                    <MudText 
-                                                        Class="opacity-50 position-absolute" 
+                                                    <MudText
+                                                        Class="opacity-50 position-absolute"
                                                         Style="bottom: -18px"
                                                         Typo="Typo.caption">
                                                         Enabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
@@ -48,8 +48,8 @@
                                                 }
                                                 else
                                                 {
-                                                    <MudText 
-                                                        Class="opacity-50 position-absolute" 
+                                                    <MudText
+                                                        Class="opacity-50 position-absolute"
                                                         Style="bottom: -18px"
                                                         Typo="Typo.caption">
                                                         Disabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
@@ -167,18 +167,18 @@
                     </MudStack>
                 </MudCardActions>
             </MudCard>
-                        <MudCard Outlined="true" Class="pa-3">
-                <MudCardHeader Class="e-card-header">
-                    <MudStack Spacing="0">
-                        <MudText Typo="Typo.h6">
-                            Linked accounts
-                        </MudText>
-                    </MudStack>
-                </MudCardHeader>
-                <MudCardActions>
-                    
-                </MudCardActions>
-            </MudCard>
+            @if (UserModel.OAuthProviders.Count > 0)
+            {
+                <MudCard Outlined="true" Class="pa-3">
+                    <MudCardHeader Class="e-card-header">
+                        <MudStack Spacing="0">
+                            <MudText Typo="Typo.h6">
+                                Linked accounts
+                            </MudText>
+                        </MudStack>
+                    </MudCardHeader>
+                </MudCard>
+            }
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -249,7 +249,7 @@
             StateHasChanged();
         }
     }
-    
+
     private async Task OnAddPasswordAsync()
     {
         var options = new DialogOptions()
@@ -377,4 +377,5 @@
             StateHasChanged();
         }
     }
+
 }

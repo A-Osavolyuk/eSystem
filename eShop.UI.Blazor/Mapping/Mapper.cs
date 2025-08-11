@@ -107,7 +107,8 @@ public static class Mapper
             PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
             TwoFactorEnabled = source.TwoFactorEnabled,
             Providers = source.Providers,
-            HasPassword = source.HasPassword
+            HasPassword = source.HasPassword,
+            OAuthProviders = source.OAuthProviders,
         };
     }
 
