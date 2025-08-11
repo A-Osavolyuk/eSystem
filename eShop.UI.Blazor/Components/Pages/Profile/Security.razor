@@ -1,5 +1,6 @@
 ﻿@page "/account/security"
 
+@using eShop.BlazorWebUI.Components.Pages.Profile.Components.Security
 @inherits PageBase
 
 @inject IUsersService UsersService
@@ -13,172 +14,20 @@
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6">
         <MudStack Spacing="2" Justify="Justify.Center">
-            <MudCard Outlined="true" Class="pa-3">
-                <MudCardHeader Class="e-card-header">
-                    <MudText Typo="Typo.h5">
-                        Two-factor authentication (2FA)
-                    </MudText>
-                </MudCardHeader>
-                <MudCardContent Class="e-card-content">
-                    <MudGrid Spacing="3">
-                        <MudItem xs="12">
-                            <MudText Class="pt-2" Typo="Typo.h6">
-                                Providers
-                            </MudText>
-                            <MudDivider/>
-                        </MudItem>
-                        @if (UserModel.Providers.Count > 0)
-                        {
-                            foreach (var provider in UserModel.Providers)
-                            {
-                                <MudItem xs="12" Class="mt-2">
-                                    <MudGrid Spacing="1">
-                                        <MudItem xs="3" Class="pt-1 position-relative">
-                                            <MudText> With @provider.Name</MudText>
-                                            @if (provider.UpdateDate.HasValue)
-                                            {
-                                                if (provider.Subscribed)
-                                                {
-                                                    <MudText
-                                                        Class="opacity-50 position-absolute"
-                                                        Style="bottom: -18px"
-                                                        Typo="Typo.caption">
-                                                        Enabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
-                                                    </MudText>
-                                                }
-                                                else
-                                                {
-                                                    <MudText
-                                                        Class="opacity-50 position-absolute"
-                                                        Style="bottom: -18px"
-                                                        Typo="Typo.caption">
-                                                        Disabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
-                                                    </MudText>
-                                                }
-                                            }
-                                        </MudItem>
-                                        <MudItem xs="9" Class="pt-0">
-                                            @if (provider.Subscribed)
-                                            {
-                                                <MudStack Row="true">
-                                                    <MudText Class="pt-1" Color="Color.Success">Enabled</MudText>
-                                                    <MudSpacer/>
-                                                    <MudTooltip Text="Disable">
-                                                        <MudIconButton
-                                                            Color="Color.Error"
-                                                            Class="pt-1"
-                                                            Icon="@Icons.Material.Filled.Close"
-                                                            Variant="Variant.Outlined"
-                                                            ButtonType="ButtonType.Button"
-                                                            OnClick="@(async () => await OnUnsubscribeAsync(provider.Name))"/>
-                                                    </MudTooltip>
-                                                </MudStack>
-                                            }
-                                            else
-                                            {
-                                                <MudStack Row="true">
-                                                    <MudText Class="pt-1" Color="Color.Error">Disabled</MudText>
-                                                    <MudSpacer/>
-                                                    <MudTooltip Text="Enable">
-                                                        <MudIconButton
-                                                            Color="Color.Primary"
-                                                            Class="pt-1"
-                                                            Icon="@Icons.Material.Filled.Check"
-                                                            Variant="Variant.Filled"
-                                                            ButtonType="ButtonType.Button"
-                                                            OnClick="@(async () => await OnSubscribeAsync(provider.Name))"/>
-                                                    </MudTooltip>
-                                                </MudStack>
-                                            }
-                                        </MudItem>
-                                        @if (provider != UserModel.Providers.Last())
-                                        {
-                                            <MudItem xs="12" Class="pt-4">
-                                                <MudDivider/>
-                                            </MudItem>
-                                        }
-                                    </MudGrid>
-                                </MudItem>
-                            }
-                        }
-                    </MudGrid>
-                </MudCardContent>
-                @if (UserModel.Providers.Any(x => x.Subscribed))
-                {
-                    <MudCardActions>
-                        <MudStack Spacing="1" Row="true">
-                            @if (UserModel.Providers.Any(x => x is { Name: ProviderTypes.Authenticator, Subscribed: true }))
-                            {
-                                <MudButton
-                                    Color="Color.Primary"
-                                    Variant="Variant.Filled"
-                                    ButtonType="ButtonType.Button"
-                                    OnClick="@(async () => await OnGenerateRecoveryCodesAsync())">
-                                    Generate recovery codes
-                                </MudButton>
-                            }
-                        </MudStack>
-                    </MudCardActions>
-                }
-            </MudCard>
-            <MudCard Outlined="true" Class="pa-3">
-                <MudCardHeader Class="e-card-header">
-                    <MudStack Spacing="0">
-                        <MudText Typo="Typo.h6">
-                            Password
-                        </MudText>
-                        @if (UserModel.PasswordChangeDate is not null)
-                        {
-                            <MudText Align="Align.Start" Typo="Typo.caption" Class="opacity-50 mb-2">
-                                Last change: @UserModel.PasswordChangeDate?.ToString("MM/dd/yyyy HH:mm")
-                            </MudText>
-                        }
-                    </MudStack>
-                </MudCardHeader>
-                <MudCardActions>
-                    <MudStack Row="true" Spacing="1">
-                        @if (UserModel.HasPassword)
-                        {
-                            <MudLoadingButton
-                                Color="Color.Primary"
-                                Variant="Variant.Filled"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnChangePasswordAsync())">
-                                Change password
-                            </MudLoadingButton>
-                            <MudLoadingButton
-                                Color="Color.Error"
-                                Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnResetPasswordAsync())">
-                                Reset password
-                            </MudLoadingButton>
-                        }
-                        else
-                        {
-                            <MudLoadingButton
-                                Color="Color.Primary"
-                                Variant="Variant.Filled"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnAddPasswordAsync())">
-                                Add password
-                            </MudLoadingButton>
-                        }
-                    </MudStack>
-                </MudCardActions>
-            </MudCard>
-            @if (UserModel.OAuthProviders.Count > 0)
-            {
-                <MudCard Outlined="true" Class="pa-3">
-                    <MudCardHeader Class="e-card-header">
-                        <MudStack Spacing="0">
-                            <MudText Typo="Typo.h6">
-                                Linked accounts
-                            </MudText>
-                        </MudStack>
-                    </MudCardHeader>
-                </MudCard>
-            }
+            <TwoFactorSection
+                Model="Model"
+                OnSubscribe="@(async (value) => await OnSubscribeAsync(value))"
+                OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
+                OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
+            
+            <PasswordSection
+                Model="Model"
+                OnAdd="@OnAddPasswordAsync"
+                OnChange="@OnChangePasswordAsync"
+                OnReset="@OnResetPasswordAsync"/>
+            
+            <LinkedAccountsSection 
+                Model="Model"/>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -196,7 +45,7 @@
 </style>
 
 @code {
-    private UserModel UserModel { get; set; } = new();
+    private UserModel Model { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -216,7 +65,7 @@
         {
             var response = result.Get<UserDto>()!;
             var model = Mapper.Map(response);
-            UserModel = model;
+            Model = model;
         }
         else
         {
@@ -233,7 +82,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ChangePasswordModel() { Id = UserModel.Id };
+        var model = new ChangePasswordModel() { Id = Model.Id };
 
         var parameters = new DialogParameters<ChangePasswordDialog>()
         {
@@ -259,7 +108,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPasswordModel() { UserId = UserModel.Id };
+        var model = new AddPasswordModel() { UserId = Model.Id };
 
         var parameters = new DialogParameters<AddPasswordDialog>()
         {
@@ -285,7 +134,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ResetPasswordModel() { Id = UserModel.Id };
+        var model = new ResetPasswordModel() { Id = Model.Id };
 
         var parameters = new DialogParameters<ResetPasswordDialog>()
         {
@@ -326,7 +175,7 @@
 
         var parameters = new DialogParameters<Disable2FaProviderDialog>()
         {
-            { x => x.UserId, UserModel.Id },
+            { x => x.UserId, Model.Id },
             { x => x.Provider, provider }
         };
 
@@ -343,7 +192,7 @@
     private async Task OnGenerateRecoveryCodesAsync()
     {
         var recoveryCodes = new List<string>();
-        var request = new GenerateRecoveryCodesRequest() { UserId = UserModel.Id };
+        var request = new GenerateRecoveryCodesRequest() { UserId = Model.Id };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
 
         if (result.Success)
