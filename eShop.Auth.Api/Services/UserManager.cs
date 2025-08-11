@@ -73,7 +73,7 @@ public sealed class UserManager(
         return user;
     }
 
-    public async ValueTask<UserEntity?> FindByUserNameAsync(string name, CancellationToken cancellationToken = default)
+    public async ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default)
     {
         var normalizedUserName = name.ToUpper();
         var user = await context.Users.Where(x => x.NormalizedUserName == normalizedUserName)

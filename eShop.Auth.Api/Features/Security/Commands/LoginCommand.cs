@@ -29,7 +29,7 @@ public sealed class LoginCommandHandler(
 
         if (identityOptions.SignIn.AllowUserNameLogin)
         {
-            user = await userManager.FindByUserNameAsync(request.Request.Login, cancellationToken);
+            user = await userManager.FindByUsernameAsync(request.Request.Login, cancellationToken);
         }
 
         if (user is null && identityOptions.SignIn.AllowEmailLogin)
