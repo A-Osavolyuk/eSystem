@@ -123,7 +123,8 @@ public sealed class LoginCommandHandler(
                 UserId = user.Id,
                 Email = user.Email,
                 IsTrustedDevice = device.IsTrusted,
-                IsBlockedDevice = device.IsBlocked
+                IsBlockedDevice = device.IsBlocked,
+                DeviceId = device.Id
             };
 
             return Results.BadRequest("Cannot sign in, device is blocked.", response);
@@ -144,7 +145,8 @@ public sealed class LoginCommandHandler(
                 UserId = user.Id,
                 Email = user.Email,
                 IsTrustedDevice = device.IsTrusted,
-                IsBlockedDevice = device.IsBlocked
+                IsBlockedDevice = device.IsBlocked,
+                DeviceId = device.Id
             };
 
             return Results.BadRequest("You need to trust this device before sign in.", response);
