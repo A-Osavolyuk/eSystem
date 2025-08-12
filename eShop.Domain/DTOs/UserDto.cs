@@ -24,6 +24,8 @@ public class UserDto
 
     public bool HasPassword { get; set; }
     public DateTimeOffset? PasswordChangeDate { get; set; }
+
+    public List<UserDeviceDto> Devices { get; set; } = [];
     
     public PersonalDataDto? PersonalData { get; set; }
 }

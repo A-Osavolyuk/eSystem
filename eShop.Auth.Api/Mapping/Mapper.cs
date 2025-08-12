@@ -61,8 +61,28 @@ public static class Mapper
             PasswordChangeDate = source.PasswordChangeDate,
             Providers = source.Providers.Select(Map).ToList(),
             OAuthProviders = source.OAuthProviders.Select(Map).ToList(),
+            Devices = source.Devices.Select(Map).ToList(),
             HasLinkedAccounts = source.OAuthProviders.Any(),
             HasPassword = !string.IsNullOrEmpty(source.PasswordHash)
+        };
+    }
+
+    public static UserDeviceDto Map(UserDeviceEntity source)
+    {
+        return new UserDeviceDto()
+        {
+            Id = source.Id,
+            IpAddress = source.IpAddress,
+            OS = source.OS,
+            Browser = source.Browser,
+            Device = source.Device,
+            BlockedDate = source.BlockedDate,
+            FirstSeen = source.FirstSeen,
+            LastSeen = source.LastSeen,
+            UserAgent = source.UserAgent,
+            Location = source.Location,
+            IsBlocked = source.IsBlocked,
+            IsTrusted = source.IsTrusted
         };
     }
 
