@@ -18,6 +18,10 @@ public class ProvidersService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Providers/subscribe", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<Response> VerifyAsync(VerifyProviderRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Providers/verify", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<Response> UnsubscribeAsync(UnsubscribeProviderRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Providers/unsubscribe", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
