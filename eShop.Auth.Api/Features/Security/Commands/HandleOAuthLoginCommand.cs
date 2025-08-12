@@ -19,7 +19,8 @@ public sealed class HandleOAuthLoginCommandHandler(
     ILockoutManager lockoutManager,
     IOAuthSessionManager sessionManager,
     IOAuthProviderManager providerManager,
-    ILoginSessionManager loginSessionManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
+    ILoginSessionManager loginSessionManager,
+    IDeviceManager deviceManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
@@ -29,6 +30,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IOAuthSessionManager sessionManager = sessionManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
+    private readonly IDeviceManager deviceManager = deviceManager;
 
     public async Task<Result> Handle(HandleOAuthLoginCommand request,
         CancellationToken cancellationToken)
@@ -116,32 +118,59 @@ public sealed class HandleOAuthLoginCommandHandler(
                 request.ReturnUri!, fallbackUri, token, cancellationToken);
         }
 
+        var userAgent = RequestUtils.GetUserAgent(request.Context);
+        var ipAddress = RequestUtils.GetIpV4(request.Context);
+        var clientInfo = RequestUtils.GetClientInfo(request.Context);
+
+        var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+
+        if (device is null)
+        {
+            device = new UserDeviceEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                UserAgent = userAgent,
+                IpAddress = ipAddress,
+                Browser = clientInfo.UA.ToString(),
+                OS = clientInfo.OS.ToString(),
+                Device = clientInfo.Device.ToString(),
+                IsTrusted = false,
+                IsBlocked = false,
+                FirstSeen = DateTimeOffset.UtcNow,
+                CreateDate = DateTimeOffset.UtcNow
+            };
+
+            var result = await deviceManager.CreateAsync(device, cancellationToken);
+            if (!result.Succeeded) return result;
+        }
+        
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
         if (lockoutState.Enabled)
         {
-            return await LockedOutAsync(user, lockoutState, provider, request.Context, fallbackUri, cancellationToken);
+            return await LockedOutAsync(user, lockoutState, provider, device, fallbackUri, cancellationToken);
         }
 
         session.SignType = OAuthSignType.SignIn;
         session.UserId = user.Id;
 
         var updateResult = await UpdateSessionAsync(user, session, provider,
-            request.Context, fallbackUri, cancellationToken);
+            device, fallbackUri, cancellationToken);
 
         if (!updateResult.Succeeded) return updateResult;
 
         var providerAllowedResult = await IsProviderAllowedAsync(user, provider,
-            request.Context, fallbackUri, cancellationToken);
+            device, fallbackUri, cancellationToken);
 
         if (!providerAllowedResult.Succeeded) return providerAllowedResult;
 
-        var checkProviderResult = await CheckUserProviderAsync(user, provider, request.Context,
+        var checkProviderResult = await CheckUserProviderAsync(user, provider, device,
             fallbackUri, cancellationToken);
 
         if (!checkProviderResult.Succeeded) return checkProviderResult;
 
-        return await SignInAsync(user, provider, session, request.Context,
+        return await SignInAsync(user, provider, session, device,
             request.ReturnUri!, fallbackUri, token, cancellationToken);
     }
 
@@ -290,9 +319,9 @@ public sealed class HandleOAuthLoginCommandHandler(
     }
 
     private async Task<Result> LockedOutAsync(UserEntity user, LockoutStateEntity lockoutState,
-        OAuthProviderEntity provider, HttpContext context, string fallbackUri, CancellationToken cancellationToken)
+        OAuthProviderEntity provider, UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
-        var loginSessionResult = await loginSessionManager.CreateAsync(user, context,
+        var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.Locked, LoginType.OAuth, provider.Name, cancellationToken);
 
         if (!loginSessionResult.Succeeded)
@@ -322,13 +351,13 @@ public sealed class HandleOAuthLoginCommandHandler(
     }
 
     private async Task<Result> UpdateSessionAsync(UserEntity user, OAuthSessionEntity session,
-        OAuthProviderEntity provider, HttpContext context, string fallbackUri, CancellationToken cancellationToken)
+        OAuthProviderEntity provider, UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
         var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
 
         if (!sessionResult.Succeeded)
         {
-            var loginSessionResult = await loginSessionManager.CreateAsync(user, context,
+            var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
 
             if (!loginSessionResult.Succeeded)
@@ -361,11 +390,11 @@ public sealed class HandleOAuthLoginCommandHandler(
     }
 
     private async Task<Result> IsProviderAllowedAsync(UserEntity user, OAuthProviderEntity provider,
-        HttpContext context, string fallbackUri, CancellationToken cancellationToken)
+        UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
         if (user.OAuthProviders.Any(x => x.ProviderId == provider.Id && !x.Allowed))
         {
-            var loginSessionResult = await loginSessionManager.CreateAsync(user, context,
+            var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
 
             if (!loginSessionResult.Succeeded)
@@ -398,13 +427,13 @@ public sealed class HandleOAuthLoginCommandHandler(
     }
 
     private async Task<Result> CheckUserProviderAsync(UserEntity user, OAuthProviderEntity provider,
-        HttpContext context, string fallbackUri, CancellationToken cancellationToken)
+        UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
         var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
 
         if (!enableResult.Succeeded)
         {
-            var loginSessionResult = await loginSessionManager.CreateAsync(user, context,
+            var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
 
             if (!loginSessionResult.Succeeded)
@@ -437,10 +466,10 @@ public sealed class HandleOAuthLoginCommandHandler(
     }
 
     private async Task<Result> SignInAsync(UserEntity user, OAuthProviderEntity provider,
-        OAuthSessionEntity session, HttpContext context, string returnUri, string fallbackUri,
+        OAuthSessionEntity session, UserDeviceEntity device, string returnUri, string fallbackUri,
         string token, CancellationToken cancellationToken)
     {
-        var result = await loginSessionManager.CreateAsync(user, context,
+        var result = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.Success, LoginType.OAuth, provider.Name, cancellationToken);
 
         if (!result.Succeeded)

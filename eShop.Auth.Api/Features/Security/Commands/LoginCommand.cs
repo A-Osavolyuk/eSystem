@@ -73,18 +73,18 @@ public sealed class LoginCommandHandler(
             if (!result.Succeeded) return result;
         }
 
-        var emailResult = await CheckEmailAsync(user, request.Context, cancellationToken);
+        var emailResult = await CheckEmailAsync(user, device, cancellationToken);
         if (!emailResult.Succeeded) return emailResult;
 
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
         if (lockoutState.Enabled)
         {
-            return await LockedOutAsync(user, lockoutState, request.Context, cancellationToken);
+            return await LockedOutAsync(user, lockoutState, device, cancellationToken);
         }
 
         var passwordResult = await CheckPasswordAsync(user, 
-            request.Request.Password, request.Context, cancellationToken);
+            request.Request.Password, device, cancellationToken);
         
         if (!passwordResult.Succeeded) return passwordResult;
 
@@ -96,25 +96,25 @@ public sealed class LoginCommandHandler(
 
         if (identityOptions.SignIn.RequireTrustedDevice)
         {
-            var deviceResult = await CheckDeviceAsync(user, device, request.Context, cancellationToken);
+            var deviceResult = await CheckDeviceAsync(user, device, cancellationToken);
             if (!deviceResult.Succeeded) return deviceResult;
         }
 
         if (user.Providers.Any(x => x.Subscribed))
         {
-            return await CheckTwoFactorStateAsync(user, lockoutState, request.Context, cancellationToken);
+            return await CheckTwoFactorStateAsync(user, lockoutState, device, cancellationToken);
         }
 
-        var tokenResult = await GenerateTokensAsync(user, lockoutState, request.Context, cancellationToken);
+        var tokenResult = await GenerateTokensAsync(user, lockoutState, device, cancellationToken);
         return tokenResult;
     }
 
-    private async Task<Result> CheckDeviceAsync(UserEntity user, UserDeviceEntity device, HttpContext context,
+    private async Task<Result> CheckDeviceAsync(UserEntity user, UserDeviceEntity device,
         CancellationToken cancellationToken)
     {
         if (device.IsBlocked)
         {
-            var loginSessionResult = await loginSessionManager.CreateAsync(user, context,
+            var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
             if (!loginSessionResult.Succeeded)
@@ -136,7 +136,7 @@ public sealed class LoginCommandHandler(
 
         if (!device.IsTrusted)
         {
-            var loginSessionResult = await loginSessionManager.CreateAsync(user, context,
+            var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
             if (!loginSessionResult.Succeeded)
@@ -184,9 +184,9 @@ public sealed class LoginCommandHandler(
     }
 
     private async Task<Result> LockedOutAsync(UserEntity user, LockoutStateEntity lockoutState,
-        HttpContext context, CancellationToken cancellationToken)
+        UserDeviceEntity device, CancellationToken cancellationToken)
     {
-        var loginSessionResult = await loginSessionManager.CreateAsync(user, context,
+        var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.Locked, LoginType.Password, cancellationToken: cancellationToken);
 
         if (!loginSessionResult.Succeeded)
@@ -204,12 +204,12 @@ public sealed class LoginCommandHandler(
         return Results.BadRequest("Account is locked out", response);
     }
 
-    private async Task<Result> CheckEmailAsync(UserEntity user, HttpContext context,
+    private async Task<Result> CheckEmailAsync(UserEntity user, UserDeviceEntity device,
         CancellationToken cancellationToken)
     {
         if (identityOptions.SignIn.RequireConfirmedEmail && !user.EmailConfirmed)
         {
-            var result = await loginSessionManager.CreateAsync(user, context,
+            var result = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
             if (!result.Succeeded)
@@ -231,9 +231,9 @@ public sealed class LoginCommandHandler(
     }
 
     private async Task<Result> CheckPasswordAsync(UserEntity user, string password,
-        HttpContext context, CancellationToken cancellationToken)
+        UserDeviceEntity device, CancellationToken cancellationToken)
     {
-        var hasPasswordResult = await HasPasswordAsync(user, context, cancellationToken);
+        var hasPasswordResult = await HasPasswordAsync(user, device, cancellationToken);
         if (!hasPasswordResult.Succeeded) return hasPasswordResult;
 
         var isValidPassword = await userManager.CheckPasswordAsync(user, password, cancellationToken);
@@ -251,7 +251,7 @@ public sealed class LoginCommandHandler(
 
         if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
         {
-            return await MaxFailedLoginAttemptsAsync(user, context, cancellationToken);
+            return await MaxFailedLoginAttemptsAsync(user, device, cancellationToken);
         }
 
         var reason = await reasonManager.FindByTypeAsync(LockoutType.TooManyFailedLoginAttempts, cancellationToken);
@@ -269,7 +269,7 @@ public sealed class LoginCommandHandler(
             return lockoutResult;
         }
 
-        var result = await loginSessionManager.CreateAsync(user, context, LoginStatus.Locked,
+        var result = await loginSessionManager.CreateAsync(user, device, LoginStatus.Locked,
             LoginType.Password, cancellationToken: cancellationToken);
 
         if (!result.Succeeded)
@@ -288,10 +288,10 @@ public sealed class LoginCommandHandler(
             });
     }
 
-    private async Task<Result> MaxFailedLoginAttemptsAsync(UserEntity user, HttpContext context,
+    private async Task<Result> MaxFailedLoginAttemptsAsync(UserEntity user, UserDeviceEntity device,
         CancellationToken cancellationToken)
     {
-        var result = await loginSessionManager.CreateAsync(user, context,
+        var result = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
         if (!result.Succeeded)
@@ -310,12 +310,12 @@ public sealed class LoginCommandHandler(
         return Results.BadRequest("The password is not valid.", response);
     }
 
-    private async Task<Result> HasPasswordAsync(UserEntity user, HttpContext context,
+    private async Task<Result> HasPasswordAsync(UserEntity user, UserDeviceEntity device,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(user.PasswordHash))
         {
-            var result = await loginSessionManager.CreateAsync(user, context,
+            var result = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
             if (!result.Succeeded)
@@ -342,9 +342,9 @@ public sealed class LoginCommandHandler(
     }
 
     private async Task<Result> CheckTwoFactorStateAsync(UserEntity user, LockoutStateEntity lockoutState,
-        HttpContext context, CancellationToken cancellationToken)
+        UserDeviceEntity device, CancellationToken cancellationToken)
     {
-        var result = await loginSessionManager.CreateAsync(user, context,
+        var result = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.PendingMfa, LoginType.Password, cancellationToken: cancellationToken);
 
         if (!result.Succeeded)
@@ -361,7 +361,7 @@ public sealed class LoginCommandHandler(
     }
 
     private async Task<Result> GenerateTokensAsync(UserEntity user, LockoutStateEntity lockoutState,
-        HttpContext context, CancellationToken cancellationToken)
+        UserDeviceEntity device, CancellationToken cancellationToken)
     {
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
@@ -375,7 +375,7 @@ public sealed class LoginCommandHandler(
             IsLockedOut = lockoutState.Enabled,
         };
 
-        var result = await loginSessionManager.CreateAsync(user, context,
+        var result = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.Success, LoginType.Password, cancellationToken: cancellationToken);
 
         if (!result.Succeeded)
