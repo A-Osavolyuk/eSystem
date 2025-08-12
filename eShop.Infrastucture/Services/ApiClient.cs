@@ -4,17 +4,20 @@ using eShop.Domain.Options;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 using eShop.Infrastructure.Security;
+using Microsoft.AspNetCore.Http;
 using HttpRequest = eShop.Domain.Common.API.HttpRequest;
 
 namespace eShop.Infrastructure.Services;
 
 public class ApiClient(
     IHttpClientFactory clientFactory,
-    ITokenProvider tokenProvider)
+    ITokenProvider tokenProvider,
+    IHttpContextAccessor httpContextAccessor)
     : IApiClient
 {
     private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");
     private readonly ITokenProvider tokenProvider = tokenProvider;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private const string Key = "services:proxy:http:0";
 
     public async ValueTask<Response> SendAsync(HttpRequest httpRequest, HttpOptions options)
@@ -37,6 +40,9 @@ public class ApiClient(
 
                 message.Headers.Add("Authorization", $"Bearer {token}");
             }
+            
+            var userAgent = httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString();
+            message.Headers.Add("User-Agent", userAgent);
 
             message.RequestUri = new Uri(httpRequest.Url);
             message.Method = httpRequest.Method;

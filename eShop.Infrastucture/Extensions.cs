@@ -19,9 +19,9 @@ public static class Extensions
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddHttpContextAccessor();
-
         builder.Services.AddHttpClient();
+        builder.Services.AddHttpContextAccessor();
+        
         builder.Services.AddHttpClient<ISecurityService, SecurityService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IStoreService, StorageService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<ITwoFactorService, TwoFactorService>(ServiceLifetime.Scoped);
