@@ -180,14 +180,14 @@
 
     private async Task OnVerifyCodeAsync()
     {
-        var request = new VerifyTwoFactorCodeRequest()
+        var request = new VerifyProviderRequest()
         {
             UserId = userId,
             Code = VerifyProviderModel.Code,
             Provider = Provider
         };
 
-        var result = await TwoFactorService.VerifyCodeAsync(request);
+        var result = await ProvidersService.VerifyAsync(request);
 
         if (result.Success)
         {

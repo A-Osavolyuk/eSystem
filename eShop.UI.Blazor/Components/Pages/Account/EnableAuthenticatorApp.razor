@@ -210,14 +210,14 @@
 
     private async Task OnVerifyCodeAsync()
     {
-        var request = new VerifyTwoFactorCodeRequest()
+        var request = new VerifyProviderRequest()
         {
             UserId = userId,
             Provider = ProviderTypes.Authenticator,
             Code = VerifyAuthenticatorModel.Code
         };
 
-        var result = await TwoFactorService.VerifyCodeAsync(request);
+        var result = await ProvidersService.VerifyAsync(request);
 
         if (result.Success)
         {
