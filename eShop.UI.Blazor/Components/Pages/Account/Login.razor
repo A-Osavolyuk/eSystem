@@ -172,10 +172,21 @@
 
                 var response = result.Get<LoginResponse>()!;
                 var userId = response.UserId;
+                var email = response.Email;
 
+                if (response is { IsTrustedDevice: false, IsBlockedDevice: false })
+                {
+                    var device = response.DeviceId;
+                    
+                    var url = $"/account/device/trust?device={device}&user={userId}&email={email}";
+
+                    Snackbar.Add(result.Message, Severity.Info);
+                    await RouteManager.NavigateAsync(url);
+                    return;
+                }
+                
                 if (!response.IsEmailConfirmed)
                 {
-                    var email = response.Email;
                     var url = $"/account/email/verify?id={userId}&email={email}";
 
                     Snackbar.Add(result.Message, Severity.Info);
