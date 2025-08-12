@@ -8,9 +8,78 @@
                 </MudText>
             </MudStack>
         </MudCardHeader>
+        <MudCardContent Class="e-card-content" Style="padding-top: 0">
+            @foreach (var provider in Model.OAuthProviders)
+            {
+                <MudItem xs="12" Class="mt-2">
+                    <MudGrid Spacing="1">
+                        <MudItem xs="3" Class="pt-1 position-relative">
+                            <MudText> @provider.Name</MudText>
+                            @if (provider.IsAllowed)
+                            {
+                                <MudText
+                                    Class="opacity-50 position-absolute"
+                                    Style="bottom: -18px"
+                                    Typo="Typo.caption">
+                                    Linked at: @provider.LinkedDate?.ToString("MM/dd/yyyy HH:mm")
+                                </MudText>
+                            }
+                            else
+                            {
+                                <MudText
+                                    Class="opacity-50 position-absolute"
+                                    Style="bottom: -18px"
+                                    Typo="Typo.caption">
+                                    Disallowed at: @provider.DisallowedDate?.ToString("MM/dd/yyyy HH:mm")
+                                </MudText>
+                            }
+                        </MudItem>
+                        <MudItem xs="9" Class="pt-0">
+                            @if (provider.IsAllowed)
+                            {
+                                <MudStack Row="true">
+                                    <MudText Class="pt-1" Color="Color.Success">Allowed</MudText>
+                                    <MudSpacer/>
+                                    <MudTooltip Text="Disallow">
+                                        <MudIconButton
+                                            Color="Color.Error"
+                                            Class="pt-1"
+                                            Icon="@Icons.Material.Filled.Close"
+                                            Variant="Variant.Outlined"
+                                            ButtonType="ButtonType.Button"
+                                            />
+                                    </MudTooltip>
+                                </MudStack>
+                            }
+                            else
+                            {
+                                <MudStack Row="true">
+                                    <MudText Class="pt-1" Color="Color.Error">Disallowed</MudText>
+                                    <MudSpacer/>
+                                    <MudTooltip Text="Enable">
+                                        <MudIconButton
+                                            Color="Color.Primary"
+                                            Class="pt-1"
+                                            Icon="@Icons.Material.Filled.Check"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button"/>
+                                    </MudTooltip>
+                                </MudStack>
+                            }
+                        </MudItem>
+                        @if (provider != Model.OAuthProviders.Last())
+                        {
+                            <MudItem xs="12" Class="pt-4">
+                                <MudDivider/>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudItem>
+            }
+        </MudCardContent>
     </MudCard>
 }
 
-@code { 
+@code {
     [Parameter] public UserModel Model { get; set; } = new();
 }
