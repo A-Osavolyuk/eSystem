@@ -6,5 +6,6 @@ public enum CodeResource
     RecoveryEmail,
     PhoneNumber,
     Account,
-    Password
+    Password,
+    Device
 }

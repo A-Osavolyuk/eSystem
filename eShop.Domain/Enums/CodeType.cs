@@ -33,7 +33,7 @@ public enum CodeType
     Unlock = 5,
     
     /// <summary>
-    /// Represents a user field rollback code
+    /// Represents an user device trust
     /// </summary>
-    Rollback = 6
+    Trust = 6
 }
