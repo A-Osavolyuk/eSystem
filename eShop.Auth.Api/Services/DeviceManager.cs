@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Services;
 
-[Injectable(typeof(IDeviceManager), ServiceLifetime.Singleton)]
+[Injectable(typeof(IDeviceManager), ServiceLifetime.Scoped)]
 public class DeviceManager(AuthDbContext context) : IDeviceManager
 {
     private readonly AuthDbContext context = context;
