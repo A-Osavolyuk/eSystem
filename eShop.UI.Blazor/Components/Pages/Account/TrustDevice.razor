@@ -9,14 +9,14 @@
 <MudGrid Spacing="1" Justify="Justify.Center">
     <MudItem xs="4">
         <MudStack Spacing="1">
-            <MudPaper Outlined="true" Class="pa-3">
+            <MudPaper Outlined="true" Class="pa-3" Style="margin-top: 150px">
                 <MudText Align="Align.Center" Typo="Typo.h4">
                     Device trust
                 </MudText>
             </MudPaper>
-            <MudPaper Outlined="true" Class="pa-3" Style="margin-top: 150px">
+            <MudPaper Outlined="true" Class="pa-3">
                 <MudForm @ref="form" Model="Model">
-                    <MudGrid Spacing="1" Justify="Justify.Center">
+                    <MudGrid Spacing="3" Justify="Justify.Center">
                         <MudItem xs="12">
                             <MudText Align="Align.Center">
                                 You attempting to sign in with new device.
@@ -52,7 +52,7 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "id")] public Guid DeviceId { get; set; }
+    [SupplyParameterFromQuery(Name = "device")] public Guid DeviceId { get; set; }
     [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
     [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
     [SupplyParameterFromForm] public TrustDeviceModel Model { get; set; } = new();
