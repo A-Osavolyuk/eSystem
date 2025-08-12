@@ -33,6 +33,7 @@ public static class Extensions
         builder.Services.AddHttpClient<IPriceService, PriceService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<ICurrencyService, CurrencyService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IOAuthService, OAuthService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IDeviceService, DeviceService>(ServiceLifetime.Scoped);
 
         builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
