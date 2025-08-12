@@ -58,13 +58,6 @@ public class SubscribeProviderCommandHandler(
                 return Results.BadRequest("You need to confirm your phone number before.");
             }
         }
-        
-        var result = await providerManager.SubscribeAsync(user, provider, cancellationToken);
-
-        if (!result.Succeeded)
-        {
-            return result;
-        }
 
         if (provider.Name == ProviderTypes.Authenticator)
         {
