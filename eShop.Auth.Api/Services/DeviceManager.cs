@@ -5,6 +5,12 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
 {
     private readonly AuthDbContext context = context;
 
+    public async ValueTask<UserDeviceEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var device = await context.UserDevices.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return device;
+    }
+
     public async ValueTask<UserDeviceEntity?> FindAsync(UserEntity user, string userAgent, 
         string ipAddress, CancellationToken cancellationToken = default)
     {
