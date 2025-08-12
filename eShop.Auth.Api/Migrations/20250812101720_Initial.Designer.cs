@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250807134117_Initial")]
+    [Migration("20250812101720_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -579,6 +579,9 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset?>("BlockedDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Browser")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
@@ -596,6 +599,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<string>("IpAddress")
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsTrusted")
                         .HasColumnType("bit");

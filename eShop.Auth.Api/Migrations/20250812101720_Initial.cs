@@ -348,6 +348,7 @@ namespace eShop.Auth.Api.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsTrusted = table.Column<bool>(type: "bit", nullable: false),
+                    IsBlocked = table.Column<bool>(type: "bit", nullable: false),
                     UserAgent = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     IpAddress = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
                     Browser = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
@@ -356,6 +357,7 @@ namespace eShop.Auth.Api.Migrations
                     Location = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     FirstSeen = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     LastSeen = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    BlockedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
