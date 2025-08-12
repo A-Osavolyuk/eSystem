@@ -41,6 +41,7 @@ public static class HostApplicationBuilderExtensions
                 new() { Routes = ["/products"] },
                 new() { Routes = ["/products/create"], RequiredRoles = ["Seller"]},
                 new() { Routes = ["/account/login"] },
+                new() { Routes = ["/account/device/trust"] },
                 new() { Routes = ["/account/oauth/sign-in"] },
                 new() { Routes = ["/account/oauth/signed-up"] },
                 new() { Routes = ["/account/oauth/fallback"] },

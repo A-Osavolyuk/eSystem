@@ -1,0 +1,100 @@
+﻿@page "/account/device/trust"
+
+@inherits PageBase
+
+@inject IDeviceService DeviceService
+
+<Title Text="Device trust"></Title>
+
+<MudGrid Spacing="1" Justify="Justify.Center">
+    <MudItem xs="4">
+        <MudStack Spacing="1">
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4">
+                    Device trust
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3" Style="margin-top: 150px">
+                <MudForm @ref="form" Model="Model">
+                    <MudGrid Spacing="1" Justify="Justify.Center">
+                        <MudItem xs="12">
+                            <MudText Align="Align.Center">
+                                You attempting to sign in with new device.
+                                To sign in with this device, please, enter 6-digit code 
+                                from the letter we have sent code to email: <strong>@Email</strong>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="7">
+                            <MudCodeInput
+                                Variant="Variant.Outlined"
+                                Spacing="2"
+                                Margin="Margin.None"
+                                Count="6"
+                                @bind-Value="Model.Code"/>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudLoadingButton
+                                ButtonType="ButtonType.Button"
+                                Variant="Variant.Filled"
+                                Color="Color.Primary"
+                                Class="mt-3"
+                                FullWidth
+                                Disabled="@(Model.Code.Length <= 5)"
+                                OnClick="@(async () => await OnVerifyEmailAsync())">
+                                Submit
+                            </MudLoadingButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudForm>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromQuery(Name = "id")] public Guid DeviceId { get; set; }
+    [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
+    [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
+    [SupplyParameterFromForm] public TrustDeviceModel Model { get; set; } = new();
+
+    private MudForm form = new();
+    
+    private async Task OnVerifyEmailAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new TrustDeviceRequest()
+            {
+                UserId = UserId,
+                DeviceId = DeviceId,
+                Code = Model.Code
+            };
+
+            var result = await DeviceService.TrustAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<TrustDeviceResponse>()!;
+
+                if (response!.IsTwoFactorEnabled)
+                {
+                    Snackbar.Add("Device successfully trusted", Severity.Success);
+                    var url = $"/account/2fa/login?id={response.UserId}";
+                    await RouteManager.NavigateAsync(url);
+                }
+                else
+                {
+                    await AuthenticationManager.LogInAsync(response!.AccessToken!, response.RefreshToken!);
+                    await RouteManager.NavigateAsync("/products");
+                    Snackbar.Add(result.Message, Severity.Success);
+                }
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+}
