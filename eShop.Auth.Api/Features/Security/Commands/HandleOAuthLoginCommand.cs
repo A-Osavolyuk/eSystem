@@ -106,6 +106,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                 if (!grantResult.Succeeded) return grantResult;
             }
 
+            var deviceResult = await CreateDeviceAsync(user, provider, request.Context, fallbackUri, cancellationToken);
+            if (!deviceResult.Succeeded) return deviceResult;
+
             await SendMessageAsync(user, provider, cancellationToken);
 
             session.SignType = OAuthSignType.SignUp;
@@ -144,7 +147,19 @@ public sealed class HandleOAuthLoginCommandHandler(
             var result = await deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-        
+
+        if (device.IsBlocked)
+        {
+            return RedirectWithError(OAuthErrorType.InternalError,
+                provider.Name, "Cannot sign in with this device, device is blocked", fallbackUri);
+        }
+
+        if (!device.IsTrusted)
+        {
+            var deviceResult = await TrustDeviceAsync(device, provider, fallbackUri, cancellationToken);
+            if (!deviceResult.Succeeded) return deviceResult;
+        }
+
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
         if (lockoutState.Enabled)
@@ -172,6 +187,65 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         return await SignInAsync(user, provider, session, device,
             request.ReturnUri!, fallbackUri, token, cancellationToken);
+    }
+
+    private async Task<Result> CreateDeviceAsync(UserEntity user, OAuthProviderEntity provider,
+        HttpContext context, string fallbackUri, CancellationToken cancellationToken)
+    {
+        var userAgent = RequestUtils.GetUserAgent(context);
+        var ipAddress = RequestUtils.GetIpV4(context);
+        var clientInfo = RequestUtils.GetClientInfo(context);
+
+        var newDevice = new UserDeviceEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            UserAgent = userAgent,
+            IpAddress = ipAddress,
+            Browser = clientInfo.UA.ToString(),
+            OS = clientInfo.OS.ToString(),
+            Device = clientInfo.Device.ToString(),
+            IsTrusted = true,
+            IsBlocked = false,
+            FirstSeen = DateTimeOffset.UtcNow,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+
+        var result = await deviceManager.CreateAsync(newDevice, cancellationToken);
+        if (!result.Succeeded)
+        {
+            var error = Uri.EscapeDataString(result.GetError().Message);
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = nameof(OAuthErrorType.InternalError),
+                Message = error,
+                Provider = provider.Name
+            });
+
+            return Results.Redirect(url);
+        }
+
+        return Result.Success();
+    }
+
+    private async Task<Result> TrustDeviceAsync(UserDeviceEntity device, OAuthProviderEntity provider,
+        string fallbackUri, CancellationToken token)
+    {
+        var result = await deviceManager.TrustAsync(device, token);
+        if (!result.Succeeded)
+        {
+            var error = Uri.EscapeDataString(result.GetError().Message);
+            var url = UrlGenerator.Url(fallbackUri, new
+            {
+                ErrorCode = nameof(OAuthErrorType.InternalError),
+                Message = error,
+                Provider = provider.Name
+            });
+
+            return Results.Redirect(url);
+        }
+
+        return Result.Success();
     }
 
     private Result RedirectWithError(OAuthErrorType type, string provider, string message, string fallbackUri)
