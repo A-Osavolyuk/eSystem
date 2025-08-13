@@ -13,10 +13,11 @@ public class UserSeed : Seed<UserEntity>
                 Id = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                 Email = "sasha.osavolll111@gmail.com",
                 NormalizedEmail = "sasha.osavolll111@gmail.com".ToUpper(),
+                EmailConfirmed = true,
+                EmailConfirmationDate = DateTimeOffset.UtcNow,
                 UserName = "pipidastr",
                 NormalizedUserName = "PIPIDASTR".ToUpper(),
                 PasswordHash = "ARAnAAAl1FoQrHhNWGK51c8k0FFv1BuyOTZvNXrRWI7EVVDW5ScOzlWykcg+O8MKwnwzJEs=",
-                EmailConfirmed = true,
                 AccountConfirmed = true,
             }
         ];
