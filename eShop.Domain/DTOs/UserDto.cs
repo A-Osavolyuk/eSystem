@@ -8,14 +8,17 @@ public class UserDto
     public DateTimeOffset? UserNameChangeDate { get; set; }
     
     public string Email { get; set; } = string.Empty;
+    public bool EmailConfirmed { get; set; }
     public DateTimeOffset? EmailChangeDate { get; set; }
     public DateTimeOffset? EmailConfirmationDate { get; set; }
     
     public string? RecoveryEmail { get; set; } = string.Empty;
+    public bool RecoveryEmailConfirmed { get; set; }
     public DateTimeOffset? RecoveryEmailChangeDate { get; set; }
     public DateTimeOffset? RecoveryEmailConfirmationDate { get; set; }
 
     public string? PhoneNumber { get; set; } = string.Empty;
+    public bool PhoneNumberConfirmed { get; set; }
     public DateTimeOffset? PhoneNumberChangeDate { get; set; }
     public DateTimeOffset? PhoneNumberConfirmationDate { get; set; }
 

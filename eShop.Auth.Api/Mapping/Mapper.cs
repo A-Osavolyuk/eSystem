@@ -50,12 +50,15 @@ public static class Mapper
         {
             Id = source.Id,
             Email = source.Email,
+            EmailConfirmed = source.EmailConfirmed,
             EmailChangeDate = source.EmailChangeDate,
             EmailConfirmationDate = source.EmailConfirmationDate,
             PhoneNumber = source.PhoneNumber,
+            PhoneNumberConfirmed = source.EmailConfirmed,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             PhoneNumberConfirmationDate = source.PhoneNumberConfirmationDate,
             RecoveryEmail = source.RecoveryEmail,
+            RecoveryEmailConfirmed = source.EmailConfirmed,
             RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
             RecoveryEmailConfirmationDate = source.RecoveryEmailConfirmationDate,
             Username = source.UserName,
@@ -67,6 +70,7 @@ public static class Mapper
             HasLinkedAccounts = source.OAuthProviders.Count > 0,
             OAuthProviders = source.OAuthProviders.Select(Map).ToList(),
             Devices = source.Devices.Select(Map).ToList(),
+            
         };
     }
 

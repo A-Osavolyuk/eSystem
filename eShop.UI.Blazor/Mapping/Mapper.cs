@@ -98,18 +98,26 @@ public static class Mapper
         {
             Id = source.Id,
             Email = source.Email,
-            PhoneNumber = source.PhoneNumber,
-            UserName = source.Username,
+            EmailConfirmed = source.EmailConfirmed,
+            EmailConfirmationDate = source.EmailConfirmationDate,
             EmailChangeDate = source.EmailChangeDate,
-            PasswordChangeDate = source.PasswordChangeDate,
-            UserNameChangeDate = source.UserNameChangeDate,
+            PhoneNumber = source.PhoneNumber,
+            PhoneNumberConfirmed = source.PhoneNumberConfirmed,
+            PhoneNumberConfirmationDate = source.PhoneNumberConfirmationDate,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
-            PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
+            RecoveryEmail = source.RecoveryEmail,
+            RecoveryEmailConfirmed = source.RecoveryEmailConfirmed,
+            RecoveryEmailConfirmationDate = source.RecoveryEmailConfirmationDate,
+            RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
+            UserName = source.Username,
+            UserNameChangeDate = source.UserNameChangeDate,
+            HasPassword = source.HasPassword,
+            PasswordChangeDate = source.PasswordChangeDate,
             TwoFactorEnabled = source.TwoFactorEnabled,
             Providers = source.Providers,
-            HasPassword = source.HasPassword,
             OAuthProviders = source.OAuthProviders,
-            Devices = source.Devices
+            Devices = source.Devices,
+            PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
         };
     }
 
