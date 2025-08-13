@@ -7,11 +7,13 @@ public class UserEntity : Entity
     public string Email { get; set; } = string.Empty;
     public string NormalizedEmail { get; set; } = string.Empty;
     public bool EmailConfirmed { get; set; }
+    public DateTimeOffset? EmailConfirmationDate { get; set; }
     public DateTimeOffset? EmailChangeDate { get; set; }
     
     public string? RecoveryEmail { get; set; } = string.Empty;
     public string? NormalizedRecoveryEmail { get; set; } = string.Empty;
     public bool RecoveryEmailConfirmed { get; set; }
+    public DateTimeOffset? RecoveryEmailConfirmationDate { get; set; }
     public DateTimeOffset? RecoveryEmailChangeDate { get; set; }
     
     public string UserName { get; set; } = string.Empty;
@@ -20,6 +22,7 @@ public class UserEntity : Entity
     
     public string? PhoneNumber { get; set; } = string.Empty;
     public bool PhoneNumberConfirmed { get; set; }
+    public DateTimeOffset? PhoneNumberConfirmationDate { get; set; }
     public DateTimeOffset? PhoneNumberChangeDate { get; set; }
     
     public string PasswordHash { get; set; } = string.Empty;
