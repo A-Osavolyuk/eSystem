@@ -1,17 +1,13 @@
 ﻿@if (Model.OAuthProviders.Count > 0)
 {
-    <MudCard Outlined="true" Class="pa-3">
-        <MudCardHeader Class="e-card-header">
-            <MudStack Spacing="0">
-                <MudText Typo="Typo.h6">
-                    Linked accounts
-                </MudText>
-            </MudStack>
-        </MudCardHeader>
-        <MudCardContent Class="e-card-content" Style="padding-top: 0">
-            @foreach (var provider in Model.OAuthProviders)
-            {
-                <MudStack Spacing="4">
+    <MudPaper Outlined="true" Class="pa-5">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h6">
+                Linked accounts
+            </MudText>
+            <MudStack Spacing="4" Class="mb-4">
+                @foreach (var provider in Model.OAuthProviders)
+                {
                     <MudStack Row="true" Spacing="1" Class="position-relative">
                         <MudText Style="padding-top: 5px"> @provider.Name</MudText>
                         @if (provider.IsAllowed)
@@ -65,10 +61,10 @@
                             </MudTooltip>
                         }
                     </MudStack>
-                </MudStack>
-            }
-        </MudCardContent>
-    </MudCard>
+                }
+            </MudStack>
+        </MudStack>
+    </MudPaper>
 }
 
 @code {

@@ -1,10 +1,8 @@
-﻿<MudCard Outlined="true" Class="pa-3">
-    <MudCardHeader Class="e-card-header">
+﻿<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="3">
         <MudText Typo="Typo.h6">
-            Two-factor authentication (2FA)
-        </MudText>
-    </MudCardHeader>
-    <MudCardContent Class="e-card-content" Style="padding-top: 0">
+        Two-factor authentication (2FA)
+    </MudText>
         <MudStack Spacing="4">
             @foreach (var provider in Model.Providers)
             {
@@ -28,7 +26,8 @@
                                 Enabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
                         }
-                        <MudSpacer />
+
+                        <MudSpacer/>
                         <MudTooltip Text="Disable">
                             <MudIconButton
                                 Color="Color.Error"
@@ -57,7 +56,8 @@
                                 Disabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
                         }
-                        <MudSpacer />
+
+                        <MudSpacer/>
                         <MudTooltip Text="Enable">
                             <MudIconButton
                                 Color="Color.Success"
@@ -71,10 +71,8 @@
                 </MudStack>
             }
         </MudStack>
-    </MudCardContent>
-    @if (Model.Providers.Any(x => x.Subscribed))
-    {
-        <MudCardActions>
+        @if (Model.Providers.Any(x => x.Subscribed))
+        {
             <MudStack Spacing="1" Row="true">
                 @if (Model.Providers.Any(x => x is { Name: ProviderTypes.Authenticator, Subscribed: true }))
                 {
@@ -87,9 +85,9 @@
                     </MudButton>
                 }
             </MudStack>
-        </MudCardActions>
-    }
-</MudCard>
+        }
+    </MudStack>
+</MudPaper>
 
 @code {
     [Parameter] public UserModel Model { get; set; } = new();
