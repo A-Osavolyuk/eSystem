@@ -109,6 +109,7 @@ public static class Mapper
             Providers = source.Providers,
             HasPassword = source.HasPassword,
             OAuthProviders = source.OAuthProviders,
+            Devices = source.Devices
         };
     }
 
