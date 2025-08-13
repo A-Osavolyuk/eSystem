@@ -1,12 +1,72 @@
-﻿<MudCard Outlined="true" Class="pa-3">
-    <MudCardHeader Class="e-card-header">
-        <MudStack Spacing="0">
-            <MudText Typo="Typo.h6">
-                Devices
-            </MudText>
+﻿<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="3">
+        <MudText Typo="Typo.h6">
+            Devices
+        </MudText>
+        <MudStack Spacing="4" Class=" mb-4">
+            @foreach (var device in Model.Devices)
+            {
+                <MudStack Row="true" Spacing="1" Class="position-relative">
+                    <MudText Style="padding-top: 5px">
+                        @if (device.OS!.Contains("Windows") && device.Device!.Contains("Desktop"))
+                        {
+                            <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.DesktopWindows"></MudIcon>
+                        }
+                        @if (device.OS!.Contains("Android") && device.Device!.Contains("Phone"))
+                        {
+                            <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.PhoneAndroid"></MudIcon>
+                        }
+                        else if (device.OS.Contains("iOS") && device.Device!.Contains("Phone"))
+                        {
+                            <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.PhoneIphone"></MudIcon>
+                        }
+                        else if (device.OS.Contains("MacOS") && device.Device!.Contains("Desktop"))
+                        {
+                            <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.DesktopMac"></MudIcon>
+                        }
+                        @($"{device.Device}, {device.OS} ({device.Browser}, IP: {device.IpAddress})")
+                    </MudText>
+                    @if (device.IsTrusted)
+                    {
+                        <MudChip
+                            T="string"
+                            Size="Size.Small"
+                            Variant="Variant.Outlined"
+                            Color="Color.Success">
+                            Trusted
+                        </MudChip>
+                    }
+                    else
+                    {
+                        <MudChip
+                            T="string"
+                            Size="Size.Small"
+                            Variant="Variant.Outlined"
+                            Color="Color.Warning">
+                            Untrusted
+                        </MudChip>
+                    }
+                    @if (device.IsBlocked)
+                    {
+                        <MudChip
+                            T="string"
+                            Size="Size.Small"
+                            Variant="Variant.Outlined"
+                            Color="Color.Error">
+                            Blocked
+                        </MudChip>
+                    }
+                    <MudText
+                        Class="opacity-50 position-absolute"
+                        Style="bottom: -18px; left: 30px"
+                        Typo="Typo.caption">
+                        First seen at: @device.FirstSeen.ToString("MM/dd/yyyy HH:mm")
+                    </MudText>
+                </MudStack>
+            }
         </MudStack>
-    </MudCardHeader>
-</MudCard>
+    </MudStack>
+</MudPaper>
 
 @code {
     [Parameter] public UserModel Model { get; set; } = new();
