@@ -19,15 +19,13 @@
                 OnSubscribe="@(async (value) => await OnSubscribeAsync(value))"
                 OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
                 OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
-            
+            <LinkedAccountsSection Model="Model"/>
+            <DevicesSection Model="Model"/>
             <PasswordSection
                 Model="Model"
                 OnAdd="@OnAddPasswordAsync"
                 OnChange="@OnChangePasswordAsync"
                 OnReset="@OnResetPasswordAsync"/>
-            
-            <LinkedAccountsSection Model="Model"/>
-            <DevicesSection Model="Model"/>
         </MudStack>
     </MudItem>
 </MudGrid>
