@@ -124,6 +124,7 @@ public sealed class UserManager(
         CancellationToken cancellationToken = default)
     {
         user.EmailConfirmed = true;
+        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
@@ -135,6 +136,7 @@ public sealed class UserManager(
         CancellationToken cancellationToken = default)
     {
         user.RecoveryEmailConfirmed = true;
+        user.RecoveryEmailConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
@@ -146,6 +148,7 @@ public sealed class UserManager(
         CancellationToken cancellationToken = default)
     {
         user.PhoneNumberConfirmed = true;
+        user.PhoneNumberConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
@@ -187,6 +190,7 @@ public sealed class UserManager(
 
         user.Email = newEmail;
         user.EmailConfirmed = true;
+        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
         user.EmailChangeDate = DateTimeOffset.UtcNow;
         user.NormalizedEmail = newEmail.ToUpper();
         user.UpdateDate = DateTimeOffset.UtcNow;
@@ -210,6 +214,7 @@ public sealed class UserManager(
 
         user.RecoveryEmail = newRecoveryEmail;
         user.RecoveryEmailConfirmed = true;
+        user.RecoveryEmailConfirmationDate = DateTimeOffset.UtcNow;
         user.NormalizedRecoveryEmail = newRecoveryEmail.ToUpper();
         user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
@@ -233,6 +238,7 @@ public sealed class UserManager(
 
         user.PhoneNumber = newPhoneNumber;
         user.PhoneNumberConfirmed = true;
+        user.PhoneNumberConfirmationDate = DateTimeOffset.UtcNow;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
@@ -279,6 +285,7 @@ public sealed class UserManager(
         user.RecoveryEmailConfirmed = false;
         user.NormalizedRecoveryEmail = null;
         user.RecoveryEmailChangeDate = null;
+        user.EmailConfirmationDate = null;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
@@ -300,6 +307,7 @@ public sealed class UserManager(
         user.Email = newEmail;
         user.NormalizedEmail = newEmail.ToUpperInvariant();
         user.EmailChangeDate = DateTimeOffset.UtcNow;
+        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.UserName = newEmail;
 
@@ -323,6 +331,7 @@ public sealed class UserManager(
         user.PhoneNumber = newPhoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
         user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
+        user.PhoneNumberConfirmationDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
@@ -345,6 +354,7 @@ public sealed class UserManager(
         user.NormalizedRecoveryEmail = newRecoveryEmail.ToUpper();
         user.RecoveryEmailConfirmed = true;
         user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
+        user.RecoveryEmailConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
@@ -358,6 +368,7 @@ public sealed class UserManager(
     {
         user.PhoneNumber = phoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
+        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
@@ -370,8 +381,8 @@ public sealed class UserManager(
     {
         user.RecoveryEmail = recoveryEmail;
         user.NormalizedRecoveryEmail = recoveryEmail.ToUpperInvariant();
-        user.RecoveryEmailChangeDate = null;
         user.UpdateDate = DateTimeOffset.UtcNow;
+        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
