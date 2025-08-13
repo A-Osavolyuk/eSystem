@@ -38,7 +38,7 @@ public static class HostApplicationBuilderExtensions
 
     private static void AddAzure(this IHostApplicationBuilder builder)
     {
-        builder.AddAzureBlobClient("blobs");
+        builder.AddAzureBlobServiceClient("blobs");
     }
 
     private static void AddDependencyInjection(this IHostApplicationBuilder builder)
