@@ -123,7 +123,7 @@ public class ResendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "PhoneNumber", user.PhoneNumber }
+                        { "PhoneNumber", user.PhoneNumber! }
                     },
                     Payload = new()
                     {
@@ -147,7 +147,7 @@ public class ResendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "PhoneNumber", user.PhoneNumber }
+                        { "PhoneNumber", user.PhoneNumber! }
                     },
                     Payload = new()
                     {

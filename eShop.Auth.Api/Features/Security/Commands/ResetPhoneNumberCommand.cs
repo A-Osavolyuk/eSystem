@@ -11,7 +11,7 @@ public class ResetPhoneNumberCommandHandler(
     IMessageService messageService,
     IdentityOptions identityOptions) : IRequestHandler<ResetPhoneNumberCommand, Result>
 {
-    public IdentityOptions IdentityOptions { get; } = identityOptions;
+    private readonly IdentityOptions identityOptions = identityOptions;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;

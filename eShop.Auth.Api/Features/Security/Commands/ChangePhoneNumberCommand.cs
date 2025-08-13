@@ -43,7 +43,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         {
             Credentials = new ()
             {
-                { "PhoneNumber", user.PhoneNumber },
+                { "PhoneNumber", user.PhoneNumber! },
             }, 
             Payload = new()
             {
