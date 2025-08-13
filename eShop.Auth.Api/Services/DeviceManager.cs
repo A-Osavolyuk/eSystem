@@ -24,6 +24,11 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
 
     public async ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
+        if (device.Device == "Other")
+        {
+            device.Device = "Desktop";
+        }
+        
         await context.UserDevices.AddAsync(device, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
