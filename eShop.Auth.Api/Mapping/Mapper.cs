@@ -50,20 +50,23 @@ public static class Mapper
         {
             Id = source.Id,
             Email = source.Email,
-            RecoveryEmail = source.RecoveryEmail,
-            PhoneNumber = source.PhoneNumber,
-            Username = source.UserName,
-            TwoFactorEnabled = source.Providers.Any(x => x.Subscribed),
             EmailChangeDate = source.EmailChangeDate,
-            RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
+            EmailConfirmationDate = source.EmailConfirmationDate,
+            PhoneNumber = source.PhoneNumber,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
+            PhoneNumberConfirmationDate = source.PhoneNumberConfirmationDate,
+            RecoveryEmail = source.RecoveryEmail,
+            RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
+            RecoveryEmailConfirmationDate = source.RecoveryEmailConfirmationDate,
+            Username = source.UserName,
             UserNameChangeDate = source.UserNameChangeDate,
+            HasPassword = !string.IsNullOrEmpty(source.PasswordHash),
             PasswordChangeDate = source.PasswordChangeDate,
+            TwoFactorEnabled = source.Providers.Any(x => x.Subscribed),
             Providers = source.Providers.Select(Map).ToList(),
+            HasLinkedAccounts = source.OAuthProviders.Count > 0,
             OAuthProviders = source.OAuthProviders.Select(Map).ToList(),
             Devices = source.Devices.Select(Map).ToList(),
-            HasLinkedAccounts = source.OAuthProviders.Any(),
-            HasPassword = !string.IsNullOrEmpty(source.PasswordHash)
         };
     }
 

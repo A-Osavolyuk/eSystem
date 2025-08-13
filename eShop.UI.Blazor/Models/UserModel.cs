@@ -7,15 +7,18 @@ public class UserModel
     public Guid Id { get; set; }
     public string Email { get; set; } = string.Empty;
     public DateTimeOffset? EmailChangeDate { get; set; }
-    
+    public DateTimeOffset? EmailConfirmationDate { get; set; }
+
     public string? RecoveryEmail { get; set; } = string.Empty;
     public DateTimeOffset? RecoveryEmailChangeDate { get; set; }
+    public DateTimeOffset? RecoveryEmailConfirmationDate { get; set; }
     
     public string UserName { get; set; } = string.Empty;
     public DateTimeOffset? UserNameChangeDate { get; set; }
     
     public string? PhoneNumber { get; set; } = string.Empty;
     public DateTimeOffset? PhoneNumberChangeDate { get; set; }
+    public DateTimeOffset? PhoneNumberConfirmationDate { get; set; }
     
     public bool? TwoFactorEnabled  { get; set; }
     public List<UserProviderDto> Providers { get; set; } = [];
