@@ -4,7 +4,7 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record RegisterCommand(RegistrationRequest Request) : IRequest<Result>;
+public sealed record RegisterCommand(RegistrationRequest Request, HttpContext Context) : IRequest<Result>;
 
 public sealed class RegisterCommandHandler(
     IPermissionManager permissionManager,
@@ -12,6 +12,7 @@ public sealed class RegisterCommandHandler(
     IMessageService messageService,
     ICodeManager codeManager,
     IRoleManager roleManager,
+    IDeviceManager deviceManager,
     IdentityOptions identityOptions) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
@@ -20,6 +21,7 @@ public sealed class RegisterCommandHandler(
     private readonly ICodeManager codeManager = codeManager;
     private readonly IRoleManager roleManager = roleManager;
     private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly IDeviceManager deviceManager = deviceManager;
 
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
@@ -81,6 +83,28 @@ public sealed class RegisterCommandHandler(
                 }
             }
         }
+        
+        var userAgent = RequestUtils.GetUserAgent(request.Context);
+        var ipAddress = RequestUtils.GetIpV4(request.Context);
+        var clientInfo = RequestUtils.GetClientInfo(request.Context);
+
+        var newDevice = new UserDeviceEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            UserAgent = userAgent,
+            IpAddress = ipAddress,
+            Browser = clientInfo.UA.ToString(),
+            OS = clientInfo.OS.ToString(),
+            Device = clientInfo.Device.ToString(),
+            IsTrusted = true,
+            IsBlocked = false,
+            FirstSeen = DateTimeOffset.UtcNow,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+
+        var deviceResult = await deviceManager.CreateAsync(newDevice, cancellationToken);
+        if (!deviceResult.Succeeded) return deviceResult;
 
         var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Verify, 
             CodeResource.Email, cancellationToken);

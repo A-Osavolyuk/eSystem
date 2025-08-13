@@ -34,7 +34,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ValidationFilter]
     public async ValueTask<IActionResult> RegisterAsync([FromBody] RegistrationRequest request)
     {
-        var result = await sender.Send(new RegisterCommand(request));
+        var result = await sender.Send(new RegisterCommand(request, HttpContext));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
