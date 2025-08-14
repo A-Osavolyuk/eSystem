@@ -8,4 +8,5 @@ public interface IDeviceService
     public ValueTask<Response> TrustAsync(TrustDeviceRequest request);
     public ValueTask<Response> BlockAsync(BlockDeviceRequest request);
     public ValueTask<Response> UnblockAsync(UnblockDeviceRequest request);
+    public ValueTask<Response> VerifyAsync(VerifyDeviceRequest request);
 }
