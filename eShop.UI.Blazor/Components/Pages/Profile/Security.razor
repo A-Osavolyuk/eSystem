@@ -20,7 +20,11 @@
                 OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
                 OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
             <LinkedAccountsSection Model="Model"/>
-            <DevicesSection Model="Model"/>
+            <DevicesSection 
+                Model="Model"
+                OnVerify="@(async (value) => await OnVerifyAsync(value))"
+                OnBlock="@(async (value) => await OnBlockAsync(value))"
+                OnUnblock="@(async (value) => await OnUnblockAsync(value))"/>
             <PasswordSection
                 Model="Model"
                 OnAdd="@OnAddPasswordAsync"
@@ -212,4 +216,13 @@
             StateHasChanged();
         }
     }
+    
+    private async Task OnVerifyAsync(Guid id) => await RouteManager.NavigateAsync(
+        $"/account/device/verify?device={id}&user={Model.Id}&email={Model.Email}");
+    
+    private async Task OnBlockAsync(Guid id) => await RouteManager.NavigateAsync(
+        $"/account/device/block?device={id}&user={Model.Id}&email={Model.Email}");
+    
+    private async Task OnUnblockAsync(Guid id) => await RouteManager.NavigateAsync(
+        $"/account/device/unblock?device={id}&user={Model.Id}&email={Model.Email}");
 }

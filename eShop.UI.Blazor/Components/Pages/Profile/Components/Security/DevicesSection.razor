@@ -71,7 +71,7 @@
                                 Icon="@Icons.Material.Outlined.LockOpen"
                                 Variant="Variant.Outlined"
                                 ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnUnblockAsync(device.Id))"/>
+                                OnClick="@(async () => await OnUnblock.InvokeAsync(device.Id))"/>
                         </MudTooltip>
                     }
                     else
@@ -82,7 +82,7 @@
                                 Icon="@Icons.Material.Outlined.Lock"
                                 Variant="Variant.Outlined"
                                 ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnBlockAsync(device.Id))"/>
+                                OnClick="@(async () => await OnBlock.InvokeAsync(device.Id))"/>
                         </MudTooltip>
                         
                         if (!device.IsTrusted)
@@ -93,7 +93,7 @@
                                     Icon="@Icons.Material.Filled.Check"
                                     Variant="Variant.Outlined"
                                     ButtonType="ButtonType.Button"
-                                    OnClick="@(async () => await OnVerifyAsync(device.Id))"/>
+                                    OnClick="@(async () => await OnVerify.InvokeAsync(device.Id))"/>
                             </MudTooltip>
                         }
                     }
@@ -111,13 +111,7 @@
 
 @code {
     [Parameter] public UserModel Model { get; set; } = new();
-
-    private async Task OnVerifyAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/verify?device={id}&user={Model.Id}&email={Model.Email}");
-    
-    private async Task OnBlockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/block?device={id}&user={Model.Id}&email={Model.Email}");
-    
-    private async Task OnUnblockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/unblock?device={id}&user={Model.Id}&email={Model.Email}");
+    [Parameter] public EventCallback<Guid> OnVerify { get; set; }
+    [Parameter] public EventCallback<Guid> OnBlock { get; set; }
+    [Parameter] public EventCallback<Guid> OnUnblock { get; set; }
 }
