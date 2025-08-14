@@ -35,5 +35,15 @@ public enum CodeType
     /// <summary>
     /// Represents an user device trust
     /// </summary>
-    Trust = 6
+    Trust = 6,
+    
+    /// <summary>
+    /// Represents an user device block
+    /// </summary>
+    Block = 7,
+    
+    /// <summary>
+    /// Represents an user device unblock
+    /// </summary>
+    Unblock = 8
 }
