@@ -74,7 +74,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Block device")]
     [EndpointDescription("Block device")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
+    [Authorize]
     [HttpPost("device/block")]
     [ValidationFilter]
     public async ValueTask<IActionResult> BlockDeviceAsync([FromBody] BlockDeviceRequest request)
@@ -89,7 +89,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Confirm device block")]
     [EndpointDescription("Confirm device block")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
+    [Authorize]
     [HttpPost("device/confirm-block")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ConfirmDeviceBlockAsync([FromBody] ConfirmBlockDeviceRequest request)
@@ -104,7 +104,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Unblock device")]
     [EndpointDescription("Unblock device")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
+    [Authorize]
     [HttpPost("device/unblock")]
     [ValidationFilter]
     public async ValueTask<IActionResult> UnblockDeviceAsync([FromBody] UnblockDeviceRequest request)
@@ -119,7 +119,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Confirm device unblock")]
     [EndpointDescription("Confirm device unblock")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
+    [Authorize]
     [HttpPost("device/confirm-unblock")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ConfirmDeviceUnblockAsync([FromBody] ConfirmUnblockDeviceRequest request)
@@ -134,7 +134,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Verify device")]
     [EndpointDescription("Verify device")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
+    [Authorize]
     [HttpPost("device/verify")]
     [ValidationFilter]
     public async ValueTask<IActionResult> VerifyDeviceAsync([FromBody] VerifyDeviceRequest request)
@@ -149,7 +149,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Confirm device verification")]
     [EndpointDescription("Confirm device verification")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
+    [Authorize]
     [HttpPost("device/confirm-verification")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ConfirmDeviceVerificationAsync([FromBody] ConfirmVerifyDeviceRequest request)
