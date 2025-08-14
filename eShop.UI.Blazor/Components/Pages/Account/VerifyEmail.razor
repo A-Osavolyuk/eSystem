@@ -5,10 +5,10 @@
 @inject ISecurityService SecurityService
 @inject VerifyEmailValidator Validator
 
-<Title Text="Verify email"></Title>
+<Title Text="Email verification"></Title>
 
 <MudGrid Justify="Justify.Center" Spacing="1">
-    <MudItem xs="12" sm="10" md="8" lg="6" xl="4" Style="margin-top: 100px">
+    <MudItem xs="4" Style="margin-top: 100px">
         <MudStack Spacing="1" Justify="Justify.Center">
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center" Typo="Typo.h4">
@@ -20,42 +20,28 @@
                     @ref="form"
                     Model="Model"
                     Validation="Validator.ValidateValue">
-                    <MudGrid Spacing="2" Justify="Justify.Center">
-                        <MudItem xs="12">
-                            <MudText Typo="Typo.h6" Align="Align.Center">
-                                Please, check your email
-                            </MudText>
-                        </MudItem>
+                    <MudStack Spacing="2" Justify="Justify.Center">
+                        <MudText Align="Align.Center">
+                            We have sent an email with code to email: <strong>@Email</strong>
+                        </MudText>
 
-                        <MudItem xs="12" Style="display: flex; justify-content: center">
-                            <MudText
-                                Align="Align.Center">
-                                We have sent code to email: <strong>@Email</strong>
-                            </MudText>
-                        </MudItem>
-
-                        <MudItem xs="12" sm="8" Class="d-flex flex-column gap-8 align-center justify-center">
-                            <MudCodeInput
-                                Variant="Variant.Outlined"
-                                Spacing="2"
-                                Margin="Margin.None"
-                                Count="6"
-                                @bind-Value="Model.Code"/>
-                        </MudItem>
-
-                        <MudItem xs="8">
-                            <MudLoadingButton
-                                ButtonType="ButtonType.Button"
-                                Variant="Variant.Filled"
-                                Color="Color.Primary"
-                                Class="mt-3"
-                                FullWidth
-                                Disabled="@(Model.Code.Length <= 5)"
-                                OnClick="@(async () => await OnVerifyEmailAsync())">
-                                Verify
-                            </MudLoadingButton>
-                        </MudItem>
-                    </MudGrid>
+                        <MudCodeInput
+                            Class="d-flex align-items-center"
+                            Variant="Variant.Outlined"
+                            Spacing="1"
+                            Margin="Margin.None"
+                            Count="6"
+                            @bind-Value="Model.Code"/>
+                        <MudLoadingButton
+                            ButtonType="ButtonType.Button"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            FullWidth
+                            Disabled="@(Model.Code.Length <= 5)"
+                            OnClick="@(async () => await OnVerifyEmailAsync())">
+                            Verify
+                        </MudLoadingButton>
+                    </MudStack>
                 </MudForm>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
