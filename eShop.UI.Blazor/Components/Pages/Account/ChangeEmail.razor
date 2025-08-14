@@ -310,7 +310,7 @@
     
     private async Task ResendCurrentEmailCodeAsync()
     {
-        var request = new ResendCodeRequest()
+        var request = new SendCodeRequest()
         {
             UserId = userId,
             CodeResource = CodeResource.Email,
@@ -318,7 +318,7 @@
             Sender = SenderType.Email
         };
 
-        var response = await SecurityService.ResendCodeAsync(request);
+        var response = await SecurityService.SendCodeAsync(request);
 
         if (response.Success)
         {
@@ -332,7 +332,7 @@
 
     private async Task ResendNewEmailCodeAsync()
     {
-        var request = new ResendCodeRequest()
+        var request = new SendCodeRequest()
         {
             UserId = userId,
             CodeResource = CodeResource.Email,
@@ -340,7 +340,7 @@
             Sender = SenderType.Email
         };
 
-        var response = await SecurityService.ResendCodeAsync(request);
+        var response = await SecurityService.SendCodeAsync(request);
 
         if (response.Success)
         {

@@ -231,7 +231,7 @@
 
     private async Task ResendCurrentPhoneNumberCodeAsync()
     {
-        var request = new ResendCodeRequest()
+        var request = new SendCodeRequest()
         {
             UserId = userId,
             CodeResource = CodeResource.PhoneNumber,
@@ -239,7 +239,7 @@
             Sender = SenderType.Sms
         };
 
-        var response = await SecurityService.ResendCodeAsync(request);
+        var response = await SecurityService.SendCodeAsync(request);
 
         if (response.Success)
         {
@@ -253,7 +253,7 @@
 
     private async Task ResendNewPhoneNumberCodeAsync()
     {
-        var request = new ResendCodeRequest()
+        var request = new SendCodeRequest()
         {
             UserId = userId,
             CodeResource = CodeResource.PhoneNumber,
@@ -261,7 +261,7 @@
             Sender = SenderType.Sms
         };
 
-        var response = await SecurityService.ResendCodeAsync(request);
+        var response = await SecurityService.SendCodeAsync(request);
 
         if (response.Success)
         {

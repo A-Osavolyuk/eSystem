@@ -416,15 +416,15 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Resend code")]
-    [EndpointDescription("Resends code")]
+    [EndpointSummary("Send code")]
+    [EndpointDescription("Sends code")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("code/resend")]
-    public async ValueTask<IActionResult> ResendCodeAsync(
-        [FromBody] ResendCodeRequest request)
+    [HttpPost("code/send")]
+    public async ValueTask<IActionResult> SendCodeAsync(
+        [FromBody] SendCodeRequest request)
     {
-        var result = await sender.Send(new ResendCodeCommand(request));
+        var result = await sender.Send(new SendCodeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

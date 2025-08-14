@@ -162,7 +162,7 @@
 
     private async Task ResendCodeAsync()
     {
-        var request = new ResendCodeRequest()
+        var request = new SendCodeRequest()
         {
             UserId = userId,
             CodeResource = CodeResource.Email,
@@ -170,7 +170,7 @@
             Sender = SenderType.Sms
         };
 
-        var response = await SecurityService.ResendCodeAsync(request);
+        var response = await SecurityService.SendCodeAsync(request);
 
         if (response.Success)
         {

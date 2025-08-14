@@ -4,18 +4,18 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public record ResendCodeCommand(ResendCodeRequest Request) : IRequest<Result>;
+public record SendCodeCommand(SendCodeRequest Request) : IRequest<Result>;
 
-public class ResendCodeCommandHandler(
+public class SendCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<ResendCodeCommand, Result>
+    IMessageService messageService) : IRequestHandler<SendCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
 
-    public async Task<Result> Handle(ResendCodeCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SendCodeCommand request, CancellationToken cancellationToken)
     {
         var sender = request.Request.Sender;
         var codeType = request.Request.CodeType;
@@ -39,7 +39,7 @@ public class ResendCodeCommandHandler(
                     Credentials = new()
                     {
                         { "To", user.Email },
-                        { "Subject", "Email verification" },
+                        { "Subject", "Account registered" },
                     },
                     Payload = new()
                     {
