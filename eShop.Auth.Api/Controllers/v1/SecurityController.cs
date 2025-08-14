@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests;
+﻿using eShop.Auth.Api.Features.Devices.Commands;
+using eShop.Domain.Requests;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;

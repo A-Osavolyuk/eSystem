@@ -1,17 +1,17 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.Devices.Commands;
 
-public record UnblockDeviceCommand(UnblockDeviceRequest Request) : IRequest<Result>;
+public record BlockDeviceCommand(BlockDeviceRequest Request) : IRequest<Result>;
 
-public class UnblockDeviceCommandHandler(
+public class BlockDeviceCommandHandler(
     IUserManager userManager,
-    IDeviceManager deviceManager) : IRequestHandler<UnblockDeviceCommand, Result>
+    IDeviceManager deviceManager) : IRequestHandler<BlockDeviceCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IDeviceManager deviceManager = deviceManager;
 
-    public async Task<Result> Handle(UnblockDeviceCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(BlockDeviceCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
@@ -27,7 +27,7 @@ public class UnblockDeviceCommandHandler(
             return Results.NotFound($"Cannot find device with ID {request.Request.DeviceId}.");
         }
         
-        var result = await deviceManager.UnblockAsync(device, cancellationToken);
+        var result = await deviceManager.BlockAsync(device, cancellationToken);
         return result;
     }
 }
