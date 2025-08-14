@@ -79,20 +79,19 @@
                                         <MudForm
                                             @ref="form"
                                             Model="VerifyProviderModel">
-                                            <MudGrid Justify="Justify.Center">
-                                                <MudItem xs="12">
+                                            <MudStack Spacing="2">
                                                     <MudText Align="Align.Center">
                                                         Enter 6-digit code from @Provider
                                                     </MudText>
-                                                </MudItem>
-                                                <MudItem xs="7">
+                                                
                                                     <MudCodeInput
                                                         Count="6"
-                                                        Margin="Margin.Normal" Spacing="1"
+                                                        Margin="Margin.Normal" 
+                                                        Spacing="2"
+                                                        Class="d-flex align-items-center"
                                                         @bind-Value="VerifyProviderModel.Code"
                                                         Variant="Variant.Outlined"/>
-                                                </MudItem>
-                                                <MudItem xs="12">
+                                                    
                                                     <MudLoadingButton
                                                         FullWidth="true"
                                                         Variant="Variant.Filled"
@@ -101,8 +100,7 @@
                                                         OnClick="@(async () => await OnVerifyCodeAsync())">
                                                         Verify
                                                     </MudLoadingButton>
-                                                </MudItem>
-                                            </MudGrid>
+                                            </MudStack>
                                         </MudForm>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">

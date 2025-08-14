@@ -82,31 +82,29 @@
                                             @ref="confirmResetEmailForm"
                                             Model="ConfirmResetEmailModel"
                                             Validation="ConfirmChangeEmailValidator.ValidateValue">
-                                            <MudGrid Justify="Justify.Center">
-                                                <MudItem xs="12">
-                                                    <MudText Class="mb-2" Align="Align.Center">
-                                                        Enter code from the letter we sent you
-                                                        to: <strong>@ResetEmailModel.NewEmail</strong>
-                                                    </MudText>
-                                                </MudItem>
-                                                <MudItem xs="7">
-                                                    <MudCodeInput
-                                                        Count="6"
-                                                        Margin="Margin.Normal" Spacing="1"
-                                                        @bind-Value="ConfirmResetEmailModel.Code"
-                                                        Variant="Variant.Outlined"/>
-                                                </MudItem>
-                                                <MudItem xs="12">
-                                                    <MudLoadingButton
-                                                        FullWidth="true"
-                                                        Variant="Variant.Filled"
-                                                        Color="Color.Primary"
-                                                        ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await OnConfirmResetEmailAsync())">
-                                                        Verify
-                                                    </MudLoadingButton>
-                                                </MudItem>
-                                            </MudGrid>
+                                            <MudStack Spacing="2">
+                                                <MudText Class="mb-2" Align="Align.Center">
+                                                    Enter code from the letter we sent you
+                                                    to: <strong>@ResetEmailModel.NewEmail</strong>
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="ConfirmResetEmailModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await OnConfirmResetEmailAsync())">
+                                                    Verify
+                                                </MudLoadingButton>
+                                            </MudStack>
                                         </MudForm>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">

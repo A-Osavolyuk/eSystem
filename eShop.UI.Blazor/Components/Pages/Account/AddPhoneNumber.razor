@@ -83,35 +83,31 @@
                                             @ref="verifyCodeForm"
                                             Model="ConfirmForgotPasswordModel"
                                             Validation="VerifyCodeValidator.ValidateValue">
-                                            <MudGrid Spacing="1" Justify="Justify.Center">
-                                                <MudItem xs="12">
-                                                    <MudText Align="Align.Center" Typo="Typo.body1"
-                                                             Style="width: 55ch; margin: auto">
-                                                        To verify your phone number, please enter the 6-digit code from
-                                                        the SMS we sent you to:
-                                                        <strong>@AddPhoneNumberModel.PhoneNumber</strong>
-                                                    </MudText>
-                                                </MudItem>
-                                                <MudItem xs="7">
-                                                    <MudCodeInput Count="6"
-                                                                  Margin="Margin.Normal"
-                                                                  Spacing="1"
+                                            <MudStack Spacing="1">
+                                                <MudText Align="Align.Center" Typo="Typo.body1"
+                                                         Style="width: 55ch; margin: auto">
+                                                    To verify your phone number, please enter the 6-digit code from
+                                                    the SMS we sent you to:
+                                                    <strong>@AddPhoneNumberModel.PhoneNumber</strong>
+                                                </MudText>
+                                                
+                                                <MudCodeInput Count="6"
+                                                              Margin="Margin.Normal"
+                                                              Spacing="2"
+                                                              Class="d-flex align-items-center"
+                                                              @bind-Value="ConfirmForgotPasswordModel.Code"
+                                                              Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton Size="Size.Large" FullWidth
+                                                                  Variant="Variant.Filled"
                                                                   Class="mt-2"
-                                                                  @bind-Value="ConfirmForgotPasswordModel.Code"
-                                                                  Variant="Variant.Outlined"/>
-                                                </MudItem>
-                                                <MudItem xs="12">
-                                                    <MudLoadingButton Size="Size.Large" FullWidth
-                                                                      Variant="Variant.Filled"
-                                                                      Class="mt-2"
-                                                                      Color="Color.Primary"
-                                                                      Disabled="@(ConfirmForgotPasswordModel.Code.Length <= 5)"
-                                                                      ButtonType="ButtonType.Button"
-                                                                      OnClick="@(async () => await OnVerifyCodeAsync())">
-                                                        Confirm
-                                                    </MudLoadingButton>
-                                                </MudItem>
-                                            </MudGrid>
+                                                                  Color="Color.Primary"
+                                                                  Disabled="@(ConfirmForgotPasswordModel.Code.Length <= 5)"
+                                                                  ButtonType="ButtonType.Button"
+                                                                  OnClick="@(async () => await OnVerifyCodeAsync())">
+                                                    Confirm
+                                                </MudLoadingButton>
+                                            </MudStack>
                                         </MudForm>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
