@@ -114,13 +114,26 @@
                 <MudSpacer/>
                 @if (!string.IsNullOrEmpty(Model.PhoneNumber))
                 {
-                    <MudTooltip Text="Change phone number">
-                        <MudIconButton
-                            Icon="@Icons.Material.Filled.Edit"
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/change"))"/>
-                    </MudTooltip>
+                    if (Model.PhoneNumberConfirmed)
+                    {
+                        <MudTooltip Text="Change phone number">
+                            <MudIconButton
+                                Icon="@Icons.Material.Filled.Edit"
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/change"))"/>
+                        </MudTooltip>
+                    }
+                    else
+                    {
+                        <MudTooltip Text="Verify phone number">
+                            <MudIconButton
+                                Icon="@Icons.Material.Filled.Check"
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                OnClick="@(async () => await RouteManager.NavigateAsync("/account/phone-number/verify"))"/>
+                        </MudTooltip>
+                    }
                 }
                 else
                 {
