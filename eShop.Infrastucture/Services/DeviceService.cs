@@ -17,4 +17,8 @@ public class DeviceService(
     public async ValueTask<Response> BlockAsync(BlockDeviceRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/block", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<Response> UnblockAsync(UnblockDeviceRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/unblock", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
 }
