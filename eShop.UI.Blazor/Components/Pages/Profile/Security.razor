@@ -6,6 +6,7 @@
 @inject IUsersService UsersService
 @inject IDialogService DialogService
 @inject ITwoFactorService TwoFactorService
+@inject IDeviceService DeviceService
 
 @attribute [Authorize]
 
@@ -20,7 +21,11 @@
                 OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
                 OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
             <LinkedAccountsSection Model="Model"/>
-            <DevicesSection Model="Model"/>
+            <DevicesSection 
+                Model="Model"
+                OnTrust="@(async (value) => await OnTrustAsync(value))"
+                OnBlock="@(async (value) => await OnBlockAsync(value))"
+                OnUnblock="@(async (value) => await OnUnblockAsync(value))"/>
             <PasswordSection
                 Model="Model"
                 OnAdd="@OnAddPasswordAsync"
@@ -213,4 +218,66 @@
         }
     }
 
+    private async Task OnTrustAsync(Guid id)
+    {
+        var request = new VerifyDeviceRequest()
+        {
+            UserId = Model.Id,
+            DeviceId = id
+        };
+
+        var result = await DeviceService.VerifyAsync(request);
+
+        if (result.Success)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task OnBlockAsync(Guid id)
+    {
+        var request = new BlockDeviceRequest()
+        {
+            UserId = Model.Id,
+            DeviceId = id
+        };
+
+        var result = await DeviceService.BlockAsync(request);
+
+        if (result.Success)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task OnUnblockAsync(Guid id)
+    {
+        var request = new UnblockDeviceRequest()
+        {
+            UserId = Model.Id,
+            DeviceId = id
+        };
+
+        var result = await DeviceService.UnblockAsync(request);
+
+        if (result.Success)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
 }

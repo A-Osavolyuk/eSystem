@@ -67,7 +67,8 @@
                                 Color="Color.Success"
                                 Icon="@Icons.Material.Outlined.LockOpen"
                                 Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"/>
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnUnblock.InvokeAsync(device.Id))"/>
                         </MudTooltip>
                     }
                     else
@@ -77,7 +78,8 @@
                                 Color="Color.Error"
                                 Icon="@Icons.Material.Outlined.Lock"
                                 Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"/>
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnBlock.InvokeAsync(device.Id))"/>
                         </MudTooltip>
                         
                         if (!device.IsTrusted)
@@ -87,7 +89,8 @@
                                     Color="Color.Success"
                                     Icon="@Icons.Material.Filled.Check"
                                     Variant="Variant.Outlined"
-                                    ButtonType="ButtonType.Button"/>
+                                    ButtonType="ButtonType.Button"
+                                    OnClick="@(async () => await OnTrust.InvokeAsync(device.Id))"/>
                             </MudTooltip>
                         }
                     }
@@ -105,4 +108,7 @@
 
 @code {
     [Parameter] public UserModel Model { get; set; } = new();
+    [Parameter] public EventCallback<Guid> OnTrust { get; set; }
+    [Parameter] public EventCallback<Guid> OnBlock { get; set; }
+    [Parameter] public EventCallback<Guid> OnUnblock { get; set; }
 }
