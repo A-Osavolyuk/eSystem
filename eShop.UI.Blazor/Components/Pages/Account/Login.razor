@@ -102,7 +102,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account?
-                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/register"))">
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/register"))">
                         Register
                     </MudLink>
                 </MudText>
@@ -110,7 +110,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Forget your password?
-                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/password/reset"))">
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/password/reset"))">
                         Reset password
                     </MudLink>
                 </MudText>
