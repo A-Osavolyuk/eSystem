@@ -78,7 +78,7 @@ public class RouteManager(
         if (!string.IsNullOrEmpty(returnUrl))
         {
             var encodedUrl = HttpUtility.UrlEncode(returnUrl);
-            url.Append("?returnUrl=").Append(encodedUrl);
+            url.Append("&returnUrl=").Append(encodedUrl);
         }
         
         navigationManager.NavigateTo(url.ToString(), forceLoad);
