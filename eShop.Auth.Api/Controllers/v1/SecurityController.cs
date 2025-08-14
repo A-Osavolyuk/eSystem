@@ -85,6 +85,21 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Unblock device")]
+    [EndpointDescription("Unblock device")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("device/unblock")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> UnblockDeviceAsync([FromBody] UnblockDeviceRequest request)
+    {
+        var result = await sender.Send(new UnblockDeviceCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Unlock account")]
     [EndpointDescription("Unlock account")]
     [ProducesResponseType(200)]
