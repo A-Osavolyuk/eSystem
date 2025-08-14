@@ -107,7 +107,7 @@
     </MudPaper>
     <MudPaper Outlined="true" Class="pt-3 pl-5 pr-5 pb-2">
         <MudStack Spacing="0">
-            <MudStack Row="true">
+            <MudStack Row="true" Spacing="1">
                 <MudText Typo="Typo.h6">
                     Phone number
                 </MudText>
@@ -116,6 +116,13 @@
                 {
                     if (Model.PhoneNumberConfirmed)
                     {
+                        <MudTooltip Text="Remove phone number">
+                            <MudIconButton
+                                Icon="@Icons.Material.Filled.Delete"
+                                Color="Color.Error"
+                                Variant="Variant.Filled"
+                                OnClick="@(async () => await OnRemove.InvokeAsync())"/>
+                        </MudTooltip>
                         <MudTooltip Text="Change phone number">
                             <MudIconButton
                                 Icon="@Icons.Material.Filled.Edit"
@@ -207,4 +214,5 @@
 @code {
     [Parameter] public UserModel Model { get; set; } = new();
     [Parameter] public EventCallback OnChange { get; set; }
+    [Parameter] public EventCallback OnRemove { get; set; }
 }

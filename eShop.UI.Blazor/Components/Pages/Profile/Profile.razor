@@ -37,12 +37,13 @@
                 <MudGrid Spacing="2">
                     <MudItem xs="12">
                         <AccountDataSection
-                            Model="UserModel"
-                            OnChange="@OnUserNameChangeAsync"/>
+                            Model="Model"
+                            OnChange="@OnUsernameChangeAsync"
+                            OnRemove="@OnRemovePhoneNumberAsync"/>
                     </MudItem>
                     <MudItem xs="12">
                         <PersonalDataSection
-                            Model="UserModel"
+                            Model="Model"
                             OnAdd="@OnAddPersonalDataAsync"
                             OnChange="@OnChangePersonalDataAsync"/>
                     </MudItem>
@@ -53,7 +54,7 @@
 </MudGrid>
 
 @code {
-    private UserModel UserModel { get; set; } = new();
+    private UserModel Model { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -73,7 +74,7 @@
         {
             var response = result.Get<UserDto>()!;
             var model = Mapper.Map(response);
-            UserModel = model;
+            Model = model;
         }
         else
         {
@@ -81,7 +82,7 @@
         }
     }
 
-    private async Task OnUserNameChangeAsync()
+    private async Task OnUsernameChangeAsync()
     {
         var options = new DialogOptions()
         {
@@ -92,8 +93,8 @@
 
         var model = new ChangeUsernameModel()
         {
-            Id = UserModel.Id,
-            Username = UserModel.UserName,
+            Id = Model.Id,
+            Username = Model.UserName,
         };
 
         var parameters = new DialogParameters<ChangeUsernameDialog>()
@@ -102,6 +103,31 @@
         };
 
         var dialog = await DialogService.ShowAsync<ChangeUsernameDialog>("Change username", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+            await UserState.Change();
+        }
+    }
+    
+    private async Task OnRemovePhoneNumberAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var parameters = new DialogParameters<RemovePhoneNumberDialog>()
+        {
+            { x => x.UserId, Model.Id }
+        };
+
+        var dialog = await DialogService.ShowAsync<RemovePhoneNumberDialog>("Remove phone number", parameters, options);
         var result = await dialog.Result;
 
         if (!result!.Canceled)
@@ -121,7 +147,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = Mapper.Map(UserModel);
+        var model = Mapper.Map(Model);
 
         var parameters = new DialogParameters<ChangePersonalDataDialog>()
         {
@@ -147,7 +173,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPersonalDataModel() { Id = UserModel.Id };
+        var model = new AddPersonalDataModel() { Id = Model.Id };
 
         var parameters = new DialogParameters<AddPersonalDataDialog>()
         {
