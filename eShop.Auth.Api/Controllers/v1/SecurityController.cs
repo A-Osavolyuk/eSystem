@@ -116,6 +116,21 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Confirm device unblock")]
+    [EndpointDescription("Confirm device unblock")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("device/confirm-unblock")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> ConfirmDeviceUnblockAsync([FromBody] ConfirmUnblockDeviceRequest request)
+    {
+        var result = await sender.Send(new ConfirmUnblockDeviceCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Verify device")]
     [EndpointDescription("Verify device")]
     [ProducesResponseType(200)]
