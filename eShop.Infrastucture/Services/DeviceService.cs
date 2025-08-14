@@ -13,4 +13,8 @@ public class DeviceService(
     public async ValueTask<Response> TrustAsync(TrustDeviceRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/trust", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
+
+    public async ValueTask<Response> BlockAsync(BlockDeviceRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/block", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
 }
