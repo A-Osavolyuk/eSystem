@@ -118,7 +118,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Verify, Sender: SenderType.Email } =>
+            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Verify, Sender: SenderType.Sms } =>
                 new VerifyPhoneNumberMessage()
                 {
                     Credentials = new()
@@ -130,7 +130,7 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.New, Sender: SenderType.Email } =>
+            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.New, Sender: SenderType.Sms } =>
                 new VerifyPhoneNumberMessage()
                 {
                     Credentials = new()
@@ -142,7 +142,7 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Current, Sender: SenderType.Email } =>
+            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Current, Sender: SenderType.Sms } =>
                 new ChangePhoneNumberMessage()
                 {
                     Credentials = new()
@@ -154,7 +154,7 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
+            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Reset, Sender: SenderType.Sms } =>
                 new ResetPhoneNumberMessage()
                 {
                     Credentials = new()
