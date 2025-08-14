@@ -45,7 +45,7 @@
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">Didn't received a SMS?
-                    <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
+                    <strong @onclick="async () => await SendCodeAsync()" class="cursor-pointer">Resend</strong>
                 </MudText>
             </MudPaper>
         </MudStack>
@@ -64,6 +64,8 @@
         if (firstRender)
         {
             userId = await LocalStorage.GetAsync<Guid>("userId");
+
+            await SendCodeAsync();
         }
     }
 
@@ -91,7 +93,7 @@
         }
     }
 
-    private async Task ResendCodeAsync()
+    private async Task SendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
