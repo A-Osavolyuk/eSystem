@@ -1,0 +1,120 @@
+﻿@page "/account/phone-number/verify"
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject ISecurityService SecurityService
+
+<Title Text="Phone number verification"></Title>
+
+<MudGrid Justify="Justify.Center" Spacing="1">
+    <MudItem xs="4" Style="margin-top: 100px">
+        <MudStack Spacing="1" Justify="Justify.Center">
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4">
+                    Phone number verification
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudForm
+                    @ref="form"
+                    Model="Model">
+                    <MudStack Spacing="2" Justify="Justify.Center">
+                        <MudText Align="Align.Center">
+                            We have sent a SMS with code to phone number: <strong>@PhoneNumber</strong>
+                        </MudText>
+                        <MudCodeInput
+                            Class="d-flex align-items-center"
+                            Variant="Variant.Outlined"
+                            Spacing="1"
+                            Margin="Margin.None"
+                            Count="6"
+                            @bind-Value="Model.Code"/>
+                        <MudLoadingButton
+                            ButtonType="ButtonType.Button"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            FullWidth
+                            Disabled="@(Model.Code.Length <= 5)"
+                            OnClick="@(async () => await OnVerificationAsync())">
+                            Verify
+                        </MudLoadingButton>
+                    </MudStack>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center">Didn't received a SMS?
+                    <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
+                </MudText>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromQuery] private string PhoneNumber { get; set; } = string.Empty;
+    [SupplyParameterFromForm] private VerifyPhoneNumberModel Model { get; set; } = new();
+
+    private MudForm form = new();
+    private Guid userId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userId = await LocalStorage.GetAsync<Guid>("userId");
+        }
+    }
+
+    private async Task OnVerificationAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new VerifyPhoneNumberRequest()
+            {
+                UserId = userId,
+                Code = Model.Code
+            };
+
+            var result = await SecurityService.VerifyPhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+                await RouteManager.NavigateAsync("/account/profile");
+            }
+            else
+                Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task ResendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            CodeResource = CodeResource.PhoneNumber,
+            CodeType = CodeType.Verify,
+            Sender = SenderType.Sms
+        };
+
+        var response = await SecurityService.SendCodeAsync(request);
+
+        if (response.Success)
+        {
+            Snackbar.Add(response.Message, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(response.Message, Severity.Error);
+        }
+    }
+
+}
+
+@code {
+    
+}
