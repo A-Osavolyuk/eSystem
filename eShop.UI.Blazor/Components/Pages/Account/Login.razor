@@ -4,7 +4,6 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
-@inject AuthenticationManager AuthenticationManager
 @inject LoginValidator Validator
 @inject IConfiguration Configuration
 
@@ -102,15 +101,15 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account?
-                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/register"))">
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/register"))">
                         Register
                     </MudLink>
                 </MudText>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
-                    Forget your password?
-                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/password/reset"))">
+                    Forgot your password?
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/password/reset"))">
                         Reset password
                     </MudLink>
                 </MudText>
