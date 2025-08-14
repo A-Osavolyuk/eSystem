@@ -46,17 +46,6 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> DistrustAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
-    {
-        device.IsTrusted = false;
-        device.UpdateDate = DateTimeOffset.UtcNow;
-        
-        context.UserDevices.Update(device);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
     public async ValueTask<Result> BlockAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
         device.IsBlocked = true;
