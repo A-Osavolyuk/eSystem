@@ -100,6 +100,21 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Verify device")]
+    [EndpointDescription("Verify device")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("device/verify")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> VerifyDeviceAsync([FromBody] VerifyDeviceRequest request)
+    {
+        var result = await sender.Send(new VerifyDeviceCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Unlock account")]
     [EndpointDescription("Unlock account")]
     [ProducesResponseType(200)]
