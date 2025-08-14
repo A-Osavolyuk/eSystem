@@ -11,30 +11,30 @@ public class DeviceService(
     IApiClient apiClient) : ApiService(configuration, apiClient), IDeviceService
 {
     public async ValueTask<Response> TrustAsync(TrustDeviceRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/trust", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Device/trust", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> BlockAsync(BlockDeviceRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/block", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Device/block", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> UnblockAsync(UnblockDeviceRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/unblock", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Device/unblock", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> VerifyAsync(VerifyDeviceRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/verify", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Device/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> ConfirmVerifyAsync(ConfirmVerifyDeviceRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/confirm-verification", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Device/confirm-verification", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> ConfirmBlockAsync(ConfirmBlockDeviceRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/confirm-block", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Device/confirm-block", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> ConfirmUnblockAsync(ConfirmUnblockDeviceRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/device/confirm-unblock", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Device/confirm-unblock", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 }
