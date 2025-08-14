@@ -13,6 +13,8 @@ public interface ISecurityService
     public ValueTask<Response> ResetEmailAsync(ResetEmailRequest request);
     public ValueTask<Response> ConfirmResetEmailAsync(ConfirmResetEmailRequest request);
     public ValueTask<Response> ResetPhoneNumberAsync(ResetPhoneNumberRequest request);
+    public ValueTask<Response> RemovePhoneNumberAsync(RemovePhoneNumberRequest request);
+    public ValueTask<Response> RemoveRecoveryEmailAsync(RemoveRecoveryEmailRequest request);
     public ValueTask<Response> ConfirmResetPhoneNumberAsync(ConfirmResetPhoneNumberRequest request);
     public ValueTask<Response> AddPhoneNumberAsync(AddPhoneNumberRequest request);
     public ValueTask<Response> AddRecoveryEmailAsync(AddRecoveryEmailRequest request);
