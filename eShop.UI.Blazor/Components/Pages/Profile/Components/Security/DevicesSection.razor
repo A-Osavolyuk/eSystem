@@ -26,26 +26,6 @@
                         }
                         @($"{device.Device}, {device.OS} ({device.Browser}, IP: {device.IpAddress})")
                     </MudText>
-                    @if (device.IsTrusted)
-                    {
-                        <MudChip
-                            T="string"
-                            Size="Size.Small"
-                            Variant="Variant.Outlined"
-                            Color="Color.Success">
-                            Trusted
-                        </MudChip>
-                    }
-                    else
-                    {
-                        <MudChip
-                            T="string"
-                            Size="Size.Small"
-                            Variant="Variant.Outlined"
-                            Color="Color.Warning">
-                            Untrusted
-                        </MudChip>
-                    }
                     @if (device.IsBlocked)
                     {
                         <MudChip
@@ -56,9 +36,64 @@
                             Blocked
                         </MudChip>
                     }
+                    else
+                    {
+                        if (device.IsTrusted)
+                        {
+                            <MudChip
+                                T="string"
+                                Size="Size.Small"
+                                Variant="Variant.Outlined"
+                                Color="Color.Success">
+                                Trusted
+                            </MudChip>
+                        }
+                        else
+                        {
+                            <MudChip
+                                T="string"
+                                Size="Size.Small"
+                                Variant="Variant.Outlined"
+                                Color="Color.Warning">
+                                Untrusted
+                            </MudChip>
+                        }
+                    }
+                    <MudSpacer />
+                    @if (device.IsBlocked)
+                    {
+                        <MudTooltip Text="Unblock device">
+                            <MudIconButton
+                                Color="Color.Success"
+                                Icon="@Icons.Material.Outlined.LockOpen"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button"/>
+                        </MudTooltip>
+                    }
+                    else
+                    {
+                        <MudTooltip Text="Block device">
+                            <MudIconButton
+                                Color="Color.Error"
+                                Icon="@Icons.Material.Outlined.Lock"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button"/>
+                        </MudTooltip>
+                        
+                        if (!device.IsTrusted)
+                        {
+                            <MudTooltip Text="Trust device">
+                                <MudIconButton
+                                    Color="Color.Success"
+                                    Icon="@Icons.Material.Filled.Check"
+                                    Variant="Variant.Outlined"
+                                    ButtonType="ButtonType.Button"/>
+                            </MudTooltip>
+                        }
+                    }
                     <MudText
                         Class="opacity-50 position-absolute"
-                        Style="bottom: -18px; left: 30px"
+                        Style="bottom: -13px; left: 30px"
                         Typo="Typo.caption">
                         First seen at: @device.FirstSeen.ToString("MM/dd/yyyy HH:mm")
                     </MudText>
