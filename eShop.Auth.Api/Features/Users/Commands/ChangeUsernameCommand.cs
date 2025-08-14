@@ -2,16 +2,16 @@
 
 namespace eShop.Auth.Api.Features.Users.Commands;
 
-public record ChangeUserNameCommand(ChangeUserNameRequest Request) : IRequest<Result>;
+public record ChangeUsernameCommand(ChangeUsernameRequest Request) : IRequest<Result>;
 
-public class ChangeUserNameCommandHandler(
+public class ChangeUsernameCommandHandler(
     IUserManager userManager,
-    IdentityOptions identityOptions) : IRequestHandler<ChangeUserNameCommand, Result>
+    IdentityOptions identityOptions) : IRequestHandler<ChangeUsernameCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
-    public async Task<Result> Handle(ChangeUserNameCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(ChangeUsernameCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
@@ -19,10 +19,15 @@ public class ChangeUserNameCommandHandler(
         {
             return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         }
+
+        if (user.UserName == request.Request.Username)
+        {
+            return Results.BadRequest("New username must be different than the current username");
+        }
         
         if (identityOptions.Account.RequireUniqueUserName)
         {
-            var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.Username, cancellationToken);
+            var isUserNameTaken = await userManager.IsUsernameTakenAsync(request.Request.Username, cancellationToken);
         
             if (isUserNameTaken)
             {
@@ -30,7 +35,7 @@ public class ChangeUserNameCommandHandler(
             }
         }
         
-        var result = await userManager.ChangeNameAsync(user, request.Request.Username, cancellationToken);
+        var result = await userManager.ChangeUsernameAsync(user, request.Request.Username, cancellationToken);
         
         return result;
     }

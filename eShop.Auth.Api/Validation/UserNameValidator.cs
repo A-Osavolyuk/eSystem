@@ -2,7 +2,7 @@
 
 namespace eShop.Auth.Api.Validation;
 
-public class UserNameValidator : Validator<ChangeUserNameRequest>
+public class UserNameValidator : Validator<ChangeUsernameRequest>
 {
     public UserNameValidator()
     {

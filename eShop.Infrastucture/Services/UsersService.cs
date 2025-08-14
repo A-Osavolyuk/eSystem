@@ -24,7 +24,7 @@ public class UsersService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/lockout-state", Method = HttpMethod.Get }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 
-    public async ValueTask<Response> ChangeUsernameAsync(ChangeUserNameRequest request) =>
+    public async ValueTask<Response> ChangeUsernameAsync(ChangeUsernameRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/username", Method = HttpMethod.Patch, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });

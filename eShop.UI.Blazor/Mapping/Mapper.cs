@@ -121,7 +121,7 @@ public static class Mapper
         };
     }
 
-    public static ChangeUserNameRequest Map(ChangeUsernameModel source)
+    public static ChangeUsernameRequest Map(ChangeUsernameModel source)
     {
         return new()
         {

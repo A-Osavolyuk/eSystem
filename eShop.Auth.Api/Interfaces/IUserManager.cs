@@ -24,11 +24,11 @@ public interface IUserManager
     public ValueTask<Result> AddPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
     public ValueTask<Result> CreateAsync(UserEntity user, string? password = null, CancellationToken cancellationToken = default);
     public ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<Result> ChangeNameAsync(UserEntity user, string userName, CancellationToken cancellationToken = default);
+    public ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName, CancellationToken cancellationToken = default);
     public ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> ChangePasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default);
     public ValueTask<bool> CheckPasswordAsync(UserEntity user, string password, CancellationToken cancellationToken = default);
-    public ValueTask<bool> IsUserNameTakenAsync(string userName, CancellationToken cancellationToken = default);
+    public ValueTask<bool> IsUsernameTakenAsync(string userName, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber, CancellationToken cancellationToken = default);
 }

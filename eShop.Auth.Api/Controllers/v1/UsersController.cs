@@ -74,9 +74,9 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPatch("{id:guid}/username")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> ChangeUsernameAsync([FromBody] ChangeUserNameRequest request)
+    public async ValueTask<IActionResult> ChangeUsernameAsync([FromBody] ChangeUsernameRequest request)
     {
-        var result = await sender.Send(new ChangeUserNameCommand(request));
+        var result = await sender.Send(new ChangeUsernameCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);

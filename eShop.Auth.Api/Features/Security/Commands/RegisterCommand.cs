@@ -38,7 +38,7 @@ public sealed class RegisterCommandHandler(
 
         if (identityOptions.Account.RequireUniqueUserName)
         {
-            var isUserNameTaken = await userManager.IsUserNameTakenAsync(request.Request.UserName, cancellationToken);
+            var isUserNameTaken = await userManager.IsUsernameTakenAsync(request.Request.UserName, cancellationToken);
         
             if (isUserNameTaken)
             {

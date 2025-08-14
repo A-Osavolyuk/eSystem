@@ -455,7 +455,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ChangeNameAsync(UserEntity user, string userName,
+    public async ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName,
         CancellationToken cancellationToken = default)
     {
         var result = await changeManager.CreateAsync(user, ChangeField.Username, user.UserName, cancellationToken);
@@ -514,7 +514,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<bool> IsUserNameTakenAsync(string userName,
+    public async ValueTask<bool> IsUsernameTakenAsync(string userName,
         CancellationToken cancellationToken = default)
     {
         var normalizedUserName = userName.ToUpper();
