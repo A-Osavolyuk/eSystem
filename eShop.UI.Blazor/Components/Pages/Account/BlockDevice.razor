@@ -20,70 +20,78 @@
             ShowSkipButton="false">
             <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Info" Title="Information">
                 <ChildContent>
-                    <MudStack Spacing="1">
-                        <MudPaper Outlined="true" Class="pa-3">
-                            <MudText Typo="Typo.h4" Align="Align.Center">
-                                Device block
-                            </MudText>
-                        </MudPaper>
-                        <MudPaper Outlined="true" Class="pa-3">
-                            <MudStack Spacing="3">
-                                <MudText Align="Align.Center">
-                                    To block this device, you will need to enter 6-digit code
-                                    from an email we will send you to: <strong>@Email</strong>.
-                                    If you block this device, sign in with this device will 
-                                    not be available anymore, until you unblock it.
-                                </MudText>
-                                <MudButton
-                                    Color="Color.Primary"
-                                    Variant="Variant.Filled"
-                                    ButtonType="ButtonType.Button"
-                                    OnClick="@(async () => await OnSendCodeAsync())">
-                                    Continue
-                                </MudButton>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="8">
+                            <MudStack Spacing="1">
+                                <MudPaper Outlined="true" Class="pa-3">
+                                    <MudText Typo="Typo.h4" Align="Align.Center">
+                                        Device block
+                                    </MudText>
+                                </MudPaper>
+                                <MudPaper Outlined="true" Class="pa-3">
+                                    <MudStack Spacing="3">
+                                        <MudText Align="Align.Center">
+                                            To block this device, you will need to enter 6-digit code
+                                            from an email we will send you to: <strong>@Email</strong>.
+                                            If you block this device, sign in with this device will 
+                                            not be available anymore, until you unblock it.
+                                        </MudText>
+                                        <MudButton
+                                            Color="Color.Primary"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button"
+                                            OnClick="@(async () => await OnSendCodeAsync())">
+                                            Continue
+                                        </MudButton>
+                                    </MudStack>
+                                </MudPaper>
                             </MudStack>
-                        </MudPaper>
-                    </MudStack>
+                        </MudItem>
+                    </MudGrid>
                 </ChildContent>
             </MudStepExtended>
             <MudStepExtended Icon="@Icons.Material.Filled.Check" Title="Code verification" Order="2">
                 <ChildContent>
-                    <MudStack Spacing="1" Justify="Justify.Center">
-                        <MudPaper Outlined Class="pa-3">
-                            <MudText Align="Align.Center" Typo="Typo.h4">
-                                Device block confirmation
-                            </MudText>
-                        </MudPaper>
-                        <MudPaper Outlined Class="pa-3">
-                            <MudForm
-                                @ref="form"
-                                Model="Model">
-                                <MudStack Spacing="2" Justify="Justify.Center">
-                                    <MudText Align="Align.Center">
-                                        We have sent an email with code to email: <strong>@Email</strong>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="8">
+                            <MudStack Spacing="1" Justify="Justify.Center">
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudText Align="Align.Center" Typo="Typo.h4">
+                                        Device block confirmation
                                     </MudText>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudForm
+                                        @ref="form"
+                                        Model="Model">
+                                        <MudStack Spacing="2" Justify="Justify.Center">
+                                            <MudText Align="Align.Center">
+                                                We have sent an email with code to email: <strong>@Email</strong>
+                                            </MudText>
 
-                                    <MudCodeInput
-                                        Class="d-flex align-items-center"
-                                        Variant="Variant.Outlined"
-                                        Spacing="2"
-                                        Margin="Margin.None"
-                                        Count="6"
-                                        @bind-Value="Model.Code"/>
+                                            <MudCodeInput
+                                                Class="d-flex align-items-center"
+                                                Variant="Variant.Outlined"
+                                                Spacing="2"
+                                                Margin="Margin.None"
+                                                Count="6"
+                                                @bind-Value="Model.Code"/>
                         
-                                    <MudLoadingButton
-                                        ButtonType="ButtonType.Button"
-                                        Variant="Variant.Filled"
-                                        Color="Color.Primary"
-                                        FullWidth
-                                        Disabled="@(Model.Code.Length <= 5)"
-                                        OnClick="@(async () => await OnVerifyCodeAsync())">
-                                        Submit
-                                    </MudLoadingButton>
-                                </MudStack>
-                            </MudForm>
-                        </MudPaper>
-                    </MudStack>
+                                            <MudLoadingButton
+                                                ButtonType="ButtonType.Button"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                FullWidth
+                                                Disabled="@(Model.Code.Length <= 5)"
+                                                OnClick="@(async () => await OnVerifyCodeAsync())">
+                                                Submit
+                                            </MudLoadingButton>
+                                        </MudStack>
+                                    </MudForm>
+                                </MudPaper>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
                 </ChildContent>
             </MudStepExtended>
         </MudStepperExtended>
