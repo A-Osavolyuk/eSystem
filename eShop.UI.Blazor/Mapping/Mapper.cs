@@ -114,6 +114,7 @@ public static class Mapper
     {
         return new UserSecurityModel()
         {
+            UserId = source.UserId,
             RecoveryEmail = source.RecoveryEmail,
             RecoveryEmailConfirmed = source.RecoveryEmailConfirmed,
             RecoveryEmailConfirmationDate = source.RecoveryEmailConfirmationDate,
