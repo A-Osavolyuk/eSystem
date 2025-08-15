@@ -13,9 +13,17 @@ public class UsersService(
     public async ValueTask<Response> GetUserAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
-    public async ValueTask<Response> GetTwoFactorProvidersAsync(Guid id) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor/providers", Method = HttpMethod.Get }, 
+
+    public async ValueTask<Response> GetUserSecurityDataAsync(Guid id) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/security", Method = HttpMethod.Get },
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<Response> GetUserPersonalDataAsync(Guid id) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/personal", Method = HttpMethod.Get },
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<Response> GetTwoFactorProvidersAsync(Guid id) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/2fa/providers", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> GetLockoutStateAsync(Guid id) => await ApiClient.SendAsync(

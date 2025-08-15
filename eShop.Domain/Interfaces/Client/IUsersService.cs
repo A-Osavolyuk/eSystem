@@ -6,6 +6,8 @@ namespace eShop.Domain.Interfaces.Client;
 public interface IUsersService
 {
     public ValueTask<Response> GetUserAsync(Guid id);
+    public ValueTask<Response> GetUserSecurityDataAsync(Guid id);
+    public ValueTask<Response> GetUserPersonalDataAsync(Guid id);
     public ValueTask<Response> GetTwoFactorProvidersAsync(Guid id);
     public ValueTask<Response> GetLockoutStateAsync(Guid id);
     public ValueTask<Response> ChangeUsernameAsync(ChangeUsernameRequest request);
