@@ -7,35 +7,30 @@ using eShop.Domain.Requests.API.Auth;
 namespace eShop.Infrastructure.Services;
 
 public class UsersService(
-    IConfiguration configuration, 
+    IConfiguration configuration,
     IApiClient apiClient) : ApiService(configuration, apiClient), IUsersService
 {
-    public async ValueTask<Response> GetUserAsync(Guid id)=>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}", Method = HttpMethod.Get }, 
+    public async ValueTask<Response> GetUserAsync(Guid id) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
     public async ValueTask<Response> GetTwoFactorProvidersAsync(Guid id) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/two-factor/providers", Method = HttpMethod.Get }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });
-    
-    public async ValueTask<Response> GetLockoutStateAsync(Guid id) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/lockout-state", Method = HttpMethod.Get }, 
+
+    public async ValueTask<Response> GetLockoutStateAsync(Guid id) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/lockout", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 
-    public async ValueTask<Response> ChangeUsernameAsync(ChangeUsernameRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/username", Method = HttpMethod.Patch, Data = request }, 
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
-    
-    public async ValueTask<Response> ChangePersonalDataAsync(ChangePersonalDataRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal-data", Method = HttpMethod.Put, Data = request }, 
+    public async ValueTask<Response> ChangeUsernameAsync(ChangeUsernameRequest request) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/username", Method = HttpMethod.Patch, Data = request },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> AddPersonalDataAsync(AddPersonalDataRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal-data", Method = HttpMethod.Post, Data = request }, 
+    public async ValueTask<Response> ChangePersonalDataAsync(ChangePersonalDataRequest request) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal", Method = HttpMethod.Put, Data = request },
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<Response> AddPersonalDataAsync(AddPersonalDataRequest request) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal", Method = HttpMethod.Post, Data = request },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 }
