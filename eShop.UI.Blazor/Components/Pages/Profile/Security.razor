@@ -36,13 +36,16 @@
 
 @code {
     private UserSecurityModel SecurityModel { get; set; } = new();
-    private UserModel UserModel { get; set; } = new();
+    
+    private string? email;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await LoadUserSecurityAsync();
+            email = await LocalStorage.GetAsync<string>("email");
+
             StateHasChanged();
         }
     }
@@ -219,11 +222,11 @@
     }
     
     private async Task OnVerifyAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/verify?device={id}&user={SecurityModel.UserId}");
+        $"/account/device/verify?device={id}&user={SecurityModel.UserId}&email={email}");
     
     private async Task OnBlockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/block?device={id}&user={SecurityModel.UserId}");
+        $"/account/device/block?device={id}&user={SecurityModel.UserId}&email={email}");
     
     private async Task OnUnblockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/unblock?device={id}&user={SecurityModel.UserId}");
+        $"/account/device/unblock?device={id}&user={SecurityModel.UserId}&email={email}");
 }
