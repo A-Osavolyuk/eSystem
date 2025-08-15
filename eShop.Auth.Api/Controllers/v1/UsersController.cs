@@ -25,6 +25,32 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Get user personal data")]
+    [EndpointDescription("Gets user personal data")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}/personal")]
+    public async ValueTask<IActionResult> GetUserPersonalDataAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserPersonalQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Get user security data")]
+    [EndpointDescription("Gets user security data")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}/security")]
+    public async ValueTask<IActionResult> GetUserSecurityDataAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserSecurityQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Get user roles")]
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]

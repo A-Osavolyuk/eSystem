@@ -20,10 +20,11 @@ public static class Mapper
         };
     }
 
-    public static PersonalDataDto Map(PersonalDataEntity source)
+    public static UserPersonalDto Map(PersonalDataEntity source)
     {
-        return new PersonalDataDto()
+        return new UserPersonalDto()
         {
+            UserId = source.Id,
             FirstName = source.FirstName,
             LastName = source.LastName,
             Gender = source.Gender,
