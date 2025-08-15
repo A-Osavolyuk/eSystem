@@ -41,7 +41,6 @@ public static class HostApplicationBuilderExtensions
                 new() { Routes = ["/products"] },
                 new() { Routes = ["/products/create"], RequiredRoles = ["Seller"]},
                 new() { Routes = ["/account/login"] },
-                new() { Routes = ["/account/device/trust"] },
                 new() { Routes = ["/account/oauth/sign-in"] },
                 new() { Routes = ["/account/oauth/signed-up"] },
                 new() { Routes = ["/account/oauth/fallback"] },
@@ -64,6 +63,10 @@ public static class HostApplicationBuilderExtensions
                 new() { Routes = ["/account/email/reset"], RequireAuthorization = true },
                 new() { Routes = ["/account/email/verify"], RequireAuthorization = true },
                 new() { Routes = ["/account/password/reset"] },
+                new() { Routes = ["/account/device/trust"] },
+                new() { Routes = ["/account/device/verify"], RequireAuthorization = true },
+                new() { Routes = ["/account/device/block"], RequireAuthorization = true },
+                new() { Routes = ["/account/device/unblock"], RequireAuthorization = true },
             ];
         });
     }
