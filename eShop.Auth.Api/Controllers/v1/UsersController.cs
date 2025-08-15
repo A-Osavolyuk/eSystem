@@ -67,7 +67,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get lockout state")]
     [EndpointDescription("Get lockout state")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/lockout-state")]
+    [HttpGet("{id:guid}/lockout")]
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetStateAsync(Guid id)
     {
@@ -81,7 +81,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user two-factor providers")]
     [EndpointDescription("Get user two-factor providers")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/two-factor/providers")]
+    [HttpGet("{id:guid}/2fa/providers")]
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserTwoFactorProvidersState(Guid id)
     {
@@ -111,7 +111,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Add personal data")]
     [EndpointDescription("Add personal data")]
     [ProducesResponseType(200)]
-    [HttpPost("{id:guid}/personal-data")]
+    [HttpPost("{id:guid}/personal")]
     [ValidationFilter]
     public async ValueTask<IActionResult> AddPersonalDataAsync([FromBody] AddPersonalDataRequest request)
     {
@@ -125,7 +125,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Change personal data")]
     [EndpointDescription("Change personal data")]
     [ProducesResponseType(200)]
-    [HttpPut("{id:guid}/personal-data")]
+    [HttpPut("{id:guid}/personal")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
     {
