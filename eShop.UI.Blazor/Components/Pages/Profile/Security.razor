@@ -38,21 +38,23 @@
     private UserSecurityModel SecurityModel { get; set; } = new();
     
     private string? email;
+    private Guid userId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LoadUserSecurityAsync();
-            email = await LocalStorage.GetAsync<string>("email");
+            await LoadAsync();
 
             StateHasChanged();
         }
     }
 
-    private async Task LoadUserSecurityAsync()
+    private async Task LoadAsync()
     {
-        var userId = await LocalStorage.GetAsync<Guid>("userId")!;
+        email = await LocalStorage.GetAsync<string>("email");
+        userId = await LocalStorage.GetAsync<Guid>("userId")!;
+        
         var result = await UserService.GetUserSecurityDataAsync(userId);
 
         if (result.Success)
@@ -88,7 +90,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserSecurityAsync();
+            await LoadAsync();
             StateHasChanged();
         }
     }
@@ -114,7 +116,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserSecurityAsync();
+            await LoadAsync();
             StateHasChanged();
         }
     }
@@ -140,7 +142,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserSecurityAsync();
+            await LoadAsync();
             StateHasChanged();
         }
     }
@@ -178,7 +180,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserSecurityAsync();
+            await LoadAsync();
             StateHasChanged();
         }
     }
@@ -216,7 +218,7 @@
 
         if (!dialogResult!.Canceled)
         {
-            await LoadUserSecurityAsync();
+            await LoadAsync();
             StateHasChanged();
         }
     }
