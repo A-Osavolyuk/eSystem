@@ -7,13 +7,13 @@ public record ConfirmBlockDeviceCommand(ConfirmBlockDeviceRequest Request) : IRe
 public class ConfirmBlockDeviceCommandHandler(
     IUserManager userManager,
     IDeviceManager deviceManager,
-    ICodeManager codeManager) : IRequestHandler<ConfirmVerifyDeviceCommand, Result>
+    ICodeManager codeManager) : IRequestHandler<ConfirmBlockDeviceCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ICodeManager codeManager = codeManager;
 
-    public async Task<Result> Handle(ConfirmVerifyDeviceCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(ConfirmBlockDeviceCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
