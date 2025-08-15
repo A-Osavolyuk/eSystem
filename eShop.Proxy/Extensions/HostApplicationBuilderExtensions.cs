@@ -74,7 +74,7 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
-                RouteId = "providers-route", ClusterId = "security-cluster",
+                RouteId = "device-route", ClusterId = "security-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Device/{**catch-all}" }
             },
             new RouteConfig
