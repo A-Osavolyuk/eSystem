@@ -3,7 +3,7 @@
 @inherits PageBase
 
 @inject ITwoFactorService TwoFactorService
-@inject IUsersService UsersService
+@inject IUserService UserService
 @inject TwoFactorLoginValidator TwoFactorLoginValidator
 
 <Title Text="Login with 2FA"/>
@@ -217,7 +217,7 @@
 
     private async Task LoadProvidersAsync()
     {
-        var result = await UsersService.GetTwoFactorProvidersAsync(Id);
+        var result = await UserService.GetTwoFactorProvidersAsync(Id);
 
         if (result.Success)
         {

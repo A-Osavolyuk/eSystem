@@ -2,7 +2,7 @@
 
 @inherits PageBase
 
-@inject IUsersService UsersService
+@inject IUserService UserService
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="4">
@@ -57,7 +57,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await UsersService.GetLockoutStateAsync(UserId);
+        var result = await UserService.GetLockoutStateAsync(UserId);
 
         if (result.Success)
         {

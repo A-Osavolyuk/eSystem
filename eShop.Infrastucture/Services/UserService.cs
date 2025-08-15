@@ -6,9 +6,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Infrastructure.Services;
 
-public class UsersService(
+public class UserService(
     IConfiguration configuration,
-    IApiClient apiClient) : ApiService(configuration, apiClient), IUsersService
+    IApiClient apiClient) : ApiService(configuration, apiClient), IUserService
 {
     public async ValueTask<Response> GetUserAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}", Method = HttpMethod.Get },

@@ -3,7 +3,7 @@
 @using eShop.BlazorWebUI.Components.Pages.Profile.Components.Security
 @inherits PageBase
 
-@inject IUsersService UsersService
+@inject IUserService UserService
 @inject IDialogService DialogService
 @inject ITwoFactorService TwoFactorService
 
@@ -15,18 +15,18 @@
     <MudItem xs="6">
         <MudStack Spacing="2" Justify="Justify.Center">
             <TwoFactorSection
-                Model="Model"
+                Model="SecurityModel"
                 OnSubscribe="@(async (value) => await OnSubscribeAsync(value))"
                 OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
                 OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
-            <LinkedAccountsSection Model="Model"/>
+            <LinkedAccountsSection Model="SecurityModel"/>
             <DevicesSection 
-                Model="Model"
+                Model="SecurityModel"
                 OnVerify="@(async (value) => await OnVerifyAsync(value))"
                 OnBlock="@(async (value) => await OnBlockAsync(value))"
                 OnUnblock="@(async (value) => await OnUnblockAsync(value))"/>
             <PasswordSection
-                Model="Model"
+                Model="SecurityModel"
                 OnAdd="@OnAddPasswordAsync"
                 OnChange="@OnChangePasswordAsync"
                 OnReset="@OnResetPasswordAsync"/>
@@ -35,7 +35,8 @@
 </MudGrid>
 
 @code {
-    private UserSecurityModel Model { get; set; } = new();
+    private UserSecurityModel SecurityModel { get; set; } = new();
+    private UserModel UserModel { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -49,13 +50,13 @@
     private async Task LoadUserSecurityAsync()
     {
         var userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        var result = await UsersService.GetUserSecurityDataAsync(userId);
+        var result = await UserService.GetUserSecurityDataAsync(userId);
 
         if (result.Success)
         {
             var response = result.Get<UserSecurityDto>()!;
             var model = Mapper.Map(response);
-            Model = model;
+            SecurityModel = model;
         }
         else
         {
@@ -72,7 +73,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ChangePasswordModel() { Id = Model.UserId };
+        var model = new ChangePasswordModel() { Id = SecurityModel.UserId };
 
         var parameters = new DialogParameters<ChangePasswordDialog>()
         {
@@ -98,7 +99,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPasswordModel() { UserId = Model.UserId };
+        var model = new AddPasswordModel() { UserId = SecurityModel.UserId };
 
         var parameters = new DialogParameters<AddPasswordDialog>()
         {
@@ -124,7 +125,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ResetPasswordModel() { Id = Model.UserId };
+        var model = new ResetPasswordModel() { Id = SecurityModel.UserId };
 
         var parameters = new DialogParameters<ResetPasswordDialog>()
         {
@@ -165,7 +166,7 @@
 
         var parameters = new DialogParameters<Disable2FaProviderDialog>()
         {
-            { x => x.UserId, Model.UserId },
+            { x => x.UserId, SecurityModel.UserId },
             { x => x.Provider, provider }
         };
 
@@ -182,7 +183,7 @@
     private async Task OnGenerateRecoveryCodesAsync()
     {
         var recoveryCodes = new List<string>();
-        var request = new GenerateRecoveryCodesRequest() { UserId = Model.UserId };
+        var request = new GenerateRecoveryCodesRequest() { UserId = SecurityModel.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
 
         if (result.Success)
@@ -218,11 +219,11 @@
     }
     
     private async Task OnVerifyAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/verify?device={id}&user={Model.UserId}");
+        $"/account/device/verify?device={id}&user={SecurityModel.UserId}");
     
     private async Task OnBlockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/block?device={id}&user={Model.UserId}");
+        $"/account/device/block?device={id}&user={SecurityModel.UserId}");
     
     private async Task OnUnblockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/unblock?device={id}&user={Model.UserId}");
+        $"/account/device/unblock?device={id}&user={SecurityModel.UserId}");
 }

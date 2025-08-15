@@ -1,4 +1,4 @@
-﻿@inject IUsersService UsersService
+﻿@inject IUserService UserService
 @inject ISnackbar Snackbar
 @inject AddPersonalDataValidator Validator
 
@@ -75,7 +75,7 @@
         if (form.IsValid)
         {
             var request = Mapper.Map(Model);
-            var result = await UsersService.AddPersonalDataAsync(request);
+            var result = await UserService.AddPersonalDataAsync(request);
 
             if (result.Success)
             {

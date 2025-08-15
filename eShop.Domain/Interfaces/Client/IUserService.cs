@@ -3,7 +3,7 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Domain.Interfaces.Client;
 
-public interface IUsersService
+public interface IUserService
 {
     public ValueTask<Response> GetUserAsync(Guid id);
     public ValueTask<Response> GetUserSecurityDataAsync(Guid id);

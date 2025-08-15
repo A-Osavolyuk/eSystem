@@ -6,7 +6,7 @@
 @inject Router RouteManager
 @inject UserState UserState
 @inject ISnackbar Snackbar
-@inject IUsersService UsersService
+@inject IUserService UserService
 @inject IStorage Storage
 
 @implements IDisposable
@@ -116,7 +116,7 @@
     private async Task LoadAsync()
     {
         var userId = await Storage.GetAsync<Guid>("userId");
-        var result = await UsersService.GetUserAsync(userId);
+        var result = await UserService.GetUserAsync(userId);
 
         if (result.Success)
         {

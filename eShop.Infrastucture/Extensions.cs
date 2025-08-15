@@ -25,7 +25,7 @@ public static class Extensions
         builder.Services.AddHttpClient<ISecurityService, SecurityService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IStoreService, StorageService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<ITwoFactorService, TwoFactorService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IUsersService, UsersService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IUserService, UserService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IProvidersService, ProvidersService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<ITypeService, TypeService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IUnitService, UnitService>(ServiceLifetime.Scoped);

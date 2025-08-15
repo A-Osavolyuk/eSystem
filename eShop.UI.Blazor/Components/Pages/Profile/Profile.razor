@@ -6,7 +6,7 @@
 @attribute [Authorize]
 
 @inject UserState UserState
-@inject IUsersService UsersService
+@inject IUserService UserService
 @inject IDialogService DialogService
 
 <Title Text="Profile"></Title>
@@ -71,7 +71,7 @@
     private async Task LoadUserAsync()
     {
         var userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        var result = await UsersService.GetUserAsync(userId);
+        var result = await UserService.GetUserAsync(userId);
 
         if (result.Success)
         {
@@ -88,7 +88,7 @@
     private async Task LoadUserPersonalAsync()
     {
         var userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        var result = await UsersService.GetUserPersonalDataAsync(userId);
+        var result = await UserService.GetUserPersonalDataAsync(userId);
 
         if (result.Success)
         {

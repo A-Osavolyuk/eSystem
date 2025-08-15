@@ -7,7 +7,7 @@
 @inject AddPasswordValidator AddPasswordValidator
 @inject AddUsernameValidator AddUsernameValidator
 @inject ISecurityService SecurityService
-@inject IUsersService UsersService
+@inject IUserService UserService
 
 <Title Text="OAuth sign up"></Title>
 
@@ -191,7 +191,7 @@
                 Username = AddUsernameModel.Username
             };
             
-            var result = await UsersService.ChangeUsernameAsync(request);
+            var result = await UserService.ChangeUsernameAsync(request);
 
             if (result.Success)
             {

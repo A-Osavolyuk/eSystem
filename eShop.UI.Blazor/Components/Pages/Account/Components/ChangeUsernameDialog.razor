@@ -1,4 +1,4 @@
-﻿@inject IUsersService UsersService
+﻿@inject IUserService UserService
 @inject ISnackbar Snackbar
 @inject ChangeUsernameValidator Validator
 
@@ -51,7 +51,7 @@
         if (form.IsValid)
         {
             var request = Mapper.Map(Model);
-            var result = await UsersService.ChangeUsernameAsync(request);
+            var result = await UserService.ChangeUsernameAsync(request);
 
             if (result.Success)
             {
