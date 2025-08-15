@@ -118,18 +118,6 @@
                         </MudGrid>
                     </ChildContent>
                 </MudStepExtended>
-                <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Email reset" IsResultStep="true">
-                    <ChildContent>
-                        <div class="d-flex flex-column align-center justify-center" style="height: 200px">
-                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
-                                           Variant="Variant.Filled" Color="Color.Success"/>
-                            <MudText Style="width: 55ch; margin: auto">
-                                Your email address was successfully reset.
-                                You will be redirected to profile page in 5 seconds.
-                            </MudText>
-                        </div>
-                    </ChildContent>
-                </MudStepExtended>
             </ChildContent>
         </MudStepperExtended>
     </MudItem>
@@ -143,18 +131,12 @@
     private MudForm resetEmailForm = new();
     private MudForm confirmResetEmailForm = new();
     private Guid userId;
-    private bool completed = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-
-        if (completed)
-        {
-            await OnCompleteAsync();
         }
     }
 
@@ -223,7 +205,7 @@
             if (result.Success)
             {
                 Snackbar.Add("Email was successfully reset", Severity.Success);
-                await StepNextAsync();
+                await RouteManager.NavigateAsync("/account/profile");
             }
             else
             {
@@ -236,18 +218,5 @@
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
-
-        if (stepper.IsAllStepsCompleted())
-        {
-            completed = true;
-            StateHasChanged();
-        }
     }
-
-    private async Task OnCompleteAsync()
-    {
-        await Task.Delay(TimeSpan.FromSeconds(5));
-        await RouteManager.NavigateAsync("/account/profile");
-    }
-
 }

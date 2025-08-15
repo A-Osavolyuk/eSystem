@@ -114,18 +114,6 @@
                         </MudGrid>
                     </ChildContent>
                 </MudStepExtended>
-                <MudStepExtended Icon="@Icons.Material.Filled.Alarm" Title="Result Step" IsResultStep="true">
-                    <ChildContent>
-                        <div class="d-flex flex-column align-center justify-center" style="height: 200px">
-                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Size="Size.Large"
-                                           Variant="Variant.Filled" Color="Color.Success"/>
-                            <MudText Style="width: 55ch; margin: auto" Align="Align.Center">
-                                2FA with @Provider code provider was successfully enabled. 
-                                You will be automatically redirected to back security page in 5 seconds
-                            </MudText>
-                        </div>
-                    </ChildContent>
-                </MudStepExtended>
             </ChildContent>
         </MudStepperExtended>
     </MudItem>
@@ -139,8 +127,6 @@
     
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-    
-    private bool completed = false;
     private Guid userId;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -148,11 +134,6 @@
         if (firstRender)
         {
             userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-
-        if (completed)
-        {
-            await OnCompleteAsync();
         }
     }
 
@@ -189,7 +170,7 @@
 
         if (result.Success)
         {
-            await StepNextAsync();
+            await RouteManager.NavigateAsync("/account/security");
         }
         else
         {
@@ -221,17 +202,5 @@
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
-
-        if (stepper.IsAllStepsCompleted())
-        {
-            completed = true;
-            StateHasChanged();
-        }
-    }
-    
-    private async Task OnCompleteAsync()
-    {
-        await Task.Delay(TimeSpan.FromSeconds(5));
-        await RouteManager.NavigateAsync("/account/security");
     }
 }
