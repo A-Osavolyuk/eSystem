@@ -71,7 +71,7 @@ public class UsersController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetStateAsync(Guid id)
     {
-        var result = await sender.Send(new GetLockoutStateQuery(id));
+        var result = await sender.Send(new GetUserLockoutQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),

@@ -1,15 +1,15 @@
 ﻿namespace eShop.Auth.Api.Features.Users.Queries;
 
-public record GetLockoutStateQuery(Guid Id) : IRequest<Result>;
+public record GetUserLockoutQuery(Guid Id) : IRequest<Result>;
 
 public class GetLockoutStateQueryHandler(
     ILockoutManager lockoutManager,
-    IUserManager userManager) : IRequestHandler<GetLockoutStateQuery, Result>
+    IUserManager userManager) : IRequestHandler<GetUserLockoutQuery, Result>
 {
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IUserManager userManager = userManager;
 
-    public async Task<Result> Handle(GetLockoutStateQuery request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(GetUserLockoutQuery request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
 
