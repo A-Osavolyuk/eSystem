@@ -71,9 +71,9 @@ public static class Mapper
         };
     }
 
-    private static PersonalDataModel Map(PersonalDataDto source)
+    private static UserPersonalModel Map(PersonalDataDto source)
     {
-        return new PersonalDataModel()
+        return new UserPersonalModel()
         {
             FirstName = source.FirstName,
             LastName = source.LastName,
@@ -96,7 +96,7 @@ public static class Mapper
     {
         return new UserModel()
         {
-            Id = source.Id,
+            UserId = source.Id,
             Email = source.Email,
             EmailConfirmed = source.EmailConfirmed,
             EmailConfirmationDate = source.EmailConfirmationDate,
@@ -105,19 +105,25 @@ public static class Mapper
             PhoneNumberConfirmed = source.PhoneNumberConfirmed,
             PhoneNumberConfirmationDate = source.PhoneNumberConfirmationDate,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
+            UserName = source.Username,
+            UserNameChangeDate = source.UserNameChangeDate,
+        };
+    }
+
+    public static UserSecurityModel Map(UserSecurityDto source)
+    {
+        return new UserSecurityModel()
+        {
             RecoveryEmail = source.RecoveryEmail,
             RecoveryEmailConfirmed = source.RecoveryEmailConfirmed,
             RecoveryEmailConfirmationDate = source.RecoveryEmailConfirmationDate,
             RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
-            UserName = source.Username,
-            UserNameChangeDate = source.UserNameChangeDate,
             HasPassword = source.HasPassword,
             PasswordChangeDate = source.PasswordChangeDate,
             TwoFactorEnabled = source.TwoFactorEnabled,
             Providers = source.Providers,
             OAuthProviders = source.OAuthProviders,
             Devices = source.Devices,
-            PersonalData = source.PersonalData is null ? null : Map(source.PersonalData),
         };
     }
 
@@ -142,15 +148,15 @@ public static class Mapper
         };
     }
 
-    public static ChangePersonalDataModel Map(UserModel source)
+    public static ChangePersonalDataModel Map(UserPersonalModel source)
     {
         return new()
         {
-            Id = source.Id,
-            Gender = source.PersonalData!.Gender,
-            BirthDate = source.PersonalData!.BirthDate,
-            FirstName = source.PersonalData!.FirstName,
-            LastName = source.PersonalData!.LastName,
+            Id = source.UserId,
+            Gender = source!.Gender,
+            BirthDate = source!.BirthDate,
+            FirstName = source!.FirstName,
+            LastName = source!.LastName,
         };
     }
 
@@ -183,6 +189,18 @@ public static class Mapper
         {
             NewPassword = source.NewPassword,
             UserId = source.Id
+        };
+    }
+
+    public static UserPersonalModel Map(UserPersonalDto source)
+    {
+        return new()
+        {
+            UserId = source.UserId,
+            FirstName = source.FirstName,
+            LastName = source.LastName,
+            BirthDate = source.BirthDate,
+            Gender = source.Gender
         };
     }
 }

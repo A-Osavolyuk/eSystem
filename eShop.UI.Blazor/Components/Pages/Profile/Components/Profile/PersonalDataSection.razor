@@ -1,6 +1,6 @@
 ﻿<MudPaper Outlined="true" Class="pa-5">
     <MudGrid Spacing="3">
-        @if (Model.PersonalData is null)
+        @if (Model is null)
         {
             <MudItem xs="11">
                 <MudText Class="mb-2" Typo="Typo.h6">
@@ -28,11 +28,11 @@
                 <MudText Class="mb-2" Typo="Typo.h6">
                     Personal information
                 </MudText>
-                @if (Model.PersonalData.UpdateDate is not null)
+                @if (Model.UpdateDate is not null)
                 {
                     <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
                         Last
-                        change: @Model.PersonalData!.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
+                        change: @Model!.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
                     </MudText>
                 }
             </MudItem>
@@ -52,7 +52,7 @@
             </MudItem>
             <MudItem xs="9">
                 <MudText>
-                    @Model.PersonalData.FirstName
+                    @Model.FirstName
                 </MudText>
             </MudItem>
             <MudItem xs="12">
@@ -65,7 +65,7 @@
             </MudItem>
             <MudItem xs="9">
                 <MudText>
-                    @Model.PersonalData.LastName
+                    @Model.LastName
                 </MudText>
             </MudItem>
             <MudItem xs="12">
@@ -78,7 +78,7 @@
             </MudItem>
             <MudItem xs="9">
                 <MudText>
-                    @Model.PersonalData.BirthDate.ToString("D", new CultureInfo("en-GB"))
+                    @Model.BirthDate.ToString("D", new CultureInfo("en-GB"))
                 </MudText>
             </MudItem>
             <MudItem xs="12">
@@ -91,7 +91,7 @@
             </MudItem>
             <MudItem xs="9">
                 <MudText>
-                    @Model.PersonalData.Gender.ToString()
+                    @Model.Gender.ToString()
                 </MudText>
             </MudItem>
         }
@@ -99,7 +99,7 @@
 </MudPaper>
 
 @code {
-    [Parameter] public UserModel Model { get; set; } = new();
+    [Parameter] public UserPersonalModel? Model { get; set; } = new();
     [Parameter] public EventCallback OnAdd { get; set; } = new();
     [Parameter] public EventCallback OnChange { get; set; } = new();
 }

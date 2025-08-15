@@ -110,7 +110,7 @@
 </MudPaper>
 
 @code {
-    [Parameter] public UserModel Model { get; set; } = new();
+    [Parameter] public UserSecurityModel Model { get; set; } = new();
     [Parameter] public EventCallback<Guid> OnVerify { get; set; }
     [Parameter] public EventCallback<Guid> OnBlock { get; set; }
     [Parameter] public EventCallback<Guid> OnUnblock { get; set; }

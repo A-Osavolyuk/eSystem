@@ -58,20 +58,8 @@ public static class Mapper
             PhoneNumberConfirmed = source.PhoneNumberConfirmed,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             PhoneNumberConfirmationDate = source.PhoneNumberConfirmationDate,
-            RecoveryEmail = source.RecoveryEmail,
-            RecoveryEmailConfirmed = source.RecoveryEmailConfirmed,
-            RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
-            RecoveryEmailConfirmationDate = source.RecoveryEmailConfirmationDate,
             Username = source.UserName,
             UserNameChangeDate = source.UserNameChangeDate,
-            HasPassword = !string.IsNullOrEmpty(source.PasswordHash),
-            PasswordChangeDate = source.PasswordChangeDate,
-            TwoFactorEnabled = source.Providers.Any(x => x.Subscribed),
-            Providers = source.Providers.Select(Map).ToList(),
-            HasLinkedAccounts = source.OAuthProviders.Count > 0,
-            OAuthProviders = source.OAuthProviders.Select(Map).ToList(),
-            Devices = source.Devices.Select(Map).ToList(),
-            
         };
     }
 

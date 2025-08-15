@@ -35,25 +35,25 @@
 </MudGrid>
 
 @code {
-    private UserModel Model { get; set; } = new();
+    private UserSecurityModel Model { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LoadUserAsync();
+            await LoadUserSecurityAsync();
             StateHasChanged();
         }
     }
 
-    private async Task LoadUserAsync()
+    private async Task LoadUserSecurityAsync()
     {
         var userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        var result = await UsersService.GetUserAsync(userId);
+        var result = await UsersService.GetUserSecurityDataAsync(userId);
 
         if (result.Success)
         {
-            var response = result.Get<UserDto>()!;
+            var response = result.Get<UserSecurityDto>()!;
             var model = Mapper.Map(response);
             Model = model;
         }
@@ -72,7 +72,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ChangePasswordModel() { Id = Model.Id };
+        var model = new ChangePasswordModel() { Id = Model.UserId };
 
         var parameters = new DialogParameters<ChangePasswordDialog>()
         {
@@ -84,7 +84,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserAsync();
+            await LoadUserSecurityAsync();
             StateHasChanged();
         }
     }
@@ -98,7 +98,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPasswordModel() { UserId = Model.Id };
+        var model = new AddPasswordModel() { UserId = Model.UserId };
 
         var parameters = new DialogParameters<AddPasswordDialog>()
         {
@@ -110,7 +110,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserAsync();
+            await LoadUserSecurityAsync();
             StateHasChanged();
         }
     }
@@ -124,7 +124,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ResetPasswordModel() { Id = Model.Id };
+        var model = new ResetPasswordModel() { Id = Model.UserId };
 
         var parameters = new DialogParameters<ResetPasswordDialog>()
         {
@@ -136,7 +136,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserAsync();
+            await LoadUserSecurityAsync();
             StateHasChanged();
         }
     }
@@ -165,7 +165,7 @@
 
         var parameters = new DialogParameters<Disable2FaProviderDialog>()
         {
-            { x => x.UserId, Model.Id },
+            { x => x.UserId, Model.UserId },
             { x => x.Provider, provider }
         };
 
@@ -174,7 +174,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserAsync();
+            await LoadUserSecurityAsync();
             StateHasChanged();
         }
     }
@@ -182,7 +182,7 @@
     private async Task OnGenerateRecoveryCodesAsync()
     {
         var recoveryCodes = new List<string>();
-        var request = new GenerateRecoveryCodesRequest() { UserId = Model.Id };
+        var request = new GenerateRecoveryCodesRequest() { UserId = Model.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
 
         if (result.Success)
@@ -212,17 +212,17 @@
 
         if (!dialogResult!.Canceled)
         {
-            await LoadUserAsync();
+            await LoadUserSecurityAsync();
             StateHasChanged();
         }
     }
     
     private async Task OnVerifyAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/verify?device={id}&user={Model.Id}&email={Model.Email}");
+        $"/account/device/verify?device={id}&user={Model.UserId}");
     
     private async Task OnBlockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/block?device={id}&user={Model.Id}&email={Model.Email}");
+        $"/account/device/block?device={id}&user={Model.UserId}");
     
     private async Task OnUnblockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/unblock?device={id}&user={Model.Id}&email={Model.Email}");
+        $"/account/device/unblock?device={id}&user={Model.UserId}");
 }

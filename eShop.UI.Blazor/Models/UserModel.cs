@@ -4,16 +4,13 @@ namespace eShop.BlazorWebUI.Models;
 
 public class UserModel
 {
-    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public string? AvatarUri { get; set; } = string.Empty;
+    
     public string Email { get; set; } = string.Empty;
     public bool EmailConfirmed  { get; set; }
     public DateTimeOffset? EmailChangeDate { get; set; }
     public DateTimeOffset? EmailConfirmationDate { get; set; }
-
-    public string? RecoveryEmail { get; set; } = string.Empty;
-    public bool RecoveryEmailConfirmed  { get; set; }
-    public DateTimeOffset? RecoveryEmailChangeDate { get; set; }
-    public DateTimeOffset? RecoveryEmailConfirmationDate { get; set; }
     
     public string UserName { get; set; } = string.Empty;
     public DateTimeOffset? UserNameChangeDate { get; set; }
@@ -22,16 +19,4 @@ public class UserModel
     public bool PhoneNumberConfirmed  { get; set; }
     public DateTimeOffset? PhoneNumberChangeDate { get; set; }
     public DateTimeOffset? PhoneNumberConfirmationDate { get; set; }
-    
-    public bool? TwoFactorEnabled  { get; set; }
-    public List<UserProviderDto> Providers { get; set; } = [];
-    public List<UserOAuthProviderDto> OAuthProviders { get; set; } = [];
-    public List<UserDeviceDto> Devices { get; set; } = [];
-    
-    public bool HasPassword { get; set; }
-    public DateTimeOffset? PasswordChangeDate { get; set; }
-    
-    public string? AvatarUri { get; set; } = string.Empty;
-    
-    public PersonalDataModel? PersonalData { get; set; }
 }

@@ -37,13 +37,13 @@
                 <MudGrid Spacing="2">
                     <MudItem xs="12">
                         <AccountDataSection
-                            Model="Model"
+                            Model="UserModel"
                             OnChange="@OnUsernameChangeAsync"
                             OnRemove="@OnRemovePhoneNumberAsync"/>
                     </MudItem>
                     <MudItem xs="12">
                         <PersonalDataSection
-                            Model="Model"
+                            Model="UserPersonalModel"
                             OnAdd="@OnAddPersonalDataAsync"
                             OnChange="@OnChangePersonalDataAsync"/>
                     </MudItem>
@@ -54,13 +54,16 @@
 </MudGrid>
 
 @code {
-    private UserModel Model { get; set; } = new();
+    private UserModel UserModel { get; set; } = new();
+    private UserPersonalModel? UserPersonalModel { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await LoadUserAsync();
+            await LoadUserPersonalAsync();
+            
             StateHasChanged();
         }
     }
@@ -74,7 +77,24 @@
         {
             var response = result.Get<UserDto>()!;
             var model = Mapper.Map(response);
-            Model = model;
+            UserModel = model;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task LoadUserPersonalAsync()
+    {
+        var userId = await LocalStorage.GetAsync<Guid>("userId")!;
+        var result = await UsersService.GetUserPersonalDataAsync(userId);
+
+        if (result.Success)
+        {
+            var response = result.Get<UserPersonalDto>()!;
+            var model = Mapper.Map(response);
+            UserPersonalModel = model;
         }
         else
         {
@@ -93,8 +113,8 @@
 
         var model = new ChangeUsernameModel()
         {
-            Id = Model.Id,
-            Username = Model.UserName,
+            Id = UserModel.UserId,
+            Username = UserModel.UserName,
         };
 
         var parameters = new DialogParameters<ChangeUsernameDialog>()
@@ -124,7 +144,7 @@
 
         var parameters = new DialogParameters<RemovePhoneNumberDialog>()
         {
-            { x => x.UserId, Model.Id }
+            { x => x.UserId, UserModel.UserId }
         };
 
         var dialog = await DialogService.ShowAsync<RemovePhoneNumberDialog>("Remove phone number", parameters, options);
@@ -147,7 +167,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = Mapper.Map(Model);
+        var model = Mapper.Map(UserPersonalModel!);
 
         var parameters = new DialogParameters<ChangePersonalDataDialog>()
         {
@@ -159,7 +179,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserAsync();
+            await LoadUserPersonalAsync();
             StateHasChanged();
         }
     }
@@ -173,7 +193,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPersonalDataModel() { Id = Model.Id };
+        var model = new AddPersonalDataModel() { Id = UserModel.UserId };
 
         var parameters = new DialogParameters<AddPersonalDataDialog>()
         {
@@ -185,7 +205,7 @@
 
         if (!result!.Canceled)
         {
-            await LoadUserAsync();
+            await LoadUserPersonalAsync();
             StateHasChanged();
         }
     }

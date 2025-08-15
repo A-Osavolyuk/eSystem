@@ -90,7 +90,7 @@
 </MudPaper>
 
 @code {
-    [Parameter] public UserModel Model { get; set; } = new();
+    [Parameter] public UserSecurityModel Model { get; set; } = new();
     [Parameter] public EventCallback<string> OnSubscribe { get; set; }
     [Parameter] public EventCallback<string> OnUnsubscribe { get; set; }
     [Parameter] public EventCallback OnGenerateCodes { get; set; }
