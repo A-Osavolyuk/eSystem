@@ -122,6 +122,8 @@
         {
             var user = result.Get<UserDto>()!;
             model = Mapper.Map(user);
+
+            await Storage.SetAsync("email", model.Email);
         }
     }
 
