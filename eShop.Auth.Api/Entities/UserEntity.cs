@@ -40,5 +40,5 @@ public class UserEntity : Entity
     public ICollection<UserChangesEntity> Changes { get; init; } = null!;
     public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
     public LockoutStateEntity LockoutState { get; set; } = null!;
-    public PersonalDataEntity PersonalData { get; set; } = null!;
+    public PersonalDataEntity? PersonalData { get; set; } = null!;
 }

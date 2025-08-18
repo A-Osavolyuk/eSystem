@@ -16,31 +16,19 @@ public sealed class UpdatePersonalDataCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
-        if (user is null)
-        {
-            return Result.Failure(new Error()
-            {
-                Code = ErrorCode.NotFound,
-                Message = "Not found",
-                Details = $"Cannot find user with ID {request.Request.UserId}."
-            });
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
-        var personalData = await personalDataManager.FindAsync(user, cancellationToken);
-
-        if (personalData is null)
-        {
-            return Results.NotFound($"Cannot find personal data of user with ID {request.Request.UserId}");
-        }
+        if (user.PersonalData is null) return Results.NotFound(
+            $"Cannot find personal data of user with ID {request.Request.UserId}");
         
-        personalData.FirstName = request.Request.FirstName;
-        personalData.LastName = request.Request.LastName;
-        personalData.MiddleName = request.Request.MiddleName;
-        personalData.Gender = request.Request.Gender;
-        personalData.BirthDate = request.Request.BirthDate!.Value;
-        personalData.UpdateDate = DateTimeOffset.UtcNow;
+        user.PersonalData.FirstName = request.Request.FirstName;
+        user.PersonalData.LastName = request.Request.LastName;
+        user.PersonalData.MiddleName = request.Request.MiddleName;
+        user.PersonalData.Gender = request.Request.Gender;
+        user.PersonalData.BirthDate = request.Request.BirthDate!.Value;
+        user.PersonalData.UpdateDate = DateTimeOffset.UtcNow;
         
-        var result = await personalDataManager.UpdateAsync(personalData, cancellationToken);
+        var result = await personalDataManager.UpdateAsync(user.PersonalData, cancellationToken);
 
         return result;
     }

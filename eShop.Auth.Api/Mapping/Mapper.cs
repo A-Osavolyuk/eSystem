@@ -24,7 +24,7 @@ public static class Mapper
     {
         return new UserPersonalDto()
         {
-            UserId = source.Id,
+            UserId = source.User.Id,
             FirstName = source.FirstName,
             LastName = source.LastName,
             MiddleName = source.MiddleName,

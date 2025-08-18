@@ -5,15 +5,6 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<PersonalDataEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        var entity = await context.PersonalData
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == user.PersonalDataId, cancellationToken: cancellationToken);
-
-        return entity;
-    }
-
     public async ValueTask<Result> CreateAsync(PersonalDataEntity personalData, CancellationToken cancellationToken = default)
     {
         await context.PersonalData.AddAsync(personalData, cancellationToken);
