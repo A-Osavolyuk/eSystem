@@ -27,6 +27,7 @@ public static class Mapper
             UserId = source.Id,
             FirstName = source.FirstName,
             LastName = source.LastName,
+            MiddleName = source.MiddleName,
             Gender = source.Gender,
             BirthDate = source.BirthDate,
             UpdateDate = source.UpdateDate

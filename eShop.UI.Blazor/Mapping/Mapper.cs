@@ -71,18 +71,6 @@ public static class Mapper
         };
     }
 
-    private static UserPersonalModel Map(PersonalDataDto source)
-    {
-        return new UserPersonalModel()
-        {
-            FirstName = source.FirstName,
-            LastName = source.LastName,
-            BirthDate = source.BirthDate,
-            Gender = source.Gender,
-            UpdateDate = source.UpdateDate
-        };
-    }
-
     public static ChangeEmailRequest Map(ChangeEmailModel source)
     {
         return new ChangeEmailRequest()
