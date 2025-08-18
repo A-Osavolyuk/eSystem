@@ -135,4 +135,18 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Remove personal data")]
+    [EndpointDescription("Remove personal data")]
+    [ProducesResponseType(200)]
+    [HttpDelete("{id:guid}/personal")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> RemovePersonalDataAsync([FromBody] RemovePersonalDataRequest request)
+    {
+        var result = await sender.Send(new RemovePersonalDataCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
 }
