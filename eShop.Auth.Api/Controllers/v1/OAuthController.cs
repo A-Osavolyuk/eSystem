@@ -1,4 +1,5 @@
-﻿using eShop.Auth.Api.Security.Schemes;
+﻿using eShop.Auth.Api.Features.OAuth.Commands;
+using eShop.Auth.Api.Security.Schemes;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 

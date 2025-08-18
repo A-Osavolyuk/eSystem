@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
 using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Types;
-using OtpNet;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.OAuth.Commands;
 
 public sealed record HandleOAuthLoginCommand(
     HttpContext Context,
