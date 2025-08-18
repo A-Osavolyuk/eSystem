@@ -36,7 +36,7 @@ public sealed class UpdatePersonalDataCommandHandler(
         personalData.FirstName = request.Request.FirstName;
         personalData.LastName = request.Request.LastName;
         personalData.Gender = request.Request.Gender;
-        personalData.DateOfBirth = request.Request.BirthDate!.Value;
+        personalData.BirthDate = request.Request.BirthDate!.Value;
         personalData.UpdateDate = DateTimeOffset.UtcNow;
         
         var result = await personalDataManager.UpdateAsync(personalData, cancellationToken);

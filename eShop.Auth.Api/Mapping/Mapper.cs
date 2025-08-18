@@ -15,7 +15,7 @@ public static class Mapper
             FirstName = source.FirstName,
             LastName = source.LastName,
             Gender = source.Gender,
-            DateOfBirth = source.BirthDate,
+            BirthDate = source.BirthDate,
             CreateDate = DateTimeOffset.UtcNow
         };
     }
@@ -28,7 +28,7 @@ public static class Mapper
             FirstName = source.FirstName,
             LastName = source.LastName,
             Gender = source.Gender,
-            BirthDate = source.DateOfBirth,
+            BirthDate = source.BirthDate,
             UpdateDate = source.UpdateDate
         };
     }
