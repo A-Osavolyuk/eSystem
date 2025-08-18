@@ -35,6 +35,7 @@ public sealed class UpdatePersonalDataCommandHandler(
         
         personalData.FirstName = request.Request.FirstName;
         personalData.LastName = request.Request.LastName;
+        personalData.MiddleName = request.Request.MiddleName;
         personalData.Gender = request.Request.Gender;
         personalData.BirthDate = request.Request.BirthDate!.Value;
         personalData.UpdateDate = DateTimeOffset.UtcNow;
