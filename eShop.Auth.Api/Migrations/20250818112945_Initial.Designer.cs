@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250812101720_Initial")]
+    [Migration("20250818112945_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace eShop.Auth.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -329,11 +329,11 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -349,16 +349,14 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<string>("MiddleName")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("PersonalData");
                 });
@@ -654,6 +652,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("EmailChangeDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset?>("EmailConfirmationDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
@@ -682,11 +683,17 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<Guid?>("PersonalDataId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(18)
                         .HasColumnType("nvarchar(18)");
 
                     b.Property<DateTimeOffset?>("PhoneNumberChangeDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("PhoneNumberConfirmationDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("PhoneNumberConfirmed")
@@ -697,6 +704,9 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<DateTimeOffset?>("RecoveryEmailChangeDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("RecoveryEmailConfirmationDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("RecoveryEmailConfirmed")
@@ -714,6 +724,10 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonalDataId")
+                        .IsUnique()
+                        .HasFilter("[PersonalDataId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -920,17 +934,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Resource");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithOne("PersonalData")
-                        .HasForeignKey("eShop.Auth.Api.Entities.PersonalDataEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.RecoveryCodeEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
@@ -1003,6 +1006,15 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.PersonalDataEntity", "PersonalData")
+                        .WithOne("User")
+                        .HasForeignKey("eShop.Auth.Api.Entities.UserEntity", "PersonalDataId");
+
+                    b.Navigation("PersonalData");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserOAuthProviderEntity", b =>
@@ -1092,6 +1104,12 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
+                {
+                    b.Navigation("User")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.RoleEntity", b =>
                 {
                     b.Navigation("Permissions");
@@ -1111,9 +1129,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("OAuthProviders");
 
                     b.Navigation("Permissions");
-
-                    b.Navigation("PersonalData")
-                        .IsRequired();
 
                     b.Navigation("Providers");
 

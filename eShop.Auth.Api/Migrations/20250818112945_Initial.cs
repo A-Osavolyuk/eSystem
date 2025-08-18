@@ -44,6 +44,24 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PersonalData",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    MiddleName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonalData", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Providers",
                 columns: table => new
                 {
@@ -91,19 +109,23 @@ namespace eShop.Auth.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PersonalDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    EmailConfirmationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     EmailChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     RecoveryEmail = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     NormalizedRecoveryEmail = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     RecoveryEmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    RecoveryEmailConfirmationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     RecoveryEmailChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     UserNameChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PhoneNumberConfirmationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     PhoneNumberChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     PasswordChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -115,6 +137,11 @@ namespace eShop.Auth.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_PersonalData_PersonalDataId",
+                        column: x => x.PersonalDataId,
+                        principalTable: "PersonalData",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -249,30 +276,6 @@ namespace eShop.Auth.Api.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PersonalData",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PersonalData", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PersonalData_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -621,12 +624,6 @@ namespace eShop.Auth.Api.Migrations
                 column: "ResourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonalData_UserId",
-                table: "PersonalData",
-                column: "UserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RecoveryCodes_UserId",
                 table: "RecoveryCodes",
                 column: "UserId");
@@ -678,6 +675,13 @@ namespace eShop.Auth.Api.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_PersonalDataId",
+                table: "Users",
+                column: "PersonalDataId",
+                unique: true,
+                filter: "[PersonalDataId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserSecret_UserId",
                 table: "UserSecret",
                 column: "UserId",
@@ -701,9 +705,6 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "OAuthSessions");
-
-            migrationBuilder.DropTable(
-                name: "PersonalData");
 
             migrationBuilder.DropTable(
                 name: "RecoveryCodes");
@@ -755,6 +756,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Resources");
+
+            migrationBuilder.DropTable(
+                name: "PersonalData");
 
             migrationBuilder.DropTable(
                 name: "ResourceOwners");
