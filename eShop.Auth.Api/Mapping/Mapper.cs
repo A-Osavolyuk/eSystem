@@ -13,6 +13,7 @@ public static class Mapper
             Id = Guid.CreateVersion7(),
             FirstName = source.FirstName,
             LastName = source.LastName,
+            MiddleName = source.MiddleName,
             Gender = source.Gender,
             BirthDate = source.BirthDate,
             CreateDate = DateTimeOffset.UtcNow

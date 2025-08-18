@@ -170,6 +170,7 @@ public static class Mapper
             BirthDate = source.BirthDate!.Value,
             FirstName = source.FirstName,
             LastName = source.LastName,
+            MiddleName = source.MiddleName
         };
     }
 
