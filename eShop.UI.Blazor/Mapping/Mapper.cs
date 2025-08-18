@@ -143,10 +143,11 @@ public static class Mapper
         return new()
         {
             UserId = source.UserId,
-            Gender = source!.Gender,
-            BirthDate = source!.BirthDate,
-            FirstName = source!.FirstName,
-            LastName = source!.LastName,
+            Gender = source.Gender,
+            BirthDate = source.BirthDate,
+            FirstName = source.FirstName,
+            LastName = source.LastName,
+            MiddleName = source.MiddleName
         };
     }
 
@@ -190,6 +191,7 @@ public static class Mapper
             UserId = source.UserId,
             FirstName = source.FirstName,
             LastName = source.LastName,
+            MiddleName = source.MiddleName,
             BirthDate = source.BirthDate,
             Gender = source.Gender
         };
