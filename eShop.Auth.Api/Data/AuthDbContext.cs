@@ -42,6 +42,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.NormalizedUserName).HasMaxLength(64);
             entity.Property(x => x.PhoneNumber).HasMaxLength(18);
             entity.Property(x => x.PasswordHash).HasMaxLength(1000);
+            
+            entity.HasOne(p => p.PersonalData)
+                .WithOne(u => u.User)
+                .HasForeignKey<UserEntity>(p => p.PersonalDataId);
         });
         
         builder.Entity<UserChangesEntity>(entity =>
@@ -89,10 +93,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Gender).HasEnumConversion();
             entity.Property(x => x.FirstName).HasMaxLength(64);
             entity.Property(x => x.LastName).HasMaxLength(64);
-
-            entity.HasOne(p => p.User)
-                .WithOne(u => u.PersonalData)
-                .HasForeignKey<PersonalDataEntity>(p => p.UserId);
+            entity.Property(x => x.MiddleName).HasMaxLength(64);
         });
 
         builder.Entity<PermissionEntity>(entity =>

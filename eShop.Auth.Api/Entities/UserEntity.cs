@@ -3,6 +3,7 @@
 public class UserEntity : Entity
 {
     public Guid Id { get; init; }
+    public Guid? PersonalDataId { get; set; }
     
     public string Email { get; set; } = string.Empty;
     public string NormalizedEmail { get; set; } = string.Empty;

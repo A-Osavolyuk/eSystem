@@ -23,7 +23,11 @@ public class AddPersonalDataCommandHandler(
         var entity = Mapper.Map(request.Request);
         
         var result = await personalDataManager.CreateAsync(entity, cancellationToken);
-
-        return result;
+        if(!result.Succeeded) return result;
+        
+        user.PersonalDataId = entity.Id;
+        
+        var userResult = await userManager.UpdateAsync(user, cancellationToken);
+        return userResult;
     }
 }
