@@ -27,7 +27,7 @@ public class ConfirmAllowLinkedAccountCommandHandler(
 
         if (!codeResult.Succeeded) return codeResult;
         
-        var result = await providerManager.DisconnectAsync(user, provider, cancellationToken);
+        var result = await providerManager.AllowAsync(user, provider, cancellationToken);
         return result;
     }
 }
