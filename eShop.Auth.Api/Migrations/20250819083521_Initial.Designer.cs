@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250818112945_Initial")]
+    [Migration("20250819083521_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -732,7 +732,7 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserOAuthProviderEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserLinkedAccountEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -1017,7 +1017,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("PersonalData");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserOAuthProviderEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserLinkedAccountEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.OAuthProviderEntity", "Provider")
                         .WithMany()
@@ -1026,7 +1026,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany("OAuthProviders")
+                        .WithMany("LinkedAccounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1123,10 +1123,10 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Navigation("Devices");
 
+                    b.Navigation("LinkedAccounts");
+
                     b.Navigation("LockoutState")
                         .IsRequired();
-
-                    b.Navigation("OAuthProviders");
 
                     b.Navigation("Permissions");
 
