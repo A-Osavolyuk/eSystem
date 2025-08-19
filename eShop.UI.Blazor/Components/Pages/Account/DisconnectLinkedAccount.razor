@@ -1,10 +1,10 @@
-﻿@page "/account/device/unblock"
+﻿@page "/account/linked-account/disconnect"
 
 @inherits PageBase
 
 @inject IOAuthService OAuthService
 
-<Title Text="Disconnect @Provider linked account"/>
+<Title Text="@($"Disconnect {Provider} linked account")"/>
 
 <MudGrid Justify="Justify.Center" Spacing="1">
     <MudItem xs="6" Style="margin-top: 100px">
