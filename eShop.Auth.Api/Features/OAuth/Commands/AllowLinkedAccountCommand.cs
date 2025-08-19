@@ -29,15 +29,16 @@ public class AllowLinkedAccountCommandHandler(
 
         var message = new AllowLinkedAccountMessage()
         {
-            Payload = new()
+            Credentials = new()
             {
                 { "To", user!.Email },
                 { "Subject", $"Allow {provider.Name} linked account" }
             },
-            Credentials = new()
+            Payload = new()
             {
                 { "Code", code },
                 { "Provider", provider.Name },
+                { "UserName", user.UserName }
             }
         };
         

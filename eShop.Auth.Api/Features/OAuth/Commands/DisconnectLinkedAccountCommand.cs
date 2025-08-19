@@ -29,15 +29,16 @@ public class DisconnectLinkedAccountCommandHandler(
 
         var message = new DisconnectLinkedAccountMessage()
         {
-            Payload = new()
+            Credentials = new()
             {
                 { "To", user!.Email },
                 { "Subject", $"Disconnect {provider.Name} linked account" }
             },
-            Credentials = new()
+            Payload = new()
             {
                 { "Code", code },
                 { "Provider", provider.Name },
+                { "UserName", user.UserName }
             }
         };
         

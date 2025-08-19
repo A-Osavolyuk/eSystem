@@ -29,15 +29,16 @@ public class DisallowLinkedAccountCommandHandler(
 
         var message = new DisallowLinkedAccountMessage()
         {
-            Payload = new()
+            Credentials = new()
             {
                 { "To", user!.Email },
                 { "Subject", $"Disallow {provider.Name} linked account" }
             },
-            Credentials = new()
+            Payload = new()
             {
                 { "Code", code },
                 { "Provider", provider.Name },
+                { "UserName", user.UserName }
             }
         };
         
