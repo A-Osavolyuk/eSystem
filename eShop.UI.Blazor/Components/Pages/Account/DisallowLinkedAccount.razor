@@ -1,0 +1,150 @@
+﻿@page "/account/device/unblock"
+
+@inherits PageBase
+
+@inject IOAuthService OAuthService
+
+<Title Text="Disallow @Provider linked account"/>
+
+<MudGrid Justify="Justify.Center" Spacing="1">
+    <MudItem xs="6" Style="margin-top: 100px">
+
+        <MudStepperExtended 
+            @ref="stepper" 
+            Color="Color.Primary" 
+            Variant="Variant.Filled"
+            HeaderTextView="HeaderTextView.All" 
+            HeaderBadgeView="HeaderBadgeView.All"
+            ShowNextButton="false" 
+            ShowPreviousButton="false" 
+            ShowSkipButton="false">
+            <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Info" Title="Information">
+                <ChildContent>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="8">
+                            <MudStack Spacing="1">
+                                <MudPaper Outlined="true" Class="pa-3">
+                                    <MudText Typo="Typo.h4" Align="Align.Center">
+                                        Disallow @Provider linked account
+                                    </MudText>
+                                </MudPaper>
+                                <MudPaper Outlined="true" Class="pa-3">
+                                    <MudStack Spacing="4">
+                                        <MudText Align="Align.Center">
+                                            To disallow sign in with @Provider linked account, 
+                                            you will need to enter 6-digit code
+                                            from an email we will send you to: <strong>@Email</strong>.
+                                        </MudText>
+                                        <MudButton
+                                            Color="Color.Primary"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button"
+                                            OnClick="@(async () => await OnSendCodeAsync())">
+                                            Continue
+                                        </MudButton>
+                                    </MudStack>
+                                </MudPaper>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </ChildContent>
+            </MudStepExtended>
+            <MudStepExtended Icon="@Icons.Material.Filled.Check" Title="Code verification" Order="2">
+                <ChildContent>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="8">
+                            <MudStack Spacing="1" Justify="Justify.Center">
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudText Align="Align.Center" Typo="Typo.h4">
+                                        @Provider linked account disallow confirmation
+                                    </MudText>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudForm
+                                        @ref="form"
+                                        Model="Model">
+                                        <MudStack Spacing="4" Justify="Justify.Center">
+                                            <MudText Align="Align.Center">
+                                                We have sent an email with code to email: <strong>@Email</strong>
+                                            </MudText>
+
+                                            <MudCodeInput
+                                                Class="d-flex align-items-center"
+                                                Variant="Variant.Outlined"
+                                                Spacing="2"
+                                                Margin="Margin.None"
+                                                Count="6"
+                                                @bind-Value="Model.Code"/>
+                        
+                                            <MudLoadingButton
+                                                ButtonType="ButtonType.Button"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                FullWidth
+                                                Disabled="@(Model.Code.Length <= 5)"
+                                                OnClick="@(async () => await OnVerifyCodeAsync())">
+                                                Submit
+                                            </MudLoadingButton>
+                                        </MudStack>
+                                    </MudForm>
+                                </MudPaper>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </ChildContent>
+            </MudStepExtended>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
+    [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
+    [SupplyParameterFromForm] public ConfirmDisallowLinkedAccountModel Model { get; set; } = new();
+
+    private MudStepperExtended stepper = new();
+    private MudForm form = new();
+
+    private async Task OnSendCodeAsync()
+    {
+        var request = new DisallowLinkedAccountRequest()
+        {
+            UserId = UserId,
+            Provider = Provider
+        };
+
+        var result = await OAuthService.DisallowAsync(request);
+
+        if (result.Success)
+        {
+            var index = stepper!.GetActiveIndex();
+            await stepper!.CompleteStep(index);
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnVerifyCodeAsync()
+    {
+        var request = new ConfirmDisallowLinkedAccountRequest()
+        {
+            Provider = Provider,
+            UserId = UserId,
+            Code = Model.Code
+        };
+
+        var result = await OAuthService.ConfirmDisallowAsync(request);
+        
+        if (result.Success)
+        {
+            await RouteManager.NavigateAsync("/account/security");
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+}

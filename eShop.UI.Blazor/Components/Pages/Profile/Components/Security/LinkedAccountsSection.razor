@@ -27,7 +27,7 @@
                                         Icon="@Icons.Material.Filled.Close"
                                         Variant="Variant.Outlined"
                                         ButtonType="ButtonType.Button"
-                                        OnClick="@(async () => await OnDisallow.InvokeAsync(provider.Id))"/>
+                                        OnClick="@(async () => await OnDisallow.InvokeAsync(provider.Name))"/>
                                 </MudTooltip>
                                 <MudTooltip Text="Disconnect">
                                     <MudIconButton
@@ -35,7 +35,7 @@
                                         Icon="@Icons.Material.Filled.Delete"
                                         Variant="Variant.Outlined"
                                         ButtonType="ButtonType.Button"
-                                        OnClick="@(async () => await OnDisconnect.InvokeAsync(provider.Id))"/>
+                                        OnClick="@(async () => await OnDisconnect.InvokeAsync(provider.Name))"/>
                                 </MudTooltip>
                             }
                             else
@@ -54,7 +54,7 @@
                                         Icon="@Icons.Material.Filled.Check"
                                         Variant="Variant.Outlined"
                                         ButtonType="ButtonType.Button"
-                                        OnClick="@(async () => await OnAllow.InvokeAsync(provider.Id))"/>
+                                        OnClick="@(async () => await OnAllow.InvokeAsync(provider.Name))"/>
                                 </MudTooltip>
                                 <MudTooltip Text="Disconnect">
                                     <MudIconButton
@@ -62,7 +62,7 @@
                                         Icon="@Icons.Material.Filled.Delete"
                                         Variant="Variant.Outlined"
                                         ButtonType="ButtonType.Button"
-                                        OnClick="@(async () => await OnDisconnect.InvokeAsync(provider.Id))"/>
+                                        OnClick="@(async () => await OnDisconnect.InvokeAsync(provider.Name))"/>
                                 </MudTooltip>
                             }
                         </MudStack>
@@ -91,7 +91,7 @@
 
 @code {
     [Parameter] public UserSecurityModel Model { get; set; } = new();
-    [Parameter] public EventCallback<Guid> OnAllow { get; set; }
-    [Parameter] public EventCallback<Guid> OnDisallow { get; set; }
-    [Parameter] public EventCallback<Guid> OnDisconnect { get; set; }
+    [Parameter] public EventCallback<string> OnAllow { get; set; }
+    [Parameter] public EventCallback<string> OnDisallow { get; set; }
+    [Parameter] public EventCallback<string> OnDisconnect { get; set; }
 }

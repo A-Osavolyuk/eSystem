@@ -21,12 +21,16 @@
                     OnSubscribe="@(async (value) => await OnSubscribeAsync(value))"
                     OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
                     OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
-                <LinkedAccountsSection Model="SecurityModel"/>
+                <LinkedAccountsSection 
+                    Model="SecurityModel"
+                    OnAllow="@(async (value) => await OnAllowLinkedAccountAsync(value))"
+                    OnDisallow="@(async (value) => await OnDisallowLinkedAccountAsync(value))"
+                    OnDisconnect="@(async (value) => await OnDisconnectLinkedAccountAsync(value))"/>
                 <DevicesSection 
                     Model="SecurityModel"
-                    OnVerify="@(async (value) => await OnVerifyAsync(value))"
-                    OnBlock="@(async (value) => await OnBlockAsync(value))"
-                    OnUnblock="@(async (value) => await OnUnblockAsync(value))"/>
+                    OnVerify="@(async (value) => await OnVerifyDeviceAsync(value))"
+                    OnBlock="@(async (value) => await OnBlockDeviceAsync(value))"
+                    OnUnblock="@(async (value) => await OnUnblockDeviceAsync(value))"/>
                 <PasswordSection
                     Model="SecurityModel"
                     OnAdd="@OnAddPasswordAsync"
@@ -225,12 +229,21 @@
         }
     }
     
-    private async Task OnVerifyAsync(Guid id) => await RouteManager.NavigateAsync(
+    private async Task OnDisconnectLinkedAccountAsync(string provider) => await RouteManager.NavigateAsync(
+        $"/account/linked-account/disconnect?provider={provider}&user={userId}&email={email}");
+    
+    private async Task OnAllowLinkedAccountAsync(string provider) => await RouteManager.NavigateAsync(
+        $"/account/linked-account/allow?provider={provider}&user={userId}&email={email}");
+    
+    private async Task OnDisallowLinkedAccountAsync(string provider) => await RouteManager.NavigateAsync(
+        $"/account/linked-account/disallow?provider={provider}&user={userId}&email={email}");
+    
+    private async Task OnVerifyDeviceAsync(Guid id) => await RouteManager.NavigateAsync(
         $"/account/device/verify?device={id}&user={userId}&email={email}");
     
-    private async Task OnBlockAsync(Guid id) => await RouteManager.NavigateAsync(
+    private async Task OnBlockDeviceAsync(Guid id) => await RouteManager.NavigateAsync(
         $"/account/device/block?device={id}&user={userId}&email={email}");
     
-    private async Task OnUnblockAsync(Guid id) => await RouteManager.NavigateAsync(
+    private async Task OnUnblockDeviceAsync(Guid id) => await RouteManager.NavigateAsync(
         $"/account/device/unblock?device={id}&user={userId}&email={email}");
 }
