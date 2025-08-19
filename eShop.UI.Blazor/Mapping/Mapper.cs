@@ -193,7 +193,8 @@ public static class Mapper
             LastName = source.LastName,
             MiddleName = source.MiddleName,
             BirthDate = source.BirthDate,
-            Gender = source.Gender
+            Gender = source.Gender,
+            UpdateDate = source.UpdateDate
         };
     }
 }
