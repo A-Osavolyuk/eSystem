@@ -11,56 +11,65 @@
 
 <Title Text="Profile"></Title>
 
-<MudGrid Spacing="2" Justify="Justify.Center">
-    <MudItem xs="8">
-        <MudGrid Spacing="2">
-            <MudItem xs="3">
-                <MudPaper Outlined="true" Class="pa-5">
-                    <MudStack Class="w-100">
-                        <MudImage
-                            Class="w-100 h-auto rounded-lg"
-                            Alt="Avatar"
-                            Src="/images/avatar.jpg"
-                            FallbackSrc="/images/avatar.jpg"/>
+@if (UserModel is not null && UserPersonalModel is not null)
+{
+    <MudGrid Spacing="2" Justify="Justify.Center">
+        <MudItem xs="8">
+            <MudGrid Spacing="2">
+                <MudItem xs="3">
+                    <MudPaper Outlined="true" Class="pa-5">
+                        <MudStack Class="w-100">
+                            <MudImage
+                                Class="w-100 h-auto rounded-lg"
+                                Alt="Avatar"
+                                Src="/images/avatar.jpg"
+                                FallbackSrc="/images/avatar.jpg"/>
 
-                        <MudLoadingButton
-                            FullWidth="true"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            ButtonType="ButtonType.Button">
-                            Change avatar
-                        </MudLoadingButton>
-                    </MudStack>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="9">
-                <MudGrid Spacing="2">
-                    <MudItem xs="12">
-                        <AccountDataSection
-                            Model="UserModel"
-                            OnChange="@OnUsernameChangeAsync"
-                            OnRemove="@OnRemovePhoneNumberAsync"/>
-                    </MudItem>
-                    <MudItem xs="12">
-                        <PersonalDataSection
-                            Model="UserPersonalModel"
-                            OnAdd="@OnAddPersonalDataAsync"
-                            OnChange="@OnChangePersonalDataAsync"/>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-        </MudGrid>
-    </MudItem>
-</MudGrid>
+                            <MudLoadingButton
+                                FullWidth="true"
+                                Variant="Variant.Filled"
+                                Color="Color.Primary"
+                                ButtonType="ButtonType.Button">
+                                Change avatar
+                            </MudLoadingButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12">
+                            <AccountDataSection
+                                Model="UserModel"
+                                OnChange="@OnUsernameChangeAsync"
+                                OnRemove="@OnRemovePhoneNumberAsync"/>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <PersonalDataSection
+                                Model="UserPersonalModel"
+                                OnAdd="@OnAddPersonalDataAsync"
+                                OnChange="@OnChangePersonalDataAsync"/>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+}
 
 @code {
-    private UserModel UserModel { get; set; } = new();
+    private UserModel? UserModel { get; set; }
     private UserPersonalModel? UserPersonalModel { get; set; }
+    
+    private string? email;
+    private Guid userId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            email = await LocalStorage.GetAsync<string>("email");
+            userId = await LocalStorage.GetAsync<Guid>("userId")!;
+            
             await LoadUserAsync();
             await LoadUserPersonalAsync();
             
@@ -70,7 +79,6 @@
 
     private async Task LoadUserAsync()
     {
-        var userId = await LocalStorage.GetAsync<Guid>("userId")!;
         var result = await UserService.GetUserAsync(userId);
 
         if (result.Success)
@@ -87,7 +95,6 @@
     
     private async Task LoadUserPersonalAsync()
     {
-        var userId = await LocalStorage.GetAsync<Guid>("userId")!;
         var result = await UserService.GetUserPersonalDataAsync(userId);
 
         if (result.Success)
@@ -113,8 +120,8 @@
 
         var model = new ChangeUsernameModel()
         {
-            Id = UserModel.UserId,
-            Username = UserModel.UserName,
+            Id = userId,
+            Username = UserModel!.UserName,
         };
 
         var parameters = new DialogParameters<ChangeUsernameDialog>()
@@ -144,7 +151,7 @@
 
         var parameters = new DialogParameters<RemovePhoneNumberDialog>()
         {
-            { x => x.UserId, UserModel.UserId }
+            { x => x.UserId, userId }
         };
 
         var dialog = await DialogService.ShowAsync<RemovePhoneNumberDialog>("Remove phone number", parameters, options);
@@ -193,7 +200,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPersonalDataModel() { Id = UserModel.UserId };
+        var model = new AddPersonalDataModel() { Id = userId };
 
         var parameters = new DialogParameters<AddPersonalDataDialog>()
         {

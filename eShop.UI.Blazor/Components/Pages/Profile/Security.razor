@@ -11,31 +11,34 @@
 
 <Title Text="Security"></Title>
 
-<MudGrid Justify="Justify.Center">
-    <MudItem xs="6">
-        <MudStack Spacing="2" Justify="Justify.Center">
-            <TwoFactorSection
-                Model="SecurityModel"
-                OnSubscribe="@(async (value) => await OnSubscribeAsync(value))"
-                OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
-                OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
-            <LinkedAccountsSection Model="SecurityModel"/>
-            <DevicesSection 
-                Model="SecurityModel"
-                OnVerify="@(async (value) => await OnVerifyAsync(value))"
-                OnBlock="@(async (value) => await OnBlockAsync(value))"
-                OnUnblock="@(async (value) => await OnUnblockAsync(value))"/>
-            <PasswordSection
-                Model="SecurityModel"
-                OnAdd="@OnAddPasswordAsync"
-                OnChange="@OnChangePasswordAsync"
-                OnReset="@OnResetPasswordAsync"/>
-        </MudStack>
-    </MudItem>
-</MudGrid>
+@if (SecurityModel is not null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="6">
+            <MudStack Spacing="2" Justify="Justify.Center">
+                <TwoFactorSection
+                    Model="SecurityModel"
+                    OnSubscribe="@(async (value) => await OnSubscribeAsync(value))"
+                    OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
+                    OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
+                <LinkedAccountsSection Model="SecurityModel"/>
+                <DevicesSection 
+                    Model="SecurityModel"
+                    OnVerify="@(async (value) => await OnVerifyAsync(value))"
+                    OnBlock="@(async (value) => await OnBlockAsync(value))"
+                    OnUnblock="@(async (value) => await OnUnblockAsync(value))"/>
+                <PasswordSection
+                    Model="SecurityModel"
+                    OnAdd="@OnAddPasswordAsync"
+                    OnChange="@OnChangePasswordAsync"
+                    OnReset="@OnResetPasswordAsync"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
 
 @code {
-    private UserSecurityModel SecurityModel { get; set; } = new();
+    private UserSecurityModel? SecurityModel { get; set; }
     
     private string? email;
     private Guid userId;
@@ -45,7 +48,6 @@
         if (firstRender)
         {
             await LoadAsync();
-
             StateHasChanged();
         }
     }
@@ -78,7 +80,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ChangePasswordModel() { Id = SecurityModel.UserId };
+        var model = new ChangePasswordModel() { Id = userId };
 
         var parameters = new DialogParameters<ChangePasswordDialog>()
         {
@@ -104,7 +106,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPasswordModel() { UserId = SecurityModel.UserId };
+        var model = new AddPasswordModel() { UserId = userId };
 
         var parameters = new DialogParameters<AddPasswordDialog>()
         {
@@ -130,7 +132,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ResetPasswordModel() { Id = SecurityModel.UserId };
+        var model = new ResetPasswordModel() { Id = userId };
 
         var parameters = new DialogParameters<ResetPasswordDialog>()
         {
@@ -171,7 +173,7 @@
 
         var parameters = new DialogParameters<Disable2FaProviderDialog>()
         {
-            { x => x.UserId, SecurityModel.UserId },
+            { x => x.UserId, userId },
             { x => x.Provider, provider }
         };
 
@@ -188,7 +190,7 @@
     private async Task OnGenerateRecoveryCodesAsync()
     {
         var recoveryCodes = new List<string>();
-        var request = new GenerateRecoveryCodesRequest() { UserId = SecurityModel.UserId };
+        var request = new GenerateRecoveryCodesRequest() { UserId = userId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
 
         if (result.Success)
@@ -224,11 +226,11 @@
     }
     
     private async Task OnVerifyAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/verify?device={id}&user={SecurityModel.UserId}&email={email}");
+        $"/account/device/verify?device={id}&user={userId}&email={email}");
     
     private async Task OnBlockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/block?device={id}&user={SecurityModel.UserId}&email={email}");
+        $"/account/device/block?device={id}&user={userId}&email={email}");
     
     private async Task OnUnblockAsync(Guid id) => await RouteManager.NavigateAsync(
-        $"/account/device/unblock?device={id}&user={SecurityModel.UserId}&email={email}");
+        $"/account/device/unblock?device={id}&user={userId}&email={email}");
 }
