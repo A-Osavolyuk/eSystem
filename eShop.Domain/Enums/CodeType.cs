@@ -6,44 +6,57 @@
 public enum CodeType
 {
     /// <summary>
-    /// Represent verification of the current (existing) resource like email, phone number, etc.
+    /// Verification of an existing resource, such as the current email or phone number.
     /// </summary>
     Current = 1,
 
     /// <summary>
-    /// Represents verification of a new resource, such as a newly registered email address or phone number.
+    /// Verification of a newly added resource, such as a new email address or phone number.
     /// </summary>
     New = 2,
 
     /// <summary>
-    /// Represents an action to verify a specific resource or process, ensuring its authenticity or correctness,
-    /// such as email or phone verification.
+    /// Generic verification of a resource or process, e.g. email or phone confirmation.
     /// </summary>
     Verify = 3,
 
     /// <summary>
-    /// Represents a verification code specifically generated for resetting a resource,
-    /// such as a password or other account-related data.
+    /// Verification for resetting a resource, such as a password or other account-related data.
     /// </summary>
     Reset = 4,
-    
+
     /// <summary>
-    /// Represents a recovery code for account recover
+    /// Recovery code used to regain access to an account (e.g., after losing credentials).
     /// </summary>
     Unlock = 5,
-    
+
     /// <summary>
-    /// Represents an user device trust
+    /// Trusting a user device, marking it as recognized for future sign-ins.
     /// </summary>
     Trust = 6,
-    
+
     /// <summary>
-    /// Represents an user device block
+    /// Blocking a user device, preventing it from being used for sign-in.
     /// </summary>
     Block = 7,
-    
+
     /// <summary>
-    /// Represents an user device unblock
+    /// Unblocking a previously blocked device, allowing it to be used again.
     /// </summary>
-    Unblock = 8
+    Unblock = 8,
+
+    /// <summary>
+    /// Disconnecting a linked external account (e.g., Google, Facebook, etc.).
+    /// </summary>
+    Disconnect = 9,
+
+    /// <summary>
+    /// Allowing sign-in via a linked external account.
+    /// </summary>
+    Allow = 10,
+
+    /// <summary>
+    /// Disallowing sign-in via a linked external account (opposite of <see cref="Allow"/>).
+    /// </summary>
+    Disallow = 11
 }
