@@ -3,5 +3,5 @@
 public class DisconnectLinkedAccountRequest
 {
     public Guid UserId { get; set; }
-    public Guid ProviderId { get; set; }
+    public string Provider { get; set; } = string.Empty;
 }

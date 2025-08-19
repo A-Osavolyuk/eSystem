@@ -21,8 +21,8 @@ public class DisconnectLinkedAccountCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        var provider = await providerManager.FindByIdAsync(request.Request.ProviderId, cancellationToken);
-        if (provider is null) return Results.NotFound($"Cannot find provider with ID {request.Request.ProviderId}.");
+        var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        if (provider is null) return Results.NotFound($"Cannot find provider with ID {request.Request.Provider}.");
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Disconnect,
             CodeResource.LinkedAccount, cancellationToken);
