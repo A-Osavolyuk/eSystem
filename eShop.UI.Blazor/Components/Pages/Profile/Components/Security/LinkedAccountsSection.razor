@@ -1,64 +1,86 @@
 ﻿@if (Model.OAuthProviders.Count > 0)
 {
-    <MudPaper Outlined="true" Class="pa-5">
+    <MudPaper Outlined="true" Class="pt-3 pl-5 pr-5 pb-5">
         <MudStack Spacing="3">
             <MudText Typo="Typo.h6">
                 Linked accounts
             </MudText>
-            <MudStack Spacing="4" Class="mb-4">
+            <MudStack Spacing="2">
                 @foreach (var provider in Model.OAuthProviders)
                 {
-                    <MudStack Row="true" Spacing="1" Class="position-relative">
-                        <MudText Style="padding-top: 5px"> @provider.Name</MudText>
+                    <MudStack Spacing="0">
+                        <MudStack Row="true" Spacing="1">
+                            <MudText Style="padding-top: 5px"> @provider.Name</MudText>
+                            @if (provider.IsAllowed)
+                            {
+                                <MudChip
+                                    T="string"
+                                    Size="Size.Small"
+                                    Variant="Variant.Outlined"
+                                    Color="Color.Success">
+                                    Allowed
+                                </MudChip>
+                                <MudSpacer/>
+                                <MudTooltip Text="Disallow">
+                                    <MudIconButton
+                                        Color="Color.Error"
+                                        Icon="@Icons.Material.Filled.Close"
+                                        Variant="Variant.Outlined"
+                                        ButtonType="ButtonType.Button"
+                                        OnClick="@(async () => await OnDisallow.InvokeAsync(provider.Id))"/>
+                                </MudTooltip>
+                                <MudTooltip Text="Disconnect">
+                                    <MudIconButton
+                                        Color="Color.Warning"
+                                        Icon="@Icons.Material.Filled.Delete"
+                                        Variant="Variant.Outlined"
+                                        ButtonType="ButtonType.Button"
+                                        OnClick="@(async () => await OnDisconnect.InvokeAsync(provider.Id))"/>
+                                </MudTooltip>
+                            }
+                            else
+                            {
+                                <MudChip
+                                    T="string"
+                                    Size="Size.Small"
+                                    Variant="Variant.Outlined"
+                                    Color="Color.Error">
+                                    Disallowed
+                                </MudChip>
+                                <MudSpacer/>
+                                <MudTooltip Text="Allow">
+                                    <MudIconButton
+                                        Color="Color.Success"
+                                        Icon="@Icons.Material.Filled.Check"
+                                        Variant="Variant.Outlined"
+                                        ButtonType="ButtonType.Button"
+                                        OnClick="@(async () => await OnAllow.InvokeAsync(provider.Id))"/>
+                                </MudTooltip>
+                                <MudTooltip Text="Disconnect">
+                                    <MudIconButton
+                                        Color="Color.Warning"
+                                        Icon="@Icons.Material.Filled.Delete"
+                                        Variant="Variant.Outlined"
+                                        ButtonType="ButtonType.Button"
+                                        OnClick="@(async () => await OnDisconnect.InvokeAsync(provider.Id))"/>
+                                </MudTooltip>
+                            }
+                        </MudStack>
                         @if (provider.IsAllowed)
                         {
-                            <MudChip
-                                T="string"
-                                Size="Size.Small"
-                                Variant="Variant.Outlined"
-                                Color="Color.Success">
-                                Allowed
-                            </MudChip>
                             <MudText
-                                Class="opacity-50 position-absolute"
-                                Style="bottom: -18px"
+                                Class="opacity-50"
                                 Typo="Typo.caption">
                                 Linked at: @provider.LinkedDate?.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
-                            <MudSpacer/>
-                            <MudTooltip Text="Disallow">
-                                <MudIconButton
-                                    Color="Color.Error"
-                                    Class="pt-1"
-                                    Icon="@Icons.Material.Filled.Close"
-                                    Variant="Variant.Outlined"
-                                    ButtonType="ButtonType.Button"/>
-                            </MudTooltip>
                         }
                         else
                         {
-                            <MudChip
-                                T="string"
-                                Size="Size.Small"
-                                Variant="Variant.Outlined"
-                                Color="Color.Error">
-                                Disallowed
-                            </MudChip>
                             <MudText
-                                Class="opacity-50 position-absolute"
-                                Style="bottom: -18px"
+                                Class="opacity-50"
                                 Typo="Typo.caption">
                                 Disallowed at: @provider.LinkedDate?.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
-                            <MudSpacer/>
-                            <MudTooltip Text="Allow">
-                                <MudIconButton
-                                    Color="Color.Success"
-                                    Class="pt-1"
-                                    Icon="@Icons.Material.Filled.Check"
-                                    Variant="Variant.Outlined"
-                                    ButtonType="ButtonType.Button"/>
-                            </MudTooltip>
                         }
                     </MudStack>
                 }
@@ -69,4 +91,7 @@
 
 @code {
     [Parameter] public UserSecurityModel Model { get; set; } = new();
+    [Parameter] public EventCallback<Guid> OnAllow { get; set; }
+    [Parameter] public EventCallback<Guid> OnDisallow { get; set; }
+    [Parameter] public EventCallback<Guid> OnDisconnect { get; set; }
 }
