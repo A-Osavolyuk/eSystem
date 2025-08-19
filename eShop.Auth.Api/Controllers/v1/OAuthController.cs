@@ -68,6 +68,18 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Confirm disconnect related account")]
+    [EndpointDescription("Confirm disconnect related account")]
+    [ProducesResponseType(200)]
+    [HttpPost("confirm-disconnect")]
+    public async ValueTask<IActionResult> ConfirmDisconnectAsync([FromBody] ConfirmDisconnectLinkedAccountRequest request)
+    {
+        var result = await sender.Send(new ConfirmDisconnectLinkedAccountCommand(request));
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Allow related account")]
     [EndpointDescription("Allow related account")]
