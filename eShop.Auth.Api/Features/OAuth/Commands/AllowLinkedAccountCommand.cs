@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Auth.Api.Messages.Email;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.OAuth.Commands;
 
@@ -6,10 +7,14 @@ public record AllowLinkedAccountCommand(AllowLinkedAccountRequest Request) : IRe
 
 public class AllowLinkedAccountCommandHandler(
     IUserManager userManager,
-    IOAuthProviderManager providerManager) : IRequestHandler<AllowLinkedAccountCommand, Result>
+    IOAuthProviderManager providerManager,
+    ICodeManager codeManager,
+    IMessageService messageService) : IRequestHandler<AllowLinkedAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
+    private readonly ICodeManager codeManager = codeManager;
+    private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(AllowLinkedAccountCommand request, CancellationToken cancellationToken)
     {
@@ -19,7 +24,25 @@ public class AllowLinkedAccountCommandHandler(
         var provider = await providerManager.FindByIdAsync(request.Request.ProviderId, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with ID {request.Request.ProviderId}.");
 
-        var result = await providerManager.AllowAsync(user, provider, cancellationToken);
-        return result;
+        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Allow,
+            CodeResource.LinkedAccount, cancellationToken);
+
+        var message = new AllowLinkedAccountMessage()
+        {
+            Payload = new()
+            {
+                { "To", user!.Email },
+                { "Subject", $"Allow {provider.Name} linked account" }
+            },
+            Credentials = new()
+            {
+                { "Code", code },
+                { "Provider", provider.Name },
+            }
+        };
+        
+        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+
+        return Result.Success();
     }
 }
