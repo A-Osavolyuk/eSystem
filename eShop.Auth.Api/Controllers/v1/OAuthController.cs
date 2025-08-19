@@ -116,4 +116,16 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Confirm disallow related account")]
+    [EndpointDescription("Confirm disallow related account")]
+    [ProducesResponseType(200)]
+    [HttpPost("confirm-disallow")]
+    public async ValueTask<IActionResult> ConfirmDisallowAsync([FromBody] ConfirmDisallowLinkedAccountRequest request)
+    {
+        var result = await sender.Send(new ConfirmDisallowLinkedAccountCommand(request));
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 }
