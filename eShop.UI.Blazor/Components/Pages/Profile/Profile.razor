@@ -11,7 +11,7 @@
 
 <Title Text="Profile"></Title>
 
-@if (UserModel is not null && UserPersonalModel is not null)
+@if (UserModel is not null)
 {
     <MudGrid Spacing="2" Justify="Justify.Center">
         <MudItem xs="8">
@@ -47,7 +47,8 @@
                             <PersonalDataSection
                                 Model="UserPersonalModel"
                                 OnAdd="@OnAddPersonalDataAsync"
-                                OnChange="@OnChangePersonalDataAsync"/>
+                                OnChange="@OnChangePersonalDataAsync"
+                                OnRemove="@OnRemovePersonalDataAsync"/>
                         </MudItem>
                     </MudGrid>
                 </MudItem>
@@ -105,7 +106,7 @@
         }
         else
         {
-            Snackbar.Add(result.Message, Severity.Error);
+            UserPersonalModel = null;
         }
     }
 
@@ -208,6 +209,30 @@
         };
 
         var dialog = await DialogService.ShowAsync<AddPersonalDataDialog>("Add personal data", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserPersonalAsync();
+            StateHasChanged();
+        }
+    }
+    
+    private async Task OnRemovePersonalDataAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var parameters = new DialogParameters<RemovePersonalDataDialog>()
+        {
+            { x => x.UserId, userId }
+        };
+
+        var dialog = await DialogService.ShowAsync<RemovePersonalDataDialog>("Remove personal data", parameters, options);
         var result = await dialog.Result;
 
         if (!result!.Canceled)

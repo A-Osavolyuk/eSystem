@@ -1,0 +1,57 @@
+﻿@inject IUserService UserService
+@inject ISnackbar Snackbar
+
+<MudDialog Style="width: 600px">
+    <TitleContent>
+        Remove personal data
+    </TitleContent>
+    <DialogContent>
+        <MudText Align="Align.Left">
+            Are you sure you want to remove your personal data?
+        </MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudStack Row="true" Spacing="1">
+            <MudButton
+                Color="Color.Info"
+                Variant="Variant.Outlined"
+                ButtonType="ButtonType.Button"
+                OnClick="@(() => OnCancel())">
+                Cancel
+            </MudButton>
+            <MudButton
+                Color="Color.Error"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                OnClick="@(async () => await OnSubmitAsync())">
+                Submit
+            </MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
+    [Parameter] public Guid UserId { get; set; }
+
+    private async Task OnSubmitAsync()
+    {
+        var request = new RemovePersonalDataRequest()
+        {
+            UserId = UserId,
+        };
+
+        var result = await UserService.RemovePersonalDataAsync(request);
+
+        if (result.Success)
+        {
+            Dialog?.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private void OnCancel() => Dialog?.Cancel();
+}
