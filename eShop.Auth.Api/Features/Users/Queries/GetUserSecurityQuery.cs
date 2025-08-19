@@ -24,8 +24,8 @@ public class GetUserSecurityQueryHandler(IUserManager userManager) : IRequestHan
             PasswordChangeDate = user.PasswordChangeDate,
             TwoFactorEnabled = user.Providers.Any(x => x.Subscribed),
             Providers = user.Providers.Select(Mapper.Map).ToList(),
-            HasLinkedAccounts = user.OAuthProviders.Count > 0,
-            OAuthProviders = user.OAuthProviders.Select(Mapper.Map).ToList(),
+            HasLinkedAccounts = user.LinkedAccounts.Count > 0,
+            OAuthProviders = user.LinkedAccounts.Select(Mapper.Map).ToList(),
             Devices = user.Devices.Select(Mapper.Map).ToList(),
         };
         

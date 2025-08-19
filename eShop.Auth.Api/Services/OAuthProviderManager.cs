@@ -33,7 +33,7 @@ public class OAuthProviderManager(AuthDbContext context) : IOAuthProviderManager
             return Result.Success();
         }
 
-        var entity = new UserOAuthProviderEntity()
+        var entity = new UserLinkedAccountEntity()
         {
             UserId = user.Id,
             ProviderId = provider.Id,

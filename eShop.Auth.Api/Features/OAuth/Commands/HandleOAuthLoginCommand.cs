@@ -368,7 +368,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private async Task<Result> IsProviderAllowedAsync(UserEntity user, OAuthProviderEntity provider,
         UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
-        if (user.OAuthProviders.Any(x => x.ProviderId == provider.Id && !x.Allowed))
+        if (user.LinkedAccounts.Any(x => x.ProviderId == provider.Id && !x.Allowed))
         {
             var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);

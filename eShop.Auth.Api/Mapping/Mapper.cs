@@ -83,7 +83,7 @@ public static class Mapper
         };
     }
 
-    public static UserOAuthProviderDto Map(UserOAuthProviderEntity source)
+    public static UserOAuthProviderDto Map(UserLinkedAccountEntity source)
     {
         return new UserOAuthProviderDto()
         {

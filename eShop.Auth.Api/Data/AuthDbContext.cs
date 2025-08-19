@@ -23,7 +23,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserChangesEntity> UserChanges { get; set; }
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
-    public DbSet<UserOAuthProviderEntity> UserOAuthProviders { get; set; }
+    public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
     
@@ -244,12 +244,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Name).HasMaxLength(64);
         });
 
-        builder.Entity<UserOAuthProviderEntity>(entity =>
+        builder.Entity<UserLinkedAccountEntity>(entity =>
         {
             entity.HasKey(x => new { x.UserId, x.ProviderId });
             
             entity.HasOne(x => x.User)
-                .WithMany(x => x.OAuthProviders)
+                .WithMany(x => x.LinkedAccounts)
                 .HasForeignKey(x => x.UserId);
             
             entity.HasOne(x => x.Provider)

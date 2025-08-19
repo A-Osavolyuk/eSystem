@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class UserOAuthProviderEntity : Entity
+public class UserLinkedAccountEntity : Entity
 {
     public Guid UserId { get; set; }
     public Guid ProviderId { get; set; }
