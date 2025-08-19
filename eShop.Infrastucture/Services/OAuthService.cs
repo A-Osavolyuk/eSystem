@@ -25,4 +25,16 @@ public class OAuthService(
     public async ValueTask<Response> DisallowAsync(DisallowLinkedAccountRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/OAuth/disallow", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<Response> ConfirmDisconnectAsync(ConfirmDisconnectLinkedAccountRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/OAuth/confirm-disconnect", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<Response> ConfirmAllowAsync(ConfirmAllowLinkedAccountRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/OAuth/confirm-allow", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<Response> ConfirmDisallowAsync(ConfirmDisallowLinkedAccountRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/OAuth/confirm-disallow", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
 }
