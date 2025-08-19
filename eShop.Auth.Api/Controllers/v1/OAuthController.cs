@@ -49,9 +49,21 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointDescription("Load OAuth session")]
     [ProducesResponseType(200)]
     [HttpPost("load")]
-    public async ValueTask<IActionResult> LoadOauthSessionAsync([FromBody] LoadOAuthSessionRequest request)
+    public async ValueTask<IActionResult> LoadSessionAsync([FromBody] LoadOAuthSessionRequest request)
     {
         var result = await sender.Send(new LoadOAuthSessionCommand(request));
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Disconnect related account")]
+    [EndpointDescription("Disconnect related account")]
+    [ProducesResponseType(200)]
+    [HttpPost("disconnect")]
+    public async ValueTask<IActionResult> DisconnectAsync([FromBody] DisconnectLinkedAccountRequest request)
+    {
+        var result = await sender.Send(new DisconnectLinkedAccountCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);

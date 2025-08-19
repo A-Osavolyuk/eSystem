@@ -316,7 +316,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private async Task<Result> SignUpAsync(UserEntity user, OAuthProviderEntity provider, OAuthSessionEntity session,
         string returnUri, string fallbackUri, string token, CancellationToken cancellationToken)
     {
-        var result = await providerManager.EnableAsync(user, provider, cancellationToken);
+        var result = await providerManager.ConnectAsync(user, provider, cancellationToken);
 
         if (!result.Succeeded)
             return RedirectWithError(OAuthErrorType.InternalError,
@@ -389,7 +389,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private async Task<Result> CheckUserProviderAsync(UserEntity user, OAuthProviderEntity provider,
         UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
-        var enableResult = await providerManager.EnableAsync(user, provider, cancellationToken);
+        var enableResult = await providerManager.ConnectAsync(user, provider, cancellationToken);
 
         if (!enableResult.Succeeded)
         {

@@ -23,8 +23,7 @@ public class OAuthProviderManager(AuthDbContext context) : IOAuthProviderManager
         return entity;
     }
 
-    public async ValueTask<Result> EnableAsync(UserEntity user, 
-        OAuthProviderEntity provider, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ConnectAsync(UserEntity user, OAuthProviderEntity provider, CancellationToken cancellationToken = default)
     {
         var existedEntity = await context.UserOAuthProviders.FirstOrDefaultAsync(
             x => x.UserId == user.Id && x.ProviderId == provider.Id, cancellationToken);
@@ -43,6 +42,23 @@ public class OAuthProviderManager(AuthDbContext context) : IOAuthProviderManager
         };
         
         await context.UserOAuthProviders.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> DisconnectAsync(UserEntity user, 
+        OAuthProviderEntity provider, CancellationToken cancellationToken = default)
+    {
+        var entity = await context.UserOAuthProviders.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.ProviderId == provider.Id, cancellationToken);
+
+        if (entity is null)
+        {
+            return Results.NotFound("Cannot disconnect. Provider was not connected.");
+        }
+        
+        context.UserOAuthProviders.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
