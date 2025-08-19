@@ -55,10 +55,48 @@ public class OAuthProviderManager(AuthDbContext context) : IOAuthProviderManager
 
         if (entity is null)
         {
-            return Results.NotFound("Cannot disconnect. Provider was not connected.");
+            return Results.NotFound($"User has no linked account with {provider.Name}.");
         }
         
         context.UserOAuthProviders.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> AllowAsync(UserEntity user, OAuthProviderEntity provider, CancellationToken cancellationToken = default)
+    {
+        var entity = await context.UserOAuthProviders.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.ProviderId == provider.Id, cancellationToken);
+
+        if (entity is null)
+        {
+            return Results.NotFound($"User has no linked account with {provider.Name}.");
+        }
+        
+        entity.Allowed = true;
+        entity.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.UserOAuthProviders.Update(entity);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> DisallowAsync(UserEntity user, OAuthProviderEntity provider, CancellationToken cancellationToken = default)
+    {
+        var entity = await context.UserOAuthProviders.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.ProviderId == provider.Id, cancellationToken);
+
+        if (entity is null)
+        {
+            return Results.NotFound($"User has no linked account with {provider.Name}.");
+        }
+        
+        entity.Allowed = false;
+        entity.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.UserOAuthProviders.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
