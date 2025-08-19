@@ -38,6 +38,10 @@ public class UserService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal", Method = HttpMethod.Put, Data = request },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<Response> RemovePersonalDataAsync(RemovePersonalDataRequest request) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal", Method = HttpMethod.Delete, Data = request },
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<Response> AddPersonalDataAsync(AddPersonalDataRequest request) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{request.UserId}/personal", Method = HttpMethod.Post, Data = request },
             new HttpOptions { WithBearer = true, Type = DataType.Text });

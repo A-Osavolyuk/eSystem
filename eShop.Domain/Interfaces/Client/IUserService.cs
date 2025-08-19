@@ -11,6 +11,7 @@ public interface IUserService
     public ValueTask<Response> GetTwoFactorProvidersAsync(Guid id);
     public ValueTask<Response> GetLockoutStateAsync(Guid id);
     public ValueTask<Response> ChangeUsernameAsync(ChangeUsernameRequest request);
-    public ValueTask<Response> ChangePersonalDataAsync(ChangePersonalDataRequest request);
     public ValueTask<Response> AddPersonalDataAsync(AddPersonalDataRequest request);
+    public ValueTask<Response> ChangePersonalDataAsync(ChangePersonalDataRequest request);
+    public ValueTask<Response> RemovePersonalDataAsync(RemovePersonalDataRequest request);
 }
