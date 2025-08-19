@@ -2,6 +2,8 @@
 
 @inherits PageBase
 
+@attribute [Authorize]
+
 @inject IOAuthService OAuthService
 
 <Title Text="@($"Allow {Provider} linked account")"/>
