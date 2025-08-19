@@ -1,13 +1,12 @@
-﻿<MudPaper Outlined="true" Class="pa-5">
-    <MudGrid Spacing="3">
-        @if (Model is null)
-        {
-            <MudItem xs="11">
-                <MudText Class="mb-2" Typo="Typo.h6">
+﻿<MudPaper Outlined="true" Class="pt-3 pl-5 pr-5 pb-5">
+    @if (Model is null)
+    {
+        <MudStack Spacing="3">
+            <MudStack Row="true">
+                <MudText Typo="Typo.h6">
                     Personal information
                 </MudText>
-            </MudItem>
-            <MudItem xs="1" Class="text-end">
+                <MudSpacer />
                 <MudTooltip Text="Add personal data">
                     <MudIconButton
                         Icon="@Icons.Material.Filled.Add"
@@ -15,28 +14,33 @@
                         Variant="Variant.Filled"
                         OnClick="@(async () => await OnAdd.InvokeAsync())"/>
                 </MudTooltip>
-            </MudItem>
-            <MudItem xs="12" Style="padding-top: 0">
-                <MudText Style="opacity: 0.5" Typo="Typo.caption">
-                    Personal information was not added. You can add it by click button right.
-                </MudText>
-            </MudItem>
-        }
-        else
-        {
-            <MudItem xs="11">
-                <MudText Class="mb-2" Typo="Typo.h6">
+            </MudStack>
+            <MudText Class="opacity-50" Typo="Typo.caption">
+                Personal information was not added. You can add it by click button right.
+            </MudText>
+        </MudStack>
+    }
+    else
+    {
+        <MudStack Spacing="3">
+            <MudStack Row="true" Spacing="1" Justify="Justify.Center">
+                <MudText Typo="Typo.h6" Class="pt-1">
                     Personal information
                 </MudText>
                 @if (Model.UpdateDate is not null)
                 {
-                    <MudText Align="Align.Start" Typo="Typo.caption" Style="opacity: .5;">
-                        Last
-                        change: @Model!.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
-                    </MudText>
+                    <MudTooltip Text="@($"Last change: {Model.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                        <MudChip
+                            T="string"
+                            Class="mx-0 mt-2"
+                            Color="Color.Warning"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Changed
+                        </MudChip>
+                    </MudTooltip>
                 }
-            </MudItem>
-            <MudItem xs="1" Class="text-end">
+                <MudSpacer />
                 <MudTooltip Text="Change personal data">
                     <MudIconButton
                         Icon="@Icons.Material.Filled.Edit"
@@ -44,58 +48,60 @@
                         Variant="Variant.Filled"
                         OnClick="@(async () => await OnChange.InvokeAsync())"/>
                 </MudTooltip>
-            </MudItem>
-            <MudItem xs="3">
-                <MudText>
-                    First name
-                </MudText>
-            </MudItem>
-            <MudItem xs="9">
-                <MudText>
-                    @Model.FirstName
-                </MudText>
-            </MudItem>
-            <MudItem xs="12">
-                <MudDivider/>
-            </MudItem>
-            <MudItem xs="3">
-                <MudText>
-                    Last name
-                </MudText>
-            </MudItem>
-            <MudItem xs="9">
-                <MudText>
-                    @Model.LastName
-                </MudText>
-            </MudItem>
-            <MudItem xs="12">
-                <MudDivider/>
-            </MudItem>
-            <MudItem xs="3">
-                <MudText>
-                    Birth date
-                </MudText>
-            </MudItem>
-            <MudItem xs="9">
-                <MudText>
-                    @Model.BirthDate.ToString("D", new CultureInfo("en-GB"))
-                </MudText>
-            </MudItem>
-            <MudItem xs="12">
-                <MudDivider/>
-            </MudItem>
-            <MudItem xs="3">
-                <MudText>
-                    Gender
-                </MudText>
-            </MudItem>
-            <MudItem xs="9">
-                <MudText>
-                    @Model.Gender.ToString()
-                </MudText>
-            </MudItem>
-        }
-    </MudGrid>
+            </MudStack>
+            <MudGrid Spacing="3">
+                <MudItem xs="3">
+                    <MudText>
+                        First name
+                    </MudText>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudText>
+                        @Model.FirstName
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDivider/>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudText>
+                        Last name
+                    </MudText>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudText>
+                        @Model.LastName
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDivider/>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudText>
+                        Birth date
+                    </MudText>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudText>
+                        @Model.BirthDate.ToString("D", new CultureInfo("en-GB"))
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDivider/>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudText>
+                        Gender
+                    </MudText>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudText>
+                        @Model.Gender.ToString()
+                    </MudText>
+                </MudItem>
+            </MudGrid>
+        </MudStack>
+    }
 </MudPaper>
 
 @code {
