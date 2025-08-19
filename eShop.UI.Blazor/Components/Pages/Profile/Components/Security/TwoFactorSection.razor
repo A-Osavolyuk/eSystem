@@ -1,72 +1,75 @@
 ﻿<MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="3">
         <MudText Typo="Typo.h6">
-        Two-factor authentication (2FA)
-    </MudText>
-        <MudStack Spacing="4">
+            Two-factor authentication (2FA)
+        </MudText>
+        <MudStack Spacing="2">
             @foreach (var provider in Model.Providers)
             {
-                <MudStack Row="true" Spacing="1" Class="position-relative">
-                    <MudText Style="padding-top: 5px"> With @provider.Name</MudText>
-                    @if (provider.Subscribed)
+                <MudStack Spacing="1">
+                    <MudStack Row="true" Spacing="1">
+                        <MudText Style="padding-top: 5px"> With @provider.Name</MudText>
+                        @if (provider.Subscribed)
+                        {
+                            <MudChip
+                                T="string"
+                                Size="Size.Small"
+                                Variant="Variant.Outlined"
+                                Color="Color.Success">
+                                Enabled
+                            </MudChip>
+                            <MudSpacer/>
+                            <MudTooltip Text="Disable">
+                                <MudIconButton
+                                    Color="Color.Error"
+                                    Class="pt-1"
+                                    Icon="@Icons.Material.Filled.Close"
+                                    Variant="Variant.Outlined"
+                                    ButtonType="ButtonType.Button"
+                                    OnClick="@(async () => await OnUnsubscribe.InvokeAsync(provider.Name))"/>
+                            </MudTooltip>
+                        }
+                        else
+                        {
+                            <MudChip
+                                T="string"
+                                Size="Size.Small"
+                                Variant="Variant.Outlined"
+                                Color="Color.Error">
+                                Disabled
+                            </MudChip>
+                            <MudSpacer/>
+                            <MudTooltip Text="Enable">
+                                <MudIconButton
+                                    Color="Color.Success"
+                                    Class="pt-1"
+                                    Icon="@Icons.Material.Filled.Check"
+                                    Variant="Variant.Outlined"
+                                    ButtonType="ButtonType.Button"
+                                    OnClick="@(async () => await OnSubscribe.InvokeAsync(provider.Name))"/>
+                            </MudTooltip>
+                        }
+                    </MudStack>
+                    @if (provider.UpdateDate.HasValue)
                     {
-                        <MudChip
-                            T="string"
-                            Size="Size.Small"
-                            Variant="Variant.Outlined"
-                            Color="Color.Success">
-                            Enabled
-                        </MudChip>
-                        if (provider.UpdateDate.HasValue)
+                        if (provider.Subscribed)
                         {
                             <MudText
-                                Class="opacity-50 position-absolute"
+                                Class="opacity-50"
                                 Style="bottom: -15px"
                                 Typo="Typo.caption">
                                 Enabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
                         }
-
-                        <MudSpacer/>
-                        <MudTooltip Text="Disable">
-                            <MudIconButton
-                                Color="Color.Error"
-                                Class="pt-1"
-                                Icon="@Icons.Material.Filled.Close"
-                                Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnUnsubscribe.InvokeAsync(provider.Name))"/>
-                        </MudTooltip>
-                    }
-                    else
-                    {
-                        <MudChip
-                            T="string"
-                            Size="Size.Small"
-                            Variant="Variant.Outlined"
-                            Color="Color.Error">
-                            Disabled
-                        </MudChip>
-                        if (provider.UpdateDate.HasValue)
+                        else
                         {
                             <MudText
-                                Class="opacity-50 position-absolute"
+                                Class="opacity-50"
                                 Style="bottom: -18px"
                                 Typo="Typo.caption">
                                 Disabled at: @provider.UpdateDate?.ToString("MM/dd/yyyy HH:mm")
                             </MudText>
                         }
-
-                        <MudSpacer/>
-                        <MudTooltip Text="Enable">
-                            <MudIconButton
-                                Color="Color.Success"
-                                Class="pt-1"
-                                Icon="@Icons.Material.Filled.Check"
-                                Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnSubscribe.InvokeAsync(provider.Name))"/>
-                        </MudTooltip>
                     }
                 </MudStack>
             }
