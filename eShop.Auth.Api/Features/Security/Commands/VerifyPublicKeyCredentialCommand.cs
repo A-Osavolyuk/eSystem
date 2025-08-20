@@ -28,7 +28,7 @@ public class VerifyPublicKeyCredentialCommandHandler(
         var clientData = JsonSerializer.Deserialize<ClientData>(clientDataJson);
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
-        if (clientData.Type != AuthType.Create) return Results.BadRequest("Invalid type");
+        if (clientData.Type != "webauthn.create") return Results.BadRequest("Invalid type");
 
         var challengeBytes = Base64UrlDecode(clientData.Challenge);
         var base64Challenge = Convert.ToBase64String(challengeBytes);
@@ -36,7 +36,7 @@ public class VerifyPublicKeyCredentialCommandHandler(
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
-        var attestationBytes = Convert.FromBase64String(response.Response.AttestationObject);
+        var attestationBytes = Base64UrlDecode(response.Response.AttestationObject);
         var attestationCbor = CBORObject.DecodeFromBytes(attestationBytes);
         var authDataBytes = attestationCbor["authData"].GetByteString();
         var authData = AuthenticationData.FromBytes(authDataBytes);

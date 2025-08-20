@@ -20,13 +20,18 @@ public class CreatePublicKeyCredentialCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var challenge = KeyGeneration.GenerateRandomKey(32);
+        var challengeBytes = KeyGeneration.GenerateRandomKey(32);
+        var challenge = Convert.ToBase64String(challengeBytes);
+
+        var userIdBytes = user.Id.ToByteArray();
+        var userIdBase64 = Convert.ToBase64String(userIdBytes);
+        
         var options = new PublicKeyCredentialCreationOptions()
         {
             Challenge = challenge,
             User = new()
             {
-                Id = user.Id.ToByteArray(),
+                Id = userIdBase64,
                 Name = user.UserName,
                 DisplayName = request.Request.DisplayName,
             },
@@ -50,7 +55,7 @@ public class CreatePublicKeyCredentialCommandHandler(
             Timeout = 60000
         };
         
-        request.HttpContext.Session.SetString("webauthn_challenge", Convert.ToBase64String(challenge));
+        request.HttpContext.Session.SetString("webauthn_challenge", challenge);
         
         return Result.Success(options);
     }

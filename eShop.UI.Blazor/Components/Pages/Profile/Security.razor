@@ -1,11 +1,16 @@
 ﻿@page "/account/security"
 
+@using System.Text.Json
+@using System.Text.Json.Serialization
 @using eShop.BlazorWebUI.Components.Pages.Profile.Components.Security
+@using JsonSerializer = System.Text.Json.JsonSerializer
+@using eShop.Domain.Types
 @inherits PageBase
 
 @inject IUserService UserService
 @inject IDialogService DialogService
 @inject ITwoFactorService TwoFactorService
+@inject ISecurityService SecurityService
 
 @attribute [Authorize]
 
@@ -36,6 +41,13 @@
                     OnAdd="@OnAddPasswordAsync"
                     OnChange="@OnChangePasswordAsync"
                     OnReset="@OnResetPasswordAsync"/>
+                <MudButton
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    ButtonType="ButtonType.Button"
+                    OnClick="@(async () => await CreateKeyAsync())">
+                    Create
+                </MudButton>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -53,6 +65,41 @@
         {
             await LoadAsync();
             StateHasChanged();
+        }
+    }
+
+    private async Task CreateKeyAsync()
+    {
+        var request = new CreatePublicKeyCredentialRequest()
+        {
+            UserId = userId,
+            DisplayName = "Some key"
+        };
+
+        var result = await SecurityService.CreatePublicKeyCredentialAsync(request);
+
+        if (result.Success)
+        {
+            var serializationOptions = new JsonSerializerOptions()
+            {
+                WriteIndented = true,
+                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.KebabCaseLower) }
+            };
+            
+            var options = JsonSerializer.Deserialize<PublicKeyCredentialCreationOptions>(result.Result!.ToString()!, serializationOptions);
+            var jsonObject = JsonSerializer.Serialize(options, serializationOptions) as object;
+            
+            var credentialResponse = await Js.InvokeAsync<PublicKeyCredentialResponse>("createKey", jsonObject);
+
+            await SecurityService.VerifyPublicKeyCredentialAsync(new VerifyPublicKeyCredentialRequest()
+            {
+                UserId = userId,
+                Response = credentialResponse
+            });
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
