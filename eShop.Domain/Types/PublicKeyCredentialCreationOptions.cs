@@ -5,7 +5,7 @@ namespace eShop.Domain.Types;
 public class PublicKeyCredentialCreationOptions
 {
     [JsonPropertyName("challenge")]
-    public required byte[] Challenge { get; set; }
+    public required string Challenge { get; set; }
     
     [JsonPropertyName("rp")]
     public required ReplyingParty ReplyingParty { get; set; }
@@ -22,6 +22,6 @@ public class PublicKeyCredentialCreationOptions
     [JsonPropertyName("timeout")]
     public int Timeout { get; set; } = 60000;
 
-    [JsonPropertyName("attestation")] 
+    [JsonPropertyName("attestation")]
     public Attestation Attestation { get; set; } = Attestation.None;
 }

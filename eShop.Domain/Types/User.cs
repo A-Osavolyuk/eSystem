@@ -5,7 +5,7 @@ namespace eShop.Domain.Types;
 public class User
 {
     [JsonPropertyName("id")]
-    public required byte[] Id { get; set; }
+    public required string Id { get; set; }
     
     [JsonPropertyName("name")]
     public required string Name { get; set; }
