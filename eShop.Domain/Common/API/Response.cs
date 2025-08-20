@@ -22,10 +22,7 @@ public class Response
     
     public TValue? Get<TValue>()
     {
-        var json = JsonConvert.SerializeObject(Result,  Formatting.Indented, new JsonSerializerSettings()
-            {
-                Converters = [ new StringEnumConverter() ]
-            });
+        var json = JsonConvert.SerializeObject(Result);
         var value = JsonConvert.DeserializeObject<TValue>(json);
         return value;
     }
