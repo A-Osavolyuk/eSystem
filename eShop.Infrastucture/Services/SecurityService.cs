@@ -85,7 +85,15 @@ public class SecurityService(
     public async ValueTask<Response> UnlockAccountAsync(UnlockAccountRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/account/unlock", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
-    
+
+    public async ValueTask<Response> CreatePublicKeyCredentialAsync(CreatePublicKeyCredentialRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/public-key/create", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
+
+    public async ValueTask<Response> VerifyPublicKeyCredentialAsync(VerifyPublicKeyCredentialRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/public-key/verify", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
+
     public async ValueTask<Response> ChangePhoneNumberAsync(ChangePhoneNumberRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/request-change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
