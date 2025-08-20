@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace eShop.Auth.Api.Enums;
+namespace eShop.Domain.Enums;
 
 [JsonConverter(typeof(AlgorithmConverter))]
 public enum Algorithm
