@@ -4,9 +4,8 @@ namespace eShop.Auth.Api.Types;
 
 public class ClientData
 {
-    [JsonPropertyName("type")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AuthType Type { get; set; }
+    [JsonPropertyName("type")] 
+    public string Type { get; set; } = string.Empty;
     
     [JsonPropertyName("challenge")]
     public string Challenge { get; set; } = string.Empty;
