@@ -40,6 +40,21 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Create public key credential creation options")]
+    [EndpointDescription("Create public key credential creation options")]
+    [ProducesResponseType(200)]
+    [HttpPost("public-key/create-option")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> CreatePublicKeyCredentialCreationOptionsAsync(
+        [FromBody] CreatePublicKeyCredentialCreationOptionsRequest request)
+    {
+        var result = await sender.Send(new CreatePublicKeyCredentialCreationOptionsCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Refresh token")]
     [EndpointDescription("Refresh token")]
     [ProducesResponseType(200)]
