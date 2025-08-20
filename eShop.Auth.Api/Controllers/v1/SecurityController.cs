@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Types;
 
 namespace eShop.Auth.Api.Controllers.v1;
 
@@ -40,15 +41,30 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Create public key credential creation options")]
-    [EndpointDescription("Create public key credential creation options")]
+    [EndpointSummary("Create public key credential")]
+    [EndpointDescription("Create public key credential")]
     [ProducesResponseType(200)]
-    [HttpPost("attestation/options")]
+    [HttpPost("public-key/create")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> CreatePublicKeyCredentialCreationOptionsAsync(
-        [FromBody] CreatePublicKeyCredentialCreationOptionsRequest request)
+    public async ValueTask<IActionResult> CreatePublicKeyCredentialAsync(
+        [FromBody] CreatePublicKeyCredentialRequest request)
     {
-        var result = await sender.Send(new CreatePublicKeyCredentialCreationOptionsCommand(request, HttpContext));
+        var result = await sender.Send(new CreatePublicKeyCredentialCommand(request, HttpContext));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Verify public key credential")]
+    [EndpointDescription("Verify public key credential")]
+    [ProducesResponseType(200)]
+    [HttpPost("public-key/verify")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> VerifyPublicKeyCredentialAsync(
+        [FromBody] VerifyPublicKeyCredentialRequest request)
+    {
+        var result = await sender.Send(new VerifyPublicKeyCredentialCommand(request, HttpContext));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

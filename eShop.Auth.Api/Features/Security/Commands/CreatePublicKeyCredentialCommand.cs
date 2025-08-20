@@ -1,18 +1,20 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Types;
 using OtpNet;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public record CreatePublicKeyCredentialCreationOptionsCommand(
-    CreatePublicKeyCredentialCreationOptionsRequest Request, HttpContext HttpContext) : IRequest<Result>;
+public record CreatePublicKeyCredentialCommand(
+    CreatePublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;
 
-public class CreatePublicKeyCredentialCreationOptionsCommandHandler(
-    IUserManager userManager) : IRequestHandler<CreatePublicKeyCredentialCreationOptionsCommand, Result>
+public class CreatePublicKeyCredentialCommandHandler(
+    IUserManager userManager) : IRequestHandler<CreatePublicKeyCredentialCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
 
-    public async Task<Result> Handle(CreatePublicKeyCredentialCreationOptionsCommand request,
+    public async Task<Result> Handle(CreatePublicKeyCredentialCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);

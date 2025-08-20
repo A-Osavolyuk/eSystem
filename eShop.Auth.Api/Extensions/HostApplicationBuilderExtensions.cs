@@ -1,4 +1,6 @@
-﻿using eShop.Application.Security.Authorization.Requirements;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using eShop.Application.Security.Authorization.Requirements;
 using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.Schemes;
@@ -24,7 +26,15 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
-        builder.Services.AddControllers();
+        
+        builder.Services.AddControllers()
+            .AddJsonOptions(cfg =>
+            {
+                cfg.JsonSerializerOptions.WriteIndented = true;
+                cfg.JsonSerializerOptions.Converters.Add(new AlgorithmConverter());
+                cfg.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.KebabCaseLower));
+            });
+        
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession(options =>
         {
