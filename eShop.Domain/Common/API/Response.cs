@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace eShop.Domain.Common.API;
 
@@ -20,7 +22,10 @@ public class Response
     
     public TValue? Get<TValue>()
     {
-        var json = JsonConvert.SerializeObject(Result);
+        var json = JsonConvert.SerializeObject(Result,  Formatting.Indented, new JsonSerializerSettings()
+            {
+                Converters = [ new StringEnumConverter() ]
+            });
         var value = JsonConvert.DeserializeObject<TValue>(json);
         return value;
     }
