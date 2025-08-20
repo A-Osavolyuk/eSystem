@@ -6,7 +6,7 @@ namespace eShop.Domain.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ResidentKey
 {
-    [EnumMember(Value = "preferred")]
+    [EnumMember(Value = "required")]
     Required,
     
     [EnumMember(Value = "preferred")]
