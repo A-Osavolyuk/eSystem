@@ -25,6 +25,13 @@ public static class HostApplicationBuilderExtensions
         builder.AddExceptionHandler();
         builder.AddDocumentation();
         builder.Services.AddControllers();
+        builder.Services.AddDistributedMemoryCache();
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(5);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+        });
     }
 
     private static void AddValidation(this IHostApplicationBuilder builder)

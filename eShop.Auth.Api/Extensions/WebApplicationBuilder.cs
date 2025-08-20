@@ -18,6 +18,7 @@ public static class WebApplicationBuilder
         await app.ConfigureDatabaseAsync<AuthDbContext>();
 
         app.UseRouting();
+        app.UseSession();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

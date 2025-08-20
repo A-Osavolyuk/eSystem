@@ -5,7 +5,7 @@ using OtpNet;
 namespace eShop.Auth.Api.Features.Security.Commands;
 
 public record CreatePublicKeyCredentialCreationOptionsCommand(
-    CreatePublicKeyCredentialCreationOptionsRequest Request) : IRequest<Result>;
+    CreatePublicKeyCredentialCreationOptionsRequest Request, HttpContext HttpContext) : IRequest<Result>;
 
 public class CreatePublicKeyCredentialCreationOptionsCommandHandler(
     IUserManager userManager) : IRequestHandler<CreatePublicKeyCredentialCreationOptionsCommand, Result>
@@ -17,16 +17,14 @@ public class CreatePublicKeyCredentialCreationOptionsCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        
-        var challenge = KeyGeneration.GenerateRandomKey(32);
-        var userIdBytes = user.Id.ToByteArray();
 
+        var challenge = KeyGeneration.GenerateRandomKey(32);
         var options = new PublicKeyCredentialCreationOptions()
         {
             Challenge = challenge,
             User = new()
             {
-                Id = userIdBytes,
+                Id = user.Id.ToByteArray(),
                 Name = user.UserName,
                 DisplayName = request.Request.DisplayName,
             },
@@ -49,8 +47,9 @@ public class CreatePublicKeyCredentialCreationOptionsCommandHandler(
             Attestation = Attestation.None,
             Timeout = 60000
         };
-
-        var response = Result.Success(options);
-        return response;
+        
+        request.HttpContext.Session.SetString("webauthn_challenge", Convert.ToBase64String(challenge));
+        
+        return Result.Success(options);
     }
 }

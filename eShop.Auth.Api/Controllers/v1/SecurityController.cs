@@ -43,12 +43,12 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Create public key credential creation options")]
     [EndpointDescription("Create public key credential creation options")]
     [ProducesResponseType(200)]
-    [HttpPost("public-key/create-option")]
+    [HttpPost("attestation/options")]
     [AllowAnonymous]
     public async ValueTask<IActionResult> CreatePublicKeyCredentialCreationOptionsAsync(
         [FromBody] CreatePublicKeyCredentialCreationOptionsRequest request)
     {
-        var result = await sender.Send(new CreatePublicKeyCredentialCreationOptionsCommand(request));
+        var result = await sender.Send(new CreatePublicKeyCredentialCreationOptionsCommand(request, HttpContext));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
