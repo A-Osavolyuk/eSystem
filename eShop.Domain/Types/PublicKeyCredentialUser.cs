@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.Types;
 
-public class User
+public class PublicKeyCredentialUser
 {
     [JsonPropertyName("id")]
     public required string Id { get; set; }

@@ -1,15 +1,16 @@
 ﻿using System.Text.Json.Serialization;
+using eShop.Domain.Constants;
 
 namespace eShop.Domain.Types;
 
 public class AuthenticatorSelection
 {
     [JsonPropertyName("authenticatorAttachment")]
-    public AuthenticatorAttachment AuthenticatorAttachment { get; set; } =  AuthenticatorAttachment.Platform;
-    
-    [JsonPropertyName("residentKey")]
-    public ResidentKey ResidentKey { get; set; } = ResidentKey.Preferred;
-    
+    public string AuthenticatorAttachment { get; set; } = AuthenticatorAttachments.Platform;
+
+    [JsonPropertyName("residentKey")] 
+    public string ResidentKey { get; set; } = ResidentKeys.Preferred;
+
     [JsonPropertyName("userVerification")]
-    public UserVerification UserVerification { get; set; } = UserVerification.Preferred;
+    public string UserVerification { get; set; } = UserVerifications.Preferred;
 }

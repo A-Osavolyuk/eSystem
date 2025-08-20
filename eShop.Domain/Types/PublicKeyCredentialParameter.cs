@@ -5,9 +5,8 @@ namespace eShop.Domain.Types;
 public class PublicKeyCredentialParameter
 {
     [JsonPropertyName("type")]
-    public KeyType Type { get; set; }
+    public required string Type { get; set; }
     
     [JsonPropertyName("alg")]
-    [JsonConverter(typeof(AlgorithmConverter))]
-    public Algorithm Algorithm { get; set; }
+    public int Algorithm { get; set; }
 }

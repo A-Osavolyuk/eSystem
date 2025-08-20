@@ -31,7 +31,6 @@ public static class HostApplicationBuilderExtensions
             .AddJsonOptions(cfg =>
             {
                 cfg.JsonSerializerOptions.WriteIndented = true;
-                cfg.JsonSerializerOptions.Converters.Add(new AlgorithmConverter());
                 cfg.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.KebabCaseLower));
             });
         

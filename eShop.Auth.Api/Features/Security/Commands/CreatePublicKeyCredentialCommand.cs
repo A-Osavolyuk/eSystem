@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using eShop.Domain.Constants;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Types;
 using OtpNet;
@@ -29,7 +30,7 @@ public class CreatePublicKeyCredentialCommandHandler(
         var options = new PublicKeyCredentialCreationOptions()
         {
             Challenge = challenge,
-            User = new()
+            PublicKeyCredentialUser = new()
             {
                 Id = userIdBase64,
                 Name = user.UserName,
@@ -37,21 +38,21 @@ public class CreatePublicKeyCredentialCommandHandler(
             },
             AuthenticatorSelection = new()
             {
-                AuthenticatorAttachment = AuthenticatorAttachment.Platform,
-                UserVerification = UserVerification.Preferred,
-                ResidentKey = ResidentKey.Preferred
+                AuthenticatorAttachment = AuthenticatorAttachments.Platform,
+                UserVerification = UserVerifications.Preferred,
+                ResidentKey = ResidentKeys.Preferred
             },
             PublicKeyCredentialParameters =
             [
-                new() { Algorithm = Algorithm.Es256, Type = KeyType.PublicKey },
-                new() { Algorithm = Algorithm.Rs256, Type = KeyType.PublicKey },
+                new() { Algorithm = Algorithms.Es256, Type = KeyType.PublicKey },
+                new() { Algorithm = Algorithms.Rs256, Type = KeyType.PublicKey },
             ],
             ReplyingParty = new ReplyingParty()
             {
                 Domain = "localhost",
                 Name = "eAccount",
             },
-            Attestation = Attestation.None,
+            Attestation = Attestations.None,
             Timeout = 60000
         };
         

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using eShop.Domain.Constants;
 
 namespace eShop.Domain.Types;
 
@@ -11,7 +12,7 @@ public class PublicKeyCredentialCreationOptions
     public required ReplyingParty ReplyingParty { get; set; }
     
     [JsonPropertyName("user")] 
-    public required User User { get; set; }
+    public required PublicKeyCredentialUser PublicKeyCredentialUser { get; set; }
     
     [JsonPropertyName("pubKeyCredParams")]
     public required List<PublicKeyCredentialParameter> PublicKeyCredentialParameters { get; set; }
@@ -22,6 +23,6 @@ public class PublicKeyCredentialCreationOptions
     [JsonPropertyName("timeout")]
     public int Timeout { get; set; } = 60000;
 
-    [JsonPropertyName("attestation")]
-    public Attestation Attestation { get; set; } = Attestation.None;
+    [JsonPropertyName("attestation")] 
+    public string Attestation { get; set; } = Attestations.None;
 }
