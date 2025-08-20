@@ -80,16 +80,8 @@
 
         if (result.Success)
         {
-            var serializationOptions = new JsonSerializerOptions()
-            {
-                WriteIndented = true,
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.KebabCaseLower) }
-            };
-            
-            var options = JsonSerializer.Deserialize<PublicKeyCredentialCreationOptions>(result.Result!.ToString()!, serializationOptions);
-            var jsonObject = JsonSerializer.Serialize(options, serializationOptions) as object;
-            
-            var credentialResponse = await Js.InvokeAsync<PublicKeyCredentialResponse>("createKey", jsonObject);
+            var options = JsonSerializer.Deserialize<PublicKeyCredentialCreationOptions>(result.Result.ToString()!);
+            var credentialResponse = await Js.InvokeAsync<PublicKeyCredentialResponse>("createKey", options);
 
             await SecurityService.VerifyPublicKeyCredentialAsync(new VerifyPublicKeyCredentialRequest()
             {

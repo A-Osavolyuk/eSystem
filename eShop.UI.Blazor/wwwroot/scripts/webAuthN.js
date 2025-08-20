@@ -10,7 +10,7 @@
 
 async function createKey(options)
 {
-    options = JSON.parse(options);
+    console.log(options);
     options.challenge = base64ToUint8Array(options.challenge);
     options.user.id = base64ToUint8Array(options.user.id);
     return await navigator.credentials.create({
