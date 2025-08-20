@@ -12,22 +12,23 @@ public class CreatePublicKeyCredentialCreationOptionsCommandHandler(
 {
     private readonly IUserManager userManager = userManager;
 
-    public Task<Result> Handle(CreatePublicKeyCredentialCreationOptionsCommand request,
+    public async Task<Result> Handle(CreatePublicKeyCredentialCreationOptionsCommand request,
         CancellationToken cancellationToken)
     {
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        
         var challenge = KeyGeneration.GenerateRandomKey(32);
-        var userIdBytes = Guid.CreateVersion7().ToByteArray();
+        var userIdBytes = user.Id.ToByteArray();
 
         var options = new PublicKeyCredentialCreationOptions()
         {
             Challenge = challenge,
-            Attestation = Attestation.None,
-            Timeout = 60000,
             User = new()
             {
                 Id = userIdBytes,
-                Name = "Username",
-                DisplayName = "Username`s key"
+                Name = user.UserName,
+                DisplayName = request.Request.DisplayName,
             },
             AuthenticatorSelection = new()
             {
@@ -44,10 +45,12 @@ public class CreatePublicKeyCredentialCreationOptionsCommandHandler(
             {
                 Domain = "localhost",
                 Name = "eAccount",
-            }
+            },
+            Attestation = Attestation.None,
+            Timeout = 60000
         };
 
         var response = Result.Success(options);
-        return Task.FromResult(response);
+        return response;
     }
 }
