@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Types;
 
-public class PublicKeyCredentialCreationOptionsResponse
+public class PublicKeyCredentialResponse
 {
     public required string Id { get; set; }
     public required string RawId { get; set; }
