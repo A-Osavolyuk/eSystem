@@ -8,13 +8,11 @@
     return bytes;
 }
 
-async function attestate(optionsFromServer) {
-    optionsFromServer.challenge = base64ToUint8Array(optionsFromServer.challenge);
-    optionsFromServer.user.id = base64ToUint8Array(optionsFromServer.user.id);
-    
-    const credential = await navigator.credentials.create({
-        publicKey: optionsFromServer
-    });
+async function attestate(options) {
+    options.challenge = base64ToUint8Array(options.challenge);
+    options.user.id = base64ToUint8Array(options.user.id);
 
-    console.log("Credential:", credential);
+    return await navigator.credentials.create({
+        publicKey: options
+    });
 }
