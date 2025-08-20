@@ -1,8 +1,4 @@
-﻿using System.Text.Json.Serialization.Metadata;
-using eShop.Application.Security.Authorization.Requirements;
-using eShop.Domain.Interfaces.API;
-using eShop.Domain.Requests.API.Product;
-using eShop.Product.Api.Services;
+﻿using eShop.Application.Security.Authorization.Requirements;
 
 namespace eShop.Product.Api.Extensions;
 

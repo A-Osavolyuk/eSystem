@@ -1,6 +1,5 @@
 ﻿using eShop.Domain.DTOs;
 using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Mapping;
 

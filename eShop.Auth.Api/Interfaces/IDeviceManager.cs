@@ -1,6 +1,4 @@
-﻿using UAParser;
-
-namespace eShop.Auth.Api.Interfaces;
+﻿namespace eShop.Auth.Api.Interfaces;
 
 public interface IDeviceManager
 {

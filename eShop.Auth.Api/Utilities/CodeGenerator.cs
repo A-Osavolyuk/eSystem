@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace eShop.Auth.Api.Utilities;
+﻿namespace eShop.Auth.Api.Utilities;
 
 public static class CodeGenerator
 {

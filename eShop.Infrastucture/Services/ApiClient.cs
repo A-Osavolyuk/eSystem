@@ -1,9 +1,6 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Enums;
 using eShop.Domain.Options;
-using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
-using eShop.Infrastructure.Security;
 using Microsoft.AspNetCore.Http;
 using HttpRequest = eShop.Domain.Common.API.HttpRequest;
 

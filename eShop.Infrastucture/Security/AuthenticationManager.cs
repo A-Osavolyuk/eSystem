@@ -1,7 +1,4 @@
-﻿using eShop.Domain.Common.Security;
-using eShop.Infrastructure.Routing;
-
-namespace eShop.Infrastructure.Security;
+﻿namespace eShop.Infrastructure.Security;
 
 public class AuthenticationManager(
     AuthenticationStateProvider authenticationStateProvider,

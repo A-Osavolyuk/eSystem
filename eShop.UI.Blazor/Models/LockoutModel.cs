@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Enums;
-
-namespace eShop.BlazorWebUI.Models;
+﻿namespace eShop.BlazorWebUI.Models;
 
 public class LockoutModel
 {

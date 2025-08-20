@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Responses.API.Auth;
-
-namespace eShop.Auth.Api.Features.Users.Queries;
+﻿namespace eShop.Auth.Api.Features.Users.Queries;
 
 public sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
 

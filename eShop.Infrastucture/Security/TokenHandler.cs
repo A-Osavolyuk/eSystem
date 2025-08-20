@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Common.Security;
-
-namespace eShop.Infrastructure.Security;
+﻿namespace eShop.Infrastructure.Security;
 
 public class TokenHandler
 {

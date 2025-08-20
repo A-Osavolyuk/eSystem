@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using System.Web;
-using eShop.Domain.Common.Security;
 using eShop.Infrastructure.Security;
 using Microsoft.AspNetCore.Components;
 

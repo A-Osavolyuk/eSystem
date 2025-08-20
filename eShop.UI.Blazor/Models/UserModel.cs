@@ -1,6 +1,4 @@
-﻿using eShop.Domain.DTOs;
-
-namespace eShop.BlazorWebUI.Models;
+﻿namespace eShop.BlazorWebUI.Models;
 
 public class UserModel
 {

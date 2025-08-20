@@ -1,5 +1,4 @@
 ﻿using eShop.Auth.Api.Security.Protection;
-using Microsoft.AspNetCore.DataProtection;
 using OtpNet;
 
 namespace eShop.Auth.Api.Services;

@@ -1,5 +1,4 @@
-﻿using eShop.BlazorWebUI.Models;
-using eShop.BlazorWebUI.Models.Products;
+﻿using eShop.BlazorWebUI.Models.Products;
 
 namespace eShop.BlazorWebUI.Validation.Products;
 

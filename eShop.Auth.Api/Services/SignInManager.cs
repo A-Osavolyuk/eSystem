@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using eShop.Auth.Api.Types;
+﻿using eShop.Auth.Api.Types;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Auth.Api.Services;
