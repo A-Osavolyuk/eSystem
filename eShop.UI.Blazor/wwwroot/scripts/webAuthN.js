@@ -8,10 +8,11 @@
     return bytes;
 }
 
-async function attestate(options) {
+async function createKey(options)
+{
+    options = JSON.parse(options);
     options.challenge = base64ToUint8Array(options.challenge);
     options.user.id = base64ToUint8Array(options.user.id);
-
     return await navigator.credentials.create({
         publicKey: options
     });
