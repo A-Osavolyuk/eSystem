@@ -32,7 +32,7 @@ public class VerifyPublicKeyCredentialCommandHandler(
 
         var challengeBytes = Base64UrlDecode(clientData.Challenge);
         var base64Challenge = Convert.ToBase64String(challengeBytes);
-        var savedChallenge = request.HttpContext.Session.GetString("webauthn_challenge");
+        var savedChallenge = request.HttpContext.Session.GetString("webauthn_attestation_challenge");
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 

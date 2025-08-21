@@ -1,11 +1,9 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using eShop.Domain.Constants;
+﻿using eShop.Domain.Constants;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Types;
 using OtpNet;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.WebAuthN;
 
 public record CreatePublicKeyCredentialCommand(
     CreatePublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;
@@ -56,7 +54,7 @@ public class CreatePublicKeyCredentialCommandHandler(
             Timeout = 60000
         };
         
-        request.HttpContext.Session.SetString("webauthn_challenge", challenge);
+        request.HttpContext.Session.SetString("webauthn_attestation_challenge", challenge);
         
         return Result.Success(options);
     }
