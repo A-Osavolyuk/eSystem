@@ -1,8 +1,10 @@
-﻿using eShop.Domain.Common.API;
+﻿using System.Text.Json;
+using eShop.Domain.Common.API;
 using eShop.Domain.Enums;
 using eShop.Domain.Options;
 using Microsoft.AspNetCore.Http;
 using HttpRequest = eShop.Domain.Common.API.HttpRequest;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace eShop.Infrastructure.Services;
 
@@ -76,7 +78,7 @@ public class ApiClient(
                             }
                         }
 
-                        var metadata = JsonConvert.SerializeObject(httpRequest.Metadata);
+                        var metadata = JsonSerializer.Serialize(httpRequest.Metadata);
                         content.Add(new StringContent(metadata), "metadata");
 
                         message.Content = content;
@@ -86,10 +88,16 @@ public class ApiClient(
                 }
                 default: throw new NotSupportedException("Unsupported request type");
             }
+            
+            var serializationOptions = new JsonSerializerOptions()
+            {
+                WriteIndented = true, 
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
 
             var httpResponse = await httpClient.SendAsync(message);
             var responseJson = await httpResponse.Content.ReadAsStringAsync();
-            var response = JsonConvert.DeserializeObject<Response>(responseJson)!;
+            var response = JsonSerializer.Deserialize<Response>(responseJson, serializationOptions)!;
 
             return response;
         }
