@@ -41,6 +41,8 @@
                     OnAdd="@OnAddPasswordAsync"
                     OnChange="@OnChangePasswordAsync"
                     OnReset="@OnResetPasswordAsync"/>
+                <CredentialsSection 
+                    OnCreate="@OnCreatePasskeyAsync"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -77,6 +79,32 @@
         else
         {
             Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnCreatePasskeyAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+        
+        var model = new CreatePasskeyModel() { UserId = userId };
+        
+        var parameters = new DialogParameters<CreatePasskeyDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<CreatePasskeyDialog>("Create passkey", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadAsync();
+            StateHasChanged();
         }
     }
 

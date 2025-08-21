@@ -1,0 +1,80 @@
+﻿@using eShop.Domain.Types
+@inject ISecurityService SecurityService
+@inject ISnackbar Snackbar
+@inject IJSRuntime Js
+
+<MudDialog Style="width: 600px">
+    <TitleContent>
+        Create passkey
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="form" Model="Model" >
+            <MudTextField
+                @bind-Value="Model.DisplayName"
+                For="() => Model.DisplayName"
+                Label="Display name"
+                Variant="Variant.Outlined"
+                Immediate="true"
+                Clearable="true"/>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton
+            Color="Color.Error"
+            Variant="Variant.Outlined"
+            ButtonType="ButtonType.Button"
+            OnClick="@(() => OnCancel())">
+            Cancel
+        </MudButton>
+        <MudButton
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button"
+            OnClick="@(async () => await OnSubmitAsync())">
+            Submit
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
+    [Parameter] public CreatePasskeyModel Model { get; set; } = new();
+    
+    private MudForm form = new();
+    
+    private async Task OnSubmitAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new CreatePublicKeyCredentialRequest()
+            {
+                UserId = Model.UserId,
+                DisplayName = Model.DisplayName
+            };
+
+            var result = await SecurityService.CreatePublicKeyCredentialAsync(request);
+
+            if (result.Success)
+            {
+                var options = result.Get<PublicKeyCredentialCreationOptions>()!;
+                var response = await Js.InvokeAsync<PublicKeyCredentialResponse>("createKey", options);
+
+                var verificationRequest = new VerifyPublicKeyCredentialRequest()
+                {
+                    UserId = Model.UserId,
+                    Response = response
+                };
+
+                var verificationResult = await SecurityService.VerifyPublicKeyCredentialAsync(verificationRequest);
+
+                if (verificationResult.Success) Dialog?.Close(DialogResult.Ok(true));
+                else Snackbar.Add(result.Message, Severity.Error);
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private void OnCancel() => Dialog?.Close();
+}
