@@ -4,7 +4,7 @@ using eShop.Auth.Api.Types;
 using eShop.Domain.Requests.API.Auth;
 using PeterO.Cbor;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.WebAuthN;
 
 public record VerifyPublicKeyCredentialCommand(
     VerifyPublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;
@@ -52,7 +52,8 @@ public class VerifyPublicKeyCredentialCommandHandler(
             CredentialId = Convert.ToBase64String(authData.CredentialId),
             PublicKey = authData.CredentialPublicKey,
             SignCount = authData.SignCount,
-            CreateDate = DateTimeOffset.UtcNow
+            CreateDate = DateTimeOffset.UtcNow,
+            Type = clientData.Type
         };
 
         var result = await credentialManager.CreateAsync(userCredential, cancellationToken);
