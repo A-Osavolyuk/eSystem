@@ -25,26 +25,26 @@ public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
         var credentialIdBytes = CredentialUtils.Base64UrlDecode(request.Request.Credential.Id);
         var base64CredentialId = Convert.ToBase64String(credentialIdBytes);
 
-        var credential = await credentialManager.FindAsync(base64CredentialId, cancellationToken);
+        var credential = await credentialManager.FindByCredentialIdAsync(base64CredentialId, cancellationToken);
         if (credential is null) return Results.BadRequest("Invalid credential");
 
         var user = await userManager.FindByIdAsync(credential.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {credential.UserId}.");
 
         var authenticationAssertionResponse = request.Request.Credential.Response;
-        
+
         var clientDataJson = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.ClientDataJson);
         var clientData = JsonSerializer.Deserialize<ClientData>(clientDataJson);
-        
+
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != "webauthn.get") return Results.BadRequest("Invalid type");
-        
+
         var challengeBytes = CredentialUtils.Base64UrlDecode(clientData.Challenge);
         var base64Challenge = Convert.ToBase64String(challengeBytes);
-        var savedChallenge = request.HttpContext.Session.GetString("webauthn_attestation_challenge");
+        var savedChallenge = request.HttpContext.Session.GetString("webauthn_assertion_challenge");
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
-        
+
         var authenticatorData = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.AuthenticatorData);
         var signature = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.Signature);
 
@@ -64,6 +64,14 @@ public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
 
         if (!valid) return Results.BadRequest("Invalid client data");
         
+        var signCount = CredentialUtils.ParseSignCount(authenticatorData);
+        
+        credential.SignCount = signCount;
+        credential.UpdateDate = DateTimeOffset.UtcNow;
+        
+        var result = await credentialManager.UpdateAsync(credential, cancellationToken);
+        if (!result.Succeeded) return result;
+
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 

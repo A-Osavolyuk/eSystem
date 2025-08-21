@@ -19,6 +19,14 @@ public static class CredentialUtils
 
         return Convert.FromBase64String(padded);
     }
+
+    public static uint ParseSignCount(byte[] authenticatorDataBytes)
+    {
+        var signCountBytes = authenticatorDataBytes.Skip(33).Take(4).ToArray();
+        if (BitConverter.IsLittleEndian) Array.Reverse(signCountBytes);
+        var signCount = BitConverter.ToUInt32(signCountBytes, 0);
+        return signCount;
+    }
     
     public static AsymmetricAlgorithm ImportCosePublicKey(byte[] coseKey)
     {
