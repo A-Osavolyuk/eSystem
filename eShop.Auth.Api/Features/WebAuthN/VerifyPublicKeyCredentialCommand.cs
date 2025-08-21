@@ -23,20 +23,20 @@ public class VerifyPublicKeyCredentialCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var response = request.Request.Response;
-        var clientDataBytes = Base64UrlDecode(response.Response.ClientDataJson);
+        var clientDataBytes = CredentialUtils.Base64UrlDecode(response.Response.ClientDataJson);
         var clientDataJson = Encoding.UTF8.GetString(clientDataBytes);
         var clientData = JsonSerializer.Deserialize<ClientData>(clientDataJson);
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != "webauthn.create") return Results.BadRequest("Invalid type");
 
-        var challengeBytes = Base64UrlDecode(clientData.Challenge);
+        var challengeBytes = CredentialUtils.Base64UrlDecode(clientData.Challenge);
         var base64Challenge = Convert.ToBase64String(challengeBytes);
         var savedChallenge = request.HttpContext.Session.GetString("webauthn_attestation_challenge");
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
-        var attestationBytes = Base64UrlDecode(response.Response.AttestationObject);
+        var attestationBytes = CredentialUtils.Base64UrlDecode(response.Response.AttestationObject);
         var attestationCbor = CBORObject.DecodeFromBytes(attestationBytes);
         var authDataBytes = attestationCbor["authData"].GetByteString();
         var authData = AuthenticationData.FromBytes(authDataBytes);
@@ -59,20 +59,5 @@ public class VerifyPublicKeyCredentialCommandHandler(
 
         var result = await credentialManager.CreateAsync(userCredential, cancellationToken);
         return result;
-    }
-
-    private byte[] Base64UrlDecode(string base64Url)
-    {
-        var padded = base64Url
-            .Replace('-', '+')
-            .Replace('_', '/');
-        
-        switch (padded.Length % 4)
-        {
-            case 2: padded += "=="; break;
-            case 3: padded += "="; break;
-        }
-
-        return Convert.FromBase64String(padded);
     }
 }
