@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.WebAuthN;
 
@@ -9,10 +10,12 @@ public record VerifyPublicKeyCredentialRequestOptionsCommand(
 
 public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
     IUserManager userManager,
-    ICredentialManager credentialManager) : IRequestHandler<VerifyPublicKeyCredentialRequestOptionsCommand, Result>
+    ICredentialManager credentialManager,
+    ITokenManager tokenManager) : IRequestHandler<VerifyPublicKeyCredentialRequestOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICredentialManager credentialManager = credentialManager;
+    private readonly ITokenManager tokenManager = tokenManager;
 
     public async Task<Result> Handle(VerifyPublicKeyCredentialRequestOptionsCommand request,
         CancellationToken cancellationToken)
@@ -26,11 +29,11 @@ public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
         var user = await userManager.FindByIdAsync(credential.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {credential.UserId}.");
 
-        var response = request.Request.Credential.Response;
+        var authenticationAssertionResponse = request.Request.Credential.Response;
 
-        var clientDataJson = CredentialUtils.Base64UrlDecode(response.ClientDataJson);
-        var authenticatorData = CredentialUtils.Base64UrlDecode(response.AuthenticatorData);
-        var signature = CredentialUtils.Base64UrlDecode(response.Signature);
+        var clientDataJson = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.ClientDataJson);
+        var authenticatorData = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.AuthenticatorData);
+        var signature = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.Signature);
 
         using var sha256 = SHA256.Create();
         var clientDataHash = sha256.ComputeHash(clientDataJson);
@@ -47,7 +50,17 @@ public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
         };
 
         if (!valid) return Results.BadRequest("Invalid client data");
+        
+        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
+        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
-        return Result.Success();
+        var response = new VerifyPublicKeyCredentialRequestOptionsResponse()
+        {
+            UserId = user.Id,
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
+        };
+
+        return Result.Success(response);
     }
 }

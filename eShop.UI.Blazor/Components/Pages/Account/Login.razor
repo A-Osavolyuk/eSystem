@@ -1,12 +1,13 @@
 ﻿@page "/account/login"
 
+@using eShop.Domain.Types
 @using System.Web
 @inherits PageBase
 
 @inject ISecurityService SecurityService
-@inject AuthenticationManager AuthenticationManager
-@inject LoginValidator Validator
+@inject IWebAuthNService WebAuthNService
 @inject IConfiguration Configuration
+@inject LoginValidator Validator
 
 <Title Text="Login"/>
 
@@ -58,6 +59,7 @@
                     StartIcon="@Icons.Material.Filled.Key"
                     Variant="Variant.Filled"
                     Color="Color.Primary"
+                    OnClick="@(async () => await OnPasskeyAsync())"
                     FullWidth="true">
                     Sign In with Passkey
                 </MudLoadingButton>
@@ -224,6 +226,38 @@
                 }
             }
         }
+    }
+
+    private async Task OnPasskeyAsync()
+    {
+        var request = new CreatePublicKeyCredentialRequestOptionsRequest()
+        {
+            Username = "pipidastr"
+        };
+
+        var result = await WebAuthNService.CreateAssertionOptionsAsync(request);
+
+        if (result.Success)
+        {
+            var options = result.Get<PublicKeyCredentialRequestOptions>()!;
+            var credential = await Js.InvokeAsync<PublicKeyCredential>("signIn", options);
+
+            var verificationRequest = new VerifyPublicKeyCredentialRequestOptionsRequest()
+            {
+                Credential = credential
+            };
+
+            var verificationResult = await WebAuthNService.VerifyAssertionResponseAsync(verificationRequest);
+
+            if (verificationResult.Success)
+            {
+                var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
+                await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
+                await RouteManager.NavigateAsync("/products");
+            }
+            else Snackbar.Add(verificationResult.Message, Severity.Error);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnOAuthAsync(string providerName)

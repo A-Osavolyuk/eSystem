@@ -32,8 +32,4 @@ public interface ISecurityService
     public ValueTask<Response> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request);
     public ValueTask<Response> VerifyCurrentPhoneNumberAsync(VerifyCurrentPhoneNumberRequest request);
     public ValueTask<Response> UnlockAccountAsync(UnlockAccountRequest request);
-    public ValueTask<Response> CreatePublicKeyCredentialAsync(CreatePublicKeyCredentialRequest request);
-    public ValueTask<Response> VerifyPublicKeyCredentialAsync(VerifyPublicKeyCredentialRequest request);
-    public ValueTask<Response> CreateCredentialRequestOptionsAsync(CreatePublicKeyCredentialRequestOptionsRequest request);
-    public ValueTask<Response> VerifyCredentialRequestOptionsAsync(VerifyPublicKeyCredentialRequestOptionsRequest request);
 }

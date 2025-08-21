@@ -1,5 +1,6 @@
 ﻿@using eShop.Domain.Types
 @inject ISecurityService SecurityService
+@inject IWebAuthNService WebAuthNService
 @inject ISnackbar Snackbar
 @inject IJSRuntime Js
 
@@ -54,7 +55,7 @@
                 DisplayName = Model.DisplayName
             };
 
-            var result = await SecurityService.CreatePublicKeyCredentialAsync(request);
+            var result = await WebAuthNService.CreateKeyAsync(request);
 
             if (result.Success)
             {
@@ -68,7 +69,7 @@
                     Response = response
                 };
 
-                var verificationResult = await SecurityService.VerifyPublicKeyCredentialAsync(verificationRequest);
+                var verificationResult = await WebAuthNService.VerifyKeyAsync(verificationRequest);
 
                 if (verificationResult.Success) Dialog?.Close(DialogResult.Ok(true));
                 else Snackbar.Add(result.Message, Severity.Error);
