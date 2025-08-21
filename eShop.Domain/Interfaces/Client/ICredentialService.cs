@@ -3,7 +3,7 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Domain.Interfaces.Client;
 
-public interface IWebAuthNService
+public interface ICredentialService
 {
     public ValueTask<Response> CreateKeyAsync(CreatePublicKeyCredentialRequest request);
     public ValueTask<Response> VerifyKeyAsync(VerifyPublicKeyCredentialRequest request);

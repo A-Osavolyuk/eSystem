@@ -5,7 +5,7 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
-@inject IWebAuthNService WebAuthNService
+@inject ICredentialService CredentialService
 @inject IConfiguration Configuration
 @inject LoginValidator Validator
 
@@ -235,7 +235,7 @@
             Username = "pipidastr"
         };
 
-        var result = await WebAuthNService.CreateAssertionOptionsAsync(request);
+        var result = await CredentialService.CreateAssertionOptionsAsync(request);
 
         if (result.Success)
         {
@@ -247,7 +247,7 @@
                 Credential = credential
             };
 
-            var verificationResult = await WebAuthNService.VerifyAssertionResponseAsync(verificationRequest);
+            var verificationResult = await CredentialService.VerifyAssertionResponseAsync(verificationRequest);
 
             if (verificationResult.Success)
             {

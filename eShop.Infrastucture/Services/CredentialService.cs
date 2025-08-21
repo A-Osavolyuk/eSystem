@@ -6,9 +6,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Infrastructure.Services;
 
-public class WebAuthNService(
+public class CredentialService(
     IConfiguration configuration, 
-    IApiClient apiClient) : ApiService(configuration, apiClient), IWebAuthNService
+    IApiClient apiClient) : ApiService(configuration, apiClient), ICredentialService
 {
     public async ValueTask<Response> CreateKeyAsync(CreatePublicKeyCredentialRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/WebAuthN/credential/options", Method = HttpMethod.Post, Data = request },
