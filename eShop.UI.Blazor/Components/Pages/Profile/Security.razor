@@ -80,7 +80,7 @@
 
         if (result.Success)
         {
-            var options = JsonSerializer.Deserialize<PublicKeyCredentialCreationOptions>(result.Result.ToString()!);
+            var options = result.Get<PublicKeyCredentialCreationOptions>();
             var credentialResponse = await Js.InvokeAsync<PublicKeyCredentialResponse>("createKey", options);
 
             await SecurityService.VerifyPublicKeyCredentialAsync(new VerifyPublicKeyCredentialRequest()
