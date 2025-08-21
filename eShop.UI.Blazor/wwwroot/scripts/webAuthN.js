@@ -10,10 +10,21 @@
 
 async function createKey(options)
 {
-    console.log(options);
     options.challenge = base64ToUint8Array(options.challenge);
     options.user.id = base64ToUint8Array(options.user.id);
     return await navigator.credentials.create({
         publicKey: options
+    });
+}
+
+async function signIn(options)
+{
+    options.challenge = base64ToUint8Array(options.challenge);
+    for (let cred of options.allowedCredentials) {
+        cred.id = base64ToUint8Array(cred.id);
+    }
+    
+    return await navigator.credentials.get({ 
+        publicKey: options 
     });
 }
