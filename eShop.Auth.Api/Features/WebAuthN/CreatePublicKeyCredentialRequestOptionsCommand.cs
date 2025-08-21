@@ -5,16 +5,16 @@ using OtpNet;
 
 namespace eShop.Auth.Api.Features.WebAuthN;
 
-public record CreateCredentialRequestOptionsCommand(
-    CreateCredentialRequestOptionRequest Request,
+public record CreatePublicKeyCredentialRequestOptionsCommand(
+    CreatePublicKeyCredentialRequestOptionsRequest Request,
     HttpContext Context) : IRequest<Result>;
 
 public class CreateRequestCredentialOptionsCommandHandler(
-    IUserManager userManager) : IRequestHandler<CreateCredentialRequestOptionsCommand, Result>
+    IUserManager userManager) : IRequestHandler<CreatePublicKeyCredentialRequestOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
 
-    public async Task<Result> Handle(CreateCredentialRequestOptionsCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CreatePublicKeyCredentialRequestOptionsCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with name {request.Request.Username}.");

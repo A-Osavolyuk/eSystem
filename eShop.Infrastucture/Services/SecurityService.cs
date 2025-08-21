@@ -94,8 +94,14 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/WebAuthN/credential/verification", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
-    public async ValueTask<Response> CreateCredentialRequestOptionsAsync(CreateCredentialRequestOptionRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> CreateCredentialRequestOptionsAsync(
+        CreatePublicKeyCredentialRequestOptionsRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/WebAuthN/assertion/options", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
+
+    public async ValueTask<Response> VerifyCredentialRequestOptionsAsync(
+        VerifyPublicKeyCredentialRequestOptionsRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/WebAuthN/assertion/verification", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> ChangePhoneNumberAsync(ChangePhoneNumberRequest request) => await ApiClient.SendAsync(
