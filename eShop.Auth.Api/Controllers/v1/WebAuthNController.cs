@@ -47,9 +47,24 @@ public class WebAuthNController(ISender sender) : ControllerBase
     [HttpPost("assertion/options")]
     [AllowAnonymous]
     public async ValueTask<IActionResult> CreateCredentialRequestOptionsAsync(
-        [FromBody] CreateCredentialRequestOptionRequest request)
+        [FromBody] CreatePublicKeyCredentialRequestOptionsRequest request)
     {
-        var result = await sender.Send(new CreateCredentialRequestOptionsCommand(request, HttpContext));
+        var result = await sender.Send(new CreatePublicKeyCredentialRequestOptionsCommand(request, HttpContext));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Verify credential request options")]
+    [EndpointDescription("Verify credential request options")]
+    [ProducesResponseType(200)]
+    [HttpPost("assertion/verification")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> CreateCredentialRequestOptionsAsync(
+        [FromBody] VerifyPublicKeyCredentialRequestOptionsRequest request)
+    {
+        var result = await sender.Send(new VerifyPublicKeyCredentialRequestOptionsCommand(request, HttpContext));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
