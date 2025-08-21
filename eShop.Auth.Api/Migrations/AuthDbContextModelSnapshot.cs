@@ -574,14 +574,6 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AaGuid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AttestationType")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
@@ -590,17 +582,14 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<byte>("Flags")
-                        .HasColumnType("tinyint");
+                    b.Property<string>("Domain")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<byte[]>("PublicKey")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("RpId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<long>("SignCount")
                         .HasColumnType("bigint");

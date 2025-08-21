@@ -12,8 +12,8 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250820114308_UserCredentialsEntity")]
-    partial class UserCredentialsEntity
+    [Migration("20250821071715_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -577,14 +577,6 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AaGuid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AttestationType")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
@@ -593,17 +585,14 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<byte>("Flags")
-                        .HasColumnType("tinyint");
+                    b.Property<string>("Domain")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<byte[]>("PublicKey")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("RpId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<long>("SignCount")
                         .HasColumnType("bigint");
