@@ -54,7 +54,7 @@ public class VerifyPublicKeyCredentialCommandHandler(
             PublicKey = authData.CredentialPublicKey,
             SignCount = authData.SignCount,
             CreateDate = DateTimeOffset.UtcNow,
-            Type = clientData.Type
+            Type = request.Request.Response.Type
         };
 
         var result = await credentialManager.CreateAsync(userCredential, cancellationToken);
