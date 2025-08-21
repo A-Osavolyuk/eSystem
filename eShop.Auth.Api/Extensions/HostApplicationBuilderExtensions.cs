@@ -28,11 +28,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddDocumentation();
         
         builder.Services.AddControllers()
-            .AddJsonOptions(cfg =>
-            {
-                cfg.JsonSerializerOptions.WriteIndented = true;
-                cfg.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.KebabCaseLower));
-            });
+            .AddJsonOptions(cfg => cfg.JsonSerializerOptions.WriteIndented = true);
         
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession(options =>
