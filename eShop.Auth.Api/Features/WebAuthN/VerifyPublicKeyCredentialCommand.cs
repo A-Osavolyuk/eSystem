@@ -48,6 +48,7 @@ public class VerifyPublicKeyCredentialCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            DisplayName = request.Request.DisplayName,
             Domain = clientData.Origin,
             CredentialId = Convert.ToBase64String(authData.CredentialId),
             PublicKey = authData.CredentialPublicKey,

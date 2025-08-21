@@ -313,6 +313,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             
             entity.Property(x => x.CredentialId).HasMaxLength(1000);
             entity.Property(x => x.Domain).HasMaxLength(100);
+            entity.Property(x => x.DisplayName).HasMaxLength(100);
             entity.Property(x => x.Type).HasMaxLength(32);
             
             entity.HasOne(x => x.User)

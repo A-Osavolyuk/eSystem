@@ -6,6 +6,7 @@ public class UserCredentialEntity : Entity
     public Guid UserId { get; set; }
 
     public string CredentialId { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
     public byte[] PublicKey { get; set; } = [];
     public string Domain { get; set; } = string.Empty;
     public uint SignCount { get; set; }
