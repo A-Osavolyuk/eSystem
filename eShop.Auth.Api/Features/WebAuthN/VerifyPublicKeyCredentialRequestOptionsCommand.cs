@@ -1,4 +1,6 @@
 ﻿using System.Security.Cryptography;
+using System.Text.Json;
+using eShop.Auth.Api.Types;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
@@ -30,8 +32,19 @@ public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {credential.UserId}.");
 
         var authenticationAssertionResponse = request.Request.Credential.Response;
-
+        
         var clientDataJson = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.ClientDataJson);
+        var clientData = JsonSerializer.Deserialize<ClientData>(clientDataJson);
+        
+        if (clientData is null) return Results.BadRequest("Invalid client data");
+        if (clientData.Type != "webauthn.get") return Results.BadRequest("Invalid type");
+        
+        var challengeBytes = CredentialUtils.Base64UrlDecode(clientData.Challenge);
+        var base64Challenge = Convert.ToBase64String(challengeBytes);
+        var savedChallenge = request.HttpContext.Session.GetString("webauthn_attestation_challenge");
+
+        if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
+        
         var authenticatorData = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.AuthenticatorData);
         var signature = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.Signature);
 
