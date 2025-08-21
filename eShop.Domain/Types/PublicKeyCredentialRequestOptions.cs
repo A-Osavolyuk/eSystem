@@ -3,7 +3,7 @@ using eShop.Domain.Constants;
 
 namespace eShop.Domain.Types;
 
-public class CredentialRequestOptions
+public class PublicKeyCredentialRequestOptions
 {
     [JsonPropertyName("challenge")]
     public required string Challenge { get; set; }
@@ -16,4 +16,7 @@ public class CredentialRequestOptions
 
     [JsonPropertyName("userVerification")]
     public required string UserVerification { get; set; } = UserVerifications.Preferred;
+    
+    [JsonPropertyName("allowedCredentials")]
+    public required List<AllowedCredential> AllowedCredentials { get; set; }
 }

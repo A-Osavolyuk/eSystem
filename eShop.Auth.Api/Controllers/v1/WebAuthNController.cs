@@ -46,9 +46,10 @@ public class WebAuthNController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("assertion/options")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> CreateCredentialRequestOptionsAsync()
+    public async ValueTask<IActionResult> CreateCredentialRequestOptionsAsync(
+        [FromBody] CreateCredentialRequestOptionRequest request)
     {
-        var result = await sender.Send(new CreateCredentialRequestOptionsCommand(HttpContext));
+        var result = await sender.Send(new CreateCredentialRequestOptionsCommand(request, HttpContext));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
