@@ -41,13 +41,6 @@
                     OnAdd="@OnAddPasswordAsync"
                     OnChange="@OnChangePasswordAsync"
                     OnReset="@OnResetPasswordAsync"/>
-                <MudButton
-                    Variant="Variant.Filled"
-                    Color="Color.Primary"
-                    ButtonType="ButtonType.Button"
-                    OnClick="@(async () => await CreateKeyAsync())">
-                    Create
-                </MudButton>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -65,33 +58,6 @@
         {
             await LoadAsync();
             StateHasChanged();
-        }
-    }
-
-    private async Task CreateKeyAsync()
-    {
-        var request = new CreatePublicKeyCredentialRequest()
-        {
-            UserId = userId,
-            DisplayName = "Some key"
-        };
-
-        var result = await SecurityService.CreatePublicKeyCredentialAsync(request);
-
-        if (result.Success)
-        {
-            var options = result.Get<PublicKeyCredentialCreationOptions>();
-            var credentialResponse = await Js.InvokeAsync<PublicKeyCredentialResponse>("createKey", options);
-
-            await SecurityService.VerifyPublicKeyCredentialAsync(new VerifyPublicKeyCredentialRequest()
-            {
-                UserId = userId,
-                Response = credentialResponse
-            });
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
