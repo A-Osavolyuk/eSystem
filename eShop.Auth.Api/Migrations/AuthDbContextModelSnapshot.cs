@@ -594,6 +594,11 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<long>("SignCount")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 

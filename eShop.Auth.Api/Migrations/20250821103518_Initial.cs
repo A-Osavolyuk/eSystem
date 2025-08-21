@@ -351,9 +351,10 @@ namespace eShop.Auth.Api.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CredentialId = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PublicKey = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     SignCount = table.Column<long>(type: "bigint", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },

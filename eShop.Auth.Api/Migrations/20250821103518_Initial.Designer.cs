@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250821071715_Initial")]
+    [Migration("20250821103518_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -596,6 +596,11 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<long>("SignCount")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
