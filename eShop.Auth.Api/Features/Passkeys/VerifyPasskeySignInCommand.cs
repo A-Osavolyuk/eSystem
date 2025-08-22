@@ -5,24 +5,22 @@ using eShop.Domain.Constants;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.Credentials;
+namespace eShop.Auth.Api.Features.Passkeys;
 
-public record VerifyPublicKeyCredentialRequestOptionsCommand(
-    VerifyPublicKeyCredentialRequestOptionsRequest Request,
-    HttpContext HttpContext) : IRequest<Result>;
+public record VerifyPasskeySignInCommand(VerifyPasskeySignInRequest Request, HttpContext HttpContext) : IRequest<Result>;
 
-public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
+public class VerifyPasskeySignInCommandHandler(
     IUserManager userManager,
     ICredentialManager credentialManager,
     ITokenManager tokenManager,
-    ILockoutManager lockoutManager) : IRequestHandler<VerifyPublicKeyCredentialRequestOptionsCommand, Result>
+    ILockoutManager lockoutManager) : IRequestHandler<VerifyPasskeySignInCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICredentialManager credentialManager = credentialManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
 
-    public async Task<Result> Handle(VerifyPublicKeyCredentialRequestOptionsCommand request,
+    public async Task<Result> Handle(VerifyPasskeySignInCommand request,
         CancellationToken cancellationToken)
     {
         var credentialIdBytes = CredentialUtils.Base64UrlDecode(request.Request.Credential.Id);

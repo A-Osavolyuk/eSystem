@@ -1,0 +1,69 @@
+﻿using eShop.Auth.Api.Features.Passkeys;
+using eShop.Domain.Requests.API.Auth;
+
+namespace eShop.Auth.Api.Controllers.v1;
+
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiController]
+[ApiVersion("1.0")]
+[Authorize]
+public class PasskeyController(ISender sender) : ControllerBase
+{
+    private readonly ISender sender = sender;
+
+    [EndpointSummary("Create passkey")]
+    [EndpointDescription("Create passkey")]
+    [ProducesResponseType(200)]
+    [HttpPost("create")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> CreatePasskeyAsync([FromBody] CreatePasskeyRequest request)
+    {
+        var result = await sender.Send(new CreatePasskeyCommand(request, HttpContext));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+
+    [EndpointSummary("Verify passkey")]
+    [EndpointDescription("Verify passkey")]
+    [ProducesResponseType(200)]
+    [HttpPost("verify")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> VerifyPasskeyAsync([FromBody] VerifyPasskeyRequest request)
+    {
+        var result = await sender.Send(new VerifyPasskeyCommand(request, HttpContext));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Sign in with passkey")]
+    [EndpointDescription("Sign in with passkey")]
+    [ProducesResponseType(200)]
+    [HttpPost("sign-in/options")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> PasskeySignInAsync([FromBody] PasskeySignInRequest request)
+    {
+        var result = await sender.Send(new PasskeySignInCommand(request, HttpContext));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Verify sign in with passkey")]
+    [EndpointDescription("Verify sign in with passkey")]
+    [ProducesResponseType(200)]
+    [HttpPost("sign-in/verify")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> VerifyPasskeySignInAsync([FromBody] VerifyPasskeySignInRequest request)
+    {
+        var result = await sender.Send(new VerifyPasskeySignInCommand(request, HttpContext));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+}

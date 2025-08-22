@@ -2,7 +2,7 @@
 
 namespace eShop.Domain.Requests.API.Auth;
 
-public class VerifyPublicKeyCredentialRequestOptionsRequest
+public class VerifyPasskeySignInRequest
 {
     public required PublicKeyCredential Credential { get; set; }
 }

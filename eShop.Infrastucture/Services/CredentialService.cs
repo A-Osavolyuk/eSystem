@@ -10,21 +10,21 @@ public class CredentialService(
     IConfiguration configuration, 
     IApiClient apiClient) : ApiService(configuration, apiClient), ICredentialService
 {
-    public async ValueTask<Response> CreateKeyAsync(CreatePublicKeyCredentialRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> CreateKeyAsync(CreatePasskeyRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/WebAuthN/credential/options", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
-    public async ValueTask<Response> VerifyKeyAsync(VerifyPublicKeyCredentialRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> VerifyKeyAsync(VerifyPasskeyRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/WebAuthN/credential/verification", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> CreateAssertionOptionsAsync(
-        CreatePublicKeyCredentialRequestOptionsRequest request) => await ApiClient.SendAsync(
+        PasskeySignInRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/WebAuthN/assertion/options", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> VerifyAssertionResponseAsync(
-        VerifyPublicKeyCredentialRequestOptionsRequest request) => await ApiClient.SendAsync(
+        VerifyPasskeySignInRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/WebAuthN/assertion/verification", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 }

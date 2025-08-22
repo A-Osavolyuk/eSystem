@@ -49,7 +49,7 @@
 
         if (form.IsValid)
         {
-            var request = new CreatePublicKeyCredentialRequest()
+            var request = new CreatePasskeyRequest()
             {
                 UserId = Model.UserId,
                 DisplayName = Model.DisplayName
@@ -62,7 +62,7 @@
                 var options = result.Get<PublicKeyCredentialCreationOptions>()!;
                 var response = await Js.InvokeAsync<PublicKeyCredentialResponse>("createKey", options);
 
-                var verificationRequest = new VerifyPublicKeyCredentialRequest()
+                var verificationRequest = new VerifyPasskeyRequest()
                 {
                     UserId = Model.UserId,
                     DisplayName = Model.DisplayName,

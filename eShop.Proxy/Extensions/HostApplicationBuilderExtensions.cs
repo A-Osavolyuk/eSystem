@@ -79,8 +79,8 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
-                RouteId = "webauthn-route", ClusterId = "security-cluster",
-                Match = new RouteMatch { Path = "/api/v1/WebAuthN/{**catch-all}" }
+                RouteId = "passkey-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Passkey/{**catch-all}" }
             },
             new RouteConfig
             {

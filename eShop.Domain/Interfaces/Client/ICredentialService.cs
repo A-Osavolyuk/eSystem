@@ -5,8 +5,8 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface ICredentialService
 {
-    public ValueTask<Response> CreateKeyAsync(CreatePublicKeyCredentialRequest request);
-    public ValueTask<Response> VerifyKeyAsync(VerifyPublicKeyCredentialRequest request);
-    public ValueTask<Response> CreateAssertionOptionsAsync(CreatePublicKeyCredentialRequestOptionsRequest request);
-    public ValueTask<Response> VerifyAssertionResponseAsync(VerifyPublicKeyCredentialRequestOptionsRequest request);
+    public ValueTask<Response> CreateKeyAsync(CreatePasskeyRequest request);
+    public ValueTask<Response> VerifyKeyAsync(VerifyPasskeyRequest request);
+    public ValueTask<Response> CreateAssertionOptionsAsync(PasskeySignInRequest request);
+    public ValueTask<Response> VerifyAssertionResponseAsync(VerifyPasskeySignInRequest request);
 }

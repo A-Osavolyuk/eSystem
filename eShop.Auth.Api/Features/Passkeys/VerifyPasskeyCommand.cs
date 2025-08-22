@@ -5,21 +5,20 @@ using eShop.Domain.Constants;
 using eShop.Domain.Requests.API.Auth;
 using PeterO.Cbor;
 
-namespace eShop.Auth.Api.Features.Credentials;
+namespace eShop.Auth.Api.Features.Passkeys;
 
-public record VerifyPublicKeyCredentialCreationOptionsCommand(
-    VerifyPublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;
+public record VerifyPasskeyCommand(VerifyPasskeyRequest Request, HttpContext HttpContext) : IRequest<Result>;
 
-public class VerifyPublicKeyCredentialCreationOptionsCommandHandler(
+public class VerifyPasskeyCommandHandler(
     IUserManager userManager,
     ICredentialManager credentialManager,
-    IdentityOptions identityOptions) : IRequestHandler<VerifyPublicKeyCredentialCreationOptionsCommand, Result>
+    IdentityOptions identityOptions) : IRequestHandler<VerifyPasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICredentialManager credentialManager = credentialManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
-    public async Task<Result> Handle(VerifyPublicKeyCredentialCreationOptionsCommand request,
+    public async Task<Result> Handle(VerifyPasskeyCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);

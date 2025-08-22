@@ -3,19 +3,18 @@ using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Types;
 using OtpNet;
 
-namespace eShop.Auth.Api.Features.Credentials;
+namespace eShop.Auth.Api.Features.Passkeys;
 
-public record CreatePublicKeyCredentialCreationOptionsCommand(
-    CreatePublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;
+public record CreatePasskeyCommand(CreatePasskeyRequest Request, HttpContext HttpContext) : IRequest<Result>;
 
-public class CreatePublicKeyCredentialCreationOptionsCommandHandler(
+public class CreatePasskeyCommandHandler(
     IUserManager userManager,
-    IdentityOptions identityOptions) : IRequestHandler<CreatePublicKeyCredentialCreationOptionsCommand, Result>
+    IdentityOptions identityOptions) : IRequestHandler<CreatePasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
-    public async Task<Result> Handle(CreatePublicKeyCredentialCreationOptionsCommand request,
+    public async Task<Result> Handle(CreatePasskeyCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);

@@ -78,7 +78,7 @@
 
         if (form.IsValid)
         {
-            var request = new CreatePublicKeyCredentialRequestOptionsRequest()
+            var request = new PasskeySignInRequest()
             {
                 Username = Model.Username
             };
@@ -90,7 +90,7 @@
                 var options = result.Get<PublicKeyCredentialRequestOptions>()!;
                 var credential = await Js.InvokeAsync<PublicKeyCredential>("signIn", options);
 
-                var verificationRequest = new VerifyPublicKeyCredentialRequestOptionsRequest()
+                var verificationRequest = new VerifyPasskeySignInRequest()
                 {
                     Credential = credential
                 };
