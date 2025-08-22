@@ -38,5 +38,10 @@ public enum CodeResource
     /// <summary>
     /// An external linked account (e.g., Google, Facebook, GitHub).
     /// </summary>
-    LinkedAccount
+    LinkedAccount,
+    
+    /// <summary>
+    /// User's passkey
+    /// </summary>
+    Passkey
 }

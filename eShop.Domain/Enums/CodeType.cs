@@ -58,5 +58,10 @@ public enum CodeType
     /// <summary>
     /// Disallowing sign-in via a linked external account (opposite of <see cref="Allow"/>).
     /// </summary>
-    Disallow = 11
+    Disallow = 11,
+    
+    /// <summary>
+    /// Verification of remove action.
+    /// </summary>
+    Remove = 12
 }
