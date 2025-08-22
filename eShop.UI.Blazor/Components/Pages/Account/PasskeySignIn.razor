@@ -105,7 +105,26 @@
                 
                     await RouteManager.NavigateAsync("/products");
                 }
-                else Snackbar.Add(verificationResult.Message, Severity.Error);
+                else
+                {
+                    if (result.Result is null)
+                    {
+                        Snackbar.Add(result.Message, Severity.Error);
+                        return;
+                    }
+                    
+                    var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
+
+                    if (response.IsLockedOut)
+                    {
+                        var url = $"/account/locked-out?id={response.UserId}";
+                        await RouteManager.NavigateAsync(url);
+                    }
+                    else
+                    {
+                        Snackbar.Add(result.Message, Severity.Error);
+                    }
+                }
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }

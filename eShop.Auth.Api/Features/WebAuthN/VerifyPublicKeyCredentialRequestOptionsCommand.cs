@@ -13,11 +13,13 @@ public record VerifyPublicKeyCredentialRequestOptionsCommand(
 public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
     IUserManager userManager,
     ICredentialManager credentialManager,
-    ITokenManager tokenManager) : IRequestHandler<VerifyPublicKeyCredentialRequestOptionsCommand, Result>
+    ITokenManager tokenManager,
+    ILockoutManager lockoutManager) : IRequestHandler<VerifyPublicKeyCredentialRequestOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICredentialManager credentialManager = credentialManager;
     private readonly ITokenManager tokenManager = tokenManager;
+    private readonly ILockoutManager lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(VerifyPublicKeyCredentialRequestOptionsCommand request,
         CancellationToken cancellationToken)
@@ -71,6 +73,19 @@ public class VerifyPublicKeyCredentialRequestOptionsCommandHandler(
         
         var result = await credentialManager.UpdateAsync(credential, cancellationToken);
         if (!result.Succeeded) return result;
+        
+        var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
+
+        if (lockoutState.Enabled)
+        {
+            var lockoutResponse = new VerifyPublicKeyCredentialRequestOptionsResponse()
+            {
+                UserId = user.Id,
+                IsLockedOut = lockoutState.Enabled,
+            };
+            
+            return Results.BadRequest("Account is locked out", lockoutResponse);
+        }
 
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
