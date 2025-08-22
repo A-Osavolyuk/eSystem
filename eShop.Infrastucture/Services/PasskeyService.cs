@@ -10,13 +10,13 @@ public class PasskeyService(
     IConfiguration configuration, 
     IApiClient apiClient) : ApiService(configuration, apiClient), IPasskeyService
 {
-    public async ValueTask<Response> CreateAsync(CreatePasskeyRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> CreatePasskeyAsync(CreatePasskeyRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/create", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> VerifyAsync(VerifyPasskeyRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<Response> VerifyPasskeyAsync(VerifyPasskeyRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/verify", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> CreateSignInOptionsAsync(
         PasskeySignInRequest request) => await ApiClient.SendAsync(

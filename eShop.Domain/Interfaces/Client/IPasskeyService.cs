@@ -5,8 +5,8 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface IPasskeyService
 {
-    public ValueTask<Response> CreateAsync(CreatePasskeyRequest request);
-    public ValueTask<Response> VerifyAsync(VerifyPasskeyRequest request);
+    public ValueTask<Response> CreatePasskeyAsync(CreatePasskeyRequest request);
+    public ValueTask<Response> VerifyPasskeyAsync(VerifyPasskeyRequest request);
     public ValueTask<Response> CreateSignInOptionsAsync(PasskeySignInRequest request);
     public ValueTask<Response> VerifySignInOptionsAsync(VerifyPasskeySignInRequest request);
 }

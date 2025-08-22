@@ -55,7 +55,7 @@
                 DisplayName = Model.DisplayName
             };
 
-            var result = await PasskeyService.CreateAsync(request);
+            var result = await PasskeyService.CreatePasskeyAsync(request);
 
             if (result.Success)
             {
@@ -69,7 +69,7 @@
                     Response = response
                 };
 
-                var verificationResult = await PasskeyService.VerifyAsync(verificationRequest);
+                var verificationResult = await PasskeyService.VerifyPasskeyAsync(verificationRequest);
 
                 if (verificationResult.Success) Dialog?.Close(DialogResult.Ok(true));
                 else Snackbar.Add(result.Message, Severity.Error);
