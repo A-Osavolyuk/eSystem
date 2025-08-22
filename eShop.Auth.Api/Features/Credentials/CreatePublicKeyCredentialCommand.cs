@@ -9,9 +9,11 @@ public record CreatePublicKeyCredentialCommand(
     CreatePublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;
 
 public class CreatePublicKeyCredentialCommandHandler(
-    IUserManager userManager) : IRequestHandler<CreatePublicKeyCredentialCommand, Result>
+    IUserManager userManager,
+    IdentityOptions identityOptions) : IRequestHandler<CreatePublicKeyCredentialCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(CreatePublicKeyCredentialCommand request,
         CancellationToken cancellationToken)
@@ -47,8 +49,8 @@ public class CreatePublicKeyCredentialCommandHandler(
             ],
             ReplyingParty = new ReplyingParty()
             {
-                Domain = "localhost",
-                Name = "eAccount",
+                Domain = identityOptions.Credentials.Domain,
+                Name = identityOptions.Credentials.Server,
             },
             Attestation = Attestations.None,
             Timeout = 60000

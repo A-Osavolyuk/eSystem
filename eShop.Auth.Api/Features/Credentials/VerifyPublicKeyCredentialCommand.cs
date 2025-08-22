@@ -11,10 +11,12 @@ public record VerifyPublicKeyCredentialCommand(
 
 public class VerifyPublicKeyCredentialCommandHandler(
     IUserManager userManager,
-    ICredentialManager credentialManager) : IRequestHandler<VerifyPublicKeyCredentialCommand, Result>
+    ICredentialManager credentialManager,
+    IdentityOptions identityOptions) : IRequestHandler<VerifyPublicKeyCredentialCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICredentialManager credentialManager = credentialManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(VerifyPublicKeyCredentialCommand request,
         CancellationToken cancellationToken)
@@ -41,7 +43,7 @@ public class VerifyPublicKeyCredentialCommandHandler(
         var authDataBytes = attestationCbor["authData"].GetByteString();
         var authData = AuthenticationData.FromBytes(authDataBytes);
         
-        var rpHash = SHA256.HashData("localhost"u8.ToArray());
+        var rpHash = SHA256.HashData(Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray()));
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
 
         var userCredential = new UserCredentialEntity()

@@ -84,6 +84,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddIdentity(options =>
         {
             options.Credentials.Domain = "localhost";
+            options.Credentials.Server = "eAccount";
             
             options.Password.RequiredLength = 8;
             options.Password.RequireUppercase = true;

@@ -10,9 +10,11 @@ public record CreatePublicKeyCredentialRequestOptionsCommand(
     HttpContext Context) : IRequest<Result>;
 
 public class CreateRequestCredentialOptionsCommandHandler(
-    IUserManager userManager) : IRequestHandler<CreatePublicKeyCredentialRequestOptionsCommand, Result>
+    IUserManager userManager,
+    IdentityOptions identityOptions) : IRequestHandler<CreatePublicKeyCredentialRequestOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(CreatePublicKeyCredentialRequestOptionsCommand request, CancellationToken cancellationToken)
     {
@@ -32,7 +34,7 @@ public class CreateRequestCredentialOptionsCommandHandler(
         {
             Challenge = challenge,
             Timeout = 60000,
-            Domain = "localhost",
+            Domain = identityOptions.Credentials.Domain,
             UserVerification = UserVerifications.Preferred,
             AllowedCredentials = allowedCredentials
         };
