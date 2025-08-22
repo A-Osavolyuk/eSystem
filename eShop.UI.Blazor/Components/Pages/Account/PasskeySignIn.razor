@@ -3,7 +3,7 @@
 @using eShop.Domain.Types
 @inherits PageBase
 
-@inject ICredentialService CredentialService
+@inject IPasskeyService PasskeyService
 @inject PasskeySignInValidator Validator
 
 <Title Text="Sign in with Passkey"></Title>
@@ -83,7 +83,7 @@
                 Username = Model.Username
             };
 
-            var result = await CredentialService.CreateAssertionOptionsAsync(request);
+            var result = await PasskeyService.CreateSignInOptionsAsync(request);
 
             if (result.Success)
             {
@@ -95,7 +95,7 @@
                     Credential = credential
                 };
 
-                var verificationResult = await CredentialService.VerifyAssertionResponseAsync(verificationRequest);
+                var verificationResult = await PasskeyService.VerifySignInOptionsAsync(verificationRequest);
 
                 if (verificationResult.Success)
                 {
