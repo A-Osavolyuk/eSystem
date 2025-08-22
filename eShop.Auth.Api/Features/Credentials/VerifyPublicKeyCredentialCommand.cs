@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text.Json;
 using eShop.Auth.Api.Types;
+using eShop.Domain.Constants;
 using eShop.Domain.Requests.API.Auth;
 using PeterO.Cbor;
 
@@ -30,7 +31,7 @@ public class VerifyPublicKeyCredentialCommandHandler(
         var clientData = JsonSerializer.Deserialize<ClientData>(clientDataJson);
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
-        if (clientData.Type != "webauthn.create") return Results.BadRequest("Invalid type");
+        if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
 
         var challengeBytes = CredentialUtils.Base64UrlDecode(clientData.Challenge);
         var base64Challenge = Convert.ToBase64String(challengeBytes);
