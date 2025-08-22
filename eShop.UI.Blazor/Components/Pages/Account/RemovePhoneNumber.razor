@@ -81,6 +81,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
+                                                    Disabled="@(Model.Code.Length <= 5)"
                                                     OnClick="@(async () => await OnConfirmRemovePhoneNumberAsync())">
                                                     Confirm
                                                 </MudLoadingButton>

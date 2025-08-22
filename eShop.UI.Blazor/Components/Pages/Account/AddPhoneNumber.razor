@@ -43,20 +43,22 @@
                                                         We will the send SMS with 6-digit code to this phone number
                                                     </MudText>
                                                     <br/>
-                                                    <MudTextField Label="Phone number"
-                                                                  Class="mt-2"
-                                                                  For="@(() => AddPhoneNumberModel.PhoneNumber)"
-                                                                  Variant="Variant.Outlined"
-                                                                  Immediate
-                                                                  @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
+                                                    <MudTextField
+                                                        Label="Phone number"
+                                                        Class="mt-2"
+                                                        For="@(() => AddPhoneNumberModel.PhoneNumber)"
+                                                        Variant="Variant.Outlined"
+                                                        Immediate
+                                                        @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
                                                 </MudItem>
                                                 <MudItem xs="12">
-                                                    <MudLoadingButton Size="Size.Large" FullWidth
-                                                                      Variant="Variant.Filled"
-                                                                      Class="mt-2"
-                                                                      Color="Color.Primary"
-                                                                      ButtonType="ButtonType.Button"
-                                                                      OnClick="@(async () => await OnAddPhoneNumberAsync())">
+                                                    <MudLoadingButton
+                                                        Size="Size.Large" FullWidth
+                                                        Variant="Variant.Filled"
+                                                        Class="mt-2"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnAddPhoneNumberAsync())">
                                                         Send code
                                                     </MudLoadingButton>
                                                 </MudItem>
@@ -90,21 +92,23 @@
                                                     the SMS we sent you to:
                                                     <strong>@AddPhoneNumberModel.PhoneNumber</strong>
                                                 </MudText>
-                                                
-                                                <MudCodeInput Count="6"
-                                                              Margin="Margin.Normal"
-                                                              Spacing="2"
-                                                              Class="d-flex align-items-center"
-                                                              @bind-Value="ConfirmForgotPasswordModel.Code"
-                                                              Variant="Variant.Outlined"/>
 
-                                                <MudLoadingButton Size="Size.Large" FullWidth
-                                                                  Variant="Variant.Filled"
-                                                                  Class="mt-2"
-                                                                  Color="Color.Primary"
-                                                                  Disabled="@(ConfirmForgotPasswordModel.Code.Length <= 5)"
-                                                                  ButtonType="ButtonType.Button"
-                                                                  OnClick="@(async () => await OnVerifyCodeAsync())">
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="ConfirmForgotPasswordModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    Size="Size.Large" FullWidth
+                                                    Variant="Variant.Filled"
+                                                    Class="mt-2"
+                                                    Color="Color.Primary"
+                                                    Disabled="@(ConfirmForgotPasswordModel.Code.Length <= 5)"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await OnVerifyCodeAsync())">
                                                     Confirm
                                                 </MudLoadingButton>
                                             </MudStack>
@@ -217,4 +221,5 @@
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
     }
+
 }

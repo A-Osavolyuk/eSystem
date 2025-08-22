@@ -99,6 +99,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
+                                                    Disabled="@(ConfirmResetPhoneNumberModel.Code.Length <= 5)"
                                                     OnClick="@(async () => await OnConfirmResetPhoneNumberAsync())">
                                                     Verify
                                                 </MudLoadingButton>

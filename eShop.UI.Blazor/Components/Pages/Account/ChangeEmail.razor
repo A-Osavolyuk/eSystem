@@ -99,6 +99,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
+                                                    Disabled="@(VerifyCurrentEmailModel.Code.Length <= 5)"
                                                     OnClick="@(async () => await OnVerifyNewEmailAsync())">
                                                     Confirm
                                                 </MudLoadingButton>
@@ -159,6 +160,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
+                                                    Disabled="@(ConfirmChangeEmailModel.Code.Length <= 5)"
                                                     OnClick="@(async () => await OnConfirmEmailChangeAsync())">
                                                     Verify
                                                 </MudLoadingButton>

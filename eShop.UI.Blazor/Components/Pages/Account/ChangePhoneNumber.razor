@@ -99,6 +99,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
+                                                    Disabled="@(VerifyCurrentPhoneNumberModel.Code.Length <= 5)"
                                                     OnClick="@(async () => await OnVerifyNewPhoneNumberAsync())">
                                                     Confirm
                                                 </MudLoadingButton>
@@ -162,6 +163,7 @@
                                                         Variant="Variant.Filled"
                                                         Color="Color.Primary"
                                                         ButtonType="ButtonType.Button"
+                                                        Disabled="@(ConfirmChangePhoneNumberModel.Code.Length <= 5)"
                                                         OnClick="@(async () => await OnConfirmChangePhoneNumberAsync())">
                                                         Verify
                                                     </MudLoadingButton>

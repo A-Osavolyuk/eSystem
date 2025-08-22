@@ -99,6 +99,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
+                                                    Disabled="@(ConfirmResetEmailModel.Code.Length <= 5)"
                                                     OnClick="@(async () => await OnConfirmResetEmailAsync())">
                                                     Verify
                                                 </MudLoadingButton>
