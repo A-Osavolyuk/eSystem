@@ -2,7 +2,8 @@
 
 public class IdentityOptions
 {
-    public AccountOptions Account { get; set; } = new AccountOptions();
-    public SignInOptions SignIn { get; set; } = new SignInOptions();
-    public PasswordOptions Password { get; set; } = new PasswordOptions();
+    public AccountOptions Account { get; set; } = new();
+    public SignInOptions SignIn { get; set; } = new();
+    public PasswordOptions Password { get; set; } = new();
+    public CredentialOptions Credentials { get; set; } = new();
 }
