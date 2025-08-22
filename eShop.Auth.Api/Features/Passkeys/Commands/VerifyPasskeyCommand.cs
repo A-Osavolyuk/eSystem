@@ -5,7 +5,7 @@ using eShop.Domain.Constants;
 using eShop.Domain.Requests.API.Auth;
 using PeterO.Cbor;
 
-namespace eShop.Auth.Api.Features.Passkeys;
+namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
 public record VerifyPasskeyCommand(VerifyPasskeyRequest Request, HttpContext HttpContext) : IRequest<Result>;
 

@@ -5,7 +5,7 @@ using eShop.Domain.Constants;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.Passkeys;
+namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
 public record VerifyPasskeySignInCommand(VerifyPasskeySignInRequest Request, HttpContext HttpContext) : IRequest<Result>;
 

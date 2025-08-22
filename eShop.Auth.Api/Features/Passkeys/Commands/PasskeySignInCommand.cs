@@ -3,7 +3,7 @@ using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Types;
 using OtpNet;
 
-namespace eShop.Auth.Api.Features.Passkeys;
+namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
 public record PasskeySignInCommand(PasskeySignInRequest Request, HttpContext Context) : IRequest<Result>;
 

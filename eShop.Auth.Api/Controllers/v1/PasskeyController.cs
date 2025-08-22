@@ -1,4 +1,5 @@
 ﻿using eShop.Auth.Api.Features.Passkeys;
+using eShop.Auth.Api.Features.Passkeys.Commands;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
