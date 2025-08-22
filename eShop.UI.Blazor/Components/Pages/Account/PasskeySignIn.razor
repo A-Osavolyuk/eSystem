@@ -1,0 +1,113 @@
+﻿@page "/account/passkey/sign-in"
+
+@using eShop.Domain.Types
+@inherits PageBase
+
+@inject ICredentialService CredentialService
+@inject PasskeySignInValidator Validator
+
+<Title Text="Sign in with Passkey"></Title>
+
+<MudGrid Justify="Justify.Center" Style="margin-top: 150px">
+    <MudItem xs="4">
+        <MudStack Spacing="1">
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4">
+                    Sign in with Passkey
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
+                    <MudStack Spacing="3">
+                        <MudTextField
+                            @bind-Value="Model.Username"
+                            For="@(() => Model.Username)"
+                            Label="Username"
+                            Immediate
+                            Variant="Variant.Outlined"/>
+
+                        <MudLoadingButton
+                            LoadingAdornment="Adornment.End"
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await OnSubmitAsync())"
+                            StartIcon="@Icons.Material.Filled.Login"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            FullWidth="true">
+                            Sign in
+                        </MudLoadingButton>
+                    </MudStack>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center">
+                    Have an account with password? Go to
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/login"))">
+                        Login
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center">
+                    Do not have an account yet?
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/register"))">
+                        Register
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center">
+                    Or you can sign up with
+                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/passkey/sign-up"))">
+                        Passkey
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] public PasskeySignInModel Model { get; set; } = new();
+
+    private MudForm form = new();
+    
+    private async Task OnSubmitAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new CreatePublicKeyCredentialRequestOptionsRequest()
+            {
+                Username = Model.Username
+            };
+
+            var result = await CredentialService.CreateAssertionOptionsAsync(request);
+
+            if (result.Success)
+            {
+                var options = result.Get<PublicKeyCredentialRequestOptions>()!;
+                var credential = await Js.InvokeAsync<PublicKeyCredential>("signIn", options);
+
+                var verificationRequest = new VerifyPublicKeyCredentialRequestOptionsRequest()
+                {
+                    Credential = credential
+                };
+
+                var verificationResult = await CredentialService.VerifyAssertionResponseAsync(verificationRequest);
+
+                if (verificationResult.Success)
+                {
+                    var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
+                    await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
+                    Snackbar.Add("Successfully signed in.", Severity.Success);
+                
+                    await RouteManager.NavigateAsync("/products");
+                }
+                else Snackbar.Add(verificationResult.Message, Severity.Error);
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+}

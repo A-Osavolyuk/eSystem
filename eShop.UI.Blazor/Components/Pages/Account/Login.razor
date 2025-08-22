@@ -5,7 +5,6 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
-@inject ICredentialService CredentialService
 @inject IConfiguration Configuration
 @inject LoginValidator Validator
 
@@ -59,7 +58,7 @@
                     StartIcon="@Icons.Material.Filled.Key"
                     Variant="Variant.Filled"
                     Color="Color.Primary"
-                    OnClick="@(async () => await OnPasskeyAsync())"
+                    OnClick="@(async () => await RouteManager.NavigateAsync("/account/passkey/sign-in"))"
                     FullWidth="true">
                     Sign In with Passkey
                 </MudLoadingButton>
@@ -114,7 +113,7 @@
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
-                    Do not have an account?
+                    Do not have an account yet?
                     <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("account/register"))">
                         Register
                     </MudLink>
@@ -226,38 +225,6 @@
                 }
             }
         }
-    }
-
-    private async Task OnPasskeyAsync()
-    {
-        var request = new CreatePublicKeyCredentialRequestOptionsRequest()
-        {
-            Username = "pipidastr"
-        };
-
-        var result = await CredentialService.CreateAssertionOptionsAsync(request);
-
-        if (result.Success)
-        {
-            var options = result.Get<PublicKeyCredentialRequestOptions>()!;
-            var credential = await Js.InvokeAsync<PublicKeyCredential>("signIn", options);
-
-            var verificationRequest = new VerifyPublicKeyCredentialRequestOptionsRequest()
-            {
-                Credential = credential
-            };
-
-            var verificationResult = await CredentialService.VerifyAssertionResponseAsync(verificationRequest);
-
-            if (verificationResult.Success)
-            {
-                var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
-                await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
-                await RouteManager.NavigateAsync("/products");
-            }
-            else Snackbar.Add(verificationResult.Message, Severity.Error);
-        }
-        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnOAuthAsync(string providerName)
