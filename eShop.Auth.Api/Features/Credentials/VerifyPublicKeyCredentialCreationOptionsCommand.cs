@@ -7,19 +7,19 @@ using PeterO.Cbor;
 
 namespace eShop.Auth.Api.Features.Credentials;
 
-public record VerifyPublicKeyCredentialCommand(
+public record VerifyPublicKeyCredentialCreationOptionsCommand(
     VerifyPublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;
 
-public class VerifyPublicKeyCredentialCommandHandler(
+public class VerifyPublicKeyCredentialCreationOptionsCommandHandler(
     IUserManager userManager,
     ICredentialManager credentialManager,
-    IdentityOptions identityOptions) : IRequestHandler<VerifyPublicKeyCredentialCommand, Result>
+    IdentityOptions identityOptions) : IRequestHandler<VerifyPublicKeyCredentialCreationOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICredentialManager credentialManager = credentialManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
-    public async Task<Result> Handle(VerifyPublicKeyCredentialCommand request,
+    public async Task<Result> Handle(VerifyPublicKeyCredentialCreationOptionsCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);

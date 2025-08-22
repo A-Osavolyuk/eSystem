@@ -5,17 +5,17 @@ using OtpNet;
 
 namespace eShop.Auth.Api.Features.Credentials;
 
-public record CreatePublicKeyCredentialCommand(
+public record CreatePublicKeyCredentialCreationOptionsCommand(
     CreatePublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;
 
-public class CreatePublicKeyCredentialCommandHandler(
+public class CreatePublicKeyCredentialCreationOptionsCommandHandler(
     IUserManager userManager,
-    IdentityOptions identityOptions) : IRequestHandler<CreatePublicKeyCredentialCommand, Result>
+    IdentityOptions identityOptions) : IRequestHandler<CreatePublicKeyCredentialCreationOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
-    public async Task<Result> Handle(CreatePublicKeyCredentialCommand request,
+    public async Task<Result> Handle(CreatePublicKeyCredentialCreationOptionsCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);

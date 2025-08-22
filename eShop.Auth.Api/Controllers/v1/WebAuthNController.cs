@@ -19,7 +19,7 @@ public class WebAuthNController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CreatePublicKeyCredentialAsync(
         [FromBody] CreatePublicKeyCredentialRequest request)
     {
-        var result = await sender.Send(new CreatePublicKeyCredentialCommand(request, HttpContext));
+        var result = await sender.Send(new CreatePublicKeyCredentialCreationOptionsCommand(request, HttpContext));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -34,7 +34,7 @@ public class WebAuthNController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyPublicKeyCredentialAsync(
         [FromBody] VerifyPublicKeyCredentialRequest request)
     {
-        var result = await sender.Send(new VerifyPublicKeyCredentialCommand(request, HttpContext));
+        var result = await sender.Send(new VerifyPublicKeyCredentialCreationOptionsCommand(request, HttpContext));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
