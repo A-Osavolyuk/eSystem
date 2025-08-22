@@ -67,4 +67,18 @@ public class PasskeyController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Remove passkey")]
+    [EndpointDescription("Remove passkey")]
+    [ProducesResponseType(200)]
+    [HttpDelete]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> RemovePasskeyAsync([FromBody] RemovePasskeyRequest request)
+    {
+        var result = await sender.Send(new RemovePasskeyCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 }
