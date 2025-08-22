@@ -3,7 +3,7 @@ using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Types;
 using OtpNet;
 
-namespace eShop.Auth.Api.Features.WebAuthN;
+namespace eShop.Auth.Api.Features.Credentials;
 
 public record CreatePublicKeyCredentialCommand(
     CreatePublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;

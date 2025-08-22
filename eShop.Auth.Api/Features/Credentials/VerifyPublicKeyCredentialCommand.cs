@@ -4,7 +4,7 @@ using eShop.Auth.Api.Types;
 using eShop.Domain.Requests.API.Auth;
 using PeterO.Cbor;
 
-namespace eShop.Auth.Api.Features.WebAuthN;
+namespace eShop.Auth.Api.Features.Credentials;
 
 public record VerifyPublicKeyCredentialCommand(
     VerifyPublicKeyCredentialRequest Request, HttpContext HttpContext) : IRequest<Result>;

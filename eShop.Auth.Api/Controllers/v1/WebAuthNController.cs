@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Features.WebAuthN;
+﻿using eShop.Auth.Api.Features.Credentials;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;

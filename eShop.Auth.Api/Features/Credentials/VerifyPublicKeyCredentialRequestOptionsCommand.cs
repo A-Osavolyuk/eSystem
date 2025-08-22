@@ -4,7 +4,7 @@ using eShop.Auth.Api.Types;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.WebAuthN;
+namespace eShop.Auth.Api.Features.Credentials;
 
 public record VerifyPublicKeyCredentialRequestOptionsCommand(
     VerifyPublicKeyCredentialRequestOptionsRequest Request,
