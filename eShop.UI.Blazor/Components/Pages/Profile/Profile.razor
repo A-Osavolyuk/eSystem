@@ -143,27 +143,8 @@
     
     private async Task OnRemovePhoneNumberAsync()
     {
-        var options = new DialogOptions()
-        {
-            CloseButton = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge
-        };
-
-        var parameters = new DialogParameters<RemovePhoneNumberDialog>()
-        {
-            { x => x.UserId, userId }
-        };
-
-        var dialog = await DialogService.ShowAsync<RemovePhoneNumberDialog>("Remove phone number", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result!.Canceled)
-        {
-            await LoadUserAsync();
-            StateHasChanged();
-            await UserState.Change();
-        }
+        var url = $"/account/phone-number/remove?phoneNumber={UserModel?.PhoneNumber}";
+        await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnChangePersonalDataAsync()
