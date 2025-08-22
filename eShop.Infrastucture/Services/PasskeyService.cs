@@ -27,4 +27,8 @@ public class PasskeyService(
         VerifyPasskeySignInRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/sign-in/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
+
+    public async ValueTask<Response> RemovePasskeyAsync(RemovePasskeyRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey", Method = HttpMethod.Delete, Data = request },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
 }
