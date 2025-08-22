@@ -16,7 +16,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [EndpointDescription("Create passkey")]
     [ProducesResponseType(200)]
     [HttpPost("create")]
-    [AllowAnonymous]
+    [Authorize]
     public async ValueTask<IActionResult> CreatePasskeyAsync([FromBody] CreatePasskeyRequest request)
     {
         var result = await sender.Send(new CreatePasskeyCommand(request, HttpContext));
@@ -30,7 +30,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [EndpointDescription("Verify passkey")]
     [ProducesResponseType(200)]
     [HttpPost("verify")]
-    [AllowAnonymous]
+    [Authorize]
     public async ValueTask<IActionResult> VerifyPasskeyAsync([FromBody] VerifyPasskeyRequest request)
     {
         var result = await sender.Send(new VerifyPasskeyCommand(request, HttpContext));
@@ -72,7 +72,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [EndpointDescription("Remove passkey")]
     [ProducesResponseType(200)]
     [HttpDelete]
-    [AllowAnonymous]
+    [Authorize]
     public async ValueTask<IActionResult> RemovePasskeyAsync([FromBody] RemovePasskeyRequest request)
     {
         var result = await sender.Send(new RemovePasskeyCommand(request));
