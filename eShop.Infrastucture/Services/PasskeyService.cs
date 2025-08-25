@@ -29,6 +29,10 @@ public class PasskeyService(
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> RemovePasskeyAsync(RemovePasskeyRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey", Method = HttpMethod.Delete, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/remove", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
+
+    public async ValueTask<Response> ConfirmRemovePasskeyAsync(ConfirmRemovePasskeyRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/confirm-remove", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 }
