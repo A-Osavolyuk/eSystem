@@ -5,7 +5,25 @@
         </MudText>
         @foreach (var passkey in Model.Passkeys)
         {
-            
+            <MudStack Spacing="1">
+                <MudStack Row="true">
+                    <MudText Style="padding-top: 5px">
+                        @passkey.DisplayName
+                    </MudText>
+                    <MudSpacer />
+                    <MudIconButton 
+                        Icon="@Icons.Material.Filled.Delete"
+                        Color="Color.Error"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"/>
+                </MudStack>
+                @if (passkey.CreateDate.HasValue)
+                {
+                    <MudText Align="Align.Start" Typo="Typo.caption" Class="opacity-50">
+                        Created at: @passkey.CreateDate?.ToString("MM/dd/yyyy HH:mm")
+                    </MudText>
+                }
+            </MudStack>
         }
         <MudStack Row="true" Spacing="1">
             <MudButton
