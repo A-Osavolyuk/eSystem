@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class UserCredentialEntity : Entity
+public class UserPasskeyEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }

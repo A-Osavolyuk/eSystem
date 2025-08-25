@@ -21,7 +21,7 @@ public class PasskeySignInCommandHandler(
 
         var challengeBytes = KeyGeneration.GenerateRandomKey(32);
         var challenge = Convert.ToBase64String(challengeBytes);
-        var allowedCredentials = user.Credentials
+        var allowedCredentials = user.Passkeys
             .Select(x => new AllowedCredential()
             {
                 Type = KeyType.PublicKey,

@@ -26,7 +26,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
-    public DbSet<UserCredentialEntity> UserCredentials { get; set; }
+    public DbSet<UserPasskeyEntity> UserPasskeys { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -307,7 +307,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(x => x.DeviceId);
         });
 
-        builder.Entity<UserCredentialEntity>(entity =>
+        builder.Entity<UserPasskeyEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
             
@@ -317,7 +317,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Type).HasMaxLength(32);
             
             entity.HasOne(x => x.User)
-                .WithMany(x => x.Credentials)
+                .WithMany(x => x.Passkeys)
                 .HasForeignKey(x => x.UserId);
         });
     }

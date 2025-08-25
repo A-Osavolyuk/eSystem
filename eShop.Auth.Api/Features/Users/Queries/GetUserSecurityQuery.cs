@@ -27,6 +27,7 @@ public class GetUserSecurityQueryHandler(IUserManager userManager) : IRequestHan
             HasLinkedAccounts = user.LinkedAccounts.Count > 0,
             OAuthProviders = user.LinkedAccounts.Select(Mapper.Map).ToList(),
             Devices = user.Devices.Select(Mapper.Map).ToList(),
+            Passkeys = user.Passkeys.Select(Mapper.Map).ToList()
         };
         
         return Result.Success(response);

@@ -11,12 +11,12 @@ public record VerifyPasskeySignInCommand(VerifyPasskeySignInRequest Request, Htt
 
 public class VerifyPasskeySignInCommandHandler(
     IUserManager userManager,
-    ICredentialManager credentialManager,
+    IPasskeyManager passkeyManager,
     ITokenManager tokenManager,
     ILockoutManager lockoutManager) : IRequestHandler<VerifyPasskeySignInCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ICredentialManager credentialManager = credentialManager;
+    private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
 
@@ -26,7 +26,7 @@ public class VerifyPasskeySignInCommandHandler(
         var credentialIdBytes = CredentialUtils.Base64UrlDecode(request.Request.Credential.Id);
         var base64CredentialId = Convert.ToBase64String(credentialIdBytes);
 
-        var credential = await credentialManager.FindByCredentialIdAsync(base64CredentialId, cancellationToken);
+        var credential = await passkeyManager.FindByCredentialIdAsync(base64CredentialId, cancellationToken);
         if (credential is null) return Results.BadRequest("Invalid credential");
 
         var user = await userManager.FindByIdAsync(credential.UserId, cancellationToken);
@@ -70,7 +70,7 @@ public class VerifyPasskeySignInCommandHandler(
         credential.SignCount = signCount;
         credential.UpdateDate = DateTimeOffset.UtcNow;
         
-        var result = await credentialManager.UpdateAsync(credential, cancellationToken);
+        var result = await passkeyManager.UpdateAsync(credential, cancellationToken);
         if (!result.Succeeded) return result;
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);

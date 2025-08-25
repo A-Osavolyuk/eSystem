@@ -28,7 +28,7 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
-            .Include(x => x.Credentials)
+            .Include(x => x.Passkeys)
             .ToListAsync(cancellationToken);
         
         return users;
@@ -51,7 +51,7 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
-            .Include(x => x.Credentials)
+            .Include(x => x.Passkeys)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -73,7 +73,7 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
-                        .Include(x => x.Credentials)
+                        .Include(x => x.Passkeys)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -96,7 +96,7 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
-            .Include(x => x.Credentials)
+            .Include(x => x.Passkeys)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -119,7 +119,7 @@ public sealed class UserManager(
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
-            .Include(x => x.Credentials)
+            .Include(x => x.Passkeys)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;

@@ -11,11 +11,11 @@ public record VerifyPasskeyCommand(VerifyPasskeyRequest Request, HttpContext Htt
 
 public class VerifyPasskeyCommandHandler(
     IUserManager userManager,
-    ICredentialManager credentialManager,
+    IPasskeyManager passkeyManager,
     IdentityOptions identityOptions) : IRequestHandler<VerifyPasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ICredentialManager credentialManager = credentialManager;
+    private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(VerifyPasskeyCommand request,
@@ -46,7 +46,7 @@ public class VerifyPasskeyCommandHandler(
         var rpHash = SHA256.HashData(Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray()));
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
 
-        var userCredential = new UserCredentialEntity()
+        var userCredential = new UserPasskeyEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -59,7 +59,7 @@ public class VerifyPasskeyCommandHandler(
             Type = request.Request.Response.Type
         };
 
-        var result = await credentialManager.CreateAsync(userCredential, cancellationToken);
+        var result = await passkeyManager.CreateAsync(userCredential, cancellationToken);
         return result;
     }
 }
