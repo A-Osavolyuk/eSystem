@@ -345,31 +345,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserCredentials",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CredentialId = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    PublicKey = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    SignCount = table.Column<long>(type: "bigint", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserCredentials", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserCredentials_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserDevices",
                 columns: table => new
                 {
@@ -421,6 +396,32 @@ namespace eShop.Auth.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserOAuthProviders_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPasskeys",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CredentialId = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PublicKey = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    SignCount = table.Column<long>(type: "bigint", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPasskeys", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserPasskeys_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -675,11 +676,6 @@ namespace eShop.Auth.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCredentials_UserId",
-                table: "UserCredentials",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserDevices_UserId",
                 table: "UserDevices",
                 column: "UserId");
@@ -688,6 +684,11 @@ namespace eShop.Auth.Api.Migrations
                 name: "IX_UserOAuthProviders_ProviderId",
                 table: "UserOAuthProviders",
                 column: "ProviderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPasskeys_UserId",
+                table: "UserPasskeys",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPermissions_PermissionId",
@@ -749,10 +750,10 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserChanges");
 
             migrationBuilder.DropTable(
-                name: "UserCredentials");
+                name: "UserOAuthProviders");
 
             migrationBuilder.DropTable(
-                name: "UserOAuthProviders");
+                name: "UserPasskeys");
 
             migrationBuilder.DropTable(
                 name: "UserPermissions");
