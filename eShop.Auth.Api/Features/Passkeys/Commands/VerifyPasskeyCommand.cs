@@ -46,7 +46,7 @@ public class VerifyPasskeyCommandHandler(
         var rpHash = SHA256.HashData(Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray()));
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
 
-        var userCredential = new UserPasskeyEntity()
+        var passkey = new UserPasskeyEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -59,7 +59,7 @@ public class VerifyPasskeyCommandHandler(
             Type = request.Request.Response.Type
         };
 
-        var result = await passkeyManager.CreateAsync(userCredential, cancellationToken);
+        var result = await passkeyManager.CreateAsync(passkey, cancellationToken);
         return result;
     }
 }

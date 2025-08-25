@@ -26,11 +26,11 @@ public class VerifyPasskeySignInCommandHandler(
         var credentialIdBytes = CredentialUtils.Base64UrlDecode(request.Request.Credential.Id);
         var base64CredentialId = Convert.ToBase64String(credentialIdBytes);
 
-        var credential = await passkeyManager.FindByCredentialIdAsync(base64CredentialId, cancellationToken);
-        if (credential is null) return Results.BadRequest("Invalid credential");
+        var passkey = await passkeyManager.FindByCredentialIdAsync(base64CredentialId, cancellationToken);
+        if (passkey is null) return Results.BadRequest("Invalid credential");
 
-        var user = await userManager.FindByIdAsync(credential.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {credential.UserId}.");
+        var user = await userManager.FindByIdAsync(passkey.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {passkey.UserId}.");
 
         var authenticationAssertionResponse = request.Request.Credential.Response;
 
@@ -54,7 +54,7 @@ public class VerifyPasskeySignInCommandHandler(
 
         var signedData = authenticatorData.Concat(clientDataHash).ToArray();
 
-        using var key = CredentialUtils.ImportCosePublicKey(credential.PublicKey);
+        using var key = CredentialUtils.ImportCosePublicKey(passkey.PublicKey);
 
         var valid = key switch
         {
@@ -67,10 +67,10 @@ public class VerifyPasskeySignInCommandHandler(
         
         var signCount = CredentialUtils.ParseSignCount(authenticatorData);
         
-        credential.SignCount = signCount;
-        credential.UpdateDate = DateTimeOffset.UtcNow;
+        passkey.SignCount = signCount;
+        passkey.UpdateDate = DateTimeOffset.UtcNow;
         
-        var result = await passkeyManager.UpdateAsync(credential, cancellationToken);
+        var result = await passkeyManager.UpdateAsync(passkey, cancellationToken);
         if (!result.Succeeded) return result;
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
