@@ -14,6 +14,7 @@ public class UserSecurityModel
     public List<UserProviderDto> Providers { get; set; } = [];
     public List<UserOAuthProviderDto> OAuthProviders { get; set; } = [];
     public List<UserDeviceDto> Devices { get; set; } = [];
+    public List<UserPasskeyDto> Passkeys { get; set; } = [];
     
     public bool HasPassword { get; set; }
     public DateTimeOffset? PasswordChangeDate { get; set; }

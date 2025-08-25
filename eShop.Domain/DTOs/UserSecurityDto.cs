@@ -18,4 +18,5 @@ public class UserSecurityDto
     public DateTimeOffset? PasswordChangeDate { get; set; }
 
     public List<UserDeviceDto> Devices { get; set; } = [];
+    public List<UserPasskeyDto> Passkeys { get; set; } = [];
 }
