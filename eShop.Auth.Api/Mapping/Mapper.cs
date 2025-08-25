@@ -24,7 +24,8 @@ public static class Mapper
         return new()
         {
             Id = source.Id,
-            DisplayName = source.DisplayName
+            DisplayName = source.DisplayName,
+            CreateDate = source.CreateDate,
         };
     }
 
