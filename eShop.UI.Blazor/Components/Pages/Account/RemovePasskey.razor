@@ -107,7 +107,7 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "passkey")] public Guid KeyId { get; set; }
+    [SupplyParameterFromQuery(Name = "id")] public Guid KeyId { get; set; }
     [SupplyParameterFromForm] private RemovePasskeyModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();

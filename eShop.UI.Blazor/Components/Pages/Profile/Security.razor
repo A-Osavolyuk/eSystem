@@ -1,11 +1,16 @@
 ﻿@page "/account/security"
 
+@using System.Text.Json
+@using System.Text.Json.Serialization
 @using eShop.BlazorWebUI.Components.Pages.Profile.Components.Security
+@using JsonSerializer = System.Text.Json.JsonSerializer
+@using eShop.Domain.Types
 @inherits PageBase
 
 @inject IUserService UserService
 @inject IDialogService DialogService
 @inject ITwoFactorService TwoFactorService
+@inject ISecurityService SecurityService
 
 @attribute [Authorize]
 
@@ -267,37 +272,37 @@
 
     private async Task OnDisconnectLinkedAccountAsync(string provider)
     {
-        var url = $"/account/linked-account/disconnect?provider={provider}";
+        var url = $"/account/linked-account/disconnect?provider={provider}&user={userId}&email={email}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnAllowLinkedAccountAsync(string provider)
     {
-        var url = $"/account/linked-account/allow?provider={provider}";
+        var url = $"/account/linked-account/allow?provider={provider}&user={userId}&email={email}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnDisallowLinkedAccountAsync(string provider)
     {
-        var url = $"/account/linked-account/disallow?provider={provider}";
+        var url = $"/account/linked-account/disallow?provider={provider}&user={userId}&email={email}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnVerifyDeviceAsync(Guid id)
     {
-        var url = $"/account/device/verify?device={id}";
+        var url = $"/account/device/verify?device={id}&user={userId}&email={email}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnBlockDeviceAsync(Guid id)
     {
-        var url = $"/account/device/block?device={id}";
+        var url = $"/account/device/block?device={id}&user={userId}&email={email}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnUnblockDeviceAsync(Guid id)
     {
-        var url = $"/account/device/unblock?device={id}";
+        var url = $"/account/device/unblock?device={id}&user={userId}&email={email}";
         await RouteManager.NavigateAsync(url);
     }
 }
