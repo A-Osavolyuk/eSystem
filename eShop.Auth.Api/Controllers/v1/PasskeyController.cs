@@ -71,11 +71,25 @@ public class PasskeyController(ISender sender) : ControllerBase
     [EndpointSummary("Remove passkey")]
     [EndpointDescription("Remove passkey")]
     [ProducesResponseType(200)]
-    [HttpDelete]
+    [HttpPost("remove")]
     [Authorize]
     public async ValueTask<IActionResult> RemovePasskeyAsync([FromBody] RemovePasskeyRequest request)
     {
         var result = await sender.Send(new RemovePasskeyCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Confirm remove passkey")]
+    [EndpointDescription("Confirm remove passkey")]
+    [ProducesResponseType(200)]
+    [HttpPost("confirm-remove")]
+    [Authorize]
+    public async ValueTask<IActionResult> ConfirmRemovePasskeyAsync([FromBody] ConfirmRemovePasskeyRequest request)
+    {
+        var result = await sender.Send(new ConfirmRemovePasskeyCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
