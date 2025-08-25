@@ -90,7 +90,7 @@
                                         </MudForm>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received a SMS?
+                                        <MudText Align="Align.Center">Didn't received an email?
                                             <strong @onclick="async () => await ResendCodeAsync()"
                                                     class="cursor-pointer">Resend</strong>
                                         </MudText>
@@ -107,7 +107,7 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "id")] public Guid KeyId { get; set; }
+    [SupplyParameterFromQuery(Name = "passkey")] public Guid KeyId { get; set; }
     [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
     [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
     [SupplyParameterFromForm] private RemovePasskeyModel Model { get; set; } = new();
@@ -175,7 +175,7 @@
             if (result.Success)
             {
                 Snackbar.Add("Passkey was successfully removed", Severity.Success);
-                await RouteManager.NavigateAsync("/account/profile");
+                await RouteManager.NavigateAsync("/account/security");
             }
             else
             {
