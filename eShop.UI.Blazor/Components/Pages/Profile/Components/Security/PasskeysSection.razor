@@ -1,8 +1,12 @@
 ﻿<MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="3">
         <MudText Typo="Typo.h6">
-            Credentials
+            Passkeys
         </MudText>
+        @foreach (var passkey in Model.Passkeys)
+        {
+            
+        }
         <MudStack Row="true" Spacing="1">
             <MudButton
                 Color="Color.Primary"
@@ -16,5 +20,6 @@
 </MudPaper>
 
 @code {
+    [Parameter] public UserSecurityModel Model { get; set; } = new();
     [Parameter] public EventCallback OnCreate { get; set; }
 }
