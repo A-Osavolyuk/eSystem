@@ -35,7 +35,7 @@
                                         <MudText Align="Align.Center">
                                             To allow sign in with @Provider linked account, 
                                             you will need to enter 6-digit code
-                                            from an email we will send you to: <strong>@Email</strong>.
+                                            from an email we will send you to: <strong>@email</strong>.
                                         </MudText>
                                         <MudButton
                                             Color="Color.Primary"
@@ -67,7 +67,7 @@
                                         Model="Model">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@Email</strong>
+                                                We have sent an email with code to email: <strong>@email</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -100,19 +100,29 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
     [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
     [SupplyParameterFromForm] public ConfirmAllowLinkedAccountModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
+    
+    private Guid userId;
+    private string? email;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userId = await LocalStorage.GetAsync<Guid>("userId");
+            email = await LocalStorage.GetAsync<string>("email");
+        }
+    }
 
     private async Task OnSendCodeAsync()
     {
         var request = new AllowLinkedAccountRequest()
         {
-            UserId = UserId,
+            UserId = userId,
             Provider = Provider
         };
 
@@ -134,7 +144,7 @@
         var request = new ConfirmAllowLinkedAccountRequest()
         {
             Provider = Provider,
-            UserId = UserId,
+            UserId = userId,
             Code = Model.Code
         };
 

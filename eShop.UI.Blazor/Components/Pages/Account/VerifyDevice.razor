@@ -34,7 +34,7 @@
                                     <MudStack Spacing="4">
                                         <MudText Align="Align.Center">
                                             To verify this device, you will need to enter 6-digit code
-                                            from an email we will send you to: <strong>@Email</strong>.
+                                            from an email we will send you to: <strong>@email</strong>.
                                             If you verify this device, you will be able to sign in.
                                         </MudText>
                                         <MudButton
@@ -67,7 +67,7 @@
                                         Model="Model">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@Email</strong>
+                                                We have sent an email with code to email: <strong>@email</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -100,20 +100,30 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
     [SupplyParameterFromQuery(Name = "device")] public Guid DeviceId { get; set; }
-    [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
     [SupplyParameterFromForm] public VerifyDeviceModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
+    
+    private Guid userId;
+    private string? email;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userId = await LocalStorage.GetAsync<Guid>("userId");
+            email = await LocalStorage.GetAsync<string>("email");
+        }
+    }
 
     private async Task OnSendCodeAsync()
     {
         var request = new VerifyDeviceRequest()
         {
             DeviceId = DeviceId,
-            UserId = UserId
+            UserId = userId
         };
 
         var result = await DeviceService.VerifyAsync(request);
@@ -134,7 +144,7 @@
         var request = new ConfirmVerifyDeviceRequest()
         {
             DeviceId = DeviceId,
-            UserId = UserId,
+            UserId = userId,
             Code = Model.Code
         };
 
