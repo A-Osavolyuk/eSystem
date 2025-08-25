@@ -25,7 +25,8 @@
                                 Icon="@Icons.Material.Filled.Delete"
                                 Color="Color.Error"
                                 Variant="Variant.Outlined"
-                                ButtonType="ButtonType.Button"/>
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnRemove.InvokeAsync(passkey.Id))"/>
                         </MudStack>
                     </MudStack>
                 </MudStack>
@@ -46,4 +47,5 @@
 @code {
     [Parameter] public UserSecurityModel Model { get; set; } = new();
     [Parameter] public EventCallback OnCreate { get; set; }
+    [Parameter] public EventCallback<Guid> OnRemove { get; set; }
 }

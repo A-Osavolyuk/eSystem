@@ -38,7 +38,8 @@
                     OnReset="@OnResetPasswordAsync"/>
                 <PasskeysSection
                     Model="SecurityModel"
-                    OnCreate="@OnCreatePasskeyAsync"/>
+                    OnCreate="@OnCreatePasskeyAsync"
+                    OnRemove="@(async (value) => await OnPasskeyRemoveAsync(value))"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -256,6 +257,12 @@
             await LoadAsync();
             StateHasChanged();
         }
+    }
+    
+    private async Task OnPasskeyRemoveAsync(Guid id)
+    {
+        var url = $"/account/passkey/remove?passkey={id}";
+        await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnDisconnectLinkedAccountAsync(string provider)
