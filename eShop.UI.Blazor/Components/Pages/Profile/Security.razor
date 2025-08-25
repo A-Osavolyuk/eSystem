@@ -41,7 +41,8 @@
                     OnAdd="@OnAddPasswordAsync"
                     OnChange="@OnChangePasswordAsync"
                     OnReset="@OnResetPasswordAsync"/>
-                <PasskeysSection 
+                <PasskeysSection
+                    Model="SecurityModel"
                     OnCreate="@OnCreatePasskeyAsync"/>
             </MudStack>
         </MudItem>
