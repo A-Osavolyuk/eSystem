@@ -33,7 +33,7 @@
                                                 another authentication method to be able to sign-in. 
                                                 To remove this passkey, you will need
                                                 to enter 6-digit code from email we 
-                                                will send to: <strong>@email</strong>
+                                                will send to: <strong>@Email</strong>
                                             </MudText>
                                             <MudLoadingButton
                                                 FullWidth="true"
@@ -66,7 +66,7 @@
                                             Model="Model">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from the email we sent you to: <strong>@email</strong>
+                                                    Enter code from the email we sent you to: <strong>@Email</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
@@ -108,28 +108,18 @@
 @code {
 
     [SupplyParameterFromQuery(Name = "id")] public Guid KeyId { get; set; }
+    [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
+    [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
     [SupplyParameterFromForm] private RemovePasskeyModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-    
-    private Guid userId;
-    private string? email;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId");
-            email = await LocalStorage.GetAsync<string>("email");
-        }
-    }
 
     private async Task ResendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserId,
             CodeResource = CodeResource.Passkey,
             CodeType = CodeType.Remove,
             Sender = SenderType.Email
@@ -151,7 +141,7 @@
     {
         var request = new RemovePasskeyRequest()
         {
-            UserId = userId,
+            UserId = UserId,
             KeyId = KeyId
         };
 
@@ -175,7 +165,7 @@
         {
             var request = new ConfirmRemovePasskeyRequest()
             {
-                UserId = userId,
+                UserId = UserId,
                 KeyId = KeyId,
                 Code = Model.Code
             };

@@ -266,7 +266,7 @@
     
     private async Task OnPasskeyRemoveAsync(Guid id)
     {
-        var url = $"/account/passkey/remove?passkey={id}";
+        var url = $"/account/passkey/remove?passkey={id}&user={userId}&email={email}";
         await RouteManager.NavigateAsync(url);
     }
 
