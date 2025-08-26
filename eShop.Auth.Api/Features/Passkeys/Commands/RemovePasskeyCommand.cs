@@ -29,9 +29,10 @@ public class RemovePasskeyCommandHandler(
         var code = await codeManager.GenerateAsync(user, SenderType.Email,
             CodeType.Remove, CodeResource.Passkey, cancellationToken);
 
-        if (identityOptions.SignIn.RequireConfirmedEmail && string.IsNullOrEmpty(user.Email)
-            && identityOptions.SignIn.RequireConfirmedPhoneNumber && string.IsNullOrEmpty(user.PhoneNumber))
-            return Results.BadRequest("You need to provide another authentication method first.");
+        if (identityOptions.SignIn.RequireConfirmedEmail && user.HasEmail()
+            && identityOptions.SignIn.RequireConfirmedPhoneNumber && user.HasPhoneNumber()
+            && identityOptions.SignIn.AllowOAuthLogin && user.HasLinkedAccount() && user.HasPassword())
+            return Results.BadRequest("You need to enable another authentication method first.");
 
         var message = new RemovePasskeyMessage()
         {
