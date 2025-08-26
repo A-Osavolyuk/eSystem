@@ -9,12 +9,14 @@ public class RemovePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     IUserManager userManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<RemovePasskeyCommand, Result>
+    IMessageService messageService,
+    IdentityOptions identityOptions) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
     {
@@ -26,6 +28,10 @@ public class RemovePasskeyCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email,
             CodeType.Remove, CodeResource.Passkey, cancellationToken);
+
+        if (identityOptions.SignIn.RequireConfirmedEmail && string.IsNullOrEmpty(user.Email)
+            && identityOptions.SignIn.RequireConfirmedPhoneNumber && string.IsNullOrEmpty(user.PhoneNumber))
+            return Results.BadRequest("You need to provide another authentication method first.");
 
         var message = new RemovePasskeyMessage()
         {
