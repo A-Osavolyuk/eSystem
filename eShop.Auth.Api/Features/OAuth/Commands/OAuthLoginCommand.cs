@@ -8,37 +8,33 @@ public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string
 
 public sealed class OAuthLoginCommandHandler(
     IOAuthProviderManager providerManager,
-    IOAuthSessionManager sessionManager) : IRequestHandler<OAuthLoginCommand, Result>
+    IOAuthSessionManager sessionManager,
+    IdentityOptions identityOptions) : IRequestHandler<OAuthLoginCommand, Result>
 {
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(OAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
+        if (!identityOptions.SignIn.AllowOAuthLogin)
+        {
+            return Failure(request.FallbackUri, request.Provider, OAuthErrorType.Unavailable);
+        }
+        
         var providers = await providerManager.GetAllAsync(cancellationToken);
 
         if (providers.Count == 0)
         {
-            var url = UrlGenerator.Url(request.FallbackUri, new
-            {
-                ErrorCode = nameof(OAuthErrorType.InternalError),
-                Provider = request.Provider
-            });
-            return Results.Redirect(url);
+            return Failure(request.FallbackUri, request.Provider, OAuthErrorType.InternalError);
         }
         
         var provider = providers.FirstOrDefault(x => x.Name == request.Provider);
 
         if (provider is null)
         {
-            var url = UrlGenerator.Url(request.FallbackUri, new
-            {
-                ErrorCode = nameof(OAuthErrorType.UnsupportedProvider), 
-                Provider = request.Provider
-            });
-            
-            return Results.Redirect(url);
+            return Failure(request.FallbackUri, request.Provider, OAuthErrorType.UnsupportedProvider);
         }
         
         var randomBytes = KeyGeneration.GenerateRandomKey(20);
@@ -76,5 +72,16 @@ public sealed class OAuthLoginCommandHandler(
         await sessionManager.CreateAsync(session, cancellationToken);
         
         return result;
+    }
+
+    private Result Failure(string fallbackUrl, string provider, OAuthErrorType error)
+    {
+        var url = UrlGenerator.Url(fallbackUrl, new
+        {
+            ErrorCode = nameof(OAuthErrorType.UnsupportedProvider), 
+            Provider = provider
+        });
+            
+        return Results.Redirect(url);
     }
 }

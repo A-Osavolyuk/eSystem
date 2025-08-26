@@ -10,5 +10,6 @@ public class SignInOptions
     
     public bool AllowUserNameLogin { get; set; } = true;
     public bool AllowEmailLogin { get; set; } = true;
+    public bool AllowOAuthLogin { get; set; } = true;
     public int MaxFailedLoginAttempts { get; set; } = 5;
 }

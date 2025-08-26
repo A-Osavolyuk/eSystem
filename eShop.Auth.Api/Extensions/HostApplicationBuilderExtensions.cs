@@ -104,6 +104,7 @@ public static class HostApplicationBuilderExtensions
 
             options.SignIn.AllowUserNameLogin = true;
             options.SignIn.AllowEmailLogin = true;
+            options.SignIn.AllowOAuthLogin = true;
             options.SignIn.RequireConfirmedAccount = true;
             options.SignIn.RequireConfirmedEmail = true;
             options.SignIn.RequireConfirmedPhoneNumber = true;
