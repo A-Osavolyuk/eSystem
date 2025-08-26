@@ -42,4 +42,9 @@ public class UserEntity : Entity
     public ICollection<UserPasskeyEntity> Passkeys { get; init; } = null!;
     public LockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
+
+    public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
+    public bool HasEmail() => !string.IsNullOrEmpty(Email);
+    public bool HasPhoneNumber() => !string.IsNullOrEmpty(PhoneNumber);
+    public bool HasLinkedAccount() => LinkedAccounts.Count > 0;
 }
