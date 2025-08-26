@@ -18,18 +18,10 @@ public class RefreshTokenCommandHandler(
         var token = request.Request.Token;
         
         var user = await userManager.FindByIdAsync(userId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with id {userId}.");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with id {userId}.");
         
         var verificationResult = await tokenManager.VerifyAsync(user, token, cancellationToken);
-
-        if (!verificationResult.Succeeded)
-        {
-            return verificationResult;
-        }
+        if (!verificationResult.Succeeded) return verificationResult;
         
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);

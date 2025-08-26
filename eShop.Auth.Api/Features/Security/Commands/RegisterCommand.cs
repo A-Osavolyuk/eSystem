@@ -29,45 +29,25 @@ public sealed class RegisterCommandHandler(
         if (identityOptions.Account.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
-
-            if (isTaken)
-            {
-                return Results.BadRequest("This email address is already taken");
-            }
+            if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
         if (identityOptions.Account.RequireUniqueUserName)
         {
             var isUserNameTaken = await userManager.IsUsernameTakenAsync(request.Request.UserName, cancellationToken);
-        
-            if (isUserNameTaken)
-            {
-                return Results.NotFound("Username is already taken");
-            }
+            if (isUserNameTaken) return Results.NotFound("Username is already taken");
         }
 
         var user = Mapper.Map(request.Request);
         
         var registrationResult = await userManager.CreateAsync(user, request.Request.Password, cancellationToken);
-
-        if (!registrationResult.Succeeded)
-        {
-            return registrationResult;
-        }
+        if (!registrationResult.Succeeded) return registrationResult;
 
         var role = await roleManager.FindByNameAsync("User", cancellationToken);
-
-        if (role is null)
-        {
-            return Results.NotFound("Cannot find role with name User");
-        }
+        if (role is null) return Results.NotFound("Cannot find role with name User");
             
         var assignRoleResult = await roleManager.AssignAsync(user, role, cancellationToken);
-
-        if (!assignRoleResult.Succeeded)
-        {
-            return assignRoleResult;
-        }
+        if (!assignRoleResult.Succeeded) return assignRoleResult;
 
         if (role.Permissions.Count > 0)
         {
@@ -76,11 +56,7 @@ public sealed class RegisterCommandHandler(
             foreach (var permission in permissions)
             {
                 var grantResult = await permissionManager.GrantAsync(user, permission, cancellationToken);
-
-                if (!grantResult.Succeeded)
-                {
-                    return grantResult;
-                }
+                if (!grantResult.Succeeded) return grantResult;
             }
         }
         

@@ -13,11 +13,7 @@ public sealed class CreateRoleCommandHandler(
         CancellationToken cancellationToken)
     {
         var isRoleExists = await roleManager.FindByNameAsync(request.Request.Name, cancellationToken);
-
-        if (isRoleExists is not null)
-        {
-            return Result.Success("Role already exists.");
-        }
+        if (isRoleExists is not null) return Result.Success("Role already exists.");
 
         var entity = Mapper.Map(request.Request);
         var result = await roleManager.CreateAsync(entity, cancellationToken);

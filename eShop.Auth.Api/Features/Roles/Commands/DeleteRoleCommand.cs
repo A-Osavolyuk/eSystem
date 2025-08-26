@@ -11,11 +11,7 @@ public sealed class DeleteRoleCommandHandler(
         CancellationToken cancellationToken)
     {
         var role = await roleManager.FindByIdAsync(request.Id, cancellationToken);
-
-        if (role is null)
-        {
-            return Results.NotFound($"Cannot find role with ID {request.Id}.");
-        }
+        if (role is null) return Results.NotFound($"Cannot find role with ID {request.Id}.");
         
         var result = await roleManager.DeleteAsync(role, cancellationToken);
 

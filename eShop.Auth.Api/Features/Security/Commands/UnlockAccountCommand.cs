@@ -16,29 +16,18 @@ public class RecoverAccountCommandHandler(
     public async Task<Result> Handle(UnlockAccountCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound("User not found");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var code = request.Request.Code;
         var verificationResult = await codeManager.VerifyAsync(user, code, SenderType.Email, 
             CodeType.Unlock, CodeResource.Account, cancellationToken);
 
-        if (!verificationResult.Succeeded)
-        {
-            return verificationResult;
-        }
+        if (!verificationResult.Succeeded) return verificationResult;
 
         user.FailedLoginAttempts = 0;
         var updateResult = await userManager.UpdateAsync(user, cancellationToken);
 
-        if (!updateResult.Succeeded)
-        {
-            return updateResult;
-        }
-        
+        if (!updateResult.Succeeded) return updateResult;
         var unlockResult = await lockoutManager.UnlockAsync(user, cancellationToken);
         
         return unlockResult;

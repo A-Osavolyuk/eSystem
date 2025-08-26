@@ -11,11 +11,7 @@ public class UpdateRoleCommandHandler(IRoleManager roleManager) : IRequestHandle
     public async Task<Result> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
     {
         var role = await roleManager.FindByIdAsync(request.Request.Id, cancellationToken);
-
-        if (role is null)
-        {
-            return Results.NotFound($"Cannot find role with ID {request.Request.Id}");
-        }
+        if (role is null) return Results.NotFound($"Cannot find role with ID {request.Request.Id}");
         
         role.Name = request.Request.Name;
         role.NormalizedName = request.Request.Name.ToUpper();

@@ -20,19 +20,12 @@ public class ResetPhoneNumberCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
-
-            if (isTaken)
-            {
-                return Results.BadRequest("This phone number is already taken");
-            }
+            if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Reset, 

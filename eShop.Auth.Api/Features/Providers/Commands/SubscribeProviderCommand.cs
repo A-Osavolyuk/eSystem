@@ -30,43 +30,25 @@ public class SubscribeProviderCommandHandler(
     public async Task<Result> Handle(SubscribeProviderCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
-
-        if (provider is null)
-        {
-            return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
-        }
+        if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         
         if (provider.Name == ProviderTypes.Email && identityOptions.SignIn.RequireConfirmedEmail)
         {
-            if (!user.EmailConfirmed)
-            {
-                return Results.BadRequest("You need to confirm your email before.");
-            }
+            if (!user.EmailConfirmed) return Results.BadRequest("You need to confirm your email before.");
         }
         
         if (provider.Name == ProviderTypes.Sms && identityOptions.SignIn.RequireConfirmedPhoneNumber)
         {
-            if (!user.PhoneNumberConfirmed)
-            {
-                return Results.BadRequest("You need to confirm your phone number before.");
-            }
+            if (!user.PhoneNumberConfirmed) return Results.BadRequest("You need to confirm your phone number before.");
         }
 
         if (provider.Name == ProviderTypes.Authenticator)
         {
             var secret = await secretManager.FindAsync(user, cancellationToken);
-
-            if (secret is null)
-            {
-                secret = await secretManager.GenerateAsync(user, cancellationToken);
-            }
+            if (secret is null) secret = await secretManager.GenerateAsync(user, cancellationToken);
 
             var unprotectedSecret = protector.Unprotect(secret.Secret);
             var qrCode = QrCodeGenerator.Generate(user.Email, unprotectedSecret, QrCodeIssuer);

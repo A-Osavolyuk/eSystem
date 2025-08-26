@@ -16,11 +16,7 @@ public sealed class IssuePermissionCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound("User does not exist.");
-        }
+        if (user is null) return Results.NotFound("User does not exist.");
 
         var permissions = new List<PermissionEntity>();
 
@@ -28,22 +24,14 @@ public sealed class IssuePermissionCommandHandler(
         {
             var permission = await permissionManager.FindByNameAsync(permissionName, cancellationToken);
 
-            if (permission is null)
-            {
-                return Results.NotFound($"Permission {permissionName} does not exist.");
-            }
-
+            if (permission is null) return Results.NotFound($"Permission {permissionName} does not exist.");
             permissions.Add(permission);
         }
 
         foreach (var permission in permissions)
         {
             var result = await permissionManager.GrantAsync(user, permission, cancellationToken);
-
-            if (!result.Succeeded)
-            {
-                return result;
-            }
+            if (!result.Succeeded) return result;
         }
 
         return Result.Success();

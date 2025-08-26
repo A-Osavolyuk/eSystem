@@ -15,9 +15,7 @@ public sealed class UpdatePersonalDataCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        
         if (user.PersonalData is null) return Results.NotFound(
             $"Cannot find personal data of user with ID {request.Request.UserId}");
         

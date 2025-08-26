@@ -29,11 +29,7 @@ public sealed class LoginWith2FaCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
         var userAgent = RequestUtils.GetUserAgent(request.Context);
         var ipAddress = RequestUtils.GetIpV4(request.Context);
@@ -63,18 +59,10 @@ public sealed class LoginWith2FaCommandHandler(
         }
         
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
-
-        if (provider is null)
-        {
-            return await NotFoundProviderAsync(user, request.Request.Provider, device, cancellationToken);
-        }
+        if (provider is null) return await NotFoundProviderAsync(user, request.Request.Provider, device, cancellationToken);
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
-
-        if (lockoutState.Enabled)
-        {
-            return await LockedOutAsync(user, provider, lockoutState, device, cancellationToken);
-        }
+        if (lockoutState.Enabled) return await LockedOutAsync(user, provider, lockoutState, device, cancellationToken);
 
         var code = request.Request.Code;
         

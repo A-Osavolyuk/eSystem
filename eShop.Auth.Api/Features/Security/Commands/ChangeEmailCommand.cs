@@ -20,20 +20,12 @@ public sealed class RequestChangeEmailCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
         if (identityOptions.Account.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
-
-            if (isTaken)
-            {
-                return Results.BadRequest("This email address is already taken");
-            }
+            if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, 

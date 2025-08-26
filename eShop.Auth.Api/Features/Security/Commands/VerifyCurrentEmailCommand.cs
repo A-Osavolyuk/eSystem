@@ -19,29 +19,18 @@ public class VerifyCurrentEmailCommandHandler(
     public async Task<Result> Handle(VerifyCurrentEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
         if (identityOptions.Account.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
-
-            if (isTaken)
-            {
-                return Results.BadRequest("This email address is already taken");
-            }
+            if (isTaken) return Results.BadRequest("This email address is already taken");
         }
         
         var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, 
             SenderType.Email, CodeType.Current, CodeResource.Email, cancellationToken);
 
-        if (!codeResult.Succeeded)
-        {
-            return codeResult;
-        }
+        if (!codeResult.Succeeded) return codeResult;
         
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.New, 
             CodeResource.Email, cancellationToken);

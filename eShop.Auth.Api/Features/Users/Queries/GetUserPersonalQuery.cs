@@ -10,7 +10,6 @@ public class GetUserPersonalQueryHandler(IUserManager userManager) : IRequestHan
     {
         var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
-        
         if (user.PersonalData is null) return Results.NotFound(
             $"Cannot find personal data of user with ID {request.UserId}.");
         

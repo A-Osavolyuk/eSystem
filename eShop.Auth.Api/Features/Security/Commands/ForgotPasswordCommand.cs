@@ -19,11 +19,7 @@ public sealed class ForgotPasswordCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
 
         var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, 
             CodeResource.Password, cancellationToken);

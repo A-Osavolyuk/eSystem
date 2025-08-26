@@ -14,24 +14,16 @@ public class ConfirmResetEmailHandler(
     public async Task<Result> Handle(ConfirmResetEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
         var code = request.Request.Code;
         
         var codeResult = await codeManager.VerifyAsync(user, code, SenderType.Email, 
             CodeType.Reset, CodeResource.Email, cancellationToken);
 
-        if (!codeResult.Succeeded)
-        {
-            return codeResult;
-        }
+        if (!codeResult.Succeeded) return codeResult;
         
         var newEmail = request.Request.NewEmail;
-        
         var result = await userManager.ResetEmailAsync(user, newEmail, cancellationToken);
         
         return result;

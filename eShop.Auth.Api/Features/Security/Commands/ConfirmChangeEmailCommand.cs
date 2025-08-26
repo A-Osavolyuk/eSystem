@@ -19,26 +19,15 @@ public sealed class ConfirmChangeEmailCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
         var codeResult = await codeManager.VerifyAsync(user, request.Request.Code, 
             SenderType.Email, CodeType.New, CodeResource.Email, cancellationToken);
         
-        if (!codeResult.Succeeded)
-        {
-            return codeResult;
-        }
+        if (!codeResult.Succeeded) return codeResult;
         
         var result = await userManager.ChangeEmailAsync(user, request.Request.NewEmail, cancellationToken);
-
-        if (!result.Succeeded)
-        {
-            return result;
-        }
+        if (!result.Succeeded) return result;
         
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);

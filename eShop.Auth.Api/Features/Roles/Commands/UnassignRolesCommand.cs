@@ -18,26 +18,15 @@ public sealed class RemoveUserRolesCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
 
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         foreach (var roleName in request.Request.Roles)
         {
             var role = await roleManager.FindByNameAsync(roleName, cancellationToken);
-
-            if (role is null)
-            {
-                return Results.NotFound($"Cannot find role with name {roleName}.");
-            }
+            if (role is null) return Results.NotFound($"Cannot find role with name {roleName}.");
 
             var result = await roleManager.UnassignAsync(user, role, cancellationToken);
-
-            if (!result.Succeeded)
-            {
-                return result;
-            }
+            if (!result.Succeeded) return result;
         }
 
         return Result.Success();

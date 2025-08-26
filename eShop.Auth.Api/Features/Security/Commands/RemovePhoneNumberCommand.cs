@@ -20,7 +20,7 @@ public class RemovePhoneNumberCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        if (string.IsNullOrEmpty(user.PhoneNumber)) return Results.BadRequest(
+        if (!user.HasPhoneNumber()) return Results.BadRequest(
             "Cannot remove phone number. Phone number is not provided.");
 
         if (user.Providers.Any(x => x.Provider.Name == ProviderTypes.Sms && x.Subscribed))

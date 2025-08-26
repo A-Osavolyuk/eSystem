@@ -21,18 +21,10 @@ public class SendTwoFactorCodeCommandHandler(
     public async Task<Result> Handle(SendTwoFactorCodeCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
-
-        if (provider is null)
-        {
-            return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
-        }
+        if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         
         var code = await loginCodeManager.GenerateAsync(user, provider, cancellationToken);
 
