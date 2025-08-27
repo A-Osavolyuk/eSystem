@@ -7,36 +7,22 @@ public record RemoveRecoveryEmailCommand(RemoveRecoveryEmailRequest Request) : I
 
 public class RemoveRecoveryEmailCommandHandler(
     IUserManager userManager,
-    ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<RemoveRecoveryEmailCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<RemoveRecoveryEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(RemoveRecoveryEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        var code = await codeManager.GenerateAsync(user, SenderType.Email,
-            CodeType.Verify, CodeResource.RecoveryEmail, cancellationToken);
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.RecoveryEmail, CodeType.Remove, cancellationToken);
 
-        var message = new RemoveRecoveryEmailMessage()
-        {
-            Credentials = new()
-            {
-                { "Subject", "Recovery email remove" },
-                { "To", user.RecoveryEmail! },
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "UserName", user.UserName },
-            }
-        };
-        
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-        return Result.Success();
+        if (!verificationResult.Succeeded) return verificationResult;
+
+        var result = await userManager.RemoveRecoveryEmailAsync(user, cancellationToken);
+        return result;
     }
 }
