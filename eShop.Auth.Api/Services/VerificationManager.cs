@@ -33,6 +33,9 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         if (entity is null) return Results.NotFound("Verification not found");
         if (entity.ExpireDate < DateTimeOffset.Now) return Results.BadRequest("Verification is expired");
         
+        context.Verifications.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+        
         return Result.Success();
     }
 }
