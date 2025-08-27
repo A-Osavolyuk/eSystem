@@ -27,6 +27,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
     public DbSet<UserPasskeyEntity> UserPasskeys { get; set; }
+    public DbSet<VerificationEntity> Verifications { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -318,6 +319,15 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             
             entity.HasOne(x => x.User)
                 .WithMany(x => x.Passkeys)
+                .HasForeignKey(x => x.UserId);
+        });
+
+        builder.Entity<VerificationEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            
+            entity.HasOne(x => x.User)
+                .WithMany()
                 .HasForeignKey(x => x.UserId);
         });
     }
