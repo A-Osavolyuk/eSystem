@@ -129,12 +129,12 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Request change email")]
-    [EndpointDescription("Request an email change")]
+    [EndpointSummary("Change email")]
+    [EndpointDescription("Change email")]
     [ProducesResponseType(200)]
-    [HttpPost("email/request-change")]
+    [HttpPost("email/change")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> RequestChangeEmailAsync(
+    public async ValueTask<IActionResult> ChangeEmailAsync(
         [FromBody] ChangeEmailRequest changeEmailRequest)
     {
         var result = await sender.Send(new ChangeEmailCommand(changeEmailRequest));
@@ -153,21 +153,6 @@ public class SecurityController(ISender sender) : ControllerBase
         [FromBody] VerifyCurrentEmailRequest changeEmailRequest)
     {
         var result = await sender.Send(new VerifyCurrentEmailCommand(changeEmailRequest));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Confirm change email")]
-    [EndpointDescription("Confirms an email change")]
-    [ProducesResponseType(200)]
-    [HttpPost("email/confirm-change")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmChangeEmailAsync(
-        [FromBody] ConfirmChangeEmailRequest request)
-    {
-        var result = await sender.Send(new ConfirmChangeEmailCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -209,7 +194,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Reset email")]
     [EndpointDescription("Reset email")]
     [ProducesResponseType(200)]
-    [HttpPost("email/request-reset")]
+    [HttpPost("email/reset")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ResetEmailAsync(
         [FromBody] ResetEmailRequest request)
@@ -247,22 +232,6 @@ public class SecurityController(ISender sender) : ControllerBase
         [FromBody] RemoveRecoveryEmailRequest request)
     {
         var result = await sender.Send(new RemoveRecoveryEmailCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Confirm remove recovery email")]
-    [EndpointDescription("Confirm remove recovery email")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpPost("recovery-email/confirm-remove")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmRemoveRecoveryEmailAsync(
-        [FromBody] ConfirmRemoveRecoveryEmailRequest request)
-    {
-        var result = await sender.Send(new ConfirmRemoveRecoveryEmailCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -313,21 +282,6 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Confirm remove phone number")]
-    [EndpointDescription("Confirm remove phone number change")]
-    [ProducesResponseType(200)]
-    [HttpPost("phone-number/confirm-remove")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmRemovePhoneNumberAsync(
-        [FromBody] ConfirmRemovePhoneNumberRequest request)
-    {
-        var result = await sender.Send(new ConfirmRemovePhoneNumberCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Verify phone number")]
     [EndpointDescription("Verify phone number change")]
     [ProducesResponseType(200)]
@@ -356,12 +310,12 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Request change phone number")]
-    [EndpointDescription("Request a phone number change")]
+    [EndpointSummary("Change phone number")]
+    [EndpointDescription("Change phone number")]
     [ProducesResponseType(200)]
-    [HttpPost("phone-number/request-change")]
+    [HttpPost("phone-number/change")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> RequestChangePhoneNumberAsync(
+    public async ValueTask<IActionResult> ChangePhoneNumberAsync(
         [FromBody] ChangePhoneNumberRequest request)
     {
         var result = await sender.Send(new ChangePhoneNumberCommand(request));
@@ -386,25 +340,10 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Confirm change phone number")]
-    [EndpointDescription("Confirm a phone number change")]
-    [ProducesResponseType(200)]
-    [HttpPost("phone-number/confirm-change")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmChangePhoneNumberAsync(
-        [FromBody] ConfirmChangePhoneNumberRequest request)
-    {
-        var result = await sender.Send(new ConfirmChangePhoneNumberCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Reset phone number")]
     [EndpointDescription("Reset phone number")]
     [ProducesResponseType(200)]
-    [HttpPost("phone-number/request-reset")]
+    [HttpPost("phone-number/reset")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ResetPhoneNumberAsync(
         [FromBody] ResetPhoneNumberRequest request)

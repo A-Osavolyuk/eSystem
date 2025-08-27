@@ -59,11 +59,7 @@ public class SecurityService(
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> ChangeEmailAsync(ChangeEmailRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/request-change", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = true, Type = DataType.Text });
-    
-    public async ValueTask<Response> ConfirmChangeEmailAsync(ConfirmChangeEmailRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/confirm-change", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
     
     public async ValueTask<Response> ChangePasswordAsync(ChangePasswordRequest request) => await ApiClient.SendAsync(

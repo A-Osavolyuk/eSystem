@@ -6,14 +6,12 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 public sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request) : IRequest<Result>;
 
 public sealed class RequestChangePhoneNumberCommandHandler(
-    IMessageService messageService,
-    ICodeManager codeManager,
     IUserManager userManager,
+    IVerificationManager verificationManager,
     IdentityOptions identityOptions) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
-    private readonly IMessageService messageService = messageService;
-    private readonly ICodeManager codeManager = codeManager;
     private readonly IUserManager userManager = userManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
@@ -28,23 +26,17 @@ public sealed class RequestChangePhoneNumberCommandHandler(
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Current, 
-            CodeResource.PhoneNumber, cancellationToken);
+        var currentPhoneNumberVerificationResult = await verificationManager.VerifyAsync(user,
+            CodeResource.PhoneNumber, CodeType.Current, cancellationToken);
 
-        var message = new ChangePhoneNumberMessage()
-        {
-            Credentials = new ()
-            {
-                { "PhoneNumber", user.PhoneNumber! },
-            }, 
-            Payload = new()
-            {
-                { "Code", code }
-            },
-        };
-        
-        await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
+        if (!currentPhoneNumberVerificationResult.Succeeded) return currentPhoneNumberVerificationResult;
 
-        return Result.Success();
+        var newPhoneNumberVerificationResult = await verificationManager.VerifyAsync(user,
+            CodeResource.PhoneNumber, CodeType.New, cancellationToken);
+
+        if (!newPhoneNumberVerificationResult.Succeeded) return newPhoneNumberVerificationResult;
+
+        var result = await userManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber, cancellationToken);
+        return result;
     }
 }
