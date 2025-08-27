@@ -372,6 +372,20 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Check phone number")]
+    [EndpointDescription("Check phone number")]
+    [ProducesResponseType(200)]
+    [HttpPost("phone-number/check")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> CheckPhoneNumberAsync([FromBody] CheckPhoneNumberRequest request)
+    {
+        var result = await sender.Send(new CheckPhoneNumberCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Request change phone number")]
     [EndpointDescription("Request a phone number change")]
