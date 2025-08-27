@@ -43,6 +43,67 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
+            { CodeResource: CodeResource.Account, CodeType: CodeType.Unlock, Sender: SenderType.Email } =>
+                new AccountUnlockMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user.Email },
+                        { "Subject", "Account unlock" },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName }
+                    }
+                },
+            { CodeResource: CodeResource.RecoveryEmail, CodeType: CodeType.Verify, Sender: SenderType.Email } =>
+                new AddRecoveryEmailMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "Subject", "Recovery email verification" },
+                        { "To", payload["RecoveryEmail"] },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName },
+                    }
+                },
+            { CodeResource: CodeResource.LinkedAccount, CodeType: CodeType.Allow, Sender: SenderType.Email } =>
+                new AllowLinkedAccountMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user!.Email },
+                        { "Subject", $"Allow {payload["Provider"]} linked account" }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "Provider", payload["Provider"] },
+                        { "UserName", user.UserName }
+                    }
+                },
+            { CodeResource: CodeResource.Device, CodeType: CodeType.Block, Sender: SenderType.Email } =>
+                new BlockDeviceMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user!.Email },
+                        { "Subject", "Device block" }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName },
+                        { "Ip", payload["IpAddress"] },
+                        { "OS", payload["OS"] },
+                        { "Device", payload["Device"] },
+                        { "Browser", payload["Browser"] }
+                    }
+                },
             { CodeResource: CodeResource.Email, CodeType: CodeType.Current, Sender: SenderType.Email } =>
                 new ChangeEmailMessage()
                 {
@@ -58,18 +119,77 @@ public class SendCodeCommandHandler(
                         { "NewEmail", payload["NewEmail"] }
                     }
                 },
-            { CodeResource: CodeResource.Email, CodeType: CodeType.New, Sender: SenderType.Email } =>
-                new VerifyEmailMessage()
+            { CodeResource: CodeResource.LinkedAccount, CodeType: CodeType.Disallow, Sender: SenderType.Email } =>
+                new DisallowLinkedAccountMessage()
                 {
                     Credentials = new()
                     {
-                        { "To", payload["NewEmail"] },
-                        { "Subject", "Email verification (step two)" },
+                        { "To", user!.Email },
+                        { "Subject", $"Disallow {payload["Provider"]} linked account" }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "Provider", payload["Provider"] },
+                        { "UserName", user.UserName }
+                    }
+                },
+            { CodeResource: CodeResource.LinkedAccount, CodeType: CodeType.Disconnect, Sender: SenderType.Email } =>
+                new DisconnectLinkedAccountMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user!.Email },
+                        { "Subject", $"Disconnect {payload["Provider"]} linked account" }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "Provider", payload["Provider"] },
+                        { "UserName", user.UserName }
+                    }
+                },
+            { CodeResource: CodeResource.Password, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
+                new ForgotPasswordMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user.Email },
+                        { "Subject", "Password reset" },
                     },
                     Payload = new()
                     {
                         { "Code", code },
                         { "UserName", user.UserName }
+                    }
+                },
+            { CodeResource: CodeResource.Passkey, CodeType: CodeType.Remove, Sender: SenderType.Email } =>
+                new RemovePasskeyMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user!.Email },
+                        { "Subject", "Device block" }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName },
+                        { "DisplayName", payload["DisplayName"] }
+                    }
+                },
+            { CodeResource: CodeResource.RecoveryEmail, CodeType: CodeType.Remove, Sender: SenderType.Email } =>
+                new RemoveRecoveryEmailMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "Subject", "Recovery email remove" },
+                        { "To", user.RecoveryEmail! },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName },
                     }
                 },
             { CodeResource: CodeResource.Email, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
@@ -86,13 +206,67 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.Account, CodeType: CodeType.Unlock, Sender: SenderType.Email } =>
-                new AccountUnlockMessage()
+            { CodeResource: CodeResource.Device, CodeType: CodeType.Trust, Sender: SenderType.Email } =>
+                new TrustDeviceMessage()
                 {
                     Credentials = new()
                     {
-                        { "To", user.Email },
-                        { "Subject", "Account unlock" },
+                        { "To", user!.Email },
+                        { "Subject", "Device trust" }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName },
+                        { "Ip", payload["IpAddress"] },
+                        { "OS", payload["OS"] },
+                        { "Device", payload["Device"] },
+                        { "Browser", payload["Browser"] }
+                    }
+                },
+            { CodeResource: CodeResource.Device, CodeType: CodeType.Unblock, Sender: SenderType.Email } =>
+                new UnblockDeviceMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user!.Email },
+                        { "Subject", "Device unblock" }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName },
+                        { "Ip", payload["IpAddress"] },
+                        { "OS", payload["OS"] },
+                        { "Device", payload["Device"] },
+                        { "Browser", payload["Browser"] }
+                    }
+                },
+            { CodeResource: CodeResource.Device, CodeType: CodeType.Verify, Sender: SenderType.Email } =>
+                new VerifyDeviceMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user!.Email },
+                        { "Subject", "Device verification" }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName },
+                        { "Ip", payload["IpAddress"] },
+                        { "OS", payload["OS"] },
+                        { "Device", payload["Device"] },
+                        { "Browser", payload["Browser"] }
+                    }
+                },
+            { CodeResource: CodeResource.Email, CodeType: CodeType.New, Sender: SenderType.Email } =>
+                new VerifyEmailMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", payload["NewEmail"] },
+                        { "Subject", "Email verification (step two)" },
                     },
                     Payload = new()
                     {
@@ -100,18 +274,40 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.Password, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
-                new ForgotPasswordMessage()
+            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Current, Sender: SenderType.Sms } =>
+                new ChangePhoneNumberMessage()
                 {
                     Credentials = new()
                     {
-                        { "To", user.Email },
-                        { "Subject", "Password reset" },
+                        { "PhoneNumber", user.PhoneNumber! }
                     },
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName }
+                    }
+                },
+            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Remove, Sender: SenderType.Sms } =>
+                new RemovePhoneNumberMessage()
+                {
+                    Credentials = new Dictionary<string, string>()
+                    {
+                        { "PhoneNumber", user.PhoneNumber! },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code }
+                    }
+                },
+            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Reset, Sender: SenderType.Sms } =>
+                new ResetPhoneNumberMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "PhoneNumber", payload["NewPhoneNumber"] }
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
                     }
                 },
             { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Verify, Sender: SenderType.Sms } =>
@@ -138,31 +334,7 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Current, Sender: SenderType.Sms } =>
-                new ChangePhoneNumberMessage()
-                {
-                    Credentials = new()
-                    {
-                        { "PhoneNumber", user.PhoneNumber! }
-                    },
-                    Payload = new()
-                    {
-                        { "Code", code },
-                    }
-                },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Reset, Sender: SenderType.Sms } =>
-                new ResetPhoneNumberMessage()
-                {
-                    Credentials = new()
-                    {
-                        { "PhoneNumber", payload["NewPhoneNumber"] }
-                    },
-                    Payload = new()
-                    {
-                        { "Code", code },
-                    }
-                },
-            
+
             _ => throw new NotSupportedException("Not supported resend code case")
         };
 
