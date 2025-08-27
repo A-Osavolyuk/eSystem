@@ -325,6 +325,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<VerificationEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Resource).HasEnumConversion();
+            entity.Property(x => x.Type).HasEnumConversion();
             
             entity.HasOne(x => x.User)
                 .WithMany()

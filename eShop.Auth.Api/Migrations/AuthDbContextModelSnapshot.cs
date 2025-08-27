@@ -896,6 +896,39 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserSecret");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("ExpireDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Resource")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Verifications");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.CodeEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
@@ -1155,6 +1188,17 @@ namespace eShop.Auth.Api.Migrations
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
                         .WithOne()
                         .HasForeignKey("eShop.Auth.Api.Entities.UserSecretEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
