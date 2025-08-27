@@ -54,7 +54,7 @@
                                                         Variant="Variant.Filled"
                                                         Color="Color.Primary"
                                                         ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await OnChangePhoneNumberAsync())">
+                                                        OnClick="@(async () => await OnSendCurrentCodeAsync())">
                                                         Change
                                                     </MudLoadingButton>
                                                 </MudItem>
@@ -100,7 +100,7 @@
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
                                                     Disabled="@(VerifyCurrentPhoneNumberModel.Code.Length <= 5)"
-                                                    OnClick="@(async () => await OnVerifyNewPhoneNumberAsync())">
+                                                    OnClick="@(async () => await OnSendNewCodeAsync())">
                                                     Confirm
                                                 </MudLoadingButton>
                                             </MudStack>
@@ -164,7 +164,7 @@
                                                         Color="Color.Primary"
                                                         ButtonType="ButtonType.Button"
                                                         Disabled="@(ConfirmChangePhoneNumberModel.Code.Length <= 5)"
-                                                        OnClick="@(async () => await OnConfirmChangePhoneNumberAsync())">
+                                                        OnClick="@(async () => await OnChangeAsync())">
                                                         Verify
                                                     </MudLoadingButton>
                                             </MudStack>
@@ -198,6 +198,7 @@
     private MudForm changePhoneNumberForm = new();
     private MudForm verifyNewPhoneNumberForm = new();
     private MudForm confirmChangePhoneNumberForm = new();
+    
     private Guid userId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -218,16 +219,24 @@
             Sender = SenderType.Sms
         };
 
-        var response = await SecurityService.SendCodeAsync(request);
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
 
-        if (response.Success)
+    private async Task SendCurrentCodeAsync()
+    {
+        var request = new SendCodeRequest()
         {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
+            UserId = userId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Current,
+            Sender = SenderType.Sms
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task ResendNewPhoneNumberCodeAsync()
@@ -240,97 +249,102 @@
             Sender = SenderType.Sms
         };
 
-        var response = await SecurityService.SendCodeAsync(request);
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
+    
+    private async Task SendNewCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.New,
+            Sender = SenderType.Sms
+        };
 
-        if (response.Success)
-        {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
+        var result = await SecurityService.SendCodeAsync(request);
+        
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
-    private async Task OnChangePhoneNumberAsync()
+    private async Task OnSendCurrentCodeAsync()
     {
         await changePhoneNumberForm.Validate();
 
         if (changePhoneNumberForm.IsValid)
         {
-            var request = new ChangePhoneNumberRequest()
-            {
-                UserId = userId,
-                NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber
-            };
+            var request = new CheckPhoneNumberRequest() { PhoneNumber = ChangePhoneNumberModel.NewPhoneNumber };
+            var result = await SecurityService.CheckPhoneNumberAsync(request);
 
-            var result = await SecurityService.ChangePhoneNumberAsync(request);
-
-            if (result.Success)
-            {
-                await StepNextAsync();
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
+            if (result.Success) await SendCurrentCodeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
-    private async Task OnVerifyNewPhoneNumberAsync()
+    private async Task OnSendNewCodeAsync()
     {
         await verifyNewPhoneNumberForm.Validate();
 
         if (verifyNewPhoneNumberForm.IsValid)
         {
-            var request = new VerifyCurrentPhoneNumberRequest()
+            var request = new VerifyCodeRequest()
             {
                 UserId = userId,
-                NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.Current,
+                Sender = SenderType.Sms,
                 Code = VerifyCurrentPhoneNumberModel.Code
             };
 
-            var result = await SecurityService.VerifyCurrentPhoneNumberAsync(request);
+            var result = await SecurityService.VerifyCodeAsync(request);
 
-            if (result.Success)
-            {
-                await StepNextAsync();
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
+            if (result.Success) await SendNewCodeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
-    private async Task OnConfirmChangePhoneNumberAsync()
+    private async Task OnChangeAsync()
     {
         await confirmChangePhoneNumberForm.Validate();
 
         if (confirmChangePhoneNumberForm.IsValid)
         {
-            var request = new ConfirmChangePhoneNumberRequest()
+            var request = new VerifyCodeRequest()
             {
                 UserId = userId,
-                NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
-                Code = ConfirmChangePhoneNumberModel.Code,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.New,
+                Sender = SenderType.Sms,
+                Code = VerifyCurrentPhoneNumberModel.Code
             };
 
-            var result = await SecurityService.ConfirmChangePhoneNumberAsync(request);
+            var result = await SecurityService.VerifyCodeAsync(request);
 
-            if (result.Success)
-            {
-                var response = result.Get<ConfirmChangePhoneNumberResponse>()!;
-                await StepNextAsync();
+            if (result.Success) await ChangeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
 
-                Snackbar.Add("Phone number was successfully changed", Severity.Success);
-                await AuthenticationManager.ReauthenticateAsync(response.AccessToken, response.RefreshToken);
-                await RouteManager.NavigateAsync("/profile");
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
+    private async Task ChangeAsync()
+    {
+        var request = new ChangePhoneNumberRequest()
+        {
+            UserId = userId,
+            NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
+        };
+
+        var result = await SecurityService.ChangePhoneNumberAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add("Phone number was successfully changed", Severity.Success);
+            await RouteManager.NavigateAsync("/profile");
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
         }
     }
 

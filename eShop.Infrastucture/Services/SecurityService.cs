@@ -87,11 +87,7 @@ public class SecurityService(
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<Response> ChangePhoneNumberAsync(ChangePhoneNumberRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/request-change", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = true, Type = DataType.Text });
-    
-    public async ValueTask<Response> ConfirmChangePhoneNumberAsync(ConfirmChangePhoneNumberRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/confirm-change", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
     
     public async ValueTask<Response> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request) => await ApiClient.SendAsync(
@@ -111,7 +107,7 @@ public class SecurityService(
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> ConfirmRemovePhoneNumberAsync(ConfirmRemovePhoneNumberRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/confirm-remove", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/remove", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> RemoveRecoveryEmailAsync(RemoveRecoveryEmailRequest request) => await ApiClient.SendAsync(
@@ -119,6 +115,6 @@ public class SecurityService(
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> ConfirmRemoveRecoveryEmailAsync(ConfirmRemoveRecoveryEmailRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/recovery-email/confirm-remove", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/recovery-email/remove", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 }
