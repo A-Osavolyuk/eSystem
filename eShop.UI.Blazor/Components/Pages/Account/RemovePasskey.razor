@@ -131,7 +131,11 @@
             UserId = UserId,
             Resource = CodeResource.Passkey,
             Type = CodeType.Remove,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "DisplayName", Model.Passkey.DisplayName }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -145,7 +149,11 @@
             UserId = UserId,
             Resource = CodeResource.Passkey,
             Type = CodeType.Remove,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "DisplayName", Model.Passkey.DisplayName }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
