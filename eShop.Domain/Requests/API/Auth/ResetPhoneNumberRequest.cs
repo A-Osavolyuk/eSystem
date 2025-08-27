@@ -3,5 +3,5 @@
 public class ResetPhoneNumberRequest
 {
     public Guid UserId { get; set; }
-    public string NewPhoneNumber { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
 }

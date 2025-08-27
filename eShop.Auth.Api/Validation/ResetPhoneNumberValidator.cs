@@ -7,6 +7,6 @@ public class ResetPhoneNumberValidator : Validator<ResetPhoneNumberRequest>
 {
     public ResetPhoneNumberValidator()
     {
-        RuleFor(x => x.NewPhoneNumber).SetValidator(new PhoneNumberValidator());
+        RuleFor(x => x.PhoneNumber).SetValidator(new PhoneNumberValidator());
     }
 }

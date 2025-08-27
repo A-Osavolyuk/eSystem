@@ -53,7 +53,7 @@
                                                         Variant="Variant.Filled"
                                                         Color="Color.Primary"
                                                         ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await OnResetPhoneNumberAsync())">
+                                                        OnClick="@(async () => await OnSendCodeAsync())">
                                                         Change
                                                     </MudLoadingButton>
                                                 </MudItem>
@@ -100,7 +100,7 @@
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
                                                     Disabled="@(ConfirmResetPhoneNumberModel.Code.Length <= 5)"
-                                                    OnClick="@(async () => await OnConfirmResetPhoneNumberAsync())">
+                                                    OnClick="@(async () => await OnVerifyAsync())">
                                                     Verify
                                                 </MudLoadingButton>
                                             </MudStack>
@@ -150,67 +150,81 @@
         };
 
         var response = await SecurityService.SendCodeAsync(request);
-
-        if (response.Success)
-        {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
+        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
 
-    private async Task OnResetPhoneNumberAsync()
+    private async Task OnSendCodeAsync()
     {
         await resetPhoneNumberForm.Validate();
 
         if (resetPhoneNumberForm.IsValid)
         {
-            var request = new ResetPhoneNumberRequest()
+            var request = new CheckPhoneNumberRequest()
             {
-                UserId = userId,
-                NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber
+                PhoneNumber = ResetPhoneNumberModel.NewPhoneNumber
             };
 
-            var result = await SecurityService.ResetPhoneNumberAsync(request);
+            var result = await SecurityService.CheckPhoneNumberAsync(request);
 
-            if (result.Success)
-            {
-                await StepNextAsync();
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
+            if (result.Success) await SendCodeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
-    private async Task OnConfirmResetPhoneNumberAsync()
+    private async Task SendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Reset,
+            Sender = SenderType.Sms
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
     {
         await confirmResetPhoneNumberForm.Validate();
 
         if (confirmResetPhoneNumberForm.IsValid)
         {
-            var request = new ConfirmResetPhoneNumberRequest()
+            var request = new VerifyCodeRequest()
             {
                 UserId = userId,
-                NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.Reset,
+                Sender = SenderType.Sms,
                 Code = ConfirmResetPhoneNumberModel.Code
             };
 
-            var result = await SecurityService.ConfirmResetPhoneNumberAsync(request);
+            var result = await SecurityService.VerifyCodeAsync(request);
 
-            if (result.Success)
-            {
-                Snackbar.Add("Phone number was successfully reset", Severity.Success);
-                await RouteManager.NavigateAsync("/account/profile");
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
+            if (result.Success) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new ResetPhoneNumberRequest()
+        {
+            UserId = userId,
+            PhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
+        };
+
+        var result = await SecurityService.ResetPhoneNumberAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add("Phone number was successfully reset", Severity.Success);
+            await RouteManager.NavigateAsync("/account/profile");
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task StepNextAsync()

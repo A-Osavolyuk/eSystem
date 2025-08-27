@@ -431,21 +431,6 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Confirm phone number reset")]
-    [EndpointDescription("Confirm phone number reset")]
-    [ProducesResponseType(200)]
-    [HttpPost("phone-number/confirm-reset")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmPhoneNumberResetAsync(
-        [FromBody] ConfirmResetPhoneNumberRequest request)
-    {
-        var result = await sender.Send(new ConfirmResetPhoneNumberCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Send code")]
     [EndpointDescription("Sends code")]
     [ProducesResponseType(200)]

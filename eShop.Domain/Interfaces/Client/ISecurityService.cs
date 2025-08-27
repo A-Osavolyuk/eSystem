@@ -16,7 +16,6 @@ public interface ISecurityService
     public ValueTask<Response> ConfirmRemovePhoneNumberAsync(ConfirmRemovePhoneNumberRequest request);
     public ValueTask<Response> RemoveRecoveryEmailAsync(RemoveRecoveryEmailRequest request);
     public ValueTask<Response> ConfirmRemoveRecoveryEmailAsync(ConfirmRemoveRecoveryEmailRequest request);
-    public ValueTask<Response> ConfirmResetPhoneNumberAsync(ConfirmResetPhoneNumberRequest request);
     public ValueTask<Response> AddPhoneNumberAsync(AddPhoneNumberRequest request);
     public ValueTask<Response> AddRecoveryEmailAsync(AddRecoveryEmailRequest request);
     public ValueTask<Response> AddPasswordAsync(AddPasswordRequest request);
