@@ -6,21 +6,21 @@ public sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<R
 
 public sealed class VerifyEmailCommandHandler(
     IUserManager userManager,
-    ICodeManager codeManager) : IRequestHandler<VerifyEmailCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        
-        var result = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Email, 
-            CodeType.Verify, CodeResource.Email, cancellationToken);
 
-        if (!result.Succeeded) return result;
+        var verificationResult = await verificationManager.VerifyAsync(user,
+            CodeResource.Email, CodeType.Verify, cancellationToken);
+
+        if (!verificationResult.Succeeded) return verificationResult;
 
         var confirmResult = await userManager.ConfirmEmailAsync(user, cancellationToken);
         if (!confirmResult.Succeeded) return confirmResult;

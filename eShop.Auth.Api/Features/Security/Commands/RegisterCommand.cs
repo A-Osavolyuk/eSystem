@@ -9,16 +9,12 @@ public sealed record RegisterCommand(RegistrationRequest Request, HttpContext Co
 public sealed class RegisterCommandHandler(
     IPermissionManager permissionManager,
     IUserManager userManager,
-    IMessageService messageService,
-    ICodeManager codeManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IdentityOptions identityOptions) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
-    private readonly IMessageService messageService = messageService;
-    private readonly ICodeManager codeManager = codeManager;
     private readonly IRoleManager roleManager = roleManager;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly IDeviceManager deviceManager = deviceManager;
@@ -81,25 +77,6 @@ public sealed class RegisterCommandHandler(
 
         var deviceResult = await deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
-
-        var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Verify, 
-            CodeResource.Email, cancellationToken);
-        
-        var message = new AccountRegisteredMessage()
-        {
-            Credentials = new ()
-            {
-                { "To", user!.Email },
-                { "Subject", "Email verification" }
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "UserName", user.UserName },
-            }
-        };
-        
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
         var response = new RegistrationResponse()
         {
