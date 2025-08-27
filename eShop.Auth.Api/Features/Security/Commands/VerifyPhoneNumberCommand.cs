@@ -6,23 +6,23 @@ public sealed record VerifyPhoneNumberCommand(VerifyPhoneNumberRequest Request) 
 
 public sealed class VerifyPhoneNumberCommandHandler(
     IUserManager userManager,
-    ICodeManager codeManager) : IRequestHandler<VerifyPhoneNumberCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<VerifyPhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(VerifyPhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID ${request.Request.UserId}");
-        
-        var result = await codeManager.VerifyAsync(user, request.Request.Code, SenderType.Sms, 
-            CodeType.Verify, CodeResource.PhoneNumber, cancellationToken);
 
-        if (!result.Succeeded) return result;
+        var verificationResult = await verificationManager.VerifyAsync(user,
+            CodeResource.PhoneNumber, CodeType.Verify, cancellationToken);
 
-        var confirmationResult = await userManager.ConfirmPhoneNumberAsync(user, cancellationToken);
-        return confirmationResult;
+        if (!verificationResult.Succeeded) return verificationResult;
+
+        var result = await userManager.ConfirmPhoneNumberAsync(user, cancellationToken);
+        return result;
     }
 }

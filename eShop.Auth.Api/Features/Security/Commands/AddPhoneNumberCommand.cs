@@ -7,14 +7,10 @@ public record AddPhoneNumberCommand(AddPhoneNumberRequest Request) : IRequest<Re
 
 public class AddPhoneNumberCommandHandler(
     IUserManager userManager,
-    ICodeManager codeManager,
-    IMessageService messageService,
     IdentityOptions identityOptions) : IRequestHandler<AddPhoneNumberCommand, Result>
 {
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(AddPhoneNumberCommand request, CancellationToken cancellationToken)
     {
@@ -30,23 +26,6 @@ public class AddPhoneNumberCommandHandler(
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
-
-        var code = await codeManager.GenerateAsync(user, SenderType.Sms, CodeType.Verify, 
-            CodeResource.PhoneNumber, cancellationToken);
-        
-        var message = new VerifyPhoneNumberMessage()
-        {
-            Credentials = new Dictionary<string, string>()
-            {
-                { "PhoneNumber", request.Request.PhoneNumber },
-            }, 
-            Payload = new()
-            {
-                { "Code", code }
-            }
-        };
-        
-        await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
 
         return Result.Success();
     }
