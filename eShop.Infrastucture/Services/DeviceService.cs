@@ -10,6 +10,10 @@ public class DeviceService(
     IConfiguration configuration, 
     IApiClient apiClient) : ApiService(configuration, apiClient), IDeviceService
 {
+    public async ValueTask<Response> GetAsync(Guid id) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Device/{id}", Method = HttpMethod.Get, },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
+
     public async ValueTask<Response> TrustAsync(TrustDeviceRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Device/trust", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });

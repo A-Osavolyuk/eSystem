@@ -5,6 +5,7 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface IDeviceService
 {
+    public ValueTask<Response> GetAsync(Guid id);
     public ValueTask<Response> TrustAsync(TrustDeviceRequest request);
     public ValueTask<Response> BlockAsync(BlockDeviceRequest request);
     public ValueTask<Response> UnblockAsync(UnblockDeviceRequest request);
