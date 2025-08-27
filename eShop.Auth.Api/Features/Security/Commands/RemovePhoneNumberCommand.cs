@@ -8,12 +8,10 @@ public record RemovePhoneNumberCommand(RemovePhoneNumberRequest Request) :  IReq
 
 public class RemovePhoneNumberCommandHandler(
     IUserManager userManager,
-    ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<RemovePhoneNumberCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<RemovePhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(RemovePhoneNumberCommand request, CancellationToken cancellationToken)
     {
@@ -25,24 +23,13 @@ public class RemovePhoneNumberCommandHandler(
 
         if (user.Providers.Any(x => x.Provider.Name == ProviderTypes.Sms && x.Subscribed))
             return Results.BadRequest("Cannot remove phone number. First disable 2FA with SMS.");
-
-        var code = await codeManager.GenerateAsync(user, SenderType.Sms, 
-            CodeType.Remove, CodeResource.PhoneNumber, cancellationToken);
         
-        var message = new RemovePhoneNumberMessage()
-        {
-            Credentials = new Dictionary<string, string>()
-            {
-                { "PhoneNumber", user.PhoneNumber! },
-            }, 
-            Payload = new()
-            {
-                { "Code", code }
-            }
-        };
-        
-        await messageService.SendMessageAsync(SenderType.Sms, message, cancellationToken);
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.PhoneNumber, CodeType.Remove, cancellationToken);
 
-        return Result.Success();
+        if (!verificationResult.Succeeded) return verificationResult;
+
+        var result = await userManager.RemovePhoneNumberAsync(user, cancellationToken);
+        return result;
     }
 }

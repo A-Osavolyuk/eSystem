@@ -39,7 +39,7 @@
                                                 Color="Color.Primary"
                                                 Variant="Variant.Filled"
                                                 ButtonType="ButtonType.Button"
-                                                OnClick="@(async () => await OnRemovePhoneNumberAsync())">
+                                                OnClick="@(async () => await OnSendCodeAsync())">
                                                 Continue
                                             </MudLoadingButton>
                                         </MudStack>
@@ -82,7 +82,7 @@
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
                                                     Disabled="@(Model.Code.Length <= 5)"
-                                                    OnClick="@(async () => await OnConfirmRemovePhoneNumberAsync())">
+                                                    OnClick="@(async () => await OnVerifyAsync())">
                                                     Confirm
                                                 </MudLoadingButton>
                                             </MudStack>
@@ -131,60 +131,65 @@
             Sender = SenderType.Sms
         };
 
-        var response = await SecurityService.SendCodeAsync(request);
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
 
-        if (response.Success)
+    private async Task OnSendCodeAsync()
+    {
+        var request = new SendCodeRequest()
         {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
+            UserId = userId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Remove,
+            Sender = SenderType.Sms
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
         {
-            Snackbar.Add(response.Message, Severity.Error);
+            var request = new VerifyCodeRequest()
+            {
+                UserId = userId,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.Remove,
+                Sender = SenderType.Sms,
+                Code = Model.Code
+            };
+
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
-    private async Task OnRemovePhoneNumberAsync()
+    private async Task VerifyAsync()
     {
         var request = new RemovePhoneNumberRequest()
         {
-            UserId = userId
+            UserId = userId,
         };
 
         var result = await SecurityService.RemovePhoneNumberAsync(request);
 
         if (result.Success)
         {
-            await StepNextAsync();
+            Snackbar.Add("Phone number was successfully removed", Severity.Success);
+            await RouteManager.NavigateAsync("/account/profile");
         }
         else
         {
             Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task OnConfirmRemovePhoneNumberAsync()
-    {
-        await form.Validate();
-
-        if (form.IsValid)
-        {
-            var request = new ConfirmRemovePhoneNumberRequest()
-            {
-                UserId = userId,
-                Code = Model.Code
-            };
-
-            var result = await SecurityService.ConfirmRemovePhoneNumberAsync(request);
-
-            if (result.Success)
-            {
-                Snackbar.Add("Phone number was successfully removed", Severity.Success);
-                await RouteManager.NavigateAsync("/account/profile");
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
         }
     }
 
