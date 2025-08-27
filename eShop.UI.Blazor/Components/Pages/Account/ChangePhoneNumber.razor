@@ -213,8 +213,8 @@
         var request = new SendCodeRequest()
         {
             UserId = userId,
-            CodeResource = CodeResource.PhoneNumber,
-            CodeType = CodeType.Current,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Current,
             Sender = SenderType.Sms
         };
 
@@ -235,8 +235,8 @@
         var request = new SendCodeRequest()
         {
             UserId = userId,
-            CodeResource = CodeResource.PhoneNumber,
-            CodeType = CodeType.New,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.New,
             Sender = SenderType.Sms
         };
 

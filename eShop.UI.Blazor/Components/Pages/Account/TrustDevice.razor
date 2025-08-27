@@ -87,8 +87,8 @@
         var request = new SendCodeRequest()
         {
             UserId = UserId,
-            CodeType = CodeType.Trust,
-            CodeResource = CodeResource.Device,
+            Type = CodeType.Trust,
+            Resource = CodeResource.Device,
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {

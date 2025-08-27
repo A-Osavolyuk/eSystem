@@ -18,8 +18,8 @@ public class SendCodeCommandHandler(
     public async Task<Result> Handle(SendCodeCommand request, CancellationToken cancellationToken)
     {
         var sender = request.Request.Sender;
-        var codeType = request.Request.CodeType;
-        var codeResource = request.Request.CodeResource;
+        var codeType = request.Request.Type;
+        var codeResource = request.Request.Resource;
         var payload = request.Request.Payload;
 
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
@@ -29,7 +29,7 @@ public class SendCodeCommandHandler(
 
         Message message = request.Request switch
         {
-            { CodeResource: CodeResource.Email, CodeType: CodeType.Verify, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Email, Type: CodeType.Verify, Sender: SenderType.Email } =>
                 new AccountRegisteredMessage
                 {
                     Credentials = new()
@@ -43,7 +43,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.Account, CodeType: CodeType.Unlock, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Account, Type: CodeType.Unlock, Sender: SenderType.Email } =>
                 new AccountUnlockMessage()
                 {
                     Credentials = new()
@@ -57,7 +57,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.RecoveryEmail, CodeType: CodeType.Verify, Sender: SenderType.Email } =>
+            { Resource: CodeResource.RecoveryEmail, Type: CodeType.Verify, Sender: SenderType.Email } =>
                 new AddRecoveryEmailMessage()
                 {
                     Credentials = new()
@@ -71,7 +71,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName },
                     }
                 },
-            { CodeResource: CodeResource.LinkedAccount, CodeType: CodeType.Allow, Sender: SenderType.Email } =>
+            { Resource: CodeResource.LinkedAccount, Type: CodeType.Allow, Sender: SenderType.Email } =>
                 new AllowLinkedAccountMessage()
                 {
                     Credentials = new()
@@ -86,7 +86,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.Device, CodeType: CodeType.Block, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Device, Type: CodeType.Block, Sender: SenderType.Email } =>
                 new BlockDeviceMessage()
                 {
                     Credentials = new()
@@ -104,7 +104,7 @@ public class SendCodeCommandHandler(
                         { "Browser", payload["Browser"] }
                     }
                 },
-            { CodeResource: CodeResource.Email, CodeType: CodeType.Current, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Email, Type: CodeType.Current, Sender: SenderType.Email } =>
                 new ChangeEmailMessage()
                 {
                     Credentials = new()
@@ -119,7 +119,7 @@ public class SendCodeCommandHandler(
                         { "NewEmail", payload["NewEmail"] }
                     }
                 },
-            { CodeResource: CodeResource.LinkedAccount, CodeType: CodeType.Disallow, Sender: SenderType.Email } =>
+            { Resource: CodeResource.LinkedAccount, Type: CodeType.Disallow, Sender: SenderType.Email } =>
                 new DisallowLinkedAccountMessage()
                 {
                     Credentials = new()
@@ -134,7 +134,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.LinkedAccount, CodeType: CodeType.Disconnect, Sender: SenderType.Email } =>
+            { Resource: CodeResource.LinkedAccount, Type: CodeType.Disconnect, Sender: SenderType.Email } =>
                 new DisconnectLinkedAccountMessage()
                 {
                     Credentials = new()
@@ -149,7 +149,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.Password, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Password, Type: CodeType.Reset, Sender: SenderType.Email } =>
                 new ForgotPasswordMessage()
                 {
                     Credentials = new()
@@ -163,7 +163,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.Passkey, CodeType: CodeType.Remove, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Passkey, Type: CodeType.Remove, Sender: SenderType.Email } =>
                 new RemovePasskeyMessage()
                 {
                     Credentials = new()
@@ -178,7 +178,7 @@ public class SendCodeCommandHandler(
                         { "DisplayName", payload["DisplayName"] }
                     }
                 },
-            { CodeResource: CodeResource.RecoveryEmail, CodeType: CodeType.Remove, Sender: SenderType.Email } =>
+            { Resource: CodeResource.RecoveryEmail, Type: CodeType.Remove, Sender: SenderType.Email } =>
                 new RemoveRecoveryEmailMessage()
                 {
                     Credentials = new()
@@ -192,7 +192,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName },
                     }
                 },
-            { CodeResource: CodeResource.Email, CodeType: CodeType.Reset, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Email, Type: CodeType.Reset, Sender: SenderType.Email } =>
                 new ResetEmailMessage()
                 {
                     Credentials = new()
@@ -206,7 +206,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.Device, CodeType: CodeType.Trust, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Device, Type: CodeType.Trust, Sender: SenderType.Email } =>
                 new TrustDeviceMessage()
                 {
                     Credentials = new()
@@ -224,7 +224,7 @@ public class SendCodeCommandHandler(
                         { "Browser", payload["Browser"] }
                     }
                 },
-            { CodeResource: CodeResource.Device, CodeType: CodeType.Unblock, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Device, Type: CodeType.Unblock, Sender: SenderType.Email } =>
                 new UnblockDeviceMessage()
                 {
                     Credentials = new()
@@ -242,7 +242,7 @@ public class SendCodeCommandHandler(
                         { "Browser", payload["Browser"] }
                     }
                 },
-            { CodeResource: CodeResource.Device, CodeType: CodeType.Verify, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Device, Type: CodeType.Verify, Sender: SenderType.Email } =>
                 new VerifyDeviceMessage()
                 {
                     Credentials = new()
@@ -260,7 +260,7 @@ public class SendCodeCommandHandler(
                         { "Browser", payload["Browser"] }
                     }
                 },
-            { CodeResource: CodeResource.Email, CodeType: CodeType.New, Sender: SenderType.Email } =>
+            { Resource: CodeResource.Email, Type: CodeType.New, Sender: SenderType.Email } =>
                 new VerifyEmailMessage()
                 {
                     Credentials = new()
@@ -274,7 +274,7 @@ public class SendCodeCommandHandler(
                         { "UserName", user.UserName }
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Current, Sender: SenderType.Sms } =>
+            { Resource: CodeResource.PhoneNumber, Type: CodeType.Current, Sender: SenderType.Sms } =>
                 new ChangePhoneNumberMessage()
                 {
                     Credentials = new()
@@ -286,7 +286,7 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Remove, Sender: SenderType.Sms } =>
+            { Resource: CodeResource.PhoneNumber, Type: CodeType.Remove, Sender: SenderType.Sms } =>
                 new RemovePhoneNumberMessage()
                 {
                     Credentials = new Dictionary<string, string>()
@@ -298,7 +298,7 @@ public class SendCodeCommandHandler(
                         { "Code", code }
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Reset, Sender: SenderType.Sms } =>
+            { Resource: CodeResource.PhoneNumber, Type: CodeType.Reset, Sender: SenderType.Sms } =>
                 new ResetPhoneNumberMessage()
                 {
                     Credentials = new()
@@ -310,7 +310,7 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.Verify, Sender: SenderType.Sms } =>
+            { Resource: CodeResource.PhoneNumber, Type: CodeType.Verify, Sender: SenderType.Sms } =>
                 new VerifyPhoneNumberMessage()
                 {
                     Credentials = new()
@@ -322,7 +322,7 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     }
                 },
-            { CodeResource: CodeResource.PhoneNumber, CodeType: CodeType.New, Sender: SenderType.Sms } =>
+            { Resource: CodeResource.PhoneNumber, Type: CodeType.New, Sender: SenderType.Sms } =>
                 new VerifyPhoneNumberMessage()
                 {
                     Credentials = new()

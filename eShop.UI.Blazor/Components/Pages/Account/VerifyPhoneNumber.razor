@@ -76,22 +76,38 @@
 
         if (form.IsValid)
         {
-            var request = new VerifyPhoneNumberRequest()
+            var request = new VerifyCodeRequest()
             {
                 UserId = userId,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.Verify,
+                Sender = SenderType.Sms,
                 Code = Model.Code
             };
 
-            var result = await SecurityService.VerifyPhoneNumberAsync(request);
+            var result = await SecurityService.VerifyCodeAsync(request);
 
-            if (result.Success)
-            {
-                Snackbar.Add(result.Message, Severity.Success);
-                await RouteManager.NavigateAsync("/account/profile");
-            }
-            else
-                Snackbar.Add(result.Message, Severity.Error);
+            if (result.Success) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new VerifyPhoneNumberRequest()
+        {
+            UserId = userId,
+            Code = Model.Code
+        };
+
+        var result = await SecurityService.VerifyPhoneNumberAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add(result.Message, Severity.Success);
+            await RouteManager.NavigateAsync("/account/profile");
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task SendCodeAsync()
@@ -99,25 +115,12 @@
         var request = new SendCodeRequest()
         {
             UserId = userId,
-            CodeResource = CodeResource.PhoneNumber,
-            CodeType = CodeType.Verify,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Verify,
             Sender = SenderType.Sms
         };
 
         var response = await SecurityService.SendCodeAsync(request);
-
-        if (response.Success)
-        {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
+        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
-
-}
-
-@code {
-    
 }

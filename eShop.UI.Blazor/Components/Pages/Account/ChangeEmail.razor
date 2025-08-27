@@ -291,8 +291,8 @@
         var request = new SendCodeRequest()
         {
             UserId = userId,
-            CodeResource = CodeResource.Email,
-            CodeType = CodeType.Current,
+            Resource = CodeResource.Email,
+            Type = CodeType.Current,
             Sender = SenderType.Email
         };
 
@@ -313,8 +313,8 @@
         var request = new SendCodeRequest()
         {
             UserId = userId,
-            CodeResource = CodeResource.Email,
-            CodeType = CodeType.New,
+            Resource = CodeResource.Email,
+            Type = CodeType.New,
             Sender = SenderType.Email
         };
 
