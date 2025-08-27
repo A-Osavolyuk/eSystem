@@ -10,7 +10,7 @@ namespace eShop.Auth.Api.Controllers.v1;
 public class SecurityController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
-    
+
     [EndpointSummary("Login")]
     [EndpointDescription("Login")]
     [ProducesResponseType(200)]
@@ -40,7 +40,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Refresh token")]
     [EndpointDescription("Refresh token")]
     [ProducesResponseType(200)]
@@ -54,7 +54,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Unlock account")]
     [EndpointDescription("Unlock account")]
     [ProducesResponseType(200)]
@@ -69,7 +69,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Add password")]
     [EndpointDescription("Add password")]
     [ProducesResponseType(200)]
@@ -83,7 +83,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Change password")]
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
@@ -113,7 +113,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Confirm forgot password")]
     [EndpointDescription("Confirm forgot password")]
     [ProducesResponseType(200)]
@@ -129,7 +129,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Reset password")]
     [EndpointDescription("Reset password")]
     [ProducesResponseType(200)]
@@ -159,7 +159,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Verify current email on change")]
     [EndpointDescription("Verify current email on change")]
     [ProducesResponseType(200)]
@@ -174,7 +174,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Confirm change email")]
     [EndpointDescription("Confirms an email change")]
     [ProducesResponseType(200)]
@@ -189,7 +189,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Verify email")]
     [EndpointDescription("Verifies email")]
     [ProducesResponseType(200)]
@@ -205,7 +205,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Reset email")]
     [EndpointDescription("Reset email")]
     [ProducesResponseType(200)]
@@ -220,7 +220,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Confirm email reset")]
     [EndpointDescription("Confirm email reset")]
     [ProducesResponseType(200)]
@@ -235,7 +235,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Add recovery email")]
     [EndpointDescription("Add recovery email")]
     [ProducesResponseType(200)]
@@ -251,7 +251,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Remove recovery email")]
     [EndpointDescription("Remove recovery email")]
     [ProducesResponseType(200)]
@@ -267,7 +267,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Confirm remove recovery email")]
     [EndpointDescription("Confirm remove recovery email")]
     [ProducesResponseType(200)]
@@ -283,7 +283,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Verify recovery email")]
     [EndpointDescription("Verify recovery email")]
     [ProducesResponseType(200)]
@@ -299,7 +299,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Add phone number")]
     [EndpointDescription("Add phone number change")]
     [ProducesResponseType(200)]
@@ -313,7 +313,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Remove phone number")]
     [EndpointDescription("Remove phone number change")]
     [ProducesResponseType(200)]
@@ -327,13 +327,14 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Confirm remove phone number")]
     [EndpointDescription("Confirm remove phone number change")]
     [ProducesResponseType(200)]
     [HttpPost("phone-number/confirm-remove")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmRemovePhoneNumberAsync([FromBody] ConfirmRemovePhoneNumberRequest request)
+    public async ValueTask<IActionResult> ConfirmRemovePhoneNumberAsync(
+        [FromBody] ConfirmRemovePhoneNumberRequest request)
     {
         var result = await sender.Send(new ConfirmRemovePhoneNumberCommand(request));
 
@@ -341,7 +342,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Verify phone number")]
     [EndpointDescription("Verify phone number change")]
     [ProducesResponseType(200)]
@@ -370,7 +371,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Verify current phone number on change")]
     [EndpointDescription("Verify current phone number on change")]
     [ProducesResponseType(200)]
@@ -385,7 +386,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Confirm change phone number")]
     [EndpointDescription("Confirm a phone number change")]
     [ProducesResponseType(200)]
@@ -400,7 +401,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Reset phone number")]
     [EndpointDescription("Reset phone number")]
     [ProducesResponseType(200)]
@@ -415,7 +416,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Confirm phone number reset")]
     [EndpointDescription("Confirm phone number reset")]
     [ProducesResponseType(200)]
@@ -436,10 +437,23 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("code/send")]
-    public async ValueTask<IActionResult> SendCodeAsync(
-        [FromBody] SendCodeRequest request)
+    public async ValueTask<IActionResult> SendCodeAsync([FromBody] SendCodeRequest request)
     {
         var result = await sender.Send(new SendCodeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+
+    [EndpointSummary("Verify code")]
+    [EndpointDescription("Verify code")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("code/verify")]
+    public async ValueTask<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
+    {
+        var result = await sender.Send(new VerifyCodeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
