@@ -205,6 +205,22 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Check email")]
+    [EndpointDescription("Check email")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("email/check")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> CheckEmailAsync(
+        [FromBody] CheckEmailRequest request)
+    {
+        var result = await sender.Send(new CheckEmailCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Reset email")]
     [EndpointDescription("Reset email")]
