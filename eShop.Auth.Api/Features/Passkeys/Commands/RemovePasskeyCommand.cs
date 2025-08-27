@@ -8,14 +8,12 @@ public record RemovePasskeyCommand(RemovePasskeyRequest Request) : IRequest<Resu
 public class RemovePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     IUserManager userManager,
-    ICodeManager codeManager,
-    IMessageService messageService,
+    IVerificationManager verificationManager,
     IdentityOptions identityOptions) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
+    private readonly IVerificationManager verificationManager = verificationManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
@@ -26,31 +24,17 @@ public class RemovePasskeyCommandHandler(
         var passkey = await passkeyManager.FindByIdAsync(request.Request.KeyId, cancellationToken);
         if (passkey is null) return Results.NotFound($"Cannot find passkey with ID {request.Request.KeyId}.");
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Email,
-            CodeType.Remove, CodeResource.Passkey, cancellationToken);
-
         if (identityOptions.SignIn.RequireConfirmedEmail && user.HasEmail()
             && identityOptions.SignIn.RequireConfirmedPhoneNumber && user.HasPhoneNumber()
             && identityOptions.SignIn.AllowOAuthLogin && user.HasLinkedAccount() && user.HasPassword())
             return Results.BadRequest("You need to enable another authentication method first.");
 
-        var message = new RemovePasskeyMessage()
-        {
-            Credentials = new()
-            {
-                { "To", user!.Email },
-                { "Subject", "Device block" }
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "UserName", user.UserName },
-                { "DisplayName", passkey.DisplayName }
-            }
-        };
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.Passkey, CodeType.Remove, cancellationToken);
         
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+        if (!verificationResult.Succeeded) return verificationResult;
 
-        return Result.Success();
+        var result = await passkeyManager.DeleteAsync(passkey, cancellationToken);
+        return result;
     }
 }
