@@ -1,5 +1,6 @@
 ﻿@page "/account/passkey/remove"
 
+@using ZXing.QrCode.Internal
 @inherits PageBase
 
 @attribute [Authorize]
@@ -40,7 +41,7 @@
                                                 Color="Color.Primary"
                                                 Variant="Variant.Filled"
                                                 ButtonType="ButtonType.Button"
-                                                OnClick="@(async () => await OnRemovePasskeyAsync())">
+                                                OnClick="@(async () => await OnSendCodeAsync())">
                                                 Continue
                                             </MudLoadingButton>
                                         </MudStack>
@@ -83,7 +84,7 @@
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
                                                     Disabled="@(Model.Code.Length <= 5)"
-                                                    OnClick="@(async () => await OnConfirmRemovePasskeyAsync())">
+                                                    OnClick="@(async () => await OnVerifyAsync())">
                                                     Confirm
                                                 </MudLoadingButton>
                                             </MudStack>
@@ -115,6 +116,14 @@
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var result = await PasskeyService.GetPasskeyAsync(KeyId);
+
+        if (result.Success) Model.Passkey = result.Get<UserPasskeyDto>()!;
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
     private async Task ResendCodeAsync()
     {
         var request = new SendCodeRequest()
@@ -125,62 +134,66 @@
             Sender = SenderType.Email
         };
 
-        var response = await SecurityService.SendCodeAsync(request);
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
 
-        if (response.Success)
+    private async Task OnSendCodeAsync()
+    {
+        var request = new SendCodeRequest()
         {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
+            UserId = UserId,
+            Resource = CodeResource.Passkey,
+            Type = CodeType.Remove,
+            Sender = SenderType.Email
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
         {
-            Snackbar.Add(response.Message, Severity.Error);
+            var request = new VerifyCodeRequest()
+            {
+                UserId = UserId,
+                Resource = CodeResource.Passkey,
+                Type = CodeType.Remove,
+                Sender = SenderType.Email,
+                Code = Model.Code
+            };
+            
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
-    private async Task OnRemovePasskeyAsync()
+    private async Task VerifyAsync()
     {
         var request = new RemovePasskeyRequest()
         {
             UserId = UserId,
-            KeyId = KeyId
+            KeyId = KeyId,
         };
 
         var result = await PasskeyService.RemovePasskeyAsync(request);
 
         if (result.Success)
         {
-            await StepNextAsync();
+            Snackbar.Add("Passkey was successfully removed", Severity.Success);
+            await RouteManager.NavigateAsync("/account/security");
         }
         else
         {
             Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task OnConfirmRemovePasskeyAsync()
-    {
-        await form.Validate();
-
-        if (form.IsValid)
-        {
-            var request = new ConfirmRemovePasskeyRequest()
-            {
-                UserId = UserId,
-                KeyId = KeyId,
-                Code = Model.Code
-            };
-
-            var result = await PasskeyService.ConfirmRemovePasskeyAsync(request);
-
-            if (result.Success)
-            {
-                Snackbar.Add("Passkey was successfully removed", Severity.Success);
-                await RouteManager.NavigateAsync("/account/security");
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
         }
     }
 
