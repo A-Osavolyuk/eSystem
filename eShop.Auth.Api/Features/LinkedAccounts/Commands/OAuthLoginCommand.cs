@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using OtpNet;
 
-namespace eShop.Auth.Api.Features.OAuth.Commands;
+namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 
 public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string FallbackUri) : IRequest<Result>;
 

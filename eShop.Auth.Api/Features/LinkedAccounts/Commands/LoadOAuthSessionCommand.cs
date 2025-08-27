@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.OAuth.Commands;
+namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 
 public record LoadOAuthSessionCommand(LoadOAuthSessionRequest Request) : IRequest<Result>;
 

@@ -2,7 +2,7 @@
 using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Types;
 
-namespace eShop.Auth.Api.Features.OAuth.Commands;
+namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 
 public sealed record HandleOAuthLoginCommand(
     HttpContext Context,

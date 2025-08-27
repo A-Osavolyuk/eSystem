@@ -1,22 +1,22 @@
 ﻿using eShop.Auth.Api.Messages.Email;
 using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.OAuth.Commands;
+namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 
-public record DisconnectLinkedAccountCommand(DisconnectLinkedAccountRequest Request) : IRequest<Result>;
+public record DisallowLinkedAccountCommand(DisallowLinkedAccountRequest Request) : IRequest<Result>;
 
-public class DisconnectLinkedAccountCommandHandler(
+public class DisallowLinkedAccountCommandHandler(
     IUserManager userManager,
     IOAuthProviderManager providerManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
+    IMessageService messageService) : IRequestHandler<DisallowLinkedAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
 
-    public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DisallowLinkedAccountCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
@@ -24,15 +24,15 @@ public class DisconnectLinkedAccountCommandHandler(
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with ID {request.Request.Provider}.");
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Disconnect,
+        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Disallow,
             CodeResource.LinkedAccount, cancellationToken);
 
-        var message = new DisconnectLinkedAccountMessage()
+        var message = new DisallowLinkedAccountMessage()
         {
             Credentials = new()
             {
                 { "To", user!.Email },
-                { "Subject", $"Disconnect {provider.Name} linked account" }
+                { "Subject", $"Disallow {provider.Name} linked account" }
             },
             Payload = new()
             {
