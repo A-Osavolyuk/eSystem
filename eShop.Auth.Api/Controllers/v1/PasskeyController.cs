@@ -13,6 +13,20 @@ public class PasskeyController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
 
+    [EndpointSummary("Get passkey")]
+    [EndpointDescription("Get passkey")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}")]
+    [Authorize]
+    public async ValueTask<IActionResult> GetPasskeyAsync(Guid id)
+    {
+        var result = await sender.Send(new GetPasskeyQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Create passkey")]
     [EndpointDescription("Create passkey")]
     [ProducesResponseType(200)]

@@ -1,0 +1,17 @@
+﻿namespace eShop.Auth.Api.Features.Passkeys.Queries;
+
+public record GetPasskeyQuery(Guid Id) : IRequest<Result>;
+
+public class GetPasskeyQueryHandler(IPasskeyManager passkeyManager) : IRequestHandler<GetPasskeyQuery, Result>
+{
+    private readonly IPasskeyManager passkeyManager = passkeyManager;
+
+    public async Task<Result> Handle(GetPasskeyQuery request, CancellationToken cancellationToken)
+    {
+        var passkey = await passkeyManager.FindByIdAsync(request.Id, cancellationToken);
+        if (passkey is null) return Results.NotFound($"Cannot find passkey with ID {request.Id}");
+        
+        var response = Mapper.Map(passkey);
+        return Result.Success(response);
+    }
+}
