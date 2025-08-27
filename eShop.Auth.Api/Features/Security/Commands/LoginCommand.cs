@@ -13,8 +13,6 @@ public sealed class LoginCommandHandler(
     IReasonManager reasonManager,
     ILoginSessionManager loginSessionManager,
     IDeviceManager deviceManager,
-    ICodeManager codeManager,
-    IMessageService messageService,
     IdentityOptions identityOptions) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
@@ -23,8 +21,6 @@ public sealed class LoginCommandHandler(
     private readonly IReasonManager reasonManager = reasonManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -143,30 +139,6 @@ public sealed class LoginCommandHandler(
             {
                 return loginSessionResult;
             }
-            
-            var code = await codeManager.GenerateAsync(user, SenderType.Email, 
-                CodeType.Trust, CodeResource.Device, cancellationToken);
-
-
-            var message = new TrustDeviceMessage()
-            {
-                Credentials = new()
-                {
-                    { "To", user!.Email },
-                    { "Subject", "Device trust" }
-                },
-                Payload = new()
-                {
-                    { "Code", code },
-                    { "UserName", user.UserName },
-                    { "Ip", device.IpAddress! },
-                    { "OS", device.OS! },
-                    { "Device", device.Device! },
-                    { "Browser", device.Browser! }
-                }
-            };
-
-            await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
             var response = new LoginResponse()
             {

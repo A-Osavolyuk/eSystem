@@ -7,31 +7,29 @@ public record TrustDeviceCommand(TrustDeviceRequest Request) : IRequest<Result>;
 
 public class TrustDeviceCommandHandler(
     IUserManager userManager,
-    ICodeManager codeManager,
     ITokenManager tokenManager,
     IDeviceManager deviceManager,
-    ILoginSessionManager loginSessionManager) : IRequestHandler<TrustDeviceCommand, Result>
+    ILoginSessionManager loginSessionManager,
+    IVerificationManager verificationManager) : IRequestHandler<TrustDeviceCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(TrustDeviceCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-
-        var code = request.Request.Code;
-        
-        var codeResult = await codeManager.VerifyAsync(user, code, SenderType.Email, 
-            CodeType.Trust, CodeResource.Device, cancellationToken);
-        
-        if (!codeResult.Succeeded) return codeResult;
         
         var device = await deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
         if (device is null) return Results.NotFound($"Cannot find user with ID {request.Request.DeviceId}.");
+        
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.Device, CodeType.Trust, cancellationToken);
+        
+        if(!verificationResult.Succeeded) return verificationResult;
         
         var deviceResult = await deviceManager.TrustAsync(device, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
