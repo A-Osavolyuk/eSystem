@@ -8,7 +8,6 @@ public interface ISecurityService
     public ValueTask<Response> LoginAsync(LoginRequest request);
     public ValueTask<Response> RegisterAsync(RegistrationRequest request);
     public ValueTask<Response> ForgotPasswordAsync(ForgotPasswordRequest request);
-    public ValueTask<Response> ConfirmForgotPasswordAsync(ConfirmForgotPasswordRequest request);
     public ValueTask<Response> ResetPasswordAsync(ResetPasswordRequest request);
     public ValueTask<Response> ResetEmailAsync(ResetEmailRequest request);
     public ValueTask<Response> ConfirmResetEmailAsync(ConfirmResetEmailRequest request);

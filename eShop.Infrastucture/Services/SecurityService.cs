@@ -30,10 +30,6 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/forgot", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
     
-    public async ValueTask<Response> ConfirmForgotPasswordAsync(ConfirmForgotPasswordRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/confirm-forgot", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = true, Type = DataType.Text });
-    
     public async ValueTask<Response> ResetPasswordAsync(ResetPasswordRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/reset", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
