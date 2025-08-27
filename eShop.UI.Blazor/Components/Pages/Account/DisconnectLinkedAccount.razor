@@ -5,6 +5,7 @@
 @attribute [Authorize]
 
 @inject IOAuthService OAuthService
+@inject ISecurityService SecurityService
 
 <Title Text="@($"Disconnect {Provider} linked account")"/>
 
@@ -108,37 +109,74 @@
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
-    private async Task OnSendCodeAsync()
+    private async Task SendCodeAsync()
     {
-        var request = new DisconnectLinkedAccountRequest()
+        var request = new SendCodeRequest()
         {
             UserId = UserId,
-            Provider = Provider
+            Type = CodeType.Disconnect,
+            Resource = CodeResource.LinkedAccount,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "Provider", Provider }
+            }
         };
 
-        var result = await OAuthService.DisconnectAsync(request);
+        var result = await SecurityService.SendCodeAsync(request);
+        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnSendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserId,
+            Type = CodeType.Disconnect,
+            Resource = CodeResource.LinkedAccount,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "Provider", Provider }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
 
         if (result.Success)
         {
             var index = stepper!.GetActiveIndex();
             await stepper!.CompleteStep(index);
         }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnVerifyCodeAsync()
     {
-        var request = new ConfirmDisconnectLinkedAccountRequest()
+        var request = new VerifyCodeRequest()
+        {
+            UserId = UserId,
+            Type = CodeType.Disconnect,
+            Resource = CodeResource.LinkedAccount,
+            Sender = SenderType.Email,
+            Code = Model.Code
+        };
+        
+        var result = await SecurityService.VerifyCodeAsync(request);
+        
+        if (result.Success) await VerifyAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new DisconnectLinkedAccountRequest()
         {
             Provider = Provider,
             UserId = UserId,
-            Code = Model.Code
         };
 
-        var result = await OAuthService.ConfirmDisconnectAsync(request);
+        var result = await OAuthService.DisconnectAsync(request);
         
         if (result.Success)
         {
