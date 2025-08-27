@@ -6,14 +6,12 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 public record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
 
 public class ResetEmailCommandHandler(
-    ICodeManager codeManager,
-    IMessageService messageService,
     IUserManager userManager,
+    IVerificationManager verificationManager,
     IdentityOptions identityOptions) : IRequestHandler<ResetEmailCommand, Result>
 {
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
     private readonly IUserManager userManager = userManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
@@ -27,26 +25,13 @@ public class ResetEmailCommandHandler(
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
-
-        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Reset, 
-            CodeResource.Email, cancellationToken);
         
-        var message = new ResetEmailMessage
-        {
-            Payload = new()
-            {
-                { "Code", code },
-                { "UserName", user.UserName },
-            },
-            Credentials = new Dictionary<string, string>()
-            {
-                { "To", newEmail },
-                { "Subject", "Email reset" }
-            }
-        };
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.Email, CodeType.Reset, cancellationToken);
         
-        await messageService.SendMessageAsync(SenderType.Email,  message, cancellationToken);
+        if(!verificationResult.Succeeded) return verificationResult;
 
-        return Result.Success();
+        var result = await userManager.ResetEmailAsync(user, newEmail, cancellationToken);
+        return result;
     }
 }

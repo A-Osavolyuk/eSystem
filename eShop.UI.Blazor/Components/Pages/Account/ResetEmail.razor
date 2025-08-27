@@ -53,7 +53,7 @@
                                                         Variant="Variant.Filled"
                                                         Color="Color.Primary"
                                                         ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await OnResetEmailAsync())">
+                                                        OnClick="@(async () => await OnSendCodeAsync())">
                                                         Change
                                                     </MudLoadingButton>
                                                 </MudItem>
@@ -100,7 +100,7 @@
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
                                                     Disabled="@(ConfirmResetEmailModel.Code.Length <= 5)"
-                                                    OnClick="@(async () => await OnConfirmResetEmailAsync())">
+                                                    OnClick="@(async () => await OnVerifyAsync())">
                                                     Verify
                                                 </MudLoadingButton>
                                             </MudStack>
@@ -129,6 +129,7 @@
     private MudStepperExtended stepper = new();
     private MudForm resetEmailForm = new();
     private MudForm confirmResetEmailForm = new();
+
     private Guid userId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -150,67 +151,78 @@
         };
 
         var response = await SecurityService.SendCodeAsync(request);
-
-        if (response.Success)
-        {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
+        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
 
-    private async Task OnResetEmailAsync()
+    private async Task OnSendCodeAsync()
     {
         await resetEmailForm.Validate();
 
         if (resetEmailForm.IsValid)
         {
-            var request = new ResetEmailRequest()
-            {
-                UserId = userId,
-                NewEmail = ResetEmailModel.NewEmail
-            };
+            var request = new CheckEmailRequest() { Email = ResetEmailModel.NewEmail };
 
-            var result = await SecurityService.ResetEmailAsync(request);
+            var result = await SecurityService.CheckEmailAsync(request);
 
-            if (result.Success)
-            {
-                await StepNextAsync();
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
+            if (result.Success) await SendCodeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
-    private async Task OnConfirmResetEmailAsync()
+    private async Task SendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            Resource = CodeResource.Email,
+            Type = CodeType.Reset,
+            Sender = SenderType.Sms
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
     {
         await confirmResetEmailForm.Validate();
 
         if (confirmResetEmailForm.IsValid)
         {
-            var request = new ConfirmResetEmailRequest()
+            var request = new VerifyCodeRequest()
             {
                 UserId = userId,
-                NewEmail = ResetEmailModel.NewEmail,
+                Resource = CodeResource.Email,
+                Type = CodeType.Reset,
+                Sender = SenderType.Sms,
                 Code = ConfirmResetEmailModel.Code
             };
 
-            var result = await SecurityService.ConfirmResetEmailAsync(request);
+            var result = await SecurityService.VerifyCodeAsync(request);
 
-            if (result.Success)
-            {
-                Snackbar.Add("Email was successfully reset", Severity.Success);
-                await RouteManager.NavigateAsync("/account/profile");
-            }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
+            if (result.Success) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
         }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new ResetEmailRequest()
+        {
+            UserId = userId,
+            NewEmail = ResetEmailModel.NewEmail,
+        };
+
+        var result = await SecurityService.ResetEmailAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add("Email was successfully reset", Severity.Success);
+            await RouteManager.NavigateAsync("/account/profile");
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task StepNextAsync()
@@ -218,4 +230,5 @@
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
     }
+
 }

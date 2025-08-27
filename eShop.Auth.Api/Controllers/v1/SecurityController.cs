@@ -221,21 +221,6 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Confirm email reset")]
-    [EndpointDescription("Confirm email reset")]
-    [ProducesResponseType(200)]
-    [HttpPost("email/confirm-reset")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmEmailResetAsync(
-        [FromBody] ConfirmResetEmailRequest request)
-    {
-        var result = await sender.Send(new ConfirmResetEmailCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Add recovery email")]
     [EndpointDescription("Add recovery email")]
     [ProducesResponseType(200)]
