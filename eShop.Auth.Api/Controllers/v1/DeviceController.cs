@@ -1,4 +1,5 @@
 ﻿using eShop.Auth.Api.Features.Devices.Commands;
+using eShop.Auth.Api.Features.Devices.Queries;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -10,6 +11,20 @@ namespace eShop.Auth.Api.Controllers.v1;
 public class DeviceController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
+    
+    [EndpointSummary("Get device")]
+    [EndpointDescription("Get device")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpGet("{id:guid}")]
+    public async ValueTask<IActionResult> GetDeviceAsync(Guid id)
+    {
+        var result = await sender.Send(new GetDeviceQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
     
     [EndpointSummary("Trust device")]
     [EndpointDescription("Trust device")]
