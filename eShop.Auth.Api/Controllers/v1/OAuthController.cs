@@ -68,18 +68,6 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
-    [EndpointSummary("Confirm disconnect related account")]
-    [EndpointDescription("Confirm disconnect related account")]
-    [ProducesResponseType(200)]
-    [HttpPost("confirm-disconnect")]
-    public async ValueTask<IActionResult> ConfirmDisconnectAsync([FromBody] ConfirmDisconnectLinkedAccountRequest request)
-    {
-        var result = await sender.Send(new ConfirmDisconnectLinkedAccountCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
 
     [EndpointSummary("Allow related account")]
     [EndpointDescription("Allow related account")]
@@ -93,18 +81,6 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Confirm allow related account")]
-    [EndpointDescription("Confirm allow related account")]
-    [ProducesResponseType(200)]
-    [HttpPost("confirm-allow")]
-    public async ValueTask<IActionResult> ConfirmAllowAsync([FromBody] ConfirmAllowLinkedAccountRequest request)
-    {
-        var result = await sender.Send(new ConfirmAllowLinkedAccountCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Disallow related account")]
     [EndpointDescription("Disallow related account")]
     [ProducesResponseType(200)]
@@ -112,18 +88,6 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     public async ValueTask<IActionResult> DisallowAsync([FromBody] DisallowLinkedAccountRequest request)
     {
         var result = await sender.Send(new DisallowLinkedAccountCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Confirm disallow related account")]
-    [EndpointDescription("Confirm disallow related account")]
-    [ProducesResponseType(200)]
-    [HttpPost("confirm-disallow")]
-    public async ValueTask<IActionResult> ConfirmDisallowAsync([FromBody] ConfirmDisallowLinkedAccountRequest request)
-    {
-        var result = await sender.Send(new ConfirmDisallowLinkedAccountCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);

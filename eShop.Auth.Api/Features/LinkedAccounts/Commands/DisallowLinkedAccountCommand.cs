@@ -8,13 +8,11 @@ public record DisallowLinkedAccountCommand(DisallowLinkedAccountRequest Request)
 public class DisallowLinkedAccountCommandHandler(
     IUserManager userManager,
     IOAuthProviderManager providerManager,
-    ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<DisallowLinkedAccountCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<DisallowLinkedAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(DisallowLinkedAccountCommand request, CancellationToken cancellationToken)
     {
@@ -24,26 +22,12 @@ public class DisallowLinkedAccountCommandHandler(
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with ID {request.Request.Provider}.");
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Disallow,
-            CodeResource.LinkedAccount, cancellationToken);
-
-        var message = new DisallowLinkedAccountMessage()
-        {
-            Credentials = new()
-            {
-                { "To", user!.Email },
-                { "Subject", $"Disallow {provider.Name} linked account" }
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "Provider", provider.Name },
-                { "UserName", user.UserName }
-            }
-        };
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.LinkedAccount, CodeType.Disallow, cancellationToken);
         
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+        if(!verificationResult.Succeeded) return verificationResult;
 
-        return Result.Success();
+        var result = await providerManager.DisallowAsync(user, provider, cancellationToken);
+        return result;
     }
 }

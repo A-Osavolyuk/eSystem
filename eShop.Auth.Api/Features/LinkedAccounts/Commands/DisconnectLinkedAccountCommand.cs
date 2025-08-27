@@ -8,13 +8,11 @@ public record DisconnectLinkedAccountCommand(DisconnectLinkedAccountRequest Requ
 public class DisconnectLinkedAccountCommandHandler(
     IUserManager userManager,
     IOAuthProviderManager providerManager,
-    ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
     {
@@ -24,26 +22,12 @@ public class DisconnectLinkedAccountCommandHandler(
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with ID {request.Request.Provider}.");
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Disconnect,
-            CodeResource.LinkedAccount, cancellationToken);
-
-        var message = new DisconnectLinkedAccountMessage()
-        {
-            Credentials = new()
-            {
-                { "To", user!.Email },
-                { "Subject", $"Disconnect {provider.Name} linked account" }
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "Provider", provider.Name },
-                { "UserName", user.UserName }
-            }
-        };
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.LinkedAccount, CodeType.Disconnect, cancellationToken);
         
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+        if(!verificationResult.Succeeded) return verificationResult;
 
-        return Result.Success();
+        var result = await providerManager.DisconnectAsync(user, provider, cancellationToken);
+        return result;
     }
 }

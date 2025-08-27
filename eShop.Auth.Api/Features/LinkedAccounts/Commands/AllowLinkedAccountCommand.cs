@@ -8,13 +8,11 @@ public record AllowLinkedAccountCommand(AllowLinkedAccountRequest Request) : IRe
 public class AllowLinkedAccountCommandHandler(
     IUserManager userManager,
     IOAuthProviderManager providerManager,
-    ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<AllowLinkedAccountCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<AllowLinkedAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(AllowLinkedAccountCommand request, CancellationToken cancellationToken)
     {
@@ -24,26 +22,12 @@ public class AllowLinkedAccountCommandHandler(
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider {request.Request.Provider}.");
 
-        var code = await codeManager.GenerateAsync(user, SenderType.Email, CodeType.Allow,
-            CodeResource.LinkedAccount, cancellationToken);
-
-        var message = new AllowLinkedAccountMessage()
-        {
-            Credentials = new()
-            {
-                { "To", user!.Email },
-                { "Subject", $"Allow {provider.Name} linked account" }
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "Provider", provider.Name },
-                { "UserName", user.UserName }
-            }
-        };
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.LinkedAccount, CodeType.Allow, cancellationToken);
         
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+        if(!verificationResult.Succeeded) return verificationResult;
 
-        return Result.Success();
+        var result = await providerManager.AllowAsync(user, provider, cancellationToken);
+        return result;
     }
 }
