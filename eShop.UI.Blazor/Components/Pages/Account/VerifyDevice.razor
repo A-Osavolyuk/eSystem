@@ -5,6 +5,7 @@
 @attribute [Authorize]
 
 @inject IDeviceService DeviceService
+@inject ISecurityService SecurityService
 
 <Title Text="Verify device"/>
 
@@ -41,7 +42,7 @@
                                             Color="Color.Primary"
                                             Variant="Variant.Filled"
                                             ButtonType="ButtonType.Button"
-                                            OnClick="@(async () => await OnSendCodeAsync())">
+                                            OnClick="@(async () => await OnSendAsync())">
                                             Continue
                                         </MudButton>
                                     </MudStack>
@@ -84,7 +85,7 @@
                                                 Color="Color.Primary"
                                                 FullWidth
                                                 Disabled="@(Model.Code.Length <= 5)"
-                                                OnClick="@(async () => await OnVerifyCodeAsync())">
+                                                OnClick="@(async () => await OnVerifyAsync())">
                                                 Submit
                                             </MudLoadingButton>
                                         </MudStack>
@@ -108,45 +109,98 @@
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
-    private async Task OnSendCodeAsync()
+protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var request = new VerifyDeviceRequest()
+        if (firstRender)
         {
-            DeviceId = DeviceId,
-            UserId = UserId
+            var result = await DeviceService.GetAsync(DeviceId);
+
+            if (result.Success)
+            {
+                Model.Device = result.Get<UserDeviceDto>()!;
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task SendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserId,
+            Type = CodeType.Verify,
+            Resource = CodeResource.Device,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "OS", Model.Device.OS! },
+                { "Device", Model.Device.Device! },
+                { "IpAddress", Model.Device.IpAddress! },
+                { "Browser", Model.Device.Browser! },
+            }
         };
 
-        var result = await DeviceService.VerifyAsync(request);
+        var result = await SecurityService.SendCodeAsync(request);
+        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+    }
 
+    private async Task OnSendAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserId,
+            Type = CodeType.Verify,
+            Resource = CodeResource.Device,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "OS", Model.Device.OS! },
+                { "Device", Model.Device.Device! },
+                { "IpAddress", Model.Device.IpAddress! },
+                { "Browser", Model.Device.Browser! },
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
         if (result.Success)
         {
             var index = stepper!.GetActiveIndex();
             await stepper!.CompleteStep(index);
         }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
-    private async Task OnVerifyCodeAsync()
+    private async Task OnVerifyAsync()
     {
-        var request = new ConfirmVerifyDeviceRequest()
+        var request = new VerifyCodeRequest()
         {
-            DeviceId = DeviceId,
             UserId = UserId,
+            Type = CodeType.Block,
+            Resource = CodeResource.Device,
+            Sender = SenderType.Email,
             Code = Model.Code
         };
 
-        var result = await DeviceService.ConfirmVerifyAsync(request);
-        
-        if (result.Success)
+        var result = await SecurityService.VerifyCodeAsync(request);
+
+        if (result.Success) await VerifyAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new VerifyDeviceRequest()
         {
-            await RouteManager.NavigateAsync("/account/security");
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
+            DeviceId = DeviceId,
+            UserId = UserId,
+        };
+
+        var result = await DeviceService.VerifyAsync(request);
+
+        if (result.Success) await RouteManager.NavigateAsync("/account/security");
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 }

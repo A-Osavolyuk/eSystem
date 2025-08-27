@@ -8,13 +8,11 @@ public record UnblockDeviceCommand(UnblockDeviceRequest Request) : IRequest<Resu
 public class UnblockDeviceCommandHandler(
     IUserManager userManager,
     IDeviceManager deviceManager,
-    ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<UnblockDeviceCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<UnblockDeviceCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(UnblockDeviceCommand request, CancellationToken cancellationToken)
     {
@@ -24,29 +22,12 @@ public class UnblockDeviceCommandHandler(
         var device = await deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
         if (device is null) return Results.NotFound($"Cannot find device with ID {request.Request.DeviceId}.");
         
-        var code = await codeManager.GenerateAsync(user!, SenderType.Email, CodeType.Unblock, 
-            CodeResource.Device, cancellationToken);
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.Device, CodeType.Unblock, cancellationToken);
         
-        var message = new UnblockDeviceMessage()
-        {
-            Credentials = new ()
-            {
-                { "To", user!.Email },
-                { "Subject", "Unblock block" }
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "UserName", user.UserName },
-                { "Ip", device.IpAddress! },
-                { "OS", device.OS! },
-                { "Device", device.Device! },
-                { "Browser", device.Browser! }
-            }
-        };
-
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-
-        return Result.Success();
+        if(!verificationResult.Succeeded) return verificationResult;
+        
+        var result = await deviceManager.UnblockAsync(device, cancellationToken);
+        return result;
     }
 }

@@ -55,20 +55,6 @@ public class DeviceController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Confirm device block")]
-    [EndpointDescription("Confirm device block")]
-    [ProducesResponseType(200)]
-    [HttpPost("confirm-block")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmDeviceBlockAsync([FromBody] ConfirmBlockDeviceRequest request)
-    {
-        var result = await sender.Send(new ConfirmBlockDeviceCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Unblock device")]
     [EndpointDescription("Unblock device")]
     [ProducesResponseType(200)]
@@ -83,20 +69,6 @@ public class DeviceController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Confirm device unblock")]
-    [EndpointDescription("Confirm device unblock")]
-    [ProducesResponseType(200)]
-    [HttpPost("confirm-unblock")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmDeviceUnblockAsync([FromBody] ConfirmUnblockDeviceRequest request)
-    {
-        var result = await sender.Send(new ConfirmUnblockDeviceCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Verify device")]
     [EndpointDescription("Verify device")]
     [ProducesResponseType(200)]
@@ -105,20 +77,6 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyDeviceAsync([FromBody] VerifyDeviceRequest request)
     {
         var result = await sender.Send(new VerifyDeviceCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Confirm device verification")]
-    [EndpointDescription("Confirm device verification")]
-    [ProducesResponseType(200)]
-    [HttpPost("confirm-verification")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> ConfirmDeviceVerificationAsync([FromBody] ConfirmVerifyDeviceRequest request)
-    {
-        var result = await sender.Send(new ConfirmVerifyDeviceCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
