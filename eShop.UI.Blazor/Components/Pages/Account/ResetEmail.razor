@@ -160,7 +160,11 @@
 
         if (resetEmailForm.IsValid)
         {
-            var request = new CheckEmailRequest() { Email = ResetEmailModel.NewEmail };
+            var request = new CheckEmailRequest()
+            {
+                UserId = userId,
+                Email = ResetEmailModel.NewEmail
+            };
 
             var result = await SecurityService.CheckEmailAsync(request);
 

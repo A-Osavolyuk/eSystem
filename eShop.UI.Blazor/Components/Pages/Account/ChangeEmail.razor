@@ -210,7 +210,11 @@
 
         if (changeEmailForm.IsValid)
         {
-            var request = new CheckEmailRequest() { Email = ChangeEmailModel.NewEmail };
+            var request = new CheckEmailRequest()
+            {
+                UserId = userId,
+                Email = ChangeEmailModel.NewEmail
+            };
 
             var result = await SecurityService.CheckEmailAsync(request);
 
