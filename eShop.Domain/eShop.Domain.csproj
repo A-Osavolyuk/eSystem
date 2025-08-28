@@ -14,9 +14,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.8" />
-    <PackageReference Include="MongoDB.Bson" Version="3.4.2" />
+    <PackageReference Include="MongoDB.Bson" Version="3.4.3" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.8" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
   </ItemGroup>
 
   <ItemGroup>

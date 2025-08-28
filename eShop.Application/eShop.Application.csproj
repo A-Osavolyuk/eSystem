@@ -33,7 +33,7 @@
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.8" />
         <PackageReference Include="Microsoft.OpenApi" Version="1.6.24" />
         <PackageReference Include="StackExchange.Redis.Extensions" Version="1.0.1"/>
-        <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+        <PackageReference Include="StackExchange.Redis" Version="2.9.11" />
     </ItemGroup>
 
     <ItemGroup>

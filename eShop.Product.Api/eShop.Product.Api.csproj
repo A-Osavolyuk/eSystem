@@ -9,8 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.4.0" />
-		<PackageReference Include="Aspire.StackExchange.Redis" Version="9.4.0" />
+		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.4.1" />
+		<PackageReference Include="Aspire.StackExchange.Redis" Version="9.4.1" />
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
 			<PrivateAssets>all</PrivateAssets>
@@ -27,7 +27,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Scalar.AspNetCore" Version="2.6.9" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.7.2" />
 	</ItemGroup>
 
 	<ItemGroup>
