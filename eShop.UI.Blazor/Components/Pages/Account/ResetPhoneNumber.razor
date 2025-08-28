@@ -161,12 +161,19 @@
         {
             var request = new CheckPhoneNumberRequest()
             {
-                PhoneNumber = ResetPhoneNumberModel.NewPhoneNumber
+                PhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
+                UserId = userId
             };
 
             var result = await SecurityService.CheckPhoneNumberAsync(request);
 
-            if (result.Success) await SendCodeAsync();
+            if (result.Success)
+            {
+                var response = result.Get<CheckPhoneNumberResponse>()!;
+                
+                if(response.IsTaken) await SendCodeAsync();
+                else Snackbar.Add("This phone number is already taken.", Severity.Error);
+            }
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }

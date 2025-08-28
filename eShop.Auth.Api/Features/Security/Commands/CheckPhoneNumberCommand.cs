@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -13,12 +14,14 @@ public class CheckPhoneNumberCommandHandler(
 
     public async Task<Result> Handle(CheckPhoneNumberCommand request, CancellationToken cancellationToken)
     {
-        if (identityOptions.Account.RequireUniquePhoneNumber)
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+
+        var response = new CheckPhoneNumberResponse()
         {
-            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
-            if (isTaken) return Results.BadRequest("This phone number is already taken");
-        }
+            IsTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken)
+        };
         
-        return Result.Success();
+        return Result.Success(response);
     }
 }

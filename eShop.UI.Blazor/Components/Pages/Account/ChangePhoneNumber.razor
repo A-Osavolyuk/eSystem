@@ -283,10 +283,21 @@
 
         if (changePhoneNumberForm.IsValid)
         {
-            var request = new CheckPhoneNumberRequest() { PhoneNumber = ChangePhoneNumberModel.NewPhoneNumber };
+            var request = new CheckPhoneNumberRequest()
+            {
+                UserId = userId,
+                PhoneNumber = ChangePhoneNumberModel.NewPhoneNumber
+            };
+            
             var result = await SecurityService.CheckPhoneNumberAsync(request);
 
-            if (result.Success) await SendCurrentCodeAsync();
+            if (result.Success)
+            {
+                var response = result.Get<CheckPhoneNumberResponse>()!;
+                
+                if(response.IsTaken) await SendCurrentCodeAsync();
+                else Snackbar.Add("This phone number is already taken.", Severity.Error);
+            }
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
