@@ -143,16 +143,16 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-
-    [EndpointSummary("Verify current email on change")]
-    [EndpointDescription("Verify current email on change")]
+    
+    [EndpointSummary("Add email")]
+    [EndpointDescription("Add email")]
     [ProducesResponseType(200)]
-    [HttpPost("email/verify-current")]
+    [HttpPost("email/add")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> VerifyCurrentEmailAsync(
-        [FromBody] VerifyCurrentEmailRequest changeEmailRequest)
+    public async ValueTask<IActionResult> AddEmailAsync(
+        [FromBody] AddEmailRequest changeEmailRequest)
     {
-        var result = await sender.Send(new VerifyCurrentEmailCommand(changeEmailRequest));
+        var result = await sender.Send(new AddEmailCommand(changeEmailRequest));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -319,21 +319,6 @@ public class SecurityController(ISender sender) : ControllerBase
         [FromBody] ChangePhoneNumberRequest request)
     {
         var result = await sender.Send(new ChangePhoneNumberCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Verify current phone number on change")]
-    [EndpointDescription("Verify current phone number on change")]
-    [ProducesResponseType(200)]
-    [HttpPost("phone-number/verify-current")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> VerifyCurrentPhoneNumberAsync(
-        [FromBody] VerifyCurrentPhoneNumberRequest request)
-    {
-        var result = await sender.Send(new VerifyCurrentPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
