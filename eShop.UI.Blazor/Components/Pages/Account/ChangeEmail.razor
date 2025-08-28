@@ -214,7 +214,23 @@
 
             var result = await SecurityService.CheckEmailAsync(request);
 
-            if (result.Success) await SendCurrentEmailCodeAsync();
+            if (result.Success)
+            {
+                var response = result.Get<CheckEmailResponse>()!;
+
+                if (response is { IsTaken: false, HasLinkedAccount: false })
+                {
+                    await SendCurrentEmailCodeAsync();
+                }
+                else if (response.IsTaken)
+                {
+                    Snackbar.Add("This email address is already taken", Severity.Error);
+                }
+                else if (response.HasLinkedAccount)
+                {
+                    Snackbar.Add("First disconnect external accounts linked to your current email address.", Severity.Error);
+                }
+            }
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
