@@ -26,6 +26,9 @@ public sealed class RequestChangeEmailCommandHandler(
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
+        if (user.HasLinkedAccount())
+            return Results.BadRequest("Cannot change email, first disconnect linked accounts.");
+
         var currentEmailVerificationResult = await verificationManager.VerifyAsync(user,
             CodeResource.Email, CodeType.Current, cancellationToken);
 
