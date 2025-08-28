@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -13,12 +14,21 @@ public class CheckEmailCommandHandler(
 
     public async Task<Result> Handle(CheckEmailCommand request, CancellationToken cancellationToken)
     {
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+
+        var response = new CheckEmailResponse()
+        {
+            HasLinkedAccount = user.HasLinkedAccount(),
+        };
+        
         if (identityOptions.Account.RequireUniqueEmail)
         {
-            var isTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
-            if (isTaken) return Results.BadRequest("This email address is already taken");
+            response.IsTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
+            return Result.Success(response);
         }
-        
-        return Result.Success();
+
+        response.IsTaken = false;
+        return Result.Success(response);
     }
 }
