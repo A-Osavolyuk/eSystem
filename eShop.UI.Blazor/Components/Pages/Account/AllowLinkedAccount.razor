@@ -91,6 +91,12 @@
                                         </MudStack>
                                     </MudForm>
                                 </MudPaper>
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudText Align="Align.Center">Didn't received an email?
+                                        <strong @onclick="async () => await SendCodeAsync()"
+                                                class="cursor-pointer">Resend</strong>
+                                    </MudText>
+                                </MudPaper>
                             </MudStack>
                         </MudItem>
                     </MudGrid>
