@@ -42,10 +42,6 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> VerifyCurrentEmailAsync(VerifyCurrentEmailRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/verify-new", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = true, Type = DataType.Text });
-
     public async ValueTask<Response> VerifyRecoveryEmailAsync(VerifyRecoveryEmailRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/recovery-email/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
@@ -69,10 +65,6 @@ public class SecurityService(
     public async ValueTask<Response> RefreshTokenAsync(RefreshTokenRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/refresh-token", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
-
-    public async ValueTask<Response> VerifyCurrentPhoneNumberAsync(VerifyCurrentPhoneNumberRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/verify-new", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<Response> UnlockAccountAsync(UnlockAccountRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/account/unlock", Method = HttpMethod.Post, Data = request },

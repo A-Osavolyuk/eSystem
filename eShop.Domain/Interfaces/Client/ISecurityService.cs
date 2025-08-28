@@ -23,10 +23,8 @@ public interface ISecurityService
     public ValueTask<Response> SendCodeAsync(SendCodeRequest request);
     public ValueTask<Response> VerifyCodeAsync(VerifyCodeRequest request);
     public ValueTask<Response> VerifyEmailAsync(VerifyEmailRequest request);
-    public ValueTask<Response> VerifyCurrentEmailAsync(VerifyCurrentEmailRequest request);
     public ValueTask<Response> VerifyRecoveryEmailAsync(VerifyRecoveryEmailRequest request);
     public ValueTask<Response> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request);
-    public ValueTask<Response> VerifyCurrentPhoneNumberAsync(VerifyCurrentPhoneNumberRequest request);
     public ValueTask<Response> UnlockAccountAsync(UnlockAccountRequest request);
     public ValueTask<Response> CheckEmailAsync(CheckEmailRequest request);
     public ValueTask<Response> CheckPhoneNumberAsync(CheckPhoneNumberRequest request);
