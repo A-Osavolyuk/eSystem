@@ -31,18 +31,26 @@ public class SubscribeProviderCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        
+
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         
-        if (provider.Name == ProviderTypes.Email && identityOptions.SignIn.RequireConfirmedEmail)
+        if (provider.Name == ProviderTypes.Email)
         {
-            if (!user.EmailConfirmed) return Results.BadRequest("You need to confirm your email before.");
+            if (identityOptions.SignIn.RequireConfirmedEmail && !user.EmailConfirmed)
+                return Results.BadRequest("You need to confirm your email first.");
+
+            if (!user.HasEmail())
+                Results.BadRequest("You need to provide a verified email first.");
         }
-        
-        if (provider.Name == ProviderTypes.Sms && identityOptions.SignIn.RequireConfirmedPhoneNumber)
+
+        if (provider.Name == ProviderTypes.Sms)
         {
-            if (!user.PhoneNumberConfirmed) return Results.BadRequest("You need to confirm your phone number before.");
+            if (identityOptions.SignIn.RequireConfirmedPhoneNumber && !user.PhoneNumberConfirmed) 
+                return Results.BadRequest("You need to confirm your phone number first.");
+            
+            if (!user.HasPhoneNumber())
+                Results.BadRequest("You need to provide a verified phone number first.");
         }
 
         if (provider.Name == ProviderTypes.Authenticator)
@@ -52,12 +60,12 @@ public class SubscribeProviderCommandHandler(
 
             var unprotectedSecret = protector.Unprotect(secret.Secret);
             var qrCode = QrCodeGenerator.Generate(user.Email, unprotectedSecret, QrCodeIssuer);
-            
+
             var response = new SubscribeProviderResponse() { QrCode = qrCode };
-            
+
             return Result.Success(response);
         }
-        
+
         var code = await loginCodeManager.GenerateAsync(user, provider, cancellationToken);
 
         var sender = provider.Name switch
@@ -71,11 +79,11 @@ public class SubscribeProviderCommandHandler(
         {
             ProviderTypes.Email => new VerifyProviderEmailMessage()
             {
-                Credentials = new ()
+                Credentials = new()
                 {
                     { "To", user!.Email },
                     { "Subject", "Two-factor authentication" }
-                }, 
+                },
                 Payload = new()
                 {
                     { "UserName", user.UserName },
@@ -84,10 +92,10 @@ public class SubscribeProviderCommandHandler(
             },
             ProviderTypes.Sms => new VerifyProviderSmsMessage()
             {
-                Credentials = new ()
+                Credentials = new()
                 {
                     { "PhoneNumber", user.PhoneNumber! },
-                }, 
+                },
                 Payload = new()
                 {
                     { "Code", code },
@@ -95,7 +103,7 @@ public class SubscribeProviderCommandHandler(
             },
             _ => throw new NotSupportedException($"Provider type {provider.Name} is not supported.")
         };
-        
+
         await messageService.SendMessageAsync(sender, message, cancellationToken);
 
         return Result.Success();
