@@ -373,7 +373,6 @@ public sealed class UserManager(
     {
         user.PhoneNumber = phoneNumber;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
@@ -385,9 +384,6 @@ public sealed class UserManager(
     {
         user.Email = email;
         user.NormalizedEmail = email.ToUpperInvariant();
-        user.EmailChangeDate = DateTimeOffset.UtcNow;
-        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
-        user.EmailConfirmed = true;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
@@ -402,7 +398,6 @@ public sealed class UserManager(
         user.RecoveryEmail = recoveryEmail;
         user.NormalizedRecoveryEmail = recoveryEmail.ToUpperInvariant();
         user.UpdateDate = DateTimeOffset.UtcNow;
-        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
