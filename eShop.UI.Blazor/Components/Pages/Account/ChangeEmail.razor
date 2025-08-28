@@ -251,9 +251,9 @@
             {
                 UserId = userId,
                 Resource = CodeResource.Email,
-                Type = CodeType.Current,
+                Type = CodeType.New,
                 Sender = SenderType.Email,
-                Code = VerifyCurrentEmailModel.Code
+                Code = ConfirmChangeEmailModel.Code
             };
 
             var result = await SecurityService.VerifyCodeAsync(request);
@@ -267,7 +267,7 @@
     {
         var request = new ChangeEmailRequest()
         {
-            NewEmail = ConfirmChangeEmailModel.NewEmail,
+            NewEmail = ChangeEmailModel.NewEmail,
             UserId = userId
         };
 
@@ -276,7 +276,7 @@
         if (result.Success)
         {
             Snackbar.Add("Email address was successfully changed", Severity.Success);
-            await RouteManager.NavigateAsync("/account/login");
+            await RouteManager.NavigateAsync("/account/profile");
         }
         else
         {
@@ -291,7 +291,11 @@
             UserId = userId,
             Resource = CodeResource.Email,
             Type = CodeType.Current,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewEmail", ChangeEmailModel.NewEmail }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -306,7 +310,11 @@
             UserId = userId,
             Resource = CodeResource.Email,
             Type = CodeType.New,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewEmail", ChangeEmailModel.NewEmail }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -321,7 +329,11 @@
             UserId = userId,
             Resource = CodeResource.Email,
             Type = CodeType.Current,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewEmail", ChangeEmailModel.NewEmail }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -335,7 +347,11 @@
             UserId = userId,
             Resource = CodeResource.Email,
             Type = CodeType.New,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewEmail", ChangeEmailModel.NewEmail }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);
