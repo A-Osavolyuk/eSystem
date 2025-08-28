@@ -246,7 +246,11 @@
             UserId = userId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.New,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewPhoneNumber", ChangePhoneNumberModel.NewPhoneNumber }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -260,7 +264,11 @@
             UserId = userId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.New,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewPhoneNumber", ChangePhoneNumberModel.NewPhoneNumber }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
