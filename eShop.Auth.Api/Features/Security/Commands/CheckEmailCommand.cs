@@ -6,11 +6,9 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 public record CheckEmailCommand(CheckEmailRequest Request) : IRequest<Result>;
 
 public class CheckEmailCommandHandler(
-    IUserManager userManager,
-    IdentityOptions identityOptions) : IRequestHandler<CheckEmailCommand, Result>
+    IUserManager userManager) : IRequestHandler<CheckEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(CheckEmailCommand request, CancellationToken cancellationToken)
     {
@@ -20,15 +18,9 @@ public class CheckEmailCommandHandler(
         var response = new CheckEmailResponse()
         {
             HasLinkedAccount = user.HasLinkedAccount(),
+            IsTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken)
         };
         
-        if (identityOptions.Account.RequireUniqueEmail)
-        {
-            response.IsTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
-            return Result.Success(response);
-        }
-
-        response.IsTaken = false;
         return Result.Success(response);
     }
 }
