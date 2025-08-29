@@ -46,7 +46,10 @@
                     OnRemove="@(async (value) => await OnPasskeyRemoveAsync(value))"/>
                 <RecoverySection
                     Model="SecurityModel"
-                    OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
+                    OnGenerateCodes="@OnGenerateRecoveryCodesAsync"
+                    OnAdd="@OnAddRecoveryEmailAsync"
+                    OnChange="@OnChangeRecoveryEmailAsync"
+                    OnRemove="@OnRemoveRecoveryEmailAsync"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -264,6 +267,24 @@
             await LoadAsync();
             StateHasChanged();
         }
+    }
+
+    private async Task OnRemoveRecoveryEmailAsync()
+    {
+        var url = $"/account/recovery-email/remove?recoveryEmail={SecurityModel!.RecoveryEmail}";
+        await RouteManager.NavigateAsync(url);
+    }
+    
+    private async Task OnChangeRecoveryEmailAsync()
+    {
+        var url = $"/account/recovery-email/change?recoveryEmail={SecurityModel!.RecoveryEmail}";
+        await RouteManager.NavigateAsync(url);
+    }
+    
+    private async Task OnAddRecoveryEmailAsync()
+    {
+        var url = "/account/recovery-email/add";
+        await RouteManager.NavigateAsync(url);
     }
     
     private async Task OnPasskeyRemoveAsync(Guid id)
