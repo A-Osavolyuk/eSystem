@@ -37,10 +37,8 @@ public sealed class LoginCommandHandler(
             user = await userManager.FindByEmailAsync(request.Request.Login, cancellationToken);
         }
 
-        if (user is null)
-        {
-            return Results.NotFound($"Cannot find user with login {request.Request.Login}.");
-        }
+        if (user is null) return Results.NotFound($"Cannot find user with login {request.Request.Login}.");
+        if (!user.HasPassword()) return Results.BadRequest("Cannot log in, you don't have a password.");
 
         var userAgent = RequestUtils.GetUserAgent(request.Context);
         var ipAddress = RequestUtils.GetIpV4(request.Context);
@@ -73,15 +71,11 @@ public sealed class LoginCommandHandler(
         if (!emailResult.Succeeded) return emailResult;
 
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
+        if (lockoutState.Enabled) return await LockedOutAsync(user, lockoutState, device, cancellationToken);
 
-        if (lockoutState.Enabled)
-        {
-            return await LockedOutAsync(user, lockoutState, device, cancellationToken);
-        }
-
-        var passwordResult = await CheckPasswordAsync(user, 
+        var passwordResult = await CheckPasswordAsync(user,
             request.Request.Password, device, cancellationToken);
-        
+
         if (!passwordResult.Succeeded) return passwordResult;
 
         if (user.FailedLoginAttempts > 0)
@@ -96,10 +90,7 @@ public sealed class LoginCommandHandler(
             if (!deviceResult.Succeeded) return deviceResult;
         }
 
-        if (user.HasTwoFactor())
-        {
-            return await CheckTwoFactorStateAsync(user, lockoutState, device, cancellationToken);
-        }
+        if (user.HasTwoFactor()) return await CheckTwoFactorStateAsync(user, lockoutState, device, cancellationToken);
 
         var tokenResult = await GenerateTokensAsync(user, lockoutState, device, cancellationToken);
         return tokenResult;
@@ -113,10 +104,7 @@ public sealed class LoginCommandHandler(
             var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
-            if (!loginSessionResult.Succeeded)
-            {
-                return loginSessionResult;
-            }
+            if (!loginSessionResult.Succeeded) return loginSessionResult;
 
             var response = new LoginResponse()
             {
@@ -135,10 +123,7 @@ public sealed class LoginCommandHandler(
             var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
-            if (!loginSessionResult.Succeeded)
-            {
-                return loginSessionResult;
-            }
+            if (!loginSessionResult.Succeeded) return loginSessionResult;
 
             var response = new LoginResponse()
             {
@@ -161,10 +146,7 @@ public sealed class LoginCommandHandler(
         var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.Locked, LoginType.Password, cancellationToken: cancellationToken);
 
-        if (!loginSessionResult.Succeeded)
-        {
-            return loginSessionResult;
-        }
+        if (!loginSessionResult.Succeeded) return loginSessionResult;
 
         var response = new LoginResponse()
         {
@@ -184,10 +166,7 @@ public sealed class LoginCommandHandler(
             var result = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
-            if (!result.Succeeded)
-            {
-                return result;
-            }
+            if (!result.Succeeded) return result;
 
             var response = new LoginResponse()
             {
@@ -216,38 +195,25 @@ public sealed class LoginCommandHandler(
 
         var updateResult = await userManager.UpdateAsync(user, cancellationToken);
 
-        if (!updateResult.Succeeded)
-        {
-            return updateResult;
-        }
+        if (!updateResult.Succeeded) return updateResult;
 
         if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
-        {
             return await MaxFailedLoginAttemptsAsync(user, device, cancellationToken);
-        }
 
         var reason = await reasonManager.FindByTypeAsync(LockoutType.TooManyFailedLoginAttempts, cancellationToken);
 
         if (reason is null)
-        {
             return Results.NotFound($"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
-        }
 
         var lockoutResult = await lockoutManager.LockoutAsync(user, reason,
             permanent: true, cancellationToken: cancellationToken);
 
-        if (!lockoutResult.Succeeded)
-        {
-            return lockoutResult;
-        }
+        if (!lockoutResult.Succeeded) return lockoutResult;
 
         var result = await loginSessionManager.CreateAsync(user, device, LoginStatus.Locked,
             LoginType.Password, cancellationToken: cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
+        if (!result.Succeeded) return result;
 
         return Results.BadRequest("Account is locked out due to too many failed login attempts",
             new LoginResponse()
@@ -266,10 +232,7 @@ public sealed class LoginCommandHandler(
         var result = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
+        if (!result.Succeeded) return result;
 
         var response = new LoginResponse()
         {
@@ -290,10 +253,7 @@ public sealed class LoginCommandHandler(
             var result = await loginSessionManager.CreateAsync(user, device,
                 LoginStatus.Failed, LoginType.Password, cancellationToken: cancellationToken);
 
-            if (!result.Succeeded)
-            {
-                return result;
-            }
+            if (!result.Succeeded) return result;
 
             return Results.BadRequest(
                 """
@@ -319,10 +279,7 @@ public sealed class LoginCommandHandler(
         var result = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.PendingMfa, LoginType.Password, cancellationToken: cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
+        if (!result.Succeeded) return result;
 
         return Result.Success(new LoginResponse()
         {
@@ -350,10 +307,7 @@ public sealed class LoginCommandHandler(
         var result = await loginSessionManager.CreateAsync(user, device,
             LoginStatus.Success, LoginType.Password, cancellationToken: cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return result;
-        }
+        if (!result.Succeeded) return result;
 
         return Result.Success(response, "Successfully logged in.");
     }
