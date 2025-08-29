@@ -6,7 +6,7 @@
 
 @inject ISecurityService SecurityService
 @inject ResetPhoneNumberValidator ResetPhoneNumberValidator
-@inject ConfirmResetPhoneNumberValidator ConfirmResetPhoneNumberValidator
+@inject CodeModelValidator Validator
 
 <Title Text="Reset phone number"></Title>
 
@@ -79,7 +79,7 @@
                                         <MudForm
                                             @ref="confirmResetPhoneNumberForm"
                                             Model="ConfirmResetPhoneNumberModel"
-                                            Validation="ConfirmResetPhoneNumberValidator.ValidateValue">
+                                            Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
                                                     Enter code from the SMS we sent you
@@ -124,7 +124,7 @@
 
 @code {
     [SupplyParameterFromForm] private ResetPhoneNumberModel ResetPhoneNumberModel { get; set; } = new();
-    [SupplyParameterFromForm] private ConfirmResetPhoneNumberModel ConfirmResetPhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel ConfirmResetPhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm resetPhoneNumberForm = new();
