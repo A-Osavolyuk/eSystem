@@ -37,20 +37,20 @@
                     OnUnblock="@(async (value) => await OnUnblockDeviceAsync(value))"/>
                 <PasswordSection
                     Model="SecurityModel"
-                    OnAdd="@OnAddPasswordAsync"
-                    OnChange="@OnChangePasswordAsync"
-                    OnReset="@OnResetPasswordAsync"/>
+                    OnAdd="@(() => OnAddPasswordAsync())"
+                    OnChange="@(() => OnChangePasswordAsync())"
+                    OnReset="@(() => OnResetPasswordAsync())"/>
                 <PasskeysSection
                     Model="SecurityModel"
-                    OnCreate="@OnCreatePasskeyAsync"
+                    OnCreate="@(() => OnCreatePasskeyAsync())"
                     OnRemove="@(async (value) => await OnPasskeyRemoveAsync(value))"/>
                 <RecoverySection
                     Model="SecurityModel"
-                    OnGenerateCodes="@OnGenerateRecoveryCodesAsync"
-                    OnAdd="@OnAddRecoveryEmailAsync"
-                    OnChange="@OnChangeRecoveryEmailAsync"
-                    OnRemove="@OnRemoveRecoveryEmailAsync"
-                    OnVerify="@OnVerifyRecoveryEmailAsync"/>
+                    OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"
+                    OnAdd="@(() => OnAddRecoveryEmailAsync())"
+                    OnChange="@(() => OnChangeRecoveryEmailAsync())"
+                    OnRemove="@(() => OnRemoveRecoveryEmailAsync())"
+                    OnVerify="@(() => OnVerifyRecoveryEmailAsync())"/>
             </MudStack>
         </MudItem>
     </MudGrid>

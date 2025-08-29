@@ -40,18 +40,18 @@
                         <MudItem xs="12">
                             <AccountDataSection
                                 Model="UserModel"
-                                OnChangeUsername="@OnUsernameChangeAsync"
-                                OnRemovePhoneNumber="@OnRemovePhoneNumberAsync"
-                                OnAddPhoneNumber="@OnAddPhoneNumberAsync"
-                                OnVerifyPhoneNumber="@OnVerifyPhoneNumberAsync"
-                                OnChangePhoneNumber="OnChangePhoneNumberAsync"/>
+                                OnChangeUsername="@(() => OnUsernameChangeAsync())"
+                                OnRemovePhoneNumber="@(() => OnRemovePhoneNumberAsync())"
+                                OnAddPhoneNumber="@(() => OnAddPhoneNumberAsync())"
+                                OnVerifyPhoneNumber="@(() => OnVerifyPhoneNumberAsync())"
+                                OnChangePhoneNumber="@(() => OnChangePhoneNumberAsync())"/>
                         </MudItem>
                         <MudItem xs="12">
                             <PersonalDataSection
                                 Model="UserPersonalModel"
-                                OnAdd="@OnAddPersonalDataAsync"
-                                OnChange="@OnChangePersonalDataAsync"
-                                OnRemove="@OnRemovePersonalDataAsync"/>
+                                OnAdd="@(() => OnAddPersonalDataAsync())"
+                                OnChange="@(() => OnChangePersonalDataAsync())"
+                                OnRemove="@(() => OnRemovePersonalDataAsync())"/>
                         </MudItem>
                     </MudGrid>
                 </MudItem>
