@@ -3,7 +3,7 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
-@inject RecoverAccountValidator RecoverAccountValidator
+@inject CodeModelValidator Validator
 
 <Title Text="Account recovery"></Title>
 
@@ -17,7 +17,7 @@
                 <MudForm
                     @ref="form"
                     Model="Model"
-                    Validation="RecoverAccountValidator.ValidateValue">
+                    Validation="Validator.ValidateValue">
                     <MudStack Spacing="2">
                         <MudText Align="Align.Center">
                             Your account was locked out due to reason: 'Too many failed login attempts'.
@@ -60,7 +60,7 @@
     [SupplyParameterFromQuery(Name = "id")]
     private Guid UserId { get; set; }
 
-    [SupplyParameterFromForm] private RecoverAccountModel Model { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
 

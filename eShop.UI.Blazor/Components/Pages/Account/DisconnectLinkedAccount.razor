@@ -6,6 +6,7 @@
 
 @inject IOAuthService OAuthService
 @inject ISecurityService SecurityService
+@inject CodeModelValidator Validator
 
 <Title Text="@($"Disconnect {Provider} linked account")"/>
 
@@ -64,6 +65,7 @@
                                 </MudPaper>
                                 <MudPaper Outlined Class="pa-3">
                                     <MudForm
+                                        Validation="Validator.ValidateValue"
                                         @ref="form"
                                         Model="Model">
                                         <MudStack Spacing="4" Justify="Justify.Center">
@@ -110,7 +112,7 @@
     [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
     [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
     [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
-    [SupplyParameterFromForm] public ConfirmDisconnectLinkedAccountModel Model { get; set; } = new();
+    [SupplyParameterFromForm] public CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();

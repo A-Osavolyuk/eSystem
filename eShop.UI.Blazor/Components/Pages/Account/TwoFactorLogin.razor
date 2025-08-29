@@ -283,7 +283,7 @@
                 }
                 else
                 {
-                    await AuthenticationManager.LogInAsync(response!.AccessToken, response.RefreshToken);
+                    await AuthenticationManager.LogInAsync(response!.AccessToken!, response.RefreshToken!);
                     Snackbar.Add(result.Message, Severity.Success);
                     await RouteManager.NavigateAsync("/products");
                 }

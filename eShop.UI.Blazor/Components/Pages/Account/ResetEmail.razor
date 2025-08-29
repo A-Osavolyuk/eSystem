@@ -6,7 +6,7 @@
 
 @inject ISecurityService SecurityService
 @inject ResetEmailValidator ResetEmailValidator
-@inject ConfirmChangeEmailValidator ConfirmChangeEmailValidator
+@inject CodeModelValidator Validator
 
 <Title Text="Reset email"></Title>
 
@@ -79,7 +79,7 @@
                                         <MudForm
                                             @ref="confirmResetEmailForm"
                                             Model="ConfirmResetEmailModel"
-                                            Validation="ConfirmChangeEmailValidator.ValidateValue">
+                                            Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
                                                     Enter code from the letter we sent you

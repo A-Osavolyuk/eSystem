@@ -5,6 +5,7 @@
 @attribute [Authorize]
 
 @inject ISecurityService SecurityService
+@inject CodeModelValidator Validator
 
 <Title Text="Phone number remove"></Title>
 
@@ -61,6 +62,7 @@
                                     </MudPaper>
                                     <MudPaper Outlined="true" Class="pa-3">
                                         <MudForm
+                                            Validation="Validator.ValidateValue"
                                             @ref="form"
                                             Model="Model">
                                             <MudStack Spacing="2">
@@ -107,7 +109,7 @@
 @code {
 
     [SupplyParameterFromQuery(Name = "phoneNumber")] public string PhoneNumber { get; set; } = string.Empty;
-    [SupplyParameterFromForm] private RemovePhoneNumberModel Model { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();

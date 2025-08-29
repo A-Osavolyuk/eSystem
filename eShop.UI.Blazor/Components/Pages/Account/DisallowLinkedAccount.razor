@@ -6,6 +6,7 @@
 
 @inject IOAuthService OAuthService
 @inject ISecurityService SecurityService
+@inject CodeModelValidator Validator
 
 <Title Text="@($"Disallow {Provider} linked account")"/>
 
@@ -65,7 +66,8 @@
                                 <MudPaper Outlined Class="pa-3">
                                     <MudForm
                                         @ref="form"
-                                        Model="Model">
+                                        Model="Model"
+                                        Validation="Validator.ValidateValue">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
                                                 We have sent an email with code to email: <strong>@Email</strong>
@@ -110,7 +112,7 @@
     [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
     [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
     [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
-    [SupplyParameterFromForm] public ConfirmDisallowLinkedAccountModel Model { get; set; } = new();
+    [SupplyParameterFromForm] public CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();

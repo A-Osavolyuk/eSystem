@@ -5,8 +5,7 @@
 @attribute [Authorize]
 
 @inject ChangeEmailValidator ChangeEmailValidator
-@inject VerifyNewEmailValidator VerifyNewEmailValidator
-@inject ConfirmChangeEmailValidator ConfirmChangeEmailValidator
+@inject CodeModelValidator Validator
 @inject ISecurityService SecurityService
 
 <Title Text="Change email"></Title>
@@ -80,7 +79,7 @@
                                         <MudForm
                                             @ref="verifyNewEmailForm"
                                             Model="VerifyCurrentEmailModel"
-                                            Validation="VerifyNewEmailValidator.ValidateValue">
+                                            Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
                                                     Enter code from letter we sent to your current email address
@@ -140,7 +139,7 @@
                                         <MudForm
                                             @ref="confirmChangeEmailForm"
                                             Model="ConfirmChangeEmailModel"
-                                            Validation="ConfirmChangeEmailValidator.ValidateValue">
+                                            Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
                                                     Enter code from letter we sent you
@@ -185,8 +184,8 @@
 
 @code {
     [SupplyParameterFromForm] private ChangeEmailModel ChangeEmailModel { get; set; } = new();
-    [SupplyParameterFromForm] private VerifyCurrentEmailModel VerifyCurrentEmailModel { get; set; } = new();
-    [SupplyParameterFromForm] private ConfirmChangeEmailModel ConfirmChangeEmailModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel VerifyCurrentEmailModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel ConfirmChangeEmailModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
 

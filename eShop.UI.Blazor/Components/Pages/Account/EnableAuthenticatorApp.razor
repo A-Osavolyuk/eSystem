@@ -7,6 +7,7 @@
 
 @inject IProvidersService ProvidersService
 @inject ITwoFactorService TwoFactorService
+@inject CodeModelValidator Validator
 
 <Title Text="2FA with Authenticator app"/>
 
@@ -112,7 +113,8 @@
                                     <MudPaper Outlined Class="pa-5">
                                         <MudForm
                                             @ref="form"
-                                            Model="VerifyAuthenticatorModel">
+                                            Model="Model"
+                                            Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
                                                 <MudText Align="Align.Center">
                                                     Enter 6-digit TOTP code from your authentication app
@@ -123,7 +125,7 @@
                                                     Margin="Margin.Normal"
                                                     Spacing="2"
                                                     Class="d-flex align-items-center"
-                                                    @bind-Value="VerifyAuthenticatorModel.Code"
+                                                    @bind-Value="Model.Code"
                                                     Variant="Variant.Outlined"/>
 
                                                 <MudLoadingButton
@@ -131,7 +133,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    Disabled="@(VerifyAuthenticatorModel.Code.Length <= 5)"
+                                                    Disabled="@(Model.Code.Length <= 5)"
                                                     OnClick="@(async () => await OnVerifyCodeAsync())">
                                                     Verify
                                                 </MudLoadingButton>
@@ -149,7 +151,7 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromForm] private VerifyAuthenticatorModel VerifyAuthenticatorModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private QrCodeModel QrCodeModel { get; set; } = new();
     private MudStepperExtended stepper = new();
@@ -195,7 +197,7 @@
         {
             UserId = userId,
             Provider = ProviderTypes.Authenticator,
-            Code = VerifyAuthenticatorModel.Code
+            Code = Model.Code
         };
 
         var result = await ProvidersService.VerifyAsync(request);

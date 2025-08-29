@@ -8,7 +8,7 @@
 
 @inject ISecurityService SecurityService
 @inject AddPhoneNumberValidator AddPhoneNumberValidator
-@inject VerifyCodeValidator VerifyCodeValidator
+@inject CodeModelValidator Validator
 
 <Title Text="Add phone number"></Title>
 
@@ -84,7 +84,7 @@
                                         <MudForm
                                             @ref="verifyCodeForm"
                                             Model="VerifyPhoneNumberModel"
-                                            Validation="VerifyCodeValidator.ValidateValue">
+                                            Validation="Validator.ValidateValue">
                                             <MudStack Spacing="1">
                                                 <MudText Align="Align.Center" Typo="Typo.body1"
                                                          Style="width: 55ch; margin: auto">
@@ -132,7 +132,7 @@
 
 @code {
     [SupplyParameterFromForm] private AddPhoneNumberModel AddPhoneNumberModel { get; set; } = new();
-    [SupplyParameterFromForm] private VerifyPhoneNumberModel VerifyPhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel VerifyPhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm addPhoneNumberForm = new();

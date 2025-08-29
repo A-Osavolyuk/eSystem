@@ -6,8 +6,7 @@
 
 @inject ISecurityService SecurityService
 @inject ChangePhoneNumberValidator ChangePhoneNumberValidator
-@inject VerifyNewPhoneNumberValidator VerifyNewPhoneNumberValidator
-@inject ConfirmChangePhoneNumberValidator ConfirmChangePhoneNumberValidator
+@inject CodeModelValidator Validator
 
 <Title Text="Change phone number"></Title>
 
@@ -79,7 +78,7 @@
                                     <MudPaper Outlined="true" Class="pa-5">
                                         <MudForm
                                             @ref="verifyNewPhoneNumberForm"
-                                            Validation="VerifyNewPhoneNumberValidator.ValidateValue"
+                                            Validation="Validator.ValidateValue"
                                             Model="ConfirmChangePhoneNumberModel">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
@@ -143,7 +142,7 @@
                                         <MudForm
                                             @ref="confirmChangePhoneNumberForm"
                                             Model="ConfirmChangePhoneNumberModel"
-                                            Validation="ConfirmChangePhoneNumberValidator.ValidateValue">
+                                            Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
                                                     <MudText Class="mb-2" Align="Align.Center">
                                                         Enter code from SMS we sent you
@@ -191,8 +190,8 @@
 
 @code {
     [SupplyParameterFromForm] private ChangePhoneNumberModel ChangePhoneNumberModel { get; set; } = new();
-    [SupplyParameterFromForm] private VerifyCurrentPhoneNumberModel VerifyCurrentPhoneNumberModel { get; set; } = new();
-    [SupplyParameterFromForm] private ConfirmChangePhoneNumberModel ConfirmChangePhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel VerifyCurrentPhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel ConfirmChangePhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm changePhoneNumberForm = new();
