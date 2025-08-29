@@ -45,6 +45,7 @@ public class UserEntity : Entity
 
     public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
     public bool HasEmail() => !string.IsNullOrEmpty(Email);
+    public bool HasRecoveryEmail() => !string.IsNullOrEmpty(RecoveryEmail);
     public bool HasPhoneNumber() => !string.IsNullOrEmpty(PhoneNumber);
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
     public bool HasTwoFactor() => Providers.Any(x => x.Subscribed);
