@@ -15,7 +15,7 @@
                         Icon="@Icons.Material.Filled.Edit"
                         Color="Color.Primary"
                         Variant="Variant.Filled"
-                        OnClick="@(async () => await OnChange.InvokeAsync())"/>
+                        OnClick="@(async () => await OnChangeUsername.InvokeAsync())"/>
                 </MudTooltip>
             </MudStack>
             <MudStack Row="true" Spacing="1">
@@ -121,7 +121,7 @@
                                 Icon="@Icons.Material.Filled.Delete"
                                 Color="Color.Error"
                                 Variant="Variant.Filled"
-                                OnClick="@(async () => await OnRemove.InvokeAsync())"/>
+                                OnClick="@(async () => await OnRemovePhoneNumber.InvokeAsync())"/>
                         </MudTooltip>
                         <MudTooltip Text="Change phone number">
                             <MudIconButton
@@ -213,6 +213,9 @@
 
 @code {
     [Parameter] public UserModel Model { get; set; } = new();
-    [Parameter] public EventCallback OnChange { get; set; }
-    [Parameter] public EventCallback OnRemove { get; set; }
+    [Parameter] public EventCallback OnChangeUsername { get; set; }
+    [Parameter] public EventCallback OnRemovePhoneNumber { get; set; }
+    [Parameter] public EventCallback OnAddPhoneNumber { get; set; }
+    [Parameter] public EventCallback OnChangePhoneNumber { get; set; }
+    [Parameter] public EventCallback OnVerifyPhoneNumber { get; set; }
 }

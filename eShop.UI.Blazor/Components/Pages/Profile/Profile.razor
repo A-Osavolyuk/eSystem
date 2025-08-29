@@ -40,8 +40,11 @@
                         <MudItem xs="12">
                             <AccountDataSection
                                 Model="UserModel"
-                                OnChange="@OnUsernameChangeAsync"
-                                OnRemove="@OnRemovePhoneNumberAsync"/>
+                                OnChangeUsername="@OnUsernameChangeAsync"
+                                OnRemovePhoneNumber="@OnRemovePhoneNumberAsync"
+                                OnAddPhoneNumber="@OnAddPhoneNumberAsync"
+                                OnVerifyPhoneNumber="@OnVerifyPhoneNumberAsync"
+                                OnChangePhoneNumber="OnChangePhoneNumberAsync"/>
                         </MudItem>
                         <MudItem xs="12">
                             <PersonalDataSection
@@ -60,7 +63,7 @@
 @code {
     private UserModel? UserModel { get; set; }
     private UserPersonalModel? UserPersonalModel { get; set; }
-    
+
     private string? email;
     private Guid userId;
 
@@ -70,10 +73,10 @@
         {
             email = await LocalStorage.GetAsync<string>("email");
             userId = await LocalStorage.GetAsync<Guid>("userId")!;
-            
+
             await LoadUserAsync();
             await LoadUserPersonalAsync();
-            
+
             StateHasChanged();
         }
     }
@@ -93,7 +96,7 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task LoadUserPersonalAsync()
     {
         var result = await UserService.GetUserPersonalDataAsync(userId);
@@ -140,11 +143,26 @@
             await UserState.Change();
         }
     }
-    
+
     private async Task OnRemovePhoneNumberAsync()
     {
         var url = $"/account/phone-number/remove?phoneNumber={UserModel?.PhoneNumber}";
         await RouteManager.NavigateAsync(url);
+    }
+
+    private async Task OnAddPhoneNumberAsync()
+    {
+        await RouteManager.NavigateAsync("/account/phone-number/add");
+    }
+    
+    private async Task OnVerifyPhoneNumberAsync()
+    {
+        await RouteManager.NavigateAsync("/account/phone-number/verify");
+    }
+    
+    private async Task OnChangePhoneNumberAsync()
+    {
+        await RouteManager.NavigateAsync("/account/phone-number/change");
     }
 
     private async Task OnChangePersonalDataAsync()
@@ -198,7 +216,7 @@
             StateHasChanged();
         }
     }
-    
+
     private async Task OnRemovePersonalDataAsync()
     {
         var options = new DialogOptions()
