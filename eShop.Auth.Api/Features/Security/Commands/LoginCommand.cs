@@ -96,7 +96,7 @@ public sealed class LoginCommandHandler(
             if (!deviceResult.Succeeded) return deviceResult;
         }
 
-        if (user.Providers.Any(x => x.Subscribed))
+        if (user.HasTwoFactor())
         {
             return await CheckTwoFactorStateAsync(user, lockoutState, device, cancellationToken);
         }
@@ -343,7 +343,7 @@ public sealed class LoginCommandHandler(
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             UserId = user.Id,
-            IsTwoFactorEnabled = user.Providers.Any(x => x.Subscribed),
+            IsTwoFactorEnabled = user.HasTwoFactor(),
             IsLockedOut = lockoutState.Enabled,
         };
 

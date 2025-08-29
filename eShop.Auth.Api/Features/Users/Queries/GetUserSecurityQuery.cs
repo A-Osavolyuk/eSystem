@@ -22,7 +22,7 @@ public class GetUserSecurityQueryHandler(IUserManager userManager) : IRequestHan
             RecoveryEmailConfirmationDate = user.RecoveryEmailConfirmationDate,
             HasPassword = !string.IsNullOrEmpty(user.PasswordHash),
             PasswordChangeDate = user.PasswordChangeDate,
-            TwoFactorEnabled = user.Providers.Any(x => x.Subscribed),
+            TwoFactorEnabled = user.HasTwoFactor(),
             Providers = user.Providers.Select(Mapper.Map).ToList(),
             HasLinkedAccounts = user.LinkedAccounts.Count > 0,
             OAuthProviders = user.LinkedAccounts.Select(Mapper.Map).ToList(),
