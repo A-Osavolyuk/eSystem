@@ -24,8 +24,7 @@
                 <TwoFactorSection
                     Model="SecurityModel"
                     OnSubscribe="@(async (value) => await OnSubscribeAsync(value))"
-                    OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"
-                    OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
+                    OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"/>
                 <LinkedAccountsSection
                     Model="SecurityModel"
                     OnAllow="@(async (value) => await OnAllowLinkedAccountAsync(value))"
@@ -45,6 +44,9 @@
                     Model="SecurityModel"
                     OnCreate="@OnCreatePasskeyAsync"
                     OnRemove="@(async (value) => await OnPasskeyRemoveAsync(value))"/>
+                <RecoverySection
+                    Model="SecurityModel"
+                    OnGenerateCodes="@OnGenerateRecoveryCodesAsync"/>
             </MudStack>
         </MudItem>
     </MudGrid>
