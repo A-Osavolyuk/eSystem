@@ -26,6 +26,16 @@ public class SendTwoFactorCodeCommandHandler(
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         
+        if (!user.HasEmail() && provider.Name == ProviderTypes.Email)
+        {
+            return Results.BadRequest("User does not have an email address to send code via email");
+        }
+        
+        if (!user.HasPhoneNumber() && provider.Name == ProviderTypes.Sms)
+        {
+            return Results.BadRequest("User does not have a phone number to send code via SMS");
+        }
+        
         var code = await loginCodeManager.GenerateAsync(user, provider, cancellationToken);
 
         var sender = provider.Name switch
