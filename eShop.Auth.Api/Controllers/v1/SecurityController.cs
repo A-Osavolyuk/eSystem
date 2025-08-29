@@ -209,7 +209,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Add recovery email")]
     [EndpointDescription("Add recovery email")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
     [HttpPost("recovery-email/add")]
     [ValidationFilter]
     public async ValueTask<IActionResult> AddRecoveryEmailAsync(
@@ -240,7 +239,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Remove recovery email")]
     [EndpointDescription("Remove recovery email")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
     [HttpPost("recovery-email/remove")]
     [ValidationFilter]
     public async ValueTask<IActionResult> RemoveRecoveryEmailAsync(
@@ -256,7 +254,6 @@ public class SecurityController(ISender sender) : ControllerBase
     [EndpointSummary("Verify recovery email")]
     [EndpointDescription("Verify recovery email")]
     [ProducesResponseType(200)]
-    [AllowAnonymous]
     [HttpPost("recovery-email/verify")]
     [ValidationFilter]
     public async ValueTask<IActionResult> VerifyRecoveryEmailAsync(
