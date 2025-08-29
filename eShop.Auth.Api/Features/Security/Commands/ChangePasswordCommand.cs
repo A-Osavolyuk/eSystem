@@ -14,6 +14,8 @@ public sealed class ChangePasswordCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        
+        if (!user.HasPassword()) return Results.BadRequest("Cannot reset password, password was not provided.");
 
         var isCorrectPassword = await userManager.CheckPasswordAsync(user, request.Request.CurrentPassword, cancellationToken);
         if (!isCorrectPassword) return Results.BadRequest($"Wrong password.");

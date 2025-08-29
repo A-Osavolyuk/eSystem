@@ -17,6 +17,8 @@ public sealed class ForgotPasswordCommandHandler(
         var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
 
+        if (!user.HasPassword()) return Results.BadRequest("Cannot reset password, password was not provided.");
+
         var response = new ForgotPasswordResponse() { UserId = user.Id };
         return Result.Success(response);
     }
