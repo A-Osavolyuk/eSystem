@@ -124,7 +124,7 @@
 
 @code {
     [SupplyParameterFromForm] private ResetEmailModel ResetEmailModel { get; set; } = new();
-    [SupplyParameterFromForm] private ConfirmResetEmailModel ConfirmResetEmailModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel ConfirmResetEmailModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm resetEmailForm = new();
@@ -147,7 +147,7 @@
             UserId = userId,
             Resource = CodeResource.Email,
             Type = CodeType.Reset,
-            Sender = SenderType.Sms
+            Sender = SenderType.Email
         };
 
         var response = await SecurityService.SendCodeAsync(request);
@@ -186,7 +186,7 @@
             UserId = userId,
             Resource = CodeResource.Email,
             Type = CodeType.Reset,
-            Sender = SenderType.Sms
+            Sender = SenderType.Email
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -206,7 +206,7 @@
                 UserId = userId,
                 Resource = CodeResource.Email,
                 Type = CodeType.Reset,
-                Sender = SenderType.Sms,
+                Sender = SenderType.Email,
                 Code = ConfirmResetEmailModel.Code
             };
 
