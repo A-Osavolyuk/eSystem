@@ -25,6 +25,16 @@ public class SendCodeCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
+        if (!user.HasEmail() && sender == SenderType.Email)
+        {
+            return Results.BadRequest("User does not have an email address to send code via email");
+        }
+        
+        if (!user.HasPhoneNumber() && sender == SenderType.Sms)
+        {
+            return Results.BadRequest("User does not have a phone number to send code via SMS");
+        }
+
         var code = await codeManager.GenerateAsync(user, sender, codeType, codeResource, cancellationToken);
 
         Message message = request.Request switch
