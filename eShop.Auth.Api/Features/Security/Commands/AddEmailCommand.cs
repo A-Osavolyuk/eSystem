@@ -13,6 +13,8 @@ public class AddEmailCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        
+        if(user.HasEmail()) return Results.BadRequest("User already has an email address.");
 
         var taken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
         if (taken) return Results.BadRequest("Email already taken.");

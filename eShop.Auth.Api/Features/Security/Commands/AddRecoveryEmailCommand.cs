@@ -21,6 +21,8 @@ public class AddRecoveryEmailCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
+        if (user.HasRecoveryEmail()) return Results.BadRequest("User already has a recovery email.");
+        
         if (identityOptions.Account.RequireUniqueRecoveryEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.RecoveryEmail, cancellationToken);
