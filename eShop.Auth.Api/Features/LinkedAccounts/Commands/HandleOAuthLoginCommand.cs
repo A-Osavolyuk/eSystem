@@ -113,7 +113,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             session.SignType = OAuthSignType.SignUp;
             session.UserId = user.Id;
 
-            var sessionResult = await UpdateSessionAsync(user, session, provider, fallbackUri, cancellationToken);
+            var sessionResult = await UpdateSessionAsync(session, provider, fallbackUri, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
 
             return await SignUpAsync(user, provider, session,
@@ -163,13 +163,13 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         if (lockoutState.Enabled)
         {
-            return await LockedOutAsync(user, lockoutState, provider, device, fallbackUri, cancellationToken);
+            return await LockedOutAsync(lockoutState, provider, device, fallbackUri, cancellationToken);
         }
 
         session.SignType = OAuthSignType.SignIn;
         session.UserId = user.Id;
 
-        var updateResult = await UpdateSessionAsync(user, session, provider,
+        var updateResult = await UpdateSessionAsync(session, provider,
             device, fallbackUri, cancellationToken);
 
         if (!updateResult.Succeeded) return updateResult;
@@ -184,8 +184,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         if (!checkProviderResult.Succeeded) return checkProviderResult;
 
-        return await SignInAsync(user, provider, session, device,
-            request.ReturnUri!, fallbackUri, token, cancellationToken);
+        return await SignInAsync( provider, session, device, request.ReturnUri!, token, cancellationToken);
     }
 
     private async Task<Result> CreateDeviceAsync(UserEntity user, OAuthProviderEntity provider,
@@ -222,6 +221,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         string fallbackUri, CancellationToken token)
     {
         var result = await deviceManager.TrustAsync(device, token);
+        
         if (!result.Succeeded)
             return RedirectWithError(OAuthErrorType.InternalError,
                 provider.Name, result.Message, fallbackUri);
@@ -246,6 +246,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         string fallbackUri, CancellationToken cancellationToken)
     {
         var result = await userManager.CreateAsync(user, cancellationToken: cancellationToken);
+        
         if (!result.Succeeded)
             return RedirectWithError(OAuthErrorType.InternalError,
                 provider.Name, result.Message, fallbackUri);
@@ -301,7 +302,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
     }
 
-    private async Task<Result> UpdateSessionAsync(UserEntity user, OAuthSessionEntity session,
+    private async Task<Result> UpdateSessionAsync(OAuthSessionEntity session,
         OAuthProviderEntity provider, string fallbackUri, CancellationToken cancellationToken)
     {
         var result = await sessionManager.UpdateAsync(session, cancellationToken);
@@ -327,63 +328,42 @@ public sealed class HandleOAuthLoginCommandHandler(
         return Result.Success(link);
     }
 
-    private async Task<Result> LockedOutAsync(UserEntity user, LockoutStateEntity lockoutState,
+    private async Task<Result> LockedOutAsync(LockoutStateEntity lockoutState,
         OAuthProviderEntity provider, UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
-        var result = await loginSessionManager.CreateAsync(user, device,
-            LoginStatus.Locked, LoginType.OAuth, provider.Name, cancellationToken);
-
-        if (!result.Succeeded)
-        {
-            return RedirectWithError(OAuthErrorType.InternalError, provider.Name, result.Message, fallbackUri);
-        }
-
+        await loginSessionManager.CreateAsync(device, LoginStatus.Locked, LoginType.OAuth, provider.Name, cancellationToken);
         var error = Uri.EscapeDataString($"This user account is locked out with reason: {lockoutState.Reason}.");
         return RedirectWithError(OAuthErrorType.InternalError, provider.Name, error, fallbackUri);
     }
 
-    private async Task<Result> UpdateSessionAsync(UserEntity user, OAuthSessionEntity session,
+    private async Task<Result> UpdateSessionAsync(OAuthSessionEntity session,
         OAuthProviderEntity provider, UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
         var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
 
-        if (!sessionResult.Succeeded)
-        {
-            var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
-                LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
+        if (sessionResult.Succeeded) return Result.Success();
+        
+        await loginSessionManager.CreateAsync(device, LoginStatus.Failed, 
+            LoginType.OAuth, provider.Name, cancellationToken);
 
-            if (!loginSessionResult.Succeeded)
-            {
-                return RedirectWithError(OAuthErrorType.InternalError, 
-                    provider.Name, loginSessionResult.Message, fallbackUri);
-            }
+        return RedirectWithError(OAuthErrorType.InternalError, 
+            provider.Name, sessionResult.Message, fallbackUri);
 
-            return RedirectWithError(OAuthErrorType.InternalError, 
-                provider.Name, sessionResult.Message, fallbackUri);
-        }
-
-        return Result.Success();
     }
 
     private async Task<Result> IsProviderAllowedAsync(UserEntity user, OAuthProviderEntity provider,
         UserDeviceEntity device, string fallbackUri, CancellationToken cancellationToken)
     {
-        if (user.LinkedAccounts.Any(x => x.ProviderId == provider.Id && !x.Allowed))
-        {
-            var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
-                LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
+        if (!user.LinkedAccounts.Any(x => x.ProviderId == provider.Id && !x.Allowed)) 
+            return Result.Success();
+        
+        await loginSessionManager.CreateAsync(device, LoginStatus.Failed, 
+            LoginType.OAuth, provider.Name, cancellationToken);
 
-            if (!loginSessionResult.Succeeded)
-            {
-                return RedirectWithError(OAuthErrorType.InternalError, 
-                    provider.Name, loginSessionResult.Message, fallbackUri);
-            }
+        var error = Uri.EscapeDataString("OAuth provider is disallowed by user");
+        
+        return RedirectWithError(OAuthErrorType.Unavailable, provider.Name, error, fallbackUri);
 
-            var error = Uri.EscapeDataString("OAuth provider is disallowed by user");
-            return RedirectWithError(OAuthErrorType.Unavailable, provider.Name, error, fallbackUri);
-        }
-
-        return Result.Success();
     }
 
     private async Task<Result> CheckUserProviderAsync(UserEntity user, OAuthProviderEntity provider,
@@ -391,37 +371,24 @@ public sealed class HandleOAuthLoginCommandHandler(
     {
         var enableResult = await providerManager.ConnectAsync(user, provider, cancellationToken);
 
-        if (!enableResult.Succeeded)
-        {
-            var loginSessionResult = await loginSessionManager.CreateAsync(user, device,
-                LoginStatus.Failed, LoginType.OAuth, provider.Name, cancellationToken);
+        if (enableResult.Succeeded) return Result.Success();
+        
+        await loginSessionManager.CreateAsync(device, LoginStatus.Failed, 
+            LoginType.OAuth, provider.Name, cancellationToken);
+            
+        var error = Uri.EscapeDataString(enableResult.GetError().Message);
+        
+        return RedirectWithError(OAuthErrorType.InternalError, 
+            provider.Name, error, fallbackUri);
 
-            if (!loginSessionResult.Succeeded)
-            {
-                var error = Uri.EscapeDataString(loginSessionResult.GetError().Message);
-                return RedirectWithError(OAuthErrorType.InternalError, 
-                    provider.Name, error, fallbackUri);
-            }
-            else
-            {
-                var error = Uri.EscapeDataString(enableResult.GetError().Message);
-                return RedirectWithError(OAuthErrorType.InternalError, 
-                    provider.Name, error, fallbackUri);
-            }
-        }
-
-        return Result.Success();
     }
 
-    private async Task<Result> SignInAsync(UserEntity user, OAuthProviderEntity provider,
-        OAuthSessionEntity session, UserDeviceEntity device, string returnUri, string fallbackUri,
+    private async Task<Result> SignInAsync(OAuthProviderEntity provider,
+        OAuthSessionEntity session, UserDeviceEntity device, string returnUri,
         string token, CancellationToken cancellationToken)
     {
-        var result = await loginSessionManager.CreateAsync(user, device,
-            LoginStatus.Success, LoginType.OAuth, provider.Name, cancellationToken);
-
-        if (!result.Succeeded)
-            return RedirectWithError(OAuthErrorType.InternalError, provider.Name, result.Message, fallbackUri);
+        await loginSessionManager.CreateAsync(device, LoginStatus.Success, 
+            LoginType.OAuth, provider.Name, cancellationToken);
 
         var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id, token });
 

@@ -2,6 +2,9 @@
 
 public interface ILoginSessionManager
 {
-    public ValueTask<Result> CreateAsync(UserEntity user, UserDeviceEntity device,
-        LoginStatus status, LoginType type, string? provider = null, CancellationToken cancellationToken = default);
+    public ValueTask CreateAsync(UserDeviceEntity device, LoginStatus status, LoginType type, 
+        string provider, CancellationToken cancellationToken = default);
+    
+    public ValueTask CreateAsync(UserDeviceEntity device, LoginStatus status, LoginType type, 
+         CancellationToken cancellationToken = default);
 }
