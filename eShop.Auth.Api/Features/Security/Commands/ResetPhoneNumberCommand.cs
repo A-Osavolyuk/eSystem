@@ -20,6 +20,8 @@ public class ResetPhoneNumberCommandHandler(
 
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
+        if(!user.HasPhoneNumber()) return Results.BadRequest("User does not have a phone number.");
+        
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);

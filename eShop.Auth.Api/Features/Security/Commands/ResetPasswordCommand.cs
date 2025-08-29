@@ -16,7 +16,7 @@ public sealed class ResetPasswordCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        if (!user.HasPassword()) return Results.BadRequest("Cannot reset password, password was not provided.");
+        if (!user.HasPassword()) return Results.BadRequest("User does not have a password.");
         
         var verificationResult = await verificationManager.VerifyAsync(user, 
             CodeResource.Password, CodeType.Reset, cancellationToken);
