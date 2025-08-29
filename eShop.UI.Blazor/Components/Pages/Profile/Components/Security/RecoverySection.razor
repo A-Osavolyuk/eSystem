@@ -15,13 +15,26 @@
                 <MudSpacer/>
                 @if (string.IsNullOrEmpty(Model.RecoveryEmail))
                 {
-                    <MudTooltip Text="Add recovery email">
-                        <MudIconButton
-                            Icon="@Icons.Material.Filled.Add"
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            OnClick="@(async () => await OnAdd.InvokeAsync())"/>
-                    </MudTooltip>
+                    if (Model.RecoveryEmailConfirmed)
+                    {
+                        <MudTooltip Text="Add recovery email">
+                            <MudIconButton
+                                Icon="@Icons.Material.Filled.Add"
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                OnClick="@(async () => await OnAdd.InvokeAsync())"/>
+                        </MudTooltip>
+                    }
+                    else
+                    {
+                        <MudTooltip Text="Verify recovery email">
+                            <MudIconButton
+                                Icon="@Icons.Material.Filled.Add"
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                OnClick="@(async () => await OnVerify.InvokeAsync())"/>
+                        </MudTooltip>
+                    }
                 }
                 else
                 {
@@ -117,4 +130,5 @@
     [Parameter] public EventCallback OnAdd { get; set; }
     [Parameter] public EventCallback OnRemove { get; set; }
     [Parameter] public EventCallback OnChange { get; set; }
+    [Parameter] public EventCallback OnVerify { get; set; }
 }

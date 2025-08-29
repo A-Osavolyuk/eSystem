@@ -49,7 +49,8 @@
                     OnGenerateCodes="@OnGenerateRecoveryCodesAsync"
                     OnAdd="@OnAddRecoveryEmailAsync"
                     OnChange="@OnChangeRecoveryEmailAsync"
-                    OnRemove="@OnRemoveRecoveryEmailAsync"/>
+                    OnRemove="@OnRemoveRecoveryEmailAsync"
+                    OnVerify="@OnVerifyRecoveryEmailAsync"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -284,6 +285,12 @@
     private async Task OnAddRecoveryEmailAsync()
     {
         var url = "/account/recovery-email/add";
+        await RouteManager.NavigateAsync(url);
+    }
+    
+    private async Task OnVerifyRecoveryEmailAsync()
+    {
+        var url = "/account/recovery-email/verify";
         await RouteManager.NavigateAsync(url);
     }
     
