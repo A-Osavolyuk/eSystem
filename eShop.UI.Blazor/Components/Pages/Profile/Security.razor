@@ -58,8 +58,7 @@
 
 @code {
     private UserSecurityModel? SecurityModel { get; set; }
-
-    private string? email;
+    
     private Guid userId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -73,7 +72,6 @@
 
     private async Task LoadAsync()
     {
-        email = await LocalStorage.GetAsync<string>("email");
         userId = await LocalStorage.GetAsync<Guid>("userId")!;
 
         var result = await UserService.GetUserSecurityDataAsync(userId);
@@ -275,43 +273,43 @@
     
     private async Task OnPasskeyRemoveAsync(Guid id)
     {
-        var url = $"/account/passkey/remove?passkey={id}&user={userId}&email={email}";
+        var url = $"/account/passkey/remove?passkey={id}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnDisconnectLinkedAccountAsync(string provider)
     {
-        var url = $"/account/linked-account/disconnect?provider={provider}&user={userId}&email={email}";
+        var url = $"/account/linked-account/disconnect?provider={provider}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnAllowLinkedAccountAsync(string provider)
     {
-        var url = $"/account/linked-account/allow?provider={provider}&user={userId}&email={email}";
+        var url = $"/account/linked-account/allow?provider={provider}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnDisallowLinkedAccountAsync(string provider)
     {
-        var url = $"/account/linked-account/disallow?provider={provider}&user={userId}&email={email}";
+        var url = $"/account/linked-account/disallow?provider={provider}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnVerifyDeviceAsync(Guid id)
     {
-        var url = $"/account/device/verify?device={id}&user={userId}&email={email}";
+        var url = $"/account/device/verify?device={id}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnBlockDeviceAsync(Guid id)
     {
-        var url = $"/account/device/block?device={id}&user={userId}&email={email}";
+        var url = $"/account/device/block?device={id}";
         await RouteManager.NavigateAsync(url);
     }
 
     private async Task OnUnblockDeviceAsync(Guid id)
     {
-        var url = $"/account/device/unblock?device={id}&user={userId}&email={email}";
+        var url = $"/account/device/unblock?device={id}";
         await RouteManager.NavigateAsync(url);
     }
 }

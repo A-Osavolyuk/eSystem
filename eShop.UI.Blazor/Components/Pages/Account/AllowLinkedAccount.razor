@@ -37,7 +37,7 @@
                                         <MudText Align="Align.Center">
                                             To allow sign in with @Provider linked account, 
                                             you will need to enter 6-digit code
-                                            from an email we will send you to: <strong>@Email</strong>.
+                                            from an email we will send you to: <strong>@email</strong>.
                                         </MudText>
                                         <MudButton
                                             Color="Color.Primary"
@@ -70,7 +70,7 @@
                                         Validation="Validator.ValidateValue">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@Email</strong>
+                                                We have sent an email with code to email: <strong>@email</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -109,19 +109,29 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
     [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
     [SupplyParameterFromForm] public CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-    
+
+    private Guid userId;
+    private string? email;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userId = await LocalStorage.GetAsync<Guid>("userId");
+            email = await LocalStorage.GetAsync<string>("email");
+        }
+    }
+
     private async Task SendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = UserId,
+            UserId = userId,
             Type = CodeType.Allow,
             Resource = CodeResource.LinkedAccount,
             Sender = SenderType.Email,
@@ -139,7 +149,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = UserId,
+            UserId = userId,
             Type = CodeType.Allow,
             Resource = CodeResource.LinkedAccount,
             Sender = SenderType.Email,
@@ -163,7 +173,7 @@
     {
         var request = new VerifyCodeRequest()
         {
-            UserId = UserId,
+            UserId = userId,
             Type = CodeType.Allow,
             Resource = CodeResource.LinkedAccount,
             Sender = SenderType.Email,
@@ -181,7 +191,7 @@
         var request = new AllowLinkedAccountRequest()
         {
             Provider = Provider,
-            UserId = UserId,
+            UserId = userId,
         };
 
         var result = await OAuthService.AllowAsync(request);

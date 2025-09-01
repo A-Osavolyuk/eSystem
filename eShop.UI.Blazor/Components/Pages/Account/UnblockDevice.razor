@@ -35,7 +35,7 @@
                                     <MudStack Spacing="4">
                                         <MudText Align="Align.Center">
                                             To unblock this device, you will need to enter 6-digit code
-                                            from an email we will send you to: <strong>@Email</strong>.
+                                            from an email we will send you to: <strong>@email</strong>.
                                             If you unblock this device, sign in with this device will be available.
                                         </MudText>
                                         <MudButton
@@ -68,7 +68,7 @@
                                         Model="Model">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@Email</strong>
+                                                We have sent an email with code to email: <strong>@email</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -107,23 +107,20 @@
 </MudGrid>
 
 @code {
-
-    [SupplyParameterFromQuery(Name = "user")]
-    public Guid UserId { get; set; }
-
-    [SupplyParameterFromQuery(Name = "device")]
-    public Guid DeviceId { get; set; }
-
-    [SupplyParameterFromQuery(Name = "email")]
-    public string Email { get; set; } = string.Empty;
-
+    [SupplyParameterFromQuery(Name = "device")] public Guid DeviceId { get; set; }
     [SupplyParameterFromForm] public UnblockDeviceModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
+    private Guid userId;
+    private string? email;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        userId = await LocalStorage.GetAsync<Guid>("userId");
+        email = await LocalStorage.GetAsync<string>("email");
+        
         if (firstRender)
         {
             var result = await DeviceService.GetAsync(DeviceId);
@@ -143,7 +140,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = UserId,
+            UserId = userId,
             Type = CodeType.Unblock,
             Resource = CodeResource.Device,
             Sender = SenderType.Email,
@@ -164,7 +161,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = UserId,
+            UserId = userId,
             Type = CodeType.Unblock,
             Resource = CodeResource.Device,
             Sender = SenderType.Email,
@@ -190,7 +187,7 @@
     {
         var request = new VerifyCodeRequest()
         {
-            UserId = UserId,
+            UserId = userId,
             Type = CodeType.Block,
             Resource = CodeResource.Device,
             Sender = SenderType.Email,
@@ -208,7 +205,7 @@
         var request = new UnblockDeviceRequest()
         {
             DeviceId = DeviceId,
-            UserId = UserId,
+            UserId = userId,
         };
 
         var result = await DeviceService.UnblockAsync(request);
