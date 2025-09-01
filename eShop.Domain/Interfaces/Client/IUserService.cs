@@ -6,6 +6,7 @@ namespace eShop.Domain.Interfaces.Client;
 public interface IUserService
 {
     public ValueTask<Response> GetUserAsync(Guid id);
+    public ValueTask<Response> GetUserStateAsync(Guid id);
     public ValueTask<Response> GetUserSecurityDataAsync(Guid id);
     public ValueTask<Response> GetUserPersonalDataAsync(Guid id);
     public ValueTask<Response> GetTwoFactorProvidersAsync(Guid id);
