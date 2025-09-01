@@ -34,8 +34,8 @@
                                             <MudGrid Justify="Justify.Center">
                                                 <MudItem xs="12">
                                                     <MudText Class="mb-1" Align="Align.Center">
-                                                        To reset email address, you should enter new email address.
-                                                        Please, enter new email address.
+                                                        To reset your current email address, please enter new email address.
+                                                        We will send you 6-digit reset code to new email address.
                                                     </MudText>
                                                 </MudItem>
                                                 <MudItem xs="12">
@@ -137,6 +137,8 @@
         if (firstRender)
         {
             userId = await LocalStorage.GetAsync<Guid>("userId")!;
+            
+            StateHasChanged();
         }
     }
 
