@@ -129,6 +129,21 @@ public class SendCodeCommandHandler(
                         { "NewEmail", payload["NewEmail"] }
                     }
                 },
+            { Resource: CodeResource.RecoveryEmail, Type: CodeType.Current, Sender: SenderType.Email } =>
+                new ChangeRecoveryEmailMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user.Email },
+                        { "Subject", "Recovery email change (step one)" },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName },
+                        { "NewEmail", payload["RecoveryNewEmail"] }
+                    }
+                },
             { Resource: CodeResource.LinkedAccount, Type: CodeType.Disallow, Sender: SenderType.Email } =>
                 new DisallowLinkedAccountMessage()
                 {
@@ -277,6 +292,20 @@ public class SendCodeCommandHandler(
                     {
                         { "To", payload["NewEmail"] },
                         { "Subject", "Email verification (step two)" },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.UserName }
+                    }
+                },
+            { Resource: CodeResource.RecoveryEmail, Type: CodeType.New, Sender: SenderType.Email } =>
+                new VerifyRecoveryEmailMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", payload["NewRecoveryEmail"] },
+                        { "Subject", "Recovery email verification (step two)" },
                     },
                     Payload = new()
                     {
