@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class VerifyRecoveryEmailMessage : Message
+public class ConfirmRecoveryEmailChangeMessage : Message
 {
     public override string Build()
     {

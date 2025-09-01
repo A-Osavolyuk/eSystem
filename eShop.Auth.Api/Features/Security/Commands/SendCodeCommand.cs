@@ -40,12 +40,12 @@ public class SendCodeCommandHandler(
         Message message = request.Request switch
         {
             { Resource: CodeResource.Email, Type: CodeType.Verify, Sender: SenderType.Email } =>
-                new AccountRegisteredMessage
+                new VerifyEmailMessage
                 {
                     Credentials = new()
                     {
                         { "To", user.Email },
-                        { "Subject", "Account registered" },
+                        { "Subject", "Email verification" },
                     },
                     Payload = new()
                     {
@@ -286,7 +286,7 @@ public class SendCodeCommandHandler(
                     }
                 },
             { Resource: CodeResource.Email, Type: CodeType.New, Sender: SenderType.Email } =>
-                new VerifyEmailMessage()
+                new ConfirmEmailChangeMessage()
                 {
                     Credentials = new()
                     {
@@ -300,7 +300,7 @@ public class SendCodeCommandHandler(
                     }
                 },
             { Resource: CodeResource.RecoveryEmail, Type: CodeType.New, Sender: SenderType.Email } =>
-                new VerifyRecoveryEmailMessage()
+                new ConfirmRecoveryEmailChangeMessage()
                 {
                     Credentials = new()
                     {
