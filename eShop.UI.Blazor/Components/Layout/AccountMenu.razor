@@ -114,16 +114,17 @@
     private async Task LoadAsync()
     {
         var userId = await Storage.GetAsync<Guid>("userId");
-        var result = await UserService.GetUserAsync(userId);
+        var result = await UserService.GetUserStateAsync(userId);
 
         if (result.Success)
         {
-            var user = result.Get<UserDto>()!;
+            var user = result.Get<UserStateDto>()!;
             
-            UserStateContainer.UserId = user.Id;
+            UserStateContainer.UserId = user.UserId;
             UserStateContainer.Username = user.Username;
             UserStateContainer.Email = user.Email;
             UserStateContainer.PhoneNumber = user.PhoneNumber;
+            UserStateContainer.RecoveryEmail = user.RecoveryEmail;
         }
     }
 

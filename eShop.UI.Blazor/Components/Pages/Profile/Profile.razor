@@ -81,8 +81,9 @@
         if (result.Success)
         {
             var response = result.Get<UserDto>()!;
-            var model = Mapper.Map(response);
-            UserModel = model;
+            
+            UserModel = Mapper.Map(response);
+            await UserState.Change();
         }
         else
         {
@@ -133,7 +134,6 @@
         {
             await LoadUserAsync();
             StateHasChanged();
-            await UserState.Change();
         }
     }
 
