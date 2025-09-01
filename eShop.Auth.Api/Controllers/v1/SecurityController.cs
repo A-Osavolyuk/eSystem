@@ -75,9 +75,9 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("password/add")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> AddPasswordAsync([FromBody] AddPasswordRequest changePasswordRequest)
+    public async ValueTask<IActionResult> AddPasswordAsync([FromBody] AddPasswordRequest request)
     {
-        var result = await sender.Send(new AddPasswordCommand(changePasswordRequest));
+        var result = await sender.Send(new AddPasswordCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -90,9 +90,24 @@ public class SecurityController(ISender sender) : ControllerBase
     [HttpPost("password/change")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ChangePasswordAsync(
-        [FromBody] ChangePasswordRequest changePasswordRequest)
+        [FromBody] ChangePasswordRequest request)
     {
-        var result = await sender.Send(new ChangePasswordCommand(changePasswordRequest));
+        var result = await sender.Send(new ChangePasswordCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Check password")]
+    [EndpointDescription("Check password")]
+    [ProducesResponseType(200)]
+    [HttpPost("password/check")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> CheckPasswordAsync(
+        [FromBody] CheckPasswordRequest request)
+    {
+        var result = await sender.Send(new CheckPasswordCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -135,9 +150,9 @@ public class SecurityController(ISender sender) : ControllerBase
     [HttpPost("email/change")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ChangeEmailAsync(
-        [FromBody] ChangeEmailRequest changeEmailRequest)
+        [FromBody] ChangeEmailRequest request)
     {
-        var result = await sender.Send(new ChangeEmailCommand(changeEmailRequest));
+        var result = await sender.Send(new ChangeEmailCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -227,9 +242,9 @@ public class SecurityController(ISender sender) : ControllerBase
     [HttpPost("recovery-email/change")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ChangeRecoveryEmailAsync(
-        [FromBody] ChangeRecoveryEmailRequest changeEmailRequest)
+        [FromBody] ChangeRecoveryEmailRequest request)
     {
-        var result = await sender.Send(new ChangeRecoveryEmailCommand(changeEmailRequest));
+        var result = await sender.Send(new ChangeRecoveryEmailCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
