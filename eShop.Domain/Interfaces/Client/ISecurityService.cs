@@ -31,4 +31,5 @@ public interface ISecurityService
     public ValueTask<Response> UnlockAccountAsync(UnlockAccountRequest request);
     public ValueTask<Response> CheckEmailAsync(CheckEmailRequest request);
     public ValueTask<Response> CheckPhoneNumberAsync(CheckPhoneNumberRequest request);
+    public ValueTask<Response> CheckPasswordAsync(CheckPasswordRequest request);
 }
