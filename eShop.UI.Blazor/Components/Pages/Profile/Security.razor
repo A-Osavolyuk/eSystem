@@ -50,7 +50,8 @@
                     OnAdd="@(() => OnAddRecoveryEmailAsync())"
                     OnChange="@(() => OnChangeRecoveryEmailAsync())"
                     OnRemove="@(() => OnRemoveRecoveryEmailAsync())"
-                    OnVerify="@(() => OnVerifyRecoveryEmailAsync())"/>
+                    OnVerify="@(() => OnVerifyRecoveryEmailAsync())"
+                    OnReset="@(() => OnResetRecoveryEmailAsync())"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -259,15 +260,21 @@
         await RouteManager.NavigateAsync(url);
     }
     
+    private async Task OnVerifyRecoveryEmailAsync()
+    {
+        var url = $"/account/recovery-email/verify?recoveryEmail={SecurityModel!.RecoveryEmail}";
+        await RouteManager.NavigateAsync(url);
+    }
+    
     private async Task OnAddRecoveryEmailAsync()
     {
         var url = "/account/recovery-email/add";
         await RouteManager.NavigateAsync(url);
     }
     
-    private async Task OnVerifyRecoveryEmailAsync()
+    private async Task OnResetRecoveryEmailAsync()
     {
-        var url = "/account/recovery-email/verify";
+        var url = "/account/recovery-email/reset";
         await RouteManager.NavigateAsync(url);
     }
     
