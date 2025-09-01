@@ -170,28 +170,7 @@
 
     private async Task OnResetPasswordAsync()
     {
-        var options = new DialogOptions()
-        {
-            CloseButton = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge
-        };
-
-        var model = new ResetPasswordModel() { Id = userId };
-
-        var parameters = new DialogParameters<ResetPasswordDialog>()
-        {
-            { x => x.Model, model }
-        };
-
-        var dialog = await DialogService.ShowAsync<ResetPasswordDialog>("Reset password", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result!.Canceled)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
+        await RouteManager.NavigateAsync("/account/password/reset");
     }
 
     private async Task OnSubscribeAsync(string provider)

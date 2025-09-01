@@ -74,6 +74,7 @@ public static class HostApplicationBuilderExtensions
                 new() { Routes = ["/account/recovery-email/reset"], RequireAuthorization = true },
                 new() { Routes = ["/account/recovery-email/verify"], RequireAuthorization = true },
                 new() { Routes = ["/account/password/forgot"] },
+                new() { Routes = ["/account/password/reset"], RequireAuthorization = true },
                 new() { Routes = ["/account/device/trust"] },
                 new() { Routes = ["/account/device/verify"], RequireAuthorization = true },
                 new() { Routes = ["/account/device/block"], RequireAuthorization = true },
