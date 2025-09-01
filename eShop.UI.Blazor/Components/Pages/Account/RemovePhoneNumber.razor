@@ -67,7 +67,7 @@
                                             Model="Model">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from the SMS we sent you to: <strong>@PhoneNumber</strong>
+                                                    Enter code from the SMS we sent you to: <strong>@UserState.PhoneNumber</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
@@ -107,27 +107,16 @@
 </MudGrid>
 
 @code {
-
-    [SupplyParameterFromQuery(Name = "phoneNumber")] public string PhoneNumber { get; set; } = string.Empty;
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-    }
 
     private async Task ResendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Remove,
             Sender = SenderType.Sms
@@ -141,7 +130,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Remove,
             Sender = SenderType.Sms
@@ -161,7 +150,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.PhoneNumber,
                 Type = CodeType.Remove,
                 Sender = SenderType.Sms,
@@ -179,7 +168,7 @@
     {
         var request = new RemovePhoneNumberRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
         };
 
         var result = await SecurityService.RemovePhoneNumberAsync(request);

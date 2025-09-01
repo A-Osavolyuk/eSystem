@@ -157,23 +157,12 @@
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
-    private string qrCode = string.Empty;
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-    }
-
     private async Task OnSubscribeAsync()
     {
         var request = new SubscribeProviderRequest()
         {
             Provider = ProviderTypes.Authenticator,
-            UserId = userId
+            UserId = UserState.UserId
         };
 
         var result = await ProvidersService.SubscribeAsync(request);
@@ -195,7 +184,7 @@
     {
         var request = new VerifyProviderRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Provider = ProviderTypes.Authenticator,
             Code = Model.Code
         };
@@ -216,7 +205,7 @@
     {
         var request = new GenerateQrCodeRequest()
         {
-            UserId = userId
+            UserId = UserState.UserId
         };
 
         var result = await TwoFactorService.GenerateQrCodeAsync(request);

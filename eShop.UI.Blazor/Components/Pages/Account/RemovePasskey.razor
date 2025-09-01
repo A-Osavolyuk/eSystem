@@ -34,7 +34,7 @@
                                                 another authentication method to be able to sign-in. 
                                                 To remove this passkey, you will need
                                                 to enter 6-digit code from email we 
-                                                will send to: <strong>@email</strong>
+                                                will send to: <strong>@UserState.Email</strong>
                                             </MudText>
                                             <MudLoadingButton
                                                 FullWidth="true"
@@ -67,7 +67,7 @@
                                             Model="Model">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from the email we sent you to: <strong>@email</strong>
+                                                    Enter code from the email we sent you to: <strong>@UserState.Email</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
@@ -113,29 +113,23 @@
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-
-    private Guid userId;
-    private string? email;
+    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            userId = await LocalStorage.GetAsync<Guid>("userId");
-            email = await LocalStorage.GetAsync<string>("email");
+            var result = await PasskeyService.GetPasskeyAsync(KeyId);
+            if (result.Success) Model.Passkey = result.Get<UserPasskeyDto>()!;
+            else Snackbar.Add(result.Message, Severity.Error);
         }
-        
-        var result = await PasskeyService.GetPasskeyAsync(KeyId);
-
-        if (result.Success) Model.Passkey = result.Get<UserPasskeyDto>()!;
-        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task ResendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.Passkey,
             Type = CodeType.Remove,
             Sender = SenderType.Email,
@@ -153,7 +147,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.Passkey,
             Type = CodeType.Remove,
             Sender = SenderType.Email,
@@ -177,7 +171,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.Passkey,
                 Type = CodeType.Remove,
                 Sender = SenderType.Email,
@@ -195,7 +189,7 @@
     {
         var request = new RemovePasskeyRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             KeyId = KeyId,
         };
 

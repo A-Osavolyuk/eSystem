@@ -191,16 +191,6 @@
     private MudForm verifyNewRecoveryEmailForm = new();
     private MudForm confirmChangeRecoveryEmailForm = new();
 
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-    }
-
     private async Task OnSendCurrentCodeAsync()
     {
         await changeRecoveryEmailForm.Validate();
@@ -209,7 +199,7 @@
         {
             var request = new CheckEmailRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Email = ChangeRecoveryEmailModel.NewRecoveryEmail
             };
 
@@ -234,7 +224,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.RecoveryEmail,
                 Type = CodeType.Current,
                 Sender = SenderType.Email,
@@ -256,7 +246,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.RecoveryEmail,
                 Type = CodeType.New,
                 Sender = SenderType.Email,
@@ -275,7 +265,7 @@
         var request = new ChangeRecoveryEmailRequest()
         {
             NewRecoveryEmail = ChangeRecoveryEmailModel.NewRecoveryEmail,
-            UserId = userId
+            UserId = UserState.UserId
         };
 
         var result = await SecurityService.ChangeRecoveryEmailAsync(request);
@@ -295,7 +285,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.Current,
             Sender = SenderType.Email,
@@ -314,7 +304,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.New,
             Sender = SenderType.Email,
@@ -333,7 +323,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.Current,
             Sender = SenderType.Email,
@@ -351,7 +341,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.New,
             Sender = SenderType.Email,

@@ -197,22 +197,12 @@
     private MudForm changePhoneNumberForm = new();
     private MudForm verifyNewPhoneNumberForm = new();
     private MudForm confirmChangePhoneNumberForm = new();
-    
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-    }
 
     private async Task ResendCurrentPhoneNumberCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Current,
             Sender = SenderType.Sms
@@ -226,7 +216,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Current,
             Sender = SenderType.Sms
@@ -242,7 +232,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.New,
             Sender = SenderType.Sms,
@@ -260,7 +250,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.New,
             Sender = SenderType.Sms,
@@ -284,7 +274,7 @@
         {
             var request = new CheckPhoneNumberRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 PhoneNumber = ChangePhoneNumberModel.NewPhoneNumber
             };
             
@@ -309,7 +299,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.PhoneNumber,
                 Type = CodeType.Current,
                 Sender = SenderType.Sms,
@@ -331,7 +321,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.PhoneNumber,
                 Type = CodeType.New,
                 Sender = SenderType.Sms,
@@ -349,7 +339,7 @@
     {
         var request = new ChangePhoneNumberRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
         };
 

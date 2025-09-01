@@ -37,7 +37,7 @@
                                         <MudText Align="Align.Center">
                                             To disconnect your account from @Provider linked account, 
                                             you will need to enter 6-digit code
-                                            from an email we will send you to: <strong>@email</strong>.
+                                            from an email we will send you to: <strong>@UserState.Email</strong>.
                                         </MudText>
                                         <MudButton
                                             Color="Color.Primary"
@@ -70,7 +70,7 @@
                                         Model="Model">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@email</strong>
+                                                We have sent an email with code to email: <strong>@UserState.Email</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -115,20 +115,11 @@
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
-    private Guid userId;
-    private string? email;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        userId = await LocalStorage.GetAsync<Guid>("userId");
-        email = await LocalStorage.GetAsync<string>("email");
-    }
-
     private async Task SendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Type = CodeType.Disconnect,
             Resource = CodeResource.LinkedAccount,
             Sender = SenderType.Email,
@@ -146,7 +137,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Type = CodeType.Disconnect,
             Resource = CodeResource.LinkedAccount,
             Sender = SenderType.Email,
@@ -170,7 +161,7 @@
     {
         var request = new VerifyCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Type = CodeType.Disconnect,
             Resource = CodeResource.LinkedAccount,
             Sender = SenderType.Email,
@@ -188,7 +179,7 @@
         var request = new DisconnectLinkedAccountRequest()
         {
             Provider = Provider,
-            UserId = userId,
+            UserId = UserState.UserId,
         };
 
         var result = await OAuthService.DisconnectAsync(request);

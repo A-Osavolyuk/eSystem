@@ -24,7 +24,7 @@
                     Validation="Validator.ValidateValue">
                     <MudStack Spacing="2" Justify="Justify.Center">
                         <MudText Align="Align.Center">
-                            We have sent a SMS with code to phone number: <strong>@PhoneNumber</strong>
+                            We have sent a SMS with code to phone number: <strong>@UserState.PhoneNumber</strong>
                         </MudText>
                         <MudCodeInput
                             Class="d-flex align-items-center"
@@ -56,21 +56,9 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery] private string PhoneNumber { get; set; } = string.Empty;
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId");
-
-            await SendCodeAsync();
-        }
-    }
 
     private async Task OnVerificationAsync()
     {
@@ -80,7 +68,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.PhoneNumber,
                 Type = CodeType.Verify,
                 Sender = SenderType.Sms,
@@ -98,7 +86,7 @@
     {
         var request = new VerifyPhoneNumberRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Code = Model.Code
         };
 
@@ -116,7 +104,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Verify,
             Sender = SenderType.Sms

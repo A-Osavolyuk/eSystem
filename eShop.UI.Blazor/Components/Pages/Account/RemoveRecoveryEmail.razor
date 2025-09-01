@@ -64,7 +64,7 @@
                                             Model="Model">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from an email we sent you to: <strong>@RecoveryEmail</strong>
+                                                    Enter code from an email we sent you to: <strong>@UserState.RecoveryEmail</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
@@ -104,27 +104,17 @@
 </MudGrid>
 
 @code {
-
-    [SupplyParameterFromQuery(Name = "recoveryEmail")] public string RecoveryEmail { get; set; } = string.Empty;
+    
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-    }
 
     private async Task ResendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.Remove,
             Sender = SenderType.Email
@@ -138,7 +128,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.Remove,
             Sender = SenderType.Email
@@ -158,7 +148,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.RecoveryEmail,
                 Type = CodeType.Remove,
                 Sender = SenderType.Email,
@@ -176,7 +166,7 @@
     {
         var request = new RemoveRecoveryEmailRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
         };
 
         var result = await SecurityService.RemoveRecoveryEmailAsync(request);

@@ -10,7 +10,6 @@
 @inject IUserService UserService
 @inject IDialogService DialogService
 @inject ITwoFactorService TwoFactorService
-@inject ISecurityService SecurityService
 
 @attribute [Authorize]
 
@@ -76,8 +75,9 @@
         if (result.Success)
         {
             var response = result.Get<UserSecurityDto>()!;
-            var model = Mapper.Map(response);
-            SecurityModel = model;
+            
+            SecurityModel = Mapper.Map(response);
+            UserState.RecoveryEmail = SecurityModel.RecoveryEmail;
         }
         else
         {
@@ -246,19 +246,19 @@
 
     private async Task OnRemoveRecoveryEmailAsync()
     {
-        var url = $"/account/recovery-email/remove?recoveryEmail={SecurityModel!.RecoveryEmail}";
+        var url = $"/account/recovery-email/remove";
         await RouteManager.NavigateAsync(url);
     }
     
     private async Task OnChangeRecoveryEmailAsync()
     {
-        var url = $"/account/recovery-email/change?recoveryEmail={SecurityModel!.RecoveryEmail}";
+        var url = $"/account/recovery-email/change";
         await RouteManager.NavigateAsync(url);
     }
     
     private async Task OnVerifyRecoveryEmailAsync()
     {
-        var url = $"/account/recovery-email/verify?recoveryEmail={SecurityModel!.RecoveryEmail}";
+        var url = $"/account/recovery-email/verify";
         await RouteManager.NavigateAsync(url);
     }
     

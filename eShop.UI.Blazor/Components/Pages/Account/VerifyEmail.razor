@@ -56,12 +56,8 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "email")]
-    private string Email { get; set; } = string.Empty;
-
-    [SupplyParameterFromQuery(Name = "id")]
-    private Guid Id { get; set; }
-
+    [SupplyParameterFromQuery(Name = "email")] private string Email { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "id")] private Guid Id { get; set; }
     [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
 
     private MudForm form = new();

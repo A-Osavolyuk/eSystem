@@ -137,21 +137,11 @@
     private MudForm addPhoneNumberForm = new();
     private MudForm verifyCodeForm = new();
 
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId");
-        }
-    }
-
     private async Task SendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Verify,
             Sender = SenderType.Sms
@@ -170,7 +160,7 @@
         {
             var request = new AddPhoneNumberRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 PhoneNumber = AddPhoneNumberModel.PhoneNumber
             };
 
@@ -193,7 +183,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.PhoneNumber,
                 Type = CodeType.Verify,
                 Sender = SenderType.Sms,
@@ -212,7 +202,7 @@
         var request = new VerifyPhoneNumberRequest()
         {
             Code = VerifyPhoneNumberModel.Code,
-            UserId = userId
+            UserId = UserState.UserId
         };
 
         var result = await SecurityService.VerifyPhoneNumberAsync(request);

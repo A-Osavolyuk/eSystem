@@ -52,7 +52,6 @@
 @code {
 
     [SupplyParameterFromQuery(Name = "id")] public Guid UserId { get; set; }
-    
     private LockoutModel Model { get; set; } = new();
 
     protected override async Task OnInitializedAsync()

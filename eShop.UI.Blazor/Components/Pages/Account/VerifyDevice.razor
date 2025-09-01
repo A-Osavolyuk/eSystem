@@ -35,7 +35,7 @@
                                     <MudStack Spacing="4">
                                         <MudText Align="Align.Center">
                                             To verify this device, you will need to enter 6-digit code
-                                            from an email we will send you to: <strong>@email</strong>.
+                                            from an email we will send you to: <strong>@UserState.Email</strong>.
                                             If you verify this device, you will be able to sign in.
                                         </MudText>
                                         <MudButton
@@ -68,7 +68,7 @@
                                         Model="Model">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@email</strong>
+                                                We have sent an email with code to email: <strong>@UserState.Email</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -116,9 +116,6 @@
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
-    private Guid userId;
-    private string? email;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -140,7 +137,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Type = CodeType.Verify,
             Resource = CodeResource.Device,
             Sender = SenderType.Email,
@@ -161,7 +158,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Type = CodeType.Verify,
             Resource = CodeResource.Device,
             Sender = SenderType.Email,
@@ -187,7 +184,7 @@
     {
         var request = new VerifyCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Type = CodeType.Block,
             Resource = CodeResource.Device,
             Sender = SenderType.Email,
@@ -205,7 +202,7 @@
         var request = new VerifyDeviceRequest()
         {
             DeviceId = DeviceId,
-            UserId = userId,
+            UserId = UserState.UserId
         };
 
         var result = await DeviceService.VerifyAsync(request);

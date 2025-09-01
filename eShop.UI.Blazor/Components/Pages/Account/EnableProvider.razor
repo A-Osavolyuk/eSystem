@@ -128,21 +128,12 @@
     
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-    private Guid userId;
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-    }
 
     private async Task OnSubscribeProviderAsync()
     {
         var request = new SubscribeProviderRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Provider = Provider
         };
 
@@ -162,7 +153,7 @@
     {
         var request = new VerifyProviderRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Code = VerifyProviderModel.Code,
             Provider = Provider
         };
@@ -183,7 +174,7 @@
     {
         var request = new SendTwoFactorCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Provider = Provider
         };
 

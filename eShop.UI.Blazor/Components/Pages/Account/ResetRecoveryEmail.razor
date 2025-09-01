@@ -128,21 +128,11 @@
     private MudForm resetEmailForm = new();
     private MudForm confirmResetEmailForm = new();
 
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId")!;
-        }
-    }
-
     private async Task ResendCodeAsync()
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.Reset,
             Sender = SenderType.Email
@@ -160,7 +150,7 @@
         {
             var request = new CheckEmailRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Email = ResetEmailModel.NewRecoveryEmail
             };
 
@@ -181,7 +171,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.Reset,
             Sender = SenderType.Email
@@ -201,7 +191,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.RecoveryEmail,
                 Type = CodeType.Reset,
                 Sender = SenderType.Email,
@@ -219,7 +209,7 @@
     {
         var request = new ResetRecoveryEmailRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             NewRecoveryEmail = ResetEmailModel.NewRecoveryEmail,
         };
 

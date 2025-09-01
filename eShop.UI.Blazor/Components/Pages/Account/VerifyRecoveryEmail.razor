@@ -22,7 +22,7 @@
                     Validation="Validator.ValidateValue">
                     <MudStack Spacing="2" Justify="Justify.Center">
                         <MudText Align="Align.Center">
-                            We have sent an email with code to: <strong>@RecoveryEmail</strong>
+                            We have sent an email with code to: <strong>@UserState.RecoveryEmail</strong>
                         </MudText>
 
                         <MudCodeInput
@@ -55,21 +55,10 @@
 </MudGrid>
 
 @code {
-
-    [SupplyParameterFromQuery(Name = "recoveryEmail")] private string RecoveryEmail { get; set; } = string.Empty;
+    
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
-    private Guid userId;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            userId = await LocalStorage.GetAsync<Guid>("userId");
-            await SendCodeAsync();
-        }
-    }
 
     private async Task OnVerifyEmailAsync()
     {
@@ -79,7 +68,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = userId,
+                UserId = UserState.UserId,
                 Resource = CodeResource.RecoveryEmail,
                 Type = CodeType.Verify,
                 Sender = SenderType.Email,
@@ -97,7 +86,7 @@
     {
         var request = new VerifyRecoveryEmailRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
         };
 
         var result = await SecurityService.VerifyRecoveryEmailAsync(request);
@@ -114,7 +103,7 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = userId,
+            UserId = UserState.UserId,
             Resource = CodeResource.RecoveryEmail,
             Type = CodeType.Verify,
             Sender = SenderType.Email
