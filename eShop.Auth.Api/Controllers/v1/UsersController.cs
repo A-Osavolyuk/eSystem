@@ -25,6 +25,19 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Get user state")]
+    [EndpointDescription("Gets user state")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}/state")]
+    public async ValueTask<IActionResult> GetUserStateAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserStateQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Get user personal data")]
     [EndpointDescription("Gets user personal data")]
     [ProducesResponseType(200)]
