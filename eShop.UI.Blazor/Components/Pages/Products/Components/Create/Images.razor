@@ -1,5 +1,5 @@
 ﻿@inject IDialogService DialogService
-@inject ProductState State
+@inject ProductStateContainer StateContainer
 
 <MudGrid Spacing="1" Justify="Justify.Center">
     <MudItem xs="12">
@@ -71,7 +71,7 @@
 
         if (result is not null && !result.Canceled)
         {
-            State.Change();
+            StateContainer.Change();
             StateHasChanged();
         }
     }

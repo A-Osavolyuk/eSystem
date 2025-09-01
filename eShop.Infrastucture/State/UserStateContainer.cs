@@ -2,7 +2,7 @@
 
 namespace eShop.Infrastructure.State;
 
-public class UserState : AsyncStateContainer
+public class UserStateContainer : AsyncStateContainer
 {
     public override async Task Change()
     {

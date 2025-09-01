@@ -2,4 +2,4 @@
 
 namespace eShop.Infrastructure.State;
 
-public class ProductState : StateContainer;
+public class ProductStateContainer : StateContainer;

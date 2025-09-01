@@ -4,7 +4,7 @@
 @inject ICategoryService CategoryService
 @inject ICurrencyService CurrencyService
 @inject ISnackbar Snackbar
-@inject ProductState State
+@inject ProductStateContainer StateContainer
 
 <MudGrid Spacing="1" Justify="Justify.Center">
     <MudItem xs="12">
@@ -283,7 +283,7 @@
                 Name = type.Name
             };
 
-            State.Change();
+            StateContainer.Change();
         }
     }
 
@@ -304,7 +304,7 @@
                 Name = category.Name
             };
 
-            State.Change();
+            StateContainer.Change();
         }
     }
     
@@ -321,7 +321,7 @@
                 Sign = category.Sign
             };
 
-            State.Change();
+            StateContainer.Change();
         }
     }
 }

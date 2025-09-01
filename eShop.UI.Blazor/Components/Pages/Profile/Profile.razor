@@ -5,7 +5,7 @@
 
 @attribute [Authorize]
 
-@inject UserState UserState
+@inject UserStateContainer UserStateContainer
 @inject IUserService UserService
 @inject IDialogService DialogService
 
@@ -140,7 +140,7 @@
         {
             await LoadUserAsync();
             StateHasChanged();
-            await UserState.Change();
+            await UserStateContainer.Change();
         }
     }
 

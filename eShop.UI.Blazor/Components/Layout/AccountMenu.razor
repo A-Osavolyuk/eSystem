@@ -3,7 +3,7 @@
 
 @inject AuthenticationManager AuthenticationManager
 @inject Router RouteManager
-@inject UserState UserState
+@inject UserStateContainer UserStateContainer
 @inject ISnackbar Snackbar
 @inject IUserService UserService
 @inject IStorage Storage
@@ -87,7 +87,7 @@
 
     protected override void OnInitialized()
     {
-        UserState.OnChange += ReloadAsync;
+        UserStateContainer.OnChange += ReloadAsync;
     }
 
     private async Task ReloadAsync()
@@ -136,7 +136,7 @@
 
     public void Dispose()
     {
-        UserState.OnChange -= ReloadAsync;
+        UserStateContainer.OnChange -= ReloadAsync;
     }
 
 }
