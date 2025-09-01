@@ -71,15 +71,6 @@ public static class Mapper
         };
     }
 
-    public static ChangeEmailRequest Map(ChangeEmailModel source)
-    {
-        return new ChangeEmailRequest()
-        {
-            UserId = source.UserId,
-            NewEmail = source.NewEmail
-        };
-    }
-
     public static UserModel Map(UserDto source)
     {
         return new UserModel()

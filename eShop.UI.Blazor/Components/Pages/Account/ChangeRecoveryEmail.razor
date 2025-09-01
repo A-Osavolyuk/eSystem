@@ -1,0 +1,379 @@
+﻿@page "/account/recovery-email/change"
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject CodeModelValidator Validator
+@inject ISecurityService SecurityService
+
+<Title Text="Change recovery email"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6" Style="margin-top: 100px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1">
+                                    <MudPaper Outlined Class="pa-3" Justify="Justify.Center">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Recovery email change
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudForm
+                                            @ref="changeRecoveryEmailForm"
+                                            Model="ChangeRecoveryEmailModel">
+                                            <MudGrid Justify="Justify.Center">
+                                                <MudItem xs="12">
+                                                    <MudText Class="mb-1" Align="Align.Center">
+                                                        To change your current recovery email, 
+                                                        please, enter new recovery email address.
+                                                    </MudText>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudTextField
+                                                        @bind-Value="ChangeRecoveryEmailModel.NewRecoveryEmail"
+                                                        For="() => ChangeRecoveryEmailModel.NewRecoveryEmail"
+                                                        Label="New recovery email"
+                                                        Variant="Variant.Outlined"
+                                                        Immediate="true"
+                                                        Clearable="true"/>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnSendCurrentCodeAsync())">
+                                                        Change
+                                                    </MudLoadingButton>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudForm>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Confirmation">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Code confirmation
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-5">
+                                        <MudForm
+                                            @ref="verifyNewRecoveryEmailForm"
+                                            Model="VerifyCurrentRecoveryEmailModel"
+                                            Validation="Validator.ValidateValue">
+                                            <MudStack Spacing="2">
+                                                <MudText Class="mb-2" Align="Align.Center">
+                                                    Enter code from letter we sent to your current recovery email address
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="VerifyCurrentRecoveryEmailModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(VerifyCurrentRecoveryEmailModel.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnSendNewCodeAsync())">
+                                                    Confirm
+                                                </MudLoadingButton>
+                                            </MudStack>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received an email?
+                                            <strong @onclick="async () => await ResendCurrentEmailCodeAsync()"
+                                                    class="cursor-pointer">Resend</strong>
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">
+                                            Lose access to your current recovery email address?
+                                            <MudLink
+                                                OnClick="@(async () => await RouteManager.NavigateAsync("account/recovery-email/reset"))">
+                                                Reset it
+                                            </MudLink>
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="2" Icon="@Icons.Material.Filled.Check" Title="Verification">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Email verification
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-5">
+                                        <MudForm
+                                            @ref="confirmChangeRecoveryEmailForm"
+                                            Model="ConfirmChangeRecoveryEmailModel"
+                                            Validation="Validator.ValidateValue">
+                                            <MudStack Spacing="2">
+                                                <MudText Class="mb-2" Align="Align.Center">
+                                                    Enter code from letter we sent you
+                                                    to: @ChangeRecoveryEmailModel.NewRecoveryEmail
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="ConfirmChangeRecoveryEmailModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(ConfirmChangeRecoveryEmailModel.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnChangeAsync())">
+                                                    Verify
+                                                </MudLoadingButton>
+                                            </MudStack>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received an email?
+                                            <strong @onclick="async () => await ResendNewEmailCodeAsync()"
+                                                    class="cursor-pointer">Resend</strong>
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private ChangeRecoveryEmailModel ChangeRecoveryEmailModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel VerifyCurrentRecoveryEmailModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel ConfirmChangeRecoveryEmailModel { get; set; } = new();
+
+    private MudStepperExtended stepper = new();
+
+    private MudForm changeRecoveryEmailForm = new();
+    private MudForm verifyNewRecoveryEmailForm = new();
+    private MudForm confirmChangeRecoveryEmailForm = new();
+
+    private Guid userId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userId = await LocalStorage.GetAsync<Guid>("userId")!;
+        }
+    }
+
+    private async Task OnSendCurrentCodeAsync()
+    {
+        await changeRecoveryEmailForm.Validate();
+
+        if (changeRecoveryEmailForm.IsValid)
+        {
+            var request = new CheckEmailRequest()
+            {
+                UserId = userId,
+                Email = ChangeRecoveryEmailModel.NewRecoveryEmail
+            };
+
+            var result = await SecurityService.CheckEmailAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<CheckEmailResponse>()!;
+
+                if (response is { IsTaken: false, HasLinkedAccount: false }) await SendCurrentEmailCodeAsync();
+                else Snackbar.Add("This email address is already taken", Severity.Error);
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnSendNewCodeAsync()
+    {
+        await verifyNewRecoveryEmailForm.Validate();
+
+        if (verifyNewRecoveryEmailForm.IsValid)
+        {
+            var request = new VerifyCodeRequest()
+            {
+                UserId = userId,
+                Resource = CodeResource.RecoveryEmail,
+                Type = CodeType.Current,
+                Sender = SenderType.Email,
+                Code = VerifyCurrentRecoveryEmailModel.Code
+            };
+
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await SendNewEmailCodeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnChangeAsync()
+    {
+        await confirmChangeRecoveryEmailForm.Validate();
+
+        if (confirmChangeRecoveryEmailForm.IsValid)
+        {
+            var request = new VerifyCodeRequest()
+            {
+                UserId = userId,
+                Resource = CodeResource.RecoveryEmail,
+                Type = CodeType.New,
+                Sender = SenderType.Email,
+                Code = ConfirmChangeRecoveryEmailModel.Code
+            };
+
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await ChangeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task ChangeAsync()
+    {
+        var request = new ChangeRecoveryEmailRequest()
+        {
+            NewRecoveryEmail = ChangeRecoveryEmailModel.NewRecoveryEmail,
+            UserId = userId
+        };
+
+        var result = await SecurityService.ChangeRecoveryEmailAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add("Recovery email address was successfully changed", Severity.Success);
+            await RouteManager.NavigateAsync("/account/security");
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task SendCurrentEmailCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            Resource = CodeResource.RecoveryEmail,
+            Type = CodeType.Current,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewRecoveryEmail", ChangeRecoveryEmailModel.NewRecoveryEmail }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task SendNewEmailCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            Resource = CodeResource.RecoveryEmail,
+            Type = CodeType.New,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewRecoveryEmail", ChangeRecoveryEmailModel.NewRecoveryEmail }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task ResendCurrentEmailCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            Resource = CodeResource.RecoveryEmail,
+            Type = CodeType.Current,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewRecoveryEmail", ChangeRecoveryEmailModel.NewRecoveryEmail }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
+
+    private async Task ResendNewEmailCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            Resource = CodeResource.RecoveryEmail,
+            Type = CodeType.New,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewRecoveryEmail", ChangeRecoveryEmailModel.NewRecoveryEmail }
+            }
+        };
+
+        var response = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
+    }
+
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+
+        if (stepper.IsAllStepsCompleted())
+        {
+            StateHasChanged();
+        }
+    }
+
+}
