@@ -59,8 +59,6 @@
 
 @code {
     private UserSecurityModel? SecurityModel { get; set; }
-    
-    private Guid userId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -73,9 +71,7 @@
 
     private async Task LoadAsync()
     {
-        userId = await LocalStorage.GetAsync<Guid>("userId")!;
-
-        var result = await UserService.GetUserSecurityDataAsync(userId);
+        var result = await UserService.GetUserSecurityDataAsync(UserState.UserId);
 
         if (result.Success)
         {
@@ -98,7 +94,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
         
-        var model = new CreatePasskeyModel() { UserId = userId };
+        var model = new CreatePasskeyModel() { UserId = UserState.UserId };
         
         var parameters = new DialogParameters<CreatePasskeyDialog>()
         {
@@ -124,7 +120,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new ChangePasswordModel() { Id = userId };
+        var model = new ChangePasswordModel() { Id = UserState.UserId };
 
         var parameters = new DialogParameters<ChangePasswordDialog>()
         {
@@ -150,7 +146,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPasswordModel() { UserId = userId };
+        var model = new AddPasswordModel() { UserId = UserState.UserId };
 
         var parameters = new DialogParameters<AddPasswordDialog>()
         {
@@ -196,7 +192,7 @@
 
         var parameters = new DialogParameters<Disable2FaProviderDialog>()
         {
-            { x => x.UserId, userId },
+            { x => x.UserId, UserState.UserId },
             { x => x.Provider, provider }
         };
 
@@ -213,7 +209,7 @@
     private async Task OnGenerateRecoveryCodesAsync()
     {
         var recoveryCodes = new List<string>();
-        var request = new GenerateRecoveryCodesRequest() { UserId = userId };
+        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
 
         if (result.Success)

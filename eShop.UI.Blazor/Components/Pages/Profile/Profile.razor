@@ -5,7 +5,6 @@
 
 @attribute [Authorize]
 
-@inject UserStateContainer UserStateContainer
 @inject IUserService UserService
 @inject IDialogService DialogService
 
@@ -64,16 +63,10 @@
     private UserModel? UserModel { get; set; }
     private UserPersonalModel? UserPersonalModel { get; set; }
 
-    private string? email;
-    private Guid userId;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            email = await LocalStorage.GetAsync<string>("email");
-            userId = await LocalStorage.GetAsync<Guid>("userId")!;
-
             await LoadUserAsync();
             await LoadUserPersonalAsync();
 
@@ -83,7 +76,7 @@
 
     private async Task LoadUserAsync()
     {
-        var result = await UserService.GetUserAsync(userId);
+        var result = await UserService.GetUserAsync(UserState.UserId);
 
         if (result.Success)
         {
@@ -99,7 +92,7 @@
 
     private async Task LoadUserPersonalAsync()
     {
-        var result = await UserService.GetUserPersonalDataAsync(userId);
+        var result = await UserService.GetUserPersonalDataAsync(UserState.UserId);
 
         if (result.Success)
         {
@@ -124,7 +117,7 @@
 
         var model = new ChangeUsernameModel()
         {
-            Id = userId,
+            Id = UserState.UserId,
             Username = UserModel!.UserName,
         };
 
@@ -140,7 +133,7 @@
         {
             await LoadUserAsync();
             StateHasChanged();
-            await UserStateContainer.Change();
+            await UserState.Change();
         }
     }
 
@@ -200,7 +193,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var model = new AddPersonalDataModel() { Id = userId };
+        var model = new AddPersonalDataModel() { Id = UserState.UserId };
 
         var parameters = new DialogParameters<AddPersonalDataDialog>()
         {
@@ -228,7 +221,7 @@
 
         var parameters = new DialogParameters<RemovePersonalDataDialog>()
         {
-            { x => x.UserId, userId }
+            { x => x.UserId, UserState.UserId }
         };
 
         var dialog = await DialogService.ShowAsync<RemovePersonalDataDialog>("Remove personal data", parameters, options);

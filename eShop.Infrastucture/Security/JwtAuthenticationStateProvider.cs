@@ -1,6 +1,7 @@
 ﻿using eShop.Domain.Common.Security;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
+using eShop.Infrastructure.State;
 
 namespace eShop.Infrastructure.Security;
 
@@ -8,13 +9,15 @@ public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage storage,
     ISecurityService securityService,
-    TokenHandler tokenHandler) : AuthenticationStateProvider
+    TokenHandler tokenHandler,
+    UserStateContainer userState) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage storage = storage;
     private readonly ISecurityService securityService = securityService;
     private readonly TokenHandler tokenHandler = tokenHandler;
+    private readonly UserStateContainer userState = userState;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
@@ -42,6 +45,8 @@ public class JwtAuthenticationStateProvider(
             }
 
             var claims = rawToken.Claims.ToList();
+            var userId = Guid.Parse(rawToken.Claims.Single(x => x.Type == AppClaimTypes.Subject).Value);
+            userState.UserId = userId;
             
             return await Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(

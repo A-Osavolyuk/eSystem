@@ -35,7 +35,7 @@
 
                 </MudAvatar>
             </MudStack>
-            <MudText Inline="true" Align="Align.Center"> @model?.UserName </MudText>
+            <MudText Inline="true" Align="Align.Center"> @UserStateContainer.Username </MudText>
             <MudDivider/>
         </MudStack>
     </MudDrawerHeader>
@@ -83,7 +83,6 @@
 
 @code {
     private bool isDrawerOpen = false;
-    private UserModel? model;
 
     protected override void OnInitialized()
     {
@@ -120,9 +119,11 @@
         if (result.Success)
         {
             var user = result.Get<UserDto>()!;
-            model = Mapper.Map(user);
-
-            await Storage.SetAsync("email", model.Email);
+            
+            UserStateContainer.UserId = user.Id;
+            UserStateContainer.Username = user.Username;
+            UserStateContainer.Email = user.Email;
+            UserStateContainer.PhoneNumber = user.PhoneNumber;
         }
     }
 

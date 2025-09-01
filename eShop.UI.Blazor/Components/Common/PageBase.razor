@@ -5,6 +5,7 @@
     [Inject] public RouteManager RouteManager { get; private set; } = null!;
     [Inject] public AuthenticationStateManager AuthenticationStateManager { get; private set; } = null!;
     [Inject] public AuthenticationManager AuthenticationManager { get; private set; } = null!;
+    [Inject] public UserStateContainer UserState { get; private set; } = null!;
     [Inject] public ISnackbar Snackbar { get; private set; } = null!;
     [Inject] public IJSRuntime Js { get; private set; } = null!;
     [Inject] public IStorage LocalStorage { get; private set; } = null!;
