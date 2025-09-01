@@ -12,45 +12,15 @@
                 <MudText Typo="Typo.h6">
                     Recovery email
                 </MudText>
-                <MudSpacer/>
                 @if (string.IsNullOrEmpty(Model.RecoveryEmail))
                 {
-                    if (Model.RecoveryEmailConfirmed)
-                    {
-                        <MudTooltip Text="Add recovery email">
-                            <MudIconButton
-                                Icon="@Icons.Material.Filled.Add"
-                                Color="Color.Primary"
-                                Variant="Variant.Filled"
-                                OnClick="@(async () => await OnAdd.InvokeAsync())"/>
-                        </MudTooltip>
-                    }
-                    else
-                    {
-                        <MudTooltip Text="Verify recovery email">
-                            <MudIconButton
-                                Icon="@Icons.Material.Filled.Add"
-                                Color="Color.Primary"
-                                Variant="Variant.Filled"
-                                OnClick="@(async () => await OnVerify.InvokeAsync())"/>
-                        </MudTooltip>
-                    }
-                }
-                else
-                {
-                    <MudTooltip Text="Remove phone number">
+                    <MudSpacer/>
+                    <MudTooltip Text="Add recovery email">
                         <MudIconButton
-                            Icon="@Icons.Material.Filled.Delete"
-                            Color="Color.Error"
-                            Variant="Variant.Filled"
-                            OnClick="@(async () => await OnRemove.InvokeAsync())"/>
-                    </MudTooltip>
-                    <MudTooltip Text="Change recovery email">
-                        <MudIconButton
-                            Icon="@Icons.Material.Filled.Edit"
+                            Icon="@Icons.Material.Filled.Add"
                             Color="Color.Primary"
                             Variant="Variant.Filled"
-                            OnClick="@(async () => await OnChange.InvokeAsync())"/>
+                            OnClick="@(async () => await OnAdd.InvokeAsync())"/>
                     </MudTooltip>
                 }
             </MudStack>
@@ -83,10 +53,11 @@
                             Unverified
                         </MudChip>
                     }
-                    
+
                     if (Model.RecoveryEmailChangeDate is not null)
                     {
-                        <MudTooltip Text="@($"Last change: {Model.RecoveryEmailChangeDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                        <MudTooltip
+                            Text="@($"Last change: {Model.RecoveryEmailChangeDate?.ToString("MM/dd/yyyy HH:mm")}")">
                             <MudChip
                                 T="string"
                                 Class="mx-0"
@@ -95,6 +66,35 @@
                                 Size="Size.Small">
                                 Changed
                             </MudChip>
+                        </MudTooltip>
+                    }
+                    
+                    <MudSpacer />
+                    if (!Model.RecoveryEmailConfirmed)
+                    {
+                        <MudTooltip Text="Verify recovery email">
+                            <MudIconButton
+                                Icon="@Icons.Material.Filled.Add"
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                OnClick="@(async () => await OnVerify.InvokeAsync())"/>
+                        </MudTooltip>
+                    }
+                    else
+                    {
+                        <MudTooltip Text="Remove phone number">
+                            <MudIconButton
+                                Icon="@Icons.Material.Filled.Delete"
+                                Color="Color.Error"
+                                Variant="Variant.Filled"
+                                OnClick="@(async () => await OnRemove.InvokeAsync())"/>
+                        </MudTooltip>
+                        <MudTooltip Text="Change recovery email">
+                            <MudIconButton
+                                Icon="@Icons.Material.Filled.Edit"
+                                Color="Color.Primary"
+                                Variant="Variant.Filled"
+                                OnClick="@(async () => await OnChange.InvokeAsync())"/>
                         </MudTooltip>
                     }
                 }
