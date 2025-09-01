@@ -95,13 +95,9 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
+        if (firstRender) StateHasChanged();
     }
 
     private async Task LogoutClick()

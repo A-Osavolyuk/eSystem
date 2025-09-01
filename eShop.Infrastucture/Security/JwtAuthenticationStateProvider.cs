@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Common.Security;
+using eShop.Domain.DTOs;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 using eShop.Infrastructure.State;
@@ -9,6 +10,7 @@ public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage storage,
     ISecurityService securityService,
+    IUserService userService,
     TokenHandler tokenHandler,
     UserStateContainer userState) : AuthenticationStateProvider
 {
@@ -16,6 +18,7 @@ public class JwtAuthenticationStateProvider(
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage storage = storage;
     private readonly ISecurityService securityService = securityService;
+    private readonly IUserService userService = userService;
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly UserStateContainer userState = userState;
 
@@ -24,29 +27,16 @@ public class JwtAuthenticationStateProvider(
         try
         {
             var token = await tokenProvider.GetAsync();
-
-            if (string.IsNullOrEmpty(token))
-            {
-                return await UnauthorizeAsync();
-            }
+            if (string.IsNullOrEmpty(token)) return await UnauthorizeAsync();
 
             var valid = tokenHandler.Validate(token);
-
-            if (!valid)
-            {
-                return await RefreshTokenAsync(token);
-            }
+            if (!valid) return await RefreshTokenAsync(token);
 
             var rawToken = tokenHandler.ReadToken(token);
-
-            if (rawToken is null || !rawToken.Claims.Any())
-            {
-                return await UnauthorizeAsync();
-            }
-
+            if (rawToken is null || !rawToken.Claims.Any()) return await UnauthorizeAsync();
+            
             var claims = rawToken.Claims.ToList();
-            var userId = Guid.Parse(rawToken.Claims.Single(x => x.Type == AppClaimTypes.Subject).Value);
-            userState.UserId = userId;
+            if (!userState.IsAuthenticated) await LoadUserStateAsync(claims);
             
             return await Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(
@@ -154,5 +144,22 @@ public class JwtAuthenticationStateProvider(
         var authenticationState = new AuthenticationState(claimsPrincipal);
         
         return authenticationState;
+    }
+
+    private async Task LoadUserStateAsync(List<Claim> claims)
+    {
+        var userId = Guid.Parse(claims.Single(x => x.Type == AppClaimTypes.Subject).Value);
+        var result = await userService.GetUserStateAsync(userId);
+
+        if (result.Success)
+        {
+            var state = result.Get<UserStateDto>()!;
+                    
+            userState.UserId = state.UserId;
+            userState.Email = state.Email;
+            userState.RecoveryEmail = state.RecoveryEmail;
+            userState.Username = state.Username;
+            userState.PhoneNumber = state.PhoneNumber;
+        }
     }
 }
