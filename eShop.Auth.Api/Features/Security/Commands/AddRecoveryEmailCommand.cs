@@ -7,13 +7,9 @@ public record AddRecoveryEmailCommand(AddRecoveryEmailRequest Request) : IReques
 
 public class AddRecoveryEmailCommandHandler(
     IUserManager userManager,
-    IMessageService messageService,
-    ICodeManager codeManager,
     IdentityOptions identityOptions) : IRequestHandler<AddRecoveryEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IMessageService messageService = messageService;
-    private readonly ICodeManager codeManager = codeManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(AddRecoveryEmailCommand request, CancellationToken cancellationToken)
@@ -30,27 +26,6 @@ public class AddRecoveryEmailCommandHandler(
         }
         
         var result = await userManager.AddRecoveryEmailAsync(user, request.Request.RecoveryEmail, cancellationToken);
-        if (!result.Succeeded) return result;
-
-        var code = await codeManager.GenerateAsync(user, SenderType.Email,
-            CodeType.Verify, CodeResource.RecoveryEmail, cancellationToken);
-
-        var message = new AddRecoveryEmailMessage()
-        {
-            Credentials = new()
-            {
-                { "Subject", "Recovery email verification" },
-                { "To", request.Request.RecoveryEmail },
-            },
-            Payload = new()
-            {
-                { "Code", code },
-                { "UserName", user.UserName },
-            }
-        };
-
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-
-        return Result.Success();
+        return result;
     }
 }

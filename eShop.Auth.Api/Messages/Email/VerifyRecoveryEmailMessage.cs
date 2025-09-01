@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class AddRecoveryEmailMessage : Message
+public class VerifyRecoveryEmailMessage : Message
 {
     public override string Build()
     {
@@ -22,8 +22,8 @@ public class AddRecoveryEmailMessage : Message
                              <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px;">Recovery email verification</h1>
                              <p style="font: 16px Arial, sans-serif; margin:0;">Hello, {Payload["UserName"]}!.</p>
                              <br>
-                             <p style="font: 16px Arial, sans-serif; margin: 0;">
-                                 To verify your recovery email address, please enter verification code from below.
+                             <p style="font: 16px Arial, sans-serif; margin: 0;">.
+                                 To verify your recovery email addrees, please enter 6-digit verification code from below.
                              </p>
                              <br>
                              <p style="font: 16px Arial, sans-serif; margin: 0;"> Your verification code: {Payload["Code"]}. Will expire in: 10 mins.</p>
