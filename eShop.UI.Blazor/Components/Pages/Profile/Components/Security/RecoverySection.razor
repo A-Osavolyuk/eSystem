@@ -27,9 +27,9 @@
             <MudStack Row="true" Spacing="1">
                 @if (!string.IsNullOrEmpty(Model.RecoveryEmail))
                 {
+                    <MudText Style="padding-top: 5px">@Model.RecoveryEmail</MudText>
                     if (Model is { RecoveryEmailConfirmed: true, RecoveryEmailConfirmationDate: not null })
                     {
-                        <MudText Style="padding-top: 5px">@Model.RecoveryEmail</MudText>
                         <MudTooltip
                             Text="@($"Verified at: {Model.RecoveryEmailConfirmationDate?.ToString("MM/dd/yyyy HH:mm")}")">
                             <MudChip
