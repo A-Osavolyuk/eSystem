@@ -362,7 +362,7 @@ public class SendCodeCommandHandler(
                     }
                 },
             { Resource: CodeResource.PhoneNumber, Type: CodeType.New, Sender: SenderType.Sms } =>
-                new VerifyPhoneNumberMessage()
+                new ConfirmPhoneNumberChangeMessage()
                 {
                     Credentials = new()
                     {
