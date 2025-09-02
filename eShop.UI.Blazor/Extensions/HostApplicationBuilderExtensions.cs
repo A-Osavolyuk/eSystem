@@ -6,13 +6,12 @@ namespace eShop.BlazorWebUI.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static void AddAppServices(this IHostApplicationBuilder builder)
+    public static void AddAppServices(this WebApplicationBuilder builder)
     {
         builder.AddServiceDefaults();
         builder.AddInfrastructureLayer();
         builder.AddValidation();
         builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
-
         builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
         builder.Services.AddMudExtensions();
         builder.Services.AddMudServices(config =>

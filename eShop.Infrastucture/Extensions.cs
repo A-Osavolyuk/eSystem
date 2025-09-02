@@ -2,12 +2,14 @@
 using eShop.Infrastructure.Security;
 using eShop.Infrastructure.State;
 using eShop.Infrastructure.Storage;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 
 namespace eShop.Infrastructure;
 
 public static class Extensions
 {
-    public static void AddInfrastructureLayer(this IHostApplicationBuilder builder)
+    public static void AddInfrastructureLayer(this WebApplicationBuilder builder)
     {
         builder.AddState();
         builder.AddDependencyInjection();
@@ -17,10 +19,15 @@ public static class Extensions
         builder.Services.AddHttpContextAccessor();
     }
 
-    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
+    private static void AddDependencyInjection(this WebApplicationBuilder builder)
     {
-        builder.Services.AddHttpClient();
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddHttpClient();
+        builder.Services.AddHttpClient("self", client =>
+        {
+            var url = new Uri(builder.WebHost.GetSetting(WebHostDefaults.ServerUrlsKey)!);
+            client.BaseAddress = url;
+        });
         
         builder.Services.AddHttpClient<ISecurityService, SecurityService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IStoreService, StorageService>(ServiceLifetime.Scoped);
