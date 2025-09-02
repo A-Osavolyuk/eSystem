@@ -11,8 +11,11 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddInfrastructureLayer();
         builder.AddValidation();
-        builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
+        
         builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
+        
+        builder.Services.AddControllers();
+        builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
         builder.Services.AddMudExtensions();
         builder.Services.AddMudServices(config =>
         {

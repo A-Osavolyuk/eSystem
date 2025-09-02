@@ -14,6 +14,7 @@ public static class WebApplicationExtensions
 
         app.UseStaticWebAssets();
         app.UseRouting();
+        app.MapControllers();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseAntiforgery();
