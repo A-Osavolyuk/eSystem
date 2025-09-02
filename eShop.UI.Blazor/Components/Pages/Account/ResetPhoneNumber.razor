@@ -220,7 +220,7 @@
         if (result.Success)
         {
             Snackbar.Add("Phone number was successfully reset", Severity.Success);
-            RouteManager.NavigateAsync("/account/profile");
+            RouteManager.Route("/account/profile");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

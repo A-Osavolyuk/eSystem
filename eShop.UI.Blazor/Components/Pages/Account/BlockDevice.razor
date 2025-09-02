@@ -205,7 +205,7 @@
 
         var result = await DeviceService.BlockAsync(request);
 
-        if (result.Success) RouteManager.NavigateAsync("/account/security");
+        if (result.Success) RouteManager.Route("/account/security");
         else Snackbar.Add(result.Message, Severity.Error);
     }
 }

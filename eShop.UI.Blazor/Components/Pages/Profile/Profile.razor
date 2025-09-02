@@ -140,22 +140,22 @@
     private void OnRemovePhoneNumberAsync()
     {
         var url = $"/account/phone-number/remove?phoneNumber={UserModel?.PhoneNumber}";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnAddPhoneNumberAsync()
     {
-        RouteManager.NavigateAsync("/account/phone-number/add");
+        RouteManager.Route("/account/phone-number/add");
     }
 
     private void OnVerifyPhoneNumberAsync()
     {
-        RouteManager.NavigateAsync("/account/phone-number/verify");
+        RouteManager.Route("/account/phone-number/verify");
     }
 
     private void OnChangePhoneNumberAsync()
     {
-        RouteManager.NavigateAsync("/account/phone-number/change");
+        RouteManager.Route("/account/phone-number/change");
     }
 
     private async Task OnChangePersonalDataAsync()

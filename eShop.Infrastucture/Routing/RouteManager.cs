@@ -17,15 +17,11 @@ public class RouteManager(
 
     public string Uri => navigationManager.Uri;
     public string BaseUri => navigationManager.BaseUri;
+    
+    public void ExternalRoute(string url) => navigationManager.NavigateTo(url);
 
-    public void NavigateAsync(string url, bool isRedirect = false, bool forceLoad = false, bool isExternal = false)
+    public void Route(string url, bool isRedirect = false, bool forceLoad = false)
     {
-        if (isExternal)
-        {
-            navigationManager.NavigateTo(url, forceLoad);
-            return;
-        }
-        
         var route = MatchRoute(url, routeOptions.Pages);
 
         if (route is null)
@@ -34,7 +30,6 @@ public class RouteManager(
             return;
         }
         
-
         if (route!.RequireAuthorization && (!userState.IsAuthenticated))
         {
             OnError(ErrorCode.Unauthorized, url, forceLoad); 

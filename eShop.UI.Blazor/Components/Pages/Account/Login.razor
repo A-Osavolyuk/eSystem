@@ -58,7 +58,7 @@
                     StartIcon="@Icons.Material.Filled.Key"
                     Variant="Variant.Filled"
                     Color="Color.Primary"
-                    OnClick="@(() => RouteManager.NavigateAsync("/account/passkey/sign-in"))"
+                    OnClick="@(() => RouteManager.Route("/account/passkey/sign-in"))"
                     FullWidth="true">
                     Sign In with Passkey
                 </MudLoadingButton>
@@ -114,7 +114,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink OnClick="@(() => RouteManager.NavigateAsync("account/register"))">
+                    <MudLink OnClick="@(() => RouteManager.Route("account/register"))">
                         Register
                     </MudLink>
                 </MudText>
@@ -122,7 +122,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Forget your password?
-                    <MudLink OnClick="@(() => RouteManager.NavigateAsync("account/password/forgot"))">
+                    <MudLink OnClick="@(() => RouteManager.Route("account/password/forgot"))">
                         Reset password
                     </MudLink>
                 </MudText>
@@ -156,7 +156,7 @@
                     Snackbar.Add(result.Message, Severity.Success);
                     
                     var url = $"/account/2fa/login?id={response.UserId}";
-                    RouteManager.NavigateAsync(url);
+                    RouteManager.Route(url);
                 }
                 else
                 {
@@ -164,11 +164,11 @@
 
                     if (string.IsNullOrEmpty(ReturnUrl))
                     {
-                        RouteManager.NavigateAsync("/products");
+                        RouteManager.Route("/products");
                     }
                     else
                     {
-                        RouteManager.NavigateAsync(ReturnUrl, true);
+                        RouteManager.Route(ReturnUrl, true);
                     }
                     
                     Snackbar.Add(result.Message, Severity.Success);
@@ -193,7 +193,7 @@
                     var url = $"/account/device/trust?device={device}&user={userId}&email={email}";
 
                     Snackbar.Add(result.Message, Severity.Info);
-                    RouteManager.NavigateAsync(url);
+                    RouteManager.Route(url);
                     return;
                 }
                 
@@ -202,7 +202,7 @@
                     var url = $"/account/email/verify?id={userId}&email={email}";
 
                     Snackbar.Add(result.Message, Severity.Info);
-                    RouteManager.NavigateAsync(url);
+                    RouteManager.Route(url);
                     return;
                 }
 
@@ -221,7 +221,7 @@
                 else
                 {
                     var url = $"/account/locked-out?id={userId}";
-                    RouteManager.NavigateAsync(url);
+                    RouteManager.Route(url);
                 }
             }
         }
@@ -235,7 +235,7 @@
         var fallbackUri = HttpUtility.UrlEncode($"{baseUri}account/oauth/fallback");
         
         var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}&fallbackUri={fallbackUri}";
-        RouteManager.NavigateAsync(url, isExternal: true);
+        RouteManager.ExternalRoute(url);
     }
 
 }

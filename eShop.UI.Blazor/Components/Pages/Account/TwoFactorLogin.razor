@@ -91,7 +91,7 @@
                                 <MudPaper Outlined Class="pa-3">
                                     <MudText Align="Align.Center">You can read more about 2FA
                                         <MudLink
-                                            OnClick="@(() => RouteManager.NavigateAsync("/faq/security/2fa"))">
+                                            OnClick="@(() => RouteManager.Route("/faq/security/2fa"))">
                                             here
                                         </MudLink>
                                     </MudText>
@@ -279,13 +279,13 @@
 
                 if (response.IsLockedOut)
                 {
-                    RouteManager.NavigateAsync($"/account/locked-out?id={response.UserId}");
+                    RouteManager.Route($"/account/locked-out?id={response.UserId}");
                 }
                 else
                 {
                     await AuthenticationManager.LogInAsync(response!.AccessToken!, response.RefreshToken!);
                     Snackbar.Add(result.Message, Severity.Success);
-                    RouteManager.NavigateAsync("/products");
+                    RouteManager.Route("/products");
                 }
             }
             else

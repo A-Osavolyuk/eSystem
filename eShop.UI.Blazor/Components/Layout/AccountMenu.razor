@@ -104,7 +104,7 @@
     {
         await AuthenticationManager.LogOutAsync();
         Snackbar.Add("Successfully logged out.", Severity.Success);
-        RouteManager.NavigateAsync("/account/login");
+        RouteManager.Route("/account/login");
     }
 
     private async Task LoadAsync()
@@ -128,7 +128,7 @@
 
     private void NavigateAsync(string uri)
     {
-        RouteManager.NavigateAsync(uri);
+        RouteManager.Route(uri);
         DrawerToggle();
     }
 

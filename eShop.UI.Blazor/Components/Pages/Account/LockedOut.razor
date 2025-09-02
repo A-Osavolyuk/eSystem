@@ -39,7 +39,7 @@
                 <MudPaper Class="pa-3" Outlined="true">
                     <MudText Align="Align.Center">
                         Want to unlock my account?
-                        <MudLink OnClick="@(() => RouteManager.NavigateAsync($"/account/unlock?id={UserId}"))">
+                        <MudLink OnClick="@(() => RouteManager.Route($"/account/unlock?id={UserId}"))">
                             Unlock
                         </MudLink>
                     </MudText>

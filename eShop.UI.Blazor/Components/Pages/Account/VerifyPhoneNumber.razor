@@ -95,7 +95,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            RouteManager.NavigateAsync("/account/profile");
+            RouteManager.Route("/account/profile");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

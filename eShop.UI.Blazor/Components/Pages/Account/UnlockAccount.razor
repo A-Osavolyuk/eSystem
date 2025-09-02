@@ -81,7 +81,7 @@
             if (result.Success)
             {
                 Snackbar.Add("Account was successfully recovered", Severity.Success);
-                RouteManager.NavigateAsync("/account/login");
+                RouteManager.Route("/account/login");
             }
             else
             {

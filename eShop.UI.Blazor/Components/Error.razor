@@ -18,7 +18,7 @@
                     Style="text-align:center"
                     Class="d-block"
                     Typo="Typo.h5"
-                    OnClick="@(() => RouteManager.NavigateAsync("/products"))">
+                    OnClick="@(() => RouteManager.Route("/products"))">
                     To main page
                 </MudLink>
                 break;
@@ -33,7 +33,7 @@
                         Style="text-align:center"
                         Class="d-block"
                         Typo="Typo.h5"
-                        OnClick="@(() => RouteManager.NavigateAsync("/products"))">
+                        OnClick="@(() => RouteManager.Route("/products"))">
                         To main page
                     </MudLink>
                 }
@@ -43,7 +43,7 @@
                         Style="text-align:center"
                         Class="d-block"
                         Typo="Typo.h5"
-                        OnClick="@(() => RouteManager.NavigateAsync(ReturnUrl, true))">
+                        OnClick="@(() => RouteManager.Route(ReturnUrl, true))">
                         Go back
                     </MudLink>
                 }
@@ -80,7 +80,7 @@
     private void ToLoginPage()
     {
         var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-        RouteManager.NavigateAsync($"/account/login?returnUrl={returnUrl}");
+        RouteManager.Route($"/account/login?returnUrl={returnUrl}");
     }
 
 }

@@ -218,7 +218,7 @@
         if (result.Success)
         {
             Snackbar.Add("Recovery email was successfully reset", Severity.Success);
-            RouteManager.NavigateAsync("/account/security");
+            RouteManager.Route("/account/security");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

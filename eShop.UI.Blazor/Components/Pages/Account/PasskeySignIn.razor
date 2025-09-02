@@ -42,7 +42,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Have an account with password? Go to
-                    <MudLink OnClick="@(() => RouteManager.NavigateAsync("/account/login"))">
+                    <MudLink OnClick="@(() => RouteManager.Route("/account/login"))">
                         Login
                     </MudLink>
                 </MudText>
@@ -50,7 +50,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink OnClick="@(() => RouteManager.NavigateAsync("/account/register"))">
+                    <MudLink OnClick="@(() => RouteManager.Route("/account/register"))">
                         Register
                     </MudLink>
                 </MudText>
@@ -58,7 +58,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Or you can sign up with
-                    <MudLink OnClick="@(() => RouteManager.NavigateAsync("/account/passkey/sign-up"))">
+                    <MudLink OnClick="@(() => RouteManager.Route("/account/passkey/sign-up"))">
                         Passkey
                     </MudLink>
                 </MudText>
@@ -102,7 +102,7 @@
                     var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
                     await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
                     Snackbar.Add("Successfully signed in.", Severity.Success);
-                    RouteManager.NavigateAsync("/products");
+                    RouteManager.Route("/products");
                 }
                 else
                 {
@@ -117,7 +117,7 @@
                     if (response.IsLockedOut)
                     {
                         var url = $"/account/locked-out?id={response.UserId}";
-                        RouteManager.NavigateAsync(url);
+                        RouteManager.Route(url);
                     }
                     else
                     {

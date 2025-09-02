@@ -201,7 +201,7 @@
         if (result.Success)
         {
             Snackbar.Add("Passkey was successfully removed", Severity.Success);
-            RouteManager.NavigateAsync("/account/security");
+            RouteManager.Route("/account/security");
         }
         else
         {

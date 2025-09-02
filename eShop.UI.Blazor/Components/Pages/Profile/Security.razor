@@ -165,18 +165,18 @@
 
     private void OnResetPasswordAsync()
     {
-        RouteManager.NavigateAsync("/account/password/reset");
+        RouteManager.Route("/account/password/reset");
     }
 
     private void OnSubscribe(string provider)
     {
         if (provider == ProviderTypes.Authenticator)
         {
-            RouteManager.NavigateAsync("/account/2fa/authenticator");
+            RouteManager.Route("/account/2fa/authenticator");
         }
         else
         {
-            RouteManager.NavigateAsync($"/account/2fa/provider/{provider}");
+            RouteManager.Route($"/account/2fa/provider/{provider}");
         }
     }
 
@@ -247,73 +247,73 @@
     private void OnRemoveRecoveryEmailAsync()
     {
         var url = $"/account/recovery-email/remove";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnChangeRecoveryEmailAsync()
     {
         var url = $"/account/recovery-email/change";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnVerifyRecoveryEmailAsync()
     {
         var url = $"/account/recovery-email/verify";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnAddRecoveryEmailAsync()
     {
         var url = "/account/recovery-email/add";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnResetRecoveryEmailAsync()
     {
         var url = "/account/recovery-email/reset";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnPasskeyRemoveAsync(Guid id)
     {
         var url = $"/account/passkey/remove?passkey={id}";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnDisconnectLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/disconnect?provider={provider}";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnAllowLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/allow?provider={provider}";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnDisallowLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/disallow?provider={provider}";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnVerifyDeviceAsync(Guid id)
     {
         var url = $"/account/device/verify?device={id}";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnBlockDeviceAsync(Guid id)
     {
         var url = $"/account/device/block?device={id}";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
     private void OnUnblockDeviceAsync(Guid id)
     {
         var url = $"/account/device/unblock?device={id}";
-        RouteManager.NavigateAsync(url);
+        RouteManager.Route(url);
     }
 
 }
