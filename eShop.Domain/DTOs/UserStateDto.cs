@@ -8,6 +8,9 @@ public class UserStateDto
     public string? Email { get; set; }
     public string? RecoveryEmail { get; set; }
     public string? PhoneNumber { get; set; }
+
+    public List<RoleDto> Roles { get; set; } = [];
+    public List<PermissionDto> Permissions { get; set; } = [];
     
     public bool LockedOut { get; set; }
 }

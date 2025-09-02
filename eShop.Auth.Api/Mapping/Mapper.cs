@@ -174,4 +174,13 @@ public static class Mapper
             Type = source.Type
         };
     }
+
+    public static PermissionDto Map (PermissionEntity source)
+    {
+        return new()
+        {
+            Id = source.Id,
+            Name = source.Name
+        };
+    }
 }
