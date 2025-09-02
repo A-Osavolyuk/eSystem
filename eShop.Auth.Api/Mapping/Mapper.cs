@@ -50,8 +50,8 @@ public static class Mapper
             Id = Guid.CreateVersion7(),
             Email = source.Email,
             NormalizedEmail = source.Email.ToUpper(),
-            UserName = source.UserName,
-            NormalizedUserName = source.UserName.ToUpper(),
+            Username = source.UserName,
+            NormalizedUsername = source.UserName.ToUpper(),
         };
     }
 
@@ -68,8 +68,8 @@ public static class Mapper
             PhoneNumberConfirmed = source.PhoneNumberConfirmed,
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             PhoneNumberConfirmationDate = source.PhoneNumberConfirmationDate,
-            Username = source.UserName,
-            UserNameChangeDate = source.UserNameChangeDate,
+            Username = source.Username,
+            UserNameChangeDate = source.UsernameChangeDate,
         };
     }
 

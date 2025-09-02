@@ -17,9 +17,9 @@ public class UserEntity : Entity
     public DateTimeOffset? RecoveryEmailConfirmationDate { get; set; }
     public DateTimeOffset? RecoveryEmailChangeDate { get; set; }
     
-    public string UserName { get; set; } = string.Empty;
-    public string NormalizedUserName { get; set; } = string.Empty;
-    public DateTimeOffset? UserNameChangeDate { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string NormalizedUsername { get; set; } = string.Empty;
+    public DateTimeOffset? UsernameChangeDate { get; set; }
     
     public string? PhoneNumber { get; set; } = string.Empty;
     public bool PhoneNumberConfirmed { get; set; }

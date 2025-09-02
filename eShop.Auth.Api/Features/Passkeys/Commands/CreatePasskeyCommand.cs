@@ -32,7 +32,7 @@ public class CreatePasskeyCommandHandler(
             PublicKeyCredentialUser = new()
             {
                 Id = userIdBase64,
-                Name = user.UserName,
+                Name = user.Username,
                 DisplayName = request.Request.DisplayName,
             },
             AuthenticatorSelection = new()

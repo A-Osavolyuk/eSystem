@@ -56,7 +56,7 @@ public class SendTwoFactorCodeCommandHandler(
                 }, 
                 Payload = new()
                 {
-                    { "UserName", user.UserName },
+                    { "UserName", user.Username },
                     { "Code", code },
                 },
             },

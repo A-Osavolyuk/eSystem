@@ -82,7 +82,7 @@ public sealed class UserManager(
     public async ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default)
     {
         var normalizedUserName = name.ToUpper();
-        var user = await context.Users.Where(x => x.NormalizedUserName == normalizedUserName)
+        var user = await context.Users.Where(x => x.NormalizedUsername == normalizedUserName)
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -321,7 +321,7 @@ public sealed class UserManager(
         user.EmailChangeDate = DateTimeOffset.UtcNow;
         user.EmailConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        user.UserName = newEmail;
+        user.Username = newEmail;
 
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
@@ -456,7 +456,7 @@ public sealed class UserManager(
         }
 
         user.NormalizedEmail = user.Email.ToUpper();
-        user.NormalizedUserName = user.UserName.ToUpper();
+        user.NormalizedUsername = user.Username.ToUpper();
         user.CreateDate = DateTimeOffset.UtcNow;
 
         await context.Users.AddAsync(user, cancellationToken);
@@ -481,16 +481,16 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName,
         CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, ChangeField.Username, user.UserName, cancellationToken);
+        var result = await changeManager.CreateAsync(user, ChangeField.Username, user.Username, cancellationToken);
 
         if (!result.Succeeded)
         {
             return result;
         }
 
-        user.UserName = userName;
-        user.NormalizedUserName = userName.ToUpper();
-        user.UserNameChangeDate = DateTimeOffset.UtcNow;
+        user.Username = userName;
+        user.NormalizedUsername = userName.ToUpper();
+        user.UsernameChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
@@ -542,7 +542,7 @@ public sealed class UserManager(
     {
         var normalizedUserName = userName.ToUpper();
         var result = await context.Users.AnyAsync(
-            u => u.NormalizedUserName == normalizedUserName, cancellationToken);
+            u => u.NormalizedUsername == normalizedUserName, cancellationToken);
 
         return result;
     }

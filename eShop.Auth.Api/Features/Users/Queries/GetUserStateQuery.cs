@@ -19,7 +19,7 @@ public class GetUserStateQueryHandler(IUserManager userManager) : IRequestHandle
             Email = user.Email,
             RecoveryEmail = user.RecoveryEmail,
             PhoneNumber = user.PhoneNumber,
-            Username = user.UserName,
+            Username = user.Username,
             LockedOut = user.LockoutState.Enabled,
             Roles = user.Roles.Select(x => Mapper.Map(x.Role)).ToList(),
             Permissions = user.Permissions.Select(x => Mapper.Map(x.Permission)).ToList(),

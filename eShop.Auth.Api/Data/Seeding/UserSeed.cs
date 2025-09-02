@@ -15,8 +15,8 @@ public class UserSeed : Seed<UserEntity>
                 NormalizedEmail = "sasha.osavolll111@gmail.com".ToUpper(),
                 EmailConfirmed = true,
                 EmailConfirmationDate = DateTimeOffset.UtcNow,
-                UserName = "pipidastr",
-                NormalizedUserName = "PIPIDASTR".ToUpper(),
+                Username = "pipidastr",
+                NormalizedUsername = "PIPIDASTR".ToUpper(),
                 PasswordHash = "ARAnAAAl1FoQrHhNWGK51c8k0FFv1BuyOTZvNXrRWI7EVVDW5ScOzlWykcg+O8MKwnwzJEs=",
                 AccountConfirmed = true,
             }

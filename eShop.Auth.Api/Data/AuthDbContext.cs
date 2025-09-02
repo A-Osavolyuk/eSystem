@@ -40,8 +40,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.NormalizedEmail).HasMaxLength(64);
             entity.Property(x => x.RecoveryEmail).HasMaxLength(64);
             entity.Property(x => x.NormalizedRecoveryEmail).HasMaxLength(64);
-            entity.Property(x => x.UserName).HasMaxLength(64);
-            entity.Property(x => x.NormalizedUserName).HasMaxLength(64);
+            entity.Property(x => x.Username).HasMaxLength(64);
+            entity.Property(x => x.NormalizedUsername).HasMaxLength(64);
             entity.Property(x => x.PhoneNumber).HasMaxLength(18);
             entity.Property(x => x.PasswordHash).HasMaxLength(1000);
             

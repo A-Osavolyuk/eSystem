@@ -50,7 +50,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.RecoveryEmail, Type: CodeType.Verify, Sender: SenderType.Email } =>
@@ -64,7 +64,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.Account, Type: CodeType.Unlock, Sender: SenderType.Email } =>
@@ -78,7 +78,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.LinkedAccount, Type: CodeType.Allow, Sender: SenderType.Email } =>
@@ -93,7 +93,7 @@ public class SendCodeCommandHandler(
                     {
                         { "Code", code },
                         { "Provider", payload["Provider"] },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.Device, Type: CodeType.Block, Sender: SenderType.Email } =>
@@ -107,7 +107,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName },
+                        { "UserName", user.Username },
                         { "Ip", payload["IpAddress"] },
                         { "OS", payload["OS"] },
                         { "Device", payload["Device"] },
@@ -125,7 +125,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName },
+                        { "UserName", user.Username },
                         { "NewEmail", payload["NewEmail"] }
                     }
                 },
@@ -140,7 +140,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName },
+                        { "UserName", user.Username },
                         { "NewEmail", payload["RecoveryNewEmail"] }
                     }
                 },
@@ -156,7 +156,7 @@ public class SendCodeCommandHandler(
                     {
                         { "Code", code },
                         { "Provider", payload["Provider"] },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.LinkedAccount, Type: CodeType.Disconnect, Sender: SenderType.Email } =>
@@ -171,7 +171,7 @@ public class SendCodeCommandHandler(
                     {
                         { "Code", code },
                         { "Provider", payload["Provider"] },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.Password, Type: CodeType.Reset, Sender: SenderType.Email } =>
@@ -185,7 +185,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.Passkey, Type: CodeType.Remove, Sender: SenderType.Email } =>
@@ -199,7 +199,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName },
+                        { "UserName", user.Username },
                         { "DisplayName", payload["DisplayName"] }
                     }
                 },
@@ -214,7 +214,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName },
+                        { "UserName", user.Username },
                     }
                 },
             { Resource: CodeResource.Email, Type: CodeType.Reset, Sender: SenderType.Email } =>
@@ -228,7 +228,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.Device, Type: CodeType.Trust, Sender: SenderType.Email } =>
@@ -242,7 +242,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName },
+                        { "UserName", user.Username },
                         { "Ip", payload["IpAddress"] },
                         { "OS", payload["OS"] },
                         { "Device", payload["Device"] },
@@ -260,7 +260,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName },
+                        { "UserName", user.Username },
                         { "Ip", payload["IpAddress"] },
                         { "OS", payload["OS"] },
                         { "Device", payload["Device"] },
@@ -278,7 +278,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName },
+                        { "UserName", user.Username },
                         { "Ip", payload["IpAddress"] },
                         { "OS", payload["OS"] },
                         { "Device", payload["Device"] },
@@ -296,7 +296,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.RecoveryEmail, Type: CodeType.New, Sender: SenderType.Email } =>
@@ -310,7 +310,7 @@ public class SendCodeCommandHandler(
                     Payload = new()
                     {
                         { "Code", code },
-                        { "UserName", user.UserName }
+                        { "UserName", user.Username }
                     }
                 },
             { Resource: CodeResource.PhoneNumber, Type: CodeType.Current, Sender: SenderType.Sms } =>

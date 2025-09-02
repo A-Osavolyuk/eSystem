@@ -81,7 +81,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             {
                 Id = Guid.CreateVersion7(),
                 Email = email,
-                UserName = email,
+                Username = email,
                 EmailConfirmed = true
             };
 
@@ -294,7 +294,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             },
             Payload = new()
             {
-                { "UserName", user.UserName },
+                { "UserName", user.Username },
                 { "ProviderName", provider.Name }
             }
         };

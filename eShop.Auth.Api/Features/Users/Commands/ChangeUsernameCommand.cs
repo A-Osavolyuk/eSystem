@@ -15,7 +15,7 @@ public class ChangeUsernameCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        if (user.UserName == request.Request.Username) 
+        if (user.Username == request.Request.Username) 
             return Results.BadRequest("New username must be different than the current username");
         
         if (identityOptions.Account.RequireUniqueUserName)

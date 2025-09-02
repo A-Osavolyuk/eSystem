@@ -81,7 +81,7 @@ public sealed class RegisterCommandHandler(
         var response = new RegistrationResponse()
         {
             UserId = user.Id,
-            UserName = user.UserName,
+            UserName = user.Username,
             Email = user.Email,
         };
 
