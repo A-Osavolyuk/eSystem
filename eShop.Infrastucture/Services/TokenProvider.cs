@@ -1,13 +1,18 @@
-﻿namespace eShop.Infrastructure.Services;
+﻿using Microsoft.AspNetCore.Http;
 
-public class TokenProvider(ICookieManager cookieManager) : ITokenProvider
+namespace eShop.Infrastructure.Services;
+
+public class TokenProvider(
+    ICookieManager cookieManager, 
+    IHttpContextAccessor httpContextAccessor) : ITokenProvider
 {
     private readonly ICookieManager cookieManager = cookieManager;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private const string Key = "access-token";
 
     public async ValueTask<string?> GetAsync()
     {
-        var token = await cookieManager.GetAsync(Key);
+        var token = httpContextAccessor.HttpContext?.Request.Cookies[Key];
         return token;
     }
 

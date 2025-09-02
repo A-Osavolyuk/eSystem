@@ -3,6 +3,7 @@ using eShop.Domain.DTOs;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 using eShop.Infrastructure.State;
+using Microsoft.AspNetCore.Http;
 
 namespace eShop.Infrastructure.Security;
 
