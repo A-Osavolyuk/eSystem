@@ -1,4 +1,5 @@
-﻿using MudBlazor.Services;
+﻿using eShop.Infrastructure.Routing;
+using MudBlazor.Services;
 using MudExtensions.Services;
 
 namespace eShop.BlazorWebUI.Extensions;
@@ -11,7 +12,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddInfrastructureLayer();
         builder.AddValidation();
         builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
-        
+
         builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
         builder.Services.AddMudExtensions();
         builder.Services.AddMudServices(config =>
@@ -29,7 +30,7 @@ public static class HostApplicationBuilderExtensions
 
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-        
+
         builder.AddRouting(cfg =>
         {
             cfg.OnNotFound = "/error?code=404";
@@ -38,23 +39,24 @@ public static class HostApplicationBuilderExtensions
 
             cfg.Pages =
             [
+                new() { Routes = ["/error"] },
                 new() { Routes = ["/products"] },
-                new() { Routes = ["/products/create"], RequiredRoles = ["Seller"]},
+                new() { Routes = ["/products/create"], RequiredRoles = ["Seller"] },
                 new() { Routes = ["/account/login"] },
                 new() { Routes = ["/account/passkey/sign-in"] },
                 new() { Routes = ["/account/passkey/remove"], RequireAuthorization = true },
                 new() { Routes = ["/account/oauth/sign-in"] },
                 new() { Routes = ["/account/oauth/signed-up"] },
                 new() { Routes = ["/account/oauth/fallback"] },
-                new() { Routes = ["/account/linked-account/disconnect"], RequireAuthorization = true},
-                new() { Routes = ["/account/linked-account/allow"], RequireAuthorization = true},
-                new() { Routes = ["/account/linked-account/disallow"], RequireAuthorization = true},
+                new() { Routes = ["/account/linked-account/disconnect"], RequireAuthorization = true },
+                new() { Routes = ["/account/linked-account/allow"], RequireAuthorization = true },
+                new() { Routes = ["/account/linked-account/disallow"], RequireAuthorization = true },
                 new() { Routes = ["/account/2fa/login"] },
                 new() { Routes = ["/account/2fa/authenticator"], RequireAuthorization = true },
                 new() { Routes = ["/account/2fa/provider/{type}"], RequireAuthorization = true },
                 new() { Routes = ["/account/locked-out"] },
                 new() { Routes = ["/account/unlock"] },
-                new() { Routes = ["/account/register"] },
+                new() { Routes = ["/account/register"], RequireAuthorization = true },
                 new() { Routes = ["/account/profile"], RequireAuthorization = true },
                 new() { Routes = ["/account/security"], RequireAuthorization = true },
                 new() { Routes = ["/account/settings"], RequireAuthorization = true },
