@@ -23,11 +23,6 @@ public static class Extensions
     {
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddHttpClient();
-        builder.Services.AddHttpClient("self", client =>
-        {
-            var url = new Uri(builder.WebHost.GetSetting(WebHostDefaults.ServerUrlsKey)!);
-            client.BaseAddress = url;
-        });
         
         builder.Services.AddHttpClient<ISecurityService, SecurityService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IStoreService, StorageService>(ServiceLifetime.Scoped);
