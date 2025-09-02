@@ -47,12 +47,11 @@ public static class Extensions
         builder.Services.AddAuthorization();
         builder.Services.AddAuthentication()
             .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(
-                JwtBearerDefaults.AuthenticationScheme, options => { });
+                JwtBearerDefaults.AuthenticationScheme, _ => { });
 
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<TokenHandler>();
         builder.Services.AddScoped<AuthenticationManager>();
-        builder.Services.AddScoped<AuthenticationStateManager>();
         builder.Services.AddScoped<JwtAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
     }
