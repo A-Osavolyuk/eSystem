@@ -34,14 +34,14 @@ public class JwtAuthenticationStateProvider(
 
             var rawToken = tokenHandler.ReadToken(token);
             if (rawToken is null || !rawToken.Claims.Any()) return await UnauthorizeAsync();
-            
+
             var claims = rawToken.Claims.ToList();
-            if (!userState.IsAuthenticated) await LoadUserStateAsync(claims);
+            if (!userState.IsAuthenticated) await LoadAsync(claims);
 
             var claimsIdentity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var authenticationState = new AuthenticationState(claimsPrincipal);
-            
+
             return await Task.FromResult(authenticationState);
         }
         catch (Exception)
@@ -50,22 +50,7 @@ public class JwtAuthenticationStateProvider(
         }
     }
 
-    public async Task ReauthenticateAsync(string accessToken, string refreshToken)
-    {
-        if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
-        {
-            await tokenProvider.SetAsync(refreshToken);
-            var authenticationState = Authorized(refreshToken);
-
-            NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
-        }
-        else
-        {
-            await UnauthorizeAsync();
-        }
-    }
-
-    public async Task LoginAsync(string accessToken, string refreshToken)
+    public async Task SignInAsync(string accessToken, string refreshToken)
     {
         if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
         {
@@ -77,26 +62,23 @@ public class JwtAuthenticationStateProvider(
             var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Subject).Value);
             var jti = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Jti).Value);
             var exp = long.Parse(claims.First(x => x.Type == AppClaimTypes.Exp).Value);
-            
+
             await storage.SetAsync("userId", userId);
             await storage.SetAsync("jti", jti);
             await storage.SetAsync("exp", exp);
-            
+
             userState.UserId = userId;
-            
+
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(identity);
             var authenticationState = new AuthenticationState(claimsPrincipal);
 
             NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
-        else
-        {
-            await UnauthorizeAsync();
-        }
+        else await UnauthorizeAsync();
     }
 
-    public async Task<AuthenticationState> LogOutAsync()
+    public async Task<AuthenticationState> SignOutAsync()
     {
         await tokenProvider.RemoveAsync();
         await storage.ClearAsync();
@@ -106,15 +88,8 @@ public class JwtAuthenticationStateProvider(
 
     private async Task<AuthenticationState> UnauthorizeAsync()
     {
-        try
-        {
-            NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
-            return await Task.FromResult(anonymous);
-        }
-        catch (Exception)
-        {
-            return await Task.FromResult(anonymous);
-        }
+        NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
+        return await Task.FromResult(anonymous);
     }
 
     private async Task<AuthenticationState> RefreshTokenAsync(string token)
@@ -127,28 +102,19 @@ public class JwtAuthenticationStateProvider(
 
         var result = await securityService.RefreshTokenAsync(request);
 
-        if (!result.Success)
-        {
-            return await LogOutAsync();
-        }
-        
-        var response = result.Get<RefreshTokenResponse>()!;
-        
-        return Authorized(response.RefreshToken);
-    }
+        if (!result.Success) return await SignOutAsync();
 
-    private AuthenticationState Authorized(string token)
-    {
-        var rawToken = tokenHandler.ReadToken(token)!;
+        var response = result.Get<RefreshTokenResponse>()!;
+        var rawToken = tokenHandler.ReadToken(response.RefreshToken)!;
         var claims = rawToken.Claims.ToList();
         var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(identity);
         var authenticationState = new AuthenticationState(claimsPrincipal);
-        
+
         return authenticationState;
     }
 
-    private async Task LoadUserStateAsync(List<Claim> claims)
+    private async Task LoadAsync(List<Claim> claims)
     {
         var userId = Guid.Parse(claims.Single(x => x.Type == AppClaimTypes.Subject).Value);
         var result = await userService.GetUserStateAsync(userId);

@@ -31,7 +31,7 @@
             if (result.Success)
             {
                 var response = result.Get<LoadOAuthSessionResponse>()!;
-                await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
+                await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken);
 
                 if (response.SignType == OAuthSignType.SignIn)
                 {

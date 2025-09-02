@@ -4,19 +4,13 @@ public class AuthenticationManager(AuthenticationStateProvider authenticationSta
 {
     private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
 
-    public async Task LogInAsync(string accessToken, string refreshToken)
+    public async Task SignInAsync(string accessToken, string refreshToken)
     {
-        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.LoginAsync(accessToken, refreshToken);
+        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignInAsync(accessToken, refreshToken);
     }
 
-    public async Task LogOutAsync()
+    public async Task SignOutAsync()
     {
-        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.LogOutAsync();
-    }
-
-    public async Task ReauthenticateAsync(string accessToken, string refreshToken)
-    {
-        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.ReauthenticateAsync(accessToken,
-            refreshToken);
+        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignOutAsync();
     }
 }

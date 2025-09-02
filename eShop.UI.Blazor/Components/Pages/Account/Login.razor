@@ -160,7 +160,7 @@
                 }
                 else
                 {
-                    await AuthenticationManager.LogInAsync(response!.AccessToken!, response.RefreshToken!);
+                    await AuthenticationManager.SignInAsync(response!.AccessToken!, response.RefreshToken!);
 
                     if (string.IsNullOrEmpty(ReturnUrl))
                     {

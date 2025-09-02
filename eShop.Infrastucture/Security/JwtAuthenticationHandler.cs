@@ -20,10 +20,7 @@ public class JwtAuthenticationHandler(
         {
             var token = Request.Cookies["access-token"];
 
-            if (string.IsNullOrEmpty(token))
-            {
-                return Task.FromResult(AuthenticateResult.NoResult());
-            }
+            if (string.IsNullOrEmpty(token)) return Task.FromResult(AuthenticateResult.NoResult());
 
             var rawToken = tokenHandler.ReadToken(token)!;
             var claims = rawToken.Claims.ToList();
