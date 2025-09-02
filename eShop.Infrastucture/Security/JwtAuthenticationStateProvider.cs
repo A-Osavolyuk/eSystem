@@ -79,6 +79,7 @@ public class JwtAuthenticationStateProvider(
             var jti = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Jti).Value);
             var exp = long.Parse(claims.First(x => x.Type == AppClaimTypes.Exp).Value);
             
+            userState.UserId = userId;
             await storage.SetAsync("userId", userId);
             await storage.SetAsync("jti", jti);
             await storage.SetAsync("exp", exp);
@@ -95,6 +96,7 @@ public class JwtAuthenticationStateProvider(
     {
         await tokenProvider.RemoveAsync();
         await storage.ClearAsync();
+        userState.LogOut();
         return await UnauthorizeAsync();
     }
 
@@ -160,6 +162,8 @@ public class JwtAuthenticationStateProvider(
             userState.RecoveryEmail = state.RecoveryEmail;
             userState.Username = state.Username;
             userState.PhoneNumber = state.PhoneNumber;
+            userState.Permissions = state.Permissions;
+            userState.Roles = state.Roles;
         }
     }
 }
