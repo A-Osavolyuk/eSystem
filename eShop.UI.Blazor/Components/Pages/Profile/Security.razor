@@ -43,14 +43,16 @@
                     Model="SecurityModel"
                     OnCreate="@(() => OnCreatePasskeyAsync())"
                     OnRemove="@((value) => OnPasskeyRemoveAsync(value))"/>
-                <RecoverySection
+                <RecoveryEmailSection
                     Model="SecurityModel"
-                    OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"
                     OnAdd="@(() => OnAddRecoveryEmailAsync())"
                     OnChange="@(() => OnChangeRecoveryEmailAsync())"
                     OnRemove="@(() => OnRemoveRecoveryEmailAsync())"
                     OnVerify="@(() => OnVerifyRecoveryEmailAsync())"
                     OnReset="@(() => OnResetRecoveryEmailAsync())"/>
+                <RecoverySection
+                    Model="SecurityModel"
+                    OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"/>
             </MudStack>
         </MudItem>
     </MudGrid>
