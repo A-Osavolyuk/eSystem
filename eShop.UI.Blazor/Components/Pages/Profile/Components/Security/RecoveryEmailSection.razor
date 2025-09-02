@@ -18,7 +18,7 @@
                 }
             </MudStack>
             <MudStack Row="true" Spacing="1">
-                @if (!Model.HasRecoveryEmail)
+                @if (Model.HasRecoveryEmail)
                 {
                     <MudText Style="padding-top: 5px">@Model.RecoveryEmail</MudText>
                     if (Model is { RecoveryEmailConfirmed: true, RecoveryEmailConfirmationDate: not null })
@@ -67,7 +67,7 @@
                     {
                         <MudTooltip Text="Verify recovery email">
                             <MudIconButton
-                                Icon="@Icons.Material.Filled.Add"
+                                Icon="@Icons.Material.Filled.Check"
                                 Color="Color.Primary"
                                 Variant="Variant.Filled"
                                 OnClick="@(async () => await OnVerify.InvokeAsync())"/>
