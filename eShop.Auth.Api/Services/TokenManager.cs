@@ -59,15 +59,19 @@ public sealed class TokenManager(
             TokenType.Refresh => DateTime.UtcNow.AddDays(options.ExpirationDays),
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
-
-        var claims = GetClaims(user);
+        
         var jti = Guid.NewGuid();
-        var jtiClaim = new Claim(AppClaimTypes.Jti, jti.ToString());
+        
+        var claims = new List<Claim>()
+        {
+            new (AppClaimTypes.Subject, user.Id.ToString()),
+            new (AppClaimTypes.Jti, jti.ToString())
+        };
 
         var securityToken = new JwtSecurityToken(
             audience: options.Audience,
             issuer: options.Issuer,
-            claims: [..claims, jtiClaim],
+            claims: claims,
             expires: expirationDate,
             signingCredentials: signingCredentials);
 
@@ -115,21 +119,5 @@ public sealed class TokenManager(
         await context.SaveChangesAsync(cancellationToken);
 
         return token;
-    }
-
-    private List<Claim> GetClaims(UserEntity user)
-    {
-        var claims = new List<Claim>()
-        {
-            new(AppClaimTypes.Subject, user.Id.ToString()),
-        };
-
-        var roles = user.Roles.Select(x => x.Role);
-        var permissions = user.Permissions.Select(x => x.Permission);
-
-        claims.AddRange(roles.Select(x => new Claim(AppClaimTypes.Role, x.Name!)));
-        claims.AddRange(permissions.Select(x => new Claim(AppClaimTypes.Permission, x.Name!)));
-
-        return claims;
     }
 }
