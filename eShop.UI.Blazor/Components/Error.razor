@@ -1,19 +1,40 @@
-﻿@page "/Error"
+﻿@page "/error"
 
 @using System.Web
 @inherits PageBase
 
 <Title Text="Error"/>
 
-<MudPage Row="3" Column="5" Height="600px">
-    <MudSection Row="2" Column="2" ColSpan="3">
-        @switch (Code)
+<MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+    @switch (Code)
+    {
+        case StatusCodes.Status404NotFound:
         {
-            case StatusCodes.Status404NotFound:
+            <MudText Align="Align.Center" Typo="Typo.h4">
+                Page not found
+            </MudText>
+            <MudText Align="Align.Center" Typo="Typo.h5">
+                Sorry, the page you are looking for does not exist.
+            </MudText>
+            <MudLink
+                Style="text-align:center"
+                Class="d-block"
+                Typo="Typo.h5"
+                OnClick="@(() => RouteManager.Route("/products"))">
+                To main page
+            </MudLink>
+            break;
+        }
+        case StatusCodes.Status403Forbidden:
+        {
+            <MudText Align="Align.Center" Typo="Typo.h4">
+                Access denied
+            </MudText>
+            <MudText Align="Align.Center" Typo="Typo.h5">
+                You do not have access to this resource.
+            </MudText>
+            if (string.IsNullOrEmpty(ReturnUrl))
             {
-                <MudText Align="Align.Center" Typo="Typo.h4">Page not found</MudText>
-                <MudText Align="Align.Center" Typo="Typo.h5">Sorry, the page you are looking for does not exist.
-                </MudText>
                 <MudLink
                     Style="text-align:center"
                     Class="d-block"
@@ -21,53 +42,42 @@
                     OnClick="@(() => RouteManager.Route("/products"))">
                     To main page
                 </MudLink>
-                break;
             }
-            case StatusCodes.Status403Forbidden:
+            else
             {
-                <MudText Align="Align.Center" Typo="Typo.h4">Access denied</MudText>
-                <MudText Align="Align.Center" Typo="Typo.h5">You do not have access to this resource.</MudText>
-                if (string.IsNullOrEmpty(ReturnUrl))
-                {
-                    <MudLink
-                        Style="text-align:center"
-                        Class="d-block"
-                        Typo="Typo.h5"
-                        OnClick="@(() => RouteManager.Route("/products"))">
-                        To main page
-                    </MudLink>
-                }
-                else
-                {
-                    <MudLink
-                        Style="text-align:center"
-                        Class="d-block"
-                        Typo="Typo.h5"
-                        OnClick="@(() => RouteManager.Route(ReturnUrl, true))">
-                        Go back
-                    </MudLink>
-                }
-
-                break;
-            }
-            case StatusCodes.Status401Unauthorized:
-            {
-                <MudText Align="Align.Center" Typo="Typo.h4">Not authorized</MudText>
-                <MudText Align="Align.Center" Typo="Typo.h5">Sorry, you have to be authorized to navigate this page.
-                </MudText>
-                <MudText Align="Align.Center" Typo="Typo.h5">Log in your account to come back to this page.</MudText>
                 <MudLink
                     Style="text-align:center"
                     Class="d-block"
                     Typo="Typo.h5"
-                    OnClick="@(() => ToLoginPage())">
-                    Go to Login
+                    OnClick="@(() => RouteManager.Route(ReturnUrl, true))">
+                    Go back
                 </MudLink>
-                break;
             }
+
+            break;
         }
-    </MudSection>
-</MudPage>
+        case StatusCodes.Status401Unauthorized:
+        {
+            <MudText Align="Align.Center" Typo="Typo.h4">
+                Not authorized
+            </MudText>
+            <MudText Align="Align.Center" Typo="Typo.h5">
+                Sorry, you have to be authorized to navigate this page.
+            </MudText>
+            <MudText Align="Align.Center" Typo="Typo.h5">
+                Log in your account to come back to this page.
+            </MudText>
+            <MudLink
+                Style="text-align:center"
+                Class="d-block"
+                Typo="Typo.h5"
+                OnClick="@(() => ToLoginPage())">
+                Go to Login
+            </MudLink>
+            break;
+        }
+    }
+</MudStack>
 
 @code {
 
