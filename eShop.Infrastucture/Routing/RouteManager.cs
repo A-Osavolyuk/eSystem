@@ -22,42 +22,36 @@ public class RouteManager(
 
     public void Route(string url, bool isRedirect = false, bool forceLoad = false)
     {
-        var route = MatchRoute(url, routeOptions.Pages);
+        var page = MatchRoute(url, routeOptions.Pages);
+        var route = GetRoute(page, url, isRedirect);
+        navigationManager.NavigateTo(route, forceLoad);
+    }
 
-        if (route is null)
+    private string GetRoute(PageRoute? page, string url, bool isRedirect = false)
+    {
+        if (page is null)
         {
-            OnError(ErrorCode.NotFound, forceLoad: forceLoad); 
-            return;
+            return OnError(ErrorCode.NotFound);
+        }
+
+        if (page.RequireAuthorization && !userState.IsAuthenticated)
+        {
+            return OnError(ErrorCode.Unauthorized, url);
         }
         
-        if (route!.RequireAuthorization && (!userState.IsAuthenticated))
+        if (page is { RequiredRoles.Count: > 0 } or { RequiredPermissions.Count: > 0 })
         {
-            OnError(ErrorCode.Unauthorized, url, forceLoad); 
-            return;
-        }
-
-        if (route is { RequiredRoles.Count: > 0 } or { RequiredPermissions.Count: > 0 })
-        {
-            if (!userState.HasRole(route.RequiredRoles) || !userState.HasPermission(route.RequiredPermissions))
+            if (!userState.HasRole(page.RequiredRoles) || !userState.HasPermission(page.RequiredPermissions))
             {
-                var returnUrl = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
-
-                OnError(ErrorCode.Forbidden, returnUrl, forceLoad); 
-                return;
+                var currentPage = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
+                return OnError(ErrorCode.Forbidden, currentPage); 
             }
         }
 
-        if (isRedirect)
-        {
-            var encodedUri = HttpUtility.UrlDecode(url);
-            navigationManager.NavigateTo(encodedUri, forceLoad);
-            return;
-        }
-
-        navigationManager.NavigateTo(url, forceLoad);
+        return isRedirect ? HttpUtility.UrlDecode(url) : url;
     }
     
-    private void OnError(ErrorCode errorCode, string? returnUrl = null, bool forceLoad = false)
+    private string OnError(ErrorCode errorCode, string? returnUrl = null)
     {
         var baseUrl = errorCode switch
         {
@@ -75,7 +69,7 @@ public class RouteManager(
             url.Append("&returnUrl=").Append(encodedUrl);
         }
         
-        navigationManager.NavigateTo(url.ToString(), forceLoad);
+        return url.ToString();
     }
 
     private Regex BuildExpression(string pattern)
