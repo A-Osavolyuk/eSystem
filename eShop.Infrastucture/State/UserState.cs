@@ -17,6 +17,17 @@ public class UserState : AsyncState
     
     public bool IsAuthenticated => UserId != Guid.Empty;
 
+    public void LogOut()
+    {
+        UserId = Guid.Empty;
+        Username = null;
+        Email = null;
+        RecoveryEmail = null;
+        PhoneNumber = null;
+        Roles.Clear();
+        Permissions.Clear();
+    }
+
     public bool HasRole(string role) 
         => Roles.Any(x => x.Name == role);
     public bool HasRole(List<string> roles) 
