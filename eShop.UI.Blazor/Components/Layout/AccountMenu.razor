@@ -3,7 +3,7 @@
 
 @inject AuthenticationManager AuthenticationManager
 @inject Router RouteManager
-@inject UserStateContainer UserStateContainer
+@inject UserState UserState
 @inject ISnackbar Snackbar
 @inject IUserService UserService
 @inject IStorage Storage
@@ -35,7 +35,7 @@
 
                 </MudAvatar>
             </MudStack>
-            <MudText Inline="true" Align="Align.Center"> @UserStateContainer.Username </MudText>
+            <MudText Inline="true" Align="Align.Center"> @UserState.Username </MudText>
             <MudDivider/>
         </MudStack>
     </MudDrawerHeader>
@@ -86,7 +86,7 @@
 
     protected override void OnInitialized()
     {
-        UserStateContainer.OnChange += ReloadAsync;
+        UserState.OnChange += ReloadAsync;
     }
 
     private async Task ReloadAsync()
@@ -116,11 +116,11 @@
         {
             var user = result.Get<UserStateDto>()!;
             
-            UserStateContainer.UserId = user.UserId;
-            UserStateContainer.Username = user.Username;
-            UserStateContainer.Email = user.Email;
-            UserStateContainer.PhoneNumber = user.PhoneNumber;
-            UserStateContainer.RecoveryEmail = user.RecoveryEmail;
+            UserState.UserId = user.UserId;
+            UserState.Username = user.Username;
+            UserState.Email = user.Email;
+            UserState.PhoneNumber = user.PhoneNumber;
+            UserState.RecoveryEmail = user.RecoveryEmail;
         }
     }
 
@@ -134,7 +134,7 @@
 
     public void Dispose()
     {
-        UserStateContainer.OnChange -= ReloadAsync;
+        UserState.OnChange -= ReloadAsync;
     }
 
 }

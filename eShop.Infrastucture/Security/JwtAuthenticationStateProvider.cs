@@ -12,7 +12,7 @@ public class JwtAuthenticationStateProvider(
     ISecurityService securityService,
     IUserService userService,
     TokenHandler tokenHandler,
-    UserStateContainer userState) : AuthenticationStateProvider
+    UserState userState) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
@@ -20,7 +20,7 @@ public class JwtAuthenticationStateProvider(
     private readonly ISecurityService securityService = securityService;
     private readonly IUserService userService = userService;
     private readonly TokenHandler tokenHandler = tokenHandler;
-    private readonly UserStateContainer userState = userState;
+    private readonly UserState userState = userState;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {

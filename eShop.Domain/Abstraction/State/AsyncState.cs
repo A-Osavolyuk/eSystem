@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Abstraction.State;
 
-public abstract class AsyncStateContainer
+public abstract class AsyncState
 {
     public event Func<Task>? OnChange;
 

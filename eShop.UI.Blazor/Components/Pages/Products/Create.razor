@@ -7,7 +7,7 @@
 
 @attribute [Authorize]
 
-@inject ProductStateContainer StateContainer
+@inject ProductState State
 @inject ProductValidator Validator
 
 <Title Text="Create product"></Title>
@@ -68,7 +68,7 @@
 
     protected override void OnInitialized()
     {
-        StateContainer.OnChange += StateHasChanged;
+        State.OnChange += StateHasChanged;
     }
 
     private async Task OnSubmitAsync()
@@ -87,7 +87,7 @@
 
     public void Dispose()
     {
-        StateContainer.OnChange -= StateHasChanged;
+        State.OnChange -= StateHasChanged;
     }
 
 }

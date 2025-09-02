@@ -59,8 +59,8 @@ public static class Extensions
 
     private static void AddState(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddScoped<UserStateContainer>();
-        builder.Services.AddScoped<ProductStateContainer>();
+        builder.Services.AddScoped<UserState>();
+        builder.Services.AddScoped<ProductState>();
     }
 
     public static void AddRouting(this IHostApplicationBuilder builder, Action<RouteOptions> configureRouter)

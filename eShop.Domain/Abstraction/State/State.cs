@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Abstraction.State;
 
-public abstract class StateContainer
+public abstract class State
 {
     public event Action? OnChange;
 
