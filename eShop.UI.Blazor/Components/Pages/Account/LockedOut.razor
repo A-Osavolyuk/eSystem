@@ -38,8 +38,8 @@
                 </MudPaper>
                 <MudPaper Class="pa-3" Outlined="true">
                     <MudText Align="Align.Center">
-                        Want to unlock my account? 
-                        <MudLink OnClick="@(async () => await RouteManager.NavigateAsync($"/account/unlock?id={UserId}"))">
+                        Want to unlock my account?
+                        <MudLink OnClick="@(() => RouteManager.NavigateAsync($"/account/unlock?id={UserId}"))">
                             Unlock
                         </MudLink>
                     </MudText>
@@ -51,7 +51,9 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "id")] public Guid UserId { get; set; }
+    [SupplyParameterFromQuery(Name = "id")]
+    public Guid UserId { get; set; }
+
     private LockoutModel Model { get; set; } = new();
 
     protected override async Task OnInitializedAsync()

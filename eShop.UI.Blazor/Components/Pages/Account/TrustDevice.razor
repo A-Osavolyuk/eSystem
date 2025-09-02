@@ -147,12 +147,12 @@
             {
                 Snackbar.Add("Device successfully trusted", Severity.Success);
                 var url = $"/account/2fa/login?id={response.UserId}";
-                await RouteManager.NavigateAsync(url);
+                RouteManager.NavigateAsync(url);
             }
             else
             {
                 await AuthenticationManager.LogInAsync(response!.AccessToken!, response.RefreshToken!);
-                await RouteManager.NavigateAsync("/products");
+                RouteManager.NavigateAsync("/products");
                 Snackbar.Add(result.Message, Severity.Success);
             }
         }

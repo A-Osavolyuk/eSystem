@@ -22,18 +22,18 @@
             <MudStack Spacing="2" Justify="Justify.Center">
                 <TwoFactorSection
                     Model="SecurityModel"
-                    OnSubscribe="@(async (value) => await OnSubscribeAsync(value))"
+                    OnSubscribe="@((value) => OnSubscribe(value))"
                     OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"/>
                 <LinkedAccountsSection
                     Model="SecurityModel"
-                    OnAllow="@(async (value) => await OnAllowLinkedAccountAsync(value))"
-                    OnDisallow="@(async (value) => await OnDisallowLinkedAccountAsync(value))"
-                    OnDisconnect="@(async (value) => await OnDisconnectLinkedAccountAsync(value))"/>
+                    OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
+                    OnDisallow="@((value) => OnDisallowLinkedAccountAsync(value))"
+                    OnDisconnect="@((value) => OnDisconnectLinkedAccountAsync(value))"/>
                 <DevicesSection
                     Model="SecurityModel"
-                    OnVerify="@(async (value) => await OnVerifyDeviceAsync(value))"
-                    OnBlock="@(async (value) => await OnBlockDeviceAsync(value))"
-                    OnUnblock="@(async (value) => await OnUnblockDeviceAsync(value))"/>
+                    OnVerify="@((value) => OnVerifyDeviceAsync(value))"
+                    OnBlock="@((value) => OnBlockDeviceAsync(value))"
+                    OnUnblock="@((value) => OnUnblockDeviceAsync(value))"/>
                 <PasswordSection
                     Model="SecurityModel"
                     OnAdd="@(() => OnAddPasswordAsync())"
@@ -42,7 +42,7 @@
                 <PasskeysSection
                     Model="SecurityModel"
                     OnCreate="@(() => OnCreatePasskeyAsync())"
-                    OnRemove="@(async (value) => await OnPasskeyRemoveAsync(value))"/>
+                    OnRemove="@((value) => OnPasskeyRemoveAsync(value))"/>
                 <RecoverySection
                     Model="SecurityModel"
                     OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"
@@ -75,7 +75,7 @@
         if (result.Success)
         {
             var response = result.Get<UserSecurityDto>()!;
-            
+
             SecurityModel = Mapper.Map(response);
             await UserState.Change();
         }
@@ -93,9 +93,9 @@
             CloseOnEscapeKey = true,
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
-        
+
         var model = new CreatePasskeyModel() { UserId = UserState.UserId };
-        
+
         var parameters = new DialogParameters<CreatePasskeyDialog>()
         {
             { x => x.Model, model }
@@ -163,20 +163,20 @@
         }
     }
 
-    private async Task OnResetPasswordAsync()
+    private void OnResetPasswordAsync()
     {
-        await RouteManager.NavigateAsync("/account/password/reset");
+        RouteManager.NavigateAsync("/account/password/reset");
     }
 
-    private async Task OnSubscribeAsync(string provider)
+    private void OnSubscribe(string provider)
     {
         if (provider == ProviderTypes.Authenticator)
         {
-            await RouteManager.NavigateAsync("/account/2fa/authenticator");
+            RouteManager.NavigateAsync("/account/2fa/authenticator");
         }
         else
         {
-            await RouteManager.NavigateAsync($"/account/2fa/provider/{provider}");
+            RouteManager.NavigateAsync($"/account/2fa/provider/{provider}");
         }
     }
 
@@ -244,75 +244,76 @@
         }
     }
 
-    private async Task OnRemoveRecoveryEmailAsync()
+    private void OnRemoveRecoveryEmailAsync()
     {
         var url = $"/account/recovery-email/remove";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
-    
-    private async Task OnChangeRecoveryEmailAsync()
+
+    private void OnChangeRecoveryEmailAsync()
     {
         var url = $"/account/recovery-email/change";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
-    
-    private async Task OnVerifyRecoveryEmailAsync()
+
+    private void OnVerifyRecoveryEmailAsync()
     {
         var url = $"/account/recovery-email/verify";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
-    
-    private async Task OnAddRecoveryEmailAsync()
+
+    private void OnAddRecoveryEmailAsync()
     {
         var url = "/account/recovery-email/add";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
-    
-    private async Task OnResetRecoveryEmailAsync()
+
+    private void OnResetRecoveryEmailAsync()
     {
         var url = "/account/recovery-email/reset";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
-    
-    private async Task OnPasskeyRemoveAsync(Guid id)
+
+    private void OnPasskeyRemoveAsync(Guid id)
     {
         var url = $"/account/passkey/remove?passkey={id}";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
 
-    private async Task OnDisconnectLinkedAccountAsync(string provider)
+    private void OnDisconnectLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/disconnect?provider={provider}";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
 
-    private async Task OnAllowLinkedAccountAsync(string provider)
+    private void OnAllowLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/allow?provider={provider}";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
 
-    private async Task OnDisallowLinkedAccountAsync(string provider)
+    private void OnDisallowLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/disallow?provider={provider}";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
 
-    private async Task OnVerifyDeviceAsync(Guid id)
+    private void OnVerifyDeviceAsync(Guid id)
     {
         var url = $"/account/device/verify?device={id}";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
 
-    private async Task OnBlockDeviceAsync(Guid id)
+    private void OnBlockDeviceAsync(Guid id)
     {
         var url = $"/account/device/block?device={id}";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
 
-    private async Task OnUnblockDeviceAsync(Guid id)
+    private void OnUnblockDeviceAsync(Guid id)
     {
         var url = $"/account/device/unblock?device={id}";
-        await RouteManager.NavigateAsync(url);
+        RouteManager.NavigateAsync(url);
     }
+
 }

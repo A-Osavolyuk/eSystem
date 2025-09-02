@@ -19,7 +19,7 @@
             Align="Align.Center"
             Typo="Typo.h5"
             Class="ml-3 cursor-pointer"
-            @onclick="@(async () => await RouteManager.NavigateAsync("/products"))">
+            @onclick="@(() => RouteManager.NavigateAsync("/products"))">
             eShop
         </MudText>
         <MudSpacer/>
@@ -28,13 +28,13 @@
                 <MudButton
                     StartIcon="@Icons.Material.Filled.Login"
                     Color="Color.Primary"
-                    OnClick="@(async () => await RouteManager.NavigateAsync("/account/login"))">
+                    OnClick="@(() => RouteManager.NavigateAsync("/account/login"))">
                     Log In
                 </MudButton>
                 <MudButton
                     StartIcon="@Icons.Material.Filled.AppRegistration"
                     Color="Color.Primary"
-                    OnClick="@(async () => await RouteManager.NavigateAsync("/account/register"))"
+                    OnClick="@(() => RouteManager.NavigateAsync("/account/register"))"
                     Class="ml-3">
                     Register
                 </MudButton>
@@ -69,4 +69,5 @@
     {
         isDrawerOpen = !isDrawerOpen;
     }
+
 }

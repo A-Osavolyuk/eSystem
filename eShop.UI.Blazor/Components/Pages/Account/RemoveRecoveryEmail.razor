@@ -174,7 +174,7 @@
         if (result.Success)
         {
             Snackbar.Add("Recovery email was successfully removed", Severity.Success);
-            await RouteManager.NavigateAsync("/account/security");
+            RouteManager.NavigateAsync("/account/security");
         }
         else
         {

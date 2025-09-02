@@ -42,7 +42,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Have an account with password? Go to
-                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/login"))">
+                    <MudLink OnClick="@(() => RouteManager.NavigateAsync("/account/login"))">
                         Login
                     </MudLink>
                 </MudText>
@@ -50,7 +50,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/register"))">
+                    <MudLink OnClick="@(() => RouteManager.NavigateAsync("/account/register"))">
                         Register
                     </MudLink>
                 </MudText>
@@ -58,7 +58,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Or you can sign up with
-                    <MudLink OnClick="@(async () => await RouteManager.NavigateAsync("/account/passkey/sign-up"))">
+                    <MudLink OnClick="@(() => RouteManager.NavigateAsync("/account/passkey/sign-up"))">
                         Passkey
                     </MudLink>
                 </MudText>
@@ -71,7 +71,7 @@
     [SupplyParameterFromForm] public PasskeySignInModel Model { get; set; } = new();
 
     private MudForm form = new();
-    
+
     private async Task OnSubmitAsync()
     {
         await form.Validate();
@@ -102,8 +102,7 @@
                     var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
                     await AuthenticationManager.LogInAsync(response.AccessToken, response.RefreshToken);
                     Snackbar.Add("Successfully signed in.", Severity.Success);
-                
-                    await RouteManager.NavigateAsync("/products");
+                    RouteManager.NavigateAsync("/products");
                 }
                 else
                 {
@@ -112,13 +111,13 @@
                         Snackbar.Add(result.Message, Severity.Error);
                         return;
                     }
-                    
+
                     var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
 
                     if (response.IsLockedOut)
                     {
                         var url = $"/account/locked-out?id={response.UserId}";
-                        await RouteManager.NavigateAsync(url);
+                        RouteManager.NavigateAsync(url);
                     }
                     else
                     {
@@ -129,4 +128,5 @@
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
+
 }

@@ -41,31 +41,31 @@
     </MudDrawerHeader>
     <MudNavMenu Color="Color.Primary" Class="px-3">
         <MudNavLink
-            OnClick="@(async () => await NavigateAsync("/account/profile"))"
+            OnClick="@(() => NavigateAsync("/account/profile"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.AccountBox">
             Profile
         </MudNavLink>
         <MudNavLink
-            OnClick="@(async () => await NavigateAsync("/account/security"))"
+            OnClick="@(() => NavigateAsync("/account/security"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Security">
             Security
         </MudNavLink>
         <MudNavLink
-            OnClick="@(async () => await NavigateAsync("/account/orders"))"
+            OnClick="@(() => NavigateAsync("/account/orders"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.ShoppingCart">
             Orders
         </MudNavLink>
         <MudNavLink
-            OnClick="@(async () => await NavigateAsync("/account/orders-history"))"
+            OnClick="@(() => NavigateAsync("/account/orders-history"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.History">
             Order History
         </MudNavLink>
         <MudNavLink
-            OnClick="@(async () => await NavigateAsync("/account/settings"))"
+            OnClick="@(() => NavigateAsync("/account/settings"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Settings">
             Settings
@@ -104,7 +104,7 @@
     {
         await AuthenticationManager.LogOutAsync();
         Snackbar.Add("Successfully logged out.", Severity.Success);
-        await RouteManager.NavigateAsync("/account/login");
+        RouteManager.NavigateAsync("/account/login");
     }
 
     private async Task LoadAsync()
@@ -115,7 +115,7 @@
         if (result.Success)
         {
             var user = result.Get<UserStateDto>()!;
-            
+
             UserState.UserId = user.UserId;
             UserState.Username = user.Username;
             UserState.Email = user.Email;
@@ -126,9 +126,9 @@
 
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
 
-    private async Task NavigateAsync(string uri)
+    private void NavigateAsync(string uri)
     {
-        await RouteManager.NavigateAsync(uri);
+        RouteManager.NavigateAsync(uri);
         DrawerToggle();
     }
 

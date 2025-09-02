@@ -13,14 +13,14 @@
 <MudGrid Justify="Justify.Center" Spacing="1">
     <MudItem xs="6" Style="margin-top: 100px">
 
-        <MudStepperExtended 
-            @ref="stepper" 
-            Color="Color.Primary" 
+        <MudStepperExtended
+            @ref="stepper"
+            Color="Color.Primary"
             Variant="Variant.Filled"
-            HeaderTextView="HeaderTextView.All" 
+            HeaderTextView="HeaderTextView.All"
             HeaderBadgeView="HeaderBadgeView.All"
-            ShowNextButton="false" 
-            ShowPreviousButton="false" 
+            ShowNextButton="false"
+            ShowPreviousButton="false"
             ShowSkipButton="false">
             <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Info" Title="Information">
                 <ChildContent>
@@ -35,7 +35,7 @@
                                 <MudPaper Outlined="true" Class="pa-3">
                                     <MudStack Spacing="4">
                                         <MudText Align="Align.Center">
-                                            To disconnect your account from @Provider linked account, 
+                                            To disconnect your account from @Provider linked account,
                                             you will need to enter 6-digit code
                                             from an email we will send you to: <strong>@UserState.Email</strong>.
                                         </MudText>
@@ -70,7 +70,8 @@
                                         Model="Model">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@UserState.Email</strong>
+                                                We have sent an email with code to email:
+                                                <strong>@UserState.Email</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -80,7 +81,7 @@
                                                 Margin="Margin.None"
                                                 Count="6"
                                                 @bind-Value="Model.Code"/>
-                        
+
                                             <MudLoadingButton
                                                 ButtonType="ButtonType.Button"
                                                 Variant="Variant.Filled"
@@ -109,7 +110,10 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "provider")]
+    public string Provider { get; set; } = string.Empty;
+
     [SupplyParameterFromForm] public CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -167,9 +171,9 @@
             Sender = SenderType.Email,
             Code = Model.Code
         };
-        
+
         var result = await SecurityService.VerifyCodeAsync(request);
-        
+
         if (result.Success) await VerifyAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
@@ -183,14 +187,15 @@
         };
 
         var result = await OAuthService.DisconnectAsync(request);
-        
+
         if (result.Success)
         {
-            await RouteManager.NavigateAsync("/account/security");
+            RouteManager.NavigateAsync("/account/security");
         }
         else
         {
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
+
 }

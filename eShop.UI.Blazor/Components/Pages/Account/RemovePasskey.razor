@@ -30,10 +30,10 @@
                                         <MudStack Spacing="4">
                                             <MudText Align="Align.Center">
                                                 Are you sure you want to remove this passkey?
-                                                Before remove passkey, please check if you have 
-                                                another authentication method to be able to sign-in. 
+                                                Before remove passkey, please check if you have
+                                                another authentication method to be able to sign-in.
                                                 To remove this passkey, you will need
-                                                to enter 6-digit code from email we 
+                                                to enter 6-digit code from email we
                                                 will send to: <strong>@UserState.Email</strong>
                                             </MudText>
                                             <MudLoadingButton
@@ -67,7 +67,8 @@
                                             Model="Model">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from the email we sent you to: <strong>@UserState.Email</strong>
+                                                    Enter code from the email we sent you to:
+                                                    <strong>@UserState.Email</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
@@ -108,12 +109,14 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "passkey")] public Guid KeyId { get; set; }
+    [SupplyParameterFromQuery(Name = "passkey")]
+    public Guid KeyId { get; set; }
+
     [SupplyParameterFromForm] private RemovePasskeyModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-    
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -177,7 +180,7 @@
                 Sender = SenderType.Email,
                 Code = Model.Code
             };
-            
+
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();
@@ -198,7 +201,7 @@
         if (result.Success)
         {
             Snackbar.Add("Passkey was successfully removed", Severity.Success);
-            await RouteManager.NavigateAsync("/account/security");
+            RouteManager.NavigateAsync("/account/security");
         }
         else
         {
@@ -211,4 +214,5 @@
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
     }
+
 }

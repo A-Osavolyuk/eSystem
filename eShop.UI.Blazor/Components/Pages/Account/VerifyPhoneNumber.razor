@@ -33,7 +33,7 @@
                             Margin="Margin.None"
                             Count="6"
                             @bind-Value="Model.Code"/>
-                        
+
                         <MudLoadingButton
                             ButtonType="ButtonType.Button"
                             Variant="Variant.Filled"
@@ -95,7 +95,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            await RouteManager.NavigateAsync("/account/profile");
+            RouteManager.NavigateAsync("/account/profile");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
@@ -113,4 +113,5 @@
         var response = await SecurityService.SendCodeAsync(request);
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
+
 }

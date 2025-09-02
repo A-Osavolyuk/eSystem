@@ -4,7 +4,7 @@
 <MudNavMenu Color="Color.Primary" Bordered="true" Class="pa-2">
     <MudNavLink
         Icon="@Icons.Material.Filled.Store"
-        OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
+        OnClick="@(() => RouteManager.NavigateAsync("/products"))">
         Products
     </MudNavLink>
 </MudNavMenu>

@@ -16,6 +16,15 @@ public class UserState : AsyncState
     public List<PermissionDto> Permissions { get; set; } = [];
     
     public bool IsAuthenticated => UserId != Guid.Empty;
+
+    public bool HasRole(string role) 
+        => Roles.Any(x => x.Name == role);
+    public bool HasRole(List<string> roles) 
+        => roles.Intersect(Roles.Select(x => x.Name)).Any();
+    public bool HasPermission(string permission) 
+        => Permissions.Any(x => x.Name == permission);
+    public bool HasPermission(List<string> permissions) 
+        => permissions.Intersect(Permissions.Select(x => x.Name)).Any();
     
     public override async Task Change()
     {

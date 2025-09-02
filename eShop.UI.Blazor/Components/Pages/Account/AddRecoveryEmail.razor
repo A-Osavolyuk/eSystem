@@ -36,7 +36,7 @@
                                                 <MudItem xs="12">
                                                     <MudText Align="Align.Center" Typo="Typo.body1"
                                                              Style="width: 55ch; margin: auto">
-                                                        To add a recovery email, please enter a recovery email. 
+                                                        To add a recovery email, please enter a recovery email.
                                                         We will send an email with 6-digit code to this recovery email.
                                                     </MudText>
                                                     <br/>
@@ -208,7 +208,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            await RouteManager.NavigateAsync("/account/security");
+            RouteManager.NavigateAsync("/account/security");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

@@ -3,7 +3,7 @@
 @using System.Web
 @inherits PageBase
 
-<Title Text="Error" />
+<Title Text="Error"/>
 
 <MudPage Row="3" Column="5" Height="600px">
     <MudSection Row="2" Column="2" ColSpan="3">
@@ -12,12 +12,13 @@
             case StatusCodes.Status404NotFound:
             {
                 <MudText Align="Align.Center" Typo="Typo.h4">Page not found</MudText>
-                <MudText Align="Align.Center" Typo="Typo.h5">Sorry, the page you are looking for does not exist.</MudText>
+                <MudText Align="Align.Center" Typo="Typo.h5">Sorry, the page you are looking for does not exist.
+                </MudText>
                 <MudLink
                     Style="text-align:center"
                     Class="d-block"
                     Typo="Typo.h5"
-                    OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
+                    OnClick="@(() => RouteManager.NavigateAsync("/products"))">
                     To main page
                 </MudLink>
                 break;
@@ -32,7 +33,7 @@
                         Style="text-align:center"
                         Class="d-block"
                         Typo="Typo.h5"
-                        OnClick="@(async () => await RouteManager.NavigateAsync("/products"))">
+                        OnClick="@(() => RouteManager.NavigateAsync("/products"))">
                         To main page
                     </MudLink>
                 }
@@ -42,22 +43,24 @@
                         Style="text-align:center"
                         Class="d-block"
                         Typo="Typo.h5"
-                        OnClick="@(async () => await RouteManager.NavigateAsync(ReturnUrl, true))">
+                        OnClick="@(() => RouteManager.NavigateAsync(ReturnUrl, true))">
                         Go back
                     </MudLink>
                 }
+
                 break;
             }
             case StatusCodes.Status401Unauthorized:
             {
                 <MudText Align="Align.Center" Typo="Typo.h4">Not authorized</MudText>
-                <MudText Align="Align.Center" Typo="Typo.h5">Sorry, you have to be authorized to navigate this page.</MudText>
+                <MudText Align="Align.Center" Typo="Typo.h5">Sorry, you have to be authorized to navigate this page.
+                </MudText>
                 <MudText Align="Align.Center" Typo="Typo.h5">Log in your account to come back to this page.</MudText>
                 <MudLink
                     Style="text-align:center"
                     Class="d-block"
                     Typo="Typo.h5"
-                    OnClick="@(async () => await ToLoginPage())">
+                    OnClick="@(() => ToLoginPage())">
                     Go to Login
                 </MudLink>
                 break;
@@ -67,13 +70,17 @@
 </MudPage>
 
 @code {
-    [SupplyParameterFromQuery(Name = "code")] public int Code { get; set; }
-    [SupplyParameterFromQuery(Name = "returnUrl")] public string? ReturnUrl { get; set; }
 
-    private async Task ToLoginPage()
+    [SupplyParameterFromQuery(Name = "code")]
+    public int Code { get; set; }
+
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    public string? ReturnUrl { get; set; }
+
+    private void ToLoginPage()
     {
         var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-        await RouteManager.NavigateAsync($"/account/login?returnUrl={returnUrl}");
+        RouteManager.NavigateAsync($"/account/login?returnUrl={returnUrl}");
     }
 
 }

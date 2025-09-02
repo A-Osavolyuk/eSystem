@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Web;
 using eShop.Infrastructure.Security;
+using eShop.Infrastructure.State;
 using Microsoft.AspNetCore.Components;
 
 namespace eShop.Infrastructure.Routing;
@@ -8,16 +9,16 @@ namespace eShop.Infrastructure.Routing;
 public class RouteManager(
     NavigationManager navigationManager,
     RouteOptions routeOptions,
-    AuthenticationStateManager authenticationStateManager)
+    UserState userState)
 {
     private readonly NavigationManager navigationManager = navigationManager;
-    private readonly AuthenticationStateManager authenticationStateManager = authenticationStateManager;
+    private readonly UserState userState = userState;
     private readonly RouteOptions routeOptions = routeOptions;
 
     public string Uri => navigationManager.Uri;
     public string BaseUri => navigationManager.BaseUri;
 
-    public async Task NavigateAsync(string url, bool isRedirect = false, bool forceLoad = false, bool isExternal = false)
+    public void NavigateAsync(string url, bool isRedirect = false, bool forceLoad = false, bool isExternal = false)
     {
         if (isExternal)
         {
@@ -32,10 +33,9 @@ public class RouteManager(
             OnError(ErrorCode.NotFound, forceLoad: forceLoad); 
             return;
         }
+        
 
-        var state = await authenticationStateManager.GetStateAsync();
-
-        if (route!.RequireAuthorization && (state is null || !state.IsAuthenticated))
+        if (route!.RequireAuthorization && (!userState.IsAuthenticated))
         {
             OnError(ErrorCode.Unauthorized, url, forceLoad); 
             return;
@@ -43,7 +43,7 @@ public class RouteManager(
 
         if (route is { RequiredRoles.Count: > 0 } or { RequiredPermissions.Count: > 0 })
         {
-            if (!state!.HasRole(route.RequiredRoles) || !state.HasPermission(route.RequiredPermissions))
+            if (!userState.HasRole(route.RequiredRoles) || !userState.HasPermission(route.RequiredPermissions))
             {
                 var returnUrl = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
 

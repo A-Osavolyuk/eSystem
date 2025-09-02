@@ -210,7 +210,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            await RouteManager.NavigateAsync("/account/profile");
+            RouteManager.NavigateAsync("/account/profile");
             await StepNextAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);

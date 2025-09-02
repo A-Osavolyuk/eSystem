@@ -36,11 +36,11 @@
                 if (response.SignType == OAuthSignType.SignIn)
                 {
                     Snackbar.Add($"Successfully signed in with {response.Provider}", Severity.Success);
-                    await RouteManager.NavigateAsync("/products");
+                    RouteManager.NavigateAsync("/products");
                 }
                 else
                 {
-                    await RouteManager.NavigateAsync($"/account/oauth/signed-up?provider={response.Provider}");
+                    RouteManager.NavigateAsync($"/account/oauth/signed-up?provider={response.Provider}");
                 }
             }
             else

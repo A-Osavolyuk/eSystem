@@ -118,7 +118,7 @@
                                         <MudText Align="Align.Center">
                                             Loose access to your current phone number?
                                             <MudLink
-                                                OnClick="@(async () => await RouteManager.NavigateAsync("account/phone-number/reset"))">
+                                                OnClick="@(() => RouteManager.NavigateAsync("account/phone-number/reset"))">
                                                 Reset it
                                             </MudLink>
                                         </MudText>
@@ -144,28 +144,28 @@
                                             Model="ConfirmChangePhoneNumberModel"
                                             Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
-                                                    <MudText Class="mb-2" Align="Align.Center">
-                                                        Enter code from SMS we sent you
-                                                        to: @ChangePhoneNumberModel.NewPhoneNumber
-                                                    </MudText>
-                                                
-                                                    <MudCodeInput
-                                                        Count="6"
-                                                        Margin="Margin.Normal"
-                                                        Spacing="2"
-                                                        Class="d-flex align-items-center"
-                                                        @bind-Value="ConfirmChangePhoneNumberModel.Code"
-                                                        Variant="Variant.Outlined"/>
-                                                    
-                                                    <MudLoadingButton
-                                                        FullWidth="true"
-                                                        Variant="Variant.Filled"
-                                                        Color="Color.Primary"
-                                                        ButtonType="ButtonType.Button"
-                                                        Disabled="@(ConfirmChangePhoneNumberModel.Code.Length <= 5)"
-                                                        OnClick="@(async () => await OnChangeAsync())">
-                                                        Verify
-                                                    </MudLoadingButton>
+                                                <MudText Class="mb-2" Align="Align.Center">
+                                                    Enter code from SMS we sent you
+                                                    to: @ChangePhoneNumberModel.NewPhoneNumber
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="ConfirmChangePhoneNumberModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(ConfirmChangePhoneNumberModel.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnChangeAsync())">
+                                                    Verify
+                                                </MudLoadingButton>
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
@@ -223,7 +223,7 @@
         };
 
         var result = await SecurityService.SendCodeAsync(request);
-        
+
         if (result.Success) await StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
@@ -245,7 +245,7 @@
         var result = await SecurityService.SendCodeAsync(request);
         Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
     }
-    
+
     private async Task SendNewCodeAsync()
     {
         var request = new SendCodeRequest()
@@ -261,7 +261,7 @@
         };
 
         var result = await SecurityService.SendCodeAsync(request);
-        
+
         if (result.Success) await StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
@@ -277,14 +277,14 @@
                 UserId = UserState.UserId,
                 PhoneNumber = ChangePhoneNumberModel.NewPhoneNumber
             };
-            
+
             var result = await SecurityService.CheckPhoneNumberAsync(request);
 
             if (result.Success)
             {
                 var response = result.Get<CheckPhoneNumberResponse>()!;
-                
-                if(response.IsTaken) await SendCurrentCodeAsync();
+
+                if (response.IsTaken) await SendCurrentCodeAsync();
                 else Snackbar.Add("This phone number is already taken.", Severity.Error);
             }
             else Snackbar.Add(result.Message, Severity.Error);
@@ -348,7 +348,7 @@
         if (result.Success)
         {
             Snackbar.Add("Phone number was successfully changed", Severity.Success);
-            await RouteManager.NavigateAsync("/profile");
+            RouteManager.NavigateAsync("/profile");
         }
         else
         {
@@ -361,4 +361,5 @@
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
     }
+
 }

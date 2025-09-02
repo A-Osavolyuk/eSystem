@@ -21,7 +21,7 @@
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
                                 <MudStack Spacing="1">
-                                    <MudPaper Outlined Class="pa-3" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center" Typo="Typo.h4">
                                             Email change
                                         </MudText>
@@ -115,7 +115,7 @@
                                         <MudText Align="Align.Center">
                                             Loose access to your current email address?
                                             <MudLink
-                                                OnClick="@(async () => await RouteManager.NavigateAsync("account/email/reset"))">
+                                                OnClick="@(() => RouteManager.NavigateAsync("account/email/reset"))">
                                                 Reset it
                                             </MudLink>
                                         </MudText>
@@ -276,7 +276,7 @@
         if (result.Success)
         {
             Snackbar.Add("Email address was successfully changed", Severity.Success);
-            await RouteManager.NavigateAsync("/account/profile");
+            RouteManager.NavigateAsync("/account/profile");
         }
         else
         {

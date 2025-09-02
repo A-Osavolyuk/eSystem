@@ -176,7 +176,7 @@
         if (result.Success)
         {
             Snackbar.Add("Phone number was successfully removed", Severity.Success);
-            await RouteManager.NavigateAsync("/account/profile");
+            RouteManager.NavigateAsync("/account/profile");
         }
         else
         {

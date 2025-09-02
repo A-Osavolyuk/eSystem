@@ -220,7 +220,7 @@
         if (result.Success)
         {
             Snackbar.Add("Email was successfully reset", Severity.Success);
-            await RouteManager.NavigateAsync("/account/profile");
+            RouteManager.NavigateAsync("/account/profile");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
