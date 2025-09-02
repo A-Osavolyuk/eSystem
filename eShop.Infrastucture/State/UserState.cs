@@ -28,14 +28,36 @@ public class UserState : AsyncState
         Permissions.Clear();
     }
 
-    public bool HasRole(string role) 
-        => Roles.Any(x => x.Name == role);
-    public bool HasRole(List<string> roles) 
-        => roles.Intersect(Roles.Select(x => x.Name)).Any();
-    public bool HasPermission(string permission) 
-        => Permissions.Any(x => x.Name == permission);
-    public bool HasPermission(List<string> permissions) 
-        => permissions.Intersect(Permissions.Select(x => x.Name)).Any();
+    public void Map(UserStateDto state)
+    {
+        UserId = state.UserId;
+        Email = state.Email;
+        RecoveryEmail = state.RecoveryEmail;
+        Username = state.Username;
+        PhoneNumber = state.PhoneNumber;
+        Permissions = state.Permissions;
+        Roles = state.Roles;
+    }
+
+    public bool HasRole(string role)
+    {
+        return Roles.Any(x => x.Name == role);
+    }
+
+    public bool HasRole(List<string> roles)
+    {
+        return roles.Intersect(Roles.Select(x => x.Name)).Any();
+    }
+
+    public bool HasPermission(string permission)
+    {
+        return Permissions.Any(x => x.Name == permission);
+    }
+
+    public bool HasPermission(List<string> permissions)
+    {
+        return permissions.Intersect(Permissions.Select(x => x.Name)).Any();
+    }
     
     public override async Task Change()
     {

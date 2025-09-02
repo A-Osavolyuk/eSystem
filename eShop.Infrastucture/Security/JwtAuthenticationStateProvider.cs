@@ -37,10 +37,12 @@ public class JwtAuthenticationStateProvider(
             
             var claims = rawToken.Claims.ToList();
             if (!userState.IsAuthenticated) await LoadUserStateAsync(claims);
+
+            var claimsIdentity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var authenticationState = new AuthenticationState(claimsPrincipal);
             
-            return await Task.FromResult(
-                new AuthenticationState(new ClaimsPrincipal(
-                    new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme))));
+            return await Task.FromResult(authenticationState);
         }
         catch (Exception)
         {
@@ -71,18 +73,20 @@ public class JwtAuthenticationStateProvider(
 
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
-            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-            var authenticationState = new AuthenticationState(claimsPrincipal);
 
             var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Subject).Value);
             var jti = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Jti).Value);
             var exp = long.Parse(claims.First(x => x.Type == AppClaimTypes.Exp).Value);
             
-            userState.UserId = userId;
             await storage.SetAsync("userId", userId);
             await storage.SetAsync("jti", jti);
             await storage.SetAsync("exp", exp);
+            
+            userState.UserId = userId;
+            
+            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            var authenticationState = new AuthenticationState(claimsPrincipal);
 
             NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
@@ -115,14 +119,10 @@ public class JwtAuthenticationStateProvider(
 
     private async Task<AuthenticationState> RefreshTokenAsync(string token)
     {
-        var rawToken = tokenHandler.ReadToken(token)!;
-        var claims = rawToken.Claims.ToList();
-        var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Subject).Value);
-
         var request = new RefreshTokenRequest()
         {
             Token = token,
-            UserId = userId
+            UserId = userState.UserId
         };
 
         var result = await securityService.RefreshTokenAsync(request);
@@ -156,14 +156,7 @@ public class JwtAuthenticationStateProvider(
         if (result.Success)
         {
             var state = result.Get<UserStateDto>()!;
-                    
-            userState.UserId = state.UserId;
-            userState.Email = state.Email;
-            userState.RecoveryEmail = state.RecoveryEmail;
-            userState.Username = state.Username;
-            userState.PhoneNumber = state.PhoneNumber;
-            userState.Permissions = state.Permissions;
-            userState.Roles = state.Roles;
+            userState.Map(state);
         }
     }
 }

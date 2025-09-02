@@ -95,9 +95,13 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) StateHasChanged();
+        if (firstRender)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
     }
 
     private async Task LogoutClick()
@@ -115,12 +119,7 @@
         if (result.Success)
         {
             var user = result.Get<UserStateDto>()!;
-
-            UserState.UserId = user.UserId;
-            UserState.Username = user.Username;
-            UserState.Email = user.Email;
-            UserState.PhoneNumber = user.PhoneNumber;
-            UserState.RecoveryEmail = user.RecoveryEmail;
+            UserState.Map(user);
         }
     }
 
