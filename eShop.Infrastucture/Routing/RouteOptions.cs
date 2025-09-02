@@ -1,6 +1,6 @@
 ﻿namespace eShop.Infrastructure.Routing;
 
-public class Router
+public class RouteOptions
 {
     public List<PageRoute> Pages { get; set; } = [];
 

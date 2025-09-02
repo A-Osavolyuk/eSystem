@@ -63,9 +63,9 @@ public static class Extensions
         builder.Services.AddScoped<ProductStateContainer>();
     }
 
-    public static void AddRouting(this IHostApplicationBuilder builder, Action<Router> configureRouter)
+    public static void AddRouting(this IHostApplicationBuilder builder, Action<RouteOptions> configureRouter)
     {
-        var router = new Router();
+        var router = new RouteOptions();
         configureRouter(router);
 
         builder.Services.AddSingleton(router);

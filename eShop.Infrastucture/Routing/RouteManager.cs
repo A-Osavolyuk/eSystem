@@ -7,12 +7,12 @@ namespace eShop.Infrastructure.Routing;
 
 public class RouteManager(
     NavigationManager navigationManager,
-    Router router,
+    RouteOptions routeOptions,
     AuthenticationStateManager authenticationStateManager)
 {
     private readonly NavigationManager navigationManager = navigationManager;
     private readonly AuthenticationStateManager authenticationStateManager = authenticationStateManager;
-    private readonly Router router = router;
+    private readonly RouteOptions routeOptions = routeOptions;
 
     public string Uri => navigationManager.Uri;
     public string BaseUri => navigationManager.BaseUri;
@@ -25,7 +25,7 @@ public class RouteManager(
             return;
         }
         
-        var route = MatchRoute(url, router.Pages);
+        var route = MatchRoute(url, routeOptions.Pages);
 
         if (route is null)
         {
@@ -66,9 +66,9 @@ public class RouteManager(
     {
         var baseUrl = errorCode switch
         {
-            ErrorCode.NotFound => router.OnNotFound,
-            ErrorCode.Forbidden => router.OnForbidden,
-            ErrorCode.Unauthorized => router.OnUnauthorized,
+            ErrorCode.NotFound => routeOptions.OnNotFound,
+            ErrorCode.Forbidden => routeOptions.OnForbidden,
+            ErrorCode.Unauthorized => routeOptions.OnUnauthorized,
             _ => throw new NotSupportedException("Unsupported error code"),
         };
         
