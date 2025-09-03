@@ -41,9 +41,8 @@ public partial class RouteManager(
         
         if (page is { RequiredRoles.Count: > 0 } or { RequiredPermissions.Count: > 0 })
         {
-            if (userState.Identity is not null && 
-                (!userState.Identity.HasRole(page.RequiredRoles) 
-                 || !userState.Identity.HasPermission(page.RequiredPermissions)))
+            if (!userState.Identity!.HasAnyRole(page.RequiredRoles.ToArray()) 
+                || !userState.Identity.HasAnyPermission(page.RequiredPermissions.ToArray()))
             {
                 var currentPage = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
                 return OnError(ErrorCode.Forbidden, currentPage); 

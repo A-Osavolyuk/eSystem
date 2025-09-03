@@ -84,7 +84,7 @@ public class JwtAuthenticationStateProvider(
     {
         await tokenProvider.RemoveAsync();
         await storage.ClearAsync();
-        userState.LogOut();
+        userState.Clear();
         return await UnauthorizeAsync();
     }
 
