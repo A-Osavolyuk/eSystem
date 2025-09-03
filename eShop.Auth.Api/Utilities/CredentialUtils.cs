@@ -1,4 +1,6 @@
 ﻿using System.Security.Cryptography;
+using System.Text.Json;
+using eShop.Auth.Api.Types;
 using PeterO.Cbor;
 
 namespace eShop.Auth.Api.Utilities;
@@ -18,6 +20,14 @@ public static class CredentialUtils
         }
 
         return Convert.FromBase64String(padded);
+    }
+
+    public static string ToBase64String(string value)
+    {
+        var bytes = Base64UrlDecode(value);
+        var base64 = Convert.ToBase64String(bytes);
+        
+        return base64;
     }
 
     public static uint ParseSignCount(byte[] authenticatorDataBytes)

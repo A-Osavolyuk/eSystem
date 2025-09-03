@@ -26,23 +26,17 @@ public class VerifyPasskeyCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var response = request.Request.Response;
-        var clientDataBytes = CredentialUtils.Base64UrlDecode(response.Response.ClientDataJson);
-        var clientDataJson = Encoding.UTF8.GetString(clientDataBytes);
-        var clientData = JsonSerializer.Deserialize<ClientData>(clientDataJson);
+        var clientData = ClientData.Parse(response.Response.ClientDataJson);
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
 
-        var challengeBytes = CredentialUtils.Base64UrlDecode(clientData.Challenge);
-        var base64Challenge = Convert.ToBase64String(challengeBytes);
+        var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
         var savedChallenge = request.HttpContext.Session.GetString("webauthn_attestation_challenge");
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
-
-        var attestationBytes = CredentialUtils.Base64UrlDecode(response.Response.AttestationObject);
-        var attestationCbor = CBORObject.DecodeFromBytes(attestationBytes);
-        var authDataBytes = attestationCbor["authData"].GetByteString();
-        var authData = AuthenticationData.FromBytes(authDataBytes);
+        
+        var authData = AuthenticationData.Parse(response.Response.AttestationObject);
         
         var rpHash = SHA256.HashData(Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray()));
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
