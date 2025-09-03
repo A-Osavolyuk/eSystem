@@ -62,7 +62,7 @@
             if (result.Success)
             {
                 var options = result.Get<PublicKeyCredentialCreationOptions>()!;
-                var response = await Js.InvokeAsync<PublicKeyCredentialResponse>("createKey", options);
+                var response = await Js.InvokeAsync<PublicKeyCredentialCreationResponse>("createKey", options);
 
                 var verificationRequest = new VerifyPasskeyRequest()
                 {
