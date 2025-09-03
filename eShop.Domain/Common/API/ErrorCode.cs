@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Enums;
+﻿namespace eShop.Domain.Common.API;
 
 public enum ErrorCode
 {
