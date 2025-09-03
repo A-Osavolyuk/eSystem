@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Constants;
+﻿namespace eShop.Domain.Common.Security.Credentials;
 
 public static class UserVerifications
 {

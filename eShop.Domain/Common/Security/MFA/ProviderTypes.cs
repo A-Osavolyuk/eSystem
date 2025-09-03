@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Common.Security;
+﻿namespace eShop.Domain.Common.Security.MFA;
 
 public static class ProviderTypes
 {

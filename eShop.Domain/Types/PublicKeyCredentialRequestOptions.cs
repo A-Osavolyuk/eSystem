@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using eShop.Domain.Constants;
+using eShop.Domain.Common.Security.Credentials;
 
 namespace eShop.Domain.Types;
 

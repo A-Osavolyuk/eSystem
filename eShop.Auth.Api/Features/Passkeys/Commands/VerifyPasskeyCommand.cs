@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text.Json;
 using eShop.Auth.Api.Types;
-using eShop.Domain.Constants;
+using eShop.Domain.Common.Security.Credentials;
 using eShop.Domain.Requests.API.Auth;
 using PeterO.Cbor;
 

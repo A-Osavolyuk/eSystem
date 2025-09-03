@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Constants;
+﻿using eShop.Domain.Common.Security.Credentials;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Types;
 using OtpNet;
