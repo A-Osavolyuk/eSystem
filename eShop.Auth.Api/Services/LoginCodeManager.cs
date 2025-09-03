@@ -1,6 +1,7 @@
 ﻿using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Domain.Common.Security;
+using eShop.Domain.Common.Security.MFA;
 using OtpNet;
 
 namespace eShop.Auth.Api.Services;

@@ -1,5 +1,6 @@
 ﻿using eShop.Application.Utilities;
 using eShop.Domain.Common.API;
+using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Storage;
 using eShop.Storage.Api.Features.Commands;
 using Newtonsoft.Json;

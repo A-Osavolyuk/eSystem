@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace eShop.Domain.Common.API;
+namespace eShop.Domain.Common.Http;
 
 public class Response
 {

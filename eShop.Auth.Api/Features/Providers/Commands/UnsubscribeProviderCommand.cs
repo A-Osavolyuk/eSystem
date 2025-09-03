@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Common.Security;
+using eShop.Domain.Common.Security.MFA;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Providers.Commands;

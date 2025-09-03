@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.API;
-using eShop.Domain.Options;
+using eShop.Domain.Common.Http;
 
 namespace eShop.Domain.Interfaces.Client;
 

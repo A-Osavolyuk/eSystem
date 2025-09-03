@@ -1,4 +1,5 @@
-﻿using eShop.Product.Api.Features.Currency.Queries;
+﻿using eShop.Domain.Common.Http;
+using eShop.Product.Api.Features.Currency.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

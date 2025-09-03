@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Common.API;
+﻿namespace eShop.Domain.Common.Http;
 
 public class ResponseBuilder
 {

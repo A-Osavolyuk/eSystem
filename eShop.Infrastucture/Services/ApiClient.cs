@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using eShop.Domain.Common.API;
+using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
-using eShop.Domain.Options;
 using Microsoft.AspNetCore.Http;
-using HttpRequest = eShop.Domain.Common.API.HttpRequest;
+using HttpRequest = eShop.Domain.Common.Http.HttpRequest;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace eShop.Infrastructure.Services;

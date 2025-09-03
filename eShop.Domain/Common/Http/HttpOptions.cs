@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Options;
+﻿namespace eShop.Domain.Common.Http;
 
 public class HttpOptions
 {
