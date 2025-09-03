@@ -1,6 +1,5 @@
 ﻿using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Types;
 
 namespace eShop.Auth.Api.Controllers.v1;
 

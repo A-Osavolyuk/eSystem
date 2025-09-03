@@ -1,6 +1,6 @@
-﻿namespace eShop.Domain.Common.Security.Credentials;
+﻿namespace eShop.Domain.Common.Security.Constants;
 
-public static class UserVerifications
+public static class ResidentKeys
 {
     public const string Required = "required";
     public const string Preferred = "preferred";

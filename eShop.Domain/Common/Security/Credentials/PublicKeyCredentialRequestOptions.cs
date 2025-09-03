@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using eShop.Domain.Common.Security.Credentials;
+using eShop.Domain.Common.Security.Constants;
 
-namespace eShop.Domain.Types;
+namespace eShop.Domain.Common.Security.Credentials;
 
 public class PublicKeyCredentialRequestOptions
 {
@@ -19,4 +19,10 @@ public class PublicKeyCredentialRequestOptions
     
     [JsonPropertyName("allowedCredentials")]
     public required List<AllowedCredential> AllowedCredentials { get; set; }
+}
+
+public class AllowedCredential
+{
+    public required string Type { get; set; }
+    public required string Id { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Types;
+﻿using eShop.Domain.Common.Security.Credentials;
 
 namespace eShop.Domain.Requests.API.Auth;
 

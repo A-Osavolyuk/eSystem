@@ -1,6 +1,6 @@
-﻿using eShop.Domain.Common.Security.Credentials;
+﻿using eShop.Domain.Common.Security.Constants;
+using eShop.Domain.Common.Security.Credentials;
 using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Types;
 using OtpNet;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
