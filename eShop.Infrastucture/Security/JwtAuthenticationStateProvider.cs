@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.Security;
-using eShop.Domain.Common.Security.Claims;
+using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;

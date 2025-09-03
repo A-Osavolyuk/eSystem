@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Common.Security.Claims;
+﻿namespace eShop.Domain.Common.Security.Constants;
 
 public static class AppClaimTypes
 {
