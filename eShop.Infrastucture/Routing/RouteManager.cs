@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace eShop.Infrastructure.Routing;
 
-public class RouteManager(
+public partial class RouteManager(
     NavigationManager navigationManager,
     RouteOptions routeOptions,
     UserState userState)
@@ -74,22 +74,22 @@ public class RouteManager(
 
     private Regex BuildExpression(string pattern)
     {
-        var regex = Regex.Replace(pattern, @"\{[^}]+\}", match =>
+        var regex = RoutePattern().Replace(pattern, match =>
         {
             var inner = match.Value.Trim('{', '}');
-            if (inner.Contains(":"))
+            
+            if (!inner.Contains(':')) return "(?<string>[^/]+)";
+            
+            var parts = inner.Split(':');
+            
+            return parts[1] switch
             {
-                var parts = inner.Split(':');
-                return parts[1] switch
-                {
-                    "int" => @"(?<int>\d+)",
-                    "guid" => @"(?<guid>[0-9a-fA-F\-]{36})",
-                    "*" => "(?<slug>.+)",
-                    _ => "(?<string>[^/]+)"
-                };
-            }
+                "int" => @"(?<int>\d+)",
+                "guid" => @"(?<guid>[0-9a-fA-F\-]{36})",
+                "*" => "(?<slug>.+)",
+                _ => "(?<string>[^/]+)"
+            };
 
-            return "(?<string>[^/]+)";
         });
 
         return new Regex("^" + regex + "$", RegexOptions.Compiled);
@@ -112,4 +112,7 @@ public class RouteManager(
 
         return null;
     }
+
+    [GeneratedRegex(@"\{[^}]+\}")]
+    private static partial Regex RoutePattern();
 }
