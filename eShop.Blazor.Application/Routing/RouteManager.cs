@@ -75,7 +75,7 @@ public partial class RouteManager(
 
     private Regex BuildExpression(string pattern)
     {
-        var regex = RoutePattern().Replace(pattern, match =>
+        var regex = new Regex(@"\{[^}]+\}").Replace(pattern, match =>
         {
             var inner = match.Value.Trim('{', '}');
             
@@ -113,7 +113,4 @@ public partial class RouteManager(
 
         return null;
     }
-
-    [GeneratedRegex(@"\{[^}]+\}")]
-    private static partial Regex RoutePattern();
 }
