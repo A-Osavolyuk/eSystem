@@ -1,0 +1,324 @@
+﻿@page "/account/security"
+
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using eShop.Blazor.Application.Mapping
+@using eShop.Blazor.Domain.Interfaces
+@using eShop.Blazor.Domain.Models
+@using eShop.Blazor.UI.Components.Pages.Profile.Components.Security
+@using eShop.Domain.Common.Security.Constants
+@using JsonSerializer = System.Text.Json.JsonSerializer
+@inherits PageBase
+
+@inject IUserService UserService
+@inject IDialogService DialogService
+@inject ITwoFactorService TwoFactorService
+
+@attribute [Authorize]
+
+<Title Text="Security"></Title>
+
+@if (SecurityModel is not null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="6">
+            <MudStack Spacing="2" Justify="Justify.Center">
+                <TwoFactorSection
+                    Model="SecurityModel"
+                    OnSubscribe="@((value) => OnSubscribe(value))"
+                    OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"/>
+                <LinkedAccountsSection
+                    Model="SecurityModel"
+                    OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
+                    OnDisallow="@((value) => OnDisallowLinkedAccountAsync(value))"
+                    OnDisconnect="@((value) => OnDisconnectLinkedAccountAsync(value))"/>
+                <DevicesSection
+                    Model="SecurityModel"
+                    OnVerify="@((value) => OnVerifyDeviceAsync(value))"
+                    OnBlock="@((value) => OnBlockDeviceAsync(value))"
+                    OnUnblock="@((value) => OnUnblockDeviceAsync(value))"/>
+                <PasswordSection
+                    Model="SecurityModel"
+                    OnAdd="@(() => OnAddPasswordAsync())"
+                    OnChange="@(() => OnChangePasswordAsync())"
+                    OnReset="@(() => OnResetPasswordAsync())"/>
+                <PasskeysSection
+                    Model="SecurityModel"
+                    OnCreate="@(() => OnCreatePasskeyAsync())"
+                    OnRemove="@((value) => OnPasskeyRemoveAsync(value))"/>
+                <RecoveryEmailSection
+                    Model="SecurityModel"
+                    OnAdd="@(() => OnAddRecoveryEmailAsync())"
+                    OnChange="@(() => OnChangeRecoveryEmailAsync())"
+                    OnRemove="@(() => OnRemoveRecoveryEmailAsync())"
+                    OnVerify="@(() => OnVerifyRecoveryEmailAsync())"
+                    OnReset="@(() => OnResetRecoveryEmailAsync())"/>
+                <RecoverySection
+                    Model="SecurityModel"
+                    OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    private UserSecurityModel? SecurityModel { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserSecurityDataAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<UserSecurityDto>()!;
+
+            SecurityModel = Mapper.Map(response);
+            await UserState.Change();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnCreatePasskeyAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new CreatePasskeyModel() { UserId = UserState.UserId };
+
+        var parameters = new DialogParameters<CreatePasskeyDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<CreatePasskeyDialog>("Create passkey", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnChangePasswordAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new ChangePasswordModel() { Id = UserState.UserId };
+
+        var parameters = new DialogParameters<ChangePasswordDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<ChangePasswordDialog>("Change password", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnAddPasswordAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new AddPasswordModel() { UserId = UserState.UserId };
+
+        var parameters = new DialogParameters<AddPasswordDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<AddPasswordDialog>("Add password", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private void OnResetPasswordAsync()
+    {
+        RouteManager.Route("/account/password/reset");
+    }
+
+    private void OnSubscribe(string provider)
+    {
+        if (provider == ProviderTypes.Authenticator)
+        {
+            RouteManager.Route("/account/2fa/authenticator");
+        }
+        else
+        {
+            RouteManager.Route($"/account/2fa/provider/{provider}");
+        }
+    }
+
+    private async Task OnUnsubscribeAsync(string provider)
+    {
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge,
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters<Disable2FaProviderDialog>()
+        {
+            { x => x.UserId, UserState.UserId },
+            { x => x.Provider, provider }
+        };
+
+        var dialog = await DialogService.ShowAsync<Disable2FaProviderDialog>("Disable 2FA provider", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnGenerateRecoveryCodesAsync()
+    {
+        var recoveryCodes = new List<string>();
+        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
+        var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
+
+        if (result.Success)
+        {
+            recoveryCodes = result.Get<List<string>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge,
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters<GenerateRecoveryCodesDialog>()
+        {
+            { x => x.Codes, recoveryCodes }
+        };
+
+        var dialog = await DialogService.ShowAsync<GenerateRecoveryCodesDialog>("Generate 2FA recovery codes", parameters, options);
+        var dialogResult = await dialog.Result;
+
+        if (!dialogResult!.Canceled)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private void OnRemoveRecoveryEmailAsync()
+    {
+        var url = $"/account/recovery-email/remove";
+        RouteManager.Route(url);
+    }
+
+    private void OnChangeRecoveryEmailAsync()
+    {
+        var url = $"/account/recovery-email/change";
+        RouteManager.Route(url);
+    }
+
+    private void OnVerifyRecoveryEmailAsync()
+    {
+        var url = $"/account/recovery-email/verify";
+        RouteManager.Route(url);
+    }
+
+    private void OnAddRecoveryEmailAsync()
+    {
+        var url = "/account/recovery-email/add";
+        RouteManager.Route(url);
+    }
+
+    private void OnResetRecoveryEmailAsync()
+    {
+        var url = "/account/recovery-email/reset";
+        RouteManager.Route(url);
+    }
+
+    private void OnPasskeyRemoveAsync(Guid id)
+    {
+        var url = $"/account/passkey/remove?passkey={id}";
+        RouteManager.Route(url);
+    }
+
+    private void OnDisconnectLinkedAccountAsync(string provider)
+    {
+        var url = $"/account/linked-account/disconnect?provider={provider}";
+        RouteManager.Route(url);
+    }
+
+    private void OnAllowLinkedAccountAsync(string provider)
+    {
+        var url = $"/account/linked-account/allow?provider={provider}";
+        RouteManager.Route(url);
+    }
+
+    private void OnDisallowLinkedAccountAsync(string provider)
+    {
+        var url = $"/account/linked-account/disallow?provider={provider}";
+        RouteManager.Route(url);
+    }
+
+    private void OnVerifyDeviceAsync(Guid id)
+    {
+        var url = $"/account/device/verify?device={id}";
+        RouteManager.Route(url);
+    }
+
+    private void OnBlockDeviceAsync(Guid id)
+    {
+        var url = $"/account/device/block?device={id}";
+        RouteManager.Route(url);
+    }
+
+    private void OnUnblockDeviceAsync(Guid id)
+    {
+        var url = $"/account/device/unblock?device={id}";
+        RouteManager.Route(url);
+    }
+
+}

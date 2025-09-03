@@ -1,0 +1,53 @@
+﻿@page "/account/oauth/sign-in/"
+
+@using eShop.Blazor.Domain.Interfaces
+@inherits PageBase
+
+@inject IOAuthService OAuthService
+
+<Title Text="Sign in via OAuth" />
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4" Style="margin-top: 150px">
+        <MudLoading Loading="true" LoaderType="LoaderType.Circular" Text="Processing OAuth session..."></MudLoading>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromQuery(Name = "sessionId")] public string SessionId { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "token")] public string Token { get; set; } = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var request = new LoadOAuthSessionRequest()
+            {
+                Id = Guid.Parse(SessionId),
+                Token = Token
+            };
+
+            var result = await OAuthService.LoadSessionAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<LoadOAuthSessionResponse>()!;
+                await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken);
+
+                if (response.SignType == OAuthSignType.SignIn)
+                {
+                    Snackbar.Add($"Successfully signed in with {response.Provider}", Severity.Success);
+                    RouteManager.Route("/products");
+                }
+                else
+                {
+                    RouteManager.Route($"/account/oauth/signed-up?provider={response.Provider}");
+                }
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+            }
+        }
+    }
+}

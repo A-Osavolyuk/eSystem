@@ -1,0 +1,48 @@
+﻿@using eShop.Blazor.Application.Routing
+@inherits LayoutComponentBase
+
+@inject RouteManager RouteManager
+
+<MudThemeProvider IsDarkMode/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<MudPopoverProvider/>
+
+<MudLayout>
+    <MudAppBar Class="align-content-center" Elevation="1">
+        <MudIconButton
+            Icon="@Icons.Material.Filled.Menu"
+            Color="Color.Inherit"
+            Edge="Edge.Start"
+            OnClick="@((e) => DrawerToggle())"/>
+        <MudText
+            Align="Align.Center"
+            Typo="Typo.h5"
+            Class="ml-3 cursor-pointer"
+            @onclick="@( () =>  RouteManager.Route("/products"))">
+            eShop
+        </MudText>
+    </MudAppBar>
+    <MudDrawer
+        @bind-Open="drawerOpen"
+        ClipMode="DrawerClipMode.Always"
+        Elevation="2">
+        <NavigationMenu/>
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer
+            MaxWidth="MaxWidth.ExtraLarge"
+            Class="py-5 position-relative">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        drawerOpen = !drawerOpen;
+    }
+}

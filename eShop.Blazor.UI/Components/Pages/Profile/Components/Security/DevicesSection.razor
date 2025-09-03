@@ -1,0 +1,120 @@
+﻿@using eShop.Blazor.Domain.Models
+
+@if (Model.Devices.Count > 0)
+{
+    <MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="3">
+        <MudText Typo="Typo.h6">
+            Devices
+        </MudText>
+        <MudStack Spacing="4" Class=" mb-4">
+            @foreach (var device in Model.Devices)
+            {
+                <MudStack Row="true" Spacing="1" Class="position-relative">
+                    <MudText Style="padding-top: 5px">
+                        @if (device.OS!.Contains("Windows") && device.Device!.Contains("Desktop"))
+                        {
+                            <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.DesktopWindows"></MudIcon>
+                        }
+                        @if (device.OS!.Contains("Android") && device.Device!.Contains("Phone"))
+                        {
+                            <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.PhoneAndroid"></MudIcon>
+                        }
+                        else if (device.OS.Contains("iOS") && device.Device!.Contains("Phone"))
+                        {
+                            <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.PhoneIphone"></MudIcon>
+                        }
+                        else if (device.OS.Contains("Mac OS") && device.Device!.Contains("Desktop"))
+                        {
+                            <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.DesktopMac"></MudIcon>
+                        }
+                        @($"{device.Device}, {device.OS} ({device.Browser}, IP: {device.IpAddress})")
+                    </MudText>
+                    @if (device.IsBlocked)
+                    {
+                        <MudChip
+                            T="string"
+                            Size="Size.Small"
+                            Variant="Variant.Outlined"
+                            Color="Color.Error">
+                            Blocked
+                        </MudChip>
+                    }
+                    else
+                    {
+                        if (device.IsTrusted)
+                        {
+                            <MudChip
+                                T="string"
+                                Size="Size.Small"
+                                Variant="Variant.Outlined"
+                                Color="Color.Success">
+                                Trusted
+                            </MudChip>
+                        }
+                        else
+                        {
+                            <MudChip
+                                T="string"
+                                Size="Size.Small"
+                                Variant="Variant.Outlined"
+                                Color="Color.Warning">
+                                Untrusted
+                            </MudChip>
+                        }
+                    }
+                    <MudSpacer />
+                    @if (device.IsBlocked)
+                    {
+                        <MudTooltip Text="Unblock device">
+                            <MudIconButton
+                                Color="Color.Success"
+                                Icon="@Icons.Material.Outlined.LockOpen"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnUnblock.InvokeAsync(device.Id))"/>
+                        </MudTooltip>
+                    }
+                    else
+                    {
+                        <MudTooltip Text="Block device">
+                            <MudIconButton
+                                Color="Color.Error"
+                                Icon="@Icons.Material.Outlined.Lock"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnBlock.InvokeAsync(device.Id))"/>
+                        </MudTooltip>
+                        
+                        if (!device.IsTrusted)
+                        {
+                            <MudTooltip Text="Trust device">
+                                <MudIconButton
+                                    Color="Color.Success"
+                                    Icon="@Icons.Material.Filled.Check"
+                                    Variant="Variant.Outlined"
+                                    ButtonType="ButtonType.Button"
+                                    OnClick="@(async () => await OnVerify.InvokeAsync(device.Id))"/>
+                            </MudTooltip>
+                        }
+                    }
+                    <MudText
+                        Class="opacity-50 position-absolute"
+                        Style="bottom: -13px; left: 30px"
+                        Typo="Typo.caption">
+                        First seen at: @device.FirstSeen.ToString("MM/dd/yyyy HH:mm")
+                    </MudText>
+                </MudStack>
+            }
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+}
+
+@code {
+    [Parameter] public UserSecurityModel Model { get; set; } = new();
+    [Parameter] public EventCallback<Guid> OnVerify { get; set; }
+    [Parameter] public EventCallback<Guid> OnBlock { get; set; }
+    [Parameter] public EventCallback<Guid> OnUnblock { get; set; }
+}

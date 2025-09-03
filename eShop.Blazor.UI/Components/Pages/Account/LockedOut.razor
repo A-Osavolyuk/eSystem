@@ -1,0 +1,77 @@
+﻿@page "/account/locked-out"
+
+@using eShop.Blazor.Application.Mapping
+@using eShop.Blazor.Domain.Interfaces
+@using eShop.Blazor.Domain.Models
+@inherits PageBase
+
+@inject IUserService UserService
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4">
+        <MudStack Spacing="1" Justify="Justify.Center">
+            @if (Model.Reason is not null)
+            {
+                <MudPaper Outlined="true" Class="pa-3" Style="margin-top: 150px">
+                    <MudText Align="Align.Center" Typo="Typo.h4">
+                        Account is locked out
+                    </MudText>
+                </MudPaper>
+                <MudPaper Outlined="true" Class="pa-3">
+                    <MudStack Spacing="1" Justify="Justify.Center">
+                        <MudText Align="Align.Center" Typo="Typo.h6">
+                            @Model.Reason.Name
+                        </MudText>
+                        <MudText Align="Align.Center" Typo="Typo.subtitle1" Class="px-4">
+                            @Model.Description
+                        </MudText>
+                        @if (Model.Permanent)
+                        {
+                            <MudText Align="Align.Center" Typo="Typo.subtitle1">
+                                Your account is locked out <strong>permanently</strong>
+                            </MudText>
+                        }
+                        else
+                        {
+                            <MudText Align="Align.Center" Typo="Typo.subtitle1">
+                                Your account is locked out until: @Model.EndDate
+                            </MudText>
+                        }
+                    </MudStack>
+                </MudPaper>
+                <MudPaper Class="pa-3" Outlined="true">
+                    <MudText Align="Align.Center">
+                        Want to unlock my account?
+                        <MudLink OnClick="@(() => RouteManager.Route($"/account/unlock?id={UserId}"))">
+                            Unlock
+                        </MudLink>
+                    </MudText>
+                </MudPaper>
+            }
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "id")]
+    public Guid UserId { get; set; }
+
+    private LockoutModel Model { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UserService.GetLockoutStateAsync(UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<LockoutStateDto>()!;
+            Model = Mapper.Map(response);
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+}

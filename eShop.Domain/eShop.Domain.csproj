@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Interfaces\Client\" />
     <Folder Include="Responses\API\" />
   </ItemGroup>
 

@@ -1,0 +1,368 @@
+﻿@page "/account/phone-number/change"
+
+@using eShop.Blazor.Application.Validation
+@using eShop.Blazor.Domain.Interfaces
+@using eShop.Blazor.Domain.Models
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject ISecurityService SecurityService
+@inject ChangePhoneNumberValidator ChangePhoneNumberValidator
+@inject CodeModelValidator Validator
+
+<Title Text="Change phone number"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6" Style="margin-top: 100px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3 mb-1">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Phone number change
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-5">
+                                        <MudForm
+                                            @ref="changePhoneNumberForm"
+                                            Validation="ChangePhoneNumberValidator.ValidateValue"
+                                            Model="ChangePhoneNumberModel">
+                                            <MudGrid Justify="Justify.Center">
+                                                <MudItem xs="12">
+                                                    <MudText Class="mb-1" Align="Align.Center">
+                                                        To change phone number, you should enter new phone number.
+                                                        Please, enter new phone number.
+                                                    </MudText>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudTextField
+                                                        @bind-Value="ChangePhoneNumberModel.NewPhoneNumber"
+                                                        For="() => ChangePhoneNumberModel.NewPhoneNumber"
+                                                        Label="New phone number"
+                                                        Variant="Variant.Outlined"
+                                                        Immediate="true"
+                                                        Clearable="true"/>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnSendCurrentCodeAsync())">
+                                                        Change
+                                                    </MudLoadingButton>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudForm>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Confirmation">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Code confirmation
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-5">
+                                        <MudForm
+                                            @ref="verifyNewPhoneNumberForm"
+                                            Validation="Validator.ValidateValue"
+                                            Model="ConfirmChangePhoneNumberModel">
+                                            <MudStack Spacing="2">
+                                                <MudText Class="mb-2" Align="Align.Center">
+                                                    Enter code from SMS we sent to your current phone number
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="VerifyCurrentPhoneNumberModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(VerifyCurrentPhoneNumberModel.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnSendNewCodeAsync())">
+                                                    Confirm
+                                                </MudLoadingButton>
+                                            </MudStack>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received a SMS?
+                                            <strong
+                                                @onclick="async () => await ResendCurrentPhoneNumberCodeAsync()"
+                                                class="cursor-pointer">
+                                                Resend
+                                            </strong>
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">
+                                            Loose access to your current phone number?
+                                            <MudLink
+                                                OnClick="@(() => RouteManager.Route("account/phone-number/reset"))">
+                                                Reset it
+                                            </MudLink>
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="2" Icon="@Icons.Material.Filled.Check" Title="Verification">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Phone number verification
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-5">
+                                        <MudForm
+                                            @ref="confirmChangePhoneNumberForm"
+                                            Model="ConfirmChangePhoneNumberModel"
+                                            Validation="Validator.ValidateValue">
+                                            <MudStack Spacing="2">
+                                                <MudText Class="mb-2" Align="Align.Center">
+                                                    Enter code from SMS we sent you
+                                                    to: @ChangePhoneNumberModel.NewPhoneNumber
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="ConfirmChangePhoneNumberModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(ConfirmChangePhoneNumberModel.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnChangeAsync())">
+                                                    Verify
+                                                </MudLoadingButton>
+                                            </MudStack>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received a SMS?
+                                            <strong
+                                                @onclick="async () => await ResendNewPhoneNumberCodeAsync()"
+                                                class="cursor-pointer">
+                                                Resend
+                                            </strong>
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private ChangePhoneNumberModel ChangePhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel VerifyCurrentPhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel ConfirmChangePhoneNumberModel { get; set; } = new();
+
+    private MudStepperExtended stepper = new();
+    private MudForm changePhoneNumberForm = new();
+    private MudForm verifyNewPhoneNumberForm = new();
+    private MudForm confirmChangePhoneNumberForm = new();
+
+    private async Task ResendCurrentPhoneNumberCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Current,
+            Sender = SenderType.Sms
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
+
+    private async Task SendCurrentCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Current,
+            Sender = SenderType.Sms
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task ResendNewPhoneNumberCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.New,
+            Sender = SenderType.Sms,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewPhoneNumber", ChangePhoneNumberModel.NewPhoneNumber }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
+
+    private async Task SendNewCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.New,
+            Sender = SenderType.Sms,
+            Payload = new Dictionary<string, string>()
+            {
+                { "NewPhoneNumber", ChangePhoneNumberModel.NewPhoneNumber }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnSendCurrentCodeAsync()
+    {
+        await changePhoneNumberForm.Validate();
+
+        if (changePhoneNumberForm.IsValid)
+        {
+            var request = new CheckPhoneNumberRequest()
+            {
+                UserId = UserState.UserId,
+                PhoneNumber = ChangePhoneNumberModel.NewPhoneNumber
+            };
+
+            var result = await SecurityService.CheckPhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<CheckPhoneNumberResponse>()!;
+
+                if (response.IsTaken) await SendCurrentCodeAsync();
+                else Snackbar.Add("This phone number is already taken.", Severity.Error);
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnSendNewCodeAsync()
+    {
+        await verifyNewPhoneNumberForm.Validate();
+
+        if (verifyNewPhoneNumberForm.IsValid)
+        {
+            var request = new VerifyCodeRequest()
+            {
+                UserId = UserState.UserId,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.Current,
+                Sender = SenderType.Sms,
+                Code = VerifyCurrentPhoneNumberModel.Code
+            };
+
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await SendNewCodeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnChangeAsync()
+    {
+        await confirmChangePhoneNumberForm.Validate();
+
+        if (confirmChangePhoneNumberForm.IsValid)
+        {
+            var request = new VerifyCodeRequest()
+            {
+                UserId = UserState.UserId,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.New,
+                Sender = SenderType.Sms,
+                Code = VerifyCurrentPhoneNumberModel.Code
+            };
+
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await ChangeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task ChangeAsync()
+    {
+        var request = new ChangePhoneNumberRequest()
+        {
+            UserId = UserState.UserId,
+            NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
+        };
+
+        var result = await SecurityService.ChangePhoneNumberAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add("Phone number was successfully changed", Severity.Success);
+            RouteManager.Route("/profile");
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+    }
+
+}

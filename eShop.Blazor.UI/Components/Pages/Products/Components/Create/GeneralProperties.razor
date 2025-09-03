@@ -1,0 +1,330 @@
+﻿@using eShop.Blazor.Application.State
+@using eShop.Blazor.Domain.Interfaces
+@using eShop.Blazor.Domain.Models
+@inject ITypeService TypeService
+@inject IUnitService UnitService
+@inject IPriceService PriceService
+@inject ICategoryService CategoryService
+@inject ICurrencyService CurrencyService
+@inject ISnackbar Snackbar
+@inject ProductState State
+
+<MudGrid Spacing="1" Justify="Justify.Center">
+    <MudItem xs="12">
+        <MudPaper Outlined="true" Class="pa-3">
+            <MudGrid Spacing="1" Justify="Justify.Center">
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h6">General properties</MudText>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper Outlined="true" Class="pa-3">
+            <MudGrid Spacing="1" Justify="Justify.Center">
+                <MudItem xs="12">
+                    <MudTextField
+                        Label="Name"
+                        @bind-Value="Model.Name"
+                        For="() => Model.Name"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true"
+                        Counter="128"
+                        MaxLength="128"/>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField
+                        Label="Description"
+                        @bind-Value="Model.Description"
+                        For="() => Model.Description"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true"
+                        AutoGrow="true"
+                        Counter="3000"
+                        MaxLength="3000"
+                        Lines="5"/>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudNumericField
+                        T="int?"
+                        Label="Quantity in stock"
+                        @bind-Value="Model.QuantityInStock"
+                        For="() => Model.QuantityInStock"
+                        Step="1"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true"/>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudSelect
+                        T="Guid?"
+                        Label="Units"
+                        For="() => Model.Unit.Id"
+                        Value="Model.Unit.Id"
+                        ValueChanged="@((value) => OnUnitChanged(value))"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true">
+                        @foreach (var type in Units)
+                        {
+                            <MudSelectItem T="Guid?"
+                                           Value="type.Id">@($"{type.Name} ({type.Code})")</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudNumericField
+                        T="decimal?"
+                        Label="Price"
+                        @bind-Value="Model.Price"
+                        For="() => Model.Price"
+                        Step="0.1m"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true"/>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudSelect
+                        T="Guid?"
+                        Label="Price per"
+                        For="() => Model.PriceType.Id"
+                        Value="Model.PriceType.Id"
+                        ValueChanged="@((value) => OnPriceTypeChanged(value))"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true">
+                        @foreach (var type in PriceTypes)
+                        {
+                            <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudSelect
+                        T="Guid?"
+                        Label="Currency"
+                        For="() => Model.Currency.Id"
+                        Value="Model.Currency.Id"
+                        ValueChanged="@((value) => OnCurrencyChanged(value))"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true">
+                        @foreach (var type in Currencies)
+                        {
+                            <MudSelectItem T="Guid?" Value="type.Id">@($"{type.Name} ({type.Code}, {type.Sign})")</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudSelect
+                        T="Guid?"
+                        Label="Category"
+                        For="() => Model.Category.Id"
+                        Value="Model.Category.Id"
+                        ValueChanged="@((value) => OnCategoryChanged(value))"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true">
+                        @foreach (var type in Categories)
+                        {
+                            <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudSelect
+                        Disabled="@(string.IsNullOrEmpty(Model.Category.Name))"
+                        T="Guid?"
+                        Label="Type"
+                        For="() => Model.Type.Id"
+                        Value="Model.Type.Id"
+                        ValueChanged="@((value) => OnTypeChanged(value))"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true">
+                        @foreach (var type in Types.Where(x => x.Category.Id == Model.Category.Id))
+                        {
+                            <MudSelectItem T="Guid?" Value="type.Id">@type.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter] public ProductModel Model { get; set; } = new();
+
+    private List<TypeDto> Types { get; set; } = [];
+    private List<UnitDto> Units { get; set; } = [];
+    private List<PriceTypeDto> PriceTypes { get; set; } = [];
+    private List<CategoryDto> Categories { get; set; } = [];
+    private List<CurrencyDto> Currencies { get; set; } = [];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadUnitsAsync();
+            await LoadTypesAsync();
+            await LoadPriceTypesAsync();
+            await LoadCategoriesAsync();
+            await LoadCurrenciesAsync();
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadUnitsAsync()
+    {
+        var result = await UnitService.GetAllAsync();
+
+        if (result.Success)
+        {
+            Units = result.Get<List<UnitDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task LoadTypesAsync()
+    {
+        var result = await TypeService.GetAllAsync();
+
+        if (result.Success)
+        {
+            Types = result.Get<List<TypeDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task LoadPriceTypesAsync()
+    {
+        var result = await PriceService.GetAllAsync();
+
+        if (result.Success)
+        {
+            PriceTypes = result.Get<List<PriceTypeDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        var result = await CategoryService.GetAllAsync();
+
+        if (result.Success)
+        {
+            Categories = result.Get<List<CategoryDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task LoadCurrenciesAsync()
+    {
+        var result = await CurrencyService.GetAllAsync();
+
+        if (result.Success)
+        {
+            Currencies = result.Get<List<CurrencyDto>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private void OnPriceTypeChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var priceType = PriceTypes.Find(x => x.Id == value)!;
+            Model.PriceType = new()
+            {
+                Id = priceType.Id,
+                Name = priceType.Name
+            };
+        }
+    }
+
+    private void OnUnitChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var unit = Units.Find(x => x.Id == value)!;
+            Model.Unit = new UnitModel
+            {
+                Id = unit.Id,
+                Name = unit.Name,
+                Code = unit.Code
+            };
+        }
+    }
+
+    private void OnTypeChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var type = Types.Find(x => x.Id == value)!;
+            Model.Type = new TypeModel()
+            {
+                Id = type.Id,
+                Name = type.Name
+            };
+
+            State.Change();
+        }
+    }
+
+    private void OnCategoryChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var category = Categories.Find(x => x.Id == value)!;
+
+            if (Model.Category.Id != category.Id)
+            {
+                Model.Type = new();
+            }
+
+            Model.Category = new CategoryModel()
+            {
+                Id = category.Id,
+                Name = category.Name
+            };
+
+            State.Change();
+        }
+    }
+    
+    private void OnCurrencyChanged(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            var category = Currencies.Find(x => x.Id == value)!;
+
+            Model.Currency = new CurrencyModel()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Sign = category.Sign
+            };
+
+            State.Change();
+        }
+    }
+}

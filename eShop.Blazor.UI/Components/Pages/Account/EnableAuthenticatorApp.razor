@@ -1,0 +1,238 @@
+﻿@page "/account/2fa/authenticator"
+@using eShop.Blazor.Application.Validation
+@using eShop.Blazor.Domain.Interfaces
+@using eShop.Blazor.Domain.Models
+@using eShop.Domain.Common.Security.Constants
+@using ZXing
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject IProvidersService ProvidersService
+@inject ITwoFactorService TwoFactorService
+@inject CodeModelValidator Validator
+
+<Title Text="2FA with Authenticator app"/>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6" Style="margin-top: 100px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            Animation="true"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Info" Title="Information">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            2FA with Authenticator app
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-5">
+                                        <MudGrid Justify="Justify.Center">
+                                            <MudItem xs="12">
+                                                <MudText Align="Align.Center">
+                                                    To enhance the security of your account, we offer Two-Factor
+                                                    Authentication (2FA) using an authenticator app.
+                                                    This adds an extra layer of protection by requiring
+                                                    not just your password, but also a one-time code
+                                                    generated on your mobile device.
+                                                    An authenticator app (such as Google Authenticator,
+                                                    Microsoft Authenticator, or Authy)
+                                                    generates time-based one-time passwords (TOTP) every 30 seconds.
+                                                    These codes are used as your second step when logging in.
+                                                </MudText>
+                                            </MudItem>
+                                            <MudItem xs="12">
+                                                <MudButton
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    FullWidth="true"
+                                                    OnClick="@(async () => await OnSubscribeAsync())">
+                                                    Continue
+                                                </MudButton>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.QrCode" Title="QR code">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Scan QR code
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-5">
+                                        <MudStack Justify="Justify.Center">
+                                            <MudBarcode
+                                                Style="margin-left: 20%"
+                                                BarcodeFormat="BarcodeFormat.QR_CODE"
+                                                @bind-Value="QrCodeModel.QrCode"
+                                                Height="400"
+                                                Width="400"/>
+
+                                            <MudButton
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                FullWidth="true"
+                                                OnClick="@(async () => await StepNextAsync())">
+                                                Continue
+                                            </MudButton>
+                                        </MudStack>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">QR didn't generated??
+                                            <strong @onclick="async () => await GenerateQrCodeAsync()"
+                                                    class="cursor-pointer">Regenerate</strong>
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="2" Icon="@Icons.Material.Filled.ScreenLockLandscape" Title="Authentication app">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Authenticator app verification
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-5">
+                                        <MudForm
+                                            @ref="form"
+                                            Model="Model"
+                                            Validation="Validator.ValidateValue">
+                                            <MudStack Spacing="2">
+                                                <MudText Align="Align.Center">
+                                                    Enter 6-digit TOTP code from your authentication app
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="Model.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(Model.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnVerifyCodeAsync())">
+                                                    Verify
+                                                </MudLoadingButton>
+                                            </MudStack>
+                                        </MudForm>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
+
+    private QrCodeModel QrCodeModel { get; set; } = new();
+    private MudStepperExtended stepper = new();
+    private MudForm form = new();
+
+    private async Task OnSubscribeAsync()
+    {
+        var request = new SubscribeProviderRequest()
+        {
+            Provider = ProviderTypes.Authenticator,
+            UserId = UserState.UserId
+        };
+
+        var result = await ProvidersService.SubscribeAsync(request);
+
+        if (result.Success)
+        {
+            var response = result.Get<SubscribeProviderResponse>()!;
+            QrCodeModel.QrCode = response.QrCode;
+
+            await StepNextAsync();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnVerifyCodeAsync()
+    {
+        var request = new VerifyProviderRequest()
+        {
+            UserId = UserState.UserId,
+            Provider = ProviderTypes.Authenticator,
+            Code = Model.Code
+        };
+
+        var result = await ProvidersService.VerifyAsync(request);
+
+        if (result.Success)
+        {
+            RouteManager.Route("/account/security");
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task GenerateQrCodeAsync()
+    {
+        var request = new GenerateQrCodeRequest()
+        {
+            UserId = UserState.UserId
+        };
+
+        var result = await TwoFactorService.GenerateQrCodeAsync(request);
+
+        if (result.Success)
+        {
+            var response = result.Get<GenerateQrCodeResponse>()!;
+            QrCodeModel.QrCode = response.QrCode;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+
+        if (stepper.IsAllStepsCompleted())
+        {
+            StateHasChanged();
+        }
+    }
+
+}

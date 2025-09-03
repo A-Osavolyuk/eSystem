@@ -1,0 +1,52 @@
+﻿@using eShop.Blazor.Domain.Models
+<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="3">
+        <MudText Typo="Typo.h6">
+            Passkeys
+        </MudText>
+        <MudStack Spacing="0">
+            @foreach (var passkey in Model.Passkeys)
+            {
+                <MudStack Spacing="0">
+                    <MudStack Row="true">
+                        <MudStack Spacing="0">
+                            <MudText Style="padding-top: 5px">
+                                @passkey.DisplayName
+                            </MudText>
+                            @if (passkey.CreateDate.HasValue)
+                            {
+                                <MudText Align="Align.Start" Typo="Typo.caption" Class="opacity-50">
+                                    Created at: @passkey.CreateDate?.ToString("MM/dd/yyyy HH:mm")
+                                </MudText>
+                            }
+                        </MudStack>
+                        <MudSpacer />
+                        <MudStack>
+                            <MudIconButton 
+                                Icon="@Icons.Material.Filled.Delete"
+                                Color="Color.Error"
+                                Variant="Variant.Outlined"
+                                ButtonType="ButtonType.Button"
+                                OnClick="@(async () => await OnRemove.InvokeAsync(passkey.Id))"/>
+                        </MudStack>
+                    </MudStack>
+                </MudStack>
+            }
+        </MudStack>
+        <MudStack Row="true" Spacing="1">
+            <MudButton
+                Color="Color.Primary"
+                ButtonType="ButtonType.Button"
+                Variant="Variant.Filled"
+                OnClick="@(async () => await OnCreate.InvokeAsync())">
+                Create passkey
+            </MudButton>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter] public UserSecurityModel Model { get; set; } = new();
+    [Parameter] public EventCallback OnCreate { get; set; }
+    [Parameter] public EventCallback<Guid> OnRemove { get; set; }
+}

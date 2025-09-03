@@ -1,0 +1,35 @@
+﻿using eShop.Domain.Common.Http;
+using eShop.Domain.Requests.API.Auth;
+
+namespace eShop.Blazor.Domain.Interfaces;
+
+public interface ISecurityService
+{
+    public ValueTask<HttpResponse> LoginAsync(LoginRequest request);
+    public ValueTask<HttpResponse> RegisterAsync(RegistrationRequest request);
+    public ValueTask<HttpResponse> ForgotPasswordAsync(ForgotPasswordRequest request);
+    public ValueTask<HttpResponse> ResetPasswordAsync(ResetPasswordRequest request);
+    public ValueTask<HttpResponse> ResetEmailAsync(ResetEmailRequest request);
+    public ValueTask<HttpResponse> ResetRecoveryEmailAsync(ResetRecoveryEmailRequest request);
+    public ValueTask<HttpResponse> ResetPhoneNumberAsync(ResetPhoneNumberRequest request);
+    public ValueTask<HttpResponse> RemovePhoneNumberAsync(RemovePhoneNumberRequest request);
+    public ValueTask<HttpResponse> RemoveRecoveryEmailAsync(RemoveRecoveryEmailRequest request);
+    public ValueTask<HttpResponse> AddPhoneNumberAsync(AddPhoneNumberRequest request);
+    public ValueTask<HttpResponse> AddRecoveryEmailAsync(AddRecoveryEmailRequest request);
+    public ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request);
+    public ValueTask<HttpResponse> AddPasswordAsync(AddPasswordRequest request);
+    public ValueTask<HttpResponse> ChangeEmailAsync(ChangeEmailRequest request);
+    public ValueTask<HttpResponse> ChangeRecoveryEmailAsync(ChangeRecoveryEmailRequest request);
+    public ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request);
+    public ValueTask<HttpResponse> RefreshTokenAsync(RefreshTokenRequest request);
+    public ValueTask<HttpResponse> ChangePhoneNumberAsync(ChangePhoneNumberRequest request);
+    public ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request);
+    public ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request);
+    public ValueTask<HttpResponse> VerifyEmailAsync(VerifyEmailRequest request);
+    public ValueTask<HttpResponse> VerifyRecoveryEmailAsync(VerifyRecoveryEmailRequest request);
+    public ValueTask<HttpResponse> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request);
+    public ValueTask<HttpResponse> UnlockAccountAsync(UnlockAccountRequest request);
+    public ValueTask<HttpResponse> CheckEmailAsync(CheckEmailRequest request);
+    public ValueTask<HttpResponse> CheckPhoneNumberAsync(CheckPhoneNumberRequest request);
+    public ValueTask<HttpResponse> CheckPasswordAsync(CheckPasswordRequest request);
+}
