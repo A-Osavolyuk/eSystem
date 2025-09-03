@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class LoginCodeEntity : Entity, IExpireable
+public class LoginCodeEntity : Entity, IExpirable
 {
     public Guid Id { get; init; }
     public Guid UserId { get; set; }

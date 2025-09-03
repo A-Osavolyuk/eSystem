@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Entities;
 
-public class RefreshTokenEntity : Entity, IExpireable
+public class RefreshTokenEntity : Entity, IExpirable
 {
     public Guid Id { get; init; }
     public Guid UserId { get; init; }
