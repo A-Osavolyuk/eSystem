@@ -80,3 +80,10 @@ public class Result
 
     public TResponse Get<TResponse>() => (TResponse)Value!;
 }
+
+public class Error
+{
+    public ErrorCode Code { get; init; }
+    public string Message { get; init; } = string.Empty;
+    public string? Details { get; init; }
+}
