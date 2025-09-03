@@ -24,7 +24,7 @@
                     Validation="Validator.ValidateValue">
                     <MudStack Spacing="2" Justify="Justify.Center">
                         <MudText Align="Align.Center">
-                            We have sent a SMS with code to phone number: <strong>@UserState.PhoneNumber</strong>
+                            We have sent a SMS with code to phone number: <strong>@UserState.Credentials?.PhoneNumber</strong>
                         </MudText>
                         <MudCodeInput
                             Class="d-flex align-items-center"

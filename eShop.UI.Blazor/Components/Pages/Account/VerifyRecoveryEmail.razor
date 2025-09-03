@@ -22,7 +22,7 @@
                     Validation="Validator.ValidateValue">
                     <MudStack Spacing="2" Justify="Justify.Center">
                         <MudText Align="Align.Center">
-                            We have sent an email with code to: <strong>@UserState.RecoveryEmail</strong>
+                            We have sent an email with code to: <strong>@UserState.Credentials?.RecoveryEmail</strong>
                         </MudText>
 
                         <MudCodeInput

@@ -64,7 +64,8 @@
                                             Model="Model">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from an email we sent you to: <strong>@UserState.RecoveryEmail</strong>
+                                                    Enter code from an email we sent you to: 
+                                                    <strong>@UserState.Credentials?.RecoveryEmail</strong>
                                                 </MudText>
 
                                                 <MudCodeInput

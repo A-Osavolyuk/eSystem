@@ -67,7 +67,8 @@
                                             Model="Model">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from the SMS we sent you to: <strong>@UserState.PhoneNumber</strong>
+                                                    Enter code from the SMS we sent you to: 
+                                                    <strong>@UserState.Credentials?.PhoneNumber</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
