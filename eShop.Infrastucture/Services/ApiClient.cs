@@ -4,6 +4,7 @@ using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using HttpRequest = eShop.Domain.Common.Http.HttpRequest;
+using HttpResponse = eShop.Domain.Common.Http.HttpResponse;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace eShop.Infrastructure.Services;
@@ -19,7 +20,7 @@ public class ApiClient(
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private const string Key = "services:proxy:http:0";
 
-    public async ValueTask<Response> SendAsync(HttpRequest httpRequest, HttpOptions options)
+    public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
     {
         try
         {
@@ -97,7 +98,7 @@ public class ApiClient(
 
             var httpResponse = await httpClient.SendAsync(message);
             var responseJson = await httpResponse.Content.ReadAsStringAsync();
-            var response = JsonSerializer.Deserialize<Response>(responseJson, serializationOptions)!;
+            var response = JsonSerializer.Deserialize<HttpResponse>(responseJson, serializationOptions)!;
 
             return response;
         }

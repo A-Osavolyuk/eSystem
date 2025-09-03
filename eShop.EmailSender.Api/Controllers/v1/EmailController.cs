@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Common.Http;
 using eShop.EmailSender.Api.Requests;
-using Response = eShop.Domain.Common.Http.Response;
+using HttpResponse = eShop.Domain.Common.Http.HttpResponse;
 
 namespace eShop.EmailSender.Api.Controllers.v1;
 
@@ -14,7 +14,7 @@ public class EmailController(IEmailService emailService) : ControllerBase
     [EndpointSummary("Send email message")]
     [EndpointDescription("Sends email message")]
     [ProducesResponseType(200)]
-    public async ValueTask<ActionResult<Response>> SendMessageAsync([FromBody] SendMessageRequest request)
+    public async ValueTask<ActionResult<HttpResponse>> SendMessageAsync([FromBody] SendMessageRequest request)
     {
         await emailService.SendMessageAsync(request.HtmlBody, request.Options);
 

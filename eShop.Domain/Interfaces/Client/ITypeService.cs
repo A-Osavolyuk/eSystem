@@ -5,5 +5,5 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface ITypeService
 {
-    public ValueTask<Response> GetAllAsync();
+    public ValueTask<HttpResponse> GetAllAsync();
 }

@@ -6,8 +6,8 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface IOAuthService
 {
-    public ValueTask<Response> LoadSessionAsync(LoadOAuthSessionRequest request);
-    public ValueTask<Response> DisconnectAsync(DisconnectLinkedAccountRequest request);
-    public ValueTask<Response> AllowAsync(AllowLinkedAccountRequest request);
-    public ValueTask<Response> DisallowAsync(DisallowLinkedAccountRequest request);
+    public ValueTask<HttpResponse> LoadSessionAsync(LoadOAuthSessionRequest request);
+    public ValueTask<HttpResponse> DisconnectAsync(DisconnectLinkedAccountRequest request);
+    public ValueTask<HttpResponse> AllowAsync(AllowLinkedAccountRequest request);
+    public ValueTask<HttpResponse> DisallowAsync(DisallowLinkedAccountRequest request);
 }

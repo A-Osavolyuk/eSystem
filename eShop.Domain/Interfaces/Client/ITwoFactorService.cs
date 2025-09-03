@@ -6,10 +6,10 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface ITwoFactorService
 {
-    public ValueTask<Response> GetProvidersAsync();
-    public ValueTask<Response> LoginAsync(TwoFactorLoginRequest request);
-    public ValueTask<Response> SendCodeAsync(SendTwoFactorCodeRequest request);
-    public ValueTask<Response> VerifyCodeAsync(VerifyTwoFactorCodeRequest request);
-    public ValueTask<Response> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request);
-    public ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request);
+    public ValueTask<HttpResponse> GetProvidersAsync();
+    public ValueTask<HttpResponse> LoginAsync(TwoFactorLoginRequest request);
+    public ValueTask<HttpResponse> SendCodeAsync(SendTwoFactorCodeRequest request);
+    public ValueTask<HttpResponse> VerifyCodeAsync(VerifyTwoFactorCodeRequest request);
+    public ValueTask<HttpResponse> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request);
+    public ValueTask<HttpResponse> GenerateQrCodeAsync(GenerateQrCodeRequest request);
 }

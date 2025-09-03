@@ -9,7 +9,7 @@ public class PriceService(
     IConfiguration configuration, 
     IApiClient apiClient) : ApiService(configuration, apiClient), IPriceService
 {
-    public async ValueTask<Response> GetAllAsync() =>
+    public async ValueTask<HttpResponse> GetAllAsync() =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Price/", Method = HttpMethod.Get }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });

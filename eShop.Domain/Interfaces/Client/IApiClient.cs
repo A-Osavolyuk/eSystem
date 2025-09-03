@@ -5,5 +5,5 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface IApiClient
 {
-    public ValueTask<Response> SendAsync(HttpRequest httpRequest, HttpOptions options);
+    public ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options);
 }

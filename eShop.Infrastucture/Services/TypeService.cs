@@ -9,7 +9,7 @@ public class TypeService(
     IConfiguration configuration, 
     IApiClient apiClient) : ApiService(configuration, apiClient), ITypeService
 {
-    public async ValueTask<Response> GetAllAsync() =>
+    public async ValueTask<HttpResponse> GetAllAsync() =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Types/", Method = HttpMethod.Get }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });

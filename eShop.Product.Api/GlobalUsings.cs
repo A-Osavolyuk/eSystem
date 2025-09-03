@@ -17,5 +17,5 @@ global using MassTransit;
 global using MediatR;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
-global using Response = eShop.Domain.Common.Http.Response;
+global using Response = eShop.Domain.Common.Http.HttpResponse;
 global using Results = eShop.Domain.Common.API.Results;

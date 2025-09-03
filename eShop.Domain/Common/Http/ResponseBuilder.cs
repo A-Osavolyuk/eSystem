@@ -30,9 +30,9 @@ public class ResponseBuilder
         return this;
     }
 
-    public Response Build()
+    public HttpResponse Build()
     {
-        var response = Response.Create(resultMessage, result, isSucceeded);
+        var response = HttpResponse.Create(resultMessage, result, isSucceeded);
         
         result = null!;
         resultMessage = string.Empty;

@@ -10,7 +10,7 @@ class StorageService(
     IConfiguration configuration,
     IApiClient pipe) : ApiService(configuration, pipe), IStoreService
 {
-    public async ValueTask<Response> UploadFilesAsync(UploadFilesRequest request) =>
+    public async ValueTask<HttpResponse> UploadFilesAsync(UploadFilesRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest()
             {
@@ -25,7 +25,7 @@ class StorageService(
             },
             new HttpOptions { WithBearer = true, Type = DataType.File });
     
-    public async ValueTask<Response> LoadFilesAsync(LoadFilesRequest request) =>
+    public async ValueTask<HttpResponse> LoadFilesAsync(LoadFilesRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest() { Data = request, Method = HttpMethod.Post, Url = $"{Gateway}/api/v1/Files/load" },
             new HttpOptions { WithBearer = true, Type = DataType.Text });

@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Telegram;
-using Response = eShop.Domain.Common.Http.Response;
+using HttpResponse = eShop.Domain.Common.Http.HttpResponse;
 
 namespace eShop.Telegram.Bot.Controllers.v1;
 
@@ -52,7 +52,7 @@ public class TelegramController(
     [EndpointDescription("Sends a message via Telegram")]
     [ProducesResponseType(200)]
     [HttpPost("send-message")]
-    public async ValueTask<ActionResult<Response>> SendAsync([FromBody] SendMessageRequest request)
+    public async ValueTask<ActionResult<HttpResponse>> SendAsync([FromBody] SendMessageRequest request)
     {
         await bot.SendMessage(chatId: new ChatId(request.ChatId), text: request.Message);
 

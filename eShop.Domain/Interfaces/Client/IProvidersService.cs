@@ -6,8 +6,8 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface IProvidersService
 {
-    public ValueTask<Response> GetProvidersAsync();
-    public ValueTask<Response> SubscribeAsync(SubscribeProviderRequest request);
-    public ValueTask<Response> VerifyAsync(VerifyProviderRequest request);
-    public ValueTask<Response> UnsubscribeAsync(UnsubscribeProviderRequest request);
+    public ValueTask<HttpResponse> GetProvidersAsync();
+    public ValueTask<HttpResponse> SubscribeAsync(SubscribeProviderRequest request);
+    public ValueTask<HttpResponse> VerifyAsync(VerifyProviderRequest request);
+    public ValueTask<HttpResponse> UnsubscribeAsync(UnsubscribeProviderRequest request);
 }

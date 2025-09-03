@@ -6,10 +6,10 @@ namespace eShop.Domain.Interfaces.Client;
 
 public interface IPasskeyService
 {
-    public ValueTask<Response> GetPasskeyAsync(Guid id);
-    public ValueTask<Response> CreatePasskeyAsync(CreatePasskeyRequest request);
-    public ValueTask<Response> VerifyPasskeyAsync(VerifyPasskeyRequest request);
-    public ValueTask<Response> CreateSignInOptionsAsync(PasskeySignInRequest request);
-    public ValueTask<Response> VerifySignInOptionsAsync(VerifyPasskeySignInRequest request);
-    public ValueTask<Response> RemovePasskeyAsync(RemovePasskeyRequest request);
+    public ValueTask<HttpResponse> GetPasskeyAsync(Guid id);
+    public ValueTask<HttpResponse> CreatePasskeyAsync(CreatePasskeyRequest request);
+    public ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request);
+    public ValueTask<HttpResponse> CreateSignInOptionsAsync(PasskeySignInRequest request);
+    public ValueTask<HttpResponse> VerifySignInOptionsAsync(VerifyPasskeySignInRequest request);
+    public ValueTask<HttpResponse> RemovePasskeyAsync(RemovePasskeyRequest request);
 }

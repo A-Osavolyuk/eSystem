@@ -10,32 +10,32 @@ public class TwoFactorService(
     IApiClient client,
     IConfiguration configuration) : ApiService(configuration, client), ITwoFactorService
 {
-    public async ValueTask<Response> GetProvidersAsync() =>
+    public async ValueTask<HttpResponse> GetProvidersAsync() =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Providers/", Method = HttpMethod.Get }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> LoginAsync(TwoFactorLoginRequest request) =>
+    public async ValueTask<HttpResponse> LoginAsync(TwoFactorLoginRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> SendCodeAsync(SendTwoFactorCodeRequest request) =>
+    public async ValueTask<HttpResponse> SendCodeAsync(SendTwoFactorCodeRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/send", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });
     
-    public async ValueTask<Response> VerifyCodeAsync(VerifyTwoFactorCodeRequest request) =>
+    public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyTwoFactorCodeRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/verify", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
+    public async ValueTask<HttpResponse> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/qr-code/generate", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<Response> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request) =>
+    public async ValueTask<HttpResponse> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/recovery-code/generate", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
