@@ -24,8 +24,7 @@ public class VerifyPasskeySignInCommandHandler(
     public async Task<Result> Handle(VerifyPasskeySignInCommand request,
         CancellationToken cancellationToken)
     {
-        var credentialIdBytes = CredentialUtils.Base64UrlDecode(request.Request.Credential.Id);
-        var base64CredentialId = Convert.ToBase64String(credentialIdBytes);
+        var base64CredentialId = CredentialUtils.ToBase64String(request.Request.Credential.Id);
 
         var passkey = await passkeyManager.FindByCredentialIdAsync(base64CredentialId, cancellationToken);
         if (passkey is null) return Results.BadRequest("Invalid credential");
@@ -34,24 +33,20 @@ public class VerifyPasskeySignInCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {passkey.UserId}.");
 
         var authenticationAssertionResponse = request.Request.Credential.Response;
-
-        var clientDataJson = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.ClientDataJson);
-        var clientData = JsonSerializer.Deserialize<ClientData>(clientDataJson);
+        var clientData = ClientData.Parse(authenticationAssertionResponse.ClientDataJson);
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != ClientDataTypes.Get) return Results.BadRequest("Invalid type");
 
-        var challengeBytes = CredentialUtils.Base64UrlDecode(clientData.Challenge);
-        var base64Challenge = Convert.ToBase64String(challengeBytes);
+        var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
         var savedChallenge = request.HttpContext.Session.GetString("webauthn_assertion_challenge");
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
         var authenticatorData = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.AuthenticatorData);
         var signature = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.Signature);
-
-        using var sha256 = SHA256.Create();
-        var clientDataHash = sha256.ComputeHash(clientDataJson);
+        var clientDataJson = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.ClientDataJson);
+        var clientDataHash = SHA256.HashData(clientDataJson);
 
         var signedData = authenticatorData.Concat(clientDataHash).ToArray();
 
@@ -65,15 +60,15 @@ public class VerifyPasskeySignInCommandHandler(
         };
 
         if (!valid) return Results.BadRequest("Invalid client data");
-        
+
         var signCount = CredentialUtils.ParseSignCount(authenticatorData);
-        
+
         passkey.SignCount = signCount;
         passkey.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         var result = await passkeyManager.UpdateAsync(passkey, cancellationToken);
         if (!result.Succeeded) return result;
-        
+
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
         if (lockoutState.Enabled)
@@ -83,7 +78,7 @@ public class VerifyPasskeySignInCommandHandler(
                 UserId = user.Id,
                 IsLockedOut = lockoutState.Enabled,
             };
-            
+
             return Results.BadRequest("Account is locked out", lockoutResponse);
         }
 
