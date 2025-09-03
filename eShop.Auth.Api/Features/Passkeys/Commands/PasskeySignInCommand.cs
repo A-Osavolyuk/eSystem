@@ -19,23 +19,8 @@ public class PasskeySignInCommandHandler(
         var user = await userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with name {request.Request.Username}.");
 
-        var challengeBytes = KeyGeneration.GenerateRandomKey(32);
-        var challenge = Convert.ToBase64String(challengeBytes);
-        var allowedCredentials = user.Passkeys
-            .Select(x => new AllowedCredential()
-            {
-                Type = KeyType.PublicKey,
-                Id = x.CredentialId
-            }).ToList();
-
-        var options = new PublicKeyCredentialRequestOptions()
-        {
-            Challenge = challenge,
-            Timeout = 60000,
-            Domain = identityOptions.Credentials.Domain,
-            UserVerification = UserVerifications.Preferred,
-            AllowedCredentials = allowedCredentials
-        };
+        var challenge = CredentialGenerator.GenerateChallenge();
+        var options = CredentialGenerator.CreateRequestOptions(user, challenge, identityOptions.Credentials);
 
         request.Context.Session.SetString("webauthn_assertion_challenge", challenge);
 
