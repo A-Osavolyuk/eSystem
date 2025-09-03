@@ -31,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eShop.UI.Angular\eShop.UI.Angular.esproj" />
     <ProjectReference Include="..\eShop.Auth.Api\eShop.Auth.Api.csproj" />
     <ProjectReference Include="..\eShop.Blazor.UI\eShop.Blazor.UI.csproj" />
     <ProjectReference Include="..\eShop.Cart.Api\eShop.Cart.Api.csproj" />

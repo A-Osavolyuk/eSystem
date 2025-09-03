@@ -103,12 +103,6 @@ builder.AddProject<Projects.eShop_Blazor_UI>("blazor-ui")
     .WithJwtConfig()
     .WithReference(proxy).WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy");
 
-// builder.AddNpmApp("ui-angular", "../eShop.UI.Angular")
-//     .WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy")
-//     .WithHttpsEndpoint(port: 5902, targetPort: 4200, env: "PORT")
-//     .WithExternalHttpEndpoints()
-//     .PublishAsDockerFile();
-
 var app = builder.Build();
 
 app.Run();
