@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using eShop.Domain.Common.API;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using Microsoft.AspNetCore.Http;
@@ -7,7 +6,7 @@ using HttpRequest = eShop.Domain.Common.Http.HttpRequest;
 using HttpResponse = eShop.Domain.Common.Http.HttpResponse;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace eShop.Infrastructure.Services;
+namespace eShop.Infrastructure.Implementations;
 
 public class ApiClient(
     IHttpClientFactory clientFactory,

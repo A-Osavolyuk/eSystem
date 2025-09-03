@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace eShop.Infrastructure.Services;
+namespace eShop.Infrastructure.Implementations;
 
 public class TokenProvider(
     ICookieManager cookieManager,

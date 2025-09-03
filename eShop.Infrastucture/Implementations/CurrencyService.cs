@@ -1,16 +1,15 @@
 ﻿using eShop.Domain.Abstraction.Services;
-using eShop.Domain.Common.API;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 
-namespace eShop.Infrastructure.Services;
+namespace eShop.Infrastructure.Implementations;
 
-public class CategoryService(
+public class CurrencyService(
     IConfiguration configuration, 
-    IApiClient apiClient) : ApiService(configuration, apiClient), ICategoryService
+    IApiClient apiClient) : ApiService(configuration, apiClient), ICurrencyService
 {
     public async ValueTask<HttpResponse> GetAllAsync() =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Category/", Method = HttpMethod.Get }, 
+            new HttpRequest { Url = $"{Gateway}/api/v1/Currency/", Method = HttpMethod.Get }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 }

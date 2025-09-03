@@ -1,10 +1,9 @@
 ﻿using eShop.Domain.Abstraction.Services;
-using eShop.Domain.Common.API;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using eShop.Domain.Requests.API.Storage;
 
-namespace eShop.Infrastructure.Services;
+namespace eShop.Infrastructure.Implementations;
 
 class StorageService(
     IConfiguration configuration,

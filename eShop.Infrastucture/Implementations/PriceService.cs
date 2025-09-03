@@ -1,9 +1,8 @@
 ﻿using eShop.Domain.Abstraction.Services;
-using eShop.Domain.Common.API;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 
-namespace eShop.Infrastructure.Services;
+namespace eShop.Infrastructure.Implementations;
 
 public class PriceService(
     IConfiguration configuration, 

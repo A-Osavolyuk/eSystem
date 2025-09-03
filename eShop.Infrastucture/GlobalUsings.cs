@@ -7,7 +7,6 @@ global using System.Text;
 global using Blazored.LocalStorage;
 global using eShop.Application.Extensions;
 global using eShop.Domain.Interfaces.Client;
-global using eShop.Infrastructure.Services;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Components.Authorization;
 global using Microsoft.AspNetCore.Components.Forms;
