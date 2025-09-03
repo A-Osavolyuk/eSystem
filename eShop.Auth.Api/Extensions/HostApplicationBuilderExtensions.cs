@@ -85,6 +85,7 @@ public static class HostApplicationBuilderExtensions
         {
             options.Credentials.Domain = "localhost";
             options.Credentials.Server = "eAccount";
+            options.Credentials.Timeout = 60000;
             
             options.Password.RequiredLength = 8;
             options.Password.RequireUppercase = true;
