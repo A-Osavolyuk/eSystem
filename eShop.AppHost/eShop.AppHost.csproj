@@ -1,47 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
-  
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsAspireHost>true</IsAspireHost>
-    <UserSecretsId>25917b55-256a-4dcc-95c1-ae526ad964ba</UserSecretsId>
-  </PropertyGroup>
+    <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0"/>
 
-  <ItemGroup>
-    <PackageReference Include="Aspire.Hosting" Version="9.4.1" />
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.1" />
-    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="9.4.1" />
-    <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.4.1" />
-    <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.4.1" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.4.1" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="9.4.1" />
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.4.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>25917b55-256a-4dcc-95c1-ae526ad964ba</UserSecretsId>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\eShop.Auth.Api\eShop.Auth.Api.csproj" />
-    <ProjectReference Include="..\eShop.Blazor.UI\eShop.Blazor.UI.csproj" />
-    <ProjectReference Include="..\eShop.Cart.Api\eShop.Cart.Api.csproj" />
-    <ProjectReference Include="..\eShop.EmailSender.Api\eShop.EmailSender.Api.csproj" />
-    <ProjectReference Include="..\eShop.Storage.Api\eShop.Storage.Api.csproj" />
-    <ProjectReference Include="..\eShop.MessageBus\eShop.MessageBus.csproj" />
-    <ProjectReference Include="..\eShop.Proxy\eShop.Proxy.csproj" />
-    <ProjectReference Include="..\eShop.Product.Api\eShop.Product.Api.csproj" />
-    <ProjectReference Include="..\eShop.Comments.Api\eShop.Comments.Api.csproj" />
-    <ProjectReference Include="..\eShop.SmsSender.Api\eShop.SmsSender.Api.csproj" />
-    <ProjectReference Include="..\eShop.Telegram.Bot\eShop.Telegram.Bot.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting" Version="9.4.1"/>
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.1"/>
+        <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="9.4.1"/>
+        <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.4.1"/>
+        <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.4.1"/>
+        <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.4.1"/>
+        <PackageReference Include="Aspire.Hosting.Redis" Version="9.4.1"/>
+        <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.4.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\eShop.Auth.Api\eShop.Auth.Api.csproj"/>
+        <ProjectReference Include="..\eShop.Blazor.UI\eShop.Blazor.UI.csproj"/>
+        <ProjectReference Include="..\eShop.Cart.Api\eShop.Cart.Api.csproj"/>
+        <ProjectReference Include="..\eShop.EmailSender.Api\eShop.EmailSender.Api.csproj"/>
+        <ProjectReference Include="..\eShop.Storage.Api\eShop.Storage.Api.csproj"/>
+        <ProjectReference Include="..\eShop.MessageBus\eShop.MessageBus.csproj"/>
+        <ProjectReference Include="..\eShop.Proxy\eShop.Proxy.csproj"/>
+        <ProjectReference Include="..\eShop.Product.Api\eShop.Product.Api.csproj"/>
+        <ProjectReference Include="..\eShop.Comments.Api\eShop.Comments.Api.csproj"/>
+        <ProjectReference Include="..\eShop.SmsSender.Api\eShop.SmsSender.Api.csproj"/>
+        <ProjectReference Include="..\eShop.Telegram.Bot\eShop.Telegram.Bot.csproj"/>
+    </ItemGroup>
 
 </Project>

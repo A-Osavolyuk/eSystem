@@ -1,27 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="12.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.8" />
-    <PackageReference Include="MongoDB.Bson" Version="3.4.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.8" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="12.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.3.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.8"/>
+        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.8"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8"/>
+        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.8"/>
+        <PackageReference Include="MongoDB.Bson" Version="3.4.3"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.8"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\Client\" />
-    <Folder Include="Responses\API\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Interfaces\Client\"/>
+        <Folder Include="Responses\API\"/>
+    </ItemGroup>
 
 </Project>

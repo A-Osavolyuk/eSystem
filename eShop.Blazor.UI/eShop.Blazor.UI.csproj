@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>f56b5756-2add-4421-bed3-0a21acd5d46e</UserSecretsId>
 		<RootNamespace>eShop.Blazor.UI</RootNamespace>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<ItemGroup>

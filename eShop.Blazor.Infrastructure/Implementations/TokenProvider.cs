@@ -15,7 +15,7 @@ public class TokenProvider(
     {
         var context = httpContextAccessor.HttpContext;
         var token = context?.Request.Cookies[Key];
-        return token;
+        return await Task.FromResult(token);
     }
 
     public async ValueTask RemoveAsync()
