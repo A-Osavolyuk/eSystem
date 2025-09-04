@@ -2,11 +2,13 @@
 @using eShop.Blazor.Application.Validation
 @using eShop.Blazor.Domain.Interfaces
 @using eShop.Blazor.Domain.Models
+@using eShop.Blazor.Infrastructure.Security
 @using eShop.Domain.Common.Security.Credentials
 @inherits PageBase
 
 @inject IPasskeyService PasskeyService
 @inject PasskeySignInValidator Validator
+@inject PasskeyManager PasskeyManager
 
 <Title Text="Sign in with Passkey"></Title>
 
@@ -90,7 +92,7 @@
             if (result.Success)
             {
                 var options = result.Get<PublicKeyCredentialRequestOptions>()!;
-                var credential = await Js.InvokeAsync<PublicKeyCredential>("signIn", options);
+                var credential = await PasskeyManager.AuthenticateAsync(options);
 
                 var verificationRequest = new VerifyPasskeySignInRequest()
                 {

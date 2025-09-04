@@ -1,10 +1,10 @@
 ﻿@using eShop.Blazor.Domain.Interfaces
 @using eShop.Blazor.Domain.Models
+@using eShop.Blazor.Infrastructure.Security
 @using eShop.Domain.Common.Security.Credentials
-@inject ISecurityService SecurityService
 @inject IPasskeyService PasskeyService
 @inject ISnackbar Snackbar
-@inject IJSRuntime Js
+@inject PasskeyManager PasskeyManager
 
 <MudDialog Style="width: 600px">
     <TitleContent>
@@ -62,7 +62,7 @@
             if (result.Success)
             {
                 var options = result.Get<PublicKeyCredentialCreationOptions>()!;
-                var response = await Js.InvokeAsync<PublicKeyCredentialCreationResponse>("createKey", options);
+                var response = await PasskeyManager.AssertAsync(options);
 
                 var verificationRequest = new VerifyPasskeyRequest()
                 {
