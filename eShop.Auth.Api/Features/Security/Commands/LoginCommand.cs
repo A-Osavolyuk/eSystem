@@ -107,10 +107,9 @@ public sealed class LoginCommandHandler(
             {
                 response = new LoginResponse()
                 {
+                    UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
                     MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
-                    IsLockedOut = false,
-                    UserId = user.Id,
                 };
 
                 return Results.BadRequest("The password is not valid.", response);
@@ -120,10 +119,10 @@ public sealed class LoginCommandHandler(
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
             var reason = await reasonManager.FindByTypeAsync(LockoutType.TooManyFailedLoginAttempts, cancellationToken);
-            if (reason is null)
-                return Results.NotFound($"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
+            if (reason is null) return Results.NotFound(
+                $"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
 
-            var lockoutResult = await lockoutManager.LockoutAsync(user, reason,
+            var lockoutResult = await lockoutManager.BlockAsync(user, reason,
                 permanent: true, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
@@ -150,31 +149,22 @@ public sealed class LoginCommandHandler(
 
         if (identityOptions.SignIn.RequireTrustedDevice)
         {
+            response = new LoginResponse()
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                DeviceId = device.Id,
+                IsDeviceTrusted = device.IsTrusted,
+                IsDeviceBlocked = device.IsBlocked,
+            };
+            
             if (device.IsBlocked)
             {
-                response = new LoginResponse()
-                {
-                    UserId = user.Id,
-                    Email = user.Email,
-                    IsTrustedDevice = device.IsTrusted,
-                    IsBlockedDevice = device.IsBlocked,
-                    DeviceId = device.Id
-                };
-
                 return Results.BadRequest("Cannot sign in, device is blocked.", response);
             }
 
             if (!device.IsTrusted)
             {
-                response = new LoginResponse()
-                {
-                    UserId = user.Id,
-                    Email = user.Email,
-                    IsTrustedDevice = device.IsTrusted,
-                    IsBlockedDevice = device.IsBlocked,
-                    DeviceId = device.Id
-                };
-
                 return Results.BadRequest("You need to trust this device before sign in.", response);
             }
         }
@@ -183,7 +173,7 @@ public sealed class LoginCommandHandler(
         {
             response = new LoginResponse()
             {
-                IsLockedOut = lockoutState.Enabled,
+                UserId = user.Id,
                 IsTwoFactorEnabled = true,
             };
 
@@ -195,11 +185,9 @@ public sealed class LoginCommandHandler(
 
         response = new LoginResponse()
         {
+            UserId = user.Id,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            UserId = user.Id,
-            IsTwoFactorEnabled = user.HasTwoFactor(),
-            IsLockedOut = lockoutState.Enabled,
         };
 
         await loginSessionManager.CreateAsync(device, LoginType.Password, cancellationToken: cancellationToken);

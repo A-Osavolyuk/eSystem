@@ -6,8 +6,8 @@ public record LoginResponse
     public Guid? DeviceId { get; set; }
     public string? Email { get; set; }
     public bool IsEmailConfirmed { get; set; }
-    public bool IsTrustedDevice { get; set; }
-    public bool IsBlockedDevice { get; set; }
+    public bool IsDeviceTrusted { get; set; }
+    public bool IsDeviceBlocked { get; set; }
     public bool IsTwoFactorEnabled { get; set; }
     
     public string? AccessToken { get; set; }
