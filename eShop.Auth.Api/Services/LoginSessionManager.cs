@@ -5,7 +5,7 @@ public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask CreateAsync(UserDeviceEntity device, LoginStatus status, LoginType type,
+    public async ValueTask CreateAsync(UserDeviceEntity device, LoginType type,
         string provider, CancellationToken cancellationToken = default)
     {
         device.UpdateDate = DateTimeOffset.UtcNow;
@@ -15,10 +15,7 @@ public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
         {
             Id = Guid.CreateVersion7(),
             DeviceId = device.Id,
-            IpAddress = device.IpAddress!,
-            UserAgent = device.UserAgent!,
             Type = type,
-            Status = status,
             Provider = provider,
             Timestamp = DateTimeOffset.UtcNow,
             CreateDate = DateTimeOffset.UtcNow
@@ -29,7 +26,7 @@ public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async ValueTask CreateAsync(UserDeviceEntity device, LoginStatus status, LoginType type,
+    public async ValueTask CreateAsync(UserDeviceEntity device, LoginType type,
         CancellationToken cancellationToken = default)
     {
         device.UpdateDate = DateTimeOffset.UtcNow;
@@ -39,10 +36,7 @@ public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
         {
             Id = Guid.CreateVersion7(),
             DeviceId = device.Id,
-            IpAddress = device.IpAddress!,
-            UserAgent = device.UserAgent!,
             Type = type,
-            Status = status,
             Provider = null,
             Timestamp = DateTimeOffset.UtcNow,
             CreateDate = DateTimeOffset.UtcNow

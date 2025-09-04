@@ -46,8 +46,7 @@ public class TrustDeviceCommandHandler(
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access,  cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh,  cancellationToken);
 
-        await loginSessionManager.CreateAsync(device, LoginStatus.Success, 
-            LoginType.Password, cancellationToken: cancellationToken);
+        await loginSessionManager.CreateAsync(device, LoginType.Password, cancellationToken: cancellationToken);
         
         var response = new TrustDeviceResponse()
         {

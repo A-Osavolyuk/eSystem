@@ -4,13 +4,9 @@ public class LoginSessionEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid DeviceId { get; set; }
-
-    public LoginStatus Status { get; set; }
-    public LoginType Type { get; set; }
     
+    public LoginType Type { get; set; }
     public string? Provider { get; set; }
-    public string IpAddress { get; set; } = string.Empty;
-    public string UserAgent { get; set; } =  string.Empty;
     
     public DateTimeOffset Timestamp { get; set; }
     public UserDeviceEntity Device { get; set; } = null!;

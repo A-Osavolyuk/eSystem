@@ -59,55 +59,22 @@ public sealed class LoginWith2FaCommandHandler(
         }
         
         var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
-        if (provider is null) return await NotFoundProviderAsync(request.Request.Provider, device, cancellationToken);
+        if (provider is null) 
+            return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
-        if (lockoutState.Enabled) return await LockedOutAsync(user, provider, lockoutState, device, cancellationToken);
+        if (lockoutState.Enabled) 
+            return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
 
         var code = request.Request.Code;
         
-        var codeResult = await VerifyCodeAsync(user, provider, code, device, cancellationToken);
-        if (!codeResult.Succeeded) return codeResult;
-
-        return await GenerateTokenAsync(user, lockoutState, provider, device, cancellationToken);
-    }
-
-    private async Task<Result> NotFoundProviderAsync(string providerName, UserDeviceEntity device,
-        CancellationToken cancellationToken)
-    {
-        await loginSessionManager.CreateAsync(device, LoginStatus.Failed, LoginType.TwoFactor, cancellationToken);
-            
-        return Results.NotFound($"Cannot find provider with name {providerName}.");
-    }
-    
-    private async Task<Result> LockedOutAsync(UserEntity user, ProviderEntity provider, LockoutStateEntity lockoutState,
-        UserDeviceEntity device, CancellationToken cancellationToken)
-    {
-        await loginSessionManager.CreateAsync(device, LoginStatus.Locked, 
-            LoginType.TwoFactor, provider.Name, cancellationToken);
-            
-        return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
-    }
-
-    private async Task<Result> VerifyCodeAsync(UserEntity user, ProviderEntity provider, string code, 
-        UserDeviceEntity device, CancellationToken cancellationToken)
-    {
         var codeResult = await loginCodeManager.VerifyAsync(user, provider, code, cancellationToken);
-        if (codeResult.Succeeded) return Result.Success();
+        if (!codeResult.Succeeded)
+        {
+            var recoveryCodeResult = await recoverManager.VerifyAsync(user, code, cancellationToken);
+            if (!recoveryCodeResult.Succeeded) return Results.BadRequest($"Invalid two-factor code {code}.");
+        }
         
-        var recoveryCodeResult = await recoverManager.VerifyAsync(user, code, cancellationToken);
-        if (recoveryCodeResult.Succeeded) return Result.Success();
-        
-        await loginSessionManager.CreateAsync(device, LoginStatus.Failed, 
-            LoginType.TwoFactor, provider.Name, cancellationToken);
-                
-        return Results.BadRequest($"Invalid two-factor code {code}.");
-
-    }
-
-    private async Task<Result> GenerateTokenAsync(UserEntity user, LockoutStateEntity lockoutState, 
-        ProviderEntity provider, UserDeviceEntity device, CancellationToken cancellationToken)
-    {
         var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
         var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
 
@@ -119,9 +86,7 @@ public sealed class LoginWith2FaCommandHandler(
             IsLockedOut = lockoutState.Enabled,
         };
         
-        await loginSessionManager.CreateAsync(device, LoginStatus.Success, 
-            LoginType.TwoFactor, provider.Name, cancellationToken);
-        
+        await loginSessionManager.CreateAsync(device, LoginType.TwoFactor, provider.Name, cancellationToken);
         return Result.Success(response, "Successfully logged in.");
     }
 }
