@@ -281,20 +281,38 @@
             {
                 var response = result.Get<LoginResponse>()!;
 
-                if (response.IsLockedOut)
-                {
-                    RouteManager.Route($"/account/locked-out?id={response.UserId}");
-                }
-                else
-                {
-                    await AuthenticationManager.SignInAsync(response!.AccessToken!, response.RefreshToken!);
-                    Snackbar.Add(result.Message, Severity.Success);
-                    RouteManager.Route("/products");
-                }
+                await AuthenticationManager.SignInAsync(response!.AccessToken!, response.RefreshToken!);
+                Snackbar.Add(result.Message, Severity.Success);
+                RouteManager.Route("/products");
             }
             else
             {
-                Snackbar.Add(result.Message, Severity.Error);
+                if (result.Result is null)
+                {
+                    Snackbar.Add(result.Message, Severity.Error);
+                    return;
+                }
+
+                var response = result.Get<LoginResponse>()!;
+                var userId = response.UserId;
+
+                if (response.FailedLoginAttempts < response.MaxFailedLoginAttempts && !response.IsLockedOut)
+                {
+                    var attemptsLeft = response.MaxFailedLoginAttempts - response.FailedLoginAttempts;
+                    var message = $"Incorrect code. You have {attemptsLeft} attempts left, then account will be locked out.";
+                    Snackbar.Add(message, Severity.Error);
+                    return;
+                }
+                
+                if (response is { FailedLoginAttempts: 0, IsLockedOut: false })
+                {
+                    Snackbar.Add(result.Message, Severity.Error);
+                }
+                else
+                {
+                    var url = $"/account/locked-out?id={userId}";
+                    RouteManager.Route(url);
+                }
             }
         }
     }

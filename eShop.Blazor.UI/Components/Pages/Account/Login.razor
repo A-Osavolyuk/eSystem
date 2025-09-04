@@ -188,7 +188,7 @@
                 var userId = response.UserId;
                 var email = response.Email;
 
-                if (response is { IsTrustedDevice: false, IsBlockedDevice: false })
+                if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
                 {
                     var device = response.DeviceId;
                     
