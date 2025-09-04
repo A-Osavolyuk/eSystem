@@ -5,7 +5,7 @@ public interface ILockoutManager
     public ValueTask<LockoutStateEntity> FindAsync(UserEntity userEntity,
         CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> LockoutAsync(
+    public ValueTask<Result> BlockAsync(
         UserEntity userEntity,
         LockoutReasonEntity lockoutReason, 
         string? description = null, 
@@ -14,5 +14,5 @@ public interface ILockoutManager
         DateTimeOffset? endDate = null, 
         CancellationToken cancellationToken = default);
     
-    public ValueTask<Result> UnlockAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UnblockAsync(UserEntity userEntity, CancellationToken cancellationToken = default);
 }

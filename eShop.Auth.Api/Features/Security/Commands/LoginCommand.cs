@@ -116,6 +116,9 @@ public sealed class LoginCommandHandler(
                 return Results.BadRequest("The password is not valid.", response);
             }
 
+            var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
+            if (!deviceBlockResult.Succeeded) return deviceBlockResult;
+
             var reason = await reasonManager.FindByTypeAsync(LockoutType.TooManyFailedLoginAttempts, cancellationToken);
             if (reason is null)
                 return Results.NotFound($"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
@@ -182,7 +185,6 @@ public sealed class LoginCommandHandler(
             {
                 IsLockedOut = lockoutState.Enabled,
                 IsTwoFactorEnabled = true,
-                UserId = user.Id
             };
 
             return Result.Success(response);

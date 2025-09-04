@@ -26,7 +26,7 @@ public class LockoutCommandHandler(
         var duration = request.Request.Duration;
         var endDate = request.Request.EndDate;
         
-        var result = await lockoutManager.LockoutAsync(user, reason, description, 
+        var result = await lockoutManager.BlockAsync(user, reason, description, 
             isPermanent, duration, endDate, cancellationToken);
         
         return result;
