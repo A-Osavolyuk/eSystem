@@ -552,11 +552,8 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Provider = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    IpAddress = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    UserAgent = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
