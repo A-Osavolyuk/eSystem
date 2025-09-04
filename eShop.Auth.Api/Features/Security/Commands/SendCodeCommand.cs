@@ -37,7 +37,7 @@ public class SendCodeCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, sender, codeType, codeResource, cancellationToken);
 
-        Message message = request.Request switch
+        Message? message = request.Request switch
         {
             { Resource: CodeResource.Email, Type: CodeType.Verify, Sender: SenderType.Email } =>
                 new VerifyEmailMessage
@@ -374,8 +374,10 @@ public class SendCodeCommandHandler(
                     }
                 },
 
-            _ => throw new NotSupportedException("Not supported resend code case")
+            _ => null
         };
+        
+        if (message is null) return Results.BadRequest("Invalid message type");
 
         await messageService.SendMessageAsync(sender, message, cancellationToken);
 
