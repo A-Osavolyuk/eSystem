@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text.Json;
 using eShop.Auth.Api.Types;
+using eShop.Domain.Common.Security.Credentials;
 using PeterO.Cbor;
 
 namespace eShop.Auth.Api.Utilities;
@@ -30,15 +31,37 @@ public static class CredentialUtils
         return base64;
     }
 
-    public static uint ParseSignCount(byte[] authenticatorDataBytes)
+    public static uint ParseSignCount(string authenticatorData)
     {
+        var authenticatorDataBytes = Base64UrlDecode(authenticatorData);
         var signCountBytes = authenticatorDataBytes.Skip(33).Take(4).ToArray();
         if (BitConverter.IsLittleEndian) Array.Reverse(signCountBytes);
         var signCount = BitConverter.ToUInt32(signCountBytes, 0);
         return signCount;
     }
+
+    public static bool VerifySignature(AuthenticatorAssertionResponse response, byte[] publicKey)
+    {
+        var authenticatorDataBytes = Base64UrlDecode(response.AuthenticatorData);
+        var signature = Base64UrlDecode(response.Signature);
+        var clientDataJson = Base64UrlDecode(response.ClientDataJson);
+        var clientDataHash = SHA256.HashData(clientDataJson);
+
+        var signedData = authenticatorDataBytes.Concat(clientDataHash).ToArray();
+
+        using var key = ImportCosePublicKey(publicKey);
+
+        var valid = key switch
+        {
+            ECDsa ecdsa => ecdsa.VerifyData(signedData, signature, HashAlgorithmName.SHA256),
+            RSA rsa => rsa.VerifyData(signedData, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1),
+            _ => throw new NotSupportedException("Unsupported key type")
+        };
+        
+        return valid;
+    }
     
-    public static AsymmetricAlgorithm ImportCosePublicKey(byte[] coseKey)
+    private static AsymmetricAlgorithm ImportCosePublicKey(byte[] coseKey)
     {
         var obj = CBORObject.DecodeFromBytes(coseKey);
 

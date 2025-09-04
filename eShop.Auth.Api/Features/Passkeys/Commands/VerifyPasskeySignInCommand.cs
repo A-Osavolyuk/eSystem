@@ -24,16 +24,16 @@ public class VerifyPasskeySignInCommandHandler(
     public async Task<Result> Handle(VerifyPasskeySignInCommand request,
         CancellationToken cancellationToken)
     {
-        var base64CredentialId = CredentialUtils.ToBase64String(request.Request.Credential.Id);
+        var credentialId = CredentialUtils.ToBase64String(request.Request.Credential.Id);
 
-        var passkey = await passkeyManager.FindByCredentialIdAsync(base64CredentialId, cancellationToken);
+        var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null) return Results.BadRequest("Invalid credential");
 
         var user = await userManager.FindByIdAsync(passkey.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {passkey.UserId}.");
 
-        var authenticationAssertionResponse = request.Request.Credential.Response;
-        var clientData = ClientData.Parse(authenticationAssertionResponse.ClientDataJson);
+        var authenticatorAssertionResponse = request.Request.Credential.Response;
+        var clientData = ClientData.Parse(authenticatorAssertionResponse.ClientDataJson);
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != ClientDataTypes.Get) return Results.BadRequest("Invalid type");
@@ -43,25 +43,10 @@ public class VerifyPasskeySignInCommandHandler(
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
-        var authenticatorData = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.AuthenticatorData);
-        var signature = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.Signature);
-        var clientDataJson = CredentialUtils.Base64UrlDecode(authenticationAssertionResponse.ClientDataJson);
-        var clientDataHash = SHA256.HashData(clientDataJson);
-
-        var signedData = authenticatorData.Concat(clientDataHash).ToArray();
-
-        using var key = CredentialUtils.ImportCosePublicKey(passkey.PublicKey);
-
-        var valid = key switch
-        {
-            ECDsa ecdsa => ecdsa.VerifyData(signedData, signature, HashAlgorithmName.SHA256),
-            RSA rsa => rsa.VerifyData(signedData, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1),
-            _ => throw new NotSupportedException("Unsupported key type")
-        };
-
+        var valid = CredentialUtils.VerifySignature(authenticatorAssertionResponse, passkey.PublicKey);
         if (!valid) return Results.BadRequest("Invalid client data");
 
-        var signCount = CredentialUtils.ParseSignCount(authenticatorData);
+        var signCount = CredentialUtils.ParseSignCount(authenticatorAssertionResponse.AuthenticatorData);
 
         passkey.SignCount = signCount;
         passkey.UpdateDate = DateTimeOffset.UtcNow;
