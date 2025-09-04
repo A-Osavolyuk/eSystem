@@ -8,7 +8,7 @@
     return bytes;
 }
 
-async function createKey(options)
+async function assert(options)
 {
     options.challenge = base64ToUint8Array(options.challenge);
     options.user.id = base64ToUint8Array(options.user.id);
@@ -17,7 +17,7 @@ async function createKey(options)
     });
 }
 
-async function signIn(options)
+async function authenticate(options)
 {
     options.challenge = base64ToUint8Array(options.challenge);
     for (let cred of options.allowedCredentials) {
