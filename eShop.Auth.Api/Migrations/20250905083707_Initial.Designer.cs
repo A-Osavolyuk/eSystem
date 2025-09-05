@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250904113115_Initial")]
+    [Migration("20250905083707_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -347,28 +347,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("PersonalData");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.ProviderEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Providers");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.RecoveryCodeEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -522,6 +500,28 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermissions");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.TwoFactorProviderEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TwoFactorProviders");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserChangesEntity", b =>
@@ -812,30 +812,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserPermissions");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserProviderEntity", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProviderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("Subscribed")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("UserId", "ProviderId");
-
-                    b.HasIndex("ProviderId");
-
-                    b.ToTable("UserProvider");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserRoleEntity", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -883,6 +859,30 @@ namespace eShop.Auth.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("UserSecret");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorProviderEntity", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Subscribed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("UserId", "ProviderId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("UserTwoFactorProviders");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationEntity", b =>
@@ -948,7 +948,7 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.LoginCodeEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.ProviderEntity", "Provider")
+                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "TwoFactorProvider")
                         .WithOne()
                         .HasForeignKey("eShop.Auth.Api.Entities.LoginCodeEntity", "ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -960,7 +960,7 @@ namespace eShop.Auth.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Provider");
+                    b.Navigation("TwoFactorProvider");
 
                     b.Navigation("User");
                 });
@@ -1134,25 +1134,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserProviderEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.ProviderEntity", "Provider")
-                        .WithMany()
-                        .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany("Providers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Provider");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserRoleEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.RoleEntity", "Role")
@@ -1179,6 +1160,25 @@ namespace eShop.Auth.Api.Migrations
                         .HasForeignKey("eShop.Auth.Api.Entities.UserSecretEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorProviderEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "TwoFactorProvider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany("TwoFactorProviders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TwoFactorProvider");
 
                     b.Navigation("User");
                 });
@@ -1222,11 +1222,11 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Navigation("Permissions");
 
-                    b.Navigation("Providers");
-
                     b.Navigation("RecoveryCodes");
 
                     b.Navigation("Roles");
+
+                    b.Navigation("TwoFactorProviders");
                 });
 #pragma warning restore 612, 618
         }

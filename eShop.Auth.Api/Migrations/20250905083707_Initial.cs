@@ -62,20 +62,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Providers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Providers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ResourceOwners",
                 columns: table => new
                 {
@@ -102,6 +88,20 @@ namespace eShop.Auth.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TwoFactorProviders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TwoFactorProviders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -237,9 +237,9 @@ namespace eShop.Auth.Api.Migrations
                 {
                     table.PrimaryKey("PK_LoginCodes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LoginCodes_Providers_ProviderId",
+                        name: "FK_LoginCodes_TwoFactorProviders_ProviderId",
                         column: x => x.ProviderId,
-                        principalTable: "Providers",
+                        principalTable: "TwoFactorProviders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -429,33 +429,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserProvider",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Subscribed = table.Column<bool>(type: "bit", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserProvider", x => new { x.UserId, x.ProviderId });
-                    table.ForeignKey(
-                        name: "FK_UserProvider_Providers_ProviderId",
-                        column: x => x.ProviderId,
-                        principalTable: "Providers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserProvider_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserRoles",
                 columns: table => new
                 {
@@ -496,6 +469,33 @@ namespace eShop.Auth.Api.Migrations
                     table.PrimaryKey("PK_UserSecret", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserSecret_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTwoFactorProviders",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Subscribed = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserTwoFactorProviders", x => new { x.UserId, x.ProviderId });
+                    table.ForeignKey(
+                        name: "FK_UserTwoFactorProviders_TwoFactorProviders_ProviderId",
+                        column: x => x.ProviderId,
+                        principalTable: "TwoFactorProviders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserTwoFactorProviders_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -716,11 +716,6 @@ namespace eShop.Auth.Api.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProvider_ProviderId",
-                table: "UserProvider",
-                column: "ProviderId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
                 table: "UserRoles",
                 column: "RoleId");
@@ -737,6 +732,11 @@ namespace eShop.Auth.Api.Migrations
                 table: "UserSecret",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTwoFactorProviders_ProviderId",
+                table: "UserTwoFactorProviders",
+                column: "ProviderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Verifications_UserId",
@@ -784,13 +784,13 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserPermissions");
 
             migrationBuilder.DropTable(
-                name: "UserProvider");
-
-            migrationBuilder.DropTable(
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
                 name: "UserSecret");
+
+            migrationBuilder.DropTable(
+                name: "UserTwoFactorProviders");
 
             migrationBuilder.DropTable(
                 name: "Verifications");
@@ -808,10 +808,10 @@ namespace eShop.Auth.Api.Migrations
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "Providers");
+                name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "TwoFactorProviders");
 
             migrationBuilder.DropTable(
                 name: "Users");
