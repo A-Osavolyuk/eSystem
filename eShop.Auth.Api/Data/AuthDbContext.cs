@@ -3,30 +3,30 @@
 public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {
     public DbSet<UserEntity> Users { get; set; }
-    public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<UserRoleEntity> UserRoles { get; set; }
+    public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
+    public DbSet<UserSecretEntity> UserSecret { get; set; }
+    public DbSet<UserTwoFactorProviderEntity> UserTwoFactorProviders { get; set; }
+    public DbSet<UserChangesEntity> UserChanges { get; set; }
+    public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
+    public DbSet<UserDeviceEntity> UserDevices { get; set; }
+    public DbSet<UserPasskeyEntity> UserPasskeys { get; set; }
+    public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<PersonalDataEntity> PersonalData { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
-    public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<CodeEntity> Codes { get; set; }
-    public DbSet<ProviderEntity> Providers { get; set; }
+    public DbSet<TwoFactorProviderEntity> TwoFactorProviders { get; set; }
     public DbSet<LoginCodeEntity> LoginCodes { get; set; }
-    public DbSet<UserSecretEntity> UserSecret { get; set; }
-    public DbSet<UserProviderEntity> UserProvider { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<LockoutStateEntity> LockoutStates { get; set; }
     public DbSet<LockoutReasonEntity> LockoutReasons { get; set; }
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
     public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
-    public DbSet<UserChangesEntity> UserChanges { get; set; }
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
-    public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
-    public DbSet<UserDeviceEntity> UserDevices { get; set; }
-    public DbSet<UserPasskeyEntity> UserPasskeys { get; set; }
     public DbSet<VerificationEntity> Verifications { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
@@ -132,7 +132,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey<RefreshTokenEntity>(t => t.UserId);
         });
 
-        builder.Entity<ProviderEntity>(entity =>
+        builder.Entity<TwoFactorProviderEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Name).HasMaxLength(64);
@@ -147,7 +147,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithOne()
                 .HasForeignKey<LoginCodeEntity>(x => x.UserId);
 
-            entity.HasOne(x => x.Provider)
+            entity.HasOne(x => x.TwoFactorProvider)
                 .WithOne()
                 .HasForeignKey<LoginCodeEntity>(x => x.ProviderId);
         });
@@ -162,15 +162,15 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey<UserSecretEntity>(x => x.UserId);
         });
 
-        builder.Entity<UserProviderEntity>(entity =>
+        builder.Entity<UserTwoFactorProviderEntity>(entity =>
         {
             entity.HasKey(x => new { x.UserId, x.ProviderId });
 
             entity.HasOne(x => x.User)
-                .WithMany(x => x.Providers)
+                .WithMany(x => x.TwoFactorProviders)
                 .HasForeignKey(x => x.UserId);
 
-            entity.HasOne(x => x.Provider)
+            entity.HasOne(x => x.TwoFactorProvider)
                 .WithMany()
                 .HasForeignKey(x => x.ProviderId);
         });

@@ -12,7 +12,7 @@ public record SubscribeProviderCommand(SubscribeProviderRequest Request) : IRequ
 
 public class SubscribeProviderCommandHandler(
     IUserManager userManager,
-    IProviderManager providerManager,
+    ITwoFactorProviderManager twoFactorProviderManager,
     ILoginCodeManager loginCodeManager,
     IMessageService messageService,
     ISecretManager secretManager,
@@ -20,7 +20,7 @@ public class SubscribeProviderCommandHandler(
     IdentityOptions identityOptions) : IRequestHandler<SubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IProviderManager providerManager = providerManager;
+    private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
     private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly IMessageService messageService = messageService;
@@ -33,7 +33,7 @@ public class SubscribeProviderCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorProviderManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         
         if (provider.Name == ProviderTypes.Email)

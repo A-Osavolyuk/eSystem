@@ -10,7 +10,7 @@ public sealed class LoginWith2FaCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
     ILoginCodeManager loginCodeManager,
-    IProviderManager providerManager,
+    ITwoFactorProviderManager twoFactorProviderManager,
     ILockoutManager lockoutManager,
     IRecoverManager recoverManager,
     ILoginSessionManager loginSessionManager,
@@ -21,7 +21,7 @@ public sealed class LoginWith2FaCommandHandler(
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
-    private readonly IProviderManager providerManager = providerManager;
+    private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IRecoverManager recoverManager = recoverManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
@@ -64,7 +64,7 @@ public sealed class LoginWith2FaCommandHandler(
             if (!result.Succeeded) return result;
         }
         
-        var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorProviderManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) 
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         

@@ -11,7 +11,7 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
         var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
 
-        var providers = user.Providers.ToList();
+        var providers = user.TwoFactorProviders.ToList();
         var result = providers.Select(Mapper.Map).ToList();
         return Result.Success(result);
     }

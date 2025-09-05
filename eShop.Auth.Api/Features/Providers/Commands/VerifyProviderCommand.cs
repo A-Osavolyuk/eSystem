@@ -6,11 +6,11 @@ public record VerifyProviderCommand(VerifyProviderRequest Request) : IRequest<Re
 
 public class VerifyProviderCommandHandler(
     IUserManager userManager,
-    IProviderManager providerManager,
+    ITwoFactorProviderManager twoFactorProviderManager,
     ILoginCodeManager loginCodeManager) : IRequestHandler<VerifyProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IProviderManager providerManager = providerManager;
+    private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
     private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
 
     public async Task<Result> Handle(VerifyProviderCommand request, CancellationToken cancellationToken)
@@ -18,7 +18,7 @@ public class VerifyProviderCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorProviderManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
 
         var code = request.Request.Code;
@@ -26,7 +26,7 @@ public class VerifyProviderCommandHandler(
         var verifyResult = await loginCodeManager.VerifyAsync(user, provider, code, cancellationToken);
         if (!verifyResult.Succeeded) return verifyResult;
 
-        var result = await providerManager.SubscribeAsync(user, provider, cancellationToken);
+        var result = await twoFactorProviderManager.SubscribeAsync(user, provider, cancellationToken);
 
         return result;
     }

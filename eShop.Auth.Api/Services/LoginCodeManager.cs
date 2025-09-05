@@ -19,10 +19,10 @@ public sealed class LoginCodeManager(
     private const int ExpirationMinutes = 30;
 
     public async ValueTask<string> GenerateAsync(UserEntity user, 
-        ProviderEntity provider, CancellationToken cancellationToken = default)
+        TwoFactorProviderEntity twoFactorProvider, CancellationToken cancellationToken = default)
     {
         var existingCode = await context.LoginCodes
-            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
+            .Where(x => x.UserId == user.Id && x.ProviderId == twoFactorProvider.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (existingCode is not null)
@@ -37,7 +37,7 @@ public sealed class LoginCodeManager(
         var entity = new LoginCodeEntity()
         {
             Id = Guid.CreateVersion7(),
-            ProviderId = provider.Id,
+            ProviderId = twoFactorProvider.Id,
             UserId = user.Id,
             CodeHash = hash,
             ExpireDate = DateTime.UtcNow.AddMinutes(ExpirationMinutes),
@@ -51,10 +51,10 @@ public sealed class LoginCodeManager(
         return code;
     }
 
-    public async ValueTask<Result> VerifyAsync(UserEntity user, ProviderEntity provider, string code,
+    public async ValueTask<Result> VerifyAsync(UserEntity user, TwoFactorProviderEntity twoFactorProvider, string code,
         CancellationToken cancellationToken = default)
     {
-        if (provider.Name == ProviderTypes.Authenticator)
+        if (twoFactorProvider.Name == ProviderTypes.Authenticator)
         {
             var userSecret = await secretManager.FindAsync(user, cancellationToken);
 
@@ -72,7 +72,7 @@ public sealed class LoginCodeManager(
         }
         
         var entity = await context.LoginCodes
-            .Where(x => x.UserId == user.Id && x.ProviderId == provider.Id)
+            .Where(x => x.UserId == user.Id && x.ProviderId == twoFactorProvider.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (entity is null)

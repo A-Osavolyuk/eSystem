@@ -2,6 +2,6 @@
 
 public interface ILoginCodeManager
 {
-    public ValueTask<string> GenerateAsync(UserEntity user, ProviderEntity provider, CancellationToken cancellationToken = default);
-    public ValueTask<Result> VerifyAsync(UserEntity user, ProviderEntity provider, string code, CancellationToken cancellationToken = default);
+    public ValueTask<string> GenerateAsync(UserEntity user, TwoFactorProviderEntity twoFactorProvider, CancellationToken cancellationToken = default);
+    public ValueTask<Result> VerifyAsync(UserEntity user, TwoFactorProviderEntity twoFactorProvider, string code, CancellationToken cancellationToken = default);
 }

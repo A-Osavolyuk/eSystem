@@ -126,18 +126,18 @@ public static class Mapper
         };
     }
 
-    public static UserProviderDto Map(UserProviderEntity source)
+    public static UserProviderDto Map(UserTwoFactorProviderEntity source)
     {
         return new UserProviderDto()
         {
-            Id = source.Provider.Id,
-            Name = source.Provider.Name,
+            Id = source.TwoFactorProvider.Id,
+            Name = source.TwoFactorProvider.Name,
             Subscribed = source.Subscribed,
             UpdateDate = source.UpdateDate,
         };
     }
     
-    public static ProviderDto Map(ProviderEntity source)
+    public static ProviderDto Map(TwoFactorProviderEntity source)
     {
         return new ProviderDto()
         {

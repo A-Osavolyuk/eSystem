@@ -11,20 +11,20 @@ public record SendTwoFactorCodeCommand(SendTwoFactorCodeRequest Request) : IRequ
 public class SendTwoFactorCodeCommandHandler(
     IUserManager userManager,
     ILoginCodeManager loginCodeManager,
-    IProviderManager providerManager,
+    ITwoFactorProviderManager twoFactorProviderManager,
     IMessageService messageService) : IRequestHandler<SendTwoFactorCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
     private readonly IMessageService messageService = messageService;
-    private readonly IProviderManager providerManager = providerManager;
+    private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
 
     public async Task<Result> Handle(SendTwoFactorCodeCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorProviderManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         
         if (!user.HasEmail() && provider.Name == ProviderTypes.Email)

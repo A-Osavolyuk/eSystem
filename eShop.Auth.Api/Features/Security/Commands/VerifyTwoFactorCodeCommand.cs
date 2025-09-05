@@ -7,18 +7,18 @@ public record VerifyTwoFactorCodeCommand(VerifyTwoFactorCodeRequest Request) : I
 public class VerifyTwoFactorCodeCommandHandler(
     IUserManager userManager,
     ILoginCodeManager loginCodeManager,
-    IProviderManager providerManager) : IRequestHandler<VerifyTwoFactorCodeCommand, Result>
+    ITwoFactorProviderManager twoFactorProviderManager) : IRequestHandler<VerifyTwoFactorCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
-    private readonly IProviderManager providerManager = providerManager;
+    private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
 
     public async Task<Result> Handle(VerifyTwoFactorCodeCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        var provider = await providerManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorProviderManager.FindByNameAsync(request.Request.Provider, cancellationToken);
 
         if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         var result = await loginCodeManager.VerifyAsync(user, provider, request.Request.Code, cancellationToken);

@@ -8,6 +8,6 @@ public class LoginCodeEntity : Entity, IExpirable
     
     public string CodeHash { get; set; } = string.Empty;
     public DateTimeOffset ExpireDate { get; set; }
-    public ProviderEntity Provider { get; set; } = null!;
+    public TwoFactorProviderEntity TwoFactorProvider { get; set; } = null!;
     public UserEntity User { get; set; } = null!;
 }
