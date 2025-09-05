@@ -43,5 +43,15 @@ public enum CodeResource
     /// <summary>
     /// User's passkey
     /// </summary>
-    Passkey
+    Passkey,
+    
+    /// <summary>
+    /// The user's authenticator app
+    /// </summary>
+    AuthenticatorApp,
+    
+    /// <summary>
+    /// The user's two-factor authentication
+    /// </summary>
+    TwoFactor,
 }

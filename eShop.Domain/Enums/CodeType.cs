@@ -8,60 +8,65 @@ public enum CodeType
     /// <summary>
     /// Verification of an existing resource, such as the current email or phone number.
     /// </summary>
-    Current = 1,
+    Current,
 
     /// <summary>
     /// Verification of a newly added resource, such as a new email address or phone number.
     /// </summary>
-    New = 2,
+    New,
 
     /// <summary>
     /// Generic verification of a resource or process, e.g. email or phone confirmation.
     /// </summary>
-    Verify = 3,
+    Verify,
 
     /// <summary>
     /// Verification for resetting a resource, such as a password or other account-related data.
     /// </summary>
-    Reset = 4,
+    Reset,
 
     /// <summary>
     /// Recovery code used to regain access to an account (e.g., after losing credentials).
     /// </summary>
-    Unlock = 5,
+    Unlock,
 
     /// <summary>
     /// Trusting a user device, marking it as recognized for future sign-ins.
     /// </summary>
-    Trust = 6,
+    Trust,
 
     /// <summary>
     /// Blocking a user device, preventing it from being used for sign-in.
     /// </summary>
-    Block = 7,
+    Block,
 
     /// <summary>
     /// Unblocking a previously blocked device, allowing it to be used again.
     /// </summary>
-    Unblock = 8,
+    Unblock,
 
     /// <summary>
     /// Disconnecting a linked external account (e.g., Google, Facebook, etc.).
     /// </summary>
-    Disconnect = 9,
+    Disconnect,
 
     /// <summary>
     /// Allowing sign-in via a linked external account.
     /// </summary>
-    Allow = 10,
+    Allow,
 
     /// <summary>
     /// Disallowing sign-in via a linked external account (opposite of <see cref="Allow"/>).
     /// </summary>
-    Disallow = 11,
+    Disallow,
     
     /// <summary>
     /// Verification of remove action.
     /// </summary>
-    Remove = 12
+    Remove,
+    
+    /// <summary>
+    /// Represents sign-in with 2FA (Two-Factor Authentication)
+    /// </summary>
+    SignIn,
 }
