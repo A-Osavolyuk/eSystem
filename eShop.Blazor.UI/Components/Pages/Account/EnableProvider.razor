@@ -7,9 +7,9 @@
 @attribute [Authorize]
 
 @inject IProvidersService ProvidersService
-@inject ITwoFactorService TwoFactorService
+@inject ISecurityService SecurityService
 
-<Title Text="2FA with providers" />
+<Title Text="2FA with providers"/>
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6" Style="margin-top: 100px">
@@ -45,7 +45,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="@(async () => await OnSubscribeProviderAsync())">
+                                                    OnClick="@(async () => await OnSendCodeAsync())">
                                                     Send code with Email
                                                 </MudButton>
                                             }
@@ -56,7 +56,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="@(async () => await OnSubscribeProviderAsync())">
+                                                    OnClick="@(async () => await OnSendCodeAsync())">
                                                     Send code with SMS
                                                 </MudButton>
                                             }
@@ -80,35 +80,35 @@
                                     <MudPaper Outlined Class="pa-5">
                                         <MudForm
                                             @ref="form"
-                                            Model="VerifyProviderModel">
+                                            Model="Model">
                                             <MudStack Spacing="2">
-                                                    <MudText Align="Align.Center">
-                                                        Enter 6-digit code from @Provider
-                                                    </MudText>
-                                                
-                                                    <MudCodeInput
-                                                        Count="6"
-                                                        Margin="Margin.Normal" 
-                                                        Spacing="2"
-                                                        Class="d-flex align-items-center"
-                                                        @bind-Value="VerifyProviderModel.Code"
-                                                        Variant="Variant.Outlined"/>
-                                                    
-                                                    <MudLoadingButton
-                                                        FullWidth="true"
-                                                        Variant="Variant.Filled"
-                                                        Color="Color.Primary"
-                                                        ButtonType="ButtonType.Button"
-                                                        Disabled="@(VerifyProviderModel.Code.Length <= 5)"
-                                                        OnClick="@(async () => await OnVerifyCodeAsync())">
-                                                        Verify
-                                                    </MudLoadingButton>
+                                                <MudText Align="Align.Center">
+                                                    Enter 6-digit code from @Provider
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="Model.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(Model.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnVerifyAsync())">
+                                                    Verify
+                                                </MudLoadingButton>
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">Didn't received an @Provider?
-                                            <strong @onclick="async () => await ResendCodeAsync()"
+                                            <strong @onclick="async () => await SendCodeAsync()"
                                                     class="cursor-pointer">Resend</strong>
                                         </MudText>
                                     </MudPaper>
@@ -125,13 +125,60 @@
 @code {
 
     [Parameter] public string Provider { get; set; } = string.Empty;
-    
-    [SupplyParameterFromForm] private VerifyProviderModel VerifyProviderModel { get; set; } = new();
-    
+
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
+
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
-    private async Task OnSubscribeProviderAsync()
+    private async Task OnSendCodeAsync()
+    {
+        var sender = Provider switch
+        {
+            ProviderTypes.Email => SenderType.Email,
+            ProviderTypes.Sms => SenderType.Sms,
+            _ => throw new NotSupportedException("")
+        };
+
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.Provider,
+            Type = CodeType.Subscribe,
+            Sender = sender
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        var sender = Provider switch
+        {
+            ProviderTypes.Email => SenderType.Email,
+            ProviderTypes.Sms => SenderType.Sms,
+            _ => throw new NotSupportedException("")
+        };
+
+        var request = new VerifyCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Code = Model.Code,
+            Resource = CodeResource.Provider,
+            Type = CodeType.Subscribe,
+            Sender = sender
+        };
+
+        var result = await SecurityService.VerifyCodeAsync(request);
+
+        if (result.Success) await VerifyAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task VerifyAsync()
     {
         var request = new SubscribeProviderRequest()
         {
@@ -141,60 +188,36 @@
 
         var result = await ProvidersService.SubscribeAsync(request);
 
-        if (result.Success)
-        {
-            await StepNextAsync();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
+        if (result.Success) RouteManager.Route("/account/security");
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
-    private async Task OnVerifyCodeAsync()
+    private async Task SendCodeAsync()
     {
-        var request = new VerifyProviderRequest()
+        var sender = Provider switch
         {
-            UserId = UserState.UserId,
-            Code = VerifyProviderModel.Code,
-            Provider = Provider
+            ProviderTypes.Email => SenderType.Email,
+            ProviderTypes.Sms => SenderType.Sms,
+            _ => throw new NotSupportedException("")
         };
 
-        var result = await ProvidersService.VerifyAsync(request);
-
-        if (result.Success)
-        {
-            RouteManager.Route("/account/security");
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-    
-    private async Task ResendCodeAsync()
-    {
-        var request = new SendTwoFactorCodeRequest()
+        var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Provider = Provider
+            Resource = CodeResource.Provider,
+            Type = CodeType.Subscribe,
+            Sender = sender
         };
 
-        var result = await TwoFactorService.SendCodeAsync(request);
+        var result = await SecurityService.SendCodeAsync(request);
 
-        if (result.Success)
-        {
-            Snackbar.Add($"2FA code was resend via {Provider}", Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
+        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
     }
-    
+
     private async Task StepNextAsync()
     {
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
     }
+
 }
