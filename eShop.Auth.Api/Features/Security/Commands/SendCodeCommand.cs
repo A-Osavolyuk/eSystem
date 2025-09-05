@@ -86,7 +86,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", $"Allow {payload["Provider"]} linked account" }
                     },
                     Payload = new()
@@ -101,7 +101,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", "Device block" }
                     },
                     Payload = new()
@@ -149,7 +149,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", $"Disallow {payload["Provider"]} linked account" }
                     },
                     Payload = new()
@@ -164,7 +164,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", $"Disconnect {payload["Provider"]} linked account" }
                     },
                     Payload = new()
@@ -193,7 +193,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", "Device block" }
                     },
                     Payload = new()
@@ -236,7 +236,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", "Device trust" }
                     },
                     Payload = new()
@@ -254,7 +254,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", "Device unblock" }
                     },
                     Payload = new()
@@ -272,7 +272,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", "Device verification" }
                     },
                     Payload = new()
@@ -318,7 +318,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", "Two-factor authentication" }
                     },
                     Payload = new()
@@ -332,7 +332,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user!.Email },
+                        { "To", user.Email },
                         { "Subject", "Two-factor authentication" }
                     },
                     Payload = new()
