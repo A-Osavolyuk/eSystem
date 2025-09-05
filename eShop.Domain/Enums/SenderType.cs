@@ -5,4 +5,5 @@ public enum SenderType
     Email,
     Sms,
     Telegram,
+    AuthenticatorApp
 }
