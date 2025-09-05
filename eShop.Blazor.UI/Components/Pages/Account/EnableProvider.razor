@@ -1,7 +1,5 @@
 ﻿@page "/account/2fa/provider/{provider}"
-@using eShop.Blazor.Domain.Interfaces
-@using eShop.Blazor.Domain.Models
-@using eShop.Domain.Common.Security.Constants
+
 @inherits PageBase
 
 @attribute [Authorize]
@@ -45,7 +43,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="@(async () => await OnSendCodeAsync())">
+                                                    OnClick="@(async () => await OnSendCodeAsync(SenderType.Email))">
                                                     Send code with Email
                                                 </MudButton>
                                             }
@@ -56,7 +54,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Primary"
                                                     ButtonType="ButtonType.Button"
-                                                    OnClick="@(async () => await OnSendCodeAsync())">
+                                                    OnClick="@(async () => await OnSendCodeAsync(SenderType.Sms))">
                                                     Send code with SMS
                                                 </MudButton>
                                             }
@@ -107,10 +105,20 @@
                                         </MudForm>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received an @Provider?
-                                            <strong @onclick="async () => await SendCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
+                                        @if (Provider == ProviderTypes.Email)
+                                        {
+                                            <MudText Align="Align.Center">Didn't received an email?
+                                                <strong @onclick="async () => await SendCodeAsync(SenderType.Email)"
+                                                        class="cursor-pointer">Resend</strong>
+                                            </MudText>
+                                        }
+                                        @if (Provider == ProviderTypes.Sms)
+                                        {
+                                            <MudText Align="Align.Center">Didn't received a SMS?
+                                                <strong @onclick="async () => await SendCodeAsync(SenderType.Sms)"
+                                                        class="cursor-pointer">Resend</strong>
+                                            </MudText>
+                                        }
                                     </MudPaper>
                                 </MudStack>
                             </MudItem>
@@ -131,15 +139,8 @@
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
-    private async Task OnSendCodeAsync()
+    private async Task OnSendCodeAsync(SenderType sender)
     {
-        var sender = Provider switch
-        {
-            ProviderTypes.Email => SenderType.Email,
-            ProviderTypes.Sms => SenderType.Sms,
-            _ => throw new NotSupportedException("")
-        };
-
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
@@ -192,15 +193,8 @@
         else Snackbar.Add(result.Message, Severity.Error);
     }
 
-    private async Task SendCodeAsync()
+    private async Task SendCodeAsync(SenderType sender)
     {
-        var sender = Provider switch
-        {
-            ProviderTypes.Email => SenderType.Email,
-            ProviderTypes.Sms => SenderType.Sms,
-            _ => throw new NotSupportedException("")
-        };
-
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
