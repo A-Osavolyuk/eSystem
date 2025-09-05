@@ -20,16 +20,6 @@ public class TwoFactorService(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> SendCodeAsync(SendTwoFactorCodeRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/send", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { WithBearer = false, Type = DataType.Text });
-    
-    public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyTwoFactorCodeRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/code/verify", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
-
     public async ValueTask<HttpResponse> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/qr-code/generate", Method = HttpMethod.Post, Data = request }, 
