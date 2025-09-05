@@ -18,7 +18,7 @@ public class TwoFactorService(
     public async ValueTask<HttpResponse> LoginAsync(TwoFactorLoginRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
         await ApiClient.SendAsync(
