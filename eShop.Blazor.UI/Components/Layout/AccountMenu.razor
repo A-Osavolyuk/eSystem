@@ -38,7 +38,10 @@
 
                 </MudAvatar>
             </MudStack>
-            <MudText Inline="true" Align="Align.Center"> @UserState.Credentials!.Username </MudText>
+            @if (!string.IsNullOrEmpty(UserState.Credentials?.Username))
+            {
+                <MudText Inline="true" Align="Align.Center"> @UserState.Credentials!.Username </MudText>
+            }
             <MudDivider/>
         </MudStack>
     </MudDrawerHeader>

@@ -21,8 +21,7 @@ public class UserState : AsyncState
     {
         UserId = state.UserId;
         Identity = new UserIdentity(state.Roles, state.Permissions);
-        Credentials = new UserCredentials(state.Email, state.RecoveryEmail, 
-            state.Username, state.PhoneNumber);
+        Credentials = new UserCredentials(state.Email, state.Username, state.PhoneNumber, state.RecoveryEmail);
     }
 
     public override async Task Change()
