@@ -1,4 +1,5 @@
-﻿using eShop.Blazor.Infrastructure;
+﻿using eShop.Blazor.Application;
+using eShop.Blazor.Infrastructure;
 using MudBlazor.Services;
 using MudExtensions.Services;
 
@@ -86,10 +87,5 @@ public static class HostApplicationBuilderExtensions
                 new() { Routes = ["/account/device/unblock"], RequireAuthorization = true },
             ];
         });
-    }
-
-    private static void AddValidation(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
 }
