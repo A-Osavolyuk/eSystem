@@ -2,10 +2,10 @@
 
 namespace eShop.Auth.Api.Services;
 
-[Injectable(typeof(IVerificationCodeManager), ServiceLifetime.Scoped)]
-public sealed class VerificationVerificationCodeManager(
+[Injectable(typeof(ICodeManager), ServiceLifetime.Scoped)]
+public sealed class CodeManager(
     AuthDbContext context,
-    Hasher hasher) : IVerificationCodeManager
+    Hasher hasher) : ICodeManager
 {
     private readonly AuthDbContext context = context;
     private readonly Hasher hasher = hasher;
@@ -13,21 +13,21 @@ public sealed class VerificationVerificationCodeManager(
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
         CodeType type, CodeResource resource, CancellationToken cancellationToken = default)
     {
-        var entity = await context.VerificationCodes
+        var entity = await context.Codes
             .FirstOrDefaultAsync(x => x.UserId == user.Id 
                                       && x.Type == type 
                                       && x.Sender == sender, cancellationToken);
 
         if (entity is not null)
         {
-            context.VerificationCodes.Remove(entity);
+            context.Codes.Remove(entity);
             await context.SaveChangesAsync(cancellationToken);
         }
 
         var code = CodeGenerator.Generate(6);
         var codeHash = hasher.Hash(code);
 
-        await context.VerificationCodes.AddAsync(new VerificationCodeEntity()
+        await context.Codes.AddAsync(new CodeEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -46,7 +46,7 @@ public sealed class VerificationVerificationCodeManager(
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, CodeType type,
         CodeResource resource, CancellationToken cancellationToken = default)
     {
-        var entity = await context.VerificationCodes
+        var entity = await context.Codes
             .SingleOrDefaultAsync(x => x.UserId == user.Id
                                        && x.Type == type
                                        && x.Sender == sender
@@ -65,7 +65,7 @@ public sealed class VerificationVerificationCodeManager(
             return Results.BadRequest("Invalid code");
         }
 
-        context.VerificationCodes.Remove(entity);
+        context.Codes.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

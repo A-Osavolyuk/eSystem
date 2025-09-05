@@ -8,11 +8,11 @@ public record SendCodeCommand(SendCodeRequest Request) : IRequest<Result>;
 
 public class SendCodeCommandHandler(
     IUserManager userManager,
-    IVerificationCodeManager verificationCodeManager,
+    ICodeManager codeManager,
     IMessageService messageService) : IRequestHandler<SendCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IVerificationCodeManager verificationCodeManager = verificationCodeManager;
+    private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
 
     public async Task<Result> Handle(SendCodeCommand request, CancellationToken cancellationToken)
@@ -35,7 +35,7 @@ public class SendCodeCommandHandler(
             return Results.BadRequest("User does not have a phone number to send code via SMS");
         }
 
-        var code = await verificationCodeManager.GenerateAsync(user, sender, codeType, codeResource, cancellationToken);
+        var code = await codeManager.GenerateAsync(user, sender, codeType, codeResource, cancellationToken);
 
         Message? message = request.Request switch
         {

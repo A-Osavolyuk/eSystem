@@ -15,7 +15,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PersonalDataEntity> PersonalData { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
-    public DbSet<VerificationCodeEntity> VerificationCodes { get; set; }
+    public DbSet<CodeEntity> Codes { get; set; }
     public DbSet<TwoFactorProviderEntity> TwoFactorProviders { get; set; }
     public DbSet<LoginCodeEntity> LoginCodes { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
@@ -68,7 +68,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.NormalizedName).HasMaxLength(64);
         });
 
-        builder.Entity<VerificationCodeEntity>(entity =>
+        builder.Entity<CodeEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.CodeHash).HasMaxLength(200);

@@ -6,12 +6,12 @@ public record UnlockAccountCommand(UnlockAccountRequest Request, HttpContext Con
 
 public class RecoverAccountCommandHandler(
     IUserManager userManager,
-    IVerificationCodeManager verificationCodeManager,
+    ICodeManager codeManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager) : IRequestHandler<UnlockAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IVerificationCodeManager verificationCodeManager = verificationCodeManager;
+    private readonly ICodeManager codeManager = codeManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IDeviceManager deviceManager = deviceManager;
 
@@ -27,7 +27,7 @@ public class RecoverAccountCommandHandler(
         if (device is null) return Results.BadRequest("Invalid device.");
         
         var code = request.Request.Code;
-        var verificationResult = await verificationCodeManager.VerifyAsync(user, code, SenderType.Email, 
+        var verificationResult = await codeManager.VerifyAsync(user, code, SenderType.Email, 
             CodeType.Unlock, CodeResource.Account, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
