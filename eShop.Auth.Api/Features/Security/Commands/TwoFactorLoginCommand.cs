@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Common.Security.Constants;
+using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
@@ -9,24 +10,24 @@ public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request, HttpCo
 public sealed class LoginWith2FaCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
-    ILoginCodeManager loginCodeManager,
     ITwoFactorProviderManager twoFactorProviderManager,
     ILockoutManager lockoutManager,
     IRecoverManager recoverManager,
     ILoginSessionManager loginSessionManager,
     IDeviceManager deviceManager,
     IReasonManager reasonManager,
+    ICodeManager codeManager,
     IdentityOptions identityOptions) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
-    private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
     private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IRecoverManager recoverManager = recoverManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IReasonManager reasonManager = reasonManager;
+    private readonly ICodeManager codeManager = codeManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(TwoFactorLoginCommand request,
@@ -73,8 +74,18 @@ public sealed class LoginWith2FaCommandHandler(
             return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
 
         var code = request.Request.Code;
+
+        var sender = provider.Name switch
+        {
+            ProviderTypes.Email => SenderType.Email,
+            ProviderTypes.Sms => SenderType.Sms,
+            ProviderTypes.Authenticator => SenderType.AuthenticatorApp,
+            _ => throw new NotSupportedException("Unknown provider type")
+        };
         
-        var codeResult = await loginCodeManager.VerifyAsync(user, provider, code, cancellationToken);
+        var codeResult = await codeManager.VerifyAsync(user, code, sender, 
+            CodeType.SignIn, CodeResource.TwoFactor, cancellationToken);
+        
         if (!codeResult.Succeeded)
         {
             var recoveryCodeResult = await recoverManager.VerifyAsync(user, code, cancellationToken);

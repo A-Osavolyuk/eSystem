@@ -17,7 +17,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<CodeEntity> Codes { get; set; }
     public DbSet<TwoFactorProviderEntity> TwoFactorProviders { get; set; }
-    public DbSet<LoginCodeEntity> LoginCodes { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<LockoutStateEntity> LockoutStates { get; set; }
@@ -136,20 +135,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Name).HasMaxLength(64);
-        });
-
-        builder.Entity<LoginCodeEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.CodeHash).HasMaxLength(200);
-
-            entity.HasOne(x => x.User)
-                .WithOne()
-                .HasForeignKey<LoginCodeEntity>(x => x.UserId);
-
-            entity.HasOne(x => x.TwoFactorProvider)
-                .WithOne()
-                .HasForeignKey<LoginCodeEntity>(x => x.ProviderId);
         });
         
         builder.Entity<UserSecretEntity>(entity =>

@@ -27,36 +27,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Send 2FA code")]
-    [EndpointDescription("Send 2FA code")]
-    [ProducesResponseType(200)]
-    [HttpPost("code/send")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> SendCodeAsync(
-        [FromBody] SendTwoFactorCodeRequest request)
-    {
-        var result = await sender.Send(new SendTwoFactorCodeCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Verify 2FA code")]
-    [EndpointDescription("Verify 2FA code")]
-    [ProducesResponseType(200)]
-    [HttpPost("code/verify")]
-    [Authorize]
-    public async ValueTask<IActionResult> VerifyCodeAsync(
-        [FromBody] VerifyTwoFactorCodeRequest request)
-    {
-        var result = await sender.Send(new VerifyTwoFactorCodeCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Generate recovery codes")]
     [EndpointDescription("Generate recovery codes")]
     [ProducesResponseType(200)]
