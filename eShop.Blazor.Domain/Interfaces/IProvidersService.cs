@@ -7,6 +7,5 @@ public interface IProvidersService
 {
     public ValueTask<HttpResponse> GetProvidersAsync();
     public ValueTask<HttpResponse> SubscribeAsync(SubscribeProviderRequest request);
-    public ValueTask<HttpResponse> VerifyAsync(VerifyProviderRequest request);
     public ValueTask<HttpResponse> UnsubscribeAsync(UnsubscribeProviderRequest request);
 }
