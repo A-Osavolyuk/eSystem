@@ -13,20 +13,15 @@ public record SubscribeProviderCommand(SubscribeProviderRequest Request) : IRequ
 public class SubscribeProviderCommandHandler(
     IUserManager userManager,
     ITwoFactorProviderManager twoFactorProviderManager,
-    ILoginCodeManager loginCodeManager,
-    IMessageService messageService,
+    IVerificationManager verificationManager,
     ISecretManager secretManager,
-    SecretProtector protector,
     IdentityOptions identityOptions) : IRequestHandler<SubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
-    private readonly ILoginCodeManager loginCodeManager = loginCodeManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
     private readonly ISecretManager secretManager = secretManager;
-    private readonly IMessageService messageService = messageService;
-    private readonly SecretProtector protector = protector;
     private readonly IdentityOptions identityOptions = identityOptions;
-    private const string QrCodeIssuer = "eShop";
 
     public async Task<Result> Handle(SubscribeProviderCommand request, CancellationToken cancellationToken)
     {
@@ -57,56 +52,15 @@ public class SubscribeProviderCommandHandler(
         if (provider.Name == ProviderTypes.Authenticator)
         {
             var secret = await secretManager.FindAsync(user, cancellationToken);
-            if (secret is null) secret = await secretManager.GenerateAsync(user, cancellationToken);
-
-            var unprotectedSecret = protector.Unprotect(secret.Secret);
-            var qrCode = QrCodeGenerator.Generate(user.Email, unprotectedSecret, QrCodeIssuer);
-
-            var response = new SubscribeProviderResponse() { QrCode = qrCode };
-
-            return Result.Success(response);
+            if (secret is null) return Results.NotFound($"Cannot find authenticator secret");
         }
+        
+        var verificationResult = await verificationManager.VerifyAsync(user, 
+            CodeResource.Provider, CodeType.Subscribe, cancellationToken);
 
-        var code = await loginCodeManager.GenerateAsync(user, provider, cancellationToken);
-
-        var sender = provider.Name switch
-        {
-            ProviderTypes.Email => SenderType.Email,
-            ProviderTypes.Sms => SenderType.Sms,
-            _ => throw new NotSupportedException($"Provider type {provider.Name} is not supported.")
-        };
-
-        Message message = provider.Name switch
-        {
-            ProviderTypes.Email => new VerifyProviderEmailMessage()
-            {
-                Credentials = new()
-                {
-                    { "To", user!.Email },
-                    { "Subject", "Two-factor authentication" }
-                },
-                Payload = new()
-                {
-                    { "UserName", user.Username },
-                    { "Code", code },
-                },
-            },
-            ProviderTypes.Sms => new VerifyProviderSmsMessage()
-            {
-                Credentials = new()
-                {
-                    { "PhoneNumber", user.PhoneNumber! },
-                },
-                Payload = new()
-                {
-                    { "Code", code },
-                },
-            },
-            _ => throw new NotSupportedException($"Provider type {provider.Name} is not supported.")
-        };
-
-        await messageService.SendMessageAsync(sender, message, cancellationToken);
-
-        return Result.Success();
+        if (!verificationResult.Succeeded) return verificationResult;
+        
+        var result = await twoFactorProviderManager.SubscribeAsync(user, provider, cancellationToken);
+        return result;
     }
 }

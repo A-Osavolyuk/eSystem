@@ -327,6 +327,20 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     },
                 },
+            { Resource: CodeResource.Provider, Type: CodeType.Subscribe, Sender: SenderType.Email } =>
+                new VerifyProviderEmailMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user!.Email },
+                        { "Subject", "Two-factor authentication" }
+                    },
+                    Payload = new()
+                    {
+                        { "UserName", user.Username },
+                        { "Code", code },
+                    },
+                },
             { Resource: CodeResource.PhoneNumber, Type: CodeType.Current, Sender: SenderType.Sms } =>
                 new ChangePhoneNumberMessage()
                 {
@@ -389,6 +403,18 @@ public class SendCodeCommandHandler(
                 },
             { Resource: CodeResource.TwoFactor, Type: CodeType.SignIn, Sender: SenderType.Sms } =>
                 new TwoFactorCodeSmsMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "PhoneNumber", user.PhoneNumber! },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                    },
+                },
+            { Resource: CodeResource.Provider, Type: CodeType.Unsubscribe, Sender: SenderType.Sms } =>
+                new VerifyProviderSmsMessage()
                 {
                     Credentials = new()
                     {

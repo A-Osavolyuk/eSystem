@@ -44,20 +44,6 @@ public class ProvidersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Verify provider")]
-    [EndpointDescription("Verify provider")]
-    [ProducesResponseType(200)]
-    [HttpPost("verify")]
-    public async ValueTask<IActionResult> VerifyProviderAsync(
-        [FromBody] VerifyProviderRequest request)
-    {
-        var result = await sender.Send(new VerifyProviderCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Unsubscribe provider")]
     [EndpointDescription("Unsubscribe provider")]
     [ProducesResponseType(200)]

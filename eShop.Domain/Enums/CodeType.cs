@@ -69,4 +69,14 @@ public enum CodeType
     /// Represents sign-in with 2FA (Two-Factor Authentication)
     /// </summary>
     SignIn,
+    
+    /// <summary>
+    /// Represents subscription to (Two-Factor Authentication) 2FA provider
+    /// </summary>
+    Subscribe,
+    
+    /// <summary>
+    /// Represents unsubscription to (Two-Factor Authentication) 2FA provider
+    /// </summary>
+    Unsubscribe,
 }
