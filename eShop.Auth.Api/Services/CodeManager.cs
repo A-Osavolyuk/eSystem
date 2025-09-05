@@ -1,13 +1,19 @@
 ﻿using eShop.Auth.Api.Security.Hashing;
+using eShop.Auth.Api.Security.Protection;
+using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ICodeManager), ServiceLifetime.Scoped)]
 public sealed class CodeManager(
     AuthDbContext context,
+    ISecretManager secretManager,
+    SecretProtector protector,
     Hasher hasher) : ICodeManager
 {
     private readonly AuthDbContext context = context;
+    private readonly ISecretManager secretManager = secretManager;
+    private readonly SecretProtector protector = protector;
     private readonly Hasher hasher = hasher;
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
@@ -46,6 +52,23 @@ public sealed class CodeManager(
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, CodeType type,
         CodeResource resource, CancellationToken cancellationToken = default)
     {
+        if (sender == SenderType.AuthenticatorApp)
+        {
+            var userSecret = await secretManager.FindAsync(user, cancellationToken);
+
+            if (userSecret is null)
+            {
+                return Results.NotFound("Not found user secret");
+            }
+
+            var unprotectedSecret = protector.Unprotect(userSecret.Secret);
+            var secretBytes = Base32Encoding.ToBytes(unprotectedSecret);
+            var totp = new Totp(secretBytes);
+            var isVerifiedCode = totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
+
+            return !isVerifiedCode ? Results.BadRequest("Invalid code") : Result.Success();
+        }
+        
         var entity = await context.Codes
             .SingleOrDefaultAsync(x => x.UserId == user.Id
                                        && x.Type == type

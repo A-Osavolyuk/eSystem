@@ -24,7 +24,7 @@ public class VerifyCodeCommandHandler(
         var sender = request.Request.Sender;
         var type = request.Request.Type;
         var resource = request.Request.Resource;
-
+        
         var codeResult = await codeManager.VerifyAsync(user, code, sender, type, resource, cancellationToken);
         if (!codeResult.Succeeded)
         {

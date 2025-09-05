@@ -29,7 +29,7 @@ public class SendCodeCommandHandler(
         {
             return Results.BadRequest("User does not have an email address to send code via email");
         }
-        
+
         if (!user.HasPhoneNumber() && sender == SenderType.Sms)
         {
             return Results.BadRequest("User does not have a phone number to send code via SMS");
@@ -313,6 +313,20 @@ public class SendCodeCommandHandler(
                         { "UserName", user.Username }
                     }
                 },
+            { Resource: CodeResource.TwoFactor, Type: CodeType.SignIn, Sender: SenderType.Email }
+                => new TwoFactorCodeEmailMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user!.Email },
+                        { "Subject", "Two-factor authentication" }
+                    },
+                    Payload = new()
+                    {
+                        { "UserName", user.Username },
+                        { "Code", code },
+                    },
+                },
             { Resource: CodeResource.PhoneNumber, Type: CodeType.Current, Sender: SenderType.Sms } =>
                 new ChangePhoneNumberMessage()
                 {
@@ -373,10 +387,22 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                     }
                 },
+            { Resource: CodeResource.TwoFactor, Type: CodeType.SignIn, Sender: SenderType.Sms } =>
+                new TwoFactorCodeSmsMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "PhoneNumber", user.PhoneNumber! },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                    },
+                },
 
             _ => null
         };
-        
+
         if (message is null) return Results.BadRequest("Invalid message type");
 
         await messageService.SendMessageAsync(sender, message, cancellationToken);
