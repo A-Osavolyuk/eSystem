@@ -148,43 +148,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("LockoutStates");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.LoginCodeEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CodeHash")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("ExpireDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("ProviderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProviderId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("LoginCodes");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.LoginSessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -939,25 +902,6 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Reason");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eShop.Auth.Api.Entities.LoginCodeEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "TwoFactorProvider")
-                        .WithOne()
-                        .HasForeignKey("eShop.Auth.Api.Entities.LoginCodeEntity", "ProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithOne()
-                        .HasForeignKey("eShop.Auth.Api.Entities.LoginCodeEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TwoFactorProvider");
 
                     b.Navigation("User");
                 });

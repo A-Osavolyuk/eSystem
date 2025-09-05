@@ -222,35 +222,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LoginCodes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CodeHash = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LoginCodes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LoginCodes_TwoFactorProviders_ProviderId",
-                        column: x => x.ProviderId,
-                        principalTable: "TwoFactorProviders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LoginCodes_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OAuthSessions",
                 columns: table => new
                 {
@@ -638,18 +609,6 @@ namespace eShop.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LoginCodes_ProviderId",
-                table: "LoginCodes",
-                column: "ProviderId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LoginCodes_UserId",
-                table: "LoginCodes",
-                column: "UserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_LoginSessions_DeviceId",
                 table: "LoginSessions",
                 column: "DeviceId");
@@ -752,9 +711,6 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "LockoutStates");
-
-            migrationBuilder.DropTable(
-                name: "LoginCodes");
 
             migrationBuilder.DropTable(
                 name: "LoginSessions");
