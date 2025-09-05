@@ -8,6 +8,7 @@
 
 @inject ITwoFactorService TwoFactorService
 @inject IUserService UserService
+@inject ISecurityService SecurityService
 @inject TwoFactorLoginValidator TwoFactorLoginValidator
 
 <Title Text="Login with 2FA"/>
@@ -50,7 +51,7 @@
                                                             <MudLoadingButton
                                                                 ButtonType="ButtonType.Button"
                                                                 StartIcon="@Icons.Material.Filled.Smartphone"
-                                                                OnClick="@(async () => await OnSendTokenAsync(provider.Name))"
+                                                                OnClick="@(async () => await OnSendCodeAsync(provider.Name))"
                                                                 Variant="Variant.Filled"
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
@@ -64,7 +65,7 @@
                                                             <MudLoadingButton
                                                                 ButtonType="ButtonType.Button"
                                                                 StartIcon="@Icons.Material.Filled.Sms"
-                                                                OnClick="@(async () => await OnSendTokenAsync(provider.Name))"
+                                                                OnClick="@(async () => await OnSendCodeAsync(provider.Name))"
                                                                 Variant="Variant.Filled"
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
@@ -78,7 +79,7 @@
                                                             <MudLoadingButton
                                                                 ButtonType="ButtonType.Button"
                                                                 StartIcon="@Icons.Material.Filled.Email"
-                                                                OnClick="@(async () => await OnSendTokenAsync(provider.Name))"
+                                                                OnClick="@(async () => await OnSendCodeAsync(provider.Name))"
                                                                 Variant="Variant.Filled"
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
@@ -169,7 +170,7 @@
                                                 ButtonType="ButtonType.Button"
                                                 Disabled="TwoFactorLoginModel.Code.Length <= 5"
                                                 StartIcon="@Icons.Material.Filled.Login"
-                                                OnClick="@(async () => await OnVerifyTokenAsync())"
+                                                OnClick="@(async () => await OnVerifyAsync())"
                                                 Variant="Variant.Filled"
                                                 Color="Color.Primary"
                                                 FullWidth>
@@ -178,15 +179,18 @@
                                         </MudStack>
                                     </MudForm>
                                 </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center">Didn't a receive code?
-                                        <strong
-                                            @onclick="@(async () => await OnSendTokenAsync(SendTwoFactorTokenModel.Provider))"
-                                            class="cursor-pointer">
-                                            Resend
-                                        </strong>
-                                    </MudText>
-                                </MudPaper>
+                                @if (SendTwoFactorTokenModel.Provider != ProviderTypes.Authenticator)
+                                {
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't a receive code?
+                                            <strong
+                                                @onclick="@(async () => await SendCodeAsync())"
+                                                class="cursor-pointer">
+                                                Resend
+                                            </strong>
+                                        </MudText>
+                                    </MudPaper>
+                                }
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -201,7 +205,7 @@
     [SupplyParameterFromForm] private TwoFactorLoginModel TwoFactorLoginModel { get; set; } = new();
 
     [SupplyParameterFromQuery(Name = "id")]
-    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
 
     private MudForm sendTwoFactorTokenForm = new();
     private MudForm twoFactorForm = new();
@@ -221,7 +225,7 @@
 
     private async Task LoadProvidersAsync()
     {
-        var result = await UserService.GetTwoFactorProvidersAsync(Id);
+        var result = await UserService.GetTwoFactorProvidersAsync(UserId);
 
         if (result.Success)
         {
@@ -233,7 +237,7 @@
         }
     }
 
-    private async Task OnSendTokenAsync(string provider)
+    private async Task OnSendCodeAsync(string provider)
     {
         SendTwoFactorTokenModel.Provider = provider;
 
@@ -247,24 +251,50 @@
             }
             else
             {
-                var request = Mapper.Map(SendTwoFactorTokenModel);
-                request.UserId = Id;
-
-                var result = await TwoFactorService.SendCodeAsync(request);
-
-                if (result.Success)
+                var sender = provider switch
                 {
-                    await StepNextAsync();
-                }
-                else
+                    ProviderTypes.Email => SenderType.Email,
+                    ProviderTypes.Sms => SenderType.Sms,
+                    _ => throw new NotSupportedException()
+                };
+
+                var request = new SendCodeRequest()
                 {
-                    Snackbar.Add(result.Message, Severity.Error);
-                }
+                    UserId = UserId,
+                    Sender = sender,
+                    Type = CodeType.SignIn,
+                    Resource = CodeResource.TwoFactor
+                };
+
+                var result = await SecurityService.SendCodeAsync(request);
+                if (result.Success) await StepNextAsync();
+                else Snackbar.Add(result.Message, Severity.Error);
             }
         }
     }
 
-    private async Task OnVerifyTokenAsync()
+    private async Task SendCodeAsync()
+    {
+        var sender = SendTwoFactorTokenModel.Provider switch
+        {
+            ProviderTypes.Email => SenderType.Email,
+            ProviderTypes.Sms => SenderType.Sms,
+            _ => throw new NotSupportedException()
+        };
+
+        var request = new SendCodeRequest()
+        {
+            UserId = UserId,
+            Sender = sender,
+            Type = CodeType.SignIn,
+            Resource = CodeResource.TwoFactor
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
     {
         await twoFactorForm.Validate();
 
@@ -273,7 +303,7 @@
             var request = Mapper.Map(TwoFactorLoginModel);
 
             request.Provider = SendTwoFactorTokenModel.Provider;
-            request.UserId = Id;
+            request.UserId = UserId;
 
             var result = await TwoFactorService.LoginAsync(request);
 
@@ -303,7 +333,7 @@
                     Snackbar.Add(message, Severity.Error);
                     return;
                 }
-                
+
                 if (response is { FailedLoginAttempts: 0, IsLockedOut: false })
                 {
                     Snackbar.Add(result.Message, Severity.Error);
