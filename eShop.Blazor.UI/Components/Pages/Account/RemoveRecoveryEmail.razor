@@ -168,12 +168,13 @@
 
     private async Task VerifyAsync()
     {
-        var request = new RemoveRecoveryEmailRequest()
+        var request = new RemoveEmailRequest()
         {
             UserId = UserState.UserId,
+            Email = UserState.Credentials?.RecoveryEmail!
         };
 
-        var result = await SecurityService.RemoveRecoveryEmailAsync(request);
+        var result = await SecurityService.RemoveEmailAsync(request);
 
         if (result.Success)
         {

@@ -221,6 +221,21 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Remove email")]
+    [EndpointDescription("Remove email")]
+    [ProducesResponseType(200)]
+    [HttpPost("email/remove")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> RemoveEmailAsync(
+        [FromBody] RemoveEmailRequest request)
+    {
+        var result = await sender.Send(new RemoveEmailCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Reset recovery email")]
     [EndpointDescription("Reset recovery email")]
     [ProducesResponseType(200)]
