@@ -215,7 +215,8 @@
         var request = new ResetPhoneNumberRequest()
         {
             UserId = UserState.UserId,
-            PhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
+            PhoneNumber = UserState.Credentials?.PhoneNumber!,
+            NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
         };
 
         var result = await SecurityService.ResetPhoneNumberAsync(request);

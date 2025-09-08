@@ -215,6 +215,7 @@
         var request = new ResetEmailRequest()
         {
             UserId = UserState.UserId,
+            Email = UserState.Credentials?.Email!,
             NewEmail = ResetEmailModel.NewEmail,
         };
 

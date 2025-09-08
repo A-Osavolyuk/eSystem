@@ -10,7 +10,6 @@ public interface ISecurityService
     public ValueTask<HttpResponse> ForgotPasswordAsync(ForgotPasswordRequest request);
     public ValueTask<HttpResponse> ResetPasswordAsync(ResetPasswordRequest request);
     public ValueTask<HttpResponse> ResetEmailAsync(ResetEmailRequest request);
-    public ValueTask<HttpResponse> ResetRecoveryEmailAsync(ResetRecoveryEmailRequest request);
     public ValueTask<HttpResponse> ResetPhoneNumberAsync(ResetPhoneNumberRequest request);
     public ValueTask<HttpResponse> RemovePhoneNumberAsync(RemovePhoneNumberRequest request);
     public ValueTask<HttpResponse> RemoveEmailAsync(RemoveEmailRequest request);

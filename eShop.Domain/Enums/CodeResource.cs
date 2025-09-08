@@ -11,11 +11,6 @@ public enum CodeResource
     Email,
 
     /// <summary>
-    /// The user's recovery or backup email address.
-    /// </summary>
-    RecoveryEmail,
-
-    /// <summary>
     /// The user's phone number.
     /// </summary>
     PhoneNumber,

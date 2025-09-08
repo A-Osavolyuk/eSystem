@@ -174,48 +174,41 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ResetEmailAsync(UserEntity user,
+    public async ValueTask<Result> ResetEmailAsync(UserEntity user, string currentEmail,
         string newEmail, CancellationToken cancellationToken = default)
     {
-        user.Email = newEmail;
-        user.EmailConfirmed = true;
-        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
-        user.EmailChangeDate = DateTimeOffset.UtcNow;
-        user.NormalizedEmail = newEmail.ToUpper();
+        var userEmail = user.Emails.FirstOrDefault(x => x.Email == currentEmail);
+        if (userEmail is null) return Results.NotFound($"User doesn't have email {currentEmail}");
+        
+        userEmail.Email = newEmail;
+        userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
+        userEmail.IsVerified = true;
+        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
+        userEmail.UpdateDate = DateTimeOffset.UtcNow;
+        
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
+        context.UserEmails.Update(userEmail);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> ResetRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
-        CancellationToken cancellationToken = default)
-    {
-        user.RecoveryEmail = newRecoveryEmail;
-        user.RecoveryEmailConfirmed = true;
-        user.RecoveryEmailConfirmationDate = DateTimeOffset.UtcNow;
-        user.NormalizedRecoveryEmail = newRecoveryEmail.ToUpper();
-        user.RecoveryEmailChangeDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user,
+    public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string currentPhoneNumber,
         string newPhoneNumber, CancellationToken cancellationToken = default)
     {
-        user.PhoneNumber = newPhoneNumber;
-        user.PhoneNumberConfirmed = true;
-        user.PhoneNumberConfirmationDate = DateTimeOffset.UtcNow;
-        user.PhoneNumberChangeDate = DateTimeOffset.UtcNow;
+        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == currentPhoneNumber);
+        if (userPhoneNumber is null) return Results.NotFound($"User doesn't have phone number {currentPhoneNumber}");
+        
+        userPhoneNumber.PhoneNumber = newPhoneNumber;
+        userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
+        userPhoneNumber.IsVerified = true;
+        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
+        context.UserPhoneNumbers.Update(userPhoneNumber);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -259,6 +252,8 @@ public sealed class UserManager(
         
         userEmail.Email = newEmail;
         userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
+        userEmail.IsVerified = true;
+        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
         userEmail.UpdateDate = DateTimeOffset.UtcNow;
         
         user.UpdateDate = DateTimeOffset.UtcNow;
@@ -278,6 +273,8 @@ public sealed class UserManager(
         
         userPhoneNumber.PhoneNumber = newPhoneNumber;
         userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
+        userPhoneNumber.IsVerified = true;
+        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);

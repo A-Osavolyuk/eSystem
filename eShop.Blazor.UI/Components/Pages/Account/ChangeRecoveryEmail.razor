@@ -228,7 +228,7 @@
             var request = new VerifyCodeRequest()
             {
                 UserId = UserState.UserId,
-                Resource = CodeResource.RecoveryEmail,
+                Resource = CodeResource.Email,
                 Type = CodeType.Current,
                 Sender = SenderType.Email,
                 Code = VerifyCurrentRecoveryEmailModel.Code
@@ -250,7 +250,7 @@
             var request = new VerifyCodeRequest()
             {
                 UserId = UserState.UserId,
-                Resource = CodeResource.RecoveryEmail,
+                Resource = CodeResource.Email,
                 Type = CodeType.New,
                 Sender = SenderType.Email,
                 Code = ConfirmChangeRecoveryEmailModel.Code
@@ -289,7 +289,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.Current,
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
@@ -308,7 +308,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.New,
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
@@ -327,7 +327,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.Current,
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
@@ -345,7 +345,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.New,
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()

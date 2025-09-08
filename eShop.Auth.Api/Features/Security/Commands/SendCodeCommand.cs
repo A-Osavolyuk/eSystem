@@ -58,20 +58,6 @@ public class SendCodeCommandHandler(
                         { "UserName", user.Username }
                     }
                 },
-            { Resource: CodeResource.RecoveryEmail, Type: CodeType.Verify, Sender: SenderType.Email } =>
-                new VerifyRecoveryEmailMessage
-                {
-                    Credentials = new()
-                    {
-                        { "To", user.Email },
-                        { "Subject", "Recovery email verification" },
-                    },
-                    Payload = new()
-                    {
-                        { "Code", code },
-                        { "UserName", user.Username }
-                    }
-                },
             { Resource: CodeResource.Account, Type: CodeType.Unlock, Sender: SenderType.Email } =>
                 new AccountUnlockMessage()
                 {
@@ -134,21 +120,6 @@ public class SendCodeCommandHandler(
                         { "NewEmail", payload["NewEmail"] }
                     }
                 },
-            { Resource: CodeResource.RecoveryEmail, Type: CodeType.Current, Sender: SenderType.Email } =>
-                new ChangeRecoveryEmailMessage()
-                {
-                    Credentials = new()
-                    {
-                        { "To", user.Email },
-                        { "Subject", "Recovery email change (step one)" },
-                    },
-                    Payload = new()
-                    {
-                        { "Code", code },
-                        { "UserName", user.Username },
-                        { "NewEmail", payload["RecoveryNewEmail"] }
-                    }
-                },
             { Resource: CodeResource.LinkedAccount, Type: CodeType.Disallow, Sender: SenderType.Email } =>
                 new DisallowLinkedAccountMessage()
                 {
@@ -206,20 +177,6 @@ public class SendCodeCommandHandler(
                         { "Code", code },
                         { "UserName", user.Username },
                         { "DisplayName", payload["DisplayName"] }
-                    }
-                },
-            { Resource: CodeResource.RecoveryEmail, Type: CodeType.Remove, Sender: SenderType.Email } =>
-                new RemoveRecoveryEmailMessage()
-                {
-                    Credentials = new()
-                    {
-                        { "Subject", "Recovery email remove" },
-                        { "To", user.RecoveryEmail! },
-                    },
-                    Payload = new()
-                    {
-                        { "Code", code },
-                        { "UserName", user.Username },
                     }
                 },
             { Resource: CodeResource.Email, Type: CodeType.Reset, Sender: SenderType.Email } =>
@@ -297,20 +254,6 @@ public class SendCodeCommandHandler(
                     {
                         { "To", payload["NewEmail"] },
                         { "Subject", "Email verification (step two)" },
-                    },
-                    Payload = new()
-                    {
-                        { "Code", code },
-                        { "UserName", user.Username }
-                    }
-                },
-            { Resource: CodeResource.RecoveryEmail, Type: CodeType.New, Sender: SenderType.Email } =>
-                new ConfirmRecoveryEmailChangeMessage()
-                {
-                    Credentials = new()
-                    {
-                        { "To", payload["NewRecoveryEmail"] },
-                        { "Subject", "Recovery email verification (step two)" },
                     },
                     Payload = new()
                     {

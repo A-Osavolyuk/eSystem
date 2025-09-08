@@ -136,7 +136,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.Reset,
             Sender = SenderType.Email
         };
@@ -175,7 +175,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.Reset,
             Sender = SenderType.Email
         };
@@ -195,7 +195,7 @@
             var request = new VerifyCodeRequest()
             {
                 UserId = UserState.UserId,
-                Resource = CodeResource.RecoveryEmail,
+                Resource = CodeResource.Email,
                 Type = CodeType.Reset,
                 Sender = SenderType.Email,
                 Code = ConfirmResetEmailModel.Code
@@ -210,13 +210,14 @@
 
     private async Task VerifyAsync()
     {
-        var request = new ResetRecoveryEmailRequest()
+        var request = new ResetEmailRequest()
         {
             UserId = UserState.UserId,
-            NewRecoveryEmail = ResetEmailModel.NewRecoveryEmail,
+            Email = UserState.Credentials?.RecoveryEmail!,
+            NewEmail = ResetEmailModel.NewRecoveryEmail,
         };
 
-        var result = await SecurityService.ResetRecoveryEmailAsync(request);
+        var result = await SecurityService.ResetEmailAsync(request);
 
         if (result.Success)
         {

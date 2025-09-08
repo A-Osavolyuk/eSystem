@@ -72,7 +72,7 @@
             var request = new VerifyCodeRequest()
             {
                 UserId = UserState.UserId,
-                Resource = CodeResource.RecoveryEmail,
+                Resource = CodeResource.Email,
                 Type = CodeType.Verify,
                 Sender = SenderType.Email,
                 Code = Model.Code
@@ -108,7 +108,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.Verify,
             Sender = SenderType.Email
         };

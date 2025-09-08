@@ -23,7 +23,7 @@ public class ResetPhoneNumberCommandHandler(
         
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
-            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
+            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
         
@@ -32,8 +32,12 @@ public class ResetPhoneNumberCommandHandler(
         
         if (!verificationResult.Succeeded) return verificationResult;
         
-        var newPhoneNumber = request.Request.PhoneNumber;
-        var result = await userManager.ResetPhoneNumberAsync(user, newPhoneNumber, cancellationToken);
+        var newPhoneNumber = request.Request.NewPhoneNumber;
+        var currentPhoneNumber = request.Request.NewPhoneNumber;
+        
+        var result = await userManager.ResetPhoneNumberAsync(user, 
+            currentPhoneNumber, newPhoneNumber, cancellationToken);
+        
         return result;
     }
 }

@@ -1,8 +1,7 @@
 ﻿@page "/account/recovery-email/remove"
 
 @using eShop.Blazor.Application.Validation
-@using eShop.Blazor.Domain.Interfaces
-@using eShop.Blazor.Domain.Models
+
 @inherits PageBase
 
 @attribute [Authorize]
@@ -119,7 +118,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.Remove,
             Sender = SenderType.Email
         };
@@ -133,7 +132,7 @@
         var request = new SendCodeRequest()
         {
             UserId = UserState.UserId,
-            Resource = CodeResource.RecoveryEmail,
+            Resource = CodeResource.Email,
             Type = CodeType.Remove,
             Sender = SenderType.Email
         };
@@ -153,7 +152,7 @@
             var request = new VerifyCodeRequest()
             {
                 UserId = UserState.UserId,
-                Resource = CodeResource.RecoveryEmail,
+                Resource = CodeResource.Email,
                 Type = CodeType.Remove,
                 Sender = SenderType.Email,
                 Code = Model.Code
