@@ -7,9 +7,9 @@ public interface IUserManager
     public ValueTask<UserEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken = default);
-    public ValueTask<Result> ConfirmEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<Result> ConfirmRecoveryEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> VerifyEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> VerifyRecoveryEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword, CancellationToken cancellationToken = default);
     public ValueTask<Result> ResetEmailAsync(UserEntity user, string newEmail, CancellationToken cancellationToken = default);
     public ValueTask<Result> ResetRecoveryEmailAsync(UserEntity user, string newRecoveryEmail, CancellationToken cancellationToken = default);

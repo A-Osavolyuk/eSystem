@@ -21,7 +21,7 @@ public class VerifyRecoveryEmailCommandHandler(
 
         if (!codeVerifiedResult.Succeeded) return codeVerifiedResult;
 
-        var result = await userManager.ConfirmRecoveryEmailAsync(user, cancellationToken);
+        var result = await userManager.VerifyRecoveryEmailAsync(user, cancellationToken);
         return result;
     }
 }

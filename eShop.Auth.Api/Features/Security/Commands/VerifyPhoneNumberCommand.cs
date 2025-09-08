@@ -22,7 +22,7 @@ public sealed class VerifyPhoneNumberCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await userManager.ConfirmPhoneNumberAsync(user, cancellationToken);
+        var result = await userManager.VerifyPhoneNumberAsync(user, cancellationToken);
         return result;
     }
 }

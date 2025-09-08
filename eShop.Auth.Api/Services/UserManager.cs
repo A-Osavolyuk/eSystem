@@ -125,39 +125,39 @@ public sealed class UserManager(
         return user;
     }
 
-    public async ValueTask<Result> ConfirmEmailAsync(UserEntity user,
+    public async ValueTask<Result> VerifyEmailAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         user.EmailConfirmed = true;
         user.EmailConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> ConfirmRecoveryEmailAsync(UserEntity user,
+    public async ValueTask<Result> VerifyRecoveryEmailAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         user.RecoveryEmailConfirmed = true;
         user.RecoveryEmailConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> ConfirmPhoneNumberAsync(UserEntity user,
+    public async ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         user.PhoneNumberConfirmed = true;
         user.PhoneNumberConfirmationDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -354,7 +354,7 @@ public sealed class UserManager(
     public async ValueTask<Result> ChangeRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
         CancellationToken cancellationToken = default)
     {
-        var result = await changeManager.CreateAsync(user, 
+        var result = await changeManager.CreateAsync(user,
             ChangeField.RecoveryEmail, user.RecoveryEmail!, cancellationToken);
 
         if (!result.Succeeded)
@@ -378,10 +378,18 @@ public sealed class UserManager(
     public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user,
         string phoneNumber, CancellationToken cancellationToken = default)
     {
-        user.PhoneNumber = phoneNumber;
+        var userPhoneNumber = new UserPhoneNumberEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            PhoneNumber = phoneNumber,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
+        await context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -390,11 +398,19 @@ public sealed class UserManager(
     public async ValueTask<Result> AddEmailAsync(UserEntity user, string email,
         CancellationToken cancellationToken = default)
     {
-        user.Email = email;
-        user.NormalizedEmail = email.ToUpperInvariant();
+        var userEmail = new UserEmailEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            Email = email,
+            NormalizedEmail = email.ToUpperInvariant(),
+            CreateDate = DateTimeOffset.UtcNow
+        };
+
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
+        await context.UserEmails.AddAsync(userEmail, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -403,11 +419,23 @@ public sealed class UserManager(
     public async ValueTask<Result> AddRecoveryEmailAsync(UserEntity user,
         string recoveryEmail, CancellationToken cancellationToken = default)
     {
-        user.RecoveryEmail = recoveryEmail;
-        user.NormalizedRecoveryEmail = recoveryEmail.ToUpperInvariant();
+        if (user.Emails.Any(x => x.IsRecovery))
+            return Results.BadRequest("User already has a recovery email address.");
+
+        var userEmail = new UserEmailEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            Email = recoveryEmail,
+            NormalizedEmail = recoveryEmail.ToUpperInvariant(),
+            IsRecovery = true,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
+        await context.UserEmails.AddAsync(userEmail, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
