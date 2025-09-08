@@ -31,7 +31,8 @@ public class UserEntity : Entity
     
     public bool AccountConfirmed { get; set; }
     public int FailedLoginAttempts { get; set; }
-    
+
+    public ICollection<UserEmailEntity> Emails { get; set; } = null!;
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
     public ICollection<RecoveryCodeEntity> RecoveryCodes { get; init; } = null!;
