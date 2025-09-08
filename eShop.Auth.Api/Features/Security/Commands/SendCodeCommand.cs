@@ -333,7 +333,7 @@ public class SendCodeCommandHandler(
                     },
                 },
             { Resource: CodeResource.Provider, Type: CodeType.Subscribe, Sender: SenderType.Email } =>
-                new VerifyProviderEmailMessage()
+                new EnableEmailTwoFactorMessage()
                 {
                     Credentials = new()
                     {
