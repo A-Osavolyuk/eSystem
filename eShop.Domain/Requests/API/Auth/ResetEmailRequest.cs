@@ -3,6 +3,5 @@
 public class ResetEmailRequest
 {
     public required Guid UserId { get; set; }
-    public required string Email { get; set; }
     public required string NewEmail { get; set; }
 }

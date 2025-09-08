@@ -221,7 +221,6 @@
         var request = new ResetEmailRequest()
         {
             UserId = UserState.UserId,
-            Email = UserState.Credentials?.RecoveryEmail!,
             NewEmail = ResetEmailModel.NewRecoveryEmail,
         };
 

@@ -16,25 +16,27 @@ public class ResetEmailCommandHandler(
     public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
     {
         var newEmail = request.Request.NewEmail;
-        var currentEmail = request.Request.Email;
-        
+
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+
+        if (!user.HasEmail()) return Results.BadRequest("User does not have an email address.");
         
-        if(!user.HasEmail()) return Results.BadRequest("User does not have an email address.");
-        
+        var userCurrentEmail = user.Emails.FirstOrDefault(x => x.IsPrimary);
+        if (userCurrentEmail is null) return Results.BadRequest("User's primary email address is missing");
+
         if (identityOptions.Account.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
-        
-        var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.Email, CodeType.Reset, cancellationToken);
-        
-        if(!verificationResult.Succeeded) return verificationResult;
 
-        var result = await userManager.ResetEmailAsync(user, currentEmail, newEmail, cancellationToken);
+        var verificationResult = await verificationManager.VerifyAsync(user,
+            CodeResource.Email, CodeType.Reset, cancellationToken);
+
+        if (!verificationResult.Succeeded) return verificationResult;
+
+        var result = await userManager.ResetEmailAsync(user, userCurrentEmail.Email, newEmail, cancellationToken);
         return result;
     }
 }
