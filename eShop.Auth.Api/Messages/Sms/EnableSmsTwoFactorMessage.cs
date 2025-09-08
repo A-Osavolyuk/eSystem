@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Sms;
 
-public class VerifyProviderSmsMessage : Message
+public class EnableSmsTwoFactorMessage : Message
 {
     public override string Build()
     {
