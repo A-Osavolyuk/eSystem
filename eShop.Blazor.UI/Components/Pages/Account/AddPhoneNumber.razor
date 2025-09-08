@@ -205,8 +205,8 @@
     {
         var request = new VerifyPhoneNumberRequest()
         {
-            Code = VerifyPhoneNumberModel.Code,
-            UserId = UserState.UserId
+            UserId = UserState.UserId,
+            PhoneNumber = AddPhoneNumberModel.PhoneNumber
         };
 
         var result = await SecurityService.VerifyPhoneNumberAsync(request);

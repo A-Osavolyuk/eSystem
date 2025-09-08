@@ -87,12 +87,13 @@
 
     private async Task VerifyAsync()
     {
-        var request = new VerifyRecoveryEmailRequest()
+        var request = new VerifyEmailRequest()
         {
             UserId = UserState.UserId,
+            Email = UserState.Credentials?.RecoveryEmail!
         };
 
-        var result = await SecurityService.VerifyRecoveryEmailAsync(request);
+        var result = await SecurityService.VerifyEmailAsync(request);
 
         if (result.Success)
         {

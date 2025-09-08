@@ -2,5 +2,6 @@
 
 public record VerifyEmailRequest
 {
-    public Guid UserId { get; set; }
+    public required Guid UserId { get; set; }
+    public required string Email { get; set; }
 }

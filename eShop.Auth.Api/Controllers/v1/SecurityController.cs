@@ -250,21 +250,6 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-
-    [EndpointSummary("Verify recovery email")]
-    [EndpointDescription("Verify recovery email")]
-    [ProducesResponseType(200)]
-    [HttpPost("recovery-email/verify")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> VerifyRecoveryEmailAsync(
-        [FromBody] VerifyRecoveryEmailRequest request)
-    {
-        var result = await sender.Send(new VerifyRecoveryEmailCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
     
     [EndpointSummary("Reset recovery email")]
     [EndpointDescription("Reset recovery email")]

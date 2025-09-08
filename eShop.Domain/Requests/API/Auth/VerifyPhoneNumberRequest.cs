@@ -2,6 +2,6 @@
 
 public class VerifyPhoneNumberRequest
 {
-    public Guid UserId { get; set; }
-    public string Code { get; set; } = string.Empty;
+    public required Guid UserId { get; set; }
+    public required string PhoneNumber { get; set; }
 }

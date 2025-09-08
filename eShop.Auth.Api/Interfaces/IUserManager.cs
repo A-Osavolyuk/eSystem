@@ -10,9 +10,10 @@ public interface IUserManager
     public ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
         CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> VerifyEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<Result> VerifyRecoveryEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
-    public ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> VerifyEmailAsync(UserEntity user, string email, 
+        CancellationToken cancellationToken = default);
+    public ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user, string phoneNumber, 
+        CancellationToken cancellationToken = default);
 
     public ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default);

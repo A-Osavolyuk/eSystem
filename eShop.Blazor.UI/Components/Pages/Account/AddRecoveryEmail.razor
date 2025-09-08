@@ -202,13 +202,13 @@
 
     private async Task VerifyAsync()
     {
-        var request = new VerifyRecoveryEmailRequest()
+        var request = new VerifyEmailRequest()
         {
-            Code = VerifyRecoveryEmailModel.Code,
-            UserId = UserState.UserId
+            UserId = UserState.UserId,
+            Email = AddRecoveryEmailModel.RecoveryEmail,
         };
 
-        var result = await SecurityService.VerifyRecoveryEmailAsync(request);
+        var result = await SecurityService.VerifyEmailAsync(request);
 
         if (result.Success)
         {

@@ -125,40 +125,37 @@ public sealed class UserManager(
         return user;
     }
 
-    public async ValueTask<Result> VerifyEmailAsync(UserEntity user,
+    public async ValueTask<Result> VerifyEmailAsync(UserEntity user, string email,
         CancellationToken cancellationToken = default)
     {
-        user.EmailConfirmed = true;
-        user.EmailConfirmationDate = DateTimeOffset.UtcNow;
+        var userEmail = user.Emails.FirstOrDefault(x => x.Email == email);
+        if (userEmail == null) return Results.NotFound($"User doesn't have email {email}");
+        
+        userEmail.IsVerified = true;
+        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
+        userEmail.CreateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
+        context.UserEmails.Update(userEmail);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> VerifyRecoveryEmailAsync(UserEntity user,
+    public async ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user, string phoneNumber,
         CancellationToken cancellationToken = default)
     {
-        user.RecoveryEmailConfirmed = true;
-        user.RecoveryEmailConfirmationDate = DateTimeOffset.UtcNow;
+        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
+        if (userPhoneNumber == null) return Results.NotFound($"User doesn't have phone number {phoneNumber}");
+        
+        userPhoneNumber.IsVerified = true;
+        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
+        userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user,
-        CancellationToken cancellationToken = default)
-    {
-        user.PhoneNumberConfirmed = true;
-        user.PhoneNumberConfirmationDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        context.Users.Update(user);
+        context.UserPhoneNumbers.Update(userPhoneNumber);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

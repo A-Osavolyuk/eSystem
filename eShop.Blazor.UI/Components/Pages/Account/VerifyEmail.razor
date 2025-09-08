@@ -104,6 +104,7 @@
         var request = new VerifyEmailRequest()
         {
             UserId = Id,
+            Email = Email
         };
 
         var result = await SecurityService.VerifyEmailAsync(request);

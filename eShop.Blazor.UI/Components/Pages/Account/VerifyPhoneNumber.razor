@@ -90,7 +90,7 @@
         var request = new VerifyPhoneNumberRequest()
         {
             UserId = UserState.UserId,
-            Code = Model.Code
+            PhoneNumber = UserState.Credentials?.PhoneNumber!
         };
 
         var result = await SecurityService.VerifyPhoneNumberAsync(request);
