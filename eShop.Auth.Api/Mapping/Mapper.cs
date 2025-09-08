@@ -43,16 +43,6 @@ public static class Mapper
         };
     }
 
-    public static UserEntity Map(RegistrationRequest source)
-    {
-        return new UserEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            Username = source.UserName,
-            NormalizedUsername = source.UserName.ToUpper(),
-        };
-    }
-
     public static UserDto Map(UserEntity source)
     {
         return new()

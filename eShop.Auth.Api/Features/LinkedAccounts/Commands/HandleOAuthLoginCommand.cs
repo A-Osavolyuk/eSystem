@@ -82,11 +82,14 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Id = Guid.CreateVersion7(),
                 Username = email,
             };
-            
-            //TODO: Set user email
 
             var createResult = await CreateAccountAsync(user, provider, fallbackUri, cancellationToken);
             if (!createResult.Succeeded) return createResult;
+
+            var setResult = await userManager.SetEmailAsync(user, email, 
+                isPrimary: true, cancellationToken: cancellationToken);
+            
+            if(setResult.Succeeded) return setResult;
 
             var role = await roleManager.FindByNameAsync("User", cancellationToken);
 
@@ -107,8 +110,6 @@ public sealed class HandleOAuthLoginCommandHandler(
 
             var deviceResult = await CreateDeviceAsync(user, provider, request.Context, fallbackUri, cancellationToken);
             if (!deviceResult.Succeeded) return deviceResult;
-
-            //TODO: Set user email
             
             await SendMessageAsync(user, provider, cancellationToken);
 

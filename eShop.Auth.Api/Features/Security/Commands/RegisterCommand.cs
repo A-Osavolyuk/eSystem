@@ -33,10 +33,20 @@ public sealed class RegisterCommandHandler(
             if (isUserNameTaken) return Results.NotFound("Username is already taken");
         }
 
-        var user = Mapper.Map(request.Request);
+        var user = new UserEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            Username = request.Request.UserName,
+            NormalizedUsername = request.Request.UserName.ToUpperInvariant(),
+        };
         
         var registrationResult = await userManager.CreateAsync(user, request.Request.Password, cancellationToken);
         if (!registrationResult.Succeeded) return registrationResult;
+        
+        var setResult = await userManager.SetEmailAsync(user, request.Request.Email, 
+            isPrimary: true, cancellationToken: cancellationToken);
+            
+        if(setResult.Succeeded) return setResult;
 
         var role = await roleManager.FindByNameAsync("User", cancellationToken);
         if (role is null) return Results.NotFound("Cannot find role with name User");
