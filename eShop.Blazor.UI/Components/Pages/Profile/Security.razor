@@ -26,7 +26,7 @@
                 <TwoFactorSection
                     Model="SecurityModel"
                     OnSubscribe="@((value) => OnSubscribe(value))"
-                    OnUnsubscribe="@(async (value) => await OnUnsubscribeAsync(value))"/>
+                    OnUnsubscribe="@((value) => OnUnsubscribe(value))"/>
                 <LinkedAccountsSection
                     Model="SecurityModel"
                     OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
@@ -179,30 +179,9 @@
         else RouteManager.Route($"/account/2fa/provider/enable?provider={provider}");
     }
 
-    private async Task OnUnsubscribeAsync(string provider)
+    private void OnUnsubscribe(string provider)
     {
-        var options = new DialogOptions()
-        {
-            BackdropClick = true,
-            CloseButton = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge,
-            CloseOnEscapeKey = true
-        };
-
-        var parameters = new DialogParameters<Disable2FaProviderDialog>()
-        {
-            { x => x.UserId, UserState.UserId },
-            { x => x.Provider, provider }
-        };
-
-        var dialog = await DialogService.ShowAsync<Disable2FaProviderDialog>("Disable 2FA provider", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result!.Canceled)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
+        RouteManager.Route($"/account/2fa/provider/disable?provider={provider}");
     }
 
     private async Task OnGenerateRecoveryCodesAsync()
