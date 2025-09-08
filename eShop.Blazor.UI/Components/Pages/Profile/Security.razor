@@ -175,14 +175,8 @@
 
     private void OnSubscribe(string provider)
     {
-        if (provider == ProviderTypes.Authenticator)
-        {
-            RouteManager.Route("/account/2fa/authenticator");
-        }
-        else
-        {
-            RouteManager.Route($"/account/2fa/provider/{provider}");
-        }
+        if (provider == ProviderTypes.Authenticator) RouteManager.Route("/account/2fa/authenticator/enable");
+        else RouteManager.Route($"/account/2fa/provider/enable?provider={provider}");
     }
 
     private async Task OnUnsubscribeAsync(string provider)
