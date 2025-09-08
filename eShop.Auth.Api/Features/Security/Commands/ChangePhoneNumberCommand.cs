@@ -37,7 +37,9 @@ public sealed class RequestChangePhoneNumberCommandHandler(
 
         if (!newPhoneNumberVerificationResult.Succeeded) return newPhoneNumberVerificationResult;
 
-        var result = await userManager.ChangePhoneNumberAsync(user, request.Request.NewPhoneNumber, cancellationToken);
+        var result = await userManager.ChangePhoneNumberAsync(user, 
+            request.Request.CurrentPhoneNumber, request.Request.NewPhoneNumber, cancellationToken);
+        
         return result;
     }
 }

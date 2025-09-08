@@ -270,8 +270,9 @@
     {
         var request = new ChangeEmailRequest()
         {
+            UserId = UserState.UserId,
+            CurrentEmail = UserState.Credentials?.Email!,
             NewEmail = ChangeEmailModel.NewEmail,
-            UserId = UserState.UserId
         };
 
         var result = await SecurityService.ChangeEmailAsync(request);

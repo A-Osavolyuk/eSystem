@@ -2,6 +2,7 @@
 
 public record ChangePhoneNumberRequest
 {
-    public Guid UserId { get; set; }
-    public string NewPhoneNumber { get; set; } = string.Empty;
+    public required Guid UserId { get; set; }
+    public required string CurrentPhoneNumber { get; set; }
+    public required string NewPhoneNumber { get; set; }
 }

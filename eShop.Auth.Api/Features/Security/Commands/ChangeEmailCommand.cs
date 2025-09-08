@@ -40,7 +40,9 @@ public sealed class RequestChangeEmailCommandHandler(
 
         if (!newEmailVerificationResult.Succeeded) return newEmailVerificationResult;
 
-        var result = await userManager.ChangeEmailAsync(user, request.Request.NewEmail, cancellationToken);
+        var result = await userManager.ChangeEmailAsync(user, request.Request.CurrentEmail, 
+            request.Request.NewEmail, cancellationToken);
+        
         return result;
     }
 }

@@ -319,7 +319,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail,
+    public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string currentEmail, string newEmail,
         CancellationToken cancellationToken = default)
     {
         var result = await changeManager.CreateAsync(user,
@@ -343,7 +343,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user,
+    public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string currentPhoneNumber,
         string newPhoneNumber, CancellationToken cancellationToken = default)
     {
         var result = await changeManager.CreateAsync(user,

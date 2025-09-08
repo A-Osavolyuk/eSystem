@@ -34,13 +34,10 @@ public interface IUserManager
 
     public ValueTask<Result> RemoveRecoveryEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> ChangeEmailAsync(UserEntity user, string newEmail,
+    public ValueTask<Result> ChangeEmailAsync(UserEntity user, string currentEmail, string newEmail,
         CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string newPhoneNumber,
-        CancellationToken cancellationToken = default);
-
-    public ValueTask<Result> ChangeRecoveryEmailAsync(UserEntity user, string newRecoveryEmail,
+    public ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string currentPhoneNumber, string newPhoneNumber,
         CancellationToken cancellationToken = default);
 
     public ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber,

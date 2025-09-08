@@ -2,6 +2,7 @@
 
 public record ChangeEmailRequest
 {
-    public Guid UserId { get; set; }
-    public string NewEmail { get; set; } = string.Empty;
+    public required Guid UserId { get; set; }
+    public required string CurrentEmail { get; set; }
+    public required string NewEmail { get; set; }
 }
