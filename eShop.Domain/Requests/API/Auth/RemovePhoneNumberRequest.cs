@@ -2,5 +2,6 @@
 
 public class RemovePhoneNumberRequest
 {
-    public Guid UserId { get; set; }
+    public required Guid UserId { get; set; }
+    public required string PhoneNumber { get; set; }
 }

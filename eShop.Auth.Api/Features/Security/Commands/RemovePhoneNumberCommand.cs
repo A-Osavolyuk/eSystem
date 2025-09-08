@@ -28,7 +28,7 @@ public class RemovePhoneNumberCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await userManager.RemovePhoneNumberAsync(user, cancellationToken);
+        var result = await userManager.RemovePhoneNumberAsync(user, request.Request.PhoneNumber, cancellationToken);
         return result;
     }
 }

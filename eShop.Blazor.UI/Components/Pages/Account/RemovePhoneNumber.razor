@@ -173,6 +173,7 @@
         var request = new RemovePhoneNumberRequest()
         {
             UserId = UserState.UserId,
+            PhoneNumber = UserState.Credentials?.PhoneNumber!
         };
 
         var result = await SecurityService.RemovePhoneNumberAsync(request);

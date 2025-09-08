@@ -27,12 +27,11 @@ public interface IUserManager
     public ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string newPhoneNumber,
         CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> RemovePhoneNumberAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> RemovePhoneNumberAsync(UserEntity user, string phoneNumber, 
+        CancellationToken cancellationToken = default);
 
     public ValueTask<Result> RemoveEmailAsync(UserEntity user, string email,
         CancellationToken cancellationToken = default);
-
-    public ValueTask<Result> RemoveRecoveryEmailAsync(UserEntity user, CancellationToken cancellationToken = default);
 
     public ValueTask<Result> ChangeEmailAsync(UserEntity user, string currentEmail, string newEmail,
         CancellationToken cancellationToken = default);
