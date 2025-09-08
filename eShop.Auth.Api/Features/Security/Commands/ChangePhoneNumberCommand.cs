@@ -21,15 +21,14 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         
         if(!user.HasPhoneNumber()) return Results.BadRequest("User does not have a phone number.");
         
+        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.IsPrimary);
+        if (userPhoneNumber is null) return Results.BadRequest("User's phone number is missing.");
+        
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
-
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.IsPrimary);
-        if(userPhoneNumber is null) 
-            return Results.BadRequest("Cannot change user's primary phone number, first provide it.");
 
         var currentPhoneNumberVerificationResult = await verificationManager.VerifyAsync(user,
             CodeResource.PhoneNumber, CodeType.Current, cancellationToken);

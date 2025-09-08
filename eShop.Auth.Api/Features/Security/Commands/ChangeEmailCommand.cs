@@ -18,17 +18,17 @@ public sealed class RequestChangeEmailCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        
-        if(!user.HasEmail()) return Results.BadRequest("User does not have an email address.");
 
+        if (!user.HasEmail()) return Results.BadRequest("User does not have an email address.");
+
+        var currentEmail = user.Emails.FirstOrDefault(x => x.IsPrimary);
+        if (currentEmail is null) return Results.BadRequest("User's primary email address is missing");
+        
         if (identityOptions.Account.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
-        
-        var currentEmail = user.Emails.FirstOrDefault(x => x.IsPrimary);
-        if(currentEmail is null) return Results.BadRequest("Cannot change user's primary email, first provide it");
 
         if (user.HasLinkedAccount())
             return Results.BadRequest("Cannot change email, first disconnect linked accounts.");
@@ -42,10 +42,10 @@ public sealed class RequestChangeEmailCommandHandler(
             CodeResource.Email, CodeType.New, cancellationToken);
 
         if (!newEmailVerificationResult.Succeeded) return newEmailVerificationResult;
-        
-        var result = await userManager.ChangeEmailAsync(user, currentEmail.Email, 
+
+        var result = await userManager.ChangeEmailAsync(user, currentEmail.Email,
             request.Request.NewEmail, cancellationToken);
-        
+
         return result;
     }
 }
