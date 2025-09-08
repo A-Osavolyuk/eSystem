@@ -3,8 +3,9 @@
 public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {
     public DbSet<UserEntity> Users { get; set; }
-    public DbSet<UserRoleEntity> UserRoles { get; set; }
     public DbSet<UserEmailEntity> UserEmails { get; set; }
+    public DbSet<UserPhoneNumberEntity> UserPhoneNumbers { get; set; }
+    public DbSet<UserRoleEntity> UserRoles { get; set; }
     public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
     public DbSet<UserTwoFactorProviderEntity> UserTwoFactorProviders { get; set; }
@@ -59,6 +60,17 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
 
             entity.HasOne(u => u.User)
                 .WithMany(x => x.Emails)
+                .HasForeignKey(x => x.UserId);
+        });
+
+        builder.Entity<UserPhoneNumberEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            
+            entity.Property(x => x.PhoneNumber).HasMaxLength(18);
+            
+            entity.HasOne(u => u.User)
+                .WithMany(x => x.PhoneNumbers)
                 .HasForeignKey(x => x.UserId);
         });
         
