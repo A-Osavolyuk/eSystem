@@ -111,21 +111,21 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "passkey")]
-    public Guid KeyId { get; set; }
+    [SupplyParameterFromQuery(Name = "passkey")] public Guid KeyId { get; set; }
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
-    [SupplyParameterFromForm] private RemovePasskeyModel Model { get; set; } = new();
-
+    private UserPasskeyDto Passkey { get; set; } = new();
+    
     private MudStepperExtended stepper = new();
     private MudForm form = new();
 
-
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             var result = await PasskeyService.GetPasskeyAsync(KeyId);
-            if (result.Success) Model.Passkey = result.Get<UserPasskeyDto>()!;
+            if (result.Success) Passkey = result.Get<UserPasskeyDto>()!;
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
@@ -140,7 +140,7 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "DisplayName", Model.Passkey.DisplayName }
+                { "DisplayName", Passkey.DisplayName }
             }
         };
 
@@ -158,7 +158,7 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "DisplayName", Model.Passkey.DisplayName }
+                { "DisplayName", Passkey.DisplayName }
             }
         };
 
