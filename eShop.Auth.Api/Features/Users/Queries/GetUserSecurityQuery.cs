@@ -16,10 +16,10 @@ public class GetUserSecurityQueryHandler(IUserManager userManager) : IRequestHan
         var response = new UserSecurityDto()
         {
             UserId = user.Id,
-            RecoveryEmail = user.RecoveryEmail,
-            RecoveryEmailConfirmed = user.RecoveryEmailConfirmed,
-            RecoveryEmailChangeDate = user.RecoveryEmailChangeDate,
-            RecoveryEmailConfirmationDate = user.RecoveryEmailConfirmationDate,
+            RecoveryEmail = user.Emails.FirstOrDefault(x => x.IsRecovery)?.Email,
+            RecoveryEmailConfirmed = user.Emails.FirstOrDefault(x => x.IsRecovery)?.IsVerified,
+            RecoveryEmailChangeDate = user.Emails.FirstOrDefault(x => x.IsRecovery)?.UpdateDate,
+            RecoveryEmailConfirmationDate = user.Emails.FirstOrDefault(x => x.IsRecovery)?.VerifiedDate,
             HasPassword = !string.IsNullOrEmpty(user.PasswordHash),
             PasswordChangeDate = user.PasswordChangeDate,
             TwoFactorEnabled = user.HasTwoFactor(),

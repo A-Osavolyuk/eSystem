@@ -123,7 +123,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Remove,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -137,7 +141,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Remove,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);

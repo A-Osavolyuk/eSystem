@@ -27,6 +27,8 @@ public sealed class UserManager(
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .Include(x => x.Passkeys)
+            .Include(x => x.Emails)
+            .Include(x => x.PhoneNumbers)
             .ToListAsync(cancellationToken);
 
         return users;
@@ -35,7 +37,9 @@ public sealed class UserManager(
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToUpper();
-        var user = await context.Users.Where(x => x.NormalizedEmail == normalizedEmail)
+        var user = await context.Users
+            .Include(x => x.Emails)
+            .Where(x => x.Emails.Any(y => y.NormalizedEmail == normalizedEmail && y.IsPrimary))
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -50,6 +54,7 @@ public sealed class UserManager(
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .Include(x => x.Passkeys)
+            .Include(x => x.PhoneNumbers)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -72,6 +77,8 @@ public sealed class UserManager(
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .Include(x => x.Passkeys)
+            .Include(x => x.Emails)
+            .Include(x => x.PhoneNumbers)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -95,6 +102,8 @@ public sealed class UserManager(
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .Include(x => x.Passkeys)
+            .Include(x => x.Emails)
+            .Include(x => x.PhoneNumbers)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -103,7 +112,9 @@ public sealed class UserManager(
     public async ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
         CancellationToken cancellationToken = default)
     {
-        var user = await context.Users.Where(x => x.PhoneNumber == phoneNumber)
+        var user = await context.Users
+            .Include(x => x.PhoneNumbers)
+            .Where(x => x.PhoneNumbers.Any(y => y.PhoneNumber == phoneNumber && y.IsPrimary))
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -118,6 +129,7 @@ public sealed class UserManager(
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .Include(x => x.Passkeys)
+            .Include(x => x.PhoneNumbers)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -375,8 +387,7 @@ public sealed class UserManager(
             var passwordHash = hasher.Hash(password);
             user.PasswordHash = passwordHash;
         }
-
-        user.NormalizedEmail = user.Email.ToUpper();
+        
         user.NormalizedUsername = user.Username.ToUpper();
         user.CreateDate = DateTimeOffset.UtcNow;
 
@@ -458,9 +469,8 @@ public sealed class UserManager(
         CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToUpper();
-        var result = await context.Users.AnyAsync(
-            u => u.NormalizedEmail == normalizedEmail
-                 || u.NormalizedRecoveryEmail == normalizedEmail, cancellationToken);
+        var result = await context.UserEmails.AnyAsync(
+            u => u.NormalizedEmail == normalizedEmail , cancellationToken);
 
         return result;
     }
@@ -468,7 +478,9 @@ public sealed class UserManager(
     public async ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber,
         CancellationToken cancellationToken = default)
     {
-        var result = await context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+        var result = await context.UserPhoneNumbers
+            .AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+        
         return result;
     }
 }

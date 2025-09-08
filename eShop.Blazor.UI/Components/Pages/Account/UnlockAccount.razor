@@ -100,7 +100,11 @@
             UserId = UserId,
             Resource = CodeResource.Account,
             Type = CodeType.Unlock,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", UserState.Credentials?.Email! }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);

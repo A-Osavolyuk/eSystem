@@ -6,7 +6,7 @@ public class UserSecurityModel
     
     public string? RecoveryEmail { get; set; } = string.Empty;
     public bool HasRecoveryEmail => !string.IsNullOrEmpty(RecoveryEmail);
-    public bool RecoveryEmailConfirmed  { get; set; }
+    public bool? RecoveryEmailConfirmed  { get; set; }
     public DateTimeOffset? RecoveryEmailChangeDate { get; set; }
     public DateTimeOffset? RecoveryEmailConfirmationDate { get; set; }
     

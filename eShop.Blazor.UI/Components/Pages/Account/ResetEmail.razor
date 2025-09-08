@@ -140,7 +140,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.Email,
             Type = CodeType.Reset,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", ResetEmailModel.NewEmail }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);
@@ -179,7 +183,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.Email,
             Type = CodeType.Reset,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", ResetEmailModel.NewEmail }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);

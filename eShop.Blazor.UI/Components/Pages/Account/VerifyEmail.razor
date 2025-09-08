@@ -89,7 +89,7 @@
                 Resource = CodeResource.Email,
                 Type = CodeType.Verify,
                 Sender = SenderType.Email,
-                Code = Model.Code
+                Code = Model.Code,
             };
 
             var result = await SecurityService.VerifyCodeAsync(request);
@@ -124,7 +124,11 @@
             UserId = Id,
             Resource = CodeResource.Email,
             Type = CodeType.Verify,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", Email }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);

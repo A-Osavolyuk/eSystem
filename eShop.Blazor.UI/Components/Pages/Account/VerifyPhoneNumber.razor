@@ -110,7 +110,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Verify,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);

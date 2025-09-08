@@ -147,7 +147,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Verify,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", AddPhoneNumberModel.PhoneNumber }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);

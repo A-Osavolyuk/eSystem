@@ -120,7 +120,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.Email,
             Type = CodeType.Remove,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", UserState.Credentials?.RecoveryEmail! }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -134,7 +138,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.Email,
             Type = CodeType.Remove,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", UserState.Credentials?.RecoveryEmail! }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);

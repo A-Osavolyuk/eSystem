@@ -185,9 +185,24 @@
             Sender = sender,
             Payload = new Dictionary<string, string>()
             {
-                { "Provider", Provider }
+                { "Provider", Provider },
             }
         };
+        
+        if (sender is SenderType.Email)
+        {
+            request.Payload = new()
+            {
+                { "Email", UserState.Credentials?.Email! }
+            };
+        }
+        else if (sender == SenderType.Sms)
+        {
+            request.Payload = new()
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            };
+        }
 
         var result = await SecurityService.SendCodeAsync(request);
         Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
@@ -203,9 +218,24 @@
             Sender = sender,
             Payload = new Dictionary<string, string>()
             {
-                { "Provider", Provider }
+                { "Provider", Provider },
             }
         };
+        
+        if (sender is SenderType.Email)
+        {
+            request.Payload = new()
+            {
+                { "Email", UserState.Credentials?.Email! }
+            };
+        }
+        else if (sender == SenderType.Sms)
+        {
+            request.Payload = new()
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            };
+        }
 
         var result = await SecurityService.SendCodeAsync(request);
 

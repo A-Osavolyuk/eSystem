@@ -148,6 +148,21 @@
             Sender = sender
         };
 
+        if (sender is SenderType.Email)
+        {
+            request.Payload = new()
+            {
+                { "Email", UserState.Credentials?.Email! }
+            };
+        }
+        else if (sender == SenderType.Sms)
+        {
+            request.Payload = new()
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            };
+        }
+
         var result = await SecurityService.SendCodeAsync(request);
 
         if (result.Success) await StepNextAsync();
@@ -201,6 +216,21 @@
             Type = CodeType.Subscribe,
             Sender = sender
         };
+        
+        if (sender is SenderType.Email)
+        {
+            request.Payload = new()
+            {
+                { "Email", UserState.Credentials?.Email! }
+            };
+        }
+        else if (sender == SenderType.Sms)
+        {
+            request.Payload = new()
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            };
+        }
 
         var result = await SecurityService.SendCodeAsync(request);
 

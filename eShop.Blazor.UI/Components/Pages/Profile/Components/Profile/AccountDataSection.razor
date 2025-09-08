@@ -63,7 +63,7 @@
                 <MudChip Class="mx-0" T="string" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small">
                     Primary
                 </MudChip>
-                @if (Model.EmailConfirmed && Model.EmailConfirmationDate.HasValue)
+                @if (Model.EmailConfirmed.HasValue && Model.EmailConfirmed.Value && Model.EmailConfirmationDate.HasValue)
                 {
                     <MudTooltip Text="@($"Verified at: {Model.EmailConfirmationDate?.ToString("MM/dd/yyyy HH:mm")}")">
                         <MudChip
@@ -115,7 +115,7 @@
                 <MudSpacer/>
                 @if (!string.IsNullOrEmpty(Model.PhoneNumber))
                 {
-                    if (Model.PhoneNumberConfirmed)
+                    if (Model.PhoneNumberConfirmed.HasValue && Model.PhoneNumberConfirmed.Value)
                     {
                         <MudTooltip Text="Remove phone number">
                             <MudIconButton

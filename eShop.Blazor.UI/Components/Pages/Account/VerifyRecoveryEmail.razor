@@ -58,7 +58,7 @@
 </MudGrid>
 
 @code {
-    
+
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
@@ -110,7 +110,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.Email,
             Type = CodeType.Verify,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", UserState.Credentials?.RecoveryEmail! }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);

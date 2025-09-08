@@ -48,8 +48,6 @@ public static class Mapper
         return new UserEntity()
         {
             Id = Guid.CreateVersion7(),
-            Email = source.Email,
-            NormalizedEmail = source.Email.ToUpper(),
             Username = source.UserName,
             NormalizedUsername = source.UserName.ToUpper(),
         };
@@ -60,14 +58,14 @@ public static class Mapper
         return new()
         {
             Id = source.Id,
-            Email = source.Email,
-            EmailConfirmed = source.EmailConfirmed,
-            EmailChangeDate = source.EmailChangeDate,
-            EmailConfirmationDate = source.EmailConfirmationDate,
-            PhoneNumber = source.PhoneNumber,
-            PhoneNumberConfirmed = source.PhoneNumberConfirmed,
-            PhoneNumberChangeDate = source.PhoneNumberChangeDate,
-            PhoneNumberConfirmationDate = source.PhoneNumberConfirmationDate,
+            Email = source.Emails.FirstOrDefault(x => x.IsPrimary)?.Email,
+            EmailConfirmed = source.Emails.FirstOrDefault(x => x.IsPrimary)?.IsVerified,
+            EmailChangeDate = source.Emails.FirstOrDefault(x => x.IsPrimary)?.UpdateDate,
+            EmailConfirmationDate = source.Emails.FirstOrDefault(x => x.IsPrimary)?.VerifiedDate,
+            PhoneNumber = source.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.PhoneNumber,
+            PhoneNumberConfirmed = source.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.IsVerified,
+            PhoneNumberChangeDate = source.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.UpdateDate,
+            PhoneNumberConfirmationDate = source.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.VerifiedDate,
             Username = source.Username,
             UserNameChangeDate = source.UsernameChangeDate,
         };

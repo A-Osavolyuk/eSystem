@@ -37,13 +37,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<UserEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Email).HasMaxLength(64);
-            entity.Property(x => x.NormalizedEmail).HasMaxLength(64);
-            entity.Property(x => x.RecoveryEmail).HasMaxLength(64);
-            entity.Property(x => x.NormalizedRecoveryEmail).HasMaxLength(64);
             entity.Property(x => x.Username).HasMaxLength(64);
             entity.Property(x => x.NormalizedUsername).HasMaxLength(64);
-            entity.Property(x => x.PhoneNumber).HasMaxLength(18);
             entity.Property(x => x.PasswordHash).HasMaxLength(1000);
             
             entity.HasOne(p => p.PersonalData)

@@ -145,7 +145,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.Email,
             Type = CodeType.Verify,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", AddRecoveryEmailModel.RecoveryEmail }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);

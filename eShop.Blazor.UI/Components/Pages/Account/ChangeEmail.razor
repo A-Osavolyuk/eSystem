@@ -234,7 +234,7 @@
                 Resource = CodeResource.Email,
                 Type = CodeType.Current,
                 Sender = SenderType.Email,
-                Code = VerifyCurrentEmailModel.Code
+                Code = VerifyCurrentEmailModel.Code,
             };
 
             var result = await SecurityService.VerifyCodeAsync(request);
@@ -298,7 +298,8 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "NewEmail", ChangeEmailModel.NewEmail }
+                { "NewEmail", ChangeEmailModel.NewEmail },
+                { "Email", UserState.Credentials?.Email! }
             }
         };
 
@@ -317,7 +318,7 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "NewEmail", ChangeEmailModel.NewEmail }
+                { "Email", ChangeEmailModel.NewEmail }
             }
         };
 
@@ -336,7 +337,8 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "NewEmail", ChangeEmailModel.NewEmail }
+                { "NewEmail", ChangeEmailModel.NewEmail },
+                { "Email", UserState.Credentials?.Email! }
             }
         };
 
@@ -354,7 +356,7 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "NewEmail", ChangeEmailModel.NewEmail }
+                { "Email", ChangeEmailModel.NewEmail }
             }
         };
 

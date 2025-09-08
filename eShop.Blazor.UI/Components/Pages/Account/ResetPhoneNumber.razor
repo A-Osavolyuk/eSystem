@@ -140,7 +140,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Reset,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", ResetPhoneNumberModel.NewPhoneNumber }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);
@@ -179,7 +183,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Reset,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", ResetPhoneNumberModel.NewPhoneNumber }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);

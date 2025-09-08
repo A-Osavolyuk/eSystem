@@ -81,7 +81,7 @@ public sealed class RegisterCommandHandler(
         {
             UserId = user.Id,
             UserName = user.Username,
-            Email = user.Email,
+            Email = user.Emails.First(x => x.IsPrimary).Email,
         };
 
         return Result.Success(response, "Your account have been successfully registered.");

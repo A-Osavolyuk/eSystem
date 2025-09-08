@@ -64,7 +64,7 @@
                     }
                     
                     <MudSpacer />
-                    if (!Model.RecoveryEmailConfirmed)
+                    if (Model.RecoveryEmailConfirmed.HasValue && !Model.RecoveryEmailConfirmed.Value)
                     {
                         <MudTooltip Text="Verify recovery email">
                             <MudIconButton

@@ -23,7 +23,7 @@ public class ConfirmEmailChangeMessage : Message
                              <p style="font: 16px Arial, sans-serif; margin:0;">Hello, {Payload["UserName"]}!.</p>
                              <br>
                              <p style="font: 16px Arial, sans-serif; margin: 0;">
-                                 To complete email change, you need to verify your new email address: {Payload["NewEmail"]}</p>.
+                                 To complete email change, you need to verify your new email address: {Payload["Email"]}</p>.
                                  To verify your new email addrees, please enter 6-digit verification code from below.
                              </p>
                              <br>

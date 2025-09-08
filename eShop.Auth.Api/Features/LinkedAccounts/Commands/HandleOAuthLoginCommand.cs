@@ -80,10 +80,10 @@ public sealed class HandleOAuthLoginCommandHandler(
             user = new UserEntity()
             {
                 Id = Guid.CreateVersion7(),
-                Email = email,
                 Username = email,
-                EmailConfirmed = true
             };
+            
+            //TODO: Set user email
 
             var createResult = await CreateAccountAsync(user, provider, fallbackUri, cancellationToken);
             if (!createResult.Succeeded) return createResult;
@@ -108,6 +108,8 @@ public sealed class HandleOAuthLoginCommandHandler(
             var deviceResult = await CreateDeviceAsync(user, provider, request.Context, fallbackUri, cancellationToken);
             if (!deviceResult.Succeeded) return deviceResult;
 
+            //TODO: Set user email
+            
             await SendMessageAsync(user, provider, cancellationToken);
 
             session.SignType = OAuthSignType.SignUp;
@@ -280,7 +282,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         {
             Credentials = new Dictionary<string, string>()
             {
-                { "To", user.Email },
+                { "To", user.Emails.First(x => x.IsPrimary).Email },
                 { "Subject", $"Account registered with {provider.Name}" },
             },
             Payload = new()

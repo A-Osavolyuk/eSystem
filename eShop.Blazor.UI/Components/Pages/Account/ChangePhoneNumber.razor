@@ -208,7 +208,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Current,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -222,7 +226,11 @@
             UserId = UserState.UserId,
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Current,
-            Sender = SenderType.Sms
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -241,7 +249,7 @@
             Sender = SenderType.Sms,
             Payload = new Dictionary<string, string>()
             {
-                { "NewPhoneNumber", ChangePhoneNumberModel.NewPhoneNumber }
+                { "PhoneNumber", ChangePhoneNumberModel.NewPhoneNumber }
             }
         };
 
@@ -259,7 +267,7 @@
             Sender = SenderType.Sms,
             Payload = new Dictionary<string, string>()
             {
-                { "NewPhoneNumber", ChangePhoneNumberModel.NewPhoneNumber }
+                { "PhoneNumber", ChangePhoneNumberModel.NewPhoneNumber }
             }
         };
 
@@ -306,7 +314,7 @@
                 Resource = CodeResource.PhoneNumber,
                 Type = CodeType.Current,
                 Sender = SenderType.Sms,
-                Code = VerifyCurrentPhoneNumberModel.Code
+                Code = VerifyCurrentPhoneNumberModel.Code,
             };
 
             var result = await SecurityService.VerifyCodeAsync(request);

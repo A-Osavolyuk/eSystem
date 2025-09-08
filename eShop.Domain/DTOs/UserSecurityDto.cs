@@ -4,7 +4,7 @@ public class UserSecurityDto
 {
     public Guid UserId { get; set; }
     public string? RecoveryEmail { get; set; } = string.Empty;
-    public bool RecoveryEmailConfirmed { get; set; }
+    public bool? RecoveryEmailConfirmed { get; set; }
     public DateTimeOffset? RecoveryEmailChangeDate { get; set; }
     public DateTimeOffset? RecoveryEmailConfirmationDate { get; set; }
 
