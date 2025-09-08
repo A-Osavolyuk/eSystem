@@ -135,6 +135,72 @@ public sealed class UserManager(
         return user;
     }
 
+    public async ValueTask<Result> SetEmailAsync(UserEntity user, string email, bool isPrimary = false, 
+        bool isRecovery = false, CancellationToken cancellationToken = default)
+    {
+        if (user.Emails.Any(x => x.Email == email))
+            return Results.BadRequest("User already has this email");
+
+        var userEmail = new UserEmailEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            Email = email,
+            NormalizedEmail = email.ToUpperInvariant(),
+            IsRecovery = isRecovery,
+            IsPrimary = isPrimary,
+            IsVerified = true,
+            VerifiedDate = DateTimeOffset.UtcNow,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.UserEmails.AddAsync(userEmail, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> SetPhoneNumberAsync(UserEntity user, string phoneNumber, bool isPrimary = false, 
+        CancellationToken cancellationToken = default)
+    {
+        if (user.PhoneNumbers.Any(x => x.PhoneNumber == phoneNumber))
+            return Results.BadRequest("User already has this phone number");
+
+        var userPhoneNumber = new UserPhoneNumberEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            PhoneNumber = phoneNumber,
+            IsPrimary = isPrimary,
+            IsVerified = true,
+            VerifiedDate = DateTimeOffset.UtcNow,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> SetUsernameAsync(UserEntity user, string username, CancellationToken cancellationToken = default)
+    {
+        user.Username = username;
+        user.UsernameChangeDate = DateTimeOffset.UtcNow;
+        user.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
     public async ValueTask<Result> VerifyEmailAsync(UserEntity user, string email,
         CancellationToken cancellationToken = default)
     {
@@ -433,11 +499,9 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<bool> CheckPasswordAsync(UserEntity user,
-        string password, CancellationToken cancellationToken = default)
+    public bool CheckPassword(UserEntity user, string password)
     {
-        var result = hasher.VerifyHash(password, user.PasswordHash);
-        return await Task.FromResult(result);
+        return hasher.VerifyHash(password, user.PasswordHash);
     }
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user,

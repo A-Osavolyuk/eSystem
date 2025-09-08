@@ -17,7 +17,7 @@ public sealed class ChangePasswordCommandHandler(
         
         if (!user.HasPassword()) return Results.BadRequest("User does not have a password.");
 
-        var isCorrectPassword = await userManager.CheckPasswordAsync(user, request.Request.CurrentPassword, cancellationToken);
+        var isCorrectPassword = userManager.CheckPassword(user, request.Request.CurrentPassword);
         if (!isCorrectPassword) return Results.BadRequest($"Wrong password.");
         
         var result = await userManager.ChangePasswordAsync(user, request.Request.NewPassword, cancellationToken);

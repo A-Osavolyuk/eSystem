@@ -95,7 +95,7 @@ public sealed class LoginCommandHandler(
 
         if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
-        var isValidPassword = await userManager.CheckPasswordAsync(user, request.Request.Password, cancellationToken);
+        var isValidPassword = userManager.CheckPassword(user, request.Request.Password);
         if (!isValidPassword)
         {
             user.FailedLoginAttempts += 1;
