@@ -27,6 +27,10 @@ public sealed class RequestChangePhoneNumberCommandHandler(
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
 
+        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.IsPrimary);
+        if(userPhoneNumber is null) 
+            return Results.BadRequest("Cannot change user's primary phone number, first provide it.");
+
         var currentPhoneNumberVerificationResult = await verificationManager.VerifyAsync(user,
             CodeResource.PhoneNumber, CodeType.Current, cancellationToken);
 
@@ -37,8 +41,8 @@ public sealed class RequestChangePhoneNumberCommandHandler(
 
         if (!newPhoneNumberVerificationResult.Succeeded) return newPhoneNumberVerificationResult;
 
-        var result = await userManager.ChangePhoneNumberAsync(user, 
-            request.Request.CurrentPhoneNumber, request.Request.NewPhoneNumber, cancellationToken);
+        var result = await userManager.ChangePhoneNumberAsync(user, userPhoneNumber.PhoneNumber, 
+            request.Request.NewPhoneNumber, cancellationToken);
         
         return result;
     }
