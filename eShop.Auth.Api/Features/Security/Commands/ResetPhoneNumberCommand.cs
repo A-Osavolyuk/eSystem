@@ -21,6 +21,9 @@ public class ResetPhoneNumberCommandHandler(
         
         if(!user.HasPhoneNumber()) return Results.BadRequest("User does not have a phone number.");
         
+        var userCurrentPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.IsPrimary);
+        if (userCurrentPhoneNumber is null) return Results.BadRequest("User's primary phone number is missing");
+        
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
@@ -33,10 +36,9 @@ public class ResetPhoneNumberCommandHandler(
         if (!verificationResult.Succeeded) return verificationResult;
         
         var newPhoneNumber = request.Request.NewPhoneNumber;
-        var currentPhoneNumber = request.Request.NewPhoneNumber;
         
         var result = await userManager.ResetPhoneNumberAsync(user, 
-            currentPhoneNumber, newPhoneNumber, cancellationToken);
+            userCurrentPhoneNumber.PhoneNumber, newPhoneNumber, cancellationToken);
         
         return result;
     }
