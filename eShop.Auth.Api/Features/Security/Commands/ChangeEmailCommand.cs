@@ -26,6 +26,9 @@ public sealed class RequestChangeEmailCommandHandler(
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
+        
+        var currentEmail = user.Emails.FirstOrDefault(x => x.IsPrimary);
+        if(currentEmail is null) return Results.BadRequest("Cannot change user's primary email, first provide it");
 
         if (user.HasLinkedAccount())
             return Results.BadRequest("Cannot change email, first disconnect linked accounts.");
@@ -39,8 +42,8 @@ public sealed class RequestChangeEmailCommandHandler(
             CodeResource.Email, CodeType.New, cancellationToken);
 
         if (!newEmailVerificationResult.Succeeded) return newEmailVerificationResult;
-
-        var result = await userManager.ChangeEmailAsync(user, request.Request.CurrentEmail, 
+        
+        var result = await userManager.ChangeEmailAsync(user, currentEmail.Email, 
             request.Request.NewEmail, cancellationToken);
         
         return result;

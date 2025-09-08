@@ -271,7 +271,6 @@
         var request = new ChangeEmailRequest()
         {
             UserId = UserState.UserId,
-            CurrentEmail = UserState.Credentials?.Email!,
             NewEmail = ChangeEmailModel.NewEmail,
         };
 
@@ -299,7 +298,6 @@
             Payload = new Dictionary<string, string>()
             {
                 { "NewEmail", ChangeEmailModel.NewEmail },
-                { "Email", UserState.Credentials?.Email! }
             }
         };
 
@@ -338,7 +336,6 @@
             Payload = new Dictionary<string, string>()
             {
                 { "NewEmail", ChangeEmailModel.NewEmail },
-                { "Email", UserState.Credentials?.Email! }
             }
         };
 
