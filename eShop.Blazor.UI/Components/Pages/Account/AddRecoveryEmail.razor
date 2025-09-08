@@ -159,13 +159,15 @@
 
         if (addPhoneNumberForm.IsValid)
         {
-            var request = new AddRecoveryEmailRequest()
+            var request = new AddEmailRequest()
             {
                 UserId = UserState.UserId,
-                RecoveryEmail = AddRecoveryEmailModel.RecoveryEmail
+                Email = AddRecoveryEmailModel.RecoveryEmail,
+                IsRecovery = true,
+                IsPrimary = false
             };
 
-            var result = await SecurityService.AddRecoveryEmailAsync(request);
+            var result = await SecurityService.AddEmailAsync(request);
 
             if (result.Success)
             {

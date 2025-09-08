@@ -164,7 +164,8 @@
             var request = new AddPhoneNumberRequest()
             {
                 UserId = UserState.UserId,
-                PhoneNumber = AddPhoneNumberModel.PhoneNumber
+                PhoneNumber = AddPhoneNumberModel.PhoneNumber,
+                IsPrimary = true
             };
 
             var result = await SecurityService.AddPhoneNumberAsync(request);

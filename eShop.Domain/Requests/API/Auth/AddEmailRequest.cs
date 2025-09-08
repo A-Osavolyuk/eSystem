@@ -2,6 +2,8 @@
 
 public class AddEmailRequest
 {
-    public Guid UserId { get; set; }
-    public string Email { get; set; } = string.Empty;
+    public required Guid UserId { get; set; }
+    public required string Email { get; set; } = string.Empty;
+    public required bool IsPrimary { get; set; }
+    public required bool IsRecovery { get; set; }
 }

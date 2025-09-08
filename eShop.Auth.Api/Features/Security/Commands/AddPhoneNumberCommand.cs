@@ -18,14 +18,16 @@ public class AddPhoneNumberCommandHandler(
         
         if (user.HasPhoneNumber()) return Results.BadRequest("User already has a phone number");
         
-        var result = await userManager.AddPhoneNumberAsync(user, request.Request.PhoneNumber, cancellationToken);
-        if (!result.Succeeded) return result;
-
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
+        
+        var result = await userManager.AddPhoneNumberAsync(user, request.Request.PhoneNumber, 
+            request.Request.IsPrimary, cancellationToken);
+        
+        if (!result.Succeeded) return result;
 
         return Result.Success();
     }

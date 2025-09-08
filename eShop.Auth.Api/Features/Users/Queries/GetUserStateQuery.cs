@@ -16,9 +16,9 @@ public class GetUserStateQueryHandler(IUserManager userManager) : IRequestHandle
         var response = new UserStateDto()
         {
             UserId = user.Id,
-            Email = user.Email,
-            RecoveryEmail = user.RecoveryEmail,
-            PhoneNumber = user.PhoneNumber,
+            Email = user.Emails.FirstOrDefault(x => x.IsPrimary)?.Email,
+            RecoveryEmail = user.Emails.FirstOrDefault(x => x.IsRecovery)?.Email,
+            PhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.PhoneNumber,
             Username = user.Username,
             LockedOut = user.LockoutState.Enabled,
             Roles = user.Roles.Select(x => Mapper.Map(x.Role)).ToList(),

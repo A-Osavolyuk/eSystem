@@ -281,6 +281,23 @@ public sealed class UserManager(
         return Result.Success();
     }
 
+    public async ValueTask<Result> RemoveEmailAsync(UserEntity user, string email,
+        CancellationToken cancellationToken = default)
+    {
+        var userEmail = await context.UserEmails.FirstOrDefaultAsync(
+            x => x.Email == email && x.UserId == user.Id, cancellationToken);
+
+        if (userEmail is null) return Results.NotFound($"User doesn't have email {email}");
+
+        user.UpdateDate = DateTimeOffset.UtcNow;
+
+        context.Users.Update(user);
+        context.UserEmails.Remove(userEmail);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
     public async ValueTask<Result> RemoveRecoveryEmailAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
@@ -376,12 +393,16 @@ public sealed class UserManager(
     }
 
     public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user,
-        string phoneNumber, CancellationToken cancellationToken = default)
+        string phoneNumber, bool isPrimary = false, CancellationToken cancellationToken = default)
     {
+        if (user.PhoneNumbers.Any(x => x.PhoneNumber == phoneNumber))
+            return Results.BadRequest("User already has this phone number");
+
         var userPhoneNumber = new UserPhoneNumberEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            IsPrimary = isPrimary,
             PhoneNumber = phoneNumber,
             CreateDate = DateTimeOffset.UtcNow
         };
@@ -395,40 +416,20 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddEmailAsync(UserEntity user, string email,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> AddEmailAsync(UserEntity user, string email, bool isPrimary,
+        bool isRecovery, CancellationToken cancellationToken = default)
     {
+        if (user.Emails.Any(x => x.Email == email))
+            return Results.BadRequest("User already has this email");
+
         var userEmail = new UserEmailEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Email = email,
             NormalizedEmail = email.ToUpperInvariant(),
-            CreateDate = DateTimeOffset.UtcNow
-        };
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        context.Users.Update(user);
-        await context.UserEmails.AddAsync(userEmail, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> AddRecoveryEmailAsync(UserEntity user,
-        string recoveryEmail, CancellationToken cancellationToken = default)
-    {
-        if (user.Emails.Any(x => x.IsRecovery))
-            return Results.BadRequest("User already has a recovery email address.");
-
-        var userEmail = new UserEmailEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            Email = recoveryEmail,
-            NormalizedEmail = recoveryEmail.ToUpperInvariant(),
-            IsRecovery = true,
+            IsPrimary = isPrimary,
+            IsRecovery = isRecovery,
             CreateDate = DateTimeOffset.UtcNow
         };
 

@@ -220,21 +220,6 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-
-    [EndpointSummary("Add recovery email")]
-    [EndpointDescription("Add recovery email")]
-    [ProducesResponseType(200)]
-    [HttpPost("recovery-email/add")]
-    [ValidationFilter]
-    public async ValueTask<IActionResult> AddRecoveryEmailAsync(
-        [FromBody] AddRecoveryEmailRequest request)
-    {
-        var result = await sender.Send(new AddRecoveryEmailCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
     
     [EndpointSummary("Change recovery email")]
     [EndpointDescription("Change recovery email")]
