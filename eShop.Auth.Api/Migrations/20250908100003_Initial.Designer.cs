@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250905102939_Initial")]
+    [Migration("20250908100003_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -581,6 +581,56 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserDevices");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserEmailEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRecovery")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NormalizedEmail")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset?>("PrimaryDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("RecoveryDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("VerifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserEmails");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -775,6 +825,45 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserPermissions");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserPhoneNumberEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(18)
+                        .HasColumnType("nvarchar(18)");
+
+                    b.Property<DateTimeOffset?>("PrimaryDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("VerifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserPhoneNumbers");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserRoleEntity", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -879,6 +968,27 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Verifications");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationProviderEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VerificationProviderEntity");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.CodeEntity", b =>
@@ -1020,6 +1130,17 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserEmailEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany("Emails")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.PersonalDataEntity", "PersonalData")
@@ -1074,6 +1195,17 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Permission");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserPhoneNumberEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany("PhoneNumbers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1157,6 +1289,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Navigation("Devices");
 
+                    b.Navigation("Emails");
+
                     b.Navigation("LinkedAccounts");
 
                     b.Navigation("LockoutState")
@@ -1165,6 +1299,8 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Passkeys");
 
                     b.Navigation("Permissions");
+
+                    b.Navigation("PhoneNumbers");
 
                     b.Navigation("RecoveryCodes");
 

@@ -105,6 +105,20 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VerificationProviderEntity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VerificationProviderEntity", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -347,6 +361,34 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserEmails",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
+                    IsPrimary = table.Column<bool>(type: "bit", nullable: false),
+                    IsRecovery = table.Column<bool>(type: "bit", nullable: false),
+                    VerifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    PrimaryDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    RecoveryDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserEmails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserEmails_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserOAuthProviders",
                 columns: table => new
                 {
@@ -393,6 +435,31 @@ namespace eShop.Auth.Api.Migrations
                     table.PrimaryKey("PK_UserPasskeys", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserPasskeys_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPhoneNumbers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: false),
+                    IsPrimary = table.Column<bool>(type: "bit", nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
+                    VerifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    PrimaryDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPhoneNumbers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserPhoneNumbers_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -660,6 +727,11 @@ namespace eShop.Auth.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserEmails_UserId",
+                table: "UserEmails",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserOAuthProviders_ProviderId",
                 table: "UserOAuthProviders",
                 column: "ProviderId");
@@ -673,6 +745,11 @@ namespace eShop.Auth.Api.Migrations
                 name: "IX_UserPermissions_PermissionId",
                 table: "UserPermissions",
                 column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPhoneNumbers_UserId",
+                table: "UserPhoneNumbers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
@@ -731,6 +808,9 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserChanges");
 
             migrationBuilder.DropTable(
+                name: "UserEmails");
+
+            migrationBuilder.DropTable(
                 name: "UserOAuthProviders");
 
             migrationBuilder.DropTable(
@@ -740,6 +820,9 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserPermissions");
 
             migrationBuilder.DropTable(
+                name: "UserPhoneNumbers");
+
+            migrationBuilder.DropTable(
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
@@ -747,6 +830,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserTwoFactorProviders");
+
+            migrationBuilder.DropTable(
+                name: "VerificationProviderEntity");
 
             migrationBuilder.DropTable(
                 name: "Verifications");
