@@ -11,42 +11,36 @@
 
 <Title Text="Password and authentication"></Title>
 
-@if (SecurityModel is not null)
+@if (Model is not null)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
             <MudStack Spacing="2" Justify="Justify.Center">
                 <PasswordSection
-                    Model="SecurityModel"
+                    Model="Model"
                     OnAdd="@(() => OnAddPasswordAsync())"
                     OnChange="@(() => OnChangePasswordAsync())"
                     OnReset="@(() => OnResetPasswordAsync())"/>
                 <PasskeysSection
-                    Model="SecurityModel"
+                    Model="Model"
                     OnCreate="@(() => OnCreatePasskeyAsync())"
                     OnRemove="@((value) => OnPasskeyRemoveAsync(value))"/>
                 <LinkedAccountsSection
-                    Model="SecurityModel"
+                    Model="Model"
                     OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
                     OnDisallow="@((value) => OnDisallowLinkedAccountAsync(value))"
                     OnDisconnect="@((value) => OnDisconnectLinkedAccountAsync(value))"/>
                 <TwoFactorSection
-                    Model="SecurityModel"
+                    Model="Model"
                     OnSubscribe="@((value) => OnSubscribe(value))"
                     OnUnsubscribe="@((value) => OnUnsubscribe(value))"/>
-                <RecoveryEmailSection
-                    Model="SecurityModel"
-                    OnAdd="@(() => OnAddRecoveryEmailAsync())"
-                    OnChange="@(() => OnChangeRecoveryEmailAsync())"
-                    OnRemove="@(() => OnRemoveRecoveryEmailAsync())"
-                    OnVerify="@(() => OnVerifyRecoveryEmailAsync())"/>
             </MudStack>
         </MudItem>
     </MudGrid>
 }
 
 @code {
-    private UserSecurityModel? SecurityModel { get; set; }
+    private UserSecurityModel? Model { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -65,7 +59,7 @@
         {
             var response = result.Get<UserSecurityDto>()!;
 
-            SecurityModel = Mapper.Map(response);
+            Model = Mapper.Map(response);
             await UserState.Change();
         }
         else
@@ -167,31 +161,7 @@
     {
         RouteManager.Route($"/account/2fa/provider/disable?provider={provider}");
     }
-
-    private void OnRemoveRecoveryEmailAsync()
-    {
-        var url = $"/account/recovery-email/remove";
-        RouteManager.Route(url);
-    }
-
-    private void OnChangeRecoveryEmailAsync()
-    {
-        var url = $"/account/recovery-email/change";
-        RouteManager.Route(url);
-    }
-
-    private void OnVerifyRecoveryEmailAsync()
-    {
-        var url = $"/account/recovery-email/verify";
-        RouteManager.Route(url);
-    }
-
-    private void OnAddRecoveryEmailAsync()
-    {
-        var url = "/account/recovery-email/add";
-        RouteManager.Route(url);
-    }
-
+    
     private void OnPasskeyRemoveAsync(Guid id)
     {
         var url = $"/account/passkey/remove?passkey={id}";
