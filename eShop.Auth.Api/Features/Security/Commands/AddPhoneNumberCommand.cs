@@ -15,8 +15,9 @@ public class AddPhoneNumberCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        
-        if (user.HasPhoneNumber()) return Results.BadRequest("User already has a phone number");
+
+        if (user.PhoneNumbers.Count(x => x.IsPrimary) >= 1 && request.Request.IsPrimary)
+            return Results.BadRequest("User already has a primary phone number.");
         
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
