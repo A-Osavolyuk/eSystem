@@ -21,7 +21,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         
         if(!user.HasPhoneNumber()) return Results.BadRequest("User does not have a phone number.");
         
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.IsPrimary);
+        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary);
         if (userPhoneNumber is null) return Results.BadRequest("User's phone number is missing.");
         
         if (identityOptions.Account.RequireUniquePhoneNumber)

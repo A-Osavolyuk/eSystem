@@ -8,9 +8,8 @@ public class UserEmailEntity : Entity
     public string Email { get; set; } = string.Empty;
     public string NormalizedEmail { get; set; } = string.Empty;
     
+    public EmailType Type { get; set; }
     public bool IsVerified { get; set; }
-    public bool IsPrimary { get; set; }
-    public bool IsRecovery { get; set; }
 
     public DateTimeOffset? VerifiedDate { get; set; }
     public DateTimeOffset? PrimaryDate { get; set; }

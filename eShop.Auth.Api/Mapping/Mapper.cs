@@ -48,14 +48,14 @@ public static class Mapper
         return new()
         {
             Id = source.Id,
-            Email = source.Emails.FirstOrDefault(x => x.IsPrimary)?.Email,
-            EmailConfirmed = source.Emails.FirstOrDefault(x => x.IsPrimary)?.IsVerified,
-            EmailChangeDate = source.Emails.FirstOrDefault(x => x.IsPrimary)?.UpdateDate,
-            EmailConfirmationDate = source.Emails.FirstOrDefault(x => x.IsPrimary)?.VerifiedDate,
-            PhoneNumber = source.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.PhoneNumber,
-            PhoneNumberConfirmed = source.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.IsVerified,
-            PhoneNumberChangeDate = source.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.UpdateDate,
-            PhoneNumberConfirmationDate = source.PhoneNumbers.FirstOrDefault(x => x.IsPrimary)?.VerifiedDate,
+            Email = source.Emails.FirstOrDefault(x => x.Type is EmailType.Primary)?.Email,
+            EmailConfirmed = source.Emails.FirstOrDefault(x => x.Type is EmailType.Primary)?.IsVerified,
+            EmailChangeDate = source.Emails.FirstOrDefault(x => x.Type is EmailType.Primary)?.UpdateDate,
+            EmailConfirmationDate = source.Emails.FirstOrDefault(x => x.Type is EmailType.Primary)?.VerifiedDate,
+            PhoneNumber = source.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary)?.PhoneNumber,
+            PhoneNumberConfirmed = source.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary)?.IsVerified,
+            PhoneNumberChangeDate = source.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary)?.UpdateDate,
+            PhoneNumberConfirmationDate = source.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary)?.VerifiedDate,
             Username = source.Username,
             UserNameChangeDate = source.UsernameChangeDate,
         };

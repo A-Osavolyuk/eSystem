@@ -7,7 +7,7 @@ public class UserPhoneNumberEntity : Entity
 
     public string PhoneNumber { get; set; } = string.Empty;
 
-    public bool IsPrimary { get; set; }
+    public PhoneNumberType Type { get; set; }
     public bool IsVerified { get; set; }
 
     public DateTimeOffset? VerifiedDate { get; set; }

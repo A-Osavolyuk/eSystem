@@ -16,18 +16,16 @@ public class AddEmailCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        if (request.Request is { IsRecovery: true, IsPrimary: true })
-            return Results.BadRequest("Same email cannot be primary and recovery at the same time.");
+        if (user.Emails.Count(x => x.Type is EmailType.Primary) 
+            >= identityOptions.Account.PrimaryEmailMaxCount && request.Request.Type is EmailType.Primary) 
+            return Results.BadRequest("User already has a primary email.");
 
-        if (user.Emails.Count(x => x.IsPrimary) >= identityOptions.Account.PrimaryEmailMaxCount
-            && request.Request.IsPrimary) return Results.BadRequest("User already has a primary email.");
+        if (user.Emails.Count(x => x.Type is EmailType.Secondary) 
+            >= identityOptions.Account.RecoveryEmailMaxCount && request.Request.Type is EmailType.Recovery) 
+            return Results.BadRequest("User already has a recovery email.");
 
-        if (user.Emails.Count(x => x.IsRecovery) >= identityOptions.Account.RecoveryEmailMaxCount
-            && request.Request.IsRecovery) return Results.BadRequest("User already has a recovery email.");
-
-        if (user.Emails.Count(x => x is { IsPrimary: false, IsRecovery: false })
-            >= identityOptions.Account.SecondaryEmailMaxCount
-            && request.Request is { IsPrimary: false, IsRecovery: false })
+        if (user.Emails.Count(x => x is { Type: EmailType.Secondary })
+            >= identityOptions.Account.SecondaryEmailMaxCount && request.Request.Type is EmailType.Secondary)
             return Results.BadRequest("User already has maximum count of secondary emails.");
 
         if (identityOptions.Account.RequireUniqueEmail)
@@ -37,7 +35,7 @@ public class AddEmailCommandHandler(
         }
 
         var result = await userManager.AddEmailAsync(user, request.Request.Email,
-            request.Request.IsPrimary, request.Request.IsRecovery, cancellationToken: cancellationToken);
+            request.Request.Type, cancellationToken);
 
         return result;
     }

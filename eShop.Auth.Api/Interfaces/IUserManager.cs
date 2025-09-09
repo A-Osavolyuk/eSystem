@@ -10,10 +10,10 @@ public interface IUserManager
     public ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
         CancellationToken cancellationToken = default);
     
-    public ValueTask<Result> SetEmailAsync(UserEntity user, string email, bool isPrimary = false, 
-        bool isRecovery = false, CancellationToken cancellationToken = default);
+    public ValueTask<Result> SetEmailAsync(UserEntity user, string email, 
+        EmailType type, CancellationToken cancellationToken = default);
     public ValueTask<Result> SetPhoneNumberAsync(UserEntity user, string phoneNumber, 
-        bool isPrimary = false, CancellationToken cancellationToken = default);
+        PhoneNumberType type, CancellationToken cancellationToken = default);
     public ValueTask<Result> SetUsernameAsync(UserEntity user, string username, 
         CancellationToken cancellationToken = default);
 
@@ -44,10 +44,10 @@ public interface IUserManager
         CancellationToken cancellationToken = default);
 
     public ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber,
-        bool isPrimary, CancellationToken cancellationToken = default);
+        PhoneNumberType type, CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> AddEmailAsync(UserEntity user, string email, bool isPrimary = false,
-        bool isRecovery = false, CancellationToken cancellationToken = default);
+    public ValueTask<Result> AddEmailAsync(UserEntity user, string email, 
+        EmailType type, CancellationToken cancellationToken = default);
 
     public ValueTask<Result> AddPasswordAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default);

@@ -87,7 +87,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             if (!createResult.Succeeded) return createResult;
 
             var setResult = await userManager.SetEmailAsync(user, email, 
-                isPrimary: true, cancellationToken: cancellationToken);
+                EmailType.Primary, cancellationToken);
             
             if(setResult.Succeeded) return setResult;
 
@@ -283,7 +283,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         {
             Credentials = new Dictionary<string, string>()
             {
-                { "To", user.Emails.First(x => x.IsPrimary).Email },
+                { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                 { "Subject", $"Account registered with {provider.Name}" },
             },
             Payload = new()

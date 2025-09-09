@@ -39,7 +39,8 @@ public sealed class UserManager(
         var normalizedEmail = email.ToUpper();
         var user = await context.Users
             .Include(x => x.Emails)
-            .Where(x => x.Emails.Any(y => y.NormalizedEmail == normalizedEmail && y.IsPrimary))
+            .Where(x => x.Emails.Any(
+                e => e.NormalizedEmail == normalizedEmail && e.Type == EmailType.Primary))
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -114,7 +115,8 @@ public sealed class UserManager(
     {
         var user = await context.Users
             .Include(x => x.PhoneNumbers)
-            .Where(x => x.PhoneNumbers.Any(y => y.PhoneNumber == phoneNumber && y.IsPrimary))
+            .Where(x => x.PhoneNumbers.Any(
+                p => p.PhoneNumber == phoneNumber && p.Type == PhoneNumberType.Primary))
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -135,20 +137,19 @@ public sealed class UserManager(
         return user;
     }
 
-    public async ValueTask<Result> SetEmailAsync(UserEntity user, string email, bool isPrimary = false, 
-        bool isRecovery = false, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> SetEmailAsync(UserEntity user, string email, EmailType type, 
+        CancellationToken cancellationToken = default)
     {
         if (user.Emails.Any(x => x.Email == email))
             return Results.BadRequest("User already has this email");
-
+        
         var userEmail = new UserEmailEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Email = email,
             NormalizedEmail = email.ToUpperInvariant(),
-            IsRecovery = isRecovery,
-            IsPrimary = isPrimary,
+            Type = type,
             IsVerified = true,
             VerifiedDate = DateTimeOffset.UtcNow,
             CreateDate = DateTimeOffset.UtcNow
@@ -163,7 +164,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> SetPhoneNumberAsync(UserEntity user, string phoneNumber, bool isPrimary = false, 
+    public async ValueTask<Result> SetPhoneNumberAsync(UserEntity user, string phoneNumber, PhoneNumberType type,
         CancellationToken cancellationToken = default)
     {
         if (user.PhoneNumbers.Any(x => x.PhoneNumber == phoneNumber))
@@ -174,7 +175,7 @@ public sealed class UserManager(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             PhoneNumber = phoneNumber,
-            IsPrimary = isPrimary,
+            Type = type,
             IsVerified = true,
             VerifiedDate = DateTimeOffset.UtcNow,
             CreateDate = DateTimeOffset.UtcNow
@@ -362,8 +363,8 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user,
-        string phoneNumber, bool isPrimary = false, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber, 
+        PhoneNumberType type, CancellationToken cancellationToken = default)
     {
         if (user.PhoneNumbers.Any(x => x.PhoneNumber == phoneNumber))
             return Results.BadRequest("User already has this phone number");
@@ -372,7 +373,7 @@ public sealed class UserManager(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            IsPrimary = isPrimary,
+            Type = type,
             PhoneNumber = phoneNumber,
             CreateDate = DateTimeOffset.UtcNow
         };
@@ -386,8 +387,8 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddEmailAsync(UserEntity user, string email, bool isPrimary,
-        bool isRecovery, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> AddEmailAsync(UserEntity user, string email, 
+        EmailType type, CancellationToken cancellationToken = default)
     {
         if (user.Emails.Any(x => x.Email == email))
             return Results.BadRequest("User already has this email");
@@ -398,8 +399,7 @@ public sealed class UserManager(
             UserId = user.Id,
             Email = email,
             NormalizedEmail = email.ToUpperInvariant(),
-            IsPrimary = isPrimary,
-            IsRecovery = isRecovery,
+            Type = type,
             CreateDate = DateTimeOffset.UtcNow
         };
 

@@ -167,8 +167,7 @@
             {
                 UserId = UserState.UserId,
                 Email = AddRecoveryEmailModel.RecoveryEmail,
-                IsRecovery = true,
-                IsPrimary = false
+                Type = EmailType.Recovery
             };
 
             var result = await SecurityService.AddEmailAsync(request);

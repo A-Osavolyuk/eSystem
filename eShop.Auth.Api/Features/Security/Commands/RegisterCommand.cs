@@ -44,7 +44,7 @@ public sealed class RegisterCommandHandler(
         if (!registrationResult.Succeeded) return registrationResult;
         
         var setResult = await userManager.SetEmailAsync(user, request.Request.Email, 
-            isPrimary: true, cancellationToken: cancellationToken);
+            EmailType.Primary, cancellationToken);
             
         if(setResult.Succeeded) return setResult;
 
@@ -91,7 +91,7 @@ public sealed class RegisterCommandHandler(
         {
             UserId = user.Id,
             UserName = user.Username,
-            Email = user.Emails.First(x => x.IsPrimary).Email,
+            Email = user.Emails.First(x => x.Type is EmailType.Primary).Email,
         };
 
         return Result.Success(response, "Your account have been successfully registered.");

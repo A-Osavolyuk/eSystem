@@ -52,6 +52,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             
             entity.Property(x => x.Email).HasMaxLength(64);
             entity.Property(x => x.NormalizedEmail).HasMaxLength(64);
+            entity.Property(x => x.Type).HasEnumConversion();
 
             entity.HasOne(u => u.User)
                 .WithMany(x => x.Emails)
@@ -63,6 +64,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => x.Id);
             
             entity.Property(x => x.PhoneNumber).HasMaxLength(18);
+            entity.Property(x => x.Type).HasEnumConversion();
             
             entity.HasOne(u => u.User)
                 .WithMany(x => x.PhoneNumbers)

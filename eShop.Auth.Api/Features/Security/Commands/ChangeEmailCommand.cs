@@ -21,7 +21,7 @@ public sealed class RequestChangeEmailCommandHandler(
 
         if (!user.HasEmail()) return Results.BadRequest("User does not have an email address.");
 
-        var currentEmail = user.Emails.FirstOrDefault(x => x.IsPrimary);
+        var currentEmail = user.Emails.FirstOrDefault(x => x.Type is EmailType.Primary);
         if (currentEmail is null) return Results.BadRequest("User's primary email address is missing");
         
         if (identityOptions.Account.RequireUniqueEmail)

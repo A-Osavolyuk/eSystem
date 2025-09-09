@@ -169,7 +169,7 @@
             {
                 UserId = UserState.UserId,
                 PhoneNumber = AddPhoneNumberModel.PhoneNumber,
-                IsPrimary = true
+                Type = PhoneNumberType.Primary
             };
 
             var result = await SecurityService.AddPhoneNumberAsync(request);

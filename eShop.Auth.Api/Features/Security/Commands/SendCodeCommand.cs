@@ -63,7 +63,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Account unlock" },
                     },
                     Payload = new()
@@ -77,7 +77,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", $"Allow {payload["Provider"]} linked account" }
                     },
                     Payload = new()
@@ -92,7 +92,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Device block" }
                     },
                     Payload = new()
@@ -110,7 +110,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Email change (step one)" },
                     },
                     Payload = new()
@@ -125,7 +125,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", $"Disallow {payload["Provider"]} linked account" }
                     },
                     Payload = new()
@@ -140,7 +140,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", $"Disconnect {payload["Provider"]} linked account" }
                     },
                     Payload = new()
@@ -155,7 +155,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Password reset" },
                     },
                     Payload = new()
@@ -169,7 +169,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Device block" }
                     },
                     Payload = new()
@@ -198,7 +198,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Device trust" }
                     },
                     Payload = new()
@@ -216,7 +216,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Device unblock" }
                     },
                     Payload = new()
@@ -234,7 +234,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Device verification" }
                     },
                     Payload = new()
@@ -266,7 +266,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Two-factor authentication" }
                     },
                     Payload = new()
@@ -280,7 +280,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.IsPrimary).Email },
+                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
                         { "Subject", "Two-factor authentication" }
                     },
                     Payload = new()
@@ -294,7 +294,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "PhoneNumber", user.PhoneNumbers.First(x => x.IsPrimary).PhoneNumber }
+                        { "PhoneNumber", user.PhoneNumbers.First(x => x.Type is PhoneNumberType.Primary).PhoneNumber }
                     },
                     Payload = new()
                     {
@@ -354,7 +354,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "PhoneNumber", user.PhoneNumbers.First(x => x.IsPrimary).PhoneNumber },
+                        { "PhoneNumber", user.PhoneNumbers.First(x => x.Type is PhoneNumberType.Primary).PhoneNumber },
                     },
                     Payload = new()
                     {
@@ -366,7 +366,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "PhoneNumber", user.PhoneNumbers.First(x => x.IsPrimary).PhoneNumber },
+                        { "PhoneNumber", user.PhoneNumbers.First(x => x.Type is PhoneNumberType.Primary).PhoneNumber },
                     },
                     Payload = new()
                     {

@@ -34,7 +34,7 @@ public class SubscribeProviderCommandHandler(
         if (provider.Name == ProviderTypes.Email)
         {
             if (identityOptions.SignIn.RequireConfirmedEmail 
-                && user.Emails.Any(x => x is { IsPrimary: true, IsVerified: false }))
+                && user.Emails.Any(x => x is { Type: EmailType.Primary, IsVerified: false }))
                 return Results.BadRequest("You need to confirm your email first.");
 
             if (!user.HasEmail())
@@ -44,7 +44,7 @@ public class SubscribeProviderCommandHandler(
         if (provider.Name == ProviderTypes.Sms)
         {
             if (identityOptions.SignIn.RequireConfirmedPhoneNumber 
-                && user.PhoneNumbers.Any(x => x is { IsPrimary: true, IsVerified: false })) 
+                && user.PhoneNumbers.Any(x => x is { Type: PhoneNumberType.Primary, IsVerified: false })) 
                 return Results.BadRequest("You need to confirm your phone number first.");
             
             if (!user.HasPhoneNumber())

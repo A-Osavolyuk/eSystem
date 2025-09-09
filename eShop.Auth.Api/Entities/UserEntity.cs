@@ -29,9 +29,9 @@ public class UserEntity : Entity
     public PersonalDataEntity? PersonalData { get; set; } = null!;
 
     public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
-    public bool HasEmail() => Emails.Any(x => x.IsPrimary);
-    public bool HasRecoveryEmail() => Emails.Any(x => x.IsRecovery);
-    public bool HasPhoneNumber() => PhoneNumbers.Any(x => x.IsPrimary);
+    public bool HasEmail() => Emails.Any(x => x.Type is EmailType.Primary);
+    public bool HasRecoveryEmail() => Emails.Any(x => x.Type is EmailType.Recovery);
+    public bool HasPhoneNumber() => PhoneNumbers.Any(x => x.Type is PhoneNumberType.Primary);
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
     public bool HasTwoFactor() => TwoFactorProviders.Any(x => x.Subscribed);
 }

@@ -68,12 +68,12 @@ public sealed class LoginCommandHandler(
         }
 
         if (identityOptions.SignIn.RequireConfirmedEmail 
-            && !user.Emails.Any(x => x is { IsPrimary: true, IsVerified: false }))
+            && !user.Emails.Any(x => x is { Type: EmailType.Primary, IsVerified: false }))
         {
             response = new LoginResponse()
             {
                 UserId = user.Id,
-                Email = user.Emails.First(x => x.IsPrimary).Email,
+                Email = user.Emails.First(x => x.Type is EmailType.Primary).Email,
                 IsEmailConfirmed = false
             };
 
@@ -152,7 +152,7 @@ public sealed class LoginCommandHandler(
             response = new LoginResponse()
             {
                 UserId = user.Id,
-                Email = user.Emails.First(x => x.IsPrimary).Email,
+                Email = user.Emails.First(x => x.Type is EmailType.Primary).Email,
                 DeviceId = device.Id,
                 IsDeviceTrusted = device.IsTrusted,
                 IsDeviceBlocked = device.IsBlocked,

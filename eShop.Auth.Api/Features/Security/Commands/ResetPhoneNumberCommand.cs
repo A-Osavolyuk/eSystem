@@ -21,7 +21,7 @@ public class ResetPhoneNumberCommandHandler(
         
         if(!user.HasPhoneNumber()) return Results.BadRequest("User does not have a phone number.");
         
-        var userCurrentPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.IsPrimary);
+        var userCurrentPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary);
         if (userCurrentPhoneNumber is null) return Results.BadRequest("User's primary phone number is missing");
         
         if (identityOptions.Account.RequireUniquePhoneNumber)

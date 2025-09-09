@@ -14,7 +14,7 @@ public class UserEmailSeed : Seed<UserEmailEntity>
                 UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                 Email = "sasha.osavolll111@gmail.com",
                 NormalizedEmail = "sasha.osavolll111@gmail.com".ToUpperInvariant(),
-                IsPrimary = true,
+                Type = EmailType.Primary,
                 IsVerified = true,
                 CreateDate = DateTimeOffset.UtcNow,
                 VerifiedDate = DateTimeOffset.UtcNow,

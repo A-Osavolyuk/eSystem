@@ -22,7 +22,7 @@ public class ResetEmailCommandHandler(
 
         if (!user.HasEmail()) return Results.BadRequest("User does not have an email address.");
         
-        var userCurrentEmail = user.Emails.FirstOrDefault(x => x.IsPrimary);
+        var userCurrentEmail = user.Emails.FirstOrDefault(x => x.Type is EmailType.Primary);
         if (userCurrentEmail is null) return Results.BadRequest("User's primary email address is missing");
 
         if (identityOptions.Account.RequireUniqueEmail)
