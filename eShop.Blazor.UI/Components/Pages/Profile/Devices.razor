@@ -1,0 +1,74 @@
+﻿@page "/account/devices"
+
+@using eShop.Blazor.UI.Components.Pages.Profile.Components.Security
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject IUserService UserService
+
+<Title Text="Device and sessions"></Title>
+
+@if (SecurityModel is not null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="6">
+            <MudStack Spacing="2" Justify="Justify.Center">
+                <DevicesSection
+                    Model="SecurityModel"
+                    OnVerify="@((value) => OnVerifyDeviceAsync(value))"
+                    OnBlock="@((value) => OnBlockDeviceAsync(value))"
+                    OnUnblock="@((value) => OnUnblockDeviceAsync(value))"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    private UserSecurityModel? SecurityModel { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+    
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserSecurityDataAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<UserSecurityDto>()!;
+
+            SecurityModel = Mapper.Map(response);
+            await UserState.Change();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private void OnVerifyDeviceAsync(Guid id)
+    {
+        var url = $"/account/device/verify?device={id}";
+        RouteManager.Route(url);
+    }
+
+    private void OnBlockDeviceAsync(Guid id)
+    {
+        var url = $"/account/device/block?device={id}";
+        RouteManager.Route(url);
+    }
+
+    private void OnUnblockDeviceAsync(Guid id)
+    {
+        var url = $"/account/device/unblock?device={id}";
+        RouteManager.Route(url);
+    }
+}

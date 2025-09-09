@@ -1,0 +1,94 @@
+﻿@page "/account/recovery"
+
+@using eShop.Blazor.UI.Components.Pages.Profile.Components.Security
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject IUserService UserService
+@inject ITwoFactorService TwoFactorService
+@inject IDialogService DialogService
+
+<Title Text="Account recovery"></Title>
+
+@if (SecurityModel is not null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="6">
+            <MudStack Spacing="2" Justify="Justify.Center">
+                <RecoverySection
+                    Model="SecurityModel"
+                    OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    private UserSecurityModel? SecurityModel { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+    
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserSecurityDataAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<UserSecurityDto>()!;
+
+            SecurityModel = Mapper.Map(response);
+            await UserState.Change();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task OnGenerateRecoveryCodesAsync()
+    {
+        var recoveryCodes = new List<string>();
+        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
+        var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
+
+        if (result.Success)
+        {
+            recoveryCodes = result.Get<List<string>>()!;
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge,
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters<GenerateRecoveryCodesDialog>()
+        {
+            { x => x.Codes, recoveryCodes }
+        };
+
+        var dialog = await DialogService.ShowAsync<GenerateRecoveryCodesDialog>("Generate 2FA recovery codes", parameters, options);
+        var dialogResult = await dialog.Result;
+
+        if (!dialogResult!.Canceled)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+}

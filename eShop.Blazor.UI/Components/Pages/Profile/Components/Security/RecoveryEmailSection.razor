@@ -83,13 +83,6 @@
                                 Variant="Variant.Filled"
                                 OnClick="@(async () => await OnRemove.InvokeAsync())"/>
                         </MudTooltip>
-                        <MudTooltip Text="Reset recovery email">
-                            <MudIconButton
-                                Icon="@Icons.Material.Filled.ChangeCircle"
-                                Color="Color.Secondary"
-                                Variant="Variant.Filled"
-                                OnClick="@(async () => await OnReset.InvokeAsync())"/>
-                        </MudTooltip>
                         <MudTooltip Text="Change recovery email">
                             <MudIconButton
                                 Icon="@Icons.Material.Filled.Edit"
@@ -122,5 +115,4 @@
     [Parameter] public EventCallback OnRemove { get; set; }
     [Parameter] public EventCallback OnChange { get; set; }
     [Parameter] public EventCallback OnVerify { get; set; }
-    [Parameter] public EventCallback OnReset { get; set; }
 }

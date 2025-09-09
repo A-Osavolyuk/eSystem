@@ -1,42 +1,21 @@
 ﻿@page "/account/security"
 
-@using System.Text.Json
-@using System.Text.Json.Serialization
-@using eShop.Blazor.Application.Mapping
-@using eShop.Blazor.Domain.Interfaces
-@using eShop.Blazor.Domain.Models
 @using eShop.Blazor.UI.Components.Pages.Profile.Components.Security
-@using eShop.Domain.Common.Security.Constants
-@using JsonSerializer = System.Text.Json.JsonSerializer
+
 @inherits PageBase
 
 @inject IUserService UserService
 @inject IDialogService DialogService
-@inject ITwoFactorService TwoFactorService
 
 @attribute [Authorize]
 
-<Title Text="Security"></Title>
+<Title Text="Password and authentication"></Title>
 
 @if (SecurityModel is not null)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
             <MudStack Spacing="2" Justify="Justify.Center">
-                <TwoFactorSection
-                    Model="SecurityModel"
-                    OnSubscribe="@((value) => OnSubscribe(value))"
-                    OnUnsubscribe="@((value) => OnUnsubscribe(value))"/>
-                <LinkedAccountsSection
-                    Model="SecurityModel"
-                    OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
-                    OnDisallow="@((value) => OnDisallowLinkedAccountAsync(value))"
-                    OnDisconnect="@((value) => OnDisconnectLinkedAccountAsync(value))"/>
-                <DevicesSection
-                    Model="SecurityModel"
-                    OnVerify="@((value) => OnVerifyDeviceAsync(value))"
-                    OnBlock="@((value) => OnBlockDeviceAsync(value))"
-                    OnUnblock="@((value) => OnUnblockDeviceAsync(value))"/>
                 <PasswordSection
                     Model="SecurityModel"
                     OnAdd="@(() => OnAddPasswordAsync())"
@@ -46,16 +25,21 @@
                     Model="SecurityModel"
                     OnCreate="@(() => OnCreatePasskeyAsync())"
                     OnRemove="@((value) => OnPasskeyRemoveAsync(value))"/>
+                <LinkedAccountsSection
+                    Model="SecurityModel"
+                    OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
+                    OnDisallow="@((value) => OnDisallowLinkedAccountAsync(value))"
+                    OnDisconnect="@((value) => OnDisconnectLinkedAccountAsync(value))"/>
+                <TwoFactorSection
+                    Model="SecurityModel"
+                    OnSubscribe="@((value) => OnSubscribe(value))"
+                    OnUnsubscribe="@((value) => OnUnsubscribe(value))"/>
                 <RecoveryEmailSection
                     Model="SecurityModel"
                     OnAdd="@(() => OnAddRecoveryEmailAsync())"
                     OnChange="@(() => OnChangeRecoveryEmailAsync())"
                     OnRemove="@(() => OnRemoveRecoveryEmailAsync())"
-                    OnVerify="@(() => OnVerifyRecoveryEmailAsync())"
-                    OnReset="@(() => OnResetRecoveryEmailAsync())"/>
-                <RecoverySection
-                    Model="SecurityModel"
-                    OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"/>
+                    OnVerify="@(() => OnVerifyRecoveryEmailAsync())"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -184,44 +168,6 @@
         RouteManager.Route($"/account/2fa/provider/disable?provider={provider}");
     }
 
-    private async Task OnGenerateRecoveryCodesAsync()
-    {
-        var recoveryCodes = new List<string>();
-        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
-        var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
-
-        if (result.Success)
-        {
-            recoveryCodes = result.Get<List<string>>()!;
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-
-        var options = new DialogOptions()
-        {
-            BackdropClick = true,
-            CloseButton = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge,
-            CloseOnEscapeKey = true
-        };
-
-        var parameters = new DialogParameters<GenerateRecoveryCodesDialog>()
-        {
-            { x => x.Codes, recoveryCodes }
-        };
-
-        var dialog = await DialogService.ShowAsync<GenerateRecoveryCodesDialog>("Generate 2FA recovery codes", parameters, options);
-        var dialogResult = await dialog.Result;
-
-        if (!dialogResult!.Canceled)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
-    }
-
     private void OnRemoveRecoveryEmailAsync()
     {
         var url = $"/account/recovery-email/remove";
@@ -243,12 +189,6 @@
     private void OnAddRecoveryEmailAsync()
     {
         var url = "/account/recovery-email/add";
-        RouteManager.Route(url);
-    }
-
-    private void OnResetRecoveryEmailAsync()
-    {
-        var url = "/account/recovery-email/reset";
         RouteManager.Route(url);
     }
 
@@ -275,23 +215,4 @@
         var url = $"/account/linked-account/disallow?provider={provider}";
         RouteManager.Route(url);
     }
-
-    private void OnVerifyDeviceAsync(Guid id)
-    {
-        var url = $"/account/device/verify?device={id}";
-        RouteManager.Route(url);
-    }
-
-    private void OnBlockDeviceAsync(Guid id)
-    {
-        var url = $"/account/device/block?device={id}";
-        RouteManager.Route(url);
-    }
-
-    private void OnUnblockDeviceAsync(Guid id)
-    {
-        var url = $"/account/device/unblock?device={id}";
-        RouteManager.Route(url);
-    }
-
 }

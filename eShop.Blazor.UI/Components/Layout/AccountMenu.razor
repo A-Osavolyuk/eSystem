@@ -52,12 +52,38 @@
             Icon="@Icons.Material.Filled.AccountBox">
             Profile
         </MudNavLink>
+        <MudDivider Class="my-2" />
         <MudNavLink
             OnClick="@(() => NavigateAsync("/account/security"))"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Security">
-            Security
+            Password and authentication
         </MudNavLink>
+        <MudNavLink
+            OnClick="@(() => NavigateAsync("/account/devices"))"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Devices">
+            Devices
+        </MudNavLink>
+        <MudNavLink
+            OnClick="@(() => NavigateAsync("/account/emails"))"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Email">
+            Emails
+        </MudNavLink>
+        <MudNavLink
+            OnClick="@(() => NavigateAsync("/account/phone-numbers"))"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Smartphone">
+            Phone numbers
+        </MudNavLink>
+        <MudNavLink
+            OnClick="@(() => NavigateAsync("/account/recovery"))"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Autorenew">
+            Account recovery
+        </MudNavLink>
+        <MudDivider Class="my-2" />
         <MudNavLink
             OnClick="@(() => NavigateAsync("/account/orders"))"
             Match="NavLinkMatch.All"
@@ -76,9 +102,8 @@
             Icon="@Icons.Material.Filled.Settings">
             Settings
         </MudNavLink>
-        <MudDivider/>
+        <MudDivider Class="my-2"/>
         <MudNavLink
-            Class="mt-2"
             Match="NavLinkMatch.All"
             OnClick="@(async () => await LogoutClick())"
             Icon="@Icons.Material.Filled.Logout">
