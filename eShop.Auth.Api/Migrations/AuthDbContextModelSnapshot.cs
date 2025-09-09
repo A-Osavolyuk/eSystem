@@ -592,12 +592,6 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRecovery")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
@@ -611,6 +605,10 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<DateTimeOffset?>("RecoveryDate")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
@@ -782,9 +780,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
@@ -795,6 +790,10 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<DateTimeOffset?>("PrimaryDate")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
