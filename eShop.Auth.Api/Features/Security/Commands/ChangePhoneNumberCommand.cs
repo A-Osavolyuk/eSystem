@@ -18,12 +18,13 @@ public sealed class RequestChangePhoneNumberCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        
-        if(!user.HasPhoneNumber()) return Results.BadRequest("User does not have a phone number.");
-        
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary);
+
+        if (request.Request.Type is PhoneNumberType.Secondary)
+            return Results.BadRequest("Cannot change a secondary phone number.");
+
+        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type == request.Request.Type);
         if (userPhoneNumber is null) return Results.BadRequest("User's phone number is missing.");
-        
+
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
@@ -40,9 +41,9 @@ public sealed class RequestChangePhoneNumberCommandHandler(
 
         if (!newPhoneNumberVerificationResult.Succeeded) return newPhoneNumberVerificationResult;
 
-        var result = await userManager.ChangePhoneNumberAsync(user, userPhoneNumber.PhoneNumber, 
+        var result = await userManager.ChangePhoneNumberAsync(user, userPhoneNumber.PhoneNumber,
             request.Request.NewPhoneNumber, cancellationToken);
-        
+
         return result;
     }
 }

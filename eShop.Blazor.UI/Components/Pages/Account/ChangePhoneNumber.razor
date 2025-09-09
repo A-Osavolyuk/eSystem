@@ -343,6 +343,7 @@
         var request = new ChangePhoneNumberRequest()
         {
             UserId = UserState.UserId,
+            Type = PhoneNumberType.Primary,
             NewPhoneNumber = ChangePhoneNumberModel.NewPhoneNumber,
         };
 

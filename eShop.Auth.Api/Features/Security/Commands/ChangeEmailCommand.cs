@@ -19,11 +19,12 @@ public sealed class RequestChangeEmailCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
-        if (!user.HasEmail()) return Results.BadRequest("User does not have an email address.");
+        if (request.Request.Type is EmailType.Secondary)
+            return Results.BadRequest("Cannot change a secondary phone number.");
 
-        var currentEmail = user.Emails.FirstOrDefault(x => x.Type is EmailType.Primary);
+        var currentEmail = user.Emails.FirstOrDefault(x => x.Type == request.Request.Type);
         if (currentEmail is null) return Results.BadRequest("User's primary email address is missing");
-        
+
         if (identityOptions.Account.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
