@@ -113,7 +113,7 @@
 }
 
 @code {
-    [Parameter] public UserSecurityModel Model { get; set; } = new();
+    [Parameter] public UserDevicesModel Model { get; set; } = new();
     [Parameter] public EventCallback<Guid> OnVerify { get; set; }
     [Parameter] public EventCallback<Guid> OnBlock { get; set; }
     [Parameter] public EventCallback<Guid> OnUnblock { get; set; }

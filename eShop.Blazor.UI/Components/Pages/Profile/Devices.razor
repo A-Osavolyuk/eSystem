@@ -10,13 +10,13 @@
 
 <Title Text="Device and sessions"></Title>
 
-@if (SecurityModel is not null)
+@if (Model is not null)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
             <MudStack Spacing="2" Justify="Justify.Center">
                 <DevicesSection
-                    Model="SecurityModel"
+                    Model="Model"
                     OnVerify="@((value) => OnVerifyDeviceAsync(value))"
                     OnBlock="@((value) => OnBlockDeviceAsync(value))"
                     OnUnblock="@((value) => OnUnblockDeviceAsync(value))"/>
@@ -26,7 +26,7 @@
 }
 
 @code {
-    private UserSecurityModel? SecurityModel { get; set; }
+    private UserDevicesModel? Model { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -43,9 +43,9 @@
 
         if (result.Success)
         {
-            var response = result.Get<UserSecurityDto>()!;
+            var devices = result.Get<List<UserDeviceDto>>()!;
 
-            SecurityModel = Mapper.Map(response);
+            Model = new UserDevicesModel() { Devices = devices };
             await UserState.Change();
         }
         else
