@@ -5,7 +5,7 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
 
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]/{id:guid}")]
 [ApiController]
 [ApiVersion("1.0")]
 [Authorize]
@@ -16,7 +16,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user")]
     [EndpointDescription("Gets user")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}")]
+    [HttpGet]
     public async ValueTask<IActionResult> GetUserAsync(Guid id)
     {
         var result = await sender.Send(new GetUserQuery(id));
@@ -29,7 +29,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user state")]
     [EndpointDescription("Gets user state")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/state")]
+    [HttpGet("state")]
     public async ValueTask<IActionResult> GetUserStateAsync(Guid id)
     {
         var result = await sender.Send(new GetUserStateQuery(id));
@@ -39,10 +39,23 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Get user emails")]
+    [EndpointDescription("Gets user emails")]
+    [ProducesResponseType(200)]
+    [HttpGet("emails")]
+    public async ValueTask<IActionResult> GetUserEmailsAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserEmailsQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Get user personal data")]
     [EndpointDescription("Gets user personal data")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/personal")]
+    [HttpGet("personal")]
     public async ValueTask<IActionResult> GetUserPersonalDataAsync(Guid id)
     {
         var result = await sender.Send(new GetUserPersonalQuery(id));
@@ -55,7 +68,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user security data")]
     [EndpointDescription("Gets user security data")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/security")]
+    [HttpGet("security")]
     public async ValueTask<IActionResult> GetUserSecurityDataAsync(Guid id)
     {
         var result = await sender.Send(new GetUserSecurityQuery(id));
@@ -68,7 +81,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user roles")]
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/roles")]
+    [HttpGet("roles")]
     public async ValueTask<IActionResult> GetUserRolesAsync(Guid id)
     {
         var result = await sender.Send(new GetUserRolesQuery(id));
@@ -81,7 +94,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get lockout state")]
     [EndpointDescription("Get lockout state")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/lockout")]
+    [HttpGet("lockout")]
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetStateAsync(Guid id)
     {
@@ -95,7 +108,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Get user two-factor providers")]
     [EndpointDescription("Get user two-factor providers")]
     [ProducesResponseType(200)]
-    [HttpGet("{id:guid}/2fa/providers")]
+    [HttpGet("2fa/providers")]
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserTwoFactorProvidersState(Guid id)
     {
@@ -112,7 +125,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Change username")]
     [EndpointDescription("Change username")]
     [ProducesResponseType(200)]
-    [HttpPatch("{id:guid}/username")]
+    [HttpPatch("username")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ChangeUsernameAsync([FromBody] ChangeUsernameRequest request)
     {
@@ -125,7 +138,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Add personal data")]
     [EndpointDescription("Add personal data")]
     [ProducesResponseType(200)]
-    [HttpPost("{id:guid}/personal")]
+    [HttpPost("personal")]
     [ValidationFilter]
     public async ValueTask<IActionResult> AddPersonalDataAsync([FromBody] AddPersonalDataRequest request)
     {
@@ -139,7 +152,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Change personal data")]
     [EndpointDescription("Change personal data")]
     [ProducesResponseType(200)]
-    [HttpPut("{id:guid}/personal")]
+    [HttpPut("personal")]
     [ValidationFilter]
     public async ValueTask<IActionResult> ChangePersonalDataAsync([FromBody] ChangePersonalDataRequest request)
     {
@@ -153,7 +166,7 @@ public class UsersController(ISender sender) : ControllerBase
     [EndpointSummary("Remove personal data")]
     [EndpointDescription("Remove personal data")]
     [ProducesResponseType(200)]
-    [HttpDelete("{id:guid}/personal")]
+    [HttpDelete("personal")]
     [ValidationFilter]
     public async ValueTask<IActionResult> RemovePersonalDataAsync([FromBody] RemovePersonalDataRequest request)
     {
