@@ -1,0 +1,116 @@
+﻿@using eShop.Blazor.Application.Routing
+@inject RouteManager RouteManager
+
+@if (Model is not null)
+{
+    <MudPaper Outlined="true" Class="pa-3">
+        <MudStack Spacing="1">
+            <MudStack Row="true" Spacing="1">
+                <MudText Typo="Typo.h6">Recovery email</MudText>
+            @if (Model.RecoveryEmail is null)
+            {
+                <MudSpacer/>
+                <MudTooltip Text="Add recovery email">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Add"
+                        Color="Color.Primary"
+                        Variant="Variant.Filled"
+                        OnClick="@(() => RouteManager.Route("/account/recovery-email/add"))"/>
+                </MudTooltip>
+            }
+        </MudStack>
+        @if (Model.RecoveryEmail is not null)
+        {
+            <MudStack Row="true" Spacing="1">
+                <MudText Class="pt-1"> @Model.RecoveryEmail.Email </MudText>
+                @if (Model.RecoveryEmail.IsVerified && Model.RecoveryEmail.VerifiedDate.HasValue)
+                {
+                    <MudTooltip
+                        Text="@($"Verified at: {Model.RecoveryEmail.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Color="Color.Success"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Verified
+                        </MudChip>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudTooltip Text="This email address is not verified">
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Color="Color.Error"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Unverified
+                        </MudChip>
+                    </MudTooltip>
+                }
+                @if (Model.RecoveryEmail.UpdateDate.HasValue)
+                {
+                    <MudTooltip
+                        Text="@($"Last change: {Model.RecoveryEmail.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Color="Color.Warning"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Changed
+                        </MudChip>
+                    </MudTooltip>
+                }
+                <MudSpacer/>
+                @if (!Model.RecoveryEmail.IsVerified)
+                {
+                    <MudTooltip Text="Verify recovery email">
+                        <MudIconButton
+                            Icon="@Icons.Material.Filled.Check"
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            OnClick="@(() => RouteManager.Route("/account/recovery-email/verify"))"/>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudTooltip Text="Remove recovery email">
+                        <MudIconButton
+                            Icon="@Icons.Material.Filled.Delete"
+                            Color="Color.Error"
+                            Variant="Variant.Filled"
+                            OnClick="@(() => RouteManager.Route("/account/recovery-email/remove"))"/>
+                    </MudTooltip>
+                    <MudTooltip Text="Change recovery email">
+                        <MudIconButton
+                            Icon="@Icons.Material.Filled.Edit"
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            OnClick="@(() => RouteManager.Route("/account/recovery-email/change"))"/>
+                    </MudTooltip>
+                }
+            </MudStack>
+        }
+        @if (Model.RecoveryEmail is null)
+        {
+            <MudText Class="opacity-50" Typo="Typo.caption">
+                Recovery email address is not provided. Please, provide recovery email address.
+                Otherwise, you will not be able to recovery access to your account.
+            </MudText>
+        }
+        else
+        {
+            <MudText Class="opacity-50" Typo="Typo.caption">
+                This email address is default for eAccount account access recover.
+            </MudText>
+        }
+        </MudStack>
+    </MudPaper>
+}
+
+@code {
+    [Parameter] public UserEmailsModel? Model { get; set; }
+}
