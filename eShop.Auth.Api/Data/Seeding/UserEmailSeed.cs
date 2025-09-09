@@ -18,7 +18,6 @@ public class UserEmailSeed : Seed<UserEmailEntity>
                 IsVerified = true,
                 CreateDate = DateTimeOffset.UtcNow,
                 VerifiedDate = DateTimeOffset.UtcNow,
-                PrimaryDate = DateTimeOffset.UtcNow,
             }
         ];
     }
