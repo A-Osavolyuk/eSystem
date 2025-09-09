@@ -20,7 +20,7 @@ public class AddEmailCommandHandler(
             >= identityOptions.Account.PrimaryEmailMaxCount && request.Request.Type is EmailType.Primary) 
             return Results.BadRequest("User already has a primary email.");
 
-        if (user.Emails.Count(x => x.Type is EmailType.Secondary) 
+        if (user.Emails.Count(x => x.Type is EmailType.Recovery) 
             >= identityOptions.Account.RecoveryEmailMaxCount && request.Request.Type is EmailType.Recovery) 
             return Results.BadRequest("User already has a recovery email.");
 
