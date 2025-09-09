@@ -6,6 +6,8 @@ namespace eShop.Blazor.Domain.Interfaces;
 public interface IUserService
 {
     public ValueTask<HttpResponse> GetUserAsync(Guid id);
+    public ValueTask<HttpResponse> GetUserEmailsAsync(Guid id);
+    public ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id);
     public ValueTask<HttpResponse> GetUserStateAsync(Guid id);
     public ValueTask<HttpResponse> GetUserSecurityDataAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPersonalDataAsync(Guid id);
