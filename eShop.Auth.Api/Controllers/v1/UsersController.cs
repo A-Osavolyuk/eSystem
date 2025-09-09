@@ -91,6 +91,19 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Get user devices")]
+    [EndpointDescription("Gets user devices")]
+    [ProducesResponseType(200)]
+    [HttpGet("devices")]
+    public async ValueTask<IActionResult> GetUserDevicesAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserDevicesQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Get user roles")]
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
