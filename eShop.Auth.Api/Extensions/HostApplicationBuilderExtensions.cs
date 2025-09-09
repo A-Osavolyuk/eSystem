@@ -102,6 +102,14 @@ public static class HostApplicationBuilderExtensions
             options.Account.RequireUniqueRecoveryEmail = true;
             options.Account.RequireUniquePhoneNumber = true;
             options.Account.RequireUniqueUserName = true;
+            
+            options.Account.PrimaryEmailMaxCount = 1;
+            options.Account.SecondaryEmailMaxCount = 3;
+            options.Account.RecoveryEmailMaxCount = 1;
+
+            options.Account.PrimaryPhoneNumberMaxCount = 1;
+            options.Account.SecondaryPhoneNumberMaxCount = 3;
+            options.Account.RecoveryPhoneNumberMaxCount = 1;
 
             options.SignIn.AllowUserNameLogin = true;
             options.SignIn.AllowEmailLogin = true;

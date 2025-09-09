@@ -16,18 +16,23 @@ public class AddPhoneNumberCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
-        if (user.PhoneNumbers.Count(x => x.IsPrimary) >= 1 && request.Request.IsPrimary)
+        if (user.PhoneNumbers.Count(x => x.IsPrimary)
+            >= identityOptions.Account.PrimaryPhoneNumberMaxCount && request.Request.IsPrimary)
             return Results.BadRequest("User already has a primary phone number.");
-        
+
+        if (user.PhoneNumbers.Count(x => !x.IsPrimary)
+            >= identityOptions.Account.SecondaryPhoneNumberMaxCount && !request.Request.IsPrimary)
+            return Results.BadRequest("User already has maximum count of secondary phone numbers.");
+
         if (identityOptions.Account.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
-        
-        var result = await userManager.AddPhoneNumberAsync(user, request.Request.PhoneNumber, 
+
+        var result = await userManager.AddPhoneNumberAsync(user, request.Request.PhoneNumber,
             request.Request.IsPrimary, cancellationToken);
-        
+
         if (!result.Succeeded) return result;
 
         return Result.Success();

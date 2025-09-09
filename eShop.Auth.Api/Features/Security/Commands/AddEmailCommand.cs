@@ -18,12 +18,17 @@ public class AddEmailCommandHandler(
 
         if (request.Request is { IsRecovery: true, IsPrimary: true })
             return Results.BadRequest("Same email cannot be primary and recovery at the same time.");
-        
-        if (user.Emails.Count(x => x.IsPrimary) >= 1 && request.Request.IsPrimary)
-            return Results.BadRequest("User already has a primary email.");
 
-        if (user.Emails.Count(x => x.IsRecovery) >= 1 && request.Request.IsRecovery)
-            return Results.BadRequest("User already has a recovery email.");
+        if (user.Emails.Count(x => x.IsPrimary) >= identityOptions.Account.PrimaryEmailMaxCount
+            && request.Request.IsPrimary) return Results.BadRequest("User already has a primary email.");
+
+        if (user.Emails.Count(x => x.IsRecovery) >= identityOptions.Account.RecoveryEmailMaxCount
+            && request.Request.IsRecovery) return Results.BadRequest("User already has a recovery email.");
+
+        if (user.Emails.Count(x => x is { IsPrimary: false, IsRecovery: false })
+            >= identityOptions.Account.SecondaryEmailMaxCount
+            && request.Request is { IsPrimary: false, IsRecovery: false })
+            return Results.BadRequest("User already has maximum count of secondary emails.");
 
         if (identityOptions.Account.RequireUniqueEmail)
         {
