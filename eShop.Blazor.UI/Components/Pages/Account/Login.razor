@@ -123,9 +123,17 @@
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
-                    Forget your password?
+                    Forgot your password?
                     <MudLink OnClick="@(() => RouteManager.Route("/account/password/forgot"))">
                         Reset password
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center">
+                    Lost access to your account?
+                    <MudLink OnClick="@(() => RouteManager.Route("/account/recover"))">
+                        Recover account
                     </MudLink>
                 </MudText>
             </MudPaper>
