@@ -70,6 +70,20 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Recover account")]
+    [EndpointDescription("Recover account")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("account/recover")]
+    public async ValueTask<IActionResult> UnlockAsync([FromBody] RecoverAccountRequest request)
+    {
+        var result = await sender.Send(new RecoverAccountCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Check account")]
     [EndpointDescription("Check account")]
     [ProducesResponseType(200)]
