@@ -6,14 +6,34 @@ public interface IUserManager
     public ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default);
-
+    
     public ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
+        CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> AsPrimaryAsync(UserEntity user, UserEmailEntity email, 
+        CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> AsSecondaryAsync(UserEntity user, UserEmailEntity email, 
+        CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> AsRecoveryAsync(UserEntity user, UserEmailEntity email, 
+        CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> AsPrimaryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber, 
+        CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> AsSecondaryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber, 
+        CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> AsRecoveryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber, 
         CancellationToken cancellationToken = default);
     
     public ValueTask<Result> SetEmailAsync(UserEntity user, string email, 
         EmailType type, CancellationToken cancellationToken = default);
+    
     public ValueTask<Result> SetPhoneNumberAsync(UserEntity user, string phoneNumber, 
         PhoneNumberType type, CancellationToken cancellationToken = default);
+    
     public ValueTask<Result> SetUsernameAsync(UserEntity user, string username, 
         CancellationToken cancellationToken = default);
 
@@ -65,9 +85,9 @@ public interface IUserManager
     public ValueTask<Result> ChangePasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default);
 
-    public bool CheckPassword(UserEntity user, string password);
-
     public ValueTask<bool> IsUsernameTakenAsync(string userName, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken = default);
     public ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber, CancellationToken cancellationToken = default);
+    
+    public bool CheckPassword(UserEntity user, string password);
 }

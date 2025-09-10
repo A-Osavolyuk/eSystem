@@ -39,8 +39,7 @@ public sealed class UserManager(
         var normalizedEmail = email.ToUpper();
         var user = await context.Users
             .Include(x => x.Emails)
-            .Where(x => x.Emails.Any(
-                e => e.NormalizedEmail == normalizedEmail && e.Type == EmailType.Primary))
+            .Where(x => x.Emails.Any(e => e.NormalizedEmail == normalizedEmail && e.Type == EmailType.Primary))
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -115,8 +114,7 @@ public sealed class UserManager(
     {
         var user = await context.Users
             .Include(x => x.PhoneNumbers)
-            .Where(x => x.PhoneNumbers.Any(
-                p => p.PhoneNumber == phoneNumber && p.Type == PhoneNumberType.Primary))
+            .Where(x => x.PhoneNumbers.Any(p => p.PhoneNumber == phoneNumber && p.Type == PhoneNumberType.Primary))
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -137,12 +135,132 @@ public sealed class UserManager(
         return user;
     }
 
-    public async ValueTask<Result> SetEmailAsync(UserEntity user, string email, EmailType type, 
+    public async ValueTask<Result> AsPrimaryAsync(UserEntity user, UserEmailEntity email,
+        CancellationToken cancellationToken = default)
+    {
+        var primaryEmail = user.Emails.FirstOrDefault(x => x.Type == EmailType.Primary);
+        if (primaryEmail is null) return Results.BadRequest("User does not have a primary email");
+
+        primaryEmail.Type = EmailType.Secondary;
+        primaryEmail.UpdateDate = DateTimeOffset.UtcNow;
+
+        email.Type = EmailType.Primary;
+        email.UpdateDate = DateTimeOffset.UtcNow;
+
+        user.UpdateDate = DateTimeOffset.UtcNow;
+
+        context.Users.Update(user);
+        context.UserEmails.UpdateRange(primaryEmail, email);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> AsSecondaryAsync(UserEntity user, UserEmailEntity email,
+        CancellationToken cancellationToken = default)
+    {
+        if (email.Type == EmailType.Primary)
+            return Results.BadRequest("Cannot set the email primary email as secondary");
+
+        email.Type = EmailType.Secondary;
+        email.UpdateDate = DateTimeOffset.UtcNow;
+
+        user.UpdateDate = DateTimeOffset.UtcNow;
+
+        context.Users.Update(user);
+        context.UserEmails.UpdateRange(email);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> AsRecoveryAsync(UserEntity user, UserEmailEntity email,
+        CancellationToken cancellationToken = default)
+    {
+        var recoveryEmail = user.Emails.FirstOrDefault(x => x.Type == EmailType.Recovery);
+        if (recoveryEmail is null) return Results.BadRequest("User does not have a recovery email");
+
+        recoveryEmail.Type = EmailType.Secondary;
+        recoveryEmail.UpdateDate = DateTimeOffset.UtcNow;
+
+        email.Type = EmailType.Recovery;
+        email.UpdateDate = DateTimeOffset.UtcNow;
+
+        user.UpdateDate = DateTimeOffset.UtcNow;
+
+        context.Users.Update(user);
+        context.UserEmails.UpdateRange(recoveryEmail, email);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> AsPrimaryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var primaryPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Primary);
+        if (primaryPhoneNumber is null) return Results.BadRequest("User does not have a primary phone number");
+
+        primaryPhoneNumber.Type = PhoneNumberType.Secondary;
+        primaryPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
+
+        phoneNumber.Type = PhoneNumberType.Primary;
+        phoneNumber.UpdateDate = DateTimeOffset.UtcNow;
+
+        user.UpdateDate = DateTimeOffset.UtcNow;
+
+        context.Users.Update(user);
+        context.UserPhoneNumbers.UpdateRange(primaryPhoneNumber, phoneNumber);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> AsSecondaryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber,
+        CancellationToken cancellationToken = default)
+    {
+        if (phoneNumber.Type == PhoneNumberType.Primary)
+            return Results.BadRequest("Cannot set the primary phone number as secondary");
+
+        phoneNumber.Type = PhoneNumberType.Secondary;
+        phoneNumber.UpdateDate = DateTimeOffset.UtcNow;
+
+        user.UpdateDate = DateTimeOffset.UtcNow;
+
+        context.Users.Update(user);
+        context.UserPhoneNumbers.UpdateRange(phoneNumber);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> AsRecoveryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var recoveryPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Recovery);
+        if (recoveryPhoneNumber is null) return Results.BadRequest("User does not have a primary phone number");
+
+        recoveryPhoneNumber.Type = PhoneNumberType.Secondary;
+        recoveryPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
+
+        phoneNumber.Type = PhoneNumberType.Recovery;
+        phoneNumber.UpdateDate = DateTimeOffset.UtcNow;
+
+        user.UpdateDate = DateTimeOffset.UtcNow;
+
+        context.Users.Update(user);
+        context.UserPhoneNumbers.UpdateRange(recoveryPhoneNumber, phoneNumber);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> SetEmailAsync(UserEntity user, string email, EmailType type,
         CancellationToken cancellationToken = default)
     {
         if (user.Emails.Any(x => x.Email == email))
             return Results.BadRequest("User already has this email");
-        
+
         var userEmail = new UserEmailEntity()
         {
             Id = Guid.CreateVersion7(),
@@ -154,9 +272,9 @@ public sealed class UserManager(
             VerifiedDate = DateTimeOffset.UtcNow,
             CreateDate = DateTimeOffset.UtcNow
         };
-        
+
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.UserEmails.AddAsync(userEmail, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
@@ -180,22 +298,23 @@ public sealed class UserManager(
             VerifiedDate = DateTimeOffset.UtcNow,
             CreateDate = DateTimeOffset.UtcNow
         };
-        
+
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
-    public async ValueTask<Result> SetUsernameAsync(UserEntity user, string username, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> SetUsernameAsync(UserEntity user, string username,
+        CancellationToken cancellationToken = default)
     {
         user.Username = username;
         user.UsernameChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -207,7 +326,7 @@ public sealed class UserManager(
     {
         var userEmail = user.Emails.FirstOrDefault(x => x.Email == email);
         if (userEmail == null) return Results.NotFound($"User doesn't have email {email}");
-        
+
         userEmail.IsVerified = true;
         userEmail.VerifiedDate = DateTimeOffset.UtcNow;
         userEmail.CreateDate = DateTimeOffset.UtcNow;
@@ -225,7 +344,7 @@ public sealed class UserManager(
     {
         var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
         if (userPhoneNumber == null) return Results.NotFound($"User doesn't have phone number {phoneNumber}");
-        
+
         userPhoneNumber.IsVerified = true;
         userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
         userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
@@ -258,13 +377,13 @@ public sealed class UserManager(
     {
         var userEmail = user.Emails.FirstOrDefault(x => x.Email == currentEmail);
         if (userEmail is null) return Results.NotFound($"User doesn't have email {currentEmail}");
-        
+
         userEmail.Email = newEmail;
         userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
         userEmail.IsVerified = true;
         userEmail.VerifiedDate = DateTimeOffset.UtcNow;
         userEmail.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
@@ -279,7 +398,7 @@ public sealed class UserManager(
     {
         var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == currentPhoneNumber);
         if (userPhoneNumber is null) return Results.NotFound($"User doesn't have phone number {currentPhoneNumber}");
-        
+
         userPhoneNumber.PhoneNumber = newPhoneNumber;
         userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
         userPhoneNumber.IsVerified = true;
@@ -298,9 +417,9 @@ public sealed class UserManager(
     {
         var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
         if (userPhoneNumber == null) return Results.NotFound($"User doesn't have phone number {phoneNumber}");
-            
+
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         context.UserPhoneNumbers.Remove(userPhoneNumber);
         await context.SaveChangesAsync(cancellationToken);
@@ -327,13 +446,13 @@ public sealed class UserManager(
     {
         var userEmail = user.Emails.FirstOrDefault(x => x.Email == currentEmail);
         if (userEmail is null) return Results.NotFound($"User doesn't have email {currentEmail}");
-        
+
         userEmail.Email = newEmail;
         userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
         userEmail.IsVerified = true;
         userEmail.VerifiedDate = DateTimeOffset.UtcNow;
         userEmail.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
@@ -348,7 +467,7 @@ public sealed class UserManager(
     {
         var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == currentPhoneNumber);
         if (userPhoneNumber is null) return Results.NotFound($"User doesn't have phone number {currentPhoneNumber}");
-        
+
         userPhoneNumber.PhoneNumber = newPhoneNumber;
         userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
         userPhoneNumber.IsVerified = true;
@@ -362,7 +481,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber, 
+    public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber,
         PhoneNumberType type, CancellationToken cancellationToken = default)
     {
         if (user.PhoneNumbers.Any(x => x.PhoneNumber == phoneNumber))
@@ -386,7 +505,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddEmailAsync(UserEntity user, string email, 
+    public async ValueTask<Result> AddEmailAsync(UserEntity user, string email,
         EmailType type, CancellationToken cancellationToken = default)
     {
         if (user.Emails.Any(x => x.Email == email))
@@ -452,7 +571,7 @@ public sealed class UserManager(
             var passwordHash = hasher.Hash(password);
             user.PasswordHash = passwordHash;
         }
-        
+
         user.NormalizedUsername = user.Username.ToUpper();
         user.CreateDate = DateTimeOffset.UtcNow;
 
@@ -533,7 +652,7 @@ public sealed class UserManager(
     {
         var normalizedEmail = email.ToUpper();
         var result = await context.UserEmails.AnyAsync(
-            u => u.NormalizedEmail == normalizedEmail , cancellationToken);
+            u => u.NormalizedEmail == normalizedEmail, cancellationToken);
 
         return result;
     }
@@ -543,7 +662,7 @@ public sealed class UserManager(
     {
         var result = await context.UserPhoneNumbers
             .AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
-        
+
         return result;
     }
 }
