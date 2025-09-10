@@ -73,7 +73,7 @@
                                     Icon="@Icons.Material.Filled.Check"
                                     Color="Color.Primary"
                                     Variant="Variant.Filled"
-                                    OnClick="@(() => RouteManager.Route("/account/secondary-email/verify"))"/>
+                                    OnClick="@(() => OnVerify(email.Email))"/>
                             </MudTooltip>
                         }
                         else
@@ -83,7 +83,7 @@
                                     Icon="@Icons.Material.Filled.Delete"
                                     Color="Color.Error"
                                     Variant="Variant.Filled"
-                                    OnClick="@(() => RouteManager.Route("/account/secondary-email/remove"))"/>
+                                    OnClick="@(() => OnRemove(email.Email))"/>
                             </MudTooltip>
                         }
                     </MudStack>
@@ -108,4 +108,14 @@
 
 @code {
     [Parameter] public UserEmailsModel? Model { get; set; }
+
+    private void OnVerify(string email)
+    {
+        RouteManager.Route($"/account/secondary-email/verify?email={email}");
+    }
+    
+    private void OnRemove(string email)
+    {
+        RouteManager.Route($"/account/secondary-email/remove?email={email}");
+    }
 }
