@@ -209,7 +209,7 @@
 
         var result = await DeviceService.BlockAsync(request);
 
-        if (result.Success) RouteManager.Route("/account/security");
+        if (result.Success) RouteManager.Route("/account/devices");
         else Snackbar.Add(result.Message, Severity.Error);
     }
 }

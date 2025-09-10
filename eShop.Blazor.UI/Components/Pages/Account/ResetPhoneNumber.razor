@@ -231,7 +231,7 @@
         if (result.Success)
         {
             Snackbar.Add("Phone number was successfully reset", Severity.Success);
-            RouteManager.Route("/account/profile");
+            RouteManager.Route("/account/phone-numbers");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
