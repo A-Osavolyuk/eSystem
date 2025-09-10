@@ -63,6 +63,11 @@
 
     private MudForm form = new();
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await SendCodeAsync();
+    }
+
     private async Task OnVerifyEmailAsync()
     {
         await form.Validate();
@@ -98,7 +103,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            RouteManager.Route("/account/login");
+            RouteManager.Route("/account/emails");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
