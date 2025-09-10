@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Common.Security.Constants;
+using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -18,6 +19,28 @@ public class RemoveEmailCommandHandler(
 
         var userEmail = user.Emails.FirstOrDefault(x => x.Email == request.Request.Email);
         if (userEmail is null) return Results.NotFound($"User doesn't have this email {request.Request.Email}.");
+
+        if (userEmail.Type == EmailType.Primary)
+        {
+            if (user.Passkeys.Count == 0)
+            {
+                return Results.BadRequest(
+                    "Cannot remove the primary email, because it is the only authentication method");
+            }
+            
+            if (user.TwoFactorProviders.Any(x => x is
+                    { Subscribed: true, TwoFactorProvider.Name: ProviderTypes.Email }))
+            {
+                return Results.BadRequest(
+                    "Cannot remove the primary email, because 2FA with Email is enabled.");
+            }
+
+            if (user.LinkedAccounts.Count >= 1)
+            {
+                return Results.BadRequest(
+                    "Cannot remove the primary email, because there are one or more linked accounts");
+            }
+        }
 
         var verificationResult = await verificationManager.VerifyAsync(user,
             CodeResource.Email, CodeType.Remove, cancellationToken);

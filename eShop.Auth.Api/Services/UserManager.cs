@@ -311,8 +311,7 @@ public sealed class UserManager(
     public async ValueTask<Result> RemoveEmailAsync(UserEntity user, string email,
         CancellationToken cancellationToken = default)
     {
-        var userEmail = user.Emails.FirstOrDefault(x => x.Email == email);
-        if (userEmail is null) return Results.NotFound($"User doesn't have email {email}");
+        var userEmail = user.Emails.First(x => x.Email == email);
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
