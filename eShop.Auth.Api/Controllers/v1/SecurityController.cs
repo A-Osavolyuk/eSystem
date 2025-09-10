@@ -69,6 +69,21 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Check account")]
+    [EndpointDescription("Check account")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("account/check")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> UnlockAsync([FromBody] CheckAccountRequest request)
+    {
+        var result = await sender.Send(new CheckAccountCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Add password")]
     [EndpointDescription("Add password")]
