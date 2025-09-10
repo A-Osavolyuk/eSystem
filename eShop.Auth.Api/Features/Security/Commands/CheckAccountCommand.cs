@@ -20,13 +20,41 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
             response = new CheckAccountResponse { Exists = false };
             return Result.Success(response);
         }
+
+        if (user.LockoutState.Enabled)
+        {
+            response = new CheckAccountResponse
+            {
+                Exists = true,
+                UserId = user.Id,
+                IsLockedOut = user.LockoutState.Enabled,
+            };
+            
+            return Result.Success(response);
+        }
+        
+        var recoveryEmail = user.Emails.FirstOrDefault(x => x.Type == EmailType.Recovery);
+
+        if (recoveryEmail is null)
+        {
+            response = new CheckAccountResponse
+            {
+                Exists = true,
+                UserId = user.Id,
+                HasRecoveryEmail = false,
+            };
+            
+            return Result.Success(response);
+        }
         
         response = new CheckAccountResponse
         {
             Exists = true,
             UserId = user.Id,
-            IsLockedOut = user.LockoutState.Enabled
+            HasRecoveryEmail = true,
+            RecoveryEmail = recoveryEmail.Email
         };
+        
         return Result.Success(response);
     }
 }
