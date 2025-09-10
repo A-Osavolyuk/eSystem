@@ -123,7 +123,7 @@
             Sender = SenderType.Email,
             Payload =
             {
-                { "Email", UserState.Credentials?.RecoveryEmail! }
+                { "Email", Email }
             }
         };
 
@@ -141,7 +141,7 @@
             Sender = SenderType.Email,
             Payload =
             {
-                { "Email", UserState.Credentials?.RecoveryEmail! }
+                { "Email", Email }
             }
         };
 
@@ -178,7 +178,7 @@
         var request = new RemoveEmailRequest()
         {
             UserId = UserState.UserId,
-            Email = UserState.Credentials?.RecoveryEmail!
+            Email = Email
         };
 
         var result = await SecurityService.RemoveEmailAsync(request);

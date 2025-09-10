@@ -231,7 +231,7 @@
         if (result.Success)
         {
             Snackbar.Add("Email was successfully reset", Severity.Success);
-            RouteManager.Route("/account/profile");
+            RouteManager.Route("/account/emails");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

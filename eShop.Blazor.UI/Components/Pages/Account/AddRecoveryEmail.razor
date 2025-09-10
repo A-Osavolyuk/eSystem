@@ -216,7 +216,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            RouteManager.Route("/account/security");
+            RouteManager.Route("/account/emails");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
