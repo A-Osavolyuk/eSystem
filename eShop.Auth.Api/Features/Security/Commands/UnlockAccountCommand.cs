@@ -4,7 +4,7 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 
 public record UnlockAccountCommand(UnlockAccountRequest Request, HttpContext Context) : IRequest<Result>;
 
-public class RecoverAccountCommandHandler(
+public class UnlockAccountCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
     ILockoutManager lockoutManager,
