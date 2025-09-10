@@ -79,4 +79,9 @@ public enum CodeType
     /// Represents unsubscription to (Two-Factor Authentication) 2FA provider
     /// </summary>
     Unsubscribe,
+    
+    /// <summary>
+    /// Represents user's account access recovery
+    /// </summary>
+    Recover,
 }
