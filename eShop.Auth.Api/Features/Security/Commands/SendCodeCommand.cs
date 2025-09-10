@@ -58,6 +58,20 @@ public class SendCodeCommandHandler(
                         { "UserName", user.Username }
                     }
                 },
+            { Resource: CodeResource.Email, Type: CodeType.Remove, Sender: SenderType.Email } =>
+                new RemoveEmailMessage
+                {
+                    Credentials = new()
+                    {
+                        { "To", payload["Email"] },
+                        { "Subject", "Email remove" },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.Username }
+                    }
+                },
             { Resource: CodeResource.Account, Type: CodeType.Unlock, Sender: SenderType.Email } =>
                 new AccountUnlockMessage()
                 {
