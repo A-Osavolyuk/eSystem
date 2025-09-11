@@ -186,11 +186,7 @@
             UserId = userId,
             Resource = CodeResource.Account,
             Type = CodeType.Recover,
-            Sender = SenderType.Email,
-            Payload =
-            {
-                { "Email", recoveryEmail! }
-            }
+            Sender = SenderType.Email
         };
 
         var response = await SecurityService.SendCodeAsync(request);
