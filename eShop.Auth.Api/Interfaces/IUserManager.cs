@@ -10,24 +10,6 @@ public interface IUserManager
     public ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
         CancellationToken cancellationToken = default);
     
-    public ValueTask<Result> AsPrimaryAsync(UserEntity user, UserEmailEntity email, 
-        CancellationToken cancellationToken = default);
-    
-    public ValueTask<Result> AsSecondaryAsync(UserEntity user, UserEmailEntity email, 
-        CancellationToken cancellationToken = default);
-    
-    public ValueTask<Result> AsRecoveryAsync(UserEntity user, UserEmailEntity email, 
-        CancellationToken cancellationToken = default);
-    
-    public ValueTask<Result> AsPrimaryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber, 
-        CancellationToken cancellationToken = default);
-    
-    public ValueTask<Result> AsSecondaryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber, 
-        CancellationToken cancellationToken = default);
-    
-    public ValueTask<Result> AsRecoveryAsync(UserEntity user, UserPhoneNumberEntity phoneNumber, 
-        CancellationToken cancellationToken = default);
-    
     public ValueTask<Result> SetEmailAsync(UserEntity user, string email, 
         EmailType type, CancellationToken cancellationToken = default);
     
