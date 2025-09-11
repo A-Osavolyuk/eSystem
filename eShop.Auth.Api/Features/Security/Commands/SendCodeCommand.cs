@@ -138,14 +138,14 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
+                        { "To", payload["Email"] },
                         { "Subject", "Email change (step one)" },
                     },
                     Payload = new()
                     {
                         { "Code", code },
                         { "UserName", user.Username },
-                        { "Email", payload["Email"] }
+                        { "NewEmail", payload["NewEmail"] }
                     }
                 },
             { Resource: CodeResource.LinkedAccount, Type: CodeType.Disallow, Sender: SenderType.Email } =>
