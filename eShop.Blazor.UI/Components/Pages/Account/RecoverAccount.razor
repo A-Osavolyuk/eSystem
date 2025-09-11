@@ -1,0 +1,244 @@
+﻿@page "/account/phone-number/add"
+
+@using eShop.Blazor.Application.Validation
+@using eShop.Blazor.Domain.Interfaces
+@using eShop.Blazor.Domain.Models
+@using Size = MudBlazor.Size
+
+@inherits PageBase
+
+@inject ISecurityService SecurityService
+@inject CodeModelValidator Validator
+
+<Title Text="Account recovery"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6" Style="margin-top: 100px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            Animation="true"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Search" Title="Search">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Account check
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudStack>
+                                            <MudForm
+                                                @ref="checkAccountForm"
+                                                Model="RecoverAccountModel">
+                                                <MudText Align="Align.Center" Typo="Typo.body1"
+                                                         Style="width: 55ch; margin: auto">
+                                                    To recover your account, we need first find your account and check
+                                                    access recovery requirements. If you have verified recovery email
+                                                    address, we will send recovery code via an email message, when you
+                                                    enter 6-digit recovery code from the email, we will set your recovery
+                                                    email address as primary. Please, enter your username.
+                                                </MudText>
+                                                <MudTextField
+                                                    Label="Username"
+                                                    For="@(() => RecoverAccountModel.Username)"
+                                                    Variant="Variant.Outlined"
+                                                    Immediate
+                                                    @bind-Value="RecoverAccountModel.Username"/>
+                                            </MudForm>
+                                            <MudLoadingButton
+                                                Size="Size.Large" FullWidth
+                                                Variant="Variant.Filled"
+                                                Class="mt-2"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await OnCheckAsync())">
+                                                Continue
+                                            </MudLoadingButton>
+                                        </MudStack>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Recovery">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Account recovery
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudForm
+                                            @ref="verifyCodeForm"
+                                            Model="CodeModel"
+                                            Validation="Validator.ValidateValue">
+                                            <MudStack Spacing="1">
+                                                <MudText Align="Align.Center" Typo="Typo.body1"
+                                                         Style="width: 55ch; margin: auto">
+                                                    Enter 6-digit code from the email we sent you to:
+                                                    <strong>@recoveryEmail</strong>
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="CodeModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    Size="Size.Large" FullWidth
+                                                    Variant="Variant.Filled"
+                                                    Class="mt-2"
+                                                    Color="Color.Primary"
+                                                    Disabled="@(CodeModel.Code.Length <= 5)"
+                                                    ButtonType="ButtonType.Button"
+                                                    OnClick="@(async () => await OnVerifyAsync())">
+                                                    Confirm
+                                                </MudLoadingButton>
+                                            </MudStack>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received an email?
+                                            <strong @onclick="async () => await SendCodeAsync()"
+                                                    class="cursor-pointer">Resend</strong>
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private RecoverAccountModel RecoverAccountModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel CodeModel { get; set; } = new();
+
+    private MudStepperExtended stepper = new();
+    private MudForm checkAccountForm = new();
+    private MudForm verifyCodeForm = new();
+
+    private Guid userId;
+    private string? recoveryEmail;
+
+    private async Task OnCheckAsync()
+    {
+        await checkAccountForm.Validate();
+
+        if (checkAccountForm.IsValid)
+        {
+            var request = new CheckAccountRequest()
+            {
+                Username = RecoverAccountModel.Username
+            };
+
+            var result = await SecurityService.CheckAccountAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<CheckAccountResponse>()!;
+
+                if (!response.Exists)
+                {
+                    const string message = "Account with such username doesn't exist. Please, check entered your name.";
+                    Snackbar.Add(message, Severity.Error);
+                }
+
+                if (!response.HasRecoveryEmail || string.IsNullOrEmpty(response.RecoveryEmail))
+                {
+                    const string message = "Your account exists, but doesn't have recovery email or it is not verified";
+                    Snackbar.Add(message, Severity.Error);
+                }
+
+                if (response.IsLockedOut)
+                {
+                    const string message = "Account is locked out";
+                    Snackbar.Add(message, Severity.Error);
+                }
+
+                userId = response.UserId;
+                recoveryEmail = response.RecoveryEmail;
+                
+                await StepNextAsync();
+                await SendCodeAsync();
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private async Task SendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = userId,
+            Resource = CodeResource.Account,
+            Type = CodeType.Recover,
+            Sender = SenderType.Email,
+            Payload =
+            {
+                { "Email", recoveryEmail! }
+            }
+        };
+
+        var response = await SecurityService.SendCodeAsync(request);
+
+        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        await verifyCodeForm.Validate();
+
+        if (verifyCodeForm.IsValid)
+        {
+            var request = new VerifyCodeRequest()
+            {
+                UserId = userId,
+                Resource = CodeResource.Account,
+                Type = CodeType.Recover,
+                Sender = SenderType.Email,
+                Code = CodeModel.Code
+            };
+
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new RecoverAccountRequest() { UserId = userId };
+        var result = await SecurityService.RecoverAccountAsync(request);
+
+        if (result.Success)
+        {
+            const string message = "Account was successfully recovered. Now sign-in with your recovery email";
+            Snackbar.Add(message, Severity.Success);
+            RouteManager.Route("/account/login");
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+    }
+
+}
