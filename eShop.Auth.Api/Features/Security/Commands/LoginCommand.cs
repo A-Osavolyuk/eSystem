@@ -68,7 +68,7 @@ public sealed class LoginCommandHandler(
         }
 
         if (identityOptions.SignIn.RequireConfirmedEmail 
-            && !user.Emails.Any(x => x is { Type: EmailType.Primary, IsVerified: false }))
+            && user.Emails.Any(x => x is { Type: EmailType.Primary, IsVerified: false }))
         {
             response = new LoginResponse()
             {
