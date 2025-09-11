@@ -1,8 +1,6 @@
-﻿@page "/account/phone-number/add"
+﻿@page "/account/recover"
 
 @using eShop.Blazor.Application.Validation
-@using eShop.Blazor.Domain.Interfaces
-@using eShop.Blazor.Domain.Models
 @using Size = MudBlazor.Size
 
 @inherits PageBase
@@ -31,17 +29,17 @@
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
                                         <MudStack>
+                                            <MudText Align="Align.Center" Typo="Typo.body1"
+                                                     Style="width: 55ch; margin: auto">
+                                                To recover your account, we need first find your account and check
+                                                access recovery requirements. If you have verified recovery email
+                                                address, we will send recovery code via an email message, when you
+                                                enter 6-digit recovery code from the email, we will set your recovery
+                                                email address as primary. Please, enter your username.
+                                            </MudText>
                                             <MudForm
                                                 @ref="checkAccountForm"
                                                 Model="RecoverAccountModel">
-                                                <MudText Align="Align.Center" Typo="Typo.body1"
-                                                         Style="width: 55ch; margin: auto">
-                                                    To recover your account, we need first find your account and check
-                                                    access recovery requirements. If you have verified recovery email
-                                                    address, we will send recovery code via an email message, when you
-                                                    enter 6-digit recovery code from the email, we will set your recovery
-                                                    email address as primary. Please, enter your username.
-                                                </MudText>
                                                 <MudTextField
                                                     Label="Username"
                                                     For="@(() => RecoverAccountModel.Username)"
@@ -76,17 +74,16 @@
                                         </MudText>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudForm
-                                            @ref="verifyCodeForm"
-                                            Model="CodeModel"
-                                            Validation="Validator.ValidateValue">
-                                            <MudStack Spacing="1">
-                                                <MudText Align="Align.Center" Typo="Typo.body1"
-                                                         Style="width: 55ch; margin: auto">
-                                                    Enter 6-digit code from the email we sent you to:
-                                                    <strong>@recoveryEmail</strong>
-                                                </MudText>
-
+                                        <MudStack Spacing="1">
+                                            <MudText Align="Align.Center" Typo="Typo.body1"
+                                                     Style="width: 55ch; margin: auto">
+                                                Enter 6-digit code from the email we sent you to:
+                                                <strong>@recoveryEmail</strong>
+                                            </MudText>
+                                            <MudForm
+                                                @ref="verifyCodeForm"
+                                                Model="CodeModel"
+                                                Validation="Validator.ValidateValue">
                                                 <MudCodeInput
                                                     Count="6"
                                                     Margin="Margin.Normal"
@@ -94,19 +91,18 @@
                                                     Class="d-flex align-items-center"
                                                     @bind-Value="CodeModel.Code"
                                                     Variant="Variant.Outlined"/>
-
-                                                <MudLoadingButton
-                                                    Size="Size.Large" FullWidth
-                                                    Variant="Variant.Filled"
-                                                    Class="mt-2"
-                                                    Color="Color.Primary"
-                                                    Disabled="@(CodeModel.Code.Length <= 5)"
-                                                    ButtonType="ButtonType.Button"
-                                                    OnClick="@(async () => await OnVerifyAsync())">
-                                                    Confirm
-                                                </MudLoadingButton>
-                                            </MudStack>
-                                        </MudForm>
+                                            </MudForm>
+                                            <MudLoadingButton
+                                                Size="Size.Large" FullWidth
+                                                Variant="Variant.Filled"
+                                                Class="mt-2"
+                                                Color="Color.Primary"
+                                                Disabled="@(CodeModel.Code.Length <= 5)"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await OnVerifyAsync())">
+                                                Confirm
+                                            </MudLoadingButton>
+                                        </MudStack>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">Didn't received an email?
@@ -156,30 +152,33 @@
                 {
                     const string message = "Account with such username doesn't exist. Please, check entered your name.";
                     Snackbar.Add(message, Severity.Error);
+                    return;
                 }
 
                 if (!response.HasRecoveryEmail || string.IsNullOrEmpty(response.RecoveryEmail))
                 {
                     const string message = "Your account exists, but doesn't have recovery email or it is not verified";
                     Snackbar.Add(message, Severity.Error);
+                    return;
                 }
 
                 if (response.IsLockedOut)
                 {
                     const string message = "Account is locked out";
                     Snackbar.Add(message, Severity.Error);
+                    return;
                 }
 
                 userId = response.UserId;
                 recoveryEmail = response.RecoveryEmail;
-                
+
                 await StepNextAsync();
                 await SendCodeAsync();
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task SendCodeAsync()
     {
         var request = new SendCodeRequest()
