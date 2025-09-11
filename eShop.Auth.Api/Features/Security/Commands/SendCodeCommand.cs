@@ -86,6 +86,20 @@ public class SendCodeCommandHandler(
                         { "UserName", user.Username }
                     }
                 },
+            { Resource: CodeResource.Account, Type: CodeType.Recover, Sender: SenderType.Email } =>
+                new RecoverAccountMessage()
+                {
+                    Credentials = new()
+                    {
+                        { "To", user.Emails.First(x => x.Type is EmailType.Recovery).Email },
+                        { "Subject", "Account recovery" },
+                    },
+                    Payload = new()
+                    {
+                        { "Code", code },
+                        { "UserName", user.Username }
+                    }
+                },
             { Resource: CodeResource.LinkedAccount, Type: CodeType.Allow, Sender: SenderType.Email } =>
                 new AllowLinkedAccountMessage()
                 {
