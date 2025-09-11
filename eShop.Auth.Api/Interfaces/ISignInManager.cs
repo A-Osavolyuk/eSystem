@@ -4,6 +4,6 @@ namespace eShop.Auth.Api.Interfaces;
 
 public interface ISignInManager
 {
-    public ValueTask<AuthenticationResult> AuthenticateAsync(HttpContext context, string scheme,
+    public ValueTask<AuthenticationResult> AuthenticateAsync(string scheme,
         CancellationToken cancellationToken = default);
 }

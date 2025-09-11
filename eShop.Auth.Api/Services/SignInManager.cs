@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Authentication;
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ISignInManager), ServiceLifetime.Scoped)]
-public sealed class SignInManager() : ISignInManager
+public sealed class SignInManager(IHttpContextAccessor httpContextAccessor) : ISignInManager
 {
-    public async ValueTask<AuthenticationResult> AuthenticateAsync(HttpContext context, 
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
+
+    public async ValueTask<AuthenticationResult> AuthenticateAsync( 
         string scheme, CancellationToken cancellationToken = default)
     {
-        var authenticateResult = await context.AuthenticateAsync(scheme);
+        var authenticateResult = await httpContextAccessor.HttpContext!.AuthenticateAsync(scheme);
         
         var principal = authenticateResult.Principal ?? throw new NullReferenceException("Principal is null");
         var properties = authenticateResult.Properties ?? throw new NullReferenceException("Properties is null");
