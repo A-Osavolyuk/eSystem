@@ -221,6 +221,45 @@
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
+    
+    private async Task SendCurrentEmailCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.Email,
+            Type = CodeType.Current,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "Email", UserState.Credentials?.Email! },
+                { "NewEmail", ChangeEmailModel.NewEmail },
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+    
+    private async Task ResendCurrentEmailCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.Email,
+            Type = CodeType.Current,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "Email", UserState.Credentials?.Email! },
+                { "NewEmail", ChangeEmailModel.NewEmail },
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
 
     private async Task OnSendNewCodeAsync()
     {
@@ -243,27 +282,42 @@
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
-
-    private async Task OnChangeAsync()
+    
+    private async Task SendNewEmailCodeAsync()
     {
-        await confirmChangeEmailForm.Validate();
-
-        if (confirmChangeEmailForm.IsValid)
+        var request = new SendCodeRequest()
         {
-            var request = new VerifyCodeRequest()
+            UserId = UserState.UserId,
+            Resource = CodeResource.Email,
+            Type = CodeType.New,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
             {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.New,
-                Sender = SenderType.Email,
-                Code = ConfirmChangeEmailModel.Code
-            };
+                { "Email", ChangeEmailModel.NewEmail }
+            }
+        };
 
-            var result = await SecurityService.VerifyCodeAsync(request);
+        var result = await SecurityService.SendCodeAsync(request);
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
 
-            if (result.Success) await ChangeAsync();
-            else Snackbar.Add(result.Message, Severity.Error);
-        }
+    private async Task ResendNewEmailCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.Email,
+            Type = CodeType.New,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "Email", ChangeEmailModel.NewEmail }
+            }
+        };
+
+        var response = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
 
     private async Task ChangeAsync()
@@ -287,79 +341,27 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-
-    private async Task SendCurrentEmailCodeAsync()
+    
+    private async Task OnChangeAsync()
     {
-        var request = new SendCodeRequest()
+        await confirmChangeEmailForm.Validate();
+
+        if (confirmChangeEmailForm.IsValid)
         {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Current,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
+            var request = new VerifyCodeRequest()
             {
-                { "NewEmail", ChangeEmailModel.NewEmail },
-            }
-        };
+                UserId = UserState.UserId,
+                Resource = CodeResource.Email,
+                Type = CodeType.New,
+                Sender = SenderType.Email,
+                Code = ConfirmChangeEmailModel.Code
+            };
 
-        var result = await SecurityService.SendCodeAsync(request);
-        if (result.Success) await StepNextAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
+            var result = await SecurityService.VerifyCodeAsync(request);
 
-    private async Task SendNewEmailCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.New,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "Email", ChangeEmailModel.NewEmail }
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        if (result.Success) await StepNextAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private async Task ResendCurrentEmailCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Current,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "NewEmail", ChangeEmailModel.NewEmail },
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
-    }
-
-    private async Task ResendNewEmailCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.New,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "Email", ChangeEmailModel.NewEmail }
-            }
-        };
-
-        var response = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
+            if (result.Success) await ChangeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
     }
 
     private async Task StepNextAsync()
