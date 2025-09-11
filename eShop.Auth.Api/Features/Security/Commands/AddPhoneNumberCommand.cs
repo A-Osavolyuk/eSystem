@@ -19,6 +19,10 @@ public class AddPhoneNumberCommandHandler(
         if (user.PhoneNumbers.Count(x => x.Type is PhoneNumberType.Primary)
             >= identityOptions.Account.PrimaryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Primary)
             return Results.BadRequest("User already has a primary phone number.");
+        
+        if (user.PhoneNumbers.Count(x => x.Type is PhoneNumberType.Recovery)
+            >= identityOptions.Account.RecoveryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Recovery)
+            return Results.BadRequest("User already has a recovery phone number.");
 
         if (user.PhoneNumbers.Count(x => x.Type is PhoneNumberType.Secondary)
             >= identityOptions.Account.SecondaryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Secondary)
