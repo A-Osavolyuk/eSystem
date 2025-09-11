@@ -30,6 +30,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddControllers()
             .AddJsonOptions(cfg => cfg.JsonSerializerOptions.WriteIndented = true);
         
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession(options =>
         {

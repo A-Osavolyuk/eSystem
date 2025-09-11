@@ -19,7 +19,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ValidationFilter]
     public async ValueTask<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        var result = await sender.Send(new LoginCommand(request, HttpContext));
+        var result = await sender.Send(new LoginCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -34,7 +34,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ValidationFilter]
     public async ValueTask<IActionResult> RegisterAsync([FromBody] RegistrationRequest request)
     {
-        var result = await sender.Send(new RegisterCommand(request, HttpContext));
+        var result = await sender.Send(new RegisterCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -63,7 +63,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ValidationFilter]
     public async ValueTask<IActionResult> UnlockAsync([FromBody] UnlockAccountRequest request)
     {
-        var result = await sender.Send(new UnlockAccountCommand(request, HttpContext));
+        var result = await sender.Send(new UnlockAccountCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

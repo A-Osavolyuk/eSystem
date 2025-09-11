@@ -3,7 +3,7 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record LoginCommand(LoginRequest Request, HttpContext Context) : IRequest<Result>;
+public sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 public sealed class LoginCommandHandler(
     ITokenManager tokenManager,
@@ -12,6 +12,7 @@ public sealed class LoginCommandHandler(
     IReasonManager reasonManager,
     ILoginSessionManager loginSessionManager,
     IDeviceManager deviceManager,
+    IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<LoginCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
@@ -20,6 +21,7 @@ public sealed class LoginCommandHandler(
     private readonly IReasonManager reasonManager = reasonManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
     private readonly IDeviceManager deviceManager = deviceManager;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -40,9 +42,9 @@ public sealed class LoginCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with login {request.Request.Login}.");
         if (!user.HasPassword()) return Results.BadRequest("Cannot log in, you don't have a password.");
 
-        var userAgent = RequestUtils.GetUserAgent(request.Context);
-        var ipAddress = RequestUtils.GetIpV4(request.Context);
-        var clientInfo = RequestUtils.GetClientInfo(request.Context);
+        var userAgent = RequestUtils.GetUserAgent(httpContextAccessor.HttpContext!);
+        var ipAddress = RequestUtils.GetIpV4(httpContextAccessor.HttpContext!);
+        var clientInfo = RequestUtils.GetClientInfo(httpContextAccessor.HttpContext!);
 
         var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
 

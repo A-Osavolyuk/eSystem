@@ -3,13 +3,14 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record RegisterCommand(RegistrationRequest Request, HttpContext Context) : IRequest<Result>;
+public sealed record RegisterCommand(RegistrationRequest Request) : IRequest<Result>;
 
 public sealed class RegisterCommandHandler(
     IPermissionManager permissionManager,
     IUserManager userManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
+    IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
@@ -17,6 +18,7 @@ public sealed class RegisterCommandHandler(
     private readonly IRoleManager roleManager = roleManager;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly IDeviceManager deviceManager = deviceManager;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
@@ -65,9 +67,9 @@ public sealed class RegisterCommandHandler(
             }
         }
         
-        var userAgent = RequestUtils.GetUserAgent(request.Context);
-        var ipAddress = RequestUtils.GetIpV4(request.Context);
-        var clientInfo = RequestUtils.GetClientInfo(request.Context);
+        var userAgent = RequestUtils.GetUserAgent(httpContextAccessor.HttpContext!);
+        var ipAddress = RequestUtils.GetIpV4(httpContextAccessor.HttpContext!);
+        var clientInfo = RequestUtils.GetClientInfo(httpContextAccessor.HttpContext!);
 
         var newDevice = new UserDeviceEntity()
         {

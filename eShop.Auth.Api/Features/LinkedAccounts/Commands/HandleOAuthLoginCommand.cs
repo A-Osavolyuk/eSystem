@@ -5,7 +5,6 @@ using eShop.Auth.Api.Types;
 namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 
 public sealed record HandleOAuthLoginCommand(
-    HttpContext Context,
     AuthenticationResult AuthenticationResult,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
@@ -19,7 +18,8 @@ public sealed class HandleOAuthLoginCommandHandler(
     IOAuthSessionManager sessionManager,
     IOAuthProviderManager providerManager,
     ILoginSessionManager loginSessionManager,
-    IDeviceManager deviceManager) : IRequestHandler<HandleOAuthLoginCommand, Result>
+    IDeviceManager deviceManager,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
@@ -30,6 +30,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
     private readonly IDeviceManager deviceManager = deviceManager;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
     public async Task<Result> Handle(HandleOAuthLoginCommand request,
         CancellationToken cancellationToken)
@@ -108,7 +109,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                 if (!grantResult.Succeeded) return grantResult;
             }
 
-            var deviceResult = await CreateDeviceAsync(user, provider, request.Context, fallbackUri, cancellationToken);
+            var deviceResult = await CreateDeviceAsync(user, provider, 
+                httpContextAccessor.HttpContext!, fallbackUri, cancellationToken);
+            
             if (!deviceResult.Succeeded) return deviceResult;
             
             await SendMessageAsync(user, provider, cancellationToken);
@@ -123,9 +126,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                 request.ReturnUri!, fallbackUri, token, cancellationToken);
         }
 
-        var userAgent = RequestUtils.GetUserAgent(request.Context);
-        var ipAddress = RequestUtils.GetIpV4(request.Context);
-        var clientInfo = RequestUtils.GetClientInfo(request.Context);
+        var userAgent = RequestUtils.GetUserAgent(httpContextAccessor.HttpContext!);
+        var ipAddress = RequestUtils.GetIpV4(httpContextAccessor.HttpContext!);
+        var clientInfo = RequestUtils.GetClientInfo(httpContextAccessor.HttpContext!);
 
         var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
 

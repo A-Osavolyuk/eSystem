@@ -2,17 +2,19 @@
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public record UnlockAccountCommand(UnlockAccountRequest Request, HttpContext Context) : IRequest<Result>;
+public record UnlockAccountCommand(UnlockAccountRequest Request) : IRequest<Result>;
 
 public class UnlockAccountCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
     ILockoutManager lockoutManager,
+    IHttpContextAccessor httpContextAccessor,
     IDeviceManager deviceManager) : IRequestHandler<UnlockAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IDeviceManager deviceManager = deviceManager;
 
     public async Task<Result> Handle(UnlockAccountCommand request, CancellationToken cancellationToken)
@@ -20,8 +22,8 @@ public class UnlockAccountCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var userAgent = RequestUtils.GetUserAgent(request.Context);
-        var ipAddress = RequestUtils.GetIpV4(request.Context);
+        var userAgent = RequestUtils.GetUserAgent(httpContextAccessor.HttpContext!);
+        var ipAddress = RequestUtils.GetIpV4(httpContextAccessor.HttpContext!);
 
         var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null) return Results.BadRequest("Invalid device.");
