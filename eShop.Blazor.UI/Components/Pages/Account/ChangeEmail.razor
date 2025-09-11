@@ -214,14 +214,33 @@
             {
                 var response = result.Get<CheckEmailResponse>()!;
 
-                if (response is { IsTaken: false, HasLinkedAccount: false }) await SendCurrentEmailCodeAsync();
-                else if (response.IsTaken) Snackbar.Add("This email address is already taken", Severity.Error);
-                else Snackbar.Add("You first need to disconnect linked account.", Severity.Error);
+                if (!response.IsTaken) await SendCurrentEmailCodeAsync();
+                else switch (response)
+                {
+                    case { IsTaken: true, IsOwn: false }:
+                    {
+                        const string message = "This email address is already taken";
+                        Snackbar.Add(message, Severity.Error);
+                        break;
+                    }
+                    case { IsTaken: true, IsOwn: true }:
+                    {
+                        const string message = "This email address is already user's";
+                        Snackbar.Add(message, Severity.Info);
+                        break;
+                    }
+                    case { HasLinkedAccount: true }:
+                    {
+                        const string message = "First disconnect linked account.";
+                        Snackbar.Add(message, Severity.Info);
+                        break;
+                    }
+                }
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task SendCurrentEmailCodeAsync()
     {
         var request = new SendCodeRequest()
@@ -241,7 +260,7 @@
         if (result.Success) await StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
-    
+
     private async Task ResendCurrentEmailCodeAsync()
     {
         var request = new SendCodeRequest()
@@ -282,7 +301,7 @@
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task SendNewEmailCodeAsync()
     {
         var request = new SendCodeRequest()
@@ -341,7 +360,7 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private async Task OnChangeAsync()
     {
         await confirmChangeEmailForm.Validate();
