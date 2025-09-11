@@ -73,7 +73,7 @@ public class SendCodeCommandHandler(
                     }
                 },
             { Resource: CodeResource.Account, Type: CodeType.Unlock, Sender: SenderType.Email } =>
-                new AccountUnlockMessage()
+                new UnblockAccountMessage()
                 {
                     Credentials = new()
                     {

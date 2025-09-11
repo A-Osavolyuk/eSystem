@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class AccountUnlockMessage : Message
+public class UnblockAccountMessage : Message
 {
     public override string Build()
     {
