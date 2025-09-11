@@ -66,7 +66,7 @@
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
                                                     Enter code from an email we sent you to: 
-                                                    <strong>@Email</strong>
+                                                    <strong>@UserState.Credentials?.Email!</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
@@ -123,7 +123,7 @@
             Sender = SenderType.Email,
             Payload =
             {
-                { "Email", Email }
+                { "Email", UserState.Credentials?.Email! }
             }
         };
 
@@ -141,7 +141,7 @@
             Sender = SenderType.Email,
             Payload =
             {
-                { "Email", Email }
+                { "Email", UserState.Credentials?.Email! }
             }
         };
 
