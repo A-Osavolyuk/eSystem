@@ -33,9 +33,9 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
             return Result.Success(response);
         }
         
-        var recoveryEmail = user.Emails.FirstOrDefault(x => x.Type == EmailType.Recovery);
+        var email = user.Emails.FirstOrDefault(x => x is { Type: EmailType.Recovery, IsVerified: true });
 
-        if (recoveryEmail is null)
+        if (email is null)
         {
             response = new CheckAccountResponse
             {
@@ -52,7 +52,7 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
             Exists = true,
             UserId = user.Id,
             HasRecoveryEmail = true,
-            RecoveryEmail = recoveryEmail.Email
+            RecoveryEmail = email.Email
         };
         
         return Result.Success(response);
