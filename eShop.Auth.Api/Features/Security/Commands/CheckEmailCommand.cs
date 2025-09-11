@@ -34,18 +34,12 @@ public class CheckEmailCommandHandler(
 
         if (userEmail.Type == EmailType.Primary)
         {
-            var hasTwoFactor = user.TwoFactorProviders.Any(x => x is
-                { Subscribed: true, TwoFactorProvider.Name: ProviderTypes.Email });
-
-            var hasLinkedAccount = user.HasLinkedAccount();
-
             response = new CheckEmailResponse()
             {
                 IsOwn = true,
                 IsTaken = true,
                 Type = userEmail.Type,
-                HasTwoFactor = hasTwoFactor,
-                HasLinkedAccount = hasLinkedAccount
+                HasLinkedAccount = user.HasLinkedAccount()
             };
             
             return Result.Success(response);
