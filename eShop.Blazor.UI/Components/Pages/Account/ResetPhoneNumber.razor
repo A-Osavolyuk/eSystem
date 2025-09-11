@@ -168,9 +168,23 @@
             if (result.Success)
             {
                 var response = result.Get<CheckPhoneNumberResponse>()!;
-                
-                if(response.IsTaken) await SendCodeAsync();
-                else Snackbar.Add("This phone number is already taken.", Severity.Error);
+
+                if (!response.IsTaken) await SendCodeAsync();
+                else switch (response)
+                {
+                    case { IsTaken: true, IsOwn: true }:
+                    {
+                        const string message = "This phone number is already user's";
+                        Snackbar.Add(message, Severity.Info);
+                        break;
+                    }
+                    case { IsTaken: true, IsOwn: false }:
+                    {
+                        const string message = "This phone number is already taken";
+                        Snackbar.Add(message, Severity.Info);
+                        break;
+                    }
+                }
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }
