@@ -16,10 +16,14 @@ public class RecoverAccountCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var userPrimaryEmail = user.Emails.FirstOrDefault(e => e.Type == EmailType.Primary);
+        var userPrimaryEmail = user.Emails.FirstOrDefault(
+            email => email is { Type: EmailType.Primary, IsVerified: true });
+        
         if (userPrimaryEmail is null) return Results.BadRequest("User does not have a primary email.");
 
-        var userRecoveryEmail = user.Emails.FirstOrDefault(e => e.Type == EmailType.Recovery);
+        var userRecoveryEmail = user.Emails.FirstOrDefault(
+            email => email is { Type: EmailType.Recovery, IsVerified: true });
+        
         if (userRecoveryEmail is null) return Results.BadRequest("User does not have a recovery email.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
@@ -27,7 +31,13 @@ public class RecoverAccountCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
         
-        var emailResult = await userManager.AsPrimaryAsync(user, userRecoveryEmail, cancellationToken);
-        return emailResult;
+        userPrimaryEmail.Type = EmailType.Secondary;
+        userPrimaryEmail.UpdateDate = DateTimeOffset.UtcNow;
+
+        userRecoveryEmail.Type = EmailType.Primary;
+        userRecoveryEmail.UpdateDate = DateTimeOffset.UtcNow;
+        
+        var updateResult = await userManager.UpdateAsync(user, cancellationToken);
+        return updateResult;
     }
 }
