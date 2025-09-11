@@ -26,7 +26,11 @@ public class CheckEmailCommandHandler(
         }
 
         var userEmail = user.Emails.FirstOrDefault(x => x.Email == request.Request.Email);
-        if (userEmail is null) return Results.BadRequest("User doesn't own this email address.");
+        if (userEmail is null)
+        {
+            response = new CheckEmailResponse() { IsTaken = true };
+            return Result.Success(response);
+        }
 
         if (userEmail.Type == EmailType.Primary)
         {
@@ -37,6 +41,7 @@ public class CheckEmailCommandHandler(
 
             response = new CheckEmailResponse()
             {
+                IsOwn = true,
                 IsTaken = true,
                 Type = userEmail.Type,
                 HasTwoFactor = hasTwoFactor,
@@ -48,6 +53,7 @@ public class CheckEmailCommandHandler(
 
         response = new CheckEmailResponse()
         {
+            IsOwn = true,
             IsTaken = true,
             Type = userEmail.Type,
         };
