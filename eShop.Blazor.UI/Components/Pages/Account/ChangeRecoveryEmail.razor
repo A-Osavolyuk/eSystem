@@ -294,8 +294,8 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "NewRecoveryEmail", ChangeRecoveryEmailModel.NewRecoveryEmail },
-                { "RecoveryEmail", UserState.Credentials?.RecoveryEmail! }
+                { "NewEmail", ChangeRecoveryEmailModel.NewRecoveryEmail },
+                { "Email", UserState.Credentials?.RecoveryEmail! }
             }
         };
 
@@ -314,7 +314,7 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "RecoveryEmail", ChangeRecoveryEmailModel.NewRecoveryEmail }
+                { "Email", ChangeRecoveryEmailModel.NewRecoveryEmail }
             }
         };
 
@@ -333,8 +333,8 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "NewRecoveryEmail", ChangeRecoveryEmailModel.NewRecoveryEmail },
-                { "RecoveryEmail", UserState.Credentials?.RecoveryEmail! }
+                { "NewEmail", ChangeRecoveryEmailModel.NewRecoveryEmail },
+                { "Email", UserState.Credentials?.RecoveryEmail! }
             }
         };
 
@@ -352,7 +352,7 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "RecoveryEmail", ChangeRecoveryEmailModel.NewRecoveryEmail }
+                { "Email", ChangeRecoveryEmailModel.NewRecoveryEmail }
             }
         };
 
