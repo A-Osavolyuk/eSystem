@@ -23,7 +23,8 @@ public static class HostApplicationBuilderExtensions
             {
                 p.AllowAnyHeader();
                 p.AllowAnyMethod();
-                p.AllowAnyOrigin();
+                p.WithOrigins("http://localhost:5501");
+                p.AllowCredentials();
             });
         });
     }
