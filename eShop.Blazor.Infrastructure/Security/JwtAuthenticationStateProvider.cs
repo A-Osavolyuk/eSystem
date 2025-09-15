@@ -55,8 +55,6 @@ public class JwtAuthenticationStateProvider(
     {
         if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
         {
-            await tokenProvider.SetAsync(refreshToken);
-
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
 
@@ -81,7 +79,6 @@ public class JwtAuthenticationStateProvider(
 
     public async Task<AuthenticationState> SignOutAsync()
     {
-        await tokenProvider.RemoveAsync();
         await storage.ClearAsync();
         userState.Clear();
         return await UnauthorizeAsync();
