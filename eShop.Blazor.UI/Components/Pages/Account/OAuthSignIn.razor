@@ -32,6 +32,8 @@
             if (result.Success)
             {
                 var response = result.Get<LoadOAuthSessionResponse>()!;
+                
+                UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
 
                 if (response.SignType == OAuthSignType.SignIn)

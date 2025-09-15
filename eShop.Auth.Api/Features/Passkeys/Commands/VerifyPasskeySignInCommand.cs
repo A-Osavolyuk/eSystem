@@ -56,7 +56,7 @@ public class VerifyPasskeySignInCommandHandler(
 
         if (lockoutState.Enabled)
         {
-            var lockoutResponse = new VerifyPublicKeyCredentialRequestOptionsResponse()
+            var lockoutResponse = new VerifyPasskeySignInResponse()
             {
                 UserId = user.Id,
                 IsLockedOut = lockoutState.Enabled,
@@ -66,7 +66,7 @@ public class VerifyPasskeySignInCommandHandler(
         }
         
 
-        var response = new VerifyPublicKeyCredentialRequestOptionsResponse()
+        var response = new VerifyPasskeySignInResponse()
         {
             UserId = user.Id,
         };

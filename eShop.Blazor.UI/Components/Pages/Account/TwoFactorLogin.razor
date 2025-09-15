@@ -311,6 +311,7 @@
             {
                 var response = result.Get<LoginResponse>()!;
 
+                UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
                 Snackbar.Add(result.Message, Severity.Success);
                 RouteManager.Route("/products");

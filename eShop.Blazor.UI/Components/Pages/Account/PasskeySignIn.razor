@@ -103,6 +103,8 @@
 
                 if (verificationResult.Success)
                 {
+                    var response = verificationResult.Get<VerifyPasskeySignInResponse>()!;
+                    UserState.UserId = response.UserId;
                     await AuthenticationManager.SignInAsync();
                     Snackbar.Add("Successfully signed in.", Severity.Success);
                     RouteManager.Route("/products");
@@ -115,7 +117,7 @@
                         return;
                     }
 
-                    var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
+                    var response = verificationResult.Get<VerifyPasskeySignInResponse>()!;
 
                     if (response.IsLockedOut)
                     {

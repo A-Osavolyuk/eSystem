@@ -50,6 +50,7 @@ public class LoadOAuthSessionCommandHandler(
 
         var response = new LoadOAuthSessionResponse()
         {
+            UserId = user.Id,
             SignType = session.SignType,
             Provider = provider.Name,
         };
