@@ -27,7 +27,7 @@ public class GetUserDevicesQueryHandler(IUserManager userManager) : IRequestHand
             FirstSeen = device.FirstSeen,
             LastSeen = device.LastSeen,
             BlockedDate = device.BlockedDate
-        });
+        }).ToList();
         
         return Result.Success(response);
     }

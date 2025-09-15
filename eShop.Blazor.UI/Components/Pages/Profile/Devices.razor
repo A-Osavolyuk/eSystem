@@ -39,7 +39,7 @@
     
     private async Task LoadAsync()
     {
-        var result = await UserService.GetUserSecurityDataAsync(UserState.UserId);
+        var result = await UserService.GetUserDevicesAsync(UserState.UserId);
 
         if (result.Success)
         {
