@@ -1,17 +1,25 @@
 ﻿using eShop.Blazor.Domain.Interfaces;
+using eShop.Blazor.Infrastructure.Security;
 using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Infrastructure.Implementations;
 
-public class TokenProvider(IHttpContextAccessor httpContextAccessor) : ITokenProvider
+public class TokenProvider(TokenStore tokenStore) : ITokenProvider
 {
-    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
+    private readonly TokenStore tokenStore = tokenStore;
 
-    public async ValueTask<string?> GetAsync()
+    public string? Get()
     {
-        const string key = "AccessToken";
-        var context = httpContextAccessor.HttpContext;
-        var token = context?.Request.Cookies[key];
-        return await Task.FromResult(token);
+        return tokenStore.Token;
+    }
+
+    public void Set(string accessToken)
+    {
+        tokenStore.Token = accessToken;
+    }
+
+    public void Clear()
+    {
+        tokenStore.Token = null;
     }
 }

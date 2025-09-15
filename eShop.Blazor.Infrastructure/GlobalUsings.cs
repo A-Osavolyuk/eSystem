@@ -12,3 +12,6 @@ global using Microsoft.AspNetCore.Components.Forms;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
+global using AuthenticationManager = eShop.Blazor.Infrastructure.Security.AuthenticationManager;
+global using HttpRequest = eShop.Domain.Common.Http.HttpRequest;
+global using HttpResponse = eShop.Domain.Common.Http.HttpResponse;

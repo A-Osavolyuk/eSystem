@@ -54,6 +54,7 @@ public static class Extensions
 
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<TokenHandler>();
+        builder.Services.AddScoped<TokenStore>();
         builder.Services.AddScoped<AuthenticationManager>();
         builder.Services.AddScoped<PasskeyManager>();
         builder.Services.AddScoped<JwtAuthenticationStateProvider>();

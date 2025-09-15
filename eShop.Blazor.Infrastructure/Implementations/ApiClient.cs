@@ -1,14 +1,10 @@
 ﻿using System.Net;
 using System.Text.Json;
-using eShop.Blazor.Application.State;
+using eShop.Blazor.Application.Routing;
 using eShop.Blazor.Domain.Interfaces;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
-using eShop.Domain.Requests.API.Auth;
 using Microsoft.AspNetCore.Http;
-using AuthenticationManager = eShop.Blazor.Infrastructure.Security.AuthenticationManager;
-using HttpRequest = eShop.Domain.Common.Http.HttpRequest;
-using HttpResponse = eShop.Domain.Common.Http.HttpResponse;
 
 namespace eShop.Blazor.Infrastructure.Implementations;
 
@@ -17,15 +13,13 @@ public class ApiClient(
     ITokenProvider tokenProvider,
     IHttpContextAccessor httpContextAccessor,
     IConfiguration configuration,
-    UserState userState,
-    AuthenticationManager authenticationManager) : IApiClient
+    RouteManager routeManager) : IApiClient
 {
     private readonly IHttpClientFactory clientFactory = clientFactory;
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IConfiguration configuration = configuration;
-    private readonly UserState userState = userState;
-    private readonly AuthenticationManager authenticationManager = authenticationManager;
+    private readonly RouteManager routeManager = routeManager;
     private const string GatewayKey = "services:proxy:http:0";
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
@@ -36,7 +30,7 @@ public class ApiClient(
 
             if (options.WithBearer)
             {
-                var token = await tokenProvider.GetAsync();
+                var token = tokenProvider.Get();
 
                 if (string.IsNullOrEmpty(token))
                 {
@@ -108,7 +102,12 @@ public class ApiClient(
             if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
             {
                 var refreshResponse = await RefreshAsync();
-                if (!refreshResponse.Success) await authenticationManager.UnauthorizedAsync();
+                
+                if (!refreshResponse.Success)
+                {
+                    tokenProvider.Clear();
+                    routeManager.Route("/account/login");
+                }
                 else httpResponse = await httpClient.SendAsync(message);
             }
             
@@ -132,13 +131,11 @@ public class ApiClient(
     {
         var gateway = configuration[GatewayKey]!;
         var url = $"{gateway}/api/v1/Security/refresh-token";
-        var refreshTokenRequest = new RefreshTokenRequest() { UserId = userState.UserId };
 
         var request = new HttpRequest()
         {
             Method = HttpMethod.Post,
-            Url = url,
-            Data = refreshTokenRequest
+            Url = url
         };
         
         var options = new HttpOptions() { Type = DataType.Text, WithBearer = false };

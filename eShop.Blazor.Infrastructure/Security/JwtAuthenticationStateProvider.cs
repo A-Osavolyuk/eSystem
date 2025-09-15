@@ -2,8 +2,6 @@
 using eShop.Blazor.Domain.Interfaces;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
-using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Blazor.Infrastructure.Security;
 
@@ -25,7 +23,7 @@ public class JwtAuthenticationStateProvider(
     {
         try
         {
-            var token = await tokenProvider.GetAsync();
+            var token = tokenProvider.Get();
             if (string.IsNullOrEmpty(token)) return await UnauthorizeAsync();
 
             var rawToken = tokenHandler.ReadToken(token);
@@ -50,17 +48,13 @@ public class JwtAuthenticationStateProvider(
     {
         if (!string.IsNullOrEmpty(accessToken))
         {
+            tokenProvider.Set(accessToken);
+            
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
 
             var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Subject).Value);
-            var jti = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Jti).Value);
-            var exp = long.Parse(claims.First(x => x.Type == AppClaimTypes.Exp).Value);
-
             await storage.SetAsync("userId", userId);
-            await storage.SetAsync("jti", jti);
-            await storage.SetAsync("exp", exp);
-
             userState.UserId = userId;
 
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
@@ -72,12 +66,14 @@ public class JwtAuthenticationStateProvider(
         else await UnauthorizeAsync();
     }
 
-    public async Task<AuthenticationState> SignOutAsync()
+    public async Task SignOutAsync()
     {
         await storage.ClearAsync();
-        userState.Clear();
         
-        return await UnauthorizeAsync();
+        userState.Clear();
+        tokenProvider.Clear();
+        
+        await UnauthorizeAsync();
     }
 
     private async Task<AuthenticationState> UnauthorizeAsync()

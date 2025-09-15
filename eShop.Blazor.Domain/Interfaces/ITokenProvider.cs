@@ -2,5 +2,7 @@
 
 public interface ITokenProvider
 {
-    public ValueTask<string?> GetAsync();
+    public string? Get();
+    public void Set(string accessToken);
+    public void Clear();
 }
