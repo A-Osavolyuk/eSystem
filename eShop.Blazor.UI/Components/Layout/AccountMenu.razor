@@ -139,7 +139,6 @@
     {
         await AuthenticationManager.SignOutAsync();
         Snackbar.Add("Successfully logged out.", Severity.Success);
-        RouteManager.Route("/account/login");
     }
 
     private async Task LoadAsync()

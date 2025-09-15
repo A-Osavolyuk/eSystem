@@ -1,24 +1,32 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
+using eShop.Blazor.Application.State;
 using eShop.Blazor.Domain.Interfaces;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
+using eShop.Domain.Requests.API.Auth;
 using Microsoft.AspNetCore.Http;
+using AuthenticationManager = eShop.Blazor.Infrastructure.Security.AuthenticationManager;
 using HttpRequest = eShop.Domain.Common.Http.HttpRequest;
 using HttpResponse = eShop.Domain.Common.Http.HttpResponse;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace eShop.Blazor.Infrastructure.Implementations;
 
 public class ApiClient(
     IHttpClientFactory clientFactory,
     ITokenProvider tokenProvider,
-    IHttpContextAccessor httpContextAccessor)
-    : IApiClient
+    IHttpContextAccessor httpContextAccessor,
+    IConfiguration configuration,
+    UserState userState,
+    AuthenticationManager authenticationManager) : IApiClient
 {
-    private readonly HttpClient httpClient = clientFactory.CreateClient("eShop.Client");
+    private readonly IHttpClientFactory clientFactory = clientFactory;
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private const string Key = "services:proxy:http:0";
+    private readonly IConfiguration configuration = configuration;
+    private readonly UserState userState = userState;
+    private readonly AuthenticationManager authenticationManager = authenticationManager;
+    private const string GatewayKey = "services:proxy:http:0";
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
     {
@@ -51,11 +59,9 @@ public class ApiClient(
             {
                 case DataType.Text:
                 {
-                    message.Headers.Add("Accept", "application/json");
-
                     if (httpRequest.Data is not null)
                     {
-                        message.Content = new StringContent(JsonConvert.SerializeObject(httpRequest.Data),
+                        message.Content = new StringContent(JsonSerializer.Serialize(httpRequest.Data),
                             Encoding.UTF8, "application/json");
                     }
 
@@ -96,7 +102,16 @@ public class ApiClient(
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
+            var httpClient = clientFactory.CreateClient("eShop.Client");
             var httpResponse = await httpClient.SendAsync(message);
+
+            if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                var refreshResponse = await RefreshAsync();
+                if (!refreshResponse.Success) await authenticationManager.UnauthorizedAsync();
+                else httpResponse = await httpClient.SendAsync(message);
+            }
+            
             var responseJson = await httpResponse.Content.ReadAsStringAsync();
             var response = JsonSerializer.Deserialize<HttpResponse>(responseJson, serializationOptions)!;
 
@@ -111,5 +126,23 @@ public class ApiClient(
 
             return response;
         }
+    }
+
+    private async Task<HttpResponse> RefreshAsync()
+    {
+        var gateway = configuration[GatewayKey]!;
+        var url = $"{gateway}/api/v1/Security/refresh-token";
+        var refreshTokenRequest = new RefreshTokenRequest() { UserId = userState.UserId };
+
+        var request = new HttpRequest()
+        {
+            Method = HttpMethod.Post,
+            Url = url,
+            Data = refreshTokenRequest
+        };
+        
+        var options = new HttpOptions() { Type = DataType.Text, WithBearer = false };
+        var response = await SendAsync(request, options);
+        return response;
     }
 }

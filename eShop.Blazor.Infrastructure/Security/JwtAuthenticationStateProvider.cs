@@ -10,7 +10,6 @@ namespace eShop.Blazor.Infrastructure.Security;
 public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage storage,
-    ISecurityService securityService,
     IUserService userService,
     TokenHandler tokenHandler,
     UserState userState) : AuthenticationStateProvider
@@ -18,7 +17,6 @@ public class JwtAuthenticationStateProvider(
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage storage = storage;
-    private readonly ISecurityService securityService = securityService;
     private readonly IUserService userService = userService;
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly UserState userState = userState;
@@ -29,9 +27,6 @@ public class JwtAuthenticationStateProvider(
         {
             var token = await tokenProvider.GetAsync();
             if (string.IsNullOrEmpty(token)) return await UnauthorizeAsync();
-
-            var valid = tokenHandler.Validate(token);
-            if (!valid) return await RefreshTokenAsync(token);
 
             var rawToken = tokenHandler.ReadToken(token);
             if (rawToken is null || !rawToken.Claims.Any()) return await UnauthorizeAsync();
@@ -90,27 +85,6 @@ public class JwtAuthenticationStateProvider(
         NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
         
         return await Task.FromResult(anonymous);
-    }
-
-    private async Task<AuthenticationState> RefreshTokenAsync(string token)
-    {
-        var request = new RefreshTokenRequest()
-        {
-            UserId = userState.UserId
-        };
-
-        var result = await securityService.RefreshTokenAsync(request);
-
-        if (!result.Success) return await SignOutAsync();
-
-        var response = result.Get<RefreshTokenResponse>()!;
-        var rawToken = tokenHandler.ReadToken(response.Token)!;
-        var claims = rawToken.Claims.ToList();
-        var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
-        var claimsPrincipal = new ClaimsPrincipal(identity);
-        var authenticationState = new AuthenticationState(claimsPrincipal);
-
-        return authenticationState;
     }
 
     private async Task LoadAsync(List<Claim> claims)
