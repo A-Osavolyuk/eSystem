@@ -55,14 +55,14 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Set token")]
-    [EndpointDescription("Set token")]
+    [EndpointSummary("Authorize")]
+    [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]
-    [HttpPost("set-token")]
+    [HttpPost("authorize")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> SetTokenAsync([FromBody] SetTokenRequest request)
+    public async ValueTask<IActionResult> SetTokenAsync([FromBody] AuthorizeRequest request)
     {
-        var result = await sender.Send(new SetTokenCommand(request));
+        var result = await sender.Send(new AuthorizeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

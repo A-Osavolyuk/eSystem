@@ -2,18 +2,18 @@
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public record SetTokenCommand(SetTokenRequest Request) : IRequest<Result>;
+public record AuthorizeCommand(AuthorizeRequest Request) : IRequest<Result>;
 
-public class SetTokenCommandHandler(
+public class AuthorizeCommandHandler(
     IUserManager userManager,
     ITokenManager tokenManager,
-    TokenHandler tokenHandler) : IRequestHandler<SetTokenCommand, Result>
+    TokenHandler tokenHandler) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly TokenHandler tokenHandler = tokenHandler;
 
-    public async Task<Result> Handle(SetTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
