@@ -62,6 +62,7 @@ public static class HostApplicationBuilderExtensions
                 ValidateIssuer = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
+                RequireExpirationTime = true,
                 ValidAudience = builder.Configuration[audiencePath],
                 ValidIssuer = builder.Configuration[issuerPath],
                 IssuerSigningKey = new SymmetricSecurityKey(

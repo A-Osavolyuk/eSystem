@@ -15,7 +15,6 @@ public sealed class TokenManager(
     private readonly AuthDbContext context = context;
     private readonly ICookieAccessor cookieAccessor = cookieAccessor;
     private readonly JwtOptions options = options.Value;
-    private const int AccessTokenExpirationMinutes = 15;
     private const string Key = "RefreshToken";
 
     public Result Verify()
@@ -58,7 +57,7 @@ public sealed class TokenManager(
                 new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
             };
             
-            var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(options.ExpirationDays);
+            var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(options.RefreshTokenExpirationDays);
             var refreshToken = Generate(refreshTokenClaims, refreshTokenExpirationDate);
             
             var entity = new RefreshTokenEntity()
@@ -91,7 +90,7 @@ public sealed class TokenManager(
             new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
         };
         
-        var accessTokenExpirationDate = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
+        var accessTokenExpirationDate = DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes);
         var token = Generate(accessTokenClaims, accessTokenExpirationDate);
 
         return token;

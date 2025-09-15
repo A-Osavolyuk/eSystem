@@ -13,6 +13,7 @@ public static class ProjectResourceBuilderExtensions
             .WithEnvironment("Jwt__Secret", options.Secret)
             .WithEnvironment("Jwt__Issuer", options.Issuer)
             .WithEnvironment("Jwt__Audience", options.Audience)
-            .WithEnvironment("Jwt__ExpirationDays", options.ExpirationDays.ToString());
+            .WithEnvironment("Jwt__AccessTokenExpirationMinutes", options.AccessTokenExpirationMinutes.ToString())
+            .WithEnvironment("Jwt__RefreshTokenExpirationDays", options.RefreshTokenExpirationDays.ToString());
     }
 }
