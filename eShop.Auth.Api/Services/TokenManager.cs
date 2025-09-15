@@ -50,8 +50,6 @@ public sealed class TokenManager(
             
             await context.RefreshTokens.AddAsync(entity, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
-
-            tokenHandler.Set(refreshToken, refreshTokenExpirationDate);
         }
         
         var accessTokenClaims = new List<Claim>()
@@ -63,6 +61,14 @@ public sealed class TokenManager(
         var accessTokenExpirationDate = DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes);
         var token = Generate(accessTokenClaims, accessTokenExpirationDate);
 
+        return token;
+    }
+
+    public async Task<RefreshTokenEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        var token = await context.RefreshTokens.FirstOrDefaultAsync(
+            x => x.UserId == user.Id, cancellationToken);
+        
         return token;
     }
 

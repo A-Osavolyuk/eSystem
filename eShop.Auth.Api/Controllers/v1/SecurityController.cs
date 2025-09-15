@@ -54,6 +54,20 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Set token")]
+    [EndpointDescription("Set token")]
+    [ProducesResponseType(200)]
+    [HttpPost("set-token")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> SetTokenAsync([FromBody] SetTokenRequest request)
+    {
+        var result = await sender.Send(new SetTokenCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Unlock account")]
     [EndpointDescription("Unlock account")]

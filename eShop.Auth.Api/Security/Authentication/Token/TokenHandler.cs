@@ -7,7 +7,7 @@ namespace eShop.Auth.Api.Security.Authentication.Token;
 public class TokenHandler(ICookieAccessor cookieAccessor)
 {
     private readonly ICookieAccessor cookieAccessor = cookieAccessor;
-    private const string Key = "RefreshToken";
+    private const string Key = "eAccount.Authentication.RefreshToken";
 
     public void Set(string token, DateTime expirationDate)
     {
@@ -16,6 +16,7 @@ public class TokenHandler(ICookieAccessor cookieAccessor)
             Path = "/",
             SameSite = SameSiteMode.Lax,
             HttpOnly = true,
+            Secure = false,
             Expires = expirationDate,
         };
 
