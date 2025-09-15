@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using eShop.Domain.Common.Security;
 using eShop.Domain.Common.Security.Constants;
 using Microsoft.Extensions.Options;
 
@@ -9,37 +8,16 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(ITokenManager), ServiceLifetime.Scoped)]
 public sealed class TokenManager(
     AuthDbContext context,
-    IOptions<JwtOptions> options,
-    ICookieAccessor cookieAccessor) : ITokenManager
+    TokenHandler tokenHandler,
+    IOptions<JwtOptions> options) : ITokenManager
 {
     private readonly AuthDbContext context = context;
-    private readonly ICookieAccessor cookieAccessor = cookieAccessor;
+    private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly JwtOptions options = options.Value;
-    private const string Key = "RefreshToken";
-
-    public Result Verify()
-    {
-        var token = cookieAccessor.Get(Key);
-        if (string.IsNullOrEmpty(token)) return Results.NotFound("Token not found");
-
-        var handler = new JwtSecurityTokenHandler();
-
-        var rawToken = handler.ReadJwtToken(token);
-        if (rawToken is null || !rawToken.Claims.Any()) return Results.BadRequest("Invalid token");
-
-        var expClaim = rawToken.Claims.SingleOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp);
-        if (expClaim is null) return Results.BadRequest("Invalid token");
-
-        var expMilliseconds = long.Parse(expClaim.Value);
-        var expDate = DateTimeOffset.FromUnixTimeMilliseconds(expMilliseconds);
-        if (expDate < DateTimeOffset.UtcNow) return Results.BadRequest("Token is expired");
-        
-        return Result.Success();
-    }
 
     public async Task<string> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var verificationResult = Verify();
+        var verificationResult = tokenHandler.Verify();
         
         if (!verificationResult.Succeeded)
         {
@@ -73,15 +51,7 @@ public sealed class TokenManager(
             await context.RefreshTokens.AddAsync(entity, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
 
-            var cookieOptions = new CookieOptions()
-            {
-                Path = "/",
-                SameSite = SameSiteMode.Lax,
-                HttpOnly = true,
-                Expires = refreshTokenExpirationDate,
-            };
-
-            cookieAccessor.Set(Key, refreshToken, cookieOptions);
+            tokenHandler.Set(refreshToken, refreshTokenExpirationDate);
         }
         
         var accessTokenClaims = new List<Claim>()

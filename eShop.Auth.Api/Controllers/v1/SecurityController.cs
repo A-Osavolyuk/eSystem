@@ -46,9 +46,9 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("refresh-token")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
+    public async ValueTask<IActionResult> RefreshTokenAsync()
     {
-        var result = await sender.Send(new RefreshTokenCommand(request));
+        var result = await sender.Send(new RefreshTokenCommand());
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
