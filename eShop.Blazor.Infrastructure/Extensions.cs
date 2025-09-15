@@ -40,6 +40,7 @@ public static class Extensions
         builder.Services.AddHttpClient<IPasskeyService, PasskeyService>(ServiceLifetime.Scoped);
 
         builder.Services.AddScoped<IApiClient, ApiClient>();
+        builder.Services.AddScoped<IFetchClient, FetchClient>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
         builder.Services.AddScoped<ICookieManager, CookieManager>();
