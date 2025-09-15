@@ -154,7 +154,7 @@
             }
             else
             {
-                await AuthenticationManager.SignInAsync(response!.Token!);
+                await AuthenticationManager.SignInAsync();
                 RouteManager.Route("/products");
                 Snackbar.Add(result.Message, Severity.Success);
             }

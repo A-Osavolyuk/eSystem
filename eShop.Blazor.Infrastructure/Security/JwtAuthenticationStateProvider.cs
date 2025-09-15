@@ -1,7 +1,12 @@
-﻿using eShop.Blazor.Application.State;
+﻿using System.Text.Json;
+using eShop.Blazor.Application.State;
 using eShop.Blazor.Domain.Interfaces;
+using eShop.Blazor.Domain.Options;
+using eShop.Domain.Common.Http;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
+using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Blazor.Infrastructure.Security;
 
@@ -9,6 +14,7 @@ public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage storage,
     IUserService userService,
+    IFetchClient fetchClient,
     TokenHandler tokenHandler,
     UserState userState) : AuthenticationStateProvider
 {
@@ -16,6 +22,7 @@ public class JwtAuthenticationStateProvider(
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage storage = storage;
     private readonly IUserService userService = userService;
+    private readonly IFetchClient fetchClient = fetchClient;
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly UserState userState = userState;
 
@@ -24,7 +31,18 @@ public class JwtAuthenticationStateProvider(
         try
         {
             var token = tokenProvider.Get();
-            if (string.IsNullOrEmpty(token)) return await UnauthorizeAsync();
+            if (string.IsNullOrEmpty(token))
+            {
+                var result = await AuthorizeAsync();
+                if (result.Success)
+                {
+                    var response = result.Get<AuthorizeResponse>()!;
+                    
+                    token = response.AccessToken;
+                    tokenProvider.Set(token);
+                }
+                else return await UnauthorizeAsync();
+            }
 
             var rawToken = tokenHandler.ReadToken(token);
             if (rawToken is null || !rawToken.Claims.Any()) return await UnauthorizeAsync();
@@ -49,7 +67,7 @@ public class JwtAuthenticationStateProvider(
         if (!string.IsNullOrEmpty(accessToken))
         {
             tokenProvider.Set(accessToken);
-            
+
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
 
@@ -69,17 +87,17 @@ public class JwtAuthenticationStateProvider(
     public async Task SignOutAsync()
     {
         await storage.ClearAsync();
-        
+
         userState.Clear();
         tokenProvider.Clear();
-        
+
         await UnauthorizeAsync();
     }
 
     private async Task<AuthenticationState> UnauthorizeAsync()
     {
         NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
-        
+
         return await Task.FromResult(anonymous);
     }
 
@@ -93,5 +111,25 @@ public class JwtAuthenticationStateProvider(
             var state = result.Get<UserStateDto>()!;
             userState.Map(state);
         }
+    }
+
+    private async Task<HttpResponse> AuthorizeAsync()
+    {
+        var userId = await storage.GetAsync<Guid>("userId");
+
+        if (userId == Guid.Empty) throw new Exception("User not found");
+
+        var request = new AuthorizeRequest() { UserId = userId };
+        var body = JsonSerializer.Serialize(request);
+
+        var options = new FetchOptions()
+        {
+            Url = "/api/v1/Security/authorize",
+            Method = HttpMethod.Post,
+            Credentials = Credentials.Include,
+            Body = body
+        };
+
+        return await fetchClient.FetchAsync(options);
     }
 }

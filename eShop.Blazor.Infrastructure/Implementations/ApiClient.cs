@@ -2,6 +2,7 @@
 using System.Text.Json;
 using eShop.Blazor.Application.Routing;
 using eShop.Blazor.Domain.Interfaces;
+using eShop.Blazor.Domain.Options;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using Microsoft.AspNetCore.Http;
@@ -12,15 +13,14 @@ public class ApiClient(
     IHttpClientFactory clientFactory,
     ITokenProvider tokenProvider,
     IHttpContextAccessor httpContextAccessor,
-    IConfiguration configuration,
+    IFetchClient fetchClient,
     RouteManager routeManager) : IApiClient
 {
     private readonly IHttpClientFactory clientFactory = clientFactory;
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private readonly IConfiguration configuration = configuration;
+    private readonly IFetchClient fetchClient = fetchClient;
     private readonly RouteManager routeManager = routeManager;
-    private const string GatewayKey = "services:proxy:http:0";
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
     {
@@ -129,17 +129,15 @@ public class ApiClient(
 
     private async Task<HttpResponse> RefreshAsync()
     {
-        var gateway = configuration[GatewayKey]!;
-        var url = $"{gateway}/api/v1/Security/refresh-token";
-
-        var request = new HttpRequest()
+        var fetchOptions = new FetchOptions()
         {
+            Url = "/api/v1/Security/refresh-token",
             Method = HttpMethod.Post,
-            Url = url
+            Body = null,
+            Credentials = Credentials.Include
         };
         
-        var options = new HttpOptions() { Type = DataType.Text, WithBearer = false };
-        var response = await SendAsync(request, options);
+        var response = await fetchClient.FetchAsync(fetchOptions);
         return response;
     }
 }
