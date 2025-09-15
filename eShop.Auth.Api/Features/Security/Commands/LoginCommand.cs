@@ -6,7 +6,6 @@ namespace eShop.Auth.Api.Features.Security.Commands;
 public sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 
 public sealed class LoginCommandHandler(
-    ITokenManager tokenManager,
     IUserManager userManager,
     ILockoutManager lockoutManager,
     IReasonManager reasonManager,
@@ -15,7 +14,6 @@ public sealed class LoginCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<LoginCommand, Result>
 {
-    private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IReasonManager reasonManager = reasonManager;
@@ -182,13 +180,7 @@ public sealed class LoginCommandHandler(
             return Result.Success(response);
         }
         
-        var token = await tokenManager.GenerateAsync(user, cancellationToken);
-
-        response = new LoginResponse()
-        {
-            UserId = user.Id,
-            Token = token,
-        };
+        response = new LoginResponse() { UserId = user.Id, };
 
         await loginSessionManager.CreateAsync(device, LoginType.Password, cancellationToken: cancellationToken);
 

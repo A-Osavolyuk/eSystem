@@ -1,7 +1,7 @@
 ﻿namespace eShop.Domain.Responses.API.Auth;
 
-public class TrustDeviceResponse
+public class AuthorizeResponse
 {
     public Guid UserId { get; set; }
-    public bool IsTwoFactorEnabled { get; set; }
+    public required string AccessToken { get; set; }
 }

@@ -13,12 +13,10 @@ public record VerifyPasskeySignInCommand(VerifyPasskeySignInRequest Request, Htt
 public class VerifyPasskeySignInCommandHandler(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
-    ITokenManager tokenManager,
     ILockoutManager lockoutManager) : IRequestHandler<VerifyPasskeySignInCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
-    private readonly ITokenManager tokenManager = tokenManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(VerifyPasskeySignInCommand request,
@@ -66,13 +64,11 @@ public class VerifyPasskeySignInCommandHandler(
 
             return Results.BadRequest("Account is locked out", lockoutResponse);
         }
-
-        var token = await tokenManager.GenerateAsync(user, cancellationToken);
+        
 
         var response = new VerifyPublicKeyCredentialRequestOptionsResponse()
         {
             UserId = user.Id,
-            Token =  token,
         };
 
         return Result.Success(response);

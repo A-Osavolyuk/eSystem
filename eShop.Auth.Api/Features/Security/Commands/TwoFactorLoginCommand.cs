@@ -8,7 +8,6 @@ public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request, HttpCo
     : IRequest<Result>;
 
 public sealed class LoginWith2FaCommandHandler(
-    ITokenManager tokenManager,
     IUserManager userManager,
     ITwoFactorProviderManager twoFactorProviderManager,
     ILockoutManager lockoutManager,
@@ -19,7 +18,6 @@ public sealed class LoginWith2FaCommandHandler(
     ICodeManager codeManager,
     IdentityOptions identityOptions) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
-    private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
@@ -140,13 +138,7 @@ public sealed class LoginWith2FaCommandHandler(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
         
-        var token = await tokenManager.GenerateAsync(user, cancellationToken);
-
-        response = new LoginResponse()
-        {
-            UserId = user.Id,
-            Token = token,
-        };
+        response = new LoginResponse() { UserId = user.Id, };
         
         await loginSessionManager.CreateAsync(device, LoginType.TwoFactor, provider.Name, cancellationToken);
         return Result.Success(response, "Successfully logged in.");

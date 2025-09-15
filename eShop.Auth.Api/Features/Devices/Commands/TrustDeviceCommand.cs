@@ -7,13 +7,11 @@ public record TrustDeviceCommand(TrustDeviceRequest Request) : IRequest<Result>;
 
 public class TrustDeviceCommandHandler(
     IUserManager userManager,
-    ITokenManager tokenManager,
     IDeviceManager deviceManager,
     ILoginSessionManager loginSessionManager,
     IVerificationManager verificationManager) : IRequestHandler<TrustDeviceCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITokenManager tokenManager = tokenManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
     private readonly IVerificationManager verificationManager = verificationManager;
@@ -42,15 +40,12 @@ public class TrustDeviceCommandHandler(
                 UserId = user.Id
             });
         }
-        
-        var token = await tokenManager.GenerateAsync(user,  cancellationToken);
 
         await loginSessionManager.CreateAsync(device, LoginType.Password, cancellationToken: cancellationToken);
         
         var response = new TrustDeviceResponse()
         {
             UserId = user.Id,
-            Token = token,
         };
         
         return Result.Success(response);

@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
@@ -18,11 +19,14 @@ public class AuthorizeCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var token = await tokenManager.FindAsync(user, cancellationToken);
-        if (token is null) return Results.NotFound($"User doesn't have refresh token.");
-        
-        tokenHandler.Set(token.Token, token.ExpireDate.DateTime);
+        var accessToken = await tokenManager.GenerateAsync(user, cancellationToken);
 
-        return Result.Success();
+        var response = new AuthorizeResponse()
+        {
+            UserId = user.Id,
+            AccessToken = accessToken,
+        };
+        
+        return Result.Success(response);
     }
 }

@@ -8,12 +8,10 @@ public record LoadOAuthSessionCommand(LoadOAuthSessionRequest Request) : IReques
 public class LoadOAuthSessionCommandHandler(
     IUserManager userManager,
     IOAuthSessionManager sessionManager,
-    ITokenManager tokenManager,
     IOAuthProviderManager providerManager) : IRequestHandler<LoadOAuthSessionCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
-    private readonly ITokenManager tokenManager = tokenManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
 
     public async Task<Result> Handle(LoadOAuthSessionCommand request, CancellationToken cancellationToken)
@@ -49,11 +47,9 @@ public class LoadOAuthSessionCommandHandler(
             return Results.NotFound($"Cannot find provider with ID {session.ProviderId}");
         }
         
-        var token = await tokenManager.GenerateAsync(user, cancellationToken);
 
         var response = new LoadOAuthSessionResponse()
         {
-            Token = token,
             SignType = session.SignType,
             Provider = provider.Name,
         };

@@ -48,6 +48,8 @@ public sealed class TokenManager(
                 UpdateDate = null
             };
             
+            tokenHandler.Set(refreshToken, refreshTokenExpirationDate);
+            
             await context.RefreshTokens.AddAsync(entity, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
