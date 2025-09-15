@@ -104,7 +104,7 @@
                 if (verificationResult.Success)
                 {
                     var response = verificationResult.Get<VerifyPublicKeyCredentialRequestOptionsResponse>()!;
-                    await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken);
+                    await AuthenticationManager.SignInAsync(response.Token);
                     Snackbar.Add("Successfully signed in.", Severity.Success);
                     RouteManager.Route("/products");
                 }

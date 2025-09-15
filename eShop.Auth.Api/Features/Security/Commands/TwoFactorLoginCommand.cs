@@ -140,14 +140,12 @@ public sealed class LoginWith2FaCommandHandler(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
         
-        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
-        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+        var token = await tokenManager.GenerateAsync(user, cancellationToken);
 
         response = new LoginResponse()
         {
             UserId = user.Id,
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
+            Token = token,
         };
         
         await loginSessionManager.CreateAsync(device, LoginType.TwoFactor, provider.Name, cancellationToken);

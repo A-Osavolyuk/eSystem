@@ -15,22 +15,12 @@ public class RefreshTokenCommandHandler(
     public async Task<Result> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         var userId = request.Request.UserId;
-        var token = request.Request.Token;
         
         var user = await userManager.FindByIdAsync(userId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with id {userId}.");
         
-        var verificationResult = await tokenManager.VerifyAsync(user, token, cancellationToken);
-        if (!verificationResult.Succeeded) return verificationResult;
-        
-        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
-        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
-        
-        var response = new RefreshTokenResponse()
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        };
+        var accessToken = await tokenManager.GenerateAsync(user, cancellationToken);
+        var response = new RefreshTokenResponse() { Token = accessToken };
 
         return Result.Success(response);
     }

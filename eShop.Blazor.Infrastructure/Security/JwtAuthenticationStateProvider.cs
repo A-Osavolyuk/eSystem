@@ -51,9 +51,9 @@ public class JwtAuthenticationStateProvider(
         }
     }
 
-    public async Task SignInAsync(string accessToken, string refreshToken)
+    public async Task SignInAsync(string accessToken)
     {
-        if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
+        if (!string.IsNullOrEmpty(accessToken))
         {
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
@@ -81,12 +81,14 @@ public class JwtAuthenticationStateProvider(
     {
         await storage.ClearAsync();
         userState.Clear();
+        
         return await UnauthorizeAsync();
     }
 
     private async Task<AuthenticationState> UnauthorizeAsync()
     {
         NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
+        
         return await Task.FromResult(anonymous);
     }
 
@@ -94,7 +96,6 @@ public class JwtAuthenticationStateProvider(
     {
         var request = new RefreshTokenRequest()
         {
-            Token = token,
             UserId = userState.UserId
         };
 
@@ -103,7 +104,7 @@ public class JwtAuthenticationStateProvider(
         if (!result.Success) return await SignOutAsync();
 
         var response = result.Get<RefreshTokenResponse>()!;
-        var rawToken = tokenHandler.ReadToken(response.RefreshToken)!;
+        var rawToken = tokenHandler.ReadToken(response.Token)!;
         var claims = rawToken.Claims.ToList();
         var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(identity);

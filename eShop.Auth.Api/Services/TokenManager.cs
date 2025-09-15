@@ -9,65 +9,100 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(ITokenManager), ServiceLifetime.Scoped)]
 public sealed class TokenManager(
     AuthDbContext context,
-    IOptions<JwtOptions> options) : ITokenManager
+    IOptions<JwtOptions> options,
+    ICookieAccessor cookieAccessor) : ITokenManager
 {
     private readonly AuthDbContext context = context;
+    private readonly ICookieAccessor cookieAccessor = cookieAccessor;
     private readonly JwtOptions options = options.Value;
-    private const int AccessTokenExpirationMinutes = 30;
-    private const string Algorithm = SecurityAlgorithms.HmacSha256Signature;
+    private const int AccessTokenExpirationMinutes = 15;
+    private const string Key = "RefreshToken";
 
-    public async ValueTask<RefreshTokenEntity?> FindAsync(UserEntity userEntity,
-        CancellationToken cancellationToken = default)
+    public Result Verify()
     {
-        var entity = await context.RefreshTokens
-            .FirstOrDefaultAsync(x => x.UserId == userEntity.Id, cancellationToken: cancellationToken);
+        var token = cookieAccessor.Get(Key);
+        if (string.IsNullOrEmpty(token)) return Results.NotFound("Token not found");
 
-        return entity;
-    }
+        var handler = new JwtSecurityTokenHandler();
 
-    public async ValueTask<Result> VerifyAsync(UserEntity user, string token,
-        CancellationToken cancellationToken = default)
-    {
-        var entity = await context.RefreshTokens
-            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.Token == token,
-                cancellationToken: cancellationToken);
+        var rawToken = handler.ReadJwtToken(token);
+        if (rawToken is null || !rawToken.Claims.Any()) return Results.BadRequest("Invalid token");
 
-        if (entity is null)
-        {
-            return Results.NotFound("Token not found");
-        }
+        var expClaim = rawToken.Claims.SingleOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp);
+        if (expClaim is null) return Results.BadRequest("Invalid token");
 
-        if (entity.ExpireDate < DateTime.UtcNow)
-        {
-            return Results.BadRequest("Token already expired");
-        }
-
-        context.RefreshTokens.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
-
+        var expMilliseconds = long.Parse(expClaim.Value);
+        var expDate = DateTimeOffset.FromUnixTimeMilliseconds(expMilliseconds);
+        if (expDate < DateTimeOffset.UtcNow) return Results.BadRequest("Token is expired");
+        
         return Result.Success();
     }
 
-    public async Task<string> GenerateAsync(UserEntity user, TokenType type,
-        CancellationToken cancellationToken = default)
+    public async Task<string> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var key = Encoding.UTF8.GetBytes(options.Secret);
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), Algorithm);
+        var verificationResult = Verify();
+        
+        if (!verificationResult.Succeeded)
+        {
+            var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
+                x => x.UserId == user.Id, cancellationToken);
 
-        var expirationDate = type switch
+            if (existingEntity is not null)
+            {
+                context.RefreshTokens.Remove(existingEntity);
+            }
+
+            var refreshTokenClaims = new List<Claim>()
+            {
+                new(AppClaimTypes.Subject, user.Id.ToString()),
+                new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
+            };
+            
+            var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(options.ExpirationDays);
+            var refreshToken = Generate(refreshTokenClaims, refreshTokenExpirationDate);
+            
+            var entity = new RefreshTokenEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                Token = refreshToken,
+                ExpireDate = refreshTokenExpirationDate,
+                CreateDate = DateTime.UtcNow,
+                UpdateDate = null
+            };
+            
+            await context.RefreshTokens.AddAsync(entity, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+
+            var cookieOptions = new CookieOptions()
+            {
+                Path = "/",
+                SameSite = SameSiteMode.Lax,
+                HttpOnly = true,
+                Expires = refreshTokenExpirationDate,
+            };
+
+            cookieAccessor.Set(Key, refreshToken, cookieOptions);
+        }
+        
+        var accessTokenClaims = new List<Claim>()
         {
-            TokenType.Access => DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes),
-            TokenType.Refresh => DateTime.UtcNow.AddDays(options.ExpirationDays),
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            new(AppClaimTypes.Subject, user.Id.ToString()),
+            new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
         };
         
-        var jti = Guid.NewGuid();
-        
-        var claims = new List<Claim>()
-        {
-            new (AppClaimTypes.Subject, user.Id.ToString()),
-            new (AppClaimTypes.Jti, jti.ToString())
-        };
+        var accessTokenExpirationDate = DateTime.UtcNow.AddMinutes(AccessTokenExpirationMinutes);
+        var token = Generate(accessTokenClaims, accessTokenExpirationDate);
+
+        return token;
+    }
+
+    private string Generate(IEnumerable<Claim> claims, DateTime expirationDate)
+    {
+        const string algorithm = SecurityAlgorithms.HmacSha256Signature;
+
+        var key = Encoding.UTF8.GetBytes(options.Secret);
+        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
 
         var securityToken = new JwtSecurityToken(
             audience: options.Audience,
@@ -78,47 +113,7 @@ public sealed class TokenManager(
 
         var handler = new JwtSecurityTokenHandler();
         var token = handler.WriteToken(securityToken);
-
-        if (type is TokenType.Access)
-        {
-            return token;
-        }
         
-        var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
-            x => x.UserId == user.Id, cancellationToken: cancellationToken);
-
-        if (existingEntity is null)
-        {
-            var entity = new RefreshTokenEntity()
-            {
-                Id = jti,
-                UserId = user.Id,
-                Token = token,
-                ExpireDate = expirationDate,
-                CreateDate = DateTime.UtcNow,
-                UpdateDate = null
-            };
-
-            await context.RefreshTokens.AddAsync(entity, cancellationToken);
-        }
-        else
-        {
-            var entity = new RefreshTokenEntity()
-            {
-                Id = jti,
-                UserId = user.Id,
-                Token = token,
-                ExpireDate = expirationDate,
-                CreateDate = DateTime.UtcNow,
-                UpdateDate = null
-            };
-
-            context.RefreshTokens.Remove(existingEntity);
-            await context.RefreshTokens.AddAsync(entity, cancellationToken);
-        }
-
-        await context.SaveChangesAsync(cancellationToken);
-
         return token;
     }
 }

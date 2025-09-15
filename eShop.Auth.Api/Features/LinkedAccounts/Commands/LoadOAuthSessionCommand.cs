@@ -49,13 +49,11 @@ public class LoadOAuthSessionCommandHandler(
             return Results.NotFound($"Cannot find provider with ID {session.ProviderId}");
         }
         
-        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
-        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+        var token = await tokenManager.GenerateAsync(user, cancellationToken);
 
         var response = new LoadOAuthSessionResponse()
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
+            Token = token,
             SignType = session.SignType,
             Provider = provider.Name,
         };

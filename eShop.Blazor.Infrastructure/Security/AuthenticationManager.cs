@@ -4,9 +4,9 @@ public class AuthenticationManager(AuthenticationStateProvider authenticationSta
 {
     private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
 
-    public async Task SignInAsync(string accessToken, string refreshToken)
+    public async Task SignInAsync(string accessToken)
     {
-        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignInAsync(accessToken, refreshToken);
+        await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignInAsync(accessToken);
     }
 
     public async Task SignOutAsync()

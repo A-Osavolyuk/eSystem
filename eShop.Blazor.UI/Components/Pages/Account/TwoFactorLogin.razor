@@ -311,7 +311,7 @@
             {
                 var response = result.Get<LoginResponse>()!;
 
-                await AuthenticationManager.SignInAsync(response!.AccessToken!, response.RefreshToken!);
+                await AuthenticationManager.SignInAsync(response.Token!);
                 Snackbar.Add(result.Message, Severity.Success);
                 RouteManager.Route("/products");
             }

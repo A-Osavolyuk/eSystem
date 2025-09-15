@@ -67,14 +67,12 @@ public class VerifyPasskeySignInCommandHandler(
             return Results.BadRequest("Account is locked out", lockoutResponse);
         }
 
-        var accessToken = await tokenManager.GenerateAsync(user, TokenType.Access, cancellationToken);
-        var refreshToken = await tokenManager.GenerateAsync(user, TokenType.Refresh, cancellationToken);
+        var token = await tokenManager.GenerateAsync(user, cancellationToken);
 
         var response = new VerifyPublicKeyCredentialRequestOptionsResponse()
         {
             UserId = user.Id,
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
+            Token =  token,
         };
 
         return Result.Success(response);

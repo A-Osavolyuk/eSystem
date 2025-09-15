@@ -10,8 +10,7 @@ public record LoginResponse
     public bool IsDeviceBlocked { get; set; }
     public bool IsTwoFactorEnabled { get; set; }
     
-    public string? AccessToken { get; set; }
-    public string? RefreshToken { get; set; }
+    public string? Token { get; set; }
     
     public bool IsLockedOut { get; set; }
     public LockoutReasonDto? Reason { get; set; }
