@@ -60,7 +60,7 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("authorize")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> SetTokenAsync([FromBody] AuthorizeRequest request)
+    public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
     {
         var result = await sender.Send(new AuthorizeCommand(request));
 
@@ -68,6 +68,20 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+        [EndpointSummary("Unauthorize")]
+        [EndpointDescription("Unauthorize")]
+        [ProducesResponseType(200)]
+        [HttpPost("unauthorize")]
+        [AllowAnonymous]
+        public async ValueTask<IActionResult> UnauthorizeAsync([FromBody] UnauthorizeRequest request)
+        {
+            var result = await sender.Send(new UnauthorizeCommand(request));
+    
+            return result.Match(
+                s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+                ErrorHandler.Handle);
+        }
 
     [EndpointSummary("Unlock account")]
     [EndpointDescription("Unlock account")]

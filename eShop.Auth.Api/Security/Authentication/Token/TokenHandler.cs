@@ -25,6 +25,19 @@ public class TokenHandler(ICookieAccessor cookieAccessor)
 
     public string? Get() => cookieAccessor.Get(Key);
 
+    public void Remove()
+    {
+        var cookieOptions = new CookieOptions()
+        {
+            Path = "/",
+            SameSite = SameSiteMode.Lax,
+            HttpOnly = true,
+            Secure = false,
+        };
+        
+        cookieAccessor.Remove(Key, cookieOptions);
+    }
+
     public List<Claim> Read(string token)
     {
         var handler = new JwtSecurityTokenHandler();
