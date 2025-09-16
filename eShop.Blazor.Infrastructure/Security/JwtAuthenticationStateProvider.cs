@@ -67,8 +67,7 @@ public class JwtAuthenticationStateProvider(
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
 
-            var userId = Guid.Parse(claims.First(x => x.Type == AppClaimTypes.Subject).Value);
-            userState.UserId = userId;
+            await LoadAsync(claims);
 
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(identity);
