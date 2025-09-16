@@ -13,7 +13,7 @@ public static class HostApplicationBuilderExtensions
     {
         builder.AddVersioning();
         builder.AddMessageBus();
-        builder.AddValidation();
+        builder.AddValidation<IAssemblyMarker>();
         builder.AddServiceDefaults();
         builder.AddSecurity();
         builder.AddServices<IAssemblyMarker>();
@@ -35,11 +35,6 @@ public static class HostApplicationBuilderExtensions
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
         });
-    }
-
-    private static void AddValidation(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)

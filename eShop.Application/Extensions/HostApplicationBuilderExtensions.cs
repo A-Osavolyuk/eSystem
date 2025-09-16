@@ -88,6 +88,11 @@ public static class HostApplicationBuilderExtensions
         builder.AddRedisClient("redis");
     }
     
+    public static void AddValidation<TAssemblyMarker>(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblyContaining<TAssemblyMarker>();
+    }
+    
     public static void AddHttpClient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>
         (this IServiceCollection services, ServiceLifetime lifetime)
         where TImplementation : class, TService

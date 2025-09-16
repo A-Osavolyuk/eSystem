@@ -12,7 +12,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddAuthorization();
         builder.AddVersioning();
         builder.AddMessageBus();
-        builder.AddValidation();
+        builder.AddValidation<IAssemblyMarker>();
         builder.AddRedisCache();
         builder.AddMediatR();
         builder.AddMsSqlDb();
@@ -33,11 +33,6 @@ public static class HostApplicationBuilderExtensions
                     await ctx.SeedAsync<IAssemblyMarker>(ct);
                 });
             });
-    }
-    
-    private static void AddValidation(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)

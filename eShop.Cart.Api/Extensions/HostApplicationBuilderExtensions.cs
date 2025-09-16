@@ -11,7 +11,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddVersioning();
         builder.AddMongoDb();
         builder.AddMessageBus();
-        builder.AddValidation();
+        builder.AddValidation<IAssemblyMarker>();
         builder.AddServiceDefaults();
         builder.AddRedisCache();
         builder.AddMediatR();
@@ -27,11 +27,6 @@ public static class HostApplicationBuilderExtensions
         {
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
         });
-    }
-    
-    private static void AddValidation(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
     
     private static void AddMongoDb(this IHostApplicationBuilder builder)

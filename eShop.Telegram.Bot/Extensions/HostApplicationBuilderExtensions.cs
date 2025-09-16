@@ -10,7 +10,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddJwtAuthentication();
         builder.AddVersioning();
-        builder.AddValidation();
         builder.AddMessageBus();
         builder.AddMediatR();
         builder.AddExceptionHandler();
@@ -26,11 +25,6 @@ public static class HostApplicationBuilderExtensions
         {
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
         });
-    }
-    
-    private static void AddValidation(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
 
     private static void AddTelegramBot(this IHostApplicationBuilder builder)

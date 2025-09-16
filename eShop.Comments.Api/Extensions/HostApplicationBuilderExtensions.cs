@@ -8,7 +8,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddJwtAuthentication();
         builder.AddVersioning();
-        builder.AddValidation();
+        builder.AddValidation<IAssemblyMarker>();
         builder.AddMessageBus();
         builder.AddRedisCache();
         builder.AddMediatR();
@@ -21,11 +21,6 @@ public static class HostApplicationBuilderExtensions
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)
     {
         builder.AddSqlServerDbContext<AppDbContext>("comment-db");
-    }
-    
-    private static void AddValidation(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)
