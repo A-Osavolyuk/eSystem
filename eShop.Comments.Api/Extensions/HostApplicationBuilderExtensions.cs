@@ -1,6 +1,4 @@
-﻿using eShop.Domain.Interfaces.API;
-
-namespace eShop.Comments.Api.Extensions;
+﻿namespace eShop.Comments.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
@@ -40,7 +38,6 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddMediatR(x =>
         {
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            x.AddOpenBehavior(typeof(TransactionBehaviour<,>), ServiceLifetime.Transient);
         });
     }
 

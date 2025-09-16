@@ -1,6 +1,4 @@
-﻿using eShop.Cart.Api.Services;
-using eShop.Domain.Interfaces.API;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace eShop.Cart.Api.Extensions;
 
@@ -11,7 +9,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddJwtAuthentication();
         builder.AddVersioning();
-        builder.AddDependencyInjection();
         builder.AddMongoDb();
         builder.AddMessageBus();
         builder.AddValidation();
@@ -40,11 +37,6 @@ public static class HostApplicationBuilderExtensions
     private static void AddRedisCache(this IHostApplicationBuilder builder)
     {
         builder.AddRedisClient("redis");
-    }
-    
-    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddScoped<ICacheService, CacheService>();
     }
     
     private static void AddMongoDb(this IHostApplicationBuilder builder)

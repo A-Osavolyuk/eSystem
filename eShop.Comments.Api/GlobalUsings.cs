@@ -1,5 +1,4 @@
 ﻿global using eShop.Application.Extensions;
-global using eShop.Comments.Api.Behaviours;
 global using eShop.Comments.Api.Data;
 global using eShop.Comments.Api.Extensions;
 global using eShop.ServiceDefaults;
