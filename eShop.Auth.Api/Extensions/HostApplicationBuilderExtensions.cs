@@ -20,7 +20,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddRedisCache();
         builder.AddMediatR();
         builder.AddMsSqlDb();
-        builder.AddGrpc();
         builder.AddLogging();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
@@ -46,11 +45,6 @@ public static class HostApplicationBuilderExtensions
     private static void AddMediatR(this IHostApplicationBuilder builder)
     {
         builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>(); });
-    }
-
-    private static void AddGrpc(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddGrpc(options => { options.EnableDetailedErrors = true; });
     }
 
     private static void AddMsSqlDb(this IHostApplicationBuilder builder)
