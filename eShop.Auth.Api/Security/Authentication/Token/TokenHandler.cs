@@ -58,7 +58,7 @@ public class TokenHandler(ICookieAccessor cookieAccessor)
         if (expClaim is null) return Results.Unauthorized("Invalid token");
 
         var expMilliseconds = long.Parse(expClaim.Value);
-        var expDate = DateTimeOffset.FromUnixTimeMilliseconds(expMilliseconds);
+        var expDate = DateTimeOffset.FromUnixTimeSeconds(expMilliseconds);
         if (expDate < DateTimeOffset.UtcNow) return Results.Unauthorized("Invalid token");
         
         return Result.Success();
