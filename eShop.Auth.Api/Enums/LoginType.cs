@@ -4,5 +4,6 @@ public enum LoginType
 {
     Password,
     TwoFactor,
-    OAuth
+    OAuth,
+    Passkey
 }

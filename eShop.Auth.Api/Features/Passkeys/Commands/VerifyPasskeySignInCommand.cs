@@ -10,11 +10,19 @@ public record VerifyPasskeySignInCommand(VerifyPasskeySignInRequest Request, Htt
 public class VerifyPasskeySignInCommandHandler(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
-    ILockoutManager lockoutManager) : IRequestHandler<VerifyPasskeySignInCommand, Result>
+    ILockoutManager lockoutManager,
+    ILoginManager loginManager,
+    IAuthorizationManager authorizationManager,
+    IDeviceManager deviceManager,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<VerifyPasskeySignInCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
+    private readonly ILoginManager loginManager = loginManager;
+    private readonly IDeviceManager deviceManager = deviceManager;
+    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
     public async Task<Result> Handle(VerifyPasskeySignInCommand request,
         CancellationToken cancellationToken)
@@ -62,7 +70,15 @@ public class VerifyPasskeySignInCommandHandler(
             return Results.BadRequest("Account is locked out", lockoutResponse);
         }
         
+        var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
+        var ipV4 = httpContextAccessor.HttpContext?.GetIpV4()!;
 
+        var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
+        if (device is null) return Results.NotFound($"Invalid device.");
+        
+        await loginManager.CreateAsync(device, LoginType.Passkey, cancellationToken);
+        await authorizationManager.CreateAsync(user, device, cancellationToken);
+        
         var response = new VerifyPasskeySignInResponse()
         {
             UserId = user.Id,

@@ -10,6 +10,7 @@ public sealed class LoginCommandHandler(
     ILockoutManager lockoutManager,
     IReasonManager reasonManager,
     ILoginManager loginManager,
+    IAuthorizationManager authorizationManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<LoginCommand, Result>
@@ -18,6 +19,7 @@ public sealed class LoginCommandHandler(
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IReasonManager reasonManager = reasonManager;
     private readonly ILoginManager loginManager = loginManager;
+    private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IdentityOptions identityOptions = identityOptions;
@@ -182,7 +184,8 @@ public sealed class LoginCommandHandler(
         
         response = new LoginResponse() { UserId = user.Id, };
 
-        await loginManager.CreateAsync(device, LoginType.Password, cancellationToken: cancellationToken);
+        await loginManager.CreateAsync(device, LoginType.Password, cancellationToken);
+        await authorizationManager.CreateAsync(user, device, cancellationToken);
 
         return Result.Success(response, "Successfully logged in.");
     }

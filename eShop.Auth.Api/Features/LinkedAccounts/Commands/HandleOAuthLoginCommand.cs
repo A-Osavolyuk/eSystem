@@ -18,6 +18,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     IOAuthSessionManager sessionManager,
     IOAuthProviderManager providerManager,
     ILoginManager loginManager,
+    IAuthorizationManager authorizationManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
@@ -29,6 +30,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IOAuthSessionManager sessionManager = sessionManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ILoginManager loginManager = loginManager;
+    private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
@@ -181,7 +183,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         var checkProviderResult = await CheckUserProviderAsync(user, provider, fallbackUri, cancellationToken);
         if (!checkProviderResult.Succeeded) return checkProviderResult;
 
-        return await SignInAsync( provider, session, device, request.ReturnUri!, token, cancellationToken);
+        return await SignInAsync(user, provider, session, device, request.ReturnUri!, token, cancellationToken);
     }
 
     private async Task<Result> CreateDeviceAsync(UserEntity user, OAuthProviderEntity provider,
@@ -356,11 +358,12 @@ public sealed class HandleOAuthLoginCommandHandler(
 
     }
 
-    private async Task<Result> SignInAsync(OAuthProviderEntity provider,
+    private async Task<Result> SignInAsync(UserEntity user, OAuthProviderEntity provider,
         OAuthSessionEntity session, UserDeviceEntity device, string returnUri,
         string token, CancellationToken cancellationToken)
     {
         await loginManager.CreateAsync(device, LoginType.OAuth, provider.Name, cancellationToken);
+        await authorizationManager.CreateAsync(user, device, cancellationToken);
 
         var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id, token });
 
