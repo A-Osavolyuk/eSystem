@@ -37,14 +37,10 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("DeviceId")
+                        .IsUnique();
 
                     b.ToTable("AuthorizationSessions");
                 });
@@ -384,15 +380,10 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceId")
                         .IsUnique();
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -964,20 +955,12 @@ namespace eShop.Auth.Api.Migrations
             modelBuilder.Entity("eShop.Auth.Api.Entities.AuthorizationSessionEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
-                        .WithMany()
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithOne()
+                        .HasForeignKey("eShop.Auth.Api.Entities.AuthorizationSessionEntity", "DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Device");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.CodeEntity", b =>
@@ -1061,18 +1044,10 @@ namespace eShop.Auth.Api.Migrations
                     b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
                         .WithOne()
                         .HasForeignKey("eShop.Auth.Api.Entities.RefreshTokenEntity", "DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Device");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.ResourceEntity", b =>

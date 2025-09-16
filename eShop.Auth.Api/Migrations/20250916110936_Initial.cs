@@ -549,7 +549,6 @@ namespace eShop.Auth.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
@@ -561,12 +560,6 @@ namespace eShop.Auth.Api.Migrations
                         name: "FK_AuthorizationSessions_UserDevices_DeviceId",
                         column: x => x.DeviceId,
                         principalTable: "UserDevices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AuthorizationSessions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -599,7 +592,6 @@ namespace eShop.Auth.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -614,13 +606,7 @@ namespace eShop.Auth.Api.Migrations
                         column: x => x.DeviceId,
                         principalTable: "UserDevices",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RefreshTokens_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -678,12 +664,8 @@ namespace eShop.Auth.Api.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AuthorizationSessions_DeviceId",
                 table: "AuthorizationSessions",
-                column: "DeviceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AuthorizationSessions_UserId",
-                table: "AuthorizationSessions",
-                column: "UserId");
+                column: "DeviceId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Codes_UserId",
@@ -731,11 +713,6 @@ namespace eShop.Auth.Api.Migrations
                 table: "RefreshTokens",
                 column: "DeviceId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UserId",
-                table: "RefreshTokens",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Resources_OwnerId",
