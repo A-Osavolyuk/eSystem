@@ -83,6 +83,11 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddProblemDetails();
     }
     
+    public static void AddRedisCache(this IHostApplicationBuilder builder)
+    {
+        builder.AddRedisClient("redis");
+    }
+    
     public static void AddHttpClient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>
         (this IServiceCollection services, ServiceLifetime lifetime)
         where TImplementation : class, TService

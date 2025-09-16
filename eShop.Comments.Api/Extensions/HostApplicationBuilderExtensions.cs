@@ -27,11 +27,6 @@ public static class HostApplicationBuilderExtensions
     {
         builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
     }
-    
-    private static void AddRedisCache(this IHostApplicationBuilder builder)
-    {
-        builder.AddRedisClient("redis");
-    }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)
     {

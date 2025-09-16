@@ -29,11 +29,6 @@ public static class HostApplicationBuilderExtensions
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
         });
     }
-    
-    private static void AddRedisCache(this IHostApplicationBuilder builder)
-    {
-        builder.AddRedisClient("redis");
-    }
 
     private static void AddAzure(this IHostApplicationBuilder builder)
     {
