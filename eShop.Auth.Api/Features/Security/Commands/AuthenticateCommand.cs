@@ -10,12 +10,14 @@ public class AuthenticateCommandHandler(
     ITokenManager tokenManager,
     IDeviceManager deviceManager,
     IUserManager userManager,
+    IAuthorizationManager authorizationManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<AuthenticateCommand, Result>
 {
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IUserManager userManager = userManager;
+    private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
     public async Task<Result> Handle(AuthenticateCommand request, CancellationToken cancellationToken)
@@ -41,6 +43,9 @@ public class AuthenticateCommandHandler(
 
         var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
         if (device is null) return Results.NotFound($"Invalid device.");
+        
+        var session = await authorizationManager.FindAsync(user, device, cancellationToken);
+        if (session is null) return Results.NotFound("Invalid authorization session.");
 
         var refreshToken = await tokenManager.FindAsync(user, device, cancellationToken);
         if (refreshToken is null || token != refreshToken.Token) return Results.Unauthorized("Invalid token");

@@ -78,6 +78,14 @@ public sealed class TokenManager(
         return token;
     }
 
+    public async Task<Result> RemoveAsync(RefreshTokenEntity token, CancellationToken cancellationToken = default)
+    {
+        context.RefreshTokens.Remove(token);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
     private string Generate(IEnumerable<Claim> claims, DateTime expirationDate)
     {
         const string algorithm = SecurityAlgorithms.HmacSha256Signature;

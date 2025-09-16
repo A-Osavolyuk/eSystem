@@ -6,4 +6,6 @@ public interface ITokenManager
         UserDeviceEntity device, CancellationToken cancellationToken = default);
     public Task<RefreshTokenEntity?> FindAsync(UserEntity user, 
         UserDeviceEntity device, CancellationToken cancellationToken = default);
+    
+    public Task<Result> RemoveAsync(RefreshTokenEntity token, CancellationToken cancellationToken = default);
 }
