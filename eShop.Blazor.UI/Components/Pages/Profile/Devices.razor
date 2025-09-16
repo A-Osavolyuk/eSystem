@@ -46,7 +46,6 @@
             var devices = result.Get<List<UserDeviceDto>>()!;
 
             Model = new UserDevicesModel() { Devices = devices };
-            await UserState.Change();
         }
         else
         {
