@@ -1,11 +1,9 @@
-﻿using System.Text.Json;
-using eShop.Blazor.Application.State;
+﻿using eShop.Blazor.Application.State;
 using eShop.Blazor.Domain.Interfaces;
 using eShop.Blazor.Domain.Options;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
-using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Blazor.Infrastructure.Security;
@@ -33,10 +31,10 @@ public class JwtAuthenticationStateProvider(
             var token = tokenProvider.Get();
             if (string.IsNullOrEmpty(token))
             {
-                var result = await AuthorizeAsync();
+                var result = await AuthenticateAsync();
                 if (result.Success)
                 {
-                    var response = result.Get<AuthorizeResponse>()!;
+                    var response = result.Get<AuthenticateResponse>()!;
                     
                     token = response.AccessToken;
                     tokenProvider.Set(token);
@@ -113,21 +111,13 @@ public class JwtAuthenticationStateProvider(
         }
     }
 
-    private async Task<HttpResponse> AuthorizeAsync()
+    private async Task<HttpResponse> AuthenticateAsync()
     {
-        var userId = await storage.GetAsync<Guid>("userId");
-
-        if (userId == Guid.Empty) throw new Exception("User not found");
-
-        var request = new AuthorizeRequest() { UserId = userId };
-        var body = JsonSerializer.Serialize(request);
-
         var options = new FetchOptions()
         {
-            Url = "/api/v1/Security/authorize",
+            Url = "/api/v1/Security/authenticate",
             Method = HttpMethod.Post,
             Credentials = Credentials.Include,
-            Body = body
         };
 
         return await fetchClient.FetchAsync(options);
