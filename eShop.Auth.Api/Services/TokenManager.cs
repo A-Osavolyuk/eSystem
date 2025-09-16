@@ -15,7 +15,8 @@ public sealed class TokenManager(
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly JwtOptions options = options.Value;
 
-    public async Task<string> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async Task<string> GenerateAsync(UserEntity user, 
+        UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
         var storedRefreshToken = tokenHandler.Get();
         var verificationResult = tokenHandler.Verify(storedRefreshToken);
@@ -23,7 +24,7 @@ public sealed class TokenManager(
         if (!verificationResult.Succeeded)
         {
             var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
-                x => x.UserId == user.Id, cancellationToken);
+                x => x.UserId == user.Id && x.DeviceId == device.Id, cancellationToken);
 
             if (existingEntity is not null)
             {
@@ -42,6 +43,7 @@ public sealed class TokenManager(
             var entity = new RefreshTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
+                DeviceId = device.Id,
                 UserId = user.Id,
                 Token = refreshToken,
                 ExpireDate = refreshTokenExpirationDate,
@@ -67,10 +69,11 @@ public sealed class TokenManager(
         return token;
     }
 
-    public async Task<RefreshTokenEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async Task<RefreshTokenEntity?> FindAsync(UserEntity user, 
+        UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
         var token = await context.RefreshTokens.FirstOrDefaultAsync(
-            x => x.UserId == user.Id, cancellationToken);
+            x => x.UserId == user.Id && x.DeviceId == device.Id, cancellationToken);
         
         return token;
     }
