@@ -15,9 +15,12 @@
         <MudItem xs="6">
             <MudStack Spacing="3">
                 <MudText Typo="Typo.h6">Emails</MudText>
-                <PrimaryEmailSection Model="Model" />
-                <SecondaryEmailsSection Model="Model" />
-                <RecoveryEmailSection Model="Model" />
+                <MudDivider />
+                <MudStack Spacing="2">
+                    <PrimaryEmailSection Model="Model" />
+                    <SecondaryEmailsSection Model="Model" />
+                    <RecoveryEmailSection Model="Model" />
+                </MudStack>
             </MudStack>
         </MudItem>
     </MudGrid>
