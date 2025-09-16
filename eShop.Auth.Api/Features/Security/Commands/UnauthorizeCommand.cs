@@ -30,10 +30,10 @@ public class UnauthorizeCommandHandler(
         var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
         if (device is null) return Results.NotFound("Invalid device.");
 
-        var refreshToken = await tokenManager.FindAsync(user, device, cancellationToken);
+        var refreshToken = await tokenManager.FindAsync(device, cancellationToken);
         if (refreshToken is null) return Results.NotFound("Invalid refresh token.");
 
-        var session = await authorizationManager.FindAsync(user, device, cancellationToken);
+        var session = await authorizationManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
         tokenHandler.Remove();

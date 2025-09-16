@@ -185,7 +185,7 @@ public sealed class LoginCommandHandler(
         response = new LoginResponse() { UserId = user.Id, };
 
         await loginManager.CreateAsync(device, LoginType.Password, cancellationToken);
-        await authorizationManager.CreateAsync(user, device, cancellationToken);
+        await authorizationManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response, "Successfully logged in.");
     }

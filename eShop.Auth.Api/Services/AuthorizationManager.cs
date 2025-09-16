@@ -5,21 +5,19 @@ public class AuthorizationManager(AuthDbContext context) : IAuthorizationManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<AuthorizationSessionEntity?> FindAsync(UserEntity user, 
+    public async ValueTask<AuthorizationSessionEntity?> FindAsync(
         UserDeviceEntity device, CancellationToken cancellationToken)
     {
         var entity = await context.AuthorizationSessions.FirstOrDefaultAsync(
-            x => x.UserId == user.Id && x.DeviceId == device.Id, cancellationToken);
+            x => x.DeviceId == device.Id, cancellationToken);
         return entity;
     }
 
-    public async ValueTask<Result> CreateAsync(UserEntity user, 
-        UserDeviceEntity device, CancellationToken cancellationToken)
+    public async ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken)
     {
         var entity = new AuthorizationSessionEntity()
         {
             Id = Guid.CreateVersion7(),
-            UserId = user.Id,
             DeviceId = device.Id,
             CreateDate = DateTimeOffset.UtcNow,
         };

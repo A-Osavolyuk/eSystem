@@ -44,13 +44,13 @@ public class AuthenticateCommandHandler(
         var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
         if (device is null) return Results.NotFound($"Invalid device.");
         
-        var session = await authorizationManager.FindAsync(user, device, cancellationToken);
+        var session = await authorizationManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
-        var refreshToken = await tokenManager.FindAsync(user, device, cancellationToken);
+        var refreshToken = await tokenManager.FindAsync(device, cancellationToken);
         if (refreshToken is null || token != refreshToken.Token) return Results.Unauthorized("Invalid token");
 
-        var accessToken = await tokenManager.GenerateAsync(user, device, cancellationToken);
+        var accessToken = await tokenManager.GenerateAsync(device, cancellationToken);
         
         var response = new AuthenticateResponse()
         {

@@ -77,7 +77,7 @@ public class VerifyPasskeySignInCommandHandler(
         if (device is null) return Results.NotFound($"Invalid device.");
         
         await loginManager.CreateAsync(device, LoginType.Passkey, cancellationToken);
-        await authorizationManager.CreateAsync(user, device, cancellationToken);
+        await authorizationManager.CreateAsync(device, cancellationToken);
         
         var response = new VerifyPasskeySignInResponse()
         {

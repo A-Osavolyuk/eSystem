@@ -31,10 +31,10 @@ public class AuthorizeCommandHandler(
         var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
         if (device is null) return Results.NotFound("Invalid device.");
 
-        var session = await authorizationManager.FindAsync(user, device, cancellationToken);
+        var session = await authorizationManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
         
-        var accessToken = await tokenManager.GenerateAsync(user, device, cancellationToken);
+        var accessToken = await tokenManager.GenerateAsync(device, cancellationToken);
 
         var response = new AuthorizeResponse()
         {

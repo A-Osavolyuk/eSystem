@@ -2,11 +2,9 @@
 
 public interface IAuthorizationManager
 {
-    public ValueTask<AuthorizationSessionEntity?> FindAsync(UserEntity user, 
+    public ValueTask<AuthorizationSessionEntity?> FindAsync(
         UserDeviceEntity device, CancellationToken cancellationToken);
     
-    public ValueTask<Result> CreateAsync(UserEntity user, 
-        UserDeviceEntity device, CancellationToken cancellationToken);
-    
+    public ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken);
     public ValueTask<Result> RemoveAsync(AuthorizationSessionEntity session, CancellationToken cancellationToken);
 }

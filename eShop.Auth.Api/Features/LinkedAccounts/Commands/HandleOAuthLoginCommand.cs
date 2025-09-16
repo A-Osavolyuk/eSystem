@@ -363,7 +363,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         string token, CancellationToken cancellationToken)
     {
         await loginManager.CreateAsync(device, LoginType.OAuth, provider.Name, cancellationToken);
-        await authorizationManager.CreateAsync(user, device, cancellationToken);
+        await authorizationManager.CreateAsync(device, cancellationToken);
 
         var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id, token });
 
