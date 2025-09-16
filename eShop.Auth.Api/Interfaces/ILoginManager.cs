@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Interfaces;
 
-public interface ILoginSessionManager
+public interface ILoginManager
 {
     public ValueTask CreateAsync(UserDeviceEntity device, LoginType type, 
         string provider, CancellationToken cancellationToken = default);

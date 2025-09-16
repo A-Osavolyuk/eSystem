@@ -1,7 +1,7 @@
 ﻿namespace eShop.Auth.Api.Services;
 
-[Injectable(typeof(ILoginSessionManager), ServiceLifetime.Scoped)]
-public class LoginSessionManager(AuthDbContext context) : ILoginSessionManager
+[Injectable(typeof(ILoginManager), ServiceLifetime.Scoped)]
+public class LoginManager(AuthDbContext context) : ILoginManager
 {
     private readonly AuthDbContext context = context;
 

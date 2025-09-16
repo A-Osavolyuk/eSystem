@@ -17,7 +17,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     ILockoutManager lockoutManager,
     IOAuthSessionManager sessionManager,
     IOAuthProviderManager providerManager,
-    ILoginSessionManager loginSessionManager,
+    ILoginManager loginManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<HandleOAuthLoginCommand, Result>
 {
@@ -28,7 +28,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
-    private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
+    private readonly ILoginManager loginManager = loginManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
@@ -360,7 +360,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         OAuthSessionEntity session, UserDeviceEntity device, string returnUri,
         string token, CancellationToken cancellationToken)
     {
-        await loginSessionManager.CreateAsync(device, LoginType.OAuth, provider.Name, cancellationToken);
+        await loginManager.CreateAsync(device, LoginType.OAuth, provider.Name, cancellationToken);
 
         var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id, token });
 

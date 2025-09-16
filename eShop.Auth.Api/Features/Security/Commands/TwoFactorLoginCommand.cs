@@ -12,7 +12,7 @@ public sealed class LoginWith2FaCommandHandler(
     ITwoFactorProviderManager twoFactorProviderManager,
     ILockoutManager lockoutManager,
     IRecoverManager recoverManager,
-    ILoginSessionManager loginSessionManager,
+    ILoginManager loginManager,
     IDeviceManager deviceManager,
     IReasonManager reasonManager,
     ICodeManager codeManager,
@@ -23,7 +23,7 @@ public sealed class LoginWith2FaCommandHandler(
     private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IRecoverManager recoverManager = recoverManager;
-    private readonly ILoginSessionManager loginSessionManager = loginSessionManager;
+    private readonly ILoginManager loginManager = loginManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IReasonManager reasonManager = reasonManager;
     private readonly ICodeManager codeManager = codeManager;
@@ -142,7 +142,7 @@ public sealed class LoginWith2FaCommandHandler(
         
         response = new LoginResponse() { UserId = user.Id, };
         
-        await loginSessionManager.CreateAsync(device, LoginType.TwoFactor, provider.Name, cancellationToken);
+        await loginManager.CreateAsync(device, LoginType.TwoFactor, provider.Name, cancellationToken);
         return Result.Success(response, "Successfully logged in.");
     }
 }
