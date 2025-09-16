@@ -19,7 +19,6 @@ public interface ISecurityService
     public ValueTask<HttpResponse> ChangeEmailAsync(ChangeEmailRequest request);
     public ValueTask<HttpResponse> ChangeRecoveryEmailAsync(ChangeRecoveryEmailRequest request);
     public ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request);
-    public ValueTask<HttpResponse> RefreshTokenAsync(RefreshTokenRequest request);
     public ValueTask<HttpResponse> ChangePhoneNumberAsync(ChangePhoneNumberRequest request);
     public ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request);
     public ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request);
@@ -31,4 +30,7 @@ public interface ISecurityService
     public ValueTask<HttpResponse> CheckEmailAsync(CheckEmailRequest request);
     public ValueTask<HttpResponse> CheckPhoneNumberAsync(CheckPhoneNumberRequest request);
     public ValueTask<HttpResponse> CheckPasswordAsync(CheckPasswordRequest request);
+    public ValueTask<HttpResponse> AuthenticateAsync();
+    public ValueTask<HttpResponse> AuthorizeAsync();
+    public ValueTask<HttpResponse> UnauthorizeAsync();
 }

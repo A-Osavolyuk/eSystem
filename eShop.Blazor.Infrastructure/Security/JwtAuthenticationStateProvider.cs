@@ -1,7 +1,5 @@
 ﻿using eShop.Blazor.Application.State;
 using eShop.Blazor.Domain.Interfaces;
-using eShop.Blazor.Domain.Options;
-using eShop.Domain.Common.Http;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
 using eShop.Domain.Responses.API.Auth;
@@ -12,7 +10,7 @@ public class JwtAuthenticationStateProvider(
     ITokenProvider tokenProvider,
     IStorage storage,
     IUserService userService,
-    IFetchClient fetchClient,
+    ISecurityService securityService,
     TokenHandler tokenHandler,
     UserState userState) : AuthenticationStateProvider
 {
@@ -20,7 +18,7 @@ public class JwtAuthenticationStateProvider(
     private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage storage = storage;
     private readonly IUserService userService = userService;
-    private readonly IFetchClient fetchClient = fetchClient;
+    private readonly ISecurityService securityService = securityService;
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly UserState userState = userState;
 
@@ -31,7 +29,7 @@ public class JwtAuthenticationStateProvider(
             var token = tokenProvider.Get();
             if (string.IsNullOrEmpty(token))
             {
-                var result = await AuthenticateAsync();
+                var result = await securityService.AuthenticateAsync();
                 if (result.Success)
                 {
                     var response = result.Get<AuthenticateResponse>()!;
@@ -109,17 +107,5 @@ public class JwtAuthenticationStateProvider(
             var state = result.Get<UserStateDto>()!;
             userState.Map(state);
         }
-    }
-
-    private async Task<HttpResponse> AuthenticateAsync()
-    {
-        var options = new FetchOptions()
-        {
-            Url = "/api/v1/Security/authenticate",
-            Method = HttpMethod.Post,
-            Credentials = Credentials.Include,
-        };
-
-        return await fetchClient.FetchAsync(options);
     }
 }

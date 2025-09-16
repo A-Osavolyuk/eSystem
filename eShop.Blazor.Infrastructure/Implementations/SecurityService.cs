@@ -1,5 +1,8 @@
-﻿using eShop.Blazor.Domain.Abstraction.Services;
+﻿using System.Text.Json;
+using eShop.Blazor.Application.State;
+using eShop.Blazor.Domain.Abstraction.Services;
 using eShop.Blazor.Domain.Interfaces;
+using eShop.Blazor.Domain.Options;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using eShop.Domain.Requests.API.Auth;
@@ -7,9 +10,14 @@ using eShop.Domain.Requests.API.Auth;
 namespace eShop.Blazor.Infrastructure.Implementations;
 
 public class SecurityService(
-    IApiClient pipe,
-    IConfiguration configuration) : ApiService(configuration, pipe), ISecurityService
+    IApiClient apiClient,
+    IFetchClient fetchClient,
+    IConfiguration configuration,
+    UserState userState) : ApiService(configuration, apiClient), ISecurityService
 {
+    private readonly IFetchClient fetchClient = fetchClient;
+    private readonly UserState userState = userState;
+
     public async ValueTask<HttpResponse> LoginAsync(LoginRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/login", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
@@ -61,11 +69,6 @@ public class SecurityService(
     public async ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/change", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
-    
-    public async ValueTask<HttpResponse> RefreshTokenAsync(RefreshTokenRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/refresh-token", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
-
     public async ValueTask<HttpResponse> UnlockAccountAsync(UnlockAccountRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/account/unlock", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
@@ -113,4 +116,48 @@ public class SecurityService(
     public async ValueTask<HttpResponse> RemovePhoneNumberAsync(RemovePhoneNumberRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/remove", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
+    
+    public async ValueTask<HttpResponse> AuthorizeAsync()
+    {
+        var request = new AuthorizeRequest() { UserId = userState.UserId };
+        var body = JsonSerializer.Serialize(request);
+
+        var options = new FetchOptions()
+        {
+            Url = "/api/v1/Security/authorize",
+            Method = HttpMethod.Post,
+            Credentials = Credentials.Include,
+            Body = body
+        };
+
+        return await fetchClient.FetchAsync(options);
+    }
+
+    public async ValueTask<HttpResponse> UnauthorizeAsync()
+    {
+        var request = new UnauthorizeRequest() { UserId = userState.UserId };
+        var body = JsonSerializer.Serialize(request);
+
+        var options = new FetchOptions()
+        {
+            Url = "/api/v1/Security/unauthorize",
+            Method = HttpMethod.Post,
+            Credentials = Credentials.Include,
+            Body = body
+        };
+
+        return await fetchClient.FetchAsync(options);
+    }
+    
+    public async ValueTask<HttpResponse> AuthenticateAsync()
+    {
+        var options = new FetchOptions()
+        {
+            Url = "/api/v1/Security/authenticate",
+            Method = HttpMethod.Post,
+            Credentials = Credentials.Include,
+        };
+
+        return await fetchClient.FetchAsync(options);
+    }
 }

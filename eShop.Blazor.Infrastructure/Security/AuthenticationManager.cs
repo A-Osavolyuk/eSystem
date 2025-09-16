@@ -14,17 +14,14 @@ namespace eShop.Blazor.Infrastructure.Security;
 public class AuthenticationManager(
     AuthenticationStateProvider authenticationStateProvider,
     RouteManager routeManager,
-    UserState state,
-    IFetchClient fetchClient)
+    ISecurityService securityService)
 {
     private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
     private readonly RouteManager routeManager = routeManager;
-    private readonly UserState state = state;
-    private readonly IFetchClient fetchClient = fetchClient;
 
     public async Task SignInAsync()
     {
-        var result = await AuthorizeAsync();
+        var result = await securityService.AuthorizeAsync();
 
         if (result.Success)
         {
@@ -35,44 +32,12 @@ public class AuthenticationManager(
 
     public async Task SignOutAsync()
     {
-        var result = await UnauthorizeAsync();
+        var result = await securityService.UnauthorizeAsync();
 
         if (result.Success)
         {
             await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignOutAsync();
             routeManager.Route("/account/login");
         }
-    }
-
-    private async Task<HttpResponse> AuthorizeAsync()
-    {
-        var request = new AuthorizeRequest() { UserId = state.UserId };
-        var body = JsonSerializer.Serialize(request);
-
-        var options = new FetchOptions()
-        {
-            Url = "/api/v1/Security/authorize",
-            Method = HttpMethod.Post,
-            Credentials = Credentials.Include,
-            Body = body
-        };
-
-        return await fetchClient.FetchAsync(options);
-    }
-
-    private async Task<HttpResponse> UnauthorizeAsync()
-    {
-        var request = new UnauthorizeRequest() { UserId = state.UserId };
-        var body = JsonSerializer.Serialize(request);
-
-        var options = new FetchOptions()
-        {
-            Url = "/api/v1/Security/unauthorize",
-            Method = HttpMethod.Post,
-            Credentials = Credentials.Include,
-            Body = body
-        };
-
-        return await fetchClient.FetchAsync(options);
     }
 }
