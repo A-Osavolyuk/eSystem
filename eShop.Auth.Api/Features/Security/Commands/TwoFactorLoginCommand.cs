@@ -4,7 +4,7 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 
-public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request, HttpContext Context)
+public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
     : IRequest<Result>;
 
 public sealed class LoginWith2FaCommandHandler(
@@ -16,6 +16,7 @@ public sealed class LoginWith2FaCommandHandler(
     IDeviceManager deviceManager,
     IReasonManager reasonManager,
     ICodeManager codeManager,
+    IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
@@ -26,6 +27,7 @@ public sealed class LoginWith2FaCommandHandler(
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IReasonManager reasonManager = reasonManager;
     private readonly ICodeManager codeManager = codeManager;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(TwoFactorLoginCommand request,
@@ -36,9 +38,9 @@ public sealed class LoginWith2FaCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        var userAgent = RequestUtils.GetUserAgent(request.Context);
-        var ipAddress = RequestUtils.GetIpV4(request.Context);
-        var clientInfo = RequestUtils.GetClientInfo(request.Context);
+        var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
+        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
+        var clientInfo = httpContextAccessor.HttpContext?.GetClientInfo()!;
 
         var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
 

@@ -67,9 +67,9 @@ public sealed class RegisterCommandHandler(
             }
         }
         
-        var userAgent = RequestUtils.GetUserAgent(httpContextAccessor.HttpContext!);
-        var ipAddress = RequestUtils.GetIpV4(httpContextAccessor.HttpContext!);
-        var clientInfo = RequestUtils.GetClientInfo(httpContextAccessor.HttpContext!);
+        var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
+        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
+        var clientInfo = httpContextAccessor.HttpContext?.GetClientInfo()!;
 
         var newDevice = new UserDeviceEntity()
         {
