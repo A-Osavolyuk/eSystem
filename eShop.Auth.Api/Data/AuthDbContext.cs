@@ -148,9 +148,13 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(k => k.Id);
             entity.Property(x => x.Token).HasMaxLength(3000);
 
-            entity.HasOne(t => t.UserEntity)
+            entity.HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId);
+            
+            entity.HasOne(t => t.Device)
                 .WithOne()
-                .HasForeignKey<RefreshTokenEntity>(t => t.UserId);
+                .HasForeignKey<RefreshTokenEntity>(t => t.DeviceId);
         });
 
         builder.Entity<TwoFactorProviderEntity>(entity =>
