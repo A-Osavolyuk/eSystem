@@ -28,6 +28,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
+    public DbSet<AuthorizationSessionEntity> AuthorizationSessions { get; set; }
     public DbSet<VerificationEntity> Verifications { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
@@ -314,6 +315,19 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.Device)
                 .WithMany()
                 .HasForeignKey(x => x.DeviceId);
+        });
+        
+        builder.Entity<AuthorizationSessionEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.Device)
+                .WithMany()
+                .HasForeignKey(x => x.DeviceId);
+            
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
         });
 
         builder.Entity<UserPasskeyEntity>(entity =>
