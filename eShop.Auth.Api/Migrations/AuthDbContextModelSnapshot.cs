@@ -17,7 +17,7 @@ namespace eShop.Auth.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -343,6 +343,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
 
@@ -359,8 +362,10 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("DeviceId")
                         .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -1007,13 +1012,21 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.RefreshTokenEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "UserEntity")
+                    b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
                         .WithOne()
-                        .HasForeignKey("eShop.Auth.Api.Entities.RefreshTokenEntity", "UserId")
+                        .HasForeignKey("eShop.Auth.Api.Entities.RefreshTokenEntity", "DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UserEntity");
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.ResourceEntity", b =>
