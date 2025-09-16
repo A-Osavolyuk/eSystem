@@ -32,6 +32,9 @@ public class AuthenticateCommandHandler(
         var user = await userManager.FindByIdAsync(userId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {userId}.");
 
+        var refreshToken = await tokenManager.FindAsync(user, cancellationToken);
+        if (refreshToken is null || token != refreshToken.Token) return Results.Unauthorized("Invalid token");
+
         var accessToken = await tokenManager.GenerateAsync(user, cancellationToken);
         
         var response = new AuthenticateResponse()
