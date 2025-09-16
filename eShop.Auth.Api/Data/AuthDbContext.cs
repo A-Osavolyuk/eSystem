@@ -144,20 +144,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(ur => ur.PermissionId);
         });
 
-        builder.Entity<RefreshTokenEntity>(entity =>
-        {
-            entity.HasKey(k => k.Id);
-            entity.Property(x => x.Token).HasMaxLength(3000);
-
-            entity.HasOne(t => t.User)
-                .WithMany()
-                .HasForeignKey(t => t.UserId);
-            
-            entity.HasOne(t => t.Device)
-                .WithOne()
-                .HasForeignKey<RefreshTokenEntity>(t => t.DeviceId);
-        });
-
         builder.Entity<TwoFactorProviderEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
@@ -304,6 +290,20 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithMany(x => x.Devices)
                 .HasForeignKey(x => x.UserId);
         });
+        
+        builder.Entity<RefreshTokenEntity>(entity =>
+        {
+            entity.HasKey(k => k.Id);
+            entity.Property(x => x.Token).HasMaxLength(3000);
+
+            entity.HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId);
+            
+            entity.HasOne(t => t.Device)
+                .WithOne()
+                .HasForeignKey<RefreshTokenEntity>(t => t.DeviceId);
+        });
 
         builder.Entity<LoginSessionEntity>(entity =>
         {
@@ -327,7 +327,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             
             entity.HasOne(x => x.User)
                 .WithMany()
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<UserPasskeyEntity>(entity =>

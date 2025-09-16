@@ -545,6 +545,33 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuthorizationSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorizationSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AuthorizationSessions_UserDevices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "UserDevices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorizationSessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LoginSessions",
                 columns: table => new
                 {
@@ -647,6 +674,16 @@ namespace eShop.Auth.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthorizationSessions_DeviceId",
+                table: "AuthorizationSessions",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthorizationSessions_UserId",
+                table: "AuthorizationSessions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Codes_UserId",
@@ -777,6 +814,9 @@ namespace eShop.Auth.Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AuthorizationSessions");
+
             migrationBuilder.DropTable(
                 name: "Codes");
 

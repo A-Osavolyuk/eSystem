@@ -17,7 +17,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddMediatR();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
-        builder.Services.AddGrpc();
         builder.Services.AddControllers();
     }
 
