@@ -54,7 +54,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Authorize")]
     [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]
@@ -69,19 +69,33 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-        [EndpointSummary("Unauthorize")]
-        [EndpointDescription("Unauthorize")]
-        [ProducesResponseType(200)]
-        [HttpPost("unauthorize")]
-        [AllowAnonymous]
-        public async ValueTask<IActionResult> UnauthorizeAsync([FromBody] UnauthorizeRequest request)
-        {
-            var result = await sender.Send(new UnauthorizeCommand(request));
-    
-            return result.Match(
-                s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-                ErrorHandler.Handle);
-        }
+    [EndpointSummary("Authenticate")]
+    [EndpointDescription("Authenticate")]
+    [ProducesResponseType(200)]
+    [HttpPost("authenticate")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> AuthenticateAsync()
+    {
+        var result = await sender.Send(new AuthenticateCommand());
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+
+    [EndpointSummary("Unauthorize")]
+    [EndpointDescription("Unauthorize")]
+    [ProducesResponseType(200)]
+    [HttpPost("unauthorize")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> UnauthorizeAsync([FromBody] UnauthorizeRequest request)
+    {
+        var result = await sender.Send(new UnauthorizeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Unlock account")]
     [EndpointDescription("Unlock account")]
@@ -97,7 +111,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Recover account")]
     [EndpointDescription("Recover account")]
     [ProducesResponseType(200)]
@@ -111,7 +125,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Check account")]
     [EndpointDescription("Check account")]
     [ProducesResponseType(200)]
@@ -155,7 +169,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Check password")]
     [EndpointDescription("Check password")]
     [ProducesResponseType(200)]
@@ -215,7 +229,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Add email")]
     [EndpointDescription("Add email")]
     [ProducesResponseType(200)]
@@ -246,7 +260,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Check email")]
     [EndpointDescription("Check email")]
     [ProducesResponseType(200)]
@@ -277,7 +291,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Remove email")]
     [EndpointDescription("Remove email")]
     [ProducesResponseType(200)]
@@ -334,7 +348,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Check phone number")]
     [EndpointDescription("Check phone number")]
     [ProducesResponseType(200)]

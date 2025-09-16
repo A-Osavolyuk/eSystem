@@ -17,7 +17,8 @@ public sealed class TokenManager(
 
     public async Task<string> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var verificationResult = tokenHandler.Verify();
+        var storedRefreshToken = tokenHandler.Get();
+        var verificationResult = tokenHandler.Verify(storedRefreshToken);
         
         if (!verificationResult.Succeeded)
         {

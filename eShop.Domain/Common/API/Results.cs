@@ -32,6 +32,16 @@ public static class Results
         }, value);
     }
 
+    public static Result Unauthorized(string details, object? value = null)
+    {
+        return Result.Failure(new Error()
+        {
+            Code = ErrorCode.Unauthorized,
+            Message = "Unauthorized",
+            Details = details
+        }, value);
+    }
+
     public static Result Redirect(string url)
     {
         return Result.Failure(new Error()

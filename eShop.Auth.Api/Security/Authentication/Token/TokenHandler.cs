@@ -45,22 +45,21 @@ public class TokenHandler(ICookieAccessor cookieAccessor)
         return rawToken?.Claims.ToList() ?? [];
     }
     
-    public Result Verify()
+    public Result Verify(string? token)
     {
-        var token = cookieAccessor.Get(Key);
-        if (string.IsNullOrEmpty(token)) return Results.NotFound("Token not found");
+        if (string.IsNullOrEmpty(token)) return Results.Unauthorized("Invalid token");
 
         var handler = new JwtSecurityTokenHandler();
 
         var rawToken = handler.ReadJwtToken(token);
-        if (rawToken is null || !rawToken.Claims.Any()) return Results.BadRequest("Invalid token");
+        if (rawToken is null || !rawToken.Claims.Any()) return Results.Unauthorized("Invalid token");
 
         var expClaim = rawToken.Claims.SingleOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp);
-        if (expClaim is null) return Results.BadRequest("Invalid token");
+        if (expClaim is null) return Results.Unauthorized("Invalid token");
 
         var expMilliseconds = long.Parse(expClaim.Value);
         var expDate = DateTimeOffset.FromUnixTimeMilliseconds(expMilliseconds);
-        if (expDate < DateTimeOffset.UtcNow) return Results.BadRequest("Token is expired");
+        if (expDate < DateTimeOffset.UtcNow) return Results.Unauthorized("Invalid token");
         
         return Result.Success();
     }
