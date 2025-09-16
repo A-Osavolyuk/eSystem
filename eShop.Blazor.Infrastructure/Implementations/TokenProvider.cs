@@ -1,6 +1,5 @@
 ﻿using eShop.Blazor.Domain.Interfaces;
 using eShop.Blazor.Infrastructure.Security;
-using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Infrastructure.Implementations;
 

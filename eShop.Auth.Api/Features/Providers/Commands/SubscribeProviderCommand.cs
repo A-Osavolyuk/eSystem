@@ -1,10 +1,5 @@
-﻿using eShop.Auth.Api.Messages.Email;
-using eShop.Auth.Api.Messages.Sms;
-using eShop.Auth.Api.Security.Protection;
-using eShop.Domain.Common.Security;
-using eShop.Domain.Common.Security.Constants;
+﻿using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Providers.Commands;
 

@@ -1,13 +1,6 @@
-﻿using System.Text.Json;
-using eShop.Blazor.Application.Routing;
-using eShop.Blazor.Application.State;
+﻿using eShop.Blazor.Application.Routing;
 using eShop.Blazor.Domain.Interfaces;
-using eShop.Blazor.Domain.Options;
-using eShop.Blazor.Infrastructure.Implementations;
-using eShop.Domain.Common.Http;
-using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
-using Microsoft.JSInterop;
 
 namespace eShop.Blazor.Infrastructure.Security;
 

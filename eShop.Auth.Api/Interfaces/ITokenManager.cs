@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace eShop.Auth.Api.Interfaces;
+﻿namespace eShop.Auth.Api.Interfaces;
 
 public interface ITokenManager
 {

@@ -1,9 +1,8 @@
-﻿using eShop.Application.Utilities;
-using eShop.Domain.Common.API;
+﻿using System.Text.Json;
+using eShop.Application.Utilities;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Storage;
 using eShop.Storage.Api.Features.Commands;
-using Newtonsoft.Json;
 
 namespace eShop.Storage.Api.Controllers.v1;
 
@@ -20,7 +19,7 @@ public class FilesController(ISender sender) : ControllerBase
     [HttpPost("upload")]
     public async ValueTask<IActionResult> UploadFilesAsync(IFormFileCollection files, [FromForm] string metadata)
     {
-        var metadataObject = JsonConvert.DeserializeObject<Metadata>(metadata)!;
+        var metadataObject = JsonSerializer.Deserialize<Metadata>(metadata)!;
         var response = await sender.Send(new UploadFilesCommand(files, metadataObject));
         return response.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value).WithMessage(s.Message).Build()),

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.HttpOverrides;
-
-namespace eShop.Auth.Api.Extensions;
+﻿namespace eShop.Auth.Api.Extensions;
 
 public static class WebApplicationBuilder
 {

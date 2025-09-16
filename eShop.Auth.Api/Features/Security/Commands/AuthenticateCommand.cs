@@ -1,6 +1,5 @@
 ﻿using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Responses.API.Auth;
-using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 

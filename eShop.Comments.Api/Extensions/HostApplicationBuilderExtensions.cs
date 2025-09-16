@@ -1,5 +1,4 @@
-﻿using eShop.Comments.Api.Services;
-using eShop.Domain.Interfaces.API;
+﻿using eShop.Domain.Interfaces.API;
 
 namespace eShop.Comments.Api.Extensions;
 
@@ -12,7 +11,6 @@ public static class HostApplicationBuilderExtensions
         builder.AddJwtAuthentication();
         builder.AddVersioning();
         builder.AddValidation();
-        builder.AddDependencyInjection();
         builder.AddMessageBus();
         builder.AddRedisCache();
         builder.AddMediatR();
@@ -44,11 +42,6 @@ public static class HostApplicationBuilderExtensions
             x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
             x.AddOpenBehavior(typeof(TransactionBehaviour<,>), ServiceLifetime.Transient);
         });
-    }
-
-    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddScoped<ICacheService, CacheService>();
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)

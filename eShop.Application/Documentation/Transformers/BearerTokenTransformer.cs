@@ -9,7 +9,7 @@ public class BearerTokenTransformer : IOpenApiDocumentTransformer
         CancellationToken cancellationToken)
     {
         document.Components ??= new OpenApiComponents();
-        document.Components.SecuritySchemes.Add(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+        document.Components.SecuritySchemes?.Add(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
         {
             Type = SecuritySchemeType.Http,
             Scheme = JwtBearerDefaults.AuthenticationScheme.ToLower(),

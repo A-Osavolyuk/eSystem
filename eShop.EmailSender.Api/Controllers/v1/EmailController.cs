@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Common.Http;
+﻿using eShop.Domain.Common.Http;
 using eShop.EmailSender.Api.Requests;
 using HttpResponse = eShop.Domain.Common.Http.HttpResponse;
 

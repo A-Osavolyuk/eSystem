@@ -1,5 +1,4 @@
 ﻿using eShop.Application.Attributes;
-using eShop.Domain.Common.Security;
 using eShop.Domain.Common.Security.Constants;
 using Microsoft.AspNetCore.Authorization;
 

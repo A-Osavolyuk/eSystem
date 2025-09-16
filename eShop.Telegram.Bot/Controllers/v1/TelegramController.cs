@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.API;
-using eShop.Domain.Common.Http;
+﻿using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Telegram;
 using HttpResponse = eShop.Domain.Common.Http.HttpResponse;
 

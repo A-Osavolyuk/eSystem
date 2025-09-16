@@ -51,18 +51,18 @@ public class CreateProductCommandHandler(
                 JsonValueKind.String => property.Value.GetString(),
                 JsonValueKind.Number => property.Value.GetInt32(),
                 JsonValueKind.True or JsonValueKind.False => property.Value.GetBoolean(),
-                JsonValueKind.Object or JsonValueKind.Array => JsonConvert.DeserializeObject(property.Value.GetString()!),
+                JsonValueKind.Object or JsonValueKind.Array => JsonSerializer.Deserialize<object>(property.Value.GetString()!),
                 _ => throw new ArgumentOutOfRangeException()
             };
             
             values.Add(property.Key, value!);
         }
 
-        var json = JsonConvert.SerializeObject(values);
+        var json = JsonSerializer.Serialize(values);
 
         var entity = type switch
         {
-            "fruit" => JsonConvert.DeserializeObject<FruitProductEntity>(json)!,
+            "fruit" => JsonSerializer.Deserialize<FruitProductEntity>(json)!,
             _ => throw new ArgumentOutOfRangeException()
         };
         

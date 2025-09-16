@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Features.Passkeys;
-using eShop.Auth.Api.Features.Passkeys.Commands;
+﻿using eShop.Auth.Api.Features.Passkeys.Commands;
 using eShop.Auth.Api.Features.Passkeys.Queries;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Auth;

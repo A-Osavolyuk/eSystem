@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Messages.Email;
-using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 

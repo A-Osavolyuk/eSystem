@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using eShop.Application.Security.Authorization.Requirements;
+﻿using eShop.Application.Security.Authorization.Requirements;
 using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.Schemes;
