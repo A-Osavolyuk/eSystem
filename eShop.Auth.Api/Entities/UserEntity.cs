@@ -14,6 +14,9 @@ public class UserEntity : Entity
     
     public bool AccountConfirmed { get; set; }
     public int FailedLoginAttempts { get; set; }
+    
+    public int CodeResendAttempts { get; set; }
+    public DateTimeOffset? CodeResendAvailableDate { get; set; }
 
     public ICollection<UserEmailEntity> Emails { get; set; } = null!;
     public ICollection<UserPhoneNumberEntity> PhoneNumbers { get; set; } = null!;
