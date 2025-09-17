@@ -288,7 +288,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         {
             Credentials = new Dictionary<string, string>()
             {
-                { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
+                { "To", user.PrimaryEmail?.Email! },
                 { "Subject", $"Account registered with {provider.Name}" },
             },
             Payload = new()

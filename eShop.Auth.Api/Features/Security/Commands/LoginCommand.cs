@@ -68,18 +68,18 @@ public sealed class LoginCommandHandler(
             var result = await deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-
-        if (identityOptions.SignIn.RequireConfirmedEmail 
-            && user.Emails.Any(x => x is { Type: EmailType.Primary, IsVerified: false }))
+        
+        var userPrimaryEmail = user.PrimaryEmail!;
+        if (identityOptions.SignIn.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
         {
             response = new LoginResponse()
             {
                 UserId = user.Id,
-                Email = user.Emails.First(x => x.Type is EmailType.Primary).Email,
+                Email = userPrimaryEmail.Email,
                 IsEmailConfirmed = false
             };
 
-            return Results.BadRequest("The email address is not confirmed.", response);
+            return Results.BadRequest("User's primary email is not verified.", response);
         }
 
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
@@ -154,7 +154,7 @@ public sealed class LoginCommandHandler(
             response = new LoginResponse()
             {
                 UserId = user.Id,
-                Email = user.Emails.First(x => x.Type is EmailType.Primary).Email,
+                Email = user.PrimaryEmail?.Email!,
                 DeviceId = device.Id,
                 IsDeviceTrusted = device.IsTrusted,
                 IsDeviceBlocked = device.IsBlocked,

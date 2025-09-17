@@ -19,7 +19,7 @@ public class ResetPhoneNumberCommandHandler(
 
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
-        var userCurrentPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary);
+        var userCurrentPhoneNumber = user.PrimaryPhoneNumber;
         if (userCurrentPhoneNumber is null) return Results.BadRequest("User's primary phone number is missing");
         
         if (identityOptions.Account.RequireUniquePhoneNumber)

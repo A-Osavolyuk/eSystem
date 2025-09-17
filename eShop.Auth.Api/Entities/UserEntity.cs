@@ -31,6 +31,15 @@ public class UserEntity : Entity
     public LockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
 
+    public UserEmailEntity? PrimaryEmail 
+        => Emails.FirstOrDefault(x => x.Type == EmailType.Primary);
+    public UserEmailEntity? RecoveryEmail 
+        => Emails.FirstOrDefault(x => x.Type == EmailType.Recovery);
+    public UserPhoneNumberEntity? PrimaryPhoneNumber 
+        => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Primary);
+    public UserPhoneNumberEntity? RecoveryPhoneNumber 
+        => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Recovery);
+
     public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
     public bool HasEmail() => Emails.Any(x => x.Type is EmailType.Primary);
     public bool HasRecoveryEmail() => Emails.Any(x => x.Type is EmailType.Recovery);
