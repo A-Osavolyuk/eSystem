@@ -34,12 +34,15 @@ public class AuthorizeCommandHandler(
         var session = await authorizationManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
         
-        var accessToken = await tokenManager.GenerateAsync(device, cancellationToken);
+        var accessToken = await tokenManager.GenerateAsync(TokenType.Access, device, cancellationToken);
+        var refreshToken = await tokenManager.GenerateAsync(TokenType.Refresh, device, cancellationToken);
+        
+        tokenHandler.Set(refreshToken.Value, refreshToken.ExpireDate);
 
         var response = new AuthorizeResponse()
         {
             UserId = user.Id,
-            AccessToken = accessToken,
+            AccessToken = accessToken.Value,
         };
         
         return Result.Success(response);

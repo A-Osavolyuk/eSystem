@@ -74,9 +74,9 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("authenticate")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> AuthenticateAsync()
+    public async ValueTask<IActionResult> AuthenticateAsync([FromBody] AuthenticateRequest request)
     {
-        var result = await sender.Send(new AuthenticateCommand());
+        var result = await sender.Send(new AuthenticateCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

@@ -44,8 +44,8 @@ public class RefreshTokenCommandHandler(
         var session = await authorizationManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
-        var accessToken = await tokenManager.GenerateAsync(device, cancellationToken);
-        var response = new RefreshTokenResponse() { Token = accessToken };
+        var accessToken = await tokenManager.GenerateAsync(TokenType.Access, device, cancellationToken);
+        var response = new RefreshTokenResponse() { Token = accessToken.Value };
 
         return Result.Success(response);
     }

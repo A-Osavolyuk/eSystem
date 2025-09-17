@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using eShop.Auth.Api.Types;
 using eShop.Domain.Common.Security.Constants;
 using Microsoft.Extensions.Options;
 
@@ -8,19 +9,31 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(ITokenManager), ServiceLifetime.Scoped)]
 public sealed class TokenManager(
     AuthDbContext context,
-    TokenHandler tokenHandler,
     IOptions<JwtOptions> options) : ITokenManager
 {
     private readonly AuthDbContext context = context;
-    private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly JwtOptions options = options.Value;
 
-    public async Task<string> GenerateAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
+    public async Task<Token> GenerateAsync(TokenType type, UserDeviceEntity device,
+        CancellationToken cancellationToken = default)
     {
-        var storedRefreshToken = tokenHandler.Get();
-        var verificationResult = tokenHandler.Verify(storedRefreshToken);
+        var expirationDate = type switch
+        {
+            TokenType.Access => DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes),
+            TokenType.Refresh => DateTime.UtcNow.AddDays(options.RefreshTokenExpirationDays),
+            _ => throw new NotSupportedException("Unsupported token type")
+        };
+
+        var jti = Guid.CreateVersion7();
+        var claims = new List<Claim>()
+        {
+            new(AppClaimTypes.Subject, device.UserId.ToString()),
+            new(AppClaimTypes.Jti, jti.ToString())
+        };
+
+        var token = Generate(claims, expirationDate);
         
-        if (!verificationResult.Succeeded)
+        if (type == TokenType.Refresh)
         {
             var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
                 x => x.DeviceId == device.Id, cancellationToken);
@@ -29,42 +42,29 @@ public sealed class TokenManager(
             {
                 context.RefreshTokens.Remove(existingEntity);
             }
-
-            var refreshTokenClaims = new List<Claim>()
-            {
-                new(AppClaimTypes.Subject, device.UserId.ToString()),
-                new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
-            };
-            
-            var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(options.RefreshTokenExpirationDays);
-            var refreshToken = Generate(refreshTokenClaims, refreshTokenExpirationDate);
             
             var entity = new RefreshTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 DeviceId = device.Id,
-                Token = refreshToken,
-                ExpireDate = refreshTokenExpirationDate,
+                Token = token,
+                ExpireDate = expirationDate,
                 CreateDate = DateTime.UtcNow,
                 UpdateDate = null
             };
             
-            tokenHandler.Set(refreshToken, refreshTokenExpirationDate);
-            
             await context.RefreshTokens.AddAsync(entity, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
-        
-        var accessTokenClaims = new List<Claim>()
+
+        var result = new Token()
         {
-            new(AppClaimTypes.Subject, device.UserId.ToString()),
-            new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
+            Id = jti,
+            Value = token,
+            ExpireDate = expirationDate,
         };
         
-        var accessTokenExpirationDate = DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes);
-        var token = Generate(accessTokenClaims, accessTokenExpirationDate);
-
-        return token;
+        return result;
     }
 
     public async Task<RefreshTokenEntity?> FindAsync(
@@ -72,7 +72,7 @@ public sealed class TokenManager(
     {
         var token = await context.RefreshTokens.FirstOrDefaultAsync(
             x => x.DeviceId == device.Id, cancellationToken);
-        
+
         return token;
     }
 
@@ -100,7 +100,7 @@ public sealed class TokenManager(
 
         var handler = new JwtSecurityTokenHandler();
         var token = handler.WriteToken(securityToken);
-        
+
         return token;
     }
 }
