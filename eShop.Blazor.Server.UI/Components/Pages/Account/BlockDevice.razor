@@ -1,0 +1,214 @@
+﻿@page "/account/device/block"
+@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Domain.Models
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject IDeviceService DeviceService
+@inject ISecurityService SecurityService
+
+<Title Text="Block device"/>
+
+<MudGrid Justify="Justify.Center" Spacing="1">
+    <MudItem xs="6" Style="margin-top: 100px">
+
+        <MudStepperExtended
+            @ref="stepper"
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            HeaderTextView="HeaderTextView.All"
+            HeaderBadgeView="HeaderBadgeView.All"
+            ShowNextButton="false"
+            ShowPreviousButton="false"
+            ShowSkipButton="false">
+            <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Info" Title="Information">
+                <ChildContent>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="8">
+                            <MudStack Spacing="1">
+                                <MudPaper Outlined="true" Class="pa-3">
+                                    <MudText Typo="Typo.h4" Align="Align.Center">
+                                        Device block
+                                    </MudText>
+                                </MudPaper>
+                                <MudPaper Outlined="true" Class="pa-3">
+                                    <MudStack Spacing="4">
+                                        <MudText Align="Align.Center">
+                                            To block this device, you will need to enter 6-digit code
+                                            from an email we will send you to: <strong>@UserState.Credentials!.Email</strong>.
+                                            If you block this device, sign in with this device will
+                                            not be available anymore, until you unblock it.
+                                        </MudText>
+                                        <MudButton
+                                            Color="Color.Primary"
+                                            Variant="Variant.Filled"
+                                            ButtonType="ButtonType.Button"
+                                            OnClick="@(async () => await OnSendAsync())">
+                                            Continue
+                                        </MudButton>
+                                    </MudStack>
+                                </MudPaper>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </ChildContent>
+            </MudStepExtended>
+            <MudStepExtended Icon="@Icons.Material.Filled.Check" Title="Code verification" Order="2">
+                <ChildContent>
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem xs="8">
+                            <MudStack Spacing="1" Justify="Justify.Center">
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudText Align="Align.Center" Typo="Typo.h4">
+                                        Device block confirmation
+                                    </MudText>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudForm
+                                        @ref="form"
+                                        Model="Model">
+                                        <MudStack Spacing="4" Justify="Justify.Center">
+                                            <MudText Align="Align.Center">
+                                                We have sent an email with code to email: <strong>@UserState.Credentials!.Email</strong>
+                                            </MudText>
+
+                                            <MudCodeInput
+                                                Class="d-flex align-items-center"
+                                                Variant="Variant.Outlined"
+                                                Spacing="2"
+                                                Margin="Margin.None"
+                                                Count="6"
+                                                @bind-Value="Model.Code"/>
+
+                                            <MudLoadingButton
+                                                ButtonType="ButtonType.Button"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                FullWidth
+                                                Disabled="@(Model.Code.Length <= 5)"
+                                                OnClick="@(async () => await OnVerifyAsync())">
+                                                Submit
+                                            </MudLoadingButton>
+                                        </MudStack>
+                                    </MudForm>
+                                </MudPaper>
+                                <MudPaper Outlined Class="pa-3">
+                                    <MudText Align="Align.Center">Didn't received an email?
+                                        <strong @onclick="async () => await SendCodeAsync()"
+                                                class="cursor-pointer">Resend</strong>
+                                    </MudText>
+                                </MudPaper>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </ChildContent>
+            </MudStepExtended>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromQuery(Name = "device")] public Guid DeviceId { get; set; }
+    [SupplyParameterFromForm] public BlockDeviceModel Model { get; set; } = new();
+
+    private MudStepperExtended stepper = new();
+    private MudForm form = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await DeviceService.GetAsync(DeviceId);
+
+            if (result.Success)
+            {
+                Model.Device = result.Get<UserDeviceDto>()!;
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task SendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Type = CodeType.Block,
+            Resource = CodeResource.Device,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "OS", Model.Device.OS! },
+                { "Device", Model.Device.Device! },
+                { "IpAddress", Model.Device.IpAddress! },
+                { "Browser", Model.Device.Browser! },
+                { "Email", UserState.Credentials?.Email! }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnSendAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Type = CodeType.Block,
+            Resource = CodeResource.Device,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "OS", Model.Device.OS! },
+                { "Device", Model.Device.Device! },
+                { "IpAddress", Model.Device.IpAddress! },
+                { "Browser", Model.Device.Browser! },
+                { "Email", UserState.Credentials?.Email! }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        if (result.Success)
+        {
+            var index = stepper!.GetActiveIndex();
+            await stepper!.CompleteStep(index);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        var request = new VerifyCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Type = CodeType.Block,
+            Resource = CodeResource.Device,
+            Sender = SenderType.Email,
+            Code = Model.Code
+        };
+
+        var result = await SecurityService.VerifyCodeAsync(request);
+
+        if (result.Success) await VerifyAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new BlockDeviceRequest()
+        {
+            DeviceId = DeviceId,
+            UserId = UserState.UserId,
+        };
+
+        var result = await DeviceService.BlockAsync(request);
+
+        if (result.Success) RouteManager.Route("/account/devices");
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+}

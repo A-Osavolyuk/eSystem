@@ -1,0 +1,85 @@
+﻿@using eShop.Blazor.Server.Application.State
+@using eShop.Blazor.Server.Domain.Models
+@inject IDialogService DialogService
+@inject ProductState State
+
+<MudGrid Spacing="1" Justify="Justify.Center">
+    <MudItem xs="12">
+        <MudPaper Class="pa-3" Outlined="true">
+            <MudText Typo="Typo.h6">
+                @($"Uploaded images: {Model.Images.Count}/20")
+            </MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper Class="pa-3" Outlined="true">
+            <MudGrid Spacing="1" Justify="Justify.Center">
+                <MudItem xs="12">
+                    <MudGallery
+                        @ref="gallery"
+                        ItemPerLine="4"
+                        ImageSource="@Model.Images.Select(x => x.Source).ToList()"
+                        EnableAnimation="true"
+                        EnableBackdropClick="true"
+                        MaxWidth="MaxWidth.Medium">
+                    </MudGallery>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStack Spacing="1">
+                        <MudButton
+                            Variant="Variant.Filled"
+                            Color="@(Model.Images.Count > 0 ? Color.Secondary : Color.Primary)"
+                            FullWidth="true"
+                            OnClick="@(async () => await OnEditAsync())">
+                            @(Model.Images.Count > 0 ? "Edit" : "Upload")
+                        </MudButton>
+                        <MudButton
+                            Disabled="@(Model.Images.Count == 0)"
+                            Variant="Variant.Outlined"
+                            Color="Color.Error"
+                            FullWidth="true"
+                            OnClick="@(() => OnClearImages())">
+                            Clear
+                        </MudButton>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter] public required ProductModel Model { get; set; }
+    
+    private MudGallery gallery = new();
+
+    private async Task OnEditAsync()
+    {
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var parameters = new DialogParameters<ImagesDialog>()
+        {
+            { x => x.Model, Model }
+        };
+
+        var dialog = await DialogService.ShowAsync<ImagesDialog>("Images dialog", parameters, options);
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            State.Change();
+            StateHasChanged();
+        }
+    }
+
+    private void OnClearImages()
+    {
+        Model.Images.Clear();
+    }
+}

@@ -1,0 +1,257 @@
+﻿@page "/account/phone-number/reset"
+@using eShop.Blazor.Server.Application.Validation
+@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Domain.Models
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject ISecurityService SecurityService
+@inject ResetPhoneNumberValidator ResetPhoneNumberValidator
+@inject CodeModelValidator Validator
+
+<Title Text="Reset phone number"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6" Style="margin-top: 100px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Phone number reset
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-5">
+                                        <MudForm
+                                            @ref="resetPhoneNumberForm"
+                                            Model="ResetPhoneNumberModel"
+                                            Validation="ResetPhoneNumberValidator.ValidateValue">
+                                            <MudGrid Justify="Justify.Center">
+                                                <MudItem xs="12">
+                                                    <MudText Class="mb-1" Align="Align.Center">
+                                                        To reset phone number, you should enter new phone number.
+                                                        Please, enter new phone number.
+                                                    </MudText>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudTextField
+                                                        @bind-Value="ResetPhoneNumberModel.NewPhoneNumber"
+                                                        For="() => ResetPhoneNumberModel.NewPhoneNumber"
+                                                        Label="New phone number"
+                                                        Variant="Variant.Outlined"
+                                                        Immediate="true"
+                                                        Clearable="true"/>
+                                                </MudItem>
+                                                <MudItem xs="12">
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnSendCodeAsync())">
+                                                        Change
+                                                    </MudLoadingButton>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudForm>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Verification">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Phone number verification
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudForm
+                                            @ref="confirmResetPhoneNumberForm"
+                                            Model="ConfirmResetPhoneNumberModel"
+                                            Validation="Validator.ValidateValue">
+                                            <MudStack Spacing="2">
+                                                <MudText Class="mb-2" Align="Align.Center">
+                                                    Enter code from the SMS we sent you
+                                                    to: <strong>@ResetPhoneNumberModel.NewPhoneNumber</strong>
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="ConfirmResetPhoneNumberModel.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(ConfirmResetPhoneNumberModel.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnVerifyAsync())">
+                                                    Verify
+                                                </MudLoadingButton>
+                                            </MudStack>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received a SMS?
+                                            <strong @onclick="async () => await ResendCodeAsync()"
+                                                    class="cursor-pointer">Resend</strong>
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private ResetPhoneNumberModel ResetPhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel ConfirmResetPhoneNumberModel { get; set; } = new();
+
+    private MudStepperExtended stepper = new();
+    private MudForm resetPhoneNumberForm = new();
+    private MudForm confirmResetPhoneNumberForm = new();
+
+    private async Task ResendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Reset,
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", ResetPhoneNumberModel.NewPhoneNumber }
+            }
+        };
+
+        var response = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
+    }
+
+    private async Task OnSendCodeAsync()
+    {
+        await resetPhoneNumberForm.Validate();
+
+        if (resetPhoneNumberForm.IsValid)
+        {
+            var request = new CheckPhoneNumberRequest()
+            {
+                PhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
+                UserId = UserState.UserId
+            };
+
+            var result = await SecurityService.CheckPhoneNumberAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<CheckPhoneNumberResponse>()!;
+
+                if (!response.IsTaken) await SendCodeAsync();
+                else switch (response)
+                {
+                    case { IsTaken: true, IsOwn: true }:
+                    {
+                        const string message = "This phone number is already user's";
+                        Snackbar.Add(message, Severity.Info);
+                        break;
+                    }
+                    case { IsTaken: true, IsOwn: false }:
+                    {
+                        const string message = "This phone number is already taken";
+                        Snackbar.Add(message, Severity.Info);
+                        break;
+                    }
+                }
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task SendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Reset,
+            Sender = SenderType.Sms,
+            Payload =
+            {
+                { "PhoneNumber", ResetPhoneNumberModel.NewPhoneNumber }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        await confirmResetPhoneNumberForm.Validate();
+
+        if (confirmResetPhoneNumberForm.IsValid)
+        {
+            var request = new VerifyCodeRequest()
+            {
+                UserId = UserState.UserId,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.Reset,
+                Sender = SenderType.Sms,
+                Code = ConfirmResetPhoneNumberModel.Code
+            };
+
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new ResetPhoneNumberRequest()
+        {
+            UserId = UserState.UserId,
+            NewPhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
+        };
+
+        var result = await SecurityService.ResetPhoneNumberAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add("Phone number was successfully reset", Severity.Success);
+            RouteManager.Route("/account/phone-numbers");
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+    }
+}

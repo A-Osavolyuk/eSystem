@@ -1,0 +1,84 @@
+﻿@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Domain.Models
+@using eShop.Blazor.Server.Infrastructure.Security
+@using eShop.Domain.Common.Security.Credentials
+@inject IPasskeyService PasskeyService
+@inject ISnackbar Snackbar
+@inject PasskeyManager PasskeyManager
+
+<MudDialog Style="width: 600px">
+    <TitleContent>
+        Create passkey
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="form" Model="Model" >
+            <MudTextField
+                @bind-Value="Model.DisplayName"
+                For="() => Model.DisplayName"
+                Label="Display name"
+                Variant="Variant.Outlined"
+                Immediate="true"
+                Clearable="true"/>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton
+            Color="Color.Error"
+            Variant="Variant.Outlined"
+            ButtonType="ButtonType.Button"
+            OnClick="@(() => OnCancel())">
+            Cancel
+        </MudButton>
+        <MudButton
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button"
+            OnClick="@(async () => await OnSubmitAsync())">
+            Submit
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
+    [Parameter] public CreatePasskeyModel Model { get; set; } = new();
+    
+    private MudForm form = new();
+    
+    private async Task OnSubmitAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new CreatePasskeyRequest()
+            {
+                UserId = Model.UserId,
+                DisplayName = Model.DisplayName
+            };
+
+            var result = await PasskeyService.CreatePasskeyAsync(request);
+
+            if (result.Success)
+            {
+                var options = result.Get<PublicKeyCredentialCreationOptions>()!;
+                var response = await PasskeyManager.AssertAsync(options);
+
+                var verificationRequest = new VerifyPasskeyRequest()
+                {
+                    UserId = Model.UserId,
+                    DisplayName = Model.DisplayName,
+                    Response = response
+                };
+
+                var verificationResult = await PasskeyService.VerifyPasskeyAsync(verificationRequest);
+
+                if (verificationResult.Success) Dialog?.Close(DialogResult.Ok(true));
+                else Snackbar.Add(result.Message, Severity.Error);
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+    
+    private void OnCancel() => Dialog?.Close();
+}

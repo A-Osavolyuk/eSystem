@@ -1,0 +1,239 @@
+﻿@page "/account/profile"
+@using eShop.Blazor.Server.Application.Mapping
+@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Domain.Models
+@using eShop.Blazor.Server.UI.Components.Pages.Profile.Components.Profile
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject IUserService UserService
+@inject IDialogService DialogService
+
+<Title Text="Profile"></Title>
+
+@if (UserModel is not null)
+{
+    <MudGrid Spacing="2" Justify="Justify.Center">
+        <MudItem xs="8">
+            <MudGrid Spacing="2">
+                <MudItem xs="3">
+                    <MudPaper Outlined="true" Class="pa-5">
+                        <MudStack Class="w-100">
+                            <MudImage
+                                Class="w-100 h-auto rounded-lg"
+                                Alt="Avatar"
+                                Src="/images/avatar.jpg"
+                                FallbackSrc="/images/avatar.jpg"/>
+
+                            <MudLoadingButton
+                                FullWidth="true"
+                                Variant="Variant.Filled"
+                                Color="Color.Primary"
+                                ButtonType="ButtonType.Button">
+                                Change avatar
+                            </MudLoadingButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12">
+                            <AccountDataSection
+                                Model="UserModel"
+                                OnChangeUsername="@(() => OnUsernameChangeAsync())"
+                                OnRemovePhoneNumber="@(() => OnRemovePhoneNumberAsync())"
+                                OnAddPhoneNumber="@(() => OnAddPhoneNumberAsync())"
+                                OnVerifyPhoneNumber="@(() => OnVerifyPhoneNumberAsync())"
+                                OnChangePhoneNumber="@(() => OnChangePhoneNumberAsync())"/>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <PersonalDataSection
+                                Model="UserPersonalModel"
+                                OnAdd="@(() => OnAddPersonalDataAsync())"
+                                OnChange="@(() => OnChangePersonalDataAsync())"
+                                OnRemove="@(() => OnRemovePersonalDataAsync())"/>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    private UserModel? UserModel { get; set; }
+    private UserPersonalModel? UserPersonalModel { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadUserAsync();
+            await LoadUserPersonalAsync();
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadUserAsync()
+    {
+        var result = await UserService.GetUserAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<UserDto>()!;
+
+            UserModel = Mapper.Map(response);
+            await UserState.Change();
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task LoadUserPersonalAsync()
+    {
+        var result = await UserService.GetUserPersonalDataAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<UserPersonalDto>()!;
+            var model = Mapper.Map(response);
+            UserPersonalModel = model;
+        }
+        else
+        {
+            UserPersonalModel = null;
+        }
+    }
+
+    private async Task OnUsernameChangeAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new ChangeUsernameModel()
+        {
+            Id = UserState.UserId,
+            Username = UserModel!.UserName,
+        };
+
+        var parameters = new DialogParameters<ChangeUsernameDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<ChangeUsernameDialog>("Change username", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+    }
+
+    private void OnRemovePhoneNumberAsync()
+    {
+        var url = $"/account/phone-number/remove?phoneNumber={UserModel?.PhoneNumber}";
+        RouteManager.Route(url);
+    }
+
+    private void OnAddPhoneNumberAsync()
+    {
+        RouteManager.Route("/account/phone-number/add");
+    }
+
+    private void OnVerifyPhoneNumberAsync()
+    {
+        RouteManager.Route("/account/phone-number/verify");
+    }
+
+    private void OnChangePhoneNumberAsync()
+    {
+        RouteManager.Route("/account/phone-number/change");
+    }
+
+    private async Task OnChangePersonalDataAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = Mapper.Map(UserPersonalModel!);
+
+        var parameters = new DialogParameters<ChangePersonalDataDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<ChangePersonalDataDialog>("Change personal data", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserPersonalAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnAddPersonalDataAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new AddPersonalDataModel() { Id = UserState.UserId };
+
+        var parameters = new DialogParameters<AddPersonalDataDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<AddPersonalDataDialog>("Add personal data", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserPersonalAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnRemovePersonalDataAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var parameters = new DialogParameters<RemovePersonalDataDialog>()
+        {
+            { x => x.UserId, UserState.UserId }
+        };
+
+        var dialog = await DialogService.ShowAsync<RemovePersonalDataDialog>("Remove personal data", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadUserPersonalAsync();
+            StateHasChanged();
+        }
+    }
+
+}

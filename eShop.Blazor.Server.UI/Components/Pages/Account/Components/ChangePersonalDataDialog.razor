@@ -1,0 +1,106 @@
+﻿@using eShop.Blazor.Server.Application.Mapping
+@using eShop.Blazor.Server.Application.Validation
+@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Domain.Models
+@inject IUserService UserService
+@inject ISnackbar Snackbar
+@inject ChangePersonalDataValidator Validator
+
+<MudDialog Style="width: 600px">
+    <TitleContent>
+        Change personal data
+    </TitleContent>
+    <DialogContent>
+        <MudForm 
+            @ref="changePersonalDataForm" 
+            Model="Model" 
+            Validation="Validator.ValidateValue">
+            <MudTextField
+                @bind-Value="Model.FirstName"
+                For="() => Model.FirstName"
+                Label="First name"
+                Variant="Variant.Outlined"
+                Immediate="true"
+                Clearable="true"/>
+            <MudTextField
+                @bind-Value="Model.LastName"
+                For="() => Model.LastName"
+                Label="Last name"
+                Variant="Variant.Outlined"
+                Immediate="true"
+                Clearable="true"/>
+            <MudTextField
+                @bind-Value="Model.MiddleName"
+                For="() => Model.MiddleName"
+                Label="Middle name"
+                Variant="Variant.Outlined"
+                Immediate="true"
+                Clearable="true"/>
+            <MudDatePicker
+                @bind-Date="Model.BirthDate"
+                For="() => Model.BirthDate"
+                Label="Birth date"
+                Variant="Variant.Outlined"
+                Clearable="true"
+                Editable="true"/>
+            <MudSelect
+                @bind-Value="Model.Gender"
+                For="() => Model.Gender"
+                T="Gender"
+                Label="Gender"
+                Variant="Variant.Outlined"
+                Immediate="true"
+                Clearable="true">
+                @foreach (var gender in Enum.GetValues<Gender>())
+                {
+                    <MudSelectItem T="Gender" Value="gender">@gender.ToString()</MudSelectItem>
+                }
+            </MudSelect>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton
+            Color="Color.Error"
+            Variant="Variant.Outlined"
+            ButtonType="ButtonType.Button"
+            OnClick="@(() => OnCancel())">
+            Cancel
+        </MudButton>
+        <MudButton
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button"
+            OnClick="@(async () => await OnSubmitAsync())">
+            Submit
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
+    [Parameter] public ChangePersonalDataModel Model { get; set; } = new();
+
+    private MudForm changePersonalDataForm = new();
+
+    private async Task OnSubmitAsync()
+    {
+        await changePersonalDataForm.Validate();
+
+        if (changePersonalDataForm.IsValid)
+        {
+            var request = Mapper.Map(Model);
+            var result = await UserService.ChangePersonalDataAsync(request);
+
+            if (result.Success)
+            {
+                Dialog?.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+    
+    private void OnCancel() => Dialog?.Close();
+}

@@ -1,0 +1,120 @@
+﻿@using eShop.Blazor.Server.Domain.Models
+<MudPaper Outlined="true" Class="pt-3 pl-5 pr-5 pb-5">
+    @if (Model is null)
+    {
+        <MudStack Spacing="1">
+            <MudStack Row="true">
+                <MudText Typo="Typo.h6" Class="pt-1">
+                    Personal information
+                </MudText>
+                <MudSpacer />
+                <MudTooltip Text="Add personal data">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Add"
+                        Color="Color.Primary"
+                        Variant="Variant.Filled"
+                        OnClick="@(async () => await OnAdd.InvokeAsync())"/>
+                </MudTooltip>
+            </MudStack>
+            <MudText Class="opacity-50" Typo="Typo.caption">
+                Personal information was not added. You can add it by click button right.
+            </MudText>
+        </MudStack>
+    }
+    else
+    {
+        <MudStack Spacing="3">
+            <MudStack Row="true" Spacing="1" Justify="Justify.Center">
+                <MudText Typo="Typo.h6" Class="pt-1">
+                    Personal information
+                </MudText>
+                @if (Model.UpdateDate is not null)
+                {
+                    <MudTooltip Text="@($"Last change: {Model.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                        <MudChip
+                            T="string"
+                            Class="mx-0 mt-2"
+                            Color="Color.Warning"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Changed
+                        </MudChip>
+                    </MudTooltip>
+                }
+                <MudSpacer />
+                <MudTooltip Text="Remove personal data">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Delete"
+                        Color="Color.Error"
+                        Variant="Variant.Filled"
+                        OnClick="@(async () => await OnRemove.InvokeAsync())"/>
+                </MudTooltip>
+                <MudTooltip Text="Change personal data">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Edit"
+                        Color="Color.Primary"
+                        Variant="Variant.Filled"
+                        OnClick="@(async () => await OnChange.InvokeAsync())"/>
+                </MudTooltip>
+            </MudStack>
+            <MudGrid Spacing="3">
+                <MudItem xs="3">
+                    <MudText>
+                        First name
+                    </MudText>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudText>
+                        @Model.FirstName
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDivider/>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudText>
+                        Last name
+                    </MudText>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudText>
+                        @Model.LastName
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDivider/>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudText>
+                        Birth date
+                    </MudText>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudText>
+                        @Model.BirthDate.ToString("D", new CultureInfo("en-GB"))
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDivider/>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudText>
+                        Gender
+                    </MudText>
+                </MudItem>
+                <MudItem xs="9">
+                    <MudText>
+                        @Model.Gender.ToString()
+                    </MudText>
+                </MudItem>
+            </MudGrid>
+        </MudStack>
+    }
+</MudPaper>
+
+@code {
+    [Parameter] public UserPersonalModel? Model { get; set; } = new();
+    [Parameter] public EventCallback OnAdd { get; set; }
+    [Parameter] public EventCallback OnChange { get; set; }
+    [Parameter] public EventCallback OnRemove { get; set; }
+}

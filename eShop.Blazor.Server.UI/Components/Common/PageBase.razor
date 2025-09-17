@@ -1,0 +1,14 @@
+﻿@using eShop.Blazor.Server.Application.Routing
+@using eShop.Blazor.Server.Application.State
+@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Infrastructure.Security
+@inherits ComponentBase
+
+@code {
+    [Inject] public RouteManager RouteManager { get; private set; } = null!;
+    [Inject] public AuthenticationManager AuthenticationManager { get; private set; } = null!;
+    [Inject] public UserState UserState { get; private set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; private set; } = null!;
+    [Inject] public IJSRuntime Js { get; private set; } = null!;
+    [Inject] public IStorage LocalStorage { get; private set; } = null!;
+}

@@ -1,0 +1,220 @@
+﻿@page "/account/passkey/remove"
+@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Domain.Models
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject IPasskeyService PasskeyService
+@inject ISecurityService SecurityService
+
+<Title Text="Passkey remove"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6" Style="margin-top: 100px">
+        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+            <ChildContent>
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Passkey remove
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-5">
+                                        <MudStack Spacing="4">
+                                            <MudText Align="Align.Center">
+                                                Are you sure you want to remove this passkey?
+                                                Before remove passkey, please check if you have
+                                                another authentication method to be able to sign-in.
+                                                To remove this passkey, you will need
+                                                to enter 6-digit code from email we
+                                                will send to: <strong>@UserState.Credentials?.Email</strong>
+                                            </MudText>
+                                            <MudLoadingButton
+                                                FullWidth="true"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await OnSendCodeAsync())">
+                                                Continue
+                                            </MudLoadingButton>
+                                        </MudStack>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Verification">
+                    <ChildContent>
+                        <MudGrid Justify="Justify.Center">
+                            <MudItem xs="8">
+                                <MudStack Spacing="1" Justify="Justify.Center">
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                            Code verification
+                                        </MudText>
+                                    </MudPaper>
+                                    <MudPaper Outlined="true" Class="pa-3">
+                                        <MudForm
+                                            @ref="form"
+                                            Model="Model">
+                                            <MudStack Spacing="2">
+                                                <MudText Class="mb-2" Align="Align.Center">
+                                                    Enter code from the email we sent you to:
+                                                    <strong>@UserState.Credentials?.Email</strong>
+                                                </MudText>
+
+                                                <MudCodeInput
+                                                    Count="6"
+                                                    Margin="Margin.Normal"
+                                                    Spacing="2"
+                                                    Class="d-flex align-items-center"
+                                                    @bind-Value="Model.Code"
+                                                    Variant="Variant.Outlined"/>
+
+                                                <MudLoadingButton
+                                                    FullWidth="true"
+                                                    Variant="Variant.Filled"
+                                                    Color="Color.Primary"
+                                                    ButtonType="ButtonType.Button"
+                                                    Disabled="@(Model.Code.Length <= 5)"
+                                                    OnClick="@(async () => await OnVerifyAsync())">
+                                                    Confirm
+                                                </MudLoadingButton>
+                                            </MudStack>
+                                        </MudForm>
+                                    </MudPaper>
+                                    <MudPaper Outlined Class="pa-3">
+                                        <MudText Align="Align.Center">Didn't received an email?
+                                            <strong @onclick="async () => await ResendCodeAsync()"
+                                                    class="cursor-pointer">Resend</strong>
+                                        </MudText>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudStepExtended>
+            </ChildContent>
+        </MudStepperExtended>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "passkey")] public Guid KeyId { get; set; }
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
+
+    private UserPasskeyDto Passkey { get; set; } = new();
+    
+    private MudStepperExtended stepper = new();
+    private MudForm form = new();
+
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await PasskeyService.GetPasskeyAsync(KeyId);
+            if (result.Success) Passkey = result.Get<UserPasskeyDto>()!;
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task ResendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.Passkey,
+            Type = CodeType.Remove,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "DisplayName", Passkey.DisplayName },
+                { "Email", UserState.Credentials?.Email! }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+    }
+
+    private async Task OnSendCodeAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Resource = CodeResource.Passkey,
+            Type = CodeType.Remove,
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "DisplayName", Passkey.DisplayName },
+                { "Email", UserState.Credentials?.Email! }
+            }
+        };
+
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new VerifyCodeRequest()
+            {
+                UserId = UserState.UserId,
+                Resource = CodeResource.Passkey,
+                Type = CodeType.Remove,
+                Sender = SenderType.Email,
+                Code = Model.Code
+            };
+
+            var result = await SecurityService.VerifyCodeAsync(request);
+
+            if (result.Success) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new RemovePasskeyRequest()
+        {
+            UserId = UserState.UserId,
+            KeyId = KeyId,
+        };
+
+        var result = await PasskeyService.RemovePasskeyAsync(request);
+
+        if (result.Success)
+        {
+            Snackbar.Add("Passkey was successfully removed", Severity.Success);
+            RouteManager.Route("/account/security");
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task StepNextAsync()
+    {
+        var index = stepper!.GetActiveIndex();
+        await stepper!.CompleteStep(index);
+    }
+
+}

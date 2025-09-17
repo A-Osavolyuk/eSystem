@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\eShop.Application\eShop.Application.csproj" />
+      <ProjectReference Include="..\eShop.Blazor.Server.Domain\eShop.Blazor.Server.Domain.csproj" />
+      <ProjectReference Include="..\eShop.Domain\eShop.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

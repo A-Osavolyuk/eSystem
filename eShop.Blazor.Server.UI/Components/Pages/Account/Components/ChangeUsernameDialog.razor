@@ -1,0 +1,72 @@
+﻿@using eShop.Blazor.Server.Application.Mapping
+@using eShop.Blazor.Server.Application.Validation
+@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Domain.Models
+@inject IUserService UserService
+@inject ISnackbar Snackbar
+@inject ChangeUsernameValidator Validator
+
+<MudDialog Style="width: 600px">
+    <TitleContent>
+        Change username
+    </TitleContent>
+    <DialogContent>
+        <MudForm
+            @ref="form"
+            Model="Model" 
+            Validation="Validator.ValidateValue">
+            <MudTextField
+                @bind-Value="Model.Username"
+                For="() => Model.Username"
+                Label="Username"
+                Variant="Variant.Outlined"
+                Immediate="true"
+                Clearable="true"/>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton
+            Color="Color.Error"
+            Variant="Variant.Outlined"
+            ButtonType="ButtonType.Button"
+            OnClick="@(() => OnCancel())">
+            Cancel
+        </MudButton>
+        <MudButton
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button"
+            OnClick="@(async () => await OnSubmitAsync())">
+            Submit
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public IMudDialogInstance? Dialog { get; set; }
+    [Parameter] public ChangeUsernameModel Model { get; set; } = new();
+
+    private MudForm form = new();
+
+    private async Task OnSubmitAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = Mapper.Map(Model);
+            var result = await UserService.ChangeUsernameAsync(request);
+
+            if (result.Success)
+            {
+                Dialog?.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+    
+    private void OnCancel() => Dialog?.Close();
+}

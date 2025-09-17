@@ -1,33 +1,34 @@
 <Solution>
-    <Folder Name="/src/"/>
-    <Folder Name="/src/Clients/"/>
-    <Folder Name="/src/Clients/Blazor/">
-        <Project Path="eShop.Blazor.Application/eShop.Blazor.Application.csproj"/>
-        <Project Path="eShop.Blazor.Domain/eShop.Blazor.Domain.csproj"/>
-        <Project Path="eShop.Blazor.Infrastructure/eShop.Blazor.Infrastructure.csproj"/>
-        <Project Path="eShop.Blazor.UI/eShop.Blazor.UI.csproj"/>
-    </Folder>
-    <Folder Name="/src/Common/">
-        <Project Path="eShop.Application/eShop.Application.csproj"/>
-        <Project Path="eShop.Domain/eShop.Domain.csproj"/>
-    </Folder>
-    <Folder Name="/src/Hosting/">
-        <Project Path="eShop.AppHost/eShop.AppHost.csproj"/>
-        <Project Path="eShop.ServiceDefaults/eShop.ServiceDefaults.csproj"/>
-    </Folder>
-    <Folder Name="/src/Microservices/">
-        <Project Path="eShop.Auth.Api/eShop.Auth.Api.csproj"/>
-        <Project Path="eShop.Cart.Api/eShop.Cart.Api.csproj"/>
-        <Project Path="eShop.Comments.Api/eShop.Comments.Api.csproj"/>
-        <Project Path="eShop.EmailSender.Api/eShop.EmailSender.Api.csproj"/>
-        <Project Path="eShop.MessageBus/eShop.MessageBus.csproj"/>
-        <Project Path="eShop.Product.Api/eShop.Product.Api.csproj"/>
-        <Project Path="eShop.SmsSender.Api/eShop.SmsSender.Api.csproj"/>
-        <Project Path="eShop.Storage.Api/eShop.Storage.Api.csproj"/>
-        <Project Path="eShop.Telegram.Bot/eShop.Telegram.Bot.csproj"/>
-    </Folder>
-    <Folder Name="/src/Proxy/">
-        <Project Path="eShop.Proxy/eShop.Proxy.csproj"/>
-    </Folder>
-    <Folder Name="/tests/"/>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Clients/" />
+  <Folder Name="/src/Clients/Blazor/" />
+  <Folder Name="/src/Clients/Blazor/Server/">
+    <Project Path="eShop.Blazor.Server.Application\eShop.Blazor.Server.Application.csproj" />
+    <Project Path="eShop.Blazor.Server.Domain\eShop.Blazor.Server.Domain.csproj" />
+    <Project Path="eShop.Blazor.Server.Infrastructure\eShop.Blazor.Server.Infrastructure.csproj" />
+    <Project Path="eShop.Blazor.Server.UI\eShop.Blazor.Server.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/Common/">
+    <Project Path="eShop.Application/eShop.Application.csproj" />
+    <Project Path="eShop.Domain/eShop.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Hosting/">
+    <Project Path="eShop.AppHost/eShop.AppHost.csproj" />
+    <Project Path="eShop.ServiceDefaults/eShop.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/src/Microservices/">
+    <Project Path="eShop.Auth.Api/eShop.Auth.Api.csproj" />
+    <Project Path="eShop.Cart.Api/eShop.Cart.Api.csproj" />
+    <Project Path="eShop.Comments.Api/eShop.Comments.Api.csproj" />
+    <Project Path="eShop.EmailSender.Api/eShop.EmailSender.Api.csproj" />
+    <Project Path="eShop.MessageBus/eShop.MessageBus.csproj" />
+    <Project Path="eShop.Product.Api/eShop.Product.Api.csproj" />
+    <Project Path="eShop.SmsSender.Api/eShop.SmsSender.Api.csproj" />
+    <Project Path="eShop.Storage.Api/eShop.Storage.Api.csproj" />
+    <Project Path="eShop.Telegram.Bot/eShop.Telegram.Bot.csproj" />
+  </Folder>
+  <Folder Name="/src/Proxy/">
+    <Project Path="eShop.Proxy/eShop.Proxy.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
 </Solution>
