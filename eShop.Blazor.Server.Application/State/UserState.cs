@@ -21,7 +21,14 @@ public class UserState : AsyncState
     {
         UserId = state.UserId;
         Identity = new UserIdentity(state.Roles, state.Permissions);
-        Credentials = new UserCredentials(state.Email, state.Username, state.PhoneNumber, state.RecoveryEmail);
+        Credentials = new UserCredentials
+        {
+            Username = state.Username, 
+            PrimaryEmail = state.PrimaryEmail, 
+            RecoveryEmail = state.RecoveryEmail,
+            PrimaryPhoneNumber = state.PrimaryPhoneNumber,
+            RecoveryPhoneNumber = state.RecoveryPhoneNumber,
+        };
     }
 
     public override async Task Change()
@@ -30,12 +37,16 @@ public class UserState : AsyncState
     }
 }
 
-public record UserCredentials(
-    string? Email,
-    string? Username,
-    string? PhoneNumber,
-    string? RecoveryEmail
-);
+public class UserCredentials
+{
+    public string? Username { get; set; }
+    
+    public string? PrimaryEmail { get; set; }
+    public string? RecoveryEmail { get; set; }
+    
+    public string? PrimaryPhoneNumber { get; set; }
+    public string? RecoveryPhoneNumber { get; set; }
+}
 
 public record UserIdentity(
     IReadOnlyList<RoleDto> Roles,

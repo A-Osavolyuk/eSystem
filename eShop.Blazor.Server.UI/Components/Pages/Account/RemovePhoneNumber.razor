@@ -70,7 +70,7 @@
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
                                                     Enter code from the SMS we sent you to: 
-                                                    <strong>@UserState.Credentials?.PhoneNumber</strong>
+                                                    <strong>@UserState.Credentials?.PrimaryPhoneNumber</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
@@ -125,7 +125,7 @@
             Sender = SenderType.Sms,
             Payload =
             {
-                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+                { "PhoneNumber", UserState.Credentials?.PrimaryPhoneNumber! }
             }
         };
 
@@ -143,7 +143,7 @@
             Sender = SenderType.Sms,
             Payload =
             {
-                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+                { "PhoneNumber", UserState.Credentials?.PrimaryPhoneNumber! }
             }
         };
 
@@ -180,7 +180,7 @@
         var request = new RemovePhoneNumberRequest()
         {
             UserId = UserState.UserId,
-            PhoneNumber = UserState.Credentials?.PhoneNumber!
+            PhoneNumber = UserState.Credentials?.PrimaryPhoneNumber!
         };
 
         var result = await SecurityService.RemovePhoneNumberAsync(request);

@@ -36,7 +36,7 @@
                                     <MudStack Spacing="4">
                                         <MudText Align="Align.Center">
                                             To verify this device, you will need to enter 6-digit code
-                                            from an email we will send you to: <strong>@UserState.Credentials?.Email</strong>.
+                                            from an email we will send you to: <strong>@UserState.Credentials?.PrimaryEmail</strong>.
                                             If you verify this device, you will be able to sign in.
                                         </MudText>
                                         <MudButton
@@ -69,7 +69,7 @@
                                         Model="Model">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@UserState.Credentials?.Email</strong>
+                                                We have sent an email with code to email: <strong>@UserState.Credentials?.PrimaryEmail</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -148,7 +148,7 @@
                 { "Device", Model.Device.Device! },
                 { "IpAddress", Model.Device.IpAddress! },
                 { "Browser", Model.Device.Browser! },
-                { "Email", UserState.Credentials?.Email! }
+                { "Email", UserState.Credentials?.PrimaryEmail! }
             }
         };
 
@@ -170,7 +170,7 @@
                 { "Device", Model.Device.Device! },
                 { "IpAddress", Model.Device.IpAddress! },
                 { "Browser", Model.Device.Browser! },
-                { "Email", UserState.Credentials?.Email! }
+                { "Email", UserState.Credentials?.PrimaryEmail! }
             }
         };
 

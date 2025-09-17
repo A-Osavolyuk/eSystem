@@ -39,7 +39,7 @@
                                         <MudText Align="Align.Center">
                                             To allow sign in with @Provider linked account, 
                                             you will need to enter 6-digit code
-                                            from an email we will send you to: <strong>@UserState.Credentials!.Email</strong>.
+                                            from an email we will send you to: <strong>@UserState.Credentials!.PrimaryEmail</strong>.
                                         </MudText>
                                         <MudButton
                                             Color="Color.Primary"
@@ -72,7 +72,7 @@
                                         Validation="Validator.ValidateValue">
                                         <MudStack Spacing="4" Justify="Justify.Center">
                                             <MudText Align="Align.Center">
-                                                We have sent an email with code to email: <strong>@UserState.Credentials!.Email</strong>
+                                                We have sent an email with code to email: <strong>@UserState.Credentials!.PrimaryEmail</strong>
                                             </MudText>
 
                                             <MudCodeInput
@@ -128,7 +128,7 @@
             Payload = new Dictionary<string, string>()
             {
                 { "Provider", Provider },
-                { "Email", UserState.Credentials?.Email! }
+                { "Email", UserState.Credentials?.PrimaryEmail! }
             }
         };
 
@@ -147,7 +147,7 @@
             Payload = new Dictionary<string, string>()
             {
                 { "Provider", Provider },
-                { "Email", UserState.Credentials?.Email! }
+                { "Email", UserState.Credentials?.PrimaryEmail! }
             }
         };
 

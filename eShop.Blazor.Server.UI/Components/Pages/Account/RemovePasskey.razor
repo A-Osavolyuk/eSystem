@@ -34,7 +34,7 @@
                                                 another authentication method to be able to sign-in.
                                                 To remove this passkey, you will need
                                                 to enter 6-digit code from email we
-                                                will send to: <strong>@UserState.Credentials?.Email</strong>
+                                                will send to: <strong>@UserState.Credentials?.PrimaryEmail</strong>
                                             </MudText>
                                             <MudLoadingButton
                                                 FullWidth="true"
@@ -68,7 +68,7 @@
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
                                                     Enter code from the email we sent you to:
-                                                    <strong>@UserState.Credentials?.Email</strong>
+                                                    <strong>@UserState.Credentials?.PrimaryEmail</strong>
                                                 </MudText>
 
                                                 <MudCodeInput
@@ -139,7 +139,7 @@
             Payload = new Dictionary<string, string>()
             {
                 { "DisplayName", Passkey.DisplayName },
-                { "Email", UserState.Credentials?.Email! }
+                { "Email", UserState.Credentials?.PrimaryEmail! }
             }
         };
 
@@ -158,7 +158,7 @@
             Payload = new Dictionary<string, string>()
             {
                 { "DisplayName", Passkey.DisplayName },
-                { "Email", UserState.Credentials?.Email! }
+                { "Email", UserState.Credentials?.PrimaryEmail! }
             }
         };
 

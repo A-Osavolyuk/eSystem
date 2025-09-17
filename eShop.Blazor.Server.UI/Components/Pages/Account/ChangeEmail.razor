@@ -250,7 +250,7 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "Email", UserState.Credentials?.Email! },
+                { "Email", UserState.Credentials?.PrimaryEmail! },
                 { "NewEmail", ChangeEmailModel.NewEmail },
             }
         };
@@ -270,7 +270,7 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "Email", UserState.Credentials?.Email! },
+                { "Email", UserState.Credentials?.PrimaryEmail! },
                 { "NewEmail", ChangeEmailModel.NewEmail },
             }
         };

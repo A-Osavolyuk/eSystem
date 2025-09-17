@@ -26,7 +26,7 @@
                     Validation="Validator.ValidateValue">
                     <MudStack Spacing="2" Justify="Justify.Center">
                         <MudText Align="Align.Center">
-                            We have sent a SMS with code to phone number: <strong>@UserState.Credentials?.PhoneNumber</strong>
+                            We have sent a SMS with code to phone number: <strong>@UserState.Credentials?.PrimaryPhoneNumber</strong>
                         </MudText>
                         <MudCodeInput
                             Class="d-flex align-items-center"
@@ -89,7 +89,7 @@
         var request = new VerifyPhoneNumberRequest()
         {
             UserId = UserState.UserId,
-            PhoneNumber = UserState.Credentials?.PhoneNumber!
+            PhoneNumber = UserState.Credentials?.PrimaryPhoneNumber!
         };
 
         var result = await SecurityService.VerifyPhoneNumberAsync(request);
@@ -112,7 +112,7 @@
             Sender = SenderType.Sms,
             Payload =
             {
-                { "PhoneNumber", UserState.Credentials?.PhoneNumber! }
+                { "PhoneNumber", UserState.Credentials?.PrimaryPhoneNumber! }
             }
         };
 
