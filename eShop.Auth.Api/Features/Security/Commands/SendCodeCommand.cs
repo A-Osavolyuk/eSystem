@@ -20,7 +20,6 @@ public class SendCodeCommandHandler(
         var sender = request.Request.Sender;
         var codeType = request.Request.Type;
         var codeResource = request.Request.Resource;
-        var payload = request.Request.Payload;
 
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
@@ -42,14 +41,24 @@ public class SendCodeCommandHandler(
 
         var code = await codeManager.GenerateAsync(user, sender, codeType, codeResource, cancellationToken);
 
-        Message? message = request.Request switch
+        var message = GenerateMessage(request.Request, user, code);
+        if (message is null) return Results.BadRequest("Invalid message type");
+
+        await messageService.SendMessageAsync(sender, message, cancellationToken);
+
+        return Result.Success();
+    }
+
+    private Message? GenerateMessage(SendCodeRequest request, UserEntity user, string code)
+    {
+        Message? message = request switch
         {
             { Resource: CodeResource.Email, Type: CodeType.Verify, Sender: SenderType.Email } =>
                 new VerifyEmailMessage
                 {
                     Credentials = new()
                     {
-                        { "To", payload["Email"] },
+                        { "To", request.Payload["Email"] },
                         { "Subject", "Email verification" },
                     },
                     Payload = new()
@@ -63,7 +72,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", payload["Email"] },
+                        { "To", request.Payload["Email"] },
                         { "Subject", "Email remove" },
                     },
                     Payload = new()
@@ -106,12 +115,12 @@ public class SendCodeCommandHandler(
                     Credentials = new()
                     {
                         { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
-                        { "Subject", $"Allow {payload["Provider"]} linked account" }
+                        { "Subject", $"Allow {request.Payload["Provider"]} linked account" }
                     },
                     Payload = new()
                     {
                         { "Code", code },
-                        { "Provider", payload["Provider"] },
+                        { "Provider", request.Payload["Provider"] },
                         { "UserName", user.Username }
                     }
                 },
@@ -127,10 +136,10 @@ public class SendCodeCommandHandler(
                     {
                         { "Code", code },
                         { "UserName", user.Username },
-                        { "Ip", payload["IpAddress"] },
-                        { "OS", payload["OS"] },
-                        { "Device", payload["Device"] },
-                        { "Browser", payload["Browser"] }
+                        { "Ip", request.Payload["IpAddress"] },
+                        { "OS", request.Payload["OS"] },
+                        { "Device", request.Payload["Device"] },
+                        { "Browser", request.Payload["Browser"] }
                     }
                 },
             { Resource: CodeResource.Email, Type: CodeType.Current, Sender: SenderType.Email } =>
@@ -138,14 +147,14 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", payload["Email"] },
+                        { "To", request.Payload["Email"] },
                         { "Subject", "Email change (step one)" },
                     },
                     Payload = new()
                     {
                         { "Code", code },
                         { "UserName", user.Username },
-                        { "NewEmail", payload["NewEmail"] }
+                        { "NewEmail", request.Payload["NewEmail"] }
                     }
                 },
             { Resource: CodeResource.LinkedAccount, Type: CodeType.Disallow, Sender: SenderType.Email } =>
@@ -154,12 +163,12 @@ public class SendCodeCommandHandler(
                     Credentials = new()
                     {
                         { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
-                        { "Subject", $"Disallow {payload["Provider"]} linked account" }
+                        { "Subject", $"Disallow {request.Payload["Provider"]} linked account" }
                     },
                     Payload = new()
                     {
                         { "Code", code },
-                        { "Provider", payload["Provider"] },
+                        { "Provider", request.Payload["Provider"] },
                         { "UserName", user.Username }
                     }
                 },
@@ -169,12 +178,12 @@ public class SendCodeCommandHandler(
                     Credentials = new()
                     {
                         { "To", user.Emails.First(x => x.Type is EmailType.Primary).Email },
-                        { "Subject", $"Disconnect {payload["Provider"]} linked account" }
+                        { "Subject", $"Disconnect {request.Payload["Provider"]} linked account" }
                     },
                     Payload = new()
                     {
                         { "Code", code },
-                        { "Provider", payload["Provider"] },
+                        { "Provider", request.Payload["Provider"] },
                         { "UserName", user.Username }
                     }
                 },
@@ -204,7 +213,7 @@ public class SendCodeCommandHandler(
                     {
                         { "Code", code },
                         { "UserName", user.Username },
-                        { "DisplayName", payload["DisplayName"] }
+                        { "DisplayName", request.Payload["DisplayName"] }
                     }
                 },
             { Resource: CodeResource.Email, Type: CodeType.Reset, Sender: SenderType.Email } =>
@@ -212,7 +221,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", payload["Email"] },
+                        { "To", request.Payload["Email"] },
                         { "Subject", "Email reset" },
                     },
                     Payload = new()
@@ -233,10 +242,10 @@ public class SendCodeCommandHandler(
                     {
                         { "Code", code },
                         { "UserName", user.Username },
-                        { "Ip", payload["IpAddress"] },
-                        { "OS", payload["OS"] },
-                        { "Device", payload["Device"] },
-                        { "Browser", payload["Browser"] }
+                        { "Ip", request.Payload["IpAddress"] },
+                        { "OS", request.Payload["OS"] },
+                        { "Device", request.Payload["Device"] },
+                        { "Browser", request.Payload["Browser"] }
                     }
                 },
             { Resource: CodeResource.Device, Type: CodeType.Unblock, Sender: SenderType.Email } =>
@@ -251,10 +260,10 @@ public class SendCodeCommandHandler(
                     {
                         { "Code", code },
                         { "UserName", user.Username },
-                        { "Ip", payload["IpAddress"] },
-                        { "OS", payload["OS"] },
-                        { "Device", payload["Device"] },
-                        { "Browser", payload["Browser"] }
+                        { "Ip", request.Payload["IpAddress"] },
+                        { "OS", request.Payload["OS"] },
+                        { "Device", request.Payload["Device"] },
+                        { "Browser", request.Payload["Browser"] }
                     }
                 },
             { Resource: CodeResource.Device, Type: CodeType.Verify, Sender: SenderType.Email } =>
@@ -269,10 +278,10 @@ public class SendCodeCommandHandler(
                     {
                         { "Code", code },
                         { "UserName", user.Username },
-                        { "Ip", payload["IpAddress"] },
-                        { "OS", payload["OS"] },
-                        { "Device", payload["Device"] },
-                        { "Browser", payload["Browser"] }
+                        { "Ip", request.Payload["IpAddress"] },
+                        { "OS", request.Payload["OS"] },
+                        { "Device", request.Payload["Device"] },
+                        { "Browser", request.Payload["Browser"] }
                     }
                 },
             { Resource: CodeResource.Email, Type: CodeType.New, Sender: SenderType.Email } =>
@@ -280,7 +289,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "To", payload["Email"] },
+                        { "To", request.Payload["Email"] },
                         { "Subject", "Email verification (step two)" },
                     },
                     Payload = new()
@@ -334,7 +343,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new Dictionary<string, string>()
                     {
-                        { "PhoneNumber", payload["PhoneNumber"] },
+                        { "PhoneNumber", request.Payload["PhoneNumber"] },
                     },
                     Payload = new()
                     {
@@ -346,7 +355,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "PhoneNumber", payload["NewPhoneNumber"] }
+                        { "PhoneNumber", request.Payload["NewPhoneNumber"] }
                     },
                     Payload = new()
                     {
@@ -358,7 +367,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "PhoneNumber", payload["PhoneNumber"] }
+                        { "PhoneNumber", request.Payload["PhoneNumber"] }
                     },
                     Payload = new()
                     {
@@ -370,7 +379,7 @@ public class SendCodeCommandHandler(
                 {
                     Credentials = new()
                     {
-                        { "PhoneNumber", payload["PhoneNumber"] }
+                        { "PhoneNumber", request.Payload["PhoneNumber"] }
                     },
                     Payload = new()
                     {
@@ -405,10 +414,6 @@ public class SendCodeCommandHandler(
             _ => null
         };
 
-        if (message is null) return Results.BadRequest("Invalid message type");
-
-        await messageService.SendMessageAsync(sender, message, cancellationToken);
-
-        return Result.Success();
+        return message;
     }
 }
