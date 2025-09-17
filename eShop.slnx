@@ -8,6 +8,7 @@
     <Project Path="eShop.Blazor.Server.Infrastructure\eShop.Blazor.Server.Infrastructure.csproj" />
     <Project Path="eShop.Blazor.Server.UI\eShop.Blazor.Server.UI.csproj" />
   </Folder>
+  <Folder Name="/src/Clients/Blazor/WASM/" />
   <Folder Name="/src/Common/">
     <Project Path="eShop.Application/eShop.Application.csproj" />
     <Project Path="eShop.Domain/eShop.Domain.csproj" />
