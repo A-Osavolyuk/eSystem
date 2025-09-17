@@ -30,7 +30,7 @@ public interface ISecurityService
     public ValueTask<HttpResponse> CheckEmailAsync(CheckEmailRequest request);
     public ValueTask<HttpResponse> CheckPhoneNumberAsync(CheckPhoneNumberRequest request);
     public ValueTask<HttpResponse> CheckPasswordAsync(CheckPasswordRequest request);
-    public ValueTask<HttpResponse> AuthenticateAsync();
+    public ValueTask<HttpResponse> AuthenticateAsync(AuthenticateRequest request);
     public ValueTask<HttpResponse> AuthorizeAsync();
     public ValueTask<HttpResponse> UnauthorizeAsync();
 }

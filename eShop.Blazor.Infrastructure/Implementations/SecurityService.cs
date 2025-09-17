@@ -149,15 +149,7 @@ public class SecurityService(
         return await fetchClient.FetchAsync(options);
     }
     
-    public async ValueTask<HttpResponse> AuthenticateAsync()
-    {
-        var options = new FetchOptions()
-        {
-            Url = "/api/v1/Security/authenticate",
-            Method = HttpMethod.Post,
-            Credentials = Credentials.Include,
-        };
-
-        return await fetchClient.FetchAsync(options);
-    }
+    public async ValueTask<HttpResponse> AuthenticateAsync(AuthenticateRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/authenticate", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
 }

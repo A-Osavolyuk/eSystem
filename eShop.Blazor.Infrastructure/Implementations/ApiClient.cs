@@ -3,6 +3,7 @@ using System.Text.Json;
 using eShop.Blazor.Application.Routing;
 using eShop.Blazor.Domain.Interfaces;
 using eShop.Blazor.Domain.Options;
+using eShop.Blazor.Infrastructure.Security;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using Microsoft.AspNetCore.Http;
@@ -11,15 +12,15 @@ namespace eShop.Blazor.Infrastructure.Implementations;
 
 public class ApiClient(
     IHttpClientFactory clientFactory,
-    ITokenProvider tokenProvider,
     IHttpContextAccessor httpContextAccessor,
     IFetchClient fetchClient,
+    TokenProvider tokenProvider,
     RouteManager routeManager) : IApiClient
 {
     private readonly IHttpClientFactory clientFactory = clientFactory;
-    private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IFetchClient fetchClient = fetchClient;
+    private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly RouteManager routeManager = routeManager;
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
@@ -30,7 +31,7 @@ public class ApiClient(
 
             if (options.WithBearer)
             {
-                var token = tokenProvider.Get();
+                var token = tokenProvider.AccessToken;
 
                 if (string.IsNullOrEmpty(token))
                 {

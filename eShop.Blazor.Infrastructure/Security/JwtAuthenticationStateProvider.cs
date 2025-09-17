@@ -2,23 +2,25 @@
 using eShop.Blazor.Domain.Interfaces;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
+using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
+using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Infrastructure.Security;
 
 public class JwtAuthenticationStateProvider(
-    ITokenProvider tokenProvider,
     IStorage storage,
     IUserService userService,
     ISecurityService securityService,
+    TokenProvider tokenProvider,
     TokenHandler tokenHandler,
     UserState userState) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
-    private readonly ITokenProvider tokenProvider = tokenProvider;
     private readonly IStorage storage = storage;
     private readonly IUserService userService = userService;
     private readonly ISecurityService securityService = securityService;
+    private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly UserState userState = userState;
 
@@ -26,16 +28,20 @@ public class JwtAuthenticationStateProvider(
     {
         try
         {
-            var token = tokenProvider.Get();
+            var token = tokenProvider.AccessToken;
             if (string.IsNullOrEmpty(token))
             {
-                var result = await securityService.AuthenticateAsync();
+                var refreshToken = tokenProvider.RefreshToken;
+                if(string.IsNullOrEmpty(refreshToken)) return await UnauthorizeAsync();
+                
+                var request = new AuthenticateRequest() { RefreshToken = refreshToken };
+                var result = await securityService.AuthenticateAsync(request);
+            
                 if (result.Success)
                 {
                     var response = result.Get<AuthenticateResponse>()!;
-                    
                     token = response.AccessToken;
-                    tokenProvider.Set(token);
+                    tokenProvider.AccessToken = response.AccessToken;
                 }
                 else return await UnauthorizeAsync();
             }
@@ -62,7 +68,7 @@ public class JwtAuthenticationStateProvider(
     {
         if (!string.IsNullOrEmpty(accessToken))
         {
-            tokenProvider.Set(accessToken);
+            tokenProvider.AccessToken = accessToken;
 
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();

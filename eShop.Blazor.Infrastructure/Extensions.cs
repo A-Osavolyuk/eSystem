@@ -41,7 +41,6 @@ public static class Extensions
 
         builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddScoped<IFetchClient, FetchClient>();
-        builder.Services.AddScoped<ITokenProvider, TokenProvider>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
         builder.Services.AddScoped<ICookieManager, CookieManager>();
     }
@@ -55,7 +54,7 @@ public static class Extensions
 
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<TokenHandler>();
-        builder.Services.AddScoped<TokenStore>();
+        builder.Services.AddScoped<TokenProvider>();
         builder.Services.AddScoped<AuthenticationManager>();
         builder.Services.AddScoped<PasskeyManager>();
         builder.Services.AddScoped<JwtAuthenticationStateProvider>();
