@@ -131,6 +131,8 @@ namespace eShop.Auth.Api.Migrations
                     PasswordChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     AccountConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
+                    CodeResendAttempts = table.Column<int>(type: "int", nullable: false),
+                    CodeResendAvailableDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },

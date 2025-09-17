@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250916110936_Initial")]
+    [Migration("20250917115933_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -654,6 +654,12 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Property<bool>("AccountConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<int>("CodeResendAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("CodeResendAvailableDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");

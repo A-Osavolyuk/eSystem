@@ -652,6 +652,12 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<bool>("AccountConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("CodeResendAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("CodeResendAvailableDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
