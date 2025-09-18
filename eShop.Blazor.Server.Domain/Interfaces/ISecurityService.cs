@@ -21,6 +21,7 @@ public interface ISecurityService
     public ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request);
     public ValueTask<HttpResponse> ChangePhoneNumberAsync(ChangePhoneNumberRequest request);
     public ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request);
+    public ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request);
     public ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request);
     public ValueTask<HttpResponse> VerifyEmailAsync(VerifyEmailRequest request);
     public ValueTask<HttpResponse> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request);

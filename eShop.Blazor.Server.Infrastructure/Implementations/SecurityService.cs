@@ -26,6 +26,10 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/code/send", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
+    public async ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/code/resend", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
+
     public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/code/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
