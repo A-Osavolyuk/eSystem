@@ -109,6 +109,9 @@ public static class HostApplicationBuilderExtensions
             options.SignIn.RequireConfirmedRecoveryEmail = true;
             options.SignIn.RequireTrustedDevice = true;
             options.SignIn.MaxFailedLoginAttempts = 5;
+
+            options.Code.MaxCodeResendAttempts = 5;
+            options.Code.CodeResendUnavailableTime = 2;
         });
 
         builder.Services.AddAuthentication(options =>
