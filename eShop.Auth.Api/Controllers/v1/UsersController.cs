@@ -52,6 +52,20 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Get user primary email")]
+    [EndpointDescription("Gets user primary email")]
+    [ProducesResponseType(200)]
+    [HttpGet("primary-email")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> GetUserPrimaryEmailAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserEmailsQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Get user phone numbers")]
     [EndpointDescription("Gets user phone numbers")]
     [ProducesResponseType(200)]
