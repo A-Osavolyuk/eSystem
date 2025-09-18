@@ -1,8 +1,5 @@
 ﻿@page "/account/2fa/login"
-@using eShop.Blazor.Server.Application.Mapping
-@using eShop.Blazor.Server.Application.Validation
-@using eShop.Blazor.Server.Domain.Interfaces
-@using eShop.Blazor.Server.Domain.Models
+
 @inherits PageBase
 
 @inject ITwoFactorService TwoFactorService
@@ -50,7 +47,7 @@
                                                             <MudLoadingButton
                                                                 ButtonType="ButtonType.Button"
                                                                 StartIcon="@Icons.Material.Filled.Smartphone"
-                                                                OnClick="@(async () => await OnSendCodeAsync(provider.Name))"
+                                                                OnClick="@(async () => await OnSendCodeAsync(provider))"
                                                                 Variant="Variant.Filled"
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
@@ -64,7 +61,7 @@
                                                             <MudLoadingButton
                                                                 ButtonType="ButtonType.Button"
                                                                 StartIcon="@Icons.Material.Filled.Sms"
-                                                                OnClick="@(async () => await OnSendCodeAsync(provider.Name))"
+                                                                OnClick="@(async () => await OnSendCodeAsync(provider))"
                                                                 Variant="Variant.Filled"
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
@@ -78,7 +75,7 @@
                                                             <MudLoadingButton
                                                                 ButtonType="ButtonType.Button"
                                                                 StartIcon="@Icons.Material.Filled.Email"
-                                                                OnClick="@(async () => await OnSendCodeAsync(provider.Name))"
+                                                                OnClick="@(async () => await OnSendCodeAsync(provider))"
                                                                 Variant="Variant.Filled"
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
@@ -183,7 +180,7 @@
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">Didn't a receive code?
                                             <strong
-                                                @onclick="@(async () => await SendCodeAsync())"
+                                                @onclick="@(async () => await SendCodeAsync(SendTwoFactorTokenModel.Provider))"
                                                 class="cursor-pointer">
                                                 Resend
                                             </strong>
@@ -236,24 +233,32 @@
         }
     }
 
-    private async Task OnSendCodeAsync(string provider)
+    private async Task OnSendCodeAsync(UserProviderDto provider)
     {
-        SendTwoFactorTokenModel.Provider = provider;
+        SendTwoFactorTokenModel.Provider = provider.Name;
 
         await sendTwoFactorTokenForm.Validate();
 
         if (sendTwoFactorTokenForm.IsValid)
         {
-            if (SendTwoFactorTokenModel.Provider == ProviderTypes.Authenticator)
+            if (provider.Name == ProviderTypes.Authenticator)
             {
                 await StepNextAsync();
             }
             else
             {
-                var sender = provider switch
+                var sender = provider.Name switch
                 {
                     ProviderTypes.Email => SenderType.Email,
                     ProviderTypes.Sms => SenderType.Sms,
+                    ProviderTypes.Authenticator => SenderType.AuthenticatorApp,
+                    _ => throw new NotSupportedException()
+                };
+
+                var payload = provider.Name switch
+                {
+                    ProviderTypes.Email => new Dictionary<string, string>() { { "To", provider.Credential! } },
+                    ProviderTypes.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
                     _ => throw new NotSupportedException()
                 };
 
@@ -262,7 +267,8 @@
                     UserId = UserId,
                     Sender = sender,
                     Type = CodeType.SignIn,
-                    Resource = CodeResource.TwoFactor
+                    Resource = CodeResource.TwoFactor,
+                    Payload = payload
                 };
 
                 var result = await SecurityService.SendCodeAsync(request);
@@ -272,12 +278,21 @@
         }
     }
 
-    private async Task SendCodeAsync()
+    private async Task SendCodeAsync(string providerName)
     {
-        var sender = SendTwoFactorTokenModel.Provider switch
+        var sender = providerName switch
         {
             ProviderTypes.Email => SenderType.Email,
             ProviderTypes.Sms => SenderType.Sms,
+            ProviderTypes.Authenticator => SenderType.AuthenticatorApp,
+            _ => throw new NotSupportedException()
+        };
+
+        var provider = providers.First(x => x.Name == providerName);
+        var payload = provider.Name switch
+        {
+            ProviderTypes.Email => new Dictionary<string, string>() { { "To", provider.Credential! } },
+            ProviderTypes.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
             _ => throw new NotSupportedException()
         };
 
@@ -286,7 +301,8 @@
             UserId = UserId,
             Sender = sender,
             Type = CodeType.SignIn,
-            Resource = CodeResource.TwoFactor
+            Resource = CodeResource.TwoFactor,
+            Payload = payload
         };
 
         var result = await SecurityService.SendCodeAsync(request);
