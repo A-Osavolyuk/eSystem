@@ -11,6 +11,6 @@ public class SmsConsumer(ISmsService smsService) : IConsumer<MessageRequest>
     {
         var message = context.Message;
 
-        await smsService.SendMessageAsync(message.Credentials["PhoneNumber"], message.Body);
+        await smsService.SendMessageAsync(message.Credentials["To"], message.Body);
     }
 }
