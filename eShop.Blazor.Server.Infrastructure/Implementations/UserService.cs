@@ -18,6 +18,10 @@ public class UserService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/primary-email", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 
+    public async ValueTask<HttpResponse> GetUserPrimaryPhoneNumberAsync(Guid id) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/primary-phone-number", Method = HttpMethod.Get },
+            new HttpOptions { WithBearer = false, Type = DataType.Text });
+
     public async ValueTask<HttpResponse> GetUserEmailsAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/emails", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });

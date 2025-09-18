@@ -7,6 +7,7 @@ public interface IUserService
 {
     public ValueTask<HttpResponse> GetUserAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPrimaryEmailAsync(Guid id);
+    public ValueTask<HttpResponse> GetUserPrimaryPhoneNumberAsync(Guid id);
     public ValueTask<HttpResponse> GetUserEmailsAsync(Guid id);
     public ValueTask<HttpResponse> GetUserDevicesAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id);
