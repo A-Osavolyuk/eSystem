@@ -6,6 +6,7 @@ using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.Schemes;
 using eShop.Auth.Api.Types;
+using eShop.Domain.Common.Messaging;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -271,13 +272,5 @@ public static class HostApplicationBuilderExtensions
             cfg.Add<TwoFactorCodeSmsMessage>(SenderType.Sms, CodeResource.TwoFactor, CodeType.SignIn);
             cfg.Add<EnableSmsTwoFactorMessage>(SenderType.Sms, CodeResource.Provider, CodeType.Subscribe);
         });
-    }
-
-    private static void AddMessaging(this IServiceCollection services, Action<MessageRegistry> cfg)
-    {
-        var messageRegistry = new MessageRegistry();
-        cfg(messageRegistry);
-        
-        services.AddSingleton(messageRegistry);
     }
 }

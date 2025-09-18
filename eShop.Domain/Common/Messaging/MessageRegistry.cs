@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Messages;
+﻿using eShop.Domain.Abstraction.Messaging;
+
+namespace eShop.Domain.Common.Messaging;
 
 public class MessageRegistry
 {
