@@ -122,7 +122,7 @@
             Sender = SenderType.Sms,
             Payload =
             {
-                { "PhoneNumber", UserState.Credentials?.PrimaryPhoneNumber! }
+                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
             }
         };
 
@@ -140,7 +140,7 @@
             Sender = SenderType.Sms,
             Payload =
             {
-                { "PhoneNumber", UserState.Credentials?.PrimaryPhoneNumber! }
+                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
             }
         };
 

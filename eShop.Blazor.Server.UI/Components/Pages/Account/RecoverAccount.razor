@@ -184,7 +184,11 @@
             UserId = userId,
             Resource = CodeResource.Account,
             Type = CodeType.Recover,
-            Sender = SenderType.Email
+            Sender = SenderType.Email,
+            Payload = new Dictionary<string, string>()
+            {
+                { "To", recoveryEmail! }
+            }
         };
 
         var response = await SecurityService.SendCodeAsync(request);

@@ -140,11 +140,11 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
+                { "To", UserState.Credentials?.PrimaryEmail! },
                 { "OS", Model.Device.OS! },
                 { "Device", Model.Device.Device! },
                 { "IpAddress", Model.Device.IpAddress! },
-                { "Browser", Model.Device.Browser! },
-                { "Email", UserState.Credentials?.PrimaryEmail! }
+                { "Browser", Model.Device.Browser! }
             }
         };
 
@@ -162,11 +162,11 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
+                { "To", UserState.Credentials?.PrimaryEmail! },
                 { "OS", Model.Device.OS! },
                 { "Device", Model.Device.Device! },
                 { "IpAddress", Model.Device.IpAddress! },
-                { "Browser", Model.Device.Browser! },
-                { "Email", UserState.Credentials?.PrimaryEmail! }
+                { "Browser", Model.Device.Browser! }
             }
         };
 

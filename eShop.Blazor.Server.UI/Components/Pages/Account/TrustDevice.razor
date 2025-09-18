@@ -101,11 +101,11 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
+                { "To", email! },
                 { "OS", Model.Device.OS! },
                 { "Device", Model.Device.Device! },
                 { "IpAddress", Model.Device.IpAddress! },
                 { "Browser", Model.Device.Browser! },
-                { "Email", email! }
             }
         };
 

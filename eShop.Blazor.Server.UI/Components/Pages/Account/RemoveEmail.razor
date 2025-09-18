@@ -122,7 +122,7 @@
             Sender = SenderType.Email,
             Payload =
             {
-                { "Email", UserState.Credentials?.PrimaryEmail! }
+                { "To", UserState.Credentials?.PrimaryEmail! }
             }
         };
 
@@ -140,7 +140,7 @@
             Sender = SenderType.Email,
             Payload =
             {
-                { "Email", UserState.Credentials?.PrimaryEmail! }
+                { "To", UserState.Credentials?.PrimaryEmail! }
             }
         };
 

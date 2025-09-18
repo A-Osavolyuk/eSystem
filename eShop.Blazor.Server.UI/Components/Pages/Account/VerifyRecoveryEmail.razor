@@ -114,7 +114,7 @@
             Sender = SenderType.Email,
             Payload =
             {
-                { "Email", UserState.Credentials?.RecoveryEmail! }
+                { "To", UserState.Credentials?.RecoveryEmail! }
             }
         };
 

@@ -124,8 +124,8 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "Provider", Provider },
-                { "Email", UserState.Credentials?.PrimaryEmail! }
+                { "To", UserState.Credentials?.PrimaryEmail! },
+                { "Provider", Provider }
             }
         };
 
@@ -143,8 +143,8 @@
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {
-                { "Provider", Provider },
-                { "Email", UserState.Credentials?.PrimaryEmail! }
+                { "To", UserState.Credentials?.PrimaryEmail! },
+                { "Provider", Provider }
             }
         };
 

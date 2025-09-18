@@ -189,14 +189,14 @@
         {
             request.Payload = new()
             {
-                { "Email", UserState.Credentials?.PrimaryEmail! }
+                { "To", UserState.Credentials?.PrimaryEmail! }
             };
         }
         else if (sender == SenderType.Sms)
         {
             request.Payload = new()
             {
-                { "PhoneNumber", UserState.Credentials?.PrimaryPhoneNumber! }
+                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
             };
         }
 
@@ -222,14 +222,14 @@
         {
             request.Payload = new()
             {
-                { "Email", UserState.Credentials?.PrimaryEmail! }
+                { "To", UserState.Credentials?.PrimaryEmail! }
             };
         }
         else if (sender == SenderType.Sms)
         {
             request.Payload = new()
             {
-                { "PhoneNumber", UserState.Credentials?.PrimaryPhoneNumber! }
+                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
             };
         }
 
