@@ -1,7 +1,11 @@
 ﻿using eShop.Application.Security.Authorization.Requirements;
+using eShop.Auth.Api.Messages;
+using eShop.Auth.Api.Messages.Email;
+using eShop.Auth.Api.Messages.Sms;
 using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.Schemes;
+using eShop.Auth.Api.Types;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -13,6 +17,7 @@ public static class HostApplicationBuilderExtensions
     {
         builder.AddVersioning();
         builder.AddMessageBus();
+        builder.AddMessaging();
         builder.AddValidation<IAssemblyMarker>();
         builder.AddServiceDefaults();
         builder.AddSecurity();
@@ -234,5 +239,45 @@ public static class HostApplicationBuilderExtensions
                 cfg.Host(connectionString);
             });
         });
+    }
+
+    private static void AddMessaging(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddMessaging(cfg =>
+        {
+            cfg.Add<VerifyEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Verify);
+            cfg.Add<RemoveEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Remove);
+            cfg.Add<ChangeEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Current);
+            cfg.Add<ResetEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Reset);
+            cfg.Add<ConfirmEmailChangeMessage>(SenderType.Email, CodeResource.Email, CodeType.New);
+            cfg.Add<UnblockAccountMessage>(SenderType.Email, CodeResource.Account, CodeType.Unlock);
+            cfg.Add<RecoverAccountMessage>(SenderType.Email, CodeResource.Account, CodeType.Recover);
+            cfg.Add<AllowLinkedAccountMessage>(SenderType.Email, CodeResource.LinkedAccount, CodeType.Allow);
+            cfg.Add<DisallowLinkedAccountMessage>(SenderType.Email, CodeResource.LinkedAccount, CodeType.Disallow);
+            cfg.Add<DisconnectLinkedAccountMessage>(SenderType.Email, CodeResource.LinkedAccount, CodeType.Disconnect);
+            cfg.Add<ForgotPasswordMessage>(SenderType.Email, CodeResource.Password, CodeType.Reset);
+            cfg.Add<RemovePasskeyMessage>(SenderType.Email, CodeResource.Passkey, CodeType.Remove);
+            cfg.Add<BlockDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Block);
+            cfg.Add<TrustDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Trust);
+            cfg.Add<UnblockDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Unblock);
+            cfg.Add<VerifyDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Verify);
+            cfg.Add<TwoFactorCodeEmailMessage>(SenderType.Email, CodeResource.TwoFactor, CodeType.SignIn);
+            cfg.Add<EnableEmailTwoFactorMessage>(SenderType.Email, CodeResource.Provider, CodeType.Subscribe);
+            cfg.Add<ChangePhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Current);
+            cfg.Add<RemovePhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Remove);
+            cfg.Add<ResetPhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Reset);
+            cfg.Add<VerifyPhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Verify);
+            cfg.Add<ConfirmPhoneNumberChangeMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.New);
+            cfg.Add<TwoFactorCodeSmsMessage>(SenderType.Sms, CodeResource.TwoFactor, CodeType.SignIn);
+            cfg.Add<EnableSmsTwoFactorMessage>(SenderType.Sms, CodeResource.Provider, CodeType.Subscribe);
+        });
+    }
+
+    private static void AddMessaging(this IServiceCollection services, Action<MessageRegistry> cfg)
+    {
+        var messageRegistry = new MessageRegistry();
+        cfg(messageRegistry);
+        
+        services.AddSingleton(messageRegistry);
     }
 }

@@ -45,4 +45,14 @@ public class AllowLinkedAccountMessage : Message
                      </html>
                 """;
     }
+
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials = new()
+        {
+            { "To", payload["To"] },
+            { "Subject", $"Allow {payload["Provider"]} linked account" }
+        };
+        Payload = payload;
+    }
 }

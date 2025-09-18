@@ -6,4 +6,10 @@ public class ChangePhoneNumberMessage : Message
     {
         return $"Phone number change code: {Payload["Code"]}";
     }
+
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials["To"] = payload["To"];
+        Payload = payload;
+    }
 }

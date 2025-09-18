@@ -9,4 +9,10 @@ public class EnableSmsTwoFactorMessage : Message
                 2FA provider verification code: {Payload["Code"]}
                 """;
     }
+    
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials["To"] = payload["To"];
+        Payload = payload;
+    }
 }

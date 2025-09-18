@@ -40,4 +40,14 @@ public class UnblockAccountMessage : Message
                      </html>
                 """;
     }
+
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials = new()
+        {
+            { "To", payload["To"] },
+            { "Subject", "Account unlock" },
+        };
+        Payload = payload;
+    }
 }

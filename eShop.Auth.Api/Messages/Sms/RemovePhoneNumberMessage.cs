@@ -6,4 +6,10 @@ public class RemovePhoneNumberMessage : Message
     {
         return $"Phone number remove code: {Payload["Code"]}";
     }
+    
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials["To"] = payload["To"];
+        Payload = payload;
+    }
 }

@@ -57,4 +57,14 @@ public class VerifyDeviceMessage : Message
                      </html>
                 """;
     }
+
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials = new()
+        {
+            { "To", payload["To"] },
+            { "Subject", "Device verification" }
+        };
+        Payload = payload;
+    }
 }

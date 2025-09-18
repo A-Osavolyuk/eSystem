@@ -6,4 +6,10 @@ public class TwoFactorCodeSmsMessage : Message
     {
         return $"2FA code: {Payload["Code"]}";
     }
+    
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials["To"] = payload["To"];
+        Payload = payload;
+    }
 }

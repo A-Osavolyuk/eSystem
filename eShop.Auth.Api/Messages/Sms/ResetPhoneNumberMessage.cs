@@ -6,4 +6,10 @@ public class ResetPhoneNumberMessage : Message
     {
         return $"Phone number reset code: {Payload["Code"]}";
     }
+    
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials["To"] = payload["To"];
+        Payload = payload;
+    }
 }

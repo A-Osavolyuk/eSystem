@@ -42,4 +42,14 @@ public class ConfirmEmailChangeMessage : Message
                      </html>
                 """;
     }
+
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials = new()
+        {
+            { "To", payload["To"] },
+            { "Subject", "Email verification (step two)" },
+        };
+        Payload = payload;
+    }
 }

@@ -38,4 +38,9 @@ public class OAuthSignUpMessage : Message
                          </html>
                     """;
     }
+
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Payload = payload;
+    }
 }
