@@ -195,13 +195,12 @@
 
                 var response = result.Get<LoginResponse>()!;
                 var userId = response.UserId;
-                var email = response.Email;
 
                 if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
                 {
                     var device = response.DeviceId;
                     
-                    var url = $"/account/device/trust?device={device}&user={userId}&email={email}";
+                    var url = $"/account/device/trust?device={device}&user={userId}";
 
                     Snackbar.Add(result.Message, Severity.Info);
                     RouteManager.Route(url);
@@ -210,7 +209,7 @@
                 
                 if (!response.IsEmailConfirmed)
                 {
-                    var url = $"/account/email/verify?id={userId}&email={email}";
+                    var url = $"/account/email/verify?id={userId}";
 
                     Snackbar.Add(result.Message, Severity.Info);
                     RouteManager.Route(url);

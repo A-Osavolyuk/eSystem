@@ -5,6 +5,7 @@
 @inherits PageBase
 
 @inject ISecurityService SecurityService
+@inject IUserService UserService
 @inject VerifyEmailValidator Validator
 
 <Title Text="Email verification"></Title>
@@ -24,7 +25,7 @@
                     Validation="Validator.ValidateValue">
                     <MudStack Spacing="2" Justify="Justify.Center">
                         <MudText Align="Align.Center">
-                            We have sent an email with code to email: <strong>@Email</strong>
+                            We have sent an email with code to email: <strong>@email</strong>
                         </MudText>
 
                         <MudCodeInput
@@ -58,15 +59,24 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "email")]
-    private string Email { get; set; } = string.Empty;
-
     [SupplyParameterFromQuery(Name = "id")]
-    private Guid Id { get; set; }
+    private Guid UserId { get; set; }
 
     [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
 
     private MudForm form = new();
+    private string? email;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UserService.GetUserPrimaryEmailAsync(UserId);
+        if (result.Success)
+        {
+            var response = result.Get<UserEmailDto>()!;
+            email = response.Email;
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -84,7 +94,7 @@
         {
             var request = new VerifyCodeRequest()
             {
-                UserId = Id,
+                UserId = UserId,
                 Resource = CodeResource.Email,
                 Type = CodeType.Verify,
                 Sender = SenderType.Email,
@@ -102,8 +112,8 @@
     {
         var request = new VerifyEmailRequest()
         {
-            UserId = Id,
-            Email = Email
+            UserId = UserId,
+            Email = email!
         };
 
         var result = await SecurityService.VerifyEmailAsync(request);
@@ -120,13 +130,13 @@
     {
         var request = new SendCodeRequest()
         {
-            UserId = Id,
+            UserId = UserId,
             Resource = CodeResource.Email,
             Type = CodeType.Verify,
             Sender = SenderType.Email,
             Payload =
             {
-                { "Email", Email }
+                { "Email", email! }
             }
         };
 

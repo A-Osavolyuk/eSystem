@@ -5,6 +5,7 @@
 
 @inject IDeviceService DeviceService
 @inject ISecurityService SecurityService
+@inject IUserService UserService
 
 <Title Text="Device trust"></Title>
 
@@ -22,7 +23,7 @@
                         <MudText Align="Align.Center">
                             You attempting to sign in with new device.
                             To sign in with this device, please, enter 6-digit code
-                            from the letter we have sent code to email: <strong>@Email</strong>
+                            from the letter we have sent code to email: <strong>@email</strong>
                         </MudText>
 
                         <MudCodeInput
@@ -60,10 +61,22 @@
 
     [SupplyParameterFromQuery(Name = "device")] public Guid DeviceId { get; set; }
     [SupplyParameterFromQuery(Name = "user")] public Guid UserId { get; set; }
-    [SupplyParameterFromQuery(Name = "email")] public string Email { get; set; } = string.Empty;
     [SupplyParameterFromForm] public TrustDeviceModel Model { get; set; } = new();
 
     private MudForm form = new();
+    private string? email;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UserService.GetUserPrimaryEmailAsync(UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<UserEmailDto>()!;
+            email = response.Email;
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -76,10 +89,7 @@
                 Model.Device = result.Get<UserDeviceDto>()!;
                 await SendCodeAsync();
             }
-            else
-            {
-                Snackbar.Add(result.Message, Severity.Error);
-            }
+            else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
@@ -97,7 +107,7 @@
                 { "Device", Model.Device.Device! },
                 { "IpAddress", Model.Device.IpAddress! },
                 { "Browser", Model.Device.Browser! },
-                { "Email", Email }
+                { "Email", email! }
             }
         };
 

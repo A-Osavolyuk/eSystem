@@ -96,7 +96,7 @@
                 var response = result.Get<RegistrationResponse>()!;
 
                 Snackbar.Add(result.Message, Severity.Success);
-                RouteManager.Route($"/account/email/verify?id={response.UserId}&email={Model.Email}");
+                RouteManager.Route($"/account/email/verify?id={response.UserId}");
             }
             else
             {
