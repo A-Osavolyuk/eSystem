@@ -75,7 +75,6 @@ public sealed class LoginCommandHandler(
             response = new LoginResponse()
             {
                 UserId = user.Id,
-                Email = userPrimaryEmail.Email,
                 IsEmailConfirmed = false
             };
 
@@ -154,7 +153,6 @@ public sealed class LoginCommandHandler(
             response = new LoginResponse()
             {
                 UserId = user.Id,
-                Email = user.PrimaryEmail?.Email!,
                 DeviceId = device.Id,
                 IsDeviceTrusted = device.IsTrusted,
                 IsDeviceBlocked = device.IsBlocked,

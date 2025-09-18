@@ -92,8 +92,6 @@ public sealed class RegisterCommandHandler(
         var response = new RegistrationResponse()
         {
             UserId = user.Id,
-            UserName = user.Username,
-            Email = user.PrimaryEmail?.Email!,
         };
 
         return Result.Success(response, "Your account have been successfully registered.");

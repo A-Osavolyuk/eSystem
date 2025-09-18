@@ -4,7 +4,6 @@ public record LoginResponse
 {
     public Guid UserId { get; set; }
     public Guid? DeviceId { get; set; }
-    public string? Email { get; set; }
     public bool IsEmailConfirmed { get; set; }
     public bool IsDeviceTrusted { get; set; }
     public bool IsDeviceBlocked { get; set; }
