@@ -2,8 +2,9 @@
 
 public class UserProviderDto
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public bool Subscribed { get; set; }
+    public required Guid Id { get; set; }
+    public required string Name { get; set; } = string.Empty;
+    public string? Credential { get; set; }
+    public required bool Subscribed { get; set; }
     public DateTimeOffset? UpdateDate { get; set; }
 }

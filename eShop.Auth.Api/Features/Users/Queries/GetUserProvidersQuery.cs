@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Features.Users.Queries;
+﻿using eShop.Domain.Common.Security.Constants;
+using eShop.Domain.DTOs;
+
+namespace eShop.Auth.Api.Features.Users.Queries;
 
 public record GetUserProvidersQuery(Guid Id) : IRequest<Result>;
 
@@ -12,7 +15,21 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
 
         var providers = user.TwoFactorProviders.ToList();
-        var result = providers.Select(Mapper.Map).ToList();
+        var result = providers.Select(provider => new UserProviderDto()
+        {
+            Id = provider.TwoFactorProvider.Id,
+            Name = provider.TwoFactorProvider.Name,
+            Subscribed = provider.Subscribed,
+            UpdateDate = provider.UpdateDate,
+            Credential = provider.TwoFactorProvider.Name switch
+            {
+                ProviderTypes.Email => user.PrimaryEmail?.Email,
+                ProviderTypes.Sms => user.PrimaryPhoneNumber?.PhoneNumber,
+                _ => null
+            }
+            
+        }).ToList();
+        
         return Result.Success(result);
     }
 }
