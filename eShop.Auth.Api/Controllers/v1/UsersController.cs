@@ -66,6 +66,20 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+        [EndpointSummary("Get user primary phone number")]
+        [EndpointDescription("Gets user primary phone number")]
+        [ProducesResponseType(200)]
+        [HttpGet("primary-phone-number")]
+        [AllowAnonymous]
+        public async ValueTask<IActionResult> GetUserPrimaryPhoneNumberAsync(Guid id)
+        {
+            var result = await sender.Send(new GetUserPrimaryPhoneNumberQuery(id));
+    
+            return result.Match(
+                s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+                ErrorHandler.Handle);
+        }
+    
     [EndpointSummary("Get user phone numbers")]
     [EndpointDescription("Gets user phone numbers")]
     [ProducesResponseType(200)]
