@@ -59,7 +59,7 @@ public class UsersController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserPrimaryEmailAsync(Guid id)
     {
-        var result = await sender.Send(new GetUserEmailsQuery(id));
+        var result = await sender.Send(new GetUserPrimaryEmailQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),

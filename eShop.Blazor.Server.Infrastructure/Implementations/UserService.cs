@@ -16,7 +16,7 @@ public class UserService(
 
     public async ValueTask<HttpResponse> GetUserPrimaryEmailAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/primary-email", Method = HttpMethod.Get },
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
+            new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GetUserEmailsAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/emails", Method = HttpMethod.Get },
