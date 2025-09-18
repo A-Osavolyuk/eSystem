@@ -406,6 +406,20 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Resend code")]
+    [EndpointDescription("Resend code")]
+    [ProducesResponseType(200)]
+    [AllowAnonymous]
+    [HttpPost("code/resend")]
+    public async ValueTask<IActionResult> ResendCodeAsync([FromBody] ResendCodeRequest request)
+    {
+        var result = await sender.Send(new ResendCodeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Verify code")]
     [EndpointDescription("Verify code")]
