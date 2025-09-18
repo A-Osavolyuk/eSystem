@@ -131,7 +131,9 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "provider")]
+    public string Provider { get; set; } = string.Empty;
+
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -144,23 +146,19 @@
             UserId = UserState.UserId,
             Resource = CodeResource.Provider,
             Type = CodeType.Subscribe,
-            Sender = sender
+            Sender = sender,
+            Payload = new()
+            {
+                {
+                    "To", sender switch
+                    {
+                        SenderType.Email => UserState.Credentials?.PrimaryEmail!,
+                        SenderType.Sms => UserState.Credentials?.PrimaryPhoneNumber!,
+                        _ => throw new NotSupportedException("Unsupported provider type")
+                    }
+                }
+            }
         };
-
-        if (sender is SenderType.Email)
-        {
-            request.Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! }
-            };
-        }
-        else if (sender == SenderType.Sms)
-        {
-            request.Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
-            };
-        }
 
         var result = await SecurityService.SendCodeAsync(request);
 
@@ -213,23 +211,19 @@
             UserId = UserState.UserId,
             Resource = CodeResource.Provider,
             Type = CodeType.Subscribe,
-            Sender = sender
+            Sender = sender,
+            Payload = new()
+            {
+                {
+                    "To", sender switch
+                    {
+                        SenderType.Email => UserState.Credentials?.PrimaryEmail!,
+                        SenderType.Sms => UserState.Credentials?.PrimaryPhoneNumber!,
+                        _ => throw new NotSupportedException("Unsupported provider type")
+                    }
+                }
+            }
         };
-        
-        if (sender is SenderType.Email)
-        {
-            request.Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! }
-            };
-        }
-        else if (sender == SenderType.Sms)
-        {
-            request.Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
-            };
-        }
 
         var result = await SecurityService.SendCodeAsync(request);
 

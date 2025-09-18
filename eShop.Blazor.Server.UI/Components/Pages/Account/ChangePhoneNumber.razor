@@ -205,6 +205,10 @@
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Current,
             Sender = SenderType.Sms,
+            Payload = new()
+            {
+                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);
@@ -219,6 +223,10 @@
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Current,
             Sender = SenderType.Sms,
+            Payload = new()
+            {
+                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
+            }
         };
 
         var result = await SecurityService.SendCodeAsync(request);

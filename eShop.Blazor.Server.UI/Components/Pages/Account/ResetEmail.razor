@@ -137,7 +137,7 @@
             Resource = CodeResource.Email,
             Type = CodeType.Reset,
             Sender = SenderType.Email,
-            Payload =
+            Payload = new()
             {
                 { "To", ResetEmailModel.NewEmail }
             }
@@ -200,7 +200,7 @@
             Resource = CodeResource.Email,
             Type = CodeType.Reset,
             Sender = SenderType.Email,
-            Payload =
+            Payload = new()
             {
                 { "To", ResetEmailModel.NewEmail }
             }

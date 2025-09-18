@@ -137,7 +137,7 @@
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Reset,
             Sender = SenderType.Sms,
-            Payload =
+            Payload = new()
             {
                 { "To", ResetPhoneNumberModel.NewPhoneNumber }
             }
@@ -194,7 +194,7 @@
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Reset,
             Sender = SenderType.Sms,
-            Payload =
+            Payload = new()
             {
                 { "To", ResetPhoneNumberModel.NewPhoneNumber }
             }

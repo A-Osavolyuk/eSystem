@@ -22,16 +22,6 @@ public class SendCodeCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
-        if (!user.HasEmail() && request.Request.Sender is SenderType.Email)
-        {
-            return Results.BadRequest("User does not have an email address to send code via email");
-        }
-
-        if (!user.HasPhoneNumber() && request.Request.Sender is SenderType.Sms)
-        {
-            return Results.BadRequest("User does not have a phone number to send code via SMS");
-        }
-
         if (request.Request.Sender is SenderType.AuthenticatorApp)
         {
             return Result.Success("Code successfully sent. Please, check your authenticator app.");
@@ -56,7 +46,7 @@ public class SendCodeCommandHandler(
         };
 
         var message = messageRegistry.Create(metadata, payload);
-        if (message is null) return Results.BadRequest("Invalid message type");
+        if (message is null) return Results.BadRequest("Invalid message type.");
 
         await messageService.SendMessageAsync(sender, message, cancellationToken);
 

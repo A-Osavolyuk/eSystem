@@ -97,7 +97,7 @@
             Resource = CodeResource.Account,
             Type = CodeType.Unlock,
             Sender = SenderType.Email,
-            Payload =
+            Payload = new()
             {
                 { "To", UserState.Credentials?.PrimaryEmail! }
             }

@@ -131,7 +131,7 @@
             Resource = CodeResource.Email,
             Type = CodeType.Verify,
             Sender = SenderType.Email,
-            Payload =
+            Payload = new()
             {
                 { "To", email! }
             }

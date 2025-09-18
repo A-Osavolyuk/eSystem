@@ -2,10 +2,9 @@
 
 public class SendCodeRequest
 {
-    public Guid UserId { get; set; }
-    public SenderType Sender { get; set; }
-    public CodeType Type { get; set; }
-    public CodeResource Resource { get; set; }
-
-    public Dictionary<string, string> Payload { get; set; } = [];
+    public required Guid UserId { get; set; }
+    public required SenderType Sender { get; set; }
+    public required CodeType Type { get; set; }
+    public required CodeResource Resource { get; set; }
+    public required Dictionary<string, string> Payload { get; set; } = [];
 }

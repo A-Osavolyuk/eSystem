@@ -118,7 +118,7 @@
             Resource = CodeResource.Email,
             Type = CodeType.Remove,
             Sender = SenderType.Email,
-            Payload =
+            Payload = new()
             {
                 { "To", UserState.Credentials?.PrimaryEmail! }
             }
@@ -136,7 +136,7 @@
             Resource = CodeResource.Email,
             Type = CodeType.Remove,
             Sender = SenderType.Email,
-            Payload =
+            Payload = new()
             {
                 { "To", UserState.Credentials?.PrimaryEmail! }
             }

@@ -144,7 +144,7 @@
             Resource = CodeResource.PhoneNumber,
             Type = CodeType.Verify,
             Sender = SenderType.Sms,
-            Payload =
+            Payload = new()
             {
                 { "To", AddPhoneNumberModel.PhoneNumber }
             }
