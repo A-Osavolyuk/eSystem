@@ -50,7 +50,6 @@
 
 	<ItemGroup>
 	  <AdditionalFiles Include="Components\Pages\Devices\Devices.razor" />
-	  <AdditionalFiles Include="Components\Pages\Devices\DevicesSection.razor" />
 	</ItemGroup>
 
 </Project>
