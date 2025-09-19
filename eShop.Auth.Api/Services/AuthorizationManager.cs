@@ -15,6 +15,11 @@ public class AuthorizationManager(AuthDbContext context) : IAuthorizationManager
 
     public async ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken)
     {
+        var existedAuthorization = await context.AuthorizationSessions.FirstOrDefaultAsync(
+            x => x.DeviceId == device.Id, cancellationToken);
+
+        if (existedAuthorization is not null) context.AuthorizationSessions.Remove(existedAuthorization);
+        
         var entity = new AuthorizationSessionEntity()
         {
             Id = Guid.CreateVersion7(),
