@@ -141,8 +141,7 @@
 
     private async Task LoadAsync()
     {
-        var userId = await Storage.GetAsync<Guid>("userId");
-        var result = await UserService.GetUserStateAsync(userId);
+        var result = await UserService.GetUserStateAsync(UserState.UserId);
 
         if (result.Success)
         {
