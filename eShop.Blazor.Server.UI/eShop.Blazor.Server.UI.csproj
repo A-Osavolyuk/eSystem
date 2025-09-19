@@ -44,6 +44,13 @@
 	  <_ContentIncludedByDefault Remove="Components\Shared\Products\PropsAndDescription.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Pages\Seller\RegisterSeller.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Pages\Seller\SellerDetails.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Profile\Devices\Devices.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Profile\Devices\DevicesSection.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="Components\Pages\Devices\Devices.razor" />
+	  <AdditionalFiles Include="Components\Pages\Devices\DevicesSection.razor" />
 	</ItemGroup>
 
 </Project>
