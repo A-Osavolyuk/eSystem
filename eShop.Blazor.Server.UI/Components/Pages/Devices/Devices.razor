@@ -13,12 +13,16 @@
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
-            <MudStack Spacing="2" Justify="Justify.Center">
-                <DevicesSection
-                    Model="Model"
-                    OnVerify="@((value) => OnVerifyDeviceAsync(value))"
-                    OnBlock="@((value) => OnBlockDeviceAsync(value))"
-                    OnUnblock="@((value) => OnUnblockDeviceAsync(value))"/>
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.h6">Devices and sessions</MudText>
+                <MudDivider/>
+                <MudStack Spacing="2" Justify="Justify.Center">
+                    <DevicesSection
+                        Model="Model"
+                        OnVerify="@((value) => OnVerifyDeviceAsync(value))"
+                        OnBlock="@((value) => OnBlockDeviceAsync(value))"
+                        OnUnblock="@((value) => OnUnblockDeviceAsync(value))"/>
+                </MudStack>
             </MudStack>
         </MudItem>
     </MudGrid>

@@ -12,9 +12,13 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6">
-        <MudStack Spacing="2" Justify="Justify.Center">
-            <RecoverySection
-                OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"/>
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h6">Account recovery</MudText>
+            <MudDivider/>
+            <MudStack Spacing="2" Justify="Justify.Center">
+                <RecoverySection
+                    OnGenerateCodes="@(() => OnGenerateRecoveryCodesAsync())"/>
+            </MudStack>
         </MudStack>
     </MudItem>
 </MudGrid>

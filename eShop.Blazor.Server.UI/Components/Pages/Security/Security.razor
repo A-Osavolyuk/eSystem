@@ -14,25 +14,29 @@
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
-            <MudStack Spacing="2" Justify="Justify.Center">
-                <PasswordSection
-                    Model="Model"
-                    OnAdd="@(() => OnAddPasswordAsync())"
-                    OnChange="@(() => OnChangePasswordAsync())"
-                    OnReset="@(() => OnResetPasswordAsync())"/>
-                <PasskeysSection
-                    Model="Model"
-                    OnCreate="@(() => OnCreatePasskeyAsync())"
-                    OnRemove="@((value) => OnPasskeyRemoveAsync(value))"/>
-                <LinkedAccountsSection
-                    Model="Model"
-                    OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
-                    OnDisallow="@((value) => OnDisallowLinkedAccountAsync(value))"
-                    OnDisconnect="@((value) => OnDisconnectLinkedAccountAsync(value))"/>
-                <TwoFactorSection
-                    Model="Model"
-                    OnSubscribe="@((value) => OnSubscribe(value))"
-                    OnUnsubscribe="@((value) => OnUnsubscribe(value))"/>
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.h6">Password and authentication</MudText>
+                <MudDivider />
+                <MudStack Spacing="2" Justify="Justify.Center">
+                    <PasswordSection
+                        Model="Model"
+                        OnAdd="@(() => OnAddPasswordAsync())"
+                        OnChange="@(() => OnChangePasswordAsync())"
+                        OnReset="@(() => OnResetPasswordAsync())"/>
+                    <PasskeysSection
+                        Model="Model"
+                        OnCreate="@(() => OnCreatePasskeyAsync())"
+                        OnRemove="@((value) => OnPasskeyRemoveAsync(value))"/>
+                    <LinkedAccountsSection
+                        Model="Model"
+                        OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
+                        OnDisallow="@((value) => OnDisallowLinkedAccountAsync(value))"
+                        OnDisconnect="@((value) => OnDisconnectLinkedAccountAsync(value))"/>
+                    <TwoFactorSection
+                        Model="Model"
+                        OnSubscribe="@((value) => OnSubscribe(value))"
+                        OnUnsubscribe="@((value) => OnUnsubscribe(value))"/>
+                </MudStack>
             </MudStack>
         </MudItem>
     </MudGrid>
