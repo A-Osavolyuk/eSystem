@@ -51,6 +51,24 @@
             Icon="@Icons.Material.Filled.AccountBox">
             Profile
         </MudNavLink>
+        <MudNavLink
+            OnClick="@(() => NavigateAsync("/account/orders"))"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.ShoppingCart">
+            Orders
+        </MudNavLink>
+        <MudNavLink
+            OnClick="@(() => NavigateAsync("/account/orders-history"))"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.History">
+            Order History
+        </MudNavLink>
+        <MudNavLink
+            OnClick="@(() => NavigateAsync("/account/settings"))"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Settings">
+            Settings
+        </MudNavLink>
         <MudDivider Class="my-2" />
         <MudNavLink
             OnClick="@(() => NavigateAsync("/account/security"))"
@@ -81,25 +99,6 @@
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Autorenew">
             Account recovery
-        </MudNavLink>
-        <MudDivider Class="my-2" />
-        <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/orders"))"
-            Match="NavLinkMatch.All"
-            Icon="@Icons.Material.Filled.ShoppingCart">
-            Orders
-        </MudNavLink>
-        <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/orders-history"))"
-            Match="NavLinkMatch.All"
-            Icon="@Icons.Material.Filled.History">
-            Order History
-        </MudNavLink>
-        <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/settings"))"
-            Match="NavLinkMatch.All"
-            Icon="@Icons.Material.Filled.Settings">
-            Settings
         </MudNavLink>
         <MudDivider Class="my-2"/>
         <MudNavLink
