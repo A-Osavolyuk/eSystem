@@ -109,12 +109,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received an email?
-                                            <strong @onclick="async () => await SendCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="context"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -132,21 +127,26 @@
     private MudStepperExtended stepper = new();
     private MudForm addPhoneNumberForm = new();
     private MudForm verifyCodeForm = new();
+    private MessageContext? context;
 
-    private async Task SendCodeAsync()
+    protected override void OnInitialized()
     {
-        var request = new SendCodeRequest()
+        context = new MessageContext()
         {
             UserId = UserState.UserId,
+            Sender = SenderType.Email,
             Resource = CodeResource.Email,
             Type = CodeType.Verify,
-            Sender = SenderType.Email,
             Payload = new()
             {
                 { "To", EmailModel.Email }
             }
         };
+    }
 
+    private async Task SendCodeAsync()
+    {
+        var request = context!.ToSendCodeRequest();
         var response = await SecurityService.SendCodeAsync(request);
 
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
@@ -182,15 +182,7 @@
 
         if (verifyCodeForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.Verify,
-                Sender = SenderType.Email,
-                Code = CodeModel.Code
-            };
-
+            var request = context!.ToVerifyCodeRequest(CodeModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();

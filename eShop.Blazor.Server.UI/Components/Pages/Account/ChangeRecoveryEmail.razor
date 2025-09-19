@@ -102,12 +102,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received an email?
-                                            <strong @onclick="async () => await ResendCurrentEmailCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="currentEmailContext"></CodeResend>
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">
                                             Lose access to your current recovery email address?
@@ -163,12 +158,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received an email?
-                                            <strong @onclick="async () => await ResendNewEmailCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="newEmailContext"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -189,6 +179,8 @@
     private MudForm changeRecoveryEmailForm = new();
     private MudForm verifyNewRecoveryEmailForm = new();
     private MudForm confirmChangeRecoveryEmailForm = new();
+    private MessageContext currentEmailContext = new();
+    private MessageContext newEmailContext = new();
 
     private async Task OnSendCurrentCodeAsync()
     {
@@ -196,6 +188,19 @@
 
         if (changeRecoveryEmailForm.IsValid)
         {
+            currentEmailContext = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Email,
+                Resource = CodeResource.Email,
+                Type = CodeType.Current,
+                Payload = new Dictionary<string, string>()
+                {
+                    { "NewEmail", ChangeRecoveryEmailModel.NewRecoveryEmail },
+                    { "To", UserState.Credentials?.RecoveryEmail! }
+                }
+            };
+            
             var request = new CheckEmailRequest()
             {
                 UserId = UserState.UserId,
@@ -221,18 +226,25 @@
 
         if (verifyNewRecoveryEmailForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.Current,
-                Sender = SenderType.Email,
-                Code = VerifyCurrentRecoveryEmailModel.Code
-            };
-
+            var request = currentEmailContext!.ToVerifyCodeRequest(VerifyCurrentRecoveryEmailModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
-            if (result.Success) await SendNewEmailCodeAsync();
+            if (result.Success)
+            {
+                newEmailContext = new MessageContext()
+                {
+                    UserId = UserState.UserId,
+                    Sender = SenderType.Email,
+                    Resource = CodeResource.Email,
+                    Type = CodeType.New,
+                    Payload = new()
+                    {
+                        { "To", ChangeRecoveryEmailModel.NewRecoveryEmail }
+                    }
+                };
+                
+                await SendNewEmailCodeAsync();
+            }
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
@@ -243,15 +255,7 @@
 
         if (confirmChangeRecoveryEmailForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.New,
-                Sender = SenderType.Email,
-                Code = ConfirmChangeRecoveryEmailModel.Code
-            };
-
+            var request = newEmailContext!.ToVerifyCodeRequest(ConfirmChangeRecoveryEmailModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await ChangeAsync();
@@ -282,19 +286,7 @@
 
     private async Task SendCurrentEmailCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Current,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "NewEmail", ChangeRecoveryEmailModel.NewRecoveryEmail },
-                { "To", UserState.Credentials?.RecoveryEmail! }
-            }
-        };
-
+        var request = currentEmailContext!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
         if (result.Success) await StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
@@ -302,58 +294,10 @@
 
     private async Task SendNewEmailCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.New,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", ChangeRecoveryEmailModel.NewRecoveryEmail }
-            }
-        };
-
+        var request = newEmailContext!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
         if (result.Success) await StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private async Task ResendCurrentEmailCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Current,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "NewEmail", ChangeRecoveryEmailModel.NewRecoveryEmail },
-                { "To", UserState.Credentials?.RecoveryEmail! }
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
-    }
-
-    private async Task ResendNewEmailCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.New,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", ChangeRecoveryEmailModel.NewRecoveryEmail }
-            }
-        };
-
-        var response = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
 
     private async Task StepNextAsync()

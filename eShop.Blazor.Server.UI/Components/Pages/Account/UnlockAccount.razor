@@ -45,11 +45,7 @@
                     </MudStack>
                 </MudForm>
             </MudPaper>
-            <MudPaper Outlined Class="pa-3">
-                <MudText Align="Align.Center">Didn't received an email?
-                    <strong @onclick="async () => await ResendCodeAsync()" class="cursor-pointer">Resend</strong>
-                </MudText>
-            </MudPaper>
+            <CodeResend Context="context"></CodeResend>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -62,6 +58,22 @@
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
+    private MessageContext? context;
+
+    protected override void OnInitialized()
+    {
+        context = new MessageContext()
+        {
+            UserId = UserState.UserId,
+            Sender = SenderType.Email,
+            Resource = CodeResource.Account,
+            Type = CodeType.Unlock,
+            Payload = new()
+            {
+                { "To", UserState.Credentials?.PrimaryEmail! }
+            }
+        };
+    }
 
     private async Task OnRecoverAsync()
     {
@@ -88,31 +100,4 @@
             }
         }
     }
-
-    private async Task ResendCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserId,
-            Resource = CodeResource.Account,
-            Type = CodeType.Unlock,
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! }
-            }
-        };
-
-        var response = await SecurityService.SendCodeAsync(request);
-
-        if (response.Success)
-        {
-            Snackbar.Add(response.Message, Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
-    }
-
 }

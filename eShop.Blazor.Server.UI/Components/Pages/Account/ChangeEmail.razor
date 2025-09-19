@@ -104,12 +104,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received an email?
-                                            <strong @onclick="async () => await ResendCurrentEmailCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="currentEmailContext"></CodeResend>
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">
                                             Loose access to your current email address?
@@ -165,12 +160,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received an email?
-                                            <strong @onclick="async () => await ResendNewEmailCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="newEmailContext"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -191,6 +181,8 @@
     private MudForm changeEmailForm = new();
     private MudForm verifyNewEmailForm = new();
     private MudForm confirmChangeEmailForm = new();
+    private MessageContext currentEmailContext = new();
+    private MessageContext newEmailContext = new();
 
     private async Task OnSendCurrentCodeAsync()
     {
@@ -198,6 +190,19 @@
 
         if (changeEmailForm.IsValid)
         {
+            currentEmailContext = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Email,
+                Resource = CodeResource.Email,
+                Type = CodeType.Current,
+                Payload = new()
+                {
+                    { "To", UserState.Credentials?.PrimaryEmail! },
+                    { "NewEmail", ChangeEmailModel.NewEmail },
+                }
+            };
+            
             var request = new CheckEmailRequest()
             {
                 UserId = UserState.UserId,
@@ -239,41 +244,10 @@
 
     private async Task SendCurrentEmailCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Current,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! },
-                { "NewEmail", ChangeEmailModel.NewEmail },
-            }
-        };
-
+        var request = currentEmailContext!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
         if (result.Success) await StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private async Task ResendCurrentEmailCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Current,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! },
-                { "NewEmail", ChangeEmailModel.NewEmail },
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
     }
 
     private async Task OnSendNewCodeAsync()
@@ -282,15 +256,19 @@
 
         if (verifyNewEmailForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
+            newEmailContext = new MessageContext()
             {
                 UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.Current,
                 Sender = SenderType.Email,
-                Code = VerifyCurrentEmailModel.Code,
+                Resource = CodeResource.Email,
+                Type = CodeType.New,
+                Payload = new()
+                {
+                    { "To", ChangeEmailModel.NewEmail }
+                }
             };
-
+            
+            var request = currentEmailContext!.ToVerifyCodeRequest(VerifyCurrentEmailModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await SendNewEmailCodeAsync();
@@ -300,39 +278,10 @@
 
     private async Task SendNewEmailCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.New,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", ChangeEmailModel.NewEmail }
-            }
-        };
-
+        var request = newEmailContext!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
         if (result.Success) await StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private async Task ResendNewEmailCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.New,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", ChangeEmailModel.NewEmail }
-            }
-        };
-
-        var response = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
 
     private async Task ChangeAsync()
@@ -363,15 +312,7 @@
 
         if (confirmChangeEmailForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.New,
-                Sender = SenderType.Email,
-                Code = ConfirmChangeEmailModel.Code
-            };
-
+            var request = newEmailContext!.ToVerifyCodeRequest(ConfirmChangeEmailModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await ChangeAsync();

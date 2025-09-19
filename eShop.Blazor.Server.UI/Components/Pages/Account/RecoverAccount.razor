@@ -102,12 +102,7 @@
                                             </MudLoadingButton>
                                         </MudStack>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received an email?
-                                            <strong @onclick="async () => await SendCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="context"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -128,6 +123,7 @@
 
     private Guid userId;
     private string? recoveryEmail;
+    private MessageContext? context;
 
     private async Task OnCheckAsync()
     {
@@ -169,6 +165,18 @@
 
                 userId = response.UserId;
                 recoveryEmail = response.RecoveryEmail;
+                
+                context = new MessageContext()
+                {
+                    UserId = userId,
+                    Sender = SenderType.Email,
+                    Resource = CodeResource.Account,
+                    Type = CodeType.Recover,
+                    Payload = new()
+                    {
+                        { "To", recoveryEmail! }
+                    }
+                };
 
                 await StepNextAsync();
                 await SendCodeAsync();
@@ -179,18 +187,7 @@
 
     private async Task SendCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = userId,
-            Resource = CodeResource.Account,
-            Type = CodeType.Recover,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", recoveryEmail! }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var response = await SecurityService.SendCodeAsync(request);
 
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
@@ -202,15 +199,7 @@
 
         if (verifyCodeForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = userId,
-                Resource = CodeResource.Account,
-                Type = CodeType.Recover,
-                Sender = SenderType.Email,
-                Code = CodeModel.Code
-            };
-
+            var request = context!.ToVerifyCodeRequest(CodeModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();

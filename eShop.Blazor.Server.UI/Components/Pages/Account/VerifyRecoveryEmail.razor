@@ -58,10 +58,26 @@
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
+    private MessageContext? context;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) await SendCodeAsync();
+        if (firstRender)
+        {
+            context = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Email,
+                Resource = CodeResource.Email,
+                Type = CodeType.Verify,
+                Payload = new()
+                {
+                    { "To", UserState.Credentials?.RecoveryEmail! }
+                }
+            };
+            
+            await SendCodeAsync();
+        }
     }
 
     private async Task OnVerifyEmailAsync()
@@ -70,15 +86,7 @@
 
         if (form.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.Verify,
-                Sender = SenderType.Email,
-                Code = Model.Code
-            };
-
+            var request = context!.ToVerifyCodeRequest(Model.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();
@@ -106,18 +114,7 @@
 
     private async Task SendCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Verify,
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", UserState.Credentials?.RecoveryEmail! }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var response = await SecurityService.SendCodeAsync(request);
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }

@@ -177,15 +177,7 @@
                                 </MudPaper>
                                 @if (SendTwoFactorTokenModel.Provider != ProviderTypes.Authenticator)
                                 {
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't a receive code?
-                                            <strong
-                                                @onclick="@(async () => await SendCodeAsync(SendTwoFactorTokenModel.Provider))"
-                                                class="cursor-pointer">
-                                                Resend
-                                            </strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="context"></CodeResend>
                                 }
                             </MudStack>
                         </MudItem>
@@ -205,6 +197,7 @@
 
     private MudForm sendTwoFactorTokenForm = new();
     private MudForm twoFactorForm = new();
+    private MessageContext context = new();
 
     private MudStepperExtended stepper = new();
     private List<UserProviderDto> providers = [];
@@ -236,7 +229,6 @@
     private async Task OnSendCodeAsync(UserProviderDto provider)
     {
         SendTwoFactorTokenModel.Provider = provider.Name;
-
         await sendTwoFactorTokenForm.Validate();
 
         if (sendTwoFactorTokenForm.IsValid)
@@ -262,7 +254,7 @@
                     _ => throw new NotSupportedException()
                 };
 
-                var request = new SendCodeRequest()
+                context = new MessageContext()
                 {
                     UserId = UserId,
                     Sender = sender,
@@ -271,42 +263,12 @@
                     Payload = payload
                 };
 
+                var request = context!.ToSendCodeRequest();
                 var result = await SecurityService.SendCodeAsync(request);
                 if (result.Success) await StepNextAsync();
                 else Snackbar.Add(result.Message, Severity.Error);
             }
         }
-    }
-
-    private async Task SendCodeAsync(string providerName)
-    {
-        var sender = providerName switch
-        {
-            ProviderTypes.Email => SenderType.Email,
-            ProviderTypes.Sms => SenderType.Sms,
-            ProviderTypes.Authenticator => SenderType.AuthenticatorApp,
-            _ => throw new NotSupportedException()
-        };
-
-        var provider = providers.First(x => x.Name == providerName);
-        var payload = provider.Name switch
-        {
-            ProviderTypes.Email => new Dictionary<string, string>() { { "To", provider.Credential! } },
-            ProviderTypes.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
-            _ => throw new NotSupportedException()
-        };
-
-        var request = new SendCodeRequest()
-        {
-            UserId = UserId,
-            Sender = sender,
-            Type = CodeType.SignIn,
-            Resource = CodeResource.TwoFactor,
-            Payload = payload
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnVerifyAsync()

@@ -29,7 +29,7 @@
                                             @if (Provider == ProviderTypes.Email)
                                             {
                                                 <MudText Align="Align.Center">
-                                                    Are you sure you want to disable 2FA 
+                                                    Are you sure you want to disable 2FA
                                                     (Two-Factor Authentication) with Email?
                                                     You will not be able to sign-in with this provider.
                                                     To disable 2FA with Email you will need
@@ -48,12 +48,13 @@
                                             else if (Provider == ProviderTypes.Sms)
                                             {
                                                 <MudText Align="Align.Center">
-                                                    Are you sure you want to disable 2FA 
+                                                    Are you sure you want to disable 2FA
                                                     (Two-Factor Authentication) with SMS?
                                                     You will not be able to sign-in with this provider.
                                                     To disable 2FA with SMS you will need
                                                     to enter 6-digit code from a SMS we
-                                                    will send to: <strong>@UserState.Credentials?.PrimaryPhoneNumber</strong>
+                                                    will send to:
+                                                    <strong>@UserState.Credentials?.PrimaryPhoneNumber</strong>
                                                 </MudText>
                                                 <MudLoadingButton
                                                     FullWidth="true"
@@ -67,11 +68,11 @@
                                             else if (Provider == ProviderTypes.Authenticator)
                                             {
                                                 <MudText Align="Align.Center">
-                                                    Are you sure you want to disable 2FA 
+                                                    Are you sure you want to disable 2FA
                                                     (Two-Factor Authentication) with Email?
                                                     You will not be able to sign-in with this provider.
                                                     To disable 2FA with Email you will need
-                                                    to enter 6-digit code from your Authenticator App 
+                                                    to enter 6-digit code from your Authenticator App
                                                     (like Google Authenticator, Microsoft Authenticator, etc.)
                                                 </MudText>
                                                 <MudLoadingButton
@@ -130,29 +131,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        @if (Provider == ProviderTypes.Email)
-                                        {
-                                            <MudText Align="Align.Center">Didn't received an email?
-                                                <strong @onclick="async () => await ResendCodeAsync(SenderType.Email)"
-                                                        class="cursor-pointer">Resend</strong>
-                                            </MudText>
-                                        }
-                                        else if (Provider == ProviderTypes.Sms)
-                                        {
-                                            <MudText Align="Align.Center">Didn't received an email?
-                                                <strong @onclick="async () => await ResendCodeAsync(SenderType.Sms)"
-                                                        class="cursor-pointer">Resend</strong>
-                                            </MudText>
-                                        }
-                                        else if (Provider == ProviderTypes.Authenticator)
-                                        {
-                                            <MudText Align="Align.Center">Didn't received an email?
-                                                <strong @onclick="async () => await ResendCodeAsync(SenderType.AuthenticatorApp)"
-                                                        class="cursor-pointer">Resend</strong>
-                                            </MudText>
-                                        }
-                                    </MudPaper>
+                                    <CodeResend Context="context"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -165,48 +144,18 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "provider")] public string Provider { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "provider")]
+    public string Provider { get; set; } = string.Empty;
+
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
-    
+
     private MudStepperExtended stepper = new();
     private MudForm form = new();
-
-    private async Task ResendCodeAsync(SenderType sender)
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Provider,
-            Type = CodeType.Unsubscribe,
-            Sender = sender,
-            Payload = new Dictionary<string, string>()
-            {
-                { "Provider", Provider },
-            }
-        };
-        
-        if (sender is SenderType.Email)
-        {
-            request.Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! }
-            };
-        }
-        else if (sender == SenderType.Sms)
-        {
-            request.Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
-            };
-        }
-
-        var result = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
-    }
+    private MessageContext context = new();
 
     private async Task OnSendCodeAsync(SenderType sender)
     {
-        var request = new SendCodeRequest()
+        context = new MessageContext()
         {
             UserId = UserState.UserId,
             Resource = CodeResource.Provider,
@@ -215,24 +164,18 @@
             Payload = new Dictionary<string, string>()
             {
                 { "Provider", Provider },
+                {
+                    "To", sender switch
+                    {
+                        SenderType.Email => UserState.Credentials?.PrimaryEmail!,
+                        SenderType.Sms => UserState.Credentials?.PrimaryPhoneNumber!,
+                        _ => throw new NotSupportedException("Not supported provider")
+                    }
+                }
             }
         };
         
-        if (sender is SenderType.Email)
-        {
-            request.Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! }
-            };
-        }
-        else if (sender == SenderType.Sms)
-        {
-            request.Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
-            };
-        }
-
+        var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
 
         if (result.Success) await StepNextAsync();
@@ -245,15 +188,7 @@
 
         if (form.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Passkey,
-                Type = CodeType.Remove,
-                Sender = SenderType.Email,
-                Code = Model.Code
-            };
-
+            var request = context!.ToVerifyCodeRequest(Model.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();

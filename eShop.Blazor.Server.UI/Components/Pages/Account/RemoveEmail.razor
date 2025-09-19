@@ -89,12 +89,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received an email?
-                                            <strong @onclick="async () => await ResendCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="context"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -111,39 +106,26 @@
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
+    private MessageContext? context;
 
-    private async Task ResendCodeAsync()
+    protected override void OnInitialized()
     {
-        var request = new SendCodeRequest()
+        context = new MessageContext()
         {
             UserId = UserState.UserId,
+            Sender = SenderType.Email,
             Resource = CodeResource.Email,
             Type = CodeType.Remove,
-            Sender = SenderType.Email,
             Payload = new()
             {
                 { "To", UserState.Credentials?.PrimaryEmail! }
             }
         };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
     }
 
     private async Task OnSendCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Remove,
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
 
         if (result.Success) await StepNextAsync();
@@ -156,15 +138,7 @@
 
         if (form.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.Remove,
-                Sender = SenderType.Email,
-                Code = Model.Code
-            };
-
+            var request = context!.ToVerifyCodeRequest(Model.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();

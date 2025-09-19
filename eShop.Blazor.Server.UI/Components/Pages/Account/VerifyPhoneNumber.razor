@@ -45,11 +45,7 @@
                     </MudStack>
                 </MudForm>
             </MudPaper>
-            <MudPaper Outlined Class="pa-3">
-                <MudText Align="Align.Center">Didn't received a SMS?
-                    <strong @onclick="async () => await SendCodeAsync()" class="cursor-pointer">Resend</strong>
-                </MudText>
-            </MudPaper>
+            <CodeResend Context="context"></CodeResend>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -58,6 +54,27 @@
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
+    private MessageContext? context;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            context = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Sms,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.Verify,
+                Payload = new()
+                {
+                    { "To", UserState.Credentials?.PrimaryPhoneNumber! }
+                }
+            };
+
+            await SendCodeAsync();
+        }
+    }
 
     private async Task OnVerificationAsync()
     {
@@ -65,15 +82,7 @@
 
         if (form.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.PhoneNumber,
-                Type = CodeType.Verify,
-                Sender = SenderType.Sms,
-                Code = Model.Code
-            };
-
+            var request = context!.ToVerifyCodeRequest(Model.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();
@@ -101,18 +110,7 @@
 
     private async Task SendCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.Verify,
-            Sender = SenderType.Sms,
-            Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var response = await SecurityService.SendCodeAsync(request);
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }

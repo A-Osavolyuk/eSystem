@@ -92,12 +92,7 @@
                                         </MudStack>
                                     </MudForm>
                                 </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center">Didn't received an email?
-                                        <strong @onclick="async () => await SendCodeAsync()"
-                                                class="cursor-pointer">Resend</strong>
-                                    </MudText>
-                                </MudPaper>
+                                <CodeResend Context="context"></CodeResend>
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -113,10 +108,11 @@
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
+    private MessageContext context = new();
 
-    private async Task SendCodeAsync()
+    protected override void OnInitialized()
     {
-        var request = new SendCodeRequest()
+        context = new MessageContext()
         {
             UserId = UserState.UserId,
             Type = CodeType.Allow,
@@ -128,26 +124,11 @@
                 { "Provider", Provider }
             }
         };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnSendCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Type = CodeType.Allow,
-            Resource = CodeResource.LinkedAccount,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! },
-                { "Provider", Provider }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
 
         if (result.Success)
@@ -160,15 +141,7 @@
 
     private async Task OnVerifyCodeAsync()
     {
-        var request = new VerifyCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Type = CodeType.Allow,
-            Resource = CodeResource.LinkedAccount,
-            Sender = SenderType.Email,
-            Code = Model.Code
-        };
-        
+        var request = context!.ToVerifyCodeRequest(Model.Code);
         var result = await SecurityService.VerifyCodeAsync(request);
         
         if (result.Success) await VerifyAsync();

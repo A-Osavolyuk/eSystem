@@ -105,12 +105,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received a SMS?
-                                            <strong @onclick="async () => await ResendCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="context"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -128,24 +123,7 @@
     private MudStepperExtended stepper = new();
     private MudForm resetPhoneNumberForm = new();
     private MudForm confirmResetPhoneNumberForm = new();
-
-    private async Task ResendCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.Reset,
-            Sender = SenderType.Sms,
-            Payload = new()
-            {
-                { "To", ResetPhoneNumberModel.NewPhoneNumber }
-            }
-        };
-
-        var response = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
-    }
+    private MessageContext? context;
 
     private async Task OnSendCodeAsync()
     {
@@ -153,6 +131,18 @@
 
         if (resetPhoneNumberForm.IsValid)
         {
+            context = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Sms,
+                Resource = CodeResource.PhoneNumber,
+                Type = CodeType.Reset,
+                Payload = new()
+                {
+                    { "To", ResetPhoneNumberModel.NewPhoneNumber }
+                }
+            };
+            
             var request = new CheckPhoneNumberRequest()
             {
                 PhoneNumber = ResetPhoneNumberModel.NewPhoneNumber,
@@ -188,18 +178,7 @@
 
     private async Task SendCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.Reset,
-            Sender = SenderType.Sms,
-            Payload = new()
-            {
-                { "To", ResetPhoneNumberModel.NewPhoneNumber }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
         
         if (result.Success) await StepNextAsync();
@@ -212,15 +191,7 @@
 
         if (confirmResetPhoneNumberForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.PhoneNumber,
-                Type = CodeType.Reset,
-                Sender = SenderType.Sms,
-                Code = ConfirmResetPhoneNumberModel.Code
-            };
-
+            var request = context!.ToVerifyCodeRequest(ConfirmResetPhoneNumberModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();

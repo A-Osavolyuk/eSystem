@@ -91,12 +91,7 @@
                                         </MudStack>
                                     </MudForm>
                                 </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center">Didn't received an email?
-                                        <strong @onclick="async () => await SendCodeAsync()"
-                                                class="cursor-pointer">Resend</strong>
-                                    </MudText>
-                                </MudPaper>
+                                <CodeResend Context="context"></CodeResend>
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -112,6 +107,7 @@
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
+    private MessageContext context = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -122,6 +118,22 @@
             if (result.Success)
             {
                 Model.Device = result.Get<UserDeviceDto>()!;
+                
+                context = new MessageContext()
+                {
+                    UserId = UserState.UserId,
+                    Type = CodeType.Block,
+                    Resource = CodeResource.Device,
+                    Sender = SenderType.Email,
+                    Payload = new Dictionary<string, string>()
+                    {
+                        { "To", UserState.Credentials?.PrimaryEmail! },
+                        { "OS", Model.Device.OS! },
+                        { "Device", Model.Device.Device! },
+                        { "IpAddress", Model.Device.IpAddress! },
+                        { "Browser", Model.Device.Browser! }
+                    }
+                };
             }
             else
             {
@@ -130,46 +142,9 @@
         }
     }
 
-    private async Task SendCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Type = CodeType.Block,
-            Resource = CodeResource.Device,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! },
-                { "OS", Model.Device.OS! },
-                { "Device", Model.Device.Device! },
-                { "IpAddress", Model.Device.IpAddress! },
-                { "Browser", Model.Device.Browser! }
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
-    }
-
     private async Task OnSendAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Type = CodeType.Block,
-            Resource = CodeResource.Device,
-            Sender = SenderType.Email,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", UserState.Credentials?.PrimaryEmail! },
-                { "OS", Model.Device.OS! },
-                { "Device", Model.Device.Device! },
-                { "IpAddress", Model.Device.IpAddress! },
-                { "Browser", Model.Device.Browser! }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
         if (result.Success)
         {
@@ -181,15 +156,7 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = new VerifyCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Type = CodeType.Block,
-            Resource = CodeResource.Device,
-            Sender = SenderType.Email,
-            Code = Model.Code
-        };
-
+        var request = context!.ToVerifyCodeRequest(Model.Code);
         var result = await SecurityService.VerifyCodeAsync(request);
 
         if (result.Success) await VerifyAsync();

@@ -103,22 +103,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        @if (Provider == ProviderTypes.Email)
-                                        {
-                                            <MudText Align="Align.Center">Didn't received an email?
-                                                <strong @onclick="async () => await SendCodeAsync(SenderType.Email)"
-                                                        class="cursor-pointer">Resend</strong>
-                                            </MudText>
-                                        }
-                                        @if (Provider == ProviderTypes.Sms)
-                                        {
-                                            <MudText Align="Align.Center">Didn't received a SMS?
-                                                <strong @onclick="async () => await SendCodeAsync(SenderType.Sms)"
-                                                        class="cursor-pointer">Resend</strong>
-                                            </MudText>
-                                        }
-                                    </MudPaper>
+                                    <CodeResend Context="context"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -138,10 +123,11 @@
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
+    private MessageContext context = new();
 
     private async Task OnSendCodeAsync(SenderType sender)
     {
-        var request = new SendCodeRequest()
+        context = new MessageContext()
         {
             UserId = UserState.UserId,
             Resource = CodeResource.Provider,
@@ -159,7 +145,8 @@
                 }
             }
         };
-
+        
+        var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
 
         if (result.Success) await StepNextAsync();
@@ -168,22 +155,7 @@
 
     private async Task OnVerifyAsync()
     {
-        var sender = Provider switch
-        {
-            ProviderTypes.Email => SenderType.Email,
-            ProviderTypes.Sms => SenderType.Sms,
-            _ => throw new NotSupportedException("")
-        };
-
-        var request = new VerifyCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Code = Model.Code,
-            Resource = CodeResource.Provider,
-            Type = CodeType.Subscribe,
-            Sender = sender
-        };
-
+        var request = context!.ToVerifyCodeRequest(Model.Code);
         var result = await SecurityService.VerifyCodeAsync(request);
 
         if (result.Success) await VerifyAsync();
@@ -206,25 +178,7 @@
 
     private async Task SendCodeAsync(SenderType sender)
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Provider,
-            Type = CodeType.Subscribe,
-            Sender = sender,
-            Payload = new()
-            {
-                {
-                    "To", sender switch
-                    {
-                        SenderType.Email => UserState.Credentials?.PrimaryEmail!,
-                        SenderType.Sms => UserState.Credentials?.PrimaryPhoneNumber!,
-                        _ => throw new NotSupportedException("Unsupported provider type")
-                    }
-                }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
 
         if (!result.Success) Snackbar.Add(result.Message, Severity.Error);

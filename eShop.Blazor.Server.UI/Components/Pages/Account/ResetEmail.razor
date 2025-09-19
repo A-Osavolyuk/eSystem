@@ -105,12 +105,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received a SMS?
-                                            <strong @onclick="async () => await ResendCodeAsync()"
-                                                    class="cursor-pointer">Resend</strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="context"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -128,24 +123,7 @@
     private MudStepperExtended stepper = new();
     private MudForm resetEmailForm = new();
     private MudForm confirmResetEmailForm = new();
-
-    private async Task ResendCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Reset,
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", ResetEmailModel.NewEmail }
-            }
-        };
-
-        var response = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
-    }
+    private MessageContext? context;
 
     private async Task OnSendCodeAsync()
     {
@@ -153,6 +131,18 @@
 
         if (resetEmailForm.IsValid)
         {
+            context = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Email,
+                Resource = CodeResource.Email,
+                Type = CodeType.Reset,
+                Payload = new()
+                {
+                    { "To", ResetEmailModel.NewEmail }
+                }
+            };
+            
             var request = new CheckEmailRequest()
             {
                 UserId = UserState.UserId,
@@ -194,18 +184,7 @@
 
     private async Task SendCodeAsync()
     {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.Email,
-            Type = CodeType.Reset,
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", ResetEmailModel.NewEmail }
-            }
-        };
-
+        var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
 
         if (result.Success) await StepNextAsync();
@@ -218,15 +197,7 @@
 
         if (confirmResetEmailForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.Reset,
-                Sender = SenderType.Email,
-                Code = ConfirmResetEmailModel.Code
-            };
-
+            var request = context!.ToVerifyCodeRequest(ConfirmResetEmailModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();

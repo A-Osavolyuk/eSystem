@@ -104,15 +104,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received a SMS?
-                                            <strong
-                                                @onclick="async () => await ResendCurrentPhoneNumberCodeAsync()"
-                                                class="cursor-pointer">
-                                                Resend
-                                            </strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="currentPhoneNumberContext"></CodeResend>
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">
                                             Loose access to your current phone number?
@@ -168,15 +160,7 @@
                                             </MudStack>
                                         </MudForm>
                                     </MudPaper>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">Didn't received a SMS?
-                                            <strong
-                                                @onclick="async () => await ResendNewPhoneNumberCodeAsync()"
-                                                class="cursor-pointer">
-                                                Resend
-                                            </strong>
-                                        </MudText>
-                                    </MudPaper>
+                                    <CodeResend Context="newPhoneNumberContext"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -196,82 +180,8 @@
     private MudForm changePhoneNumberForm = new();
     private MudForm verifyNewPhoneNumberForm = new();
     private MudForm confirmChangePhoneNumberForm = new();
-
-    private async Task ResendCurrentPhoneNumberCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.Current,
-            Sender = SenderType.Sms,
-            Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
-    }
-
-    private async Task SendCurrentCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.Current,
-            Sender = SenderType.Sms,
-            Payload = new()
-            {
-                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-
-        if (result.Success) await StepNextAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private async Task ResendNewPhoneNumberCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.New,
-            Sender = SenderType.Sms,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", ChangePhoneNumberModel.NewPhoneNumber }
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
-    }
-
-    private async Task SendNewCodeAsync()
-    {
-        var request = new SendCodeRequest()
-        {
-            UserId = UserState.UserId,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.New,
-            Sender = SenderType.Sms,
-            Payload = new Dictionary<string, string>()
-            {
-                { "To", ChangePhoneNumberModel.NewPhoneNumber }
-            }
-        };
-
-        var result = await SecurityService.SendCodeAsync(request);
-
-        if (result.Success) await StepNextAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
+    private MessageContext currentPhoneNumberContext = new();
+    private MessageContext newPhoneNumberContext = new();
 
     private async Task OnSendCurrentCodeAsync()
     {
@@ -311,6 +221,27 @@
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
+    
+    private async Task SendCurrentCodeAsync()
+    {
+        currentPhoneNumberContext = new MessageContext()
+        {
+            UserId = UserState.UserId,
+            Sender = SenderType.Sms,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.Current,
+            Payload = new()
+            {
+                { "To", UserState.Credentials?.PrimaryPhoneNumber! }
+            }
+        };
+        
+        var request = currentPhoneNumberContext!.ToSendCodeRequest();
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
 
     private async Task OnSendNewCodeAsync()
     {
@@ -318,20 +249,33 @@
 
         if (verifyNewPhoneNumberForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.PhoneNumber,
-                Type = CodeType.Current,
-                Sender = SenderType.Sms,
-                Code = VerifyCurrentPhoneNumberModel.Code,
-            };
-
+            var request = currentPhoneNumberContext!.ToVerifyCodeRequest(VerifyCurrentPhoneNumberModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await SendNewCodeAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }
+    }
+    
+    private async Task SendNewCodeAsync()
+    {
+        newPhoneNumberContext = new MessageContext()
+        {
+            UserId = UserState.UserId,
+            Sender = SenderType.Sms,
+            Resource = CodeResource.PhoneNumber,
+            Type = CodeType.New,
+            Payload = new()
+            {
+                { "To", ChangePhoneNumberModel.NewPhoneNumber }
+            }
+        };
+        
+        var request = newPhoneNumberContext!.ToSendCodeRequest();
+        var result = await SecurityService.SendCodeAsync(request);
+
+        if (result.Success) await StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnChangeAsync()
@@ -340,15 +284,7 @@
 
         if (confirmChangePhoneNumberForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                UserId = UserState.UserId,
-                Resource = CodeResource.PhoneNumber,
-                Type = CodeType.New,
-                Sender = SenderType.Sms,
-                Code = VerifyCurrentPhoneNumberModel.Code
-            };
-
+            var request = newPhoneNumberContext!.ToVerifyCodeRequest(ConfirmChangePhoneNumberModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
             if (result.Success) await ChangeAsync();
