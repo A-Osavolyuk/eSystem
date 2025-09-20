@@ -40,6 +40,20 @@ public class TwoFactorController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Revoke recovery codes")]
+    [EndpointDescription("Revoke recovery codes")]
+    [ProducesResponseType(200)]
+    [HttpPost("recovery-code/revoke")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> RevokeRecoveryCodes([FromBody] RevokeRecoveryCodesRequest request)
+    {
+        var result = await sender.Send(new RevokeRecoveryCodesCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Generate QR code")]
     [EndpointDescription("Generate QR code")]
     [ProducesResponseType(200)]

@@ -57,4 +57,16 @@ public sealed class RecoverManager(
 
         return Result.Success();
     }
+
+    public async ValueTask<Result> RevokeAsync(UserEntity user, CancellationToken cancellationToken = default)
+    {
+        var codes = await context.RecoveryCodes
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+        
+        context.RecoveryCodes.RemoveRange(codes);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
 }

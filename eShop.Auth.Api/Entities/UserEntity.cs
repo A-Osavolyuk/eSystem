@@ -46,4 +46,5 @@ public class UserEntity : Entity
     public bool HasPhoneNumber() => PhoneNumbers.Any(x => x.Type is PhoneNumberType.Primary);
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
     public bool HasTwoFactor() => TwoFactorProviders.Any(x => x.Subscribed);
+    public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
 }
