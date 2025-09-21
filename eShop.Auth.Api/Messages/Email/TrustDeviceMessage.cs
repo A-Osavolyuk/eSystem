@@ -26,7 +26,7 @@ public class TrustDeviceMessage : Message
                                  You attempted to sign in with a new device.
                              </p>
                              <p style="font: 16px Arial, sans-serif; margin: 0;">
-                                 IP: {Payload["Ip"]}
+                                 IP: {Payload["IpAddress"]}
                              </p>
                              <p style="font: 16px Arial, sans-serif; margin: 0;">
                                  Browser: {Payload["Browser"]}
