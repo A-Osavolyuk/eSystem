@@ -2,35 +2,38 @@
 @inject ISecurityService SecurityService
 @inject ISnackbar Snackbar
 
-<MudPaper Outlined Class="pa-3">
-    @if (Context.Sender == SenderType.Email)
-    {
-        <MudText Align="Align.Center"> Didn't received an email?
-            <strong @onclick="async () => await ResendCodeAsync()"
-                    class="cursor-pointer">Resend</strong>
-        </MudText>
-    }
-    else if (Context.Sender == SenderType.Sms)
-    {
-        <MudText Align="Align.Center"> Didn't received a SMS?
-            <strong @onclick="async () => await ResendCodeAsync()"
-                    class="cursor-pointer">Resend</strong>
-        </MudText>
-    }
-</MudPaper>
+@if (Context is not null)
+{
+    <MudPaper Outlined Class="pa-3">
+        @if (Context.Sender == SenderType.Email)
+        {
+            <MudText Align="Align.Center"> Didn't received an email?
+                <strong @onclick="async () => await ResendCodeAsync()"
+                        class="cursor-pointer">Resend</strong>
+            </MudText>
+        }
+        else if (Context.Sender == SenderType.Sms)
+        {
+            <MudText Align="Align.Center"> Didn't received a SMS?
+                <strong @onclick="async () => await ResendCodeAsync()"
+                        class="cursor-pointer">Resend</strong>
+            </MudText>
+        }
+    </MudPaper>
+}
 
 @code {
-    [Parameter] public MessageContext Context { get; set; } = new();
+    [Parameter] public MessageContext? Context { get; set; } = new();
 
     private async Task ResendCodeAsync()
     {
         var request = new ResendCodeRequest()
         {
-            UserId = Context.UserId,
-            Payload = Context.Payload,
-            Resource = Context.Resource,
-            Sender = Context.Sender,
-            Type = Context.Type
+            UserId = Context!.UserId,
+            Payload = Context!.Payload,
+            Resource = Context!.Resource,
+            Sender = Context!.Sender,
+            Type = Context!.Type
         };
 
         var result = await SecurityService.ResendCodeAsync(request);
