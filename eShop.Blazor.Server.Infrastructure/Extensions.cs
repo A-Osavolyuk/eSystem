@@ -21,6 +21,7 @@ public static class Extensions
 
         builder.Services.AddBlazoredLocalStorage();
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddControllers();
     }
 
     private static void AddDependencyInjection(this WebApplicationBuilder builder)

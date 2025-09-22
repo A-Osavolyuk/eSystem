@@ -2,8 +2,8 @@
 using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
-using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
@@ -11,16 +11,16 @@ namespace eShop.Blazor.Server.Infrastructure.Security;
 public class JwtAuthenticationStateProvider(
     IStorage storage,
     IHttpContextAccessor httpContextAccessor,
+    IUserService userService,
     TokenProvider tokenProvider,
-    TokenHandler tokenHandler,
     UserState userState) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly IStorage storage = storage;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly TokenProvider tokenProvider = tokenProvider;
-    private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly UserState userState = userState;
+    private readonly IUserService userService = userService;
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
@@ -34,22 +34,20 @@ public class JwtAuthenticationStateProvider(
         return Task.FromResult(anonymous);
     }
 
-    public async Task SignInAsync(string accessToken)
+    public async Task SignInAsync(ClaimsPrincipal principal, HttpContext httpContext)
     {
-        if (!string.IsNullOrEmpty(accessToken))
-        {
-            tokenProvider.AccessToken = accessToken;
+        var properties = new AuthenticationProperties() { IsPersistent = true, };
+        await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+        await LoadAsync(principal.Claims.ToList());
+        
+        var state = new AuthenticationState(principal);
+        NotifyAuthenticationStateChanged(Task.FromResult(state));
+    }
 
-            var rawToken = tokenHandler.ReadToken(accessToken)!;
-            var claims = rawToken.Claims.ToList();
-
-            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-            var authenticationState = new AuthenticationState(claimsPrincipal);
-
-            NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
-        }
-        else await UnauthorizeAsync();
+    public async Task NotifyAsync()
+    {
+        var state = await GetAuthenticationStateAsync();
+        NotifyAuthenticationStateChanged(Task.FromResult(state));
     }
 
     public async Task SignOutAsync()
@@ -60,6 +58,18 @@ public class JwtAuthenticationStateProvider(
         tokenProvider.Clear();
 
         await UnauthorizeAsync();
+    }
+    
+    private async Task LoadAsync(List<Claim> claims)
+    {
+        var userId = Guid.Parse(claims.Single(x => x.Type == AppClaimTypes.Subject).Value);
+        var result = await userService.GetUserStateAsync(userId);
+
+        if (result.Success)
+        {
+            var state = result.Get<UserStateDto>()!;
+            userState.Map(state);
+        }
     }
 
     private async Task<AuthenticationState> UnauthorizeAsync()
