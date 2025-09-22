@@ -128,7 +128,7 @@ public class SecurityService(
 
         var options = new FetchOptions()
         {
-            Url = "/api/v1/Security/authorize",
+            Url = $"{Gateway}/api/v1/Security/authorize",
             Method = HttpMethod.Post,
             Credentials = Credentials.Include,
             Body = body
@@ -144,7 +144,7 @@ public class SecurityService(
 
         var options = new FetchOptions()
         {
-            Url = "/api/v1/Security/unauthorize",
+            Url = $"{Gateway}/api/v1/Security/unauthorize",
             Method = HttpMethod.Post,
             Credentials = Credentials.Include,
             Body = body
