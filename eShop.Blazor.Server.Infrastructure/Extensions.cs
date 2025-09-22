@@ -4,7 +4,10 @@ using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Blazor.Server.Infrastructure.Implementations;
 using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Blazor.Server.Infrastructure.Storage;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using ICookieManager = eShop.Blazor.Server.Domain.Interfaces.ICookieManager;
 
 namespace eShop.Blazor.Server.Infrastructure;
 
@@ -48,7 +51,20 @@ public static class Extensions
     private static void AddJwtAuthentication(this IHostApplicationBuilder builder)
     {
         builder.Services.AddAuthorization();
-        builder.Services.AddAuthentication()
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.Name = "eAccount.Authentication.State";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                
+                options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                options.SlidingExpiration = true;
+                
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/logout";
+                options.AccessDeniedPath = "/access-denied";
+            })
             .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(
                 JwtBearerDefaults.AuthenticationScheme, _ => { });
 
