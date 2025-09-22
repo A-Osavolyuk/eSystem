@@ -4,63 +4,34 @@ using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
+using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
 
 public class JwtAuthenticationStateProvider(
     IStorage storage,
-    IUserService userService,
-    ISecurityService securityService,
+    IHttpContextAccessor httpContextAccessor,
     TokenProvider tokenProvider,
     TokenHandler tokenHandler,
     UserState userState) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly IStorage storage = storage;
-    private readonly IUserService userService = userService;
-    private readonly ISecurityService securityService = securityService;
+    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly TokenHandler tokenHandler = tokenHandler;
     private readonly UserState userState = userState;
 
-    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        try
+        if (httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true)
         {
-            var token = tokenProvider.AccessToken;
-            if (string.IsNullOrEmpty(token))
-            {
-                var refreshToken = tokenProvider.RefreshToken;
-                if(string.IsNullOrEmpty(refreshToken)) return await UnauthorizeAsync();
-                
-                var request = new AuthenticateRequest() { RefreshToken = refreshToken };
-                var result = await securityService.AuthenticateAsync(request);
-            
-                if (result.Success)
-                {
-                    var response = result.Get<AuthenticateResponse>()!;
-                    token = response.AccessToken;
-                    tokenProvider.AccessToken = response.AccessToken;
-                }
-                else return await UnauthorizeAsync();
-            }
-
-            var rawToken = tokenHandler.ReadToken(token);
-            if (rawToken is null || !rawToken.Claims.Any()) return await UnauthorizeAsync();
-
-            var claims = rawToken.Claims.ToList();
-            if (!userState.IsAuthenticated) await LoadAsync(claims);
-
-            var claimsIdentity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            var authenticationState = new AuthenticationState(claimsPrincipal);
-
-            return await Task.FromResult(authenticationState);
+            var principal = httpContextAccessor.HttpContext!.User;
+            var authenticationState = new AuthenticationState(principal);
+            return Task.FromResult(authenticationState);
         }
-        catch (Exception)
-        {
-            return await UnauthorizeAsync();
-        }
+        
+        return Task.FromResult(anonymous);
     }
 
     public async Task SignInAsync(string accessToken)
@@ -71,8 +42,6 @@ public class JwtAuthenticationStateProvider(
 
             var rawToken = tokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
-
-            await LoadAsync(claims);
 
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(identity);
@@ -98,17 +67,5 @@ public class JwtAuthenticationStateProvider(
         NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
 
         return await Task.FromResult(anonymous);
-    }
-
-    private async Task LoadAsync(List<Claim> claims)
-    {
-        var userId = Guid.Parse(claims.Single(x => x.Type == AppClaimTypes.Subject).Value);
-        var result = await userService.GetUserStateAsync(userId);
-
-        if (result.Success)
-        {
-            var state = result.Get<UserStateDto>()!;
-            userState.Map(state);
-        }
     }
 }
