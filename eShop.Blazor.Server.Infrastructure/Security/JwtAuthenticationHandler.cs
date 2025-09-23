@@ -10,13 +10,11 @@ namespace eShop.Blazor.Server.Infrastructure.Security;
 public class JwtAuthenticationHandler(
     IOptionsMonitor<JwtAuthenticationOptions> options,
     ILoggerFactory logger,
-    ISecurityService securityService,
     TokenProvider tokenProvider,
     UrlEncoder encoder,
     TokenHandler tokenHandler)
     : AuthenticationHandler<JwtAuthenticationOptions>(options, logger, encoder)
 {
-    private readonly ISecurityService securityService = securityService;
     private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly TokenHandler tokenHandler = tokenHandler;
 
@@ -39,18 +37,6 @@ public class JwtAuthenticationHandler(
         {
             return Task.FromResult(AuthenticateResult.NoResult());
         }
-    }
-
-    protected override Task HandleChallengeAsync(AuthenticationProperties properties)
-    {
-        Response.Redirect("/error?code=401");
-        return Task.CompletedTask;
-    }
-
-    protected override Task HandleForbiddenAsync(AuthenticationProperties properties)
-    {
-        Response.Redirect("/error?code=403");
-        return Task.CompletedTask;
     }
 }
 
