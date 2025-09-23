@@ -1,24 +1,21 @@
 ﻿using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.Interfaces;
+using eShop.Domain.Common.API;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
 
 public class JwtAuthenticationStateProvider(
-    IStorage storage,
     IHttpContextAccessor httpContextAccessor,
     IUserService userService,
-    TokenProvider tokenProvider,
     UserState userState) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
-    private readonly IStorage storage = storage;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly UserState userState = userState;
     private readonly IUserService userService = userService;
 
@@ -28,54 +25,32 @@ public class JwtAuthenticationStateProvider(
         {
             var principal = httpContextAccessor.HttpContext!.User;
             var authenticationState = new AuthenticationState(principal);
+
+            var subjectClaim = principal.Claims.Single(x => x.Type == AppClaimTypes.Subject);
+            var userId = Guid.Parse(subjectClaim.Value);
+            userState.UserId = userId;
+            
             return Task.FromResult(authenticationState);
         }
         
         return Task.FromResult(anonymous);
     }
 
-    public async Task SignInAsync(ClaimsPrincipal principal, HttpContext httpContext)
+    public async Task SignInAsync(ClaimsPrincipal principal)
     {
-        var properties = new AuthenticationProperties() { IsPersistent = true, };
-        await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
-        await LoadAsync(principal.Claims.ToList());
-        
-        var state = new AuthenticationState(principal);
+        var state  = new AuthenticationState(principal);
+        await LoadStateAsync();
         NotifyAuthenticationStateChanged(Task.FromResult(state));
-    }
-
-    public async Task NotifyAsync()
-    {
-        var state = await GetAuthenticationStateAsync();
-        NotifyAuthenticationStateChanged(Task.FromResult(state));
-    }
-
-    public async Task SignOutAsync()
-    {
-        await storage.ClearAsync();
-
-        userState.Clear();
-        tokenProvider.Clear();
-
-        await UnauthorizeAsync();
     }
     
-    private async Task LoadAsync(List<Claim> claims)
+    private async Task LoadStateAsync()
     {
-        var userId = Guid.Parse(claims.Single(x => x.Type == AppClaimTypes.Subject).Value);
-        var result = await userService.GetUserStateAsync(userId);
-
+        var result = await userService.GetUserStateAsync(userState.UserId);
+        
         if (result.Success)
         {
             var state = result.Get<UserStateDto>()!;
             userState.Map(state);
         }
-    }
-
-    private async Task<AuthenticationState> UnauthorizeAsync()
-    {
-        NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
-
-        return await Task.FromResult(anonymous);
     }
 }
