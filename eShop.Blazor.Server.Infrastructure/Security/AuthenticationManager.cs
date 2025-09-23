@@ -15,13 +15,17 @@ public class AuthenticationManager(
     AuthenticationStateProvider authenticationStateProvider,
     RouteManager routeManager,
     UserState userState,
+    TokenProvider tokenProvider,
     IFetchClient fetchClient,
+    IStorage storage,
     ISecurityService securityService)
 {
     private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
     private readonly RouteManager routeManager = routeManager;
     private readonly UserState userState = userState;
+    private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly IFetchClient fetchClient = fetchClient;
+    private readonly IStorage storage = storage;
     private readonly ISecurityService securityService = securityService;
 
     public async Task SignInAsync()
@@ -31,7 +35,9 @@ public class AuthenticationManager(
         if (result.Success)
         {
             var response = result.Get<AuthorizeResponse>()!;
-            var authRequest = new SignInRequest() { AccessToken = response.AccessToken };
+            tokenProvider.AccessToken = response.AccessToken;
+            
+            var authRequest = new SignInRequest() { AccessToken = tokenProvider.AccessToken };
             var body = JsonSerializer.Serialize(authRequest);
             var fetchOptions = new FetchOptions()
             {
@@ -70,6 +76,11 @@ public class AuthenticationManager(
             if (authResult.Success)
             {
                 await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignOutAsync();
+
+                await storage.ClearAsync();
+                tokenProvider.Clear();
+                
+                routeManager.Route("/account/login");
             }
         }
     }
