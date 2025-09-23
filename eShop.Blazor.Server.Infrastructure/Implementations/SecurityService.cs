@@ -124,4 +124,14 @@ public class SecurityService(
     public async ValueTask<HttpResponse> RefreshTokenAsync(RefreshTokenRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/refresh-token", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
+
+    public async ValueTask<HttpResponse> AuthorizeAsync(AuthorizeRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/authorize", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = false, Type = DataType.Text });
+
+
+    public async ValueTask<HttpResponse> UnauthorizeAsync(UnauthorizeRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/unauthorize", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
+
 }
