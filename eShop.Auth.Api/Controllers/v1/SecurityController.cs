@@ -69,6 +69,20 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
+    [EndpointSummary("Unauthorize")]
+    [EndpointDescription("Unauthorize")]
+    [ProducesResponseType(200)]
+    [HttpPost("unauthorize")]
+    [Authorize]
+    public async ValueTask<IActionResult> UnauthorizeAsync([FromBody] UnauthorizeRequest request)
+    {
+        var result = await sender.Send(new UnauthorizeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+
     [EndpointSummary("Unlock account")]
     [EndpointDescription("Unlock account")]
     [ProducesResponseType(200)]
@@ -378,7 +392,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Resend code")]
     [EndpointDescription("Resend code")]
     [ProducesResponseType(200)]
