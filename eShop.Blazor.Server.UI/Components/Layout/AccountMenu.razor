@@ -8,7 +8,6 @@
 @inject UserState UserState
 @inject ISnackbar Snackbar
 @inject IUserService UserService
-@inject IStorage Storage
 
 @implements IDisposable
 
@@ -118,19 +117,19 @@
         UserState.OnChange += ReloadAsync;
     }
 
-    private async Task ReloadAsync()
-    {
-        await LoadAsync();
-        await InvokeAsync(StateHasChanged);
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LoadAsync();
+            await LoadStateAsync();
             StateHasChanged();
         }
+    }
+
+    private async Task ReloadAsync()
+    {
+        await LoadStateAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task LogoutClick()
@@ -139,14 +138,14 @@
         Snackbar.Add("Successfully logged out.", Severity.Success);
     }
 
-    private async Task LoadAsync()
+    private async Task LoadStateAsync()
     {
         var result = await UserService.GetUserStateAsync(UserState.UserId);
-
+        
         if (result.Success)
         {
-            var user = result.Get<UserStateDto>()!;
-            UserState.Map(user);
+            var state = result.Get<UserStateDto>()!;
+            UserState.Map(state);
         }
     }
 
