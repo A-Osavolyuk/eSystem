@@ -45,7 +45,7 @@ public class AuthController(TokenProvider tokenProvider) : ControllerBase
             Value = c.Value
         }).ToList();
         
-        var claimsIdentity = new ClaimIdentityDto
+        var claimsIdentity = new ClaimsIdentityDto
         {
             Claims = claims, 
             Scheme = CookieAuthenticationDefaults.AuthenticationScheme

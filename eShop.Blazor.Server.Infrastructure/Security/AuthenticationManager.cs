@@ -50,7 +50,7 @@ public class AuthenticationManager(
             var authResult = await fetchClient.FetchAsync(fetchOptions);
             if (authResult.Success)
             {
-                var identity = authResult.Get<ClaimIdentityDto>()!;
+                var identity = authResult.Get<ClaimsIdentityDto>()!;
                 var claims = identity.Claims.Select(x => new Claim(x.Type, x.Value)).ToList();
                 var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, identity.Scheme));
             
