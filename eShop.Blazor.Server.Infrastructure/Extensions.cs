@@ -79,7 +79,6 @@ public static class Extensions
         builder.Services.AddScoped<TokenProvider>();
         builder.Services.AddScoped<AuthenticationManager>();
         builder.Services.AddScoped<PasskeyManager>();
-        builder.Services.AddScoped<JwtAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
     }
 
