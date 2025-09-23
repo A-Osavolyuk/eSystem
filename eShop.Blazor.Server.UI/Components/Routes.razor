@@ -1,5 +1,7 @@
 ﻿@rendermode InteractiveServer
 
+@inject RouteManager RouteManager
+
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -7,7 +9,21 @@
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(MainLayout)">
-            <RediractionManager Uri="/Error?code=404"/>
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudText Align="Align.Center" Typo="Typo.h4">
+                    Page not found
+                </MudText>
+                <MudText Align="Align.Center" Typo="Typo.h5">
+                    Sorry, the page you are looking for does not exist.
+                </MudText>
+                <MudLink
+                    Style="text-align:center"
+                    Class="d-block"
+                    Typo="Typo.h5"
+                    OnClick="@(() => RouteManager.Route("/products"))">
+                    To main page
+                </MudLink>
+            </MudStack>
         </LayoutView>
     </NotFound>
 </Router>

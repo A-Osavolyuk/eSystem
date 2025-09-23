@@ -1,0 +1,39 @@
+﻿@page "/access-denied"
+
+@inherits PageBase
+
+<Title Text="Access denied"></Title>
+
+<MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudText Align="Align.Center" Typo="Typo.h4">
+        Access denied
+    </MudText>
+    <MudText Align="Align.Center" Typo="Typo.h5">
+        You do not have access to this resource.
+    </MudText>
+    @if (string.IsNullOrEmpty(ReturnUrl))
+    {
+        <MudLink
+            Style="text-align:center"
+            Class="d-block"
+            Typo="Typo.h5"
+            OnClick="@(() => RouteManager.Route("/products"))">
+            To main page
+        </MudLink>
+    }
+    else
+    {
+        <MudLink
+            Style="text-align:center"
+            Class="d-block"
+            Typo="Typo.h5"
+            OnClick="@(() => RouteManager.Route(ReturnUrl, true))">
+            Go back
+        </MudLink>
+    }
+</MudStack>
+
+@code {
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    public string? ReturnUrl { get; set; }
+}

@@ -9,8 +9,6 @@ public static class WebApplicationExtensions
     public static void MapAppServices(this WebApplication app)
     {
         app.MapDefaultEndpoints();
-
-        app.UseExceptionHandler("/Error", createScopeForErrors: true);
         app.UseHsts();
 
         app.UseStaticWebAssets();
@@ -19,7 +17,7 @@ public static class WebApplicationExtensions
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseAntiforgery();
-        app.UseStatusCodePagesWithRedirects("/Error?code={0}");
+        app.UseStatusCodePagesWithRedirects("/not-found");
         app.UseLocalization();
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();

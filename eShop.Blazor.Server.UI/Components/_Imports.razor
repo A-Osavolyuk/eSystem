@@ -6,6 +6,14 @@
 @using System.Security.Claims
 @using System.Text
 @using eShop.Application.Utilities
+@using eShop.Blazor.Server.Application.Mapping
+@using eShop.Blazor.Server.Application.Routing
+@using eShop.Blazor.Server.Application.State
+@using eShop.Blazor.Server.Application.Validation
+@using eShop.Blazor.Server.Domain.Common
+@using eShop.Blazor.Server.Domain.Interfaces
+@using eShop.Blazor.Server.Domain.Models
+@using eShop.Blazor.Server.Infrastructure.Security
 @using eShop.Blazor.Server.UI.Components
 @using eShop.Blazor.Server.UI.Components.Common
 @using eShop.Blazor.Server.UI.Components.Layout
@@ -14,6 +22,7 @@
 @using eShop.Blazor.Server.UI.Components.Pages.Products.Components
 @using eShop.Domain.Common
 @using eShop.Domain.Common.Security
+@using eShop.Domain.Common.Security.Constants
 @using eShop.Domain.DTOs
 @using eShop.Domain.Enums
 @using eShop.Domain.Interfaces
@@ -35,9 +44,4 @@
 @using MudExtensions
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Severity = MudBlazor.Severity
-@using eShop.Domain.Common.Security.Constants
-@using eShop.Blazor.Server.Application.Mapping
-@using eShop.Blazor.Server.Application.Validation
-@using eShop.Blazor.Server.Domain.Interfaces
-@using eShop.Blazor.Server.Domain.Models
-@using eShop.Blazor.Server.Domain.Common
+@using Size = MudBlazor.Size

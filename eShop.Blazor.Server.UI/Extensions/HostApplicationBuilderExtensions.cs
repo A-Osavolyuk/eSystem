@@ -36,13 +36,15 @@ public static class HostApplicationBuilderExtensions
 
         builder.AddRouting(cfg =>
         {
-            cfg.OnNotFound = "/error?code=404";
-            cfg.OnForbidden = "/error?code=403";
-            cfg.OnUnauthorized = "/error?code=401";
+            cfg.OnNotFound = "/not-found";
+            cfg.OnForbidden = "/access-denied";
+            cfg.OnUnauthorized = "/unathorized";
 
             cfg.Pages =
             [
-                new() { Routes = ["/error"] },
+                new() { Routes = ["/not-found"] },
+                new() { Routes = ["/access-denied"] },
+                new() { Routes = ["/unathorized"] },
                 new() { Routes = ["/products"] },
                 new() { Routes = ["/products/create"], RequiredRoles = ["Seller"] },
                 new() { Routes = ["/account/login"] },
