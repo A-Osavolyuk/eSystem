@@ -7,16 +7,16 @@ using Microsoft.Extensions.Options;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
 
+public class JwtAuthenticationOptions : AuthenticationSchemeOptions {}
+
 public class JwtAuthenticationHandler(
     IOptionsMonitor<JwtAuthenticationOptions> options,
     ILoggerFactory logger,
     TokenProvider tokenProvider,
-    UrlEncoder encoder,
-    TokenHandler tokenHandler)
+    UrlEncoder encoder)
     : AuthenticationHandler<JwtAuthenticationOptions>(options, logger, encoder)
 {
     private readonly TokenProvider tokenProvider = tokenProvider;
-    private readonly TokenHandler tokenHandler = tokenHandler;
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -25,7 +25,7 @@ public class JwtAuthenticationHandler(
             var accessToken = tokenProvider.AccessToken;
             if (string.IsNullOrEmpty(accessToken)) return Task.FromResult(AuthenticateResult.NoResult());
 
-            var rawToken = tokenHandler.ReadToken(accessToken)!;
+            var rawToken = TokenHandler.ReadToken(accessToken)!;
             var claims = rawToken.Claims.ToList();
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
@@ -39,4 +39,3 @@ public class JwtAuthenticationHandler(
         }
     }
 }
-

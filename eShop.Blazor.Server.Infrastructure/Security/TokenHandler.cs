@@ -1,8 +1,8 @@
 ﻿namespace eShop.Blazor.Server.Infrastructure.Security;
 
-public class TokenHandler
+public static class TokenHandler
 {
-    public JwtSecurityToken? ReadToken(string token)
+    public static JwtSecurityToken? ReadToken(string token)
     {
         var handler = new JwtSecurityTokenHandler();
 
@@ -15,7 +15,7 @@ public class TokenHandler
         return rawToken;
     }
     
-    public bool Validate(string token)
+    public static bool Validate(string token)
     {
         var rawToken = ReadToken(token);
         
@@ -29,7 +29,7 @@ public class TokenHandler
         return !isExpired;
     }
     
-    private bool IsExpired(JwtSecurityToken token)
+    private static bool IsExpired(JwtSecurityToken token)
     {
         var expValue = token.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp)!.Value;
         var expMilliseconds = Convert.ToInt64(expValue);

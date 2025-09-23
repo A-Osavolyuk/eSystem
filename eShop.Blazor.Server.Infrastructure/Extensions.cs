@@ -75,7 +75,6 @@ public static class Extensions
                 JwtBearerDefaults.AuthenticationScheme, _ => { });
 
         builder.Services.AddCascadingAuthenticationState();
-        builder.Services.AddScoped<TokenHandler>();
         builder.Services.AddScoped<TokenProvider>();
         builder.Services.AddScoped<AuthenticationManager>();
         builder.Services.AddScoped<PasskeyManager>();
