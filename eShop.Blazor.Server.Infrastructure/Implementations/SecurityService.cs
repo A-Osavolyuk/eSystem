@@ -1,8 +1,6 @@
-﻿using System.Text.Json;
-using eShop.Blazor.Server.Application.State;
+﻿using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.Abstraction.Services;
 using eShop.Blazor.Server.Domain.Interfaces;
-using eShop.Blazor.Server.Domain.Options;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using eShop.Domain.Requests.API.Auth;

@@ -1,7 +1,5 @@
 ﻿using System.Text.Encodings.Web;
 using eShop.Blazor.Server.Domain.Interfaces;
-using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging;

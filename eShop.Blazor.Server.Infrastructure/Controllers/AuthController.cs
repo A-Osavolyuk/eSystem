@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using eShop.Blazor.Server.Domain.DTOs;
+﻿using eShop.Blazor.Server.Domain.DTOs;
 using eShop.Blazor.Server.Domain.Types;
 using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Domain.Common.Http;
@@ -16,7 +15,7 @@ public class AuthController(TokenProvider tokenProvider) : ControllerBase
     private readonly TokenProvider tokenProvider = tokenProvider;
 
     [HttpPost("sign-in")]
-    public async Task<ActionResult<HttpResponse>> SignInAsync([FromBody] AuthenticationRequest request)
+    public async Task<IActionResult> SignInAsync([FromBody] SignInRequest request)
     {
         if (string.IsNullOrEmpty(request.AccessToken))
         {
@@ -40,9 +39,25 @@ public class AuthController(TokenProvider tokenProvider) : ControllerBase
         var properties = new AuthenticationProperties() { IsPersistent = true, };
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
 
-        var claims = principal.Claims.Select(c => new ClaimDto{ Type = c.Type, Value = c.Value }).ToList();
-        var claimsIdentity = new ClaimIdentityDto() { Claims = claims, Scheme = CookieAuthenticationDefaults.AuthenticationScheme };
+        var claims = principal.Claims.Select(c => new ClaimDto
+        {
+            Type = c.Type, 
+            Value = c.Value
+        }).ToList();
+        
+        var claimsIdentity = new ClaimIdentityDto
+        {
+            Claims = claims, 
+            Scheme = CookieAuthenticationDefaults.AuthenticationScheme
+        };
         
         return Ok(new ResponseBuilder().Succeeded().WithResult(claimsIdentity).Build());
+    }
+
+    [HttpPost("sign-out")]
+    public async Task<IActionResult> SignOutAsync()
+    {
+        await  HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return Ok(new ResponseBuilder().Succeeded().Build());
     }
 }

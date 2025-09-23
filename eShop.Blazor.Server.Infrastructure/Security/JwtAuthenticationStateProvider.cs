@@ -1,10 +1,7 @@
 ﻿using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.Interfaces;
-using eShop.Domain.Common.API;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
-using eShop.Domain.Requests.API.Auth;
-using eShop.Domain.Responses.API.Auth;
 using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
@@ -41,6 +38,12 @@ public class JwtAuthenticationStateProvider(
         var state  = new AuthenticationState(principal);
         await LoadStateAsync();
         NotifyAuthenticationStateChanged(Task.FromResult(state));
+    }
+    
+    public Task SignOutAsync()
+    {
+        NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
+        return Task.CompletedTask;
     }
     
     private async Task LoadStateAsync()

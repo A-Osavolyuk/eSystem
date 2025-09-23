@@ -3,7 +3,6 @@ using System.Text.Json;
 using eShop.Blazor.Server.Application.Routing;
 using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.Interfaces;
-using eShop.Blazor.Server.Domain.Options;
 using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;

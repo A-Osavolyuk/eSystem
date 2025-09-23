@@ -8,7 +8,6 @@ using eShop.Blazor.Server.Domain.Types;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
 
@@ -27,13 +26,12 @@ public class AuthenticationManager(
 
     public async Task SignInAsync()
     {
-        var request = new RefreshTokenRequest { UserId = userState.UserId };
-        var result = await securityService.RefreshTokenAsync(request);
-
+        var request = new AuthorizeRequest { UserId = userState.UserId };
+        var result = await securityService.AuthorizeAsync(request);
         if (result.Success)
         {
             var response = result.Get<AuthorizeResponse>()!;
-            var authRequest = new AuthenticationRequest() { AccessToken = response.AccessToken };
+            var authRequest = new SignInRequest() { AccessToken = response.AccessToken };
             var body = JsonSerializer.Serialize(authRequest);
             var fetchOptions = new FetchOptions()
             {
@@ -44,18 +42,35 @@ public class AuthenticationManager(
             };
 
             var authResult = await fetchClient.FetchAsync(fetchOptions);
-
-            var identity = authResult.Get<ClaimIdentityDto>()!;
-            var claims = identity.Claims.Select(x => new Claim(x.Type, x.Value)).ToList();
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, identity.Scheme));
+            if (authResult.Success)
+            {
+                var identity = authResult.Get<ClaimIdentityDto>()!;
+                var claims = identity.Claims.Select(x => new Claim(x.Type, x.Value)).ToList();
+                var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, identity.Scheme));
             
-            await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignInAsync(principal);
+                await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignInAsync(principal);
+            }
         }
     }
 
-    public Task SignOutAsync()
+    public async Task SignOutAsync()
     {
-        //TODO: Implement user sign-out
-        return Task.CompletedTask;
+        var request = new UnauthorizeRequest(){ UserId = userState.UserId };
+        var result =  await securityService.UnauthorizeAsync(request);
+        if (result.Success)
+        {
+            var fetchOptions = new FetchOptions()
+            {
+                Method = HttpMethod.Post,
+                Url = $"{routeManager.BaseUri}api/auth/sign-out",
+                Credentials = Credentials.Include,
+            };
+
+            var authResult = await fetchClient.FetchAsync(fetchOptions);
+            if (authResult.Success)
+            {
+                await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignOutAsync();
+            }
+        }
     }
 }

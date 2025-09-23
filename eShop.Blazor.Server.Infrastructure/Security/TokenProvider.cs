@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace eShop.Blazor.Server.Infrastructure.Security;
+﻿namespace eShop.Blazor.Server.Infrastructure.Security;
 
 public class TokenProvider()
 {
