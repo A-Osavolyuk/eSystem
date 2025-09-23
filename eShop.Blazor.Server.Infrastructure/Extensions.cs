@@ -7,7 +7,6 @@ using eShop.Blazor.Server.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ICookieManager = eShop.Blazor.Server.Domain.Interfaces.ICookieManager;
 
 namespace eShop.Blazor.Server.Infrastructure;
 
@@ -46,7 +45,6 @@ public static class Extensions
         builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddScoped<IFetchClient, FetchClient>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
-        builder.Services.AddScoped<ICookieManager, CookieManager>();
     }
 
     private static void AddJwtAuthentication(this IHostApplicationBuilder builder)
