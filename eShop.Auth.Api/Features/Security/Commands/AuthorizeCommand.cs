@@ -10,15 +10,13 @@ public class AuthorizeCommandHandler(
     ITokenManager tokenManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
-    IAuthorizationManager authorizationManager,
-    TokenHandler tokenHandler) : IRequestHandler<AuthorizeCommand, Result>
+    IAuthorizationManager authorizationManager) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
-    private readonly TokenHandler tokenHandler = tokenHandler;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
@@ -34,15 +32,12 @@ public class AuthorizeCommandHandler(
         var session = await authorizationManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
         
-        var accessToken = await tokenManager.GenerateAsync(TokenType.Access, device, cancellationToken);
-        var refreshToken = await tokenManager.GenerateAsync(TokenType.Refresh, device, cancellationToken);
-        
-        tokenHandler.Set(refreshToken.Value, refreshToken.ExpireDate);
+        var accessToken = await tokenManager.GenerateAsync(device, cancellationToken);
 
         var response = new AuthorizeResponse()
         {
             UserId = user.Id,
-            AccessToken = accessToken.Value,
+            AccessToken = accessToken,
         };
         
         return Result.Success(response);

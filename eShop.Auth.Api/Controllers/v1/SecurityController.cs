@@ -46,9 +46,9 @@ public class SecurityController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("refresh-token")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> RefreshTokenAsync()
+    public async ValueTask<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
     {
-        var result = await sender.Send(new RefreshTokenCommand());
+        var result = await sender.Send(new RefreshTokenCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -63,34 +63,6 @@ public class SecurityController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
     {
         var result = await sender.Send(new AuthorizeCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Authenticate")]
-    [EndpointDescription("Authenticate")]
-    [ProducesResponseType(200)]
-    [HttpPost("authenticate")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> AuthenticateAsync([FromBody] AuthenticateRequest request)
-    {
-        var result = await sender.Send(new AuthenticateCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Unauthorize")]
-    [EndpointDescription("Unauthorize")]
-    [ProducesResponseType(200)]
-    [HttpPost("unauthorize")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> UnauthorizeAsync([FromBody] UnauthorizeRequest request)
-    {
-        var result = await sender.Send(new UnauthorizeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

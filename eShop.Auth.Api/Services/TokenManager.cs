@@ -14,57 +14,49 @@ public sealed class TokenManager(
     private readonly AuthDbContext context = context;
     private readonly JwtOptions options = options.Value;
 
-    public async Task<Token> GenerateAsync(TokenType type, UserDeviceEntity device,
+    public async Task<string> GenerateAsync(UserDeviceEntity device,
         CancellationToken cancellationToken = default)
     {
-        var expirationDate = type switch
-        {
-            TokenType.Access => DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes),
-            TokenType.Refresh => DateTime.UtcNow.AddDays(options.RefreshTokenExpirationDays),
-            _ => throw new NotSupportedException("Unsupported token type")
-        };
-
-        var jti = Guid.CreateVersion7();
+        var accessTokenExpirationData = DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes);
+        
         var claims = new List<Claim>()
         {
             new(AppClaimTypes.Subject, device.UserId.ToString()),
-            new(AppClaimTypes.Jti, jti.ToString())
+            new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
         };
 
-        var token = Generate(claims, expirationDate);
-        
-        if (type == TokenType.Refresh)
-        {
-            var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
-                x => x.DeviceId == device.Id, cancellationToken);
+        var accessToken = Generate(claims, accessTokenExpirationData);
 
-            if (existingEntity is not null)
+        var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
+            x => x.DeviceId == device.Id, cancellationToken);
+
+        if (existingEntity is null)
+        {
+            var refreshTokenExpirationData = DateTime.UtcNow.AddDays(options.RefreshTokenExpirationDays);
+            var jti = Guid.CreateVersion7();
+            var refreshTokenClaims = new List<Claim>()
             {
-                context.RefreshTokens.Remove(existingEntity);
-            }
+                new(AppClaimTypes.Subject, device.UserId.ToString()),
+                new(AppClaimTypes.Jti, jti.ToString())
+            };
+            
+            var refreshToken = Generate(refreshTokenClaims, refreshTokenExpirationData);
             
             var entity = new RefreshTokenEntity()
             {
-                Id = Guid.CreateVersion7(),
+                Id = jti,
                 DeviceId = device.Id,
-                Token = token,
-                ExpireDate = expirationDate,
+                Token = refreshToken,
+                ExpireDate = refreshTokenExpirationData,
                 CreateDate = DateTime.UtcNow,
                 UpdateDate = null
             };
-            
+
             await context.RefreshTokens.AddAsync(entity, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
-
-        var result = new Token()
-        {
-            Id = jti,
-            Value = token,
-            ExpireDate = expirationDate,
-        };
         
-        return result;
+        return accessToken;
     }
 
     public async Task<RefreshTokenEntity?> FindAsync(
