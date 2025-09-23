@@ -121,39 +121,7 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/remove", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
     
-    public async ValueTask<HttpResponse> AuthorizeAsync()
-    {
-        var request = new AuthorizeRequest() { UserId = userState.UserId };
-        var body = JsonSerializer.Serialize(request);
-
-        var options = new FetchOptions()
-        {
-            Url = $"{Gateway}/api/v1/Security/authorize",
-            Method = HttpMethod.Post,
-            Credentials = Credentials.Include,
-            Body = body
-        };
-
-        return await fetchClient.FetchAsync(options);
-    }
-
-    public async ValueTask<HttpResponse> UnauthorizeAsync()
-    {
-        var request = new UnauthorizeRequest() { UserId = userState.UserId };
-        var body = JsonSerializer.Serialize(request);
-
-        var options = new FetchOptions()
-        {
-            Url = $"{Gateway}/api/v1/Security/unauthorize",
-            Method = HttpMethod.Post,
-            Credentials = Credentials.Include,
-            Body = body
-        };
-
-        return await fetchClient.FetchAsync(options);
-    }
-    
-    public async ValueTask<HttpResponse> AuthenticateAsync(AuthenticateRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/authenticate", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> RefreshTokenAsync(RefreshTokenRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/refresh-token", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 }

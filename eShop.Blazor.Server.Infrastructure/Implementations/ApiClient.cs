@@ -1,11 +1,14 @@
 ﻿using System.Net;
 using System.Text.Json;
 using eShop.Blazor.Server.Application.Routing;
+using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Blazor.Server.Domain.Options;
 using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
+using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Server.Infrastructure.Implementations;
@@ -13,15 +16,18 @@ namespace eShop.Blazor.Server.Infrastructure.Implementations;
 public class ApiClient(
     IHttpClientFactory clientFactory,
     IHttpContextAccessor httpContextAccessor,
-    IFetchClient fetchClient,
+    IConfiguration configuration,
     TokenProvider tokenProvider,
+    UserState userState,
     RouteManager routeManager) : IApiClient
 {
     private readonly IHttpClientFactory clientFactory = clientFactory;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private readonly IFetchClient fetchClient = fetchClient;
+    private readonly IConfiguration configuration = configuration;
     private readonly TokenProvider tokenProvider = tokenProvider;
+    private readonly UserState userState = userState;
     private readonly RouteManager routeManager = routeManager;
+    private const string Key = "services:proxy:http:0";
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
     {
@@ -31,17 +37,22 @@ public class ApiClient(
 
             if (options.WithBearer)
             {
-                var token = tokenProvider.AccessToken;
-
-                if (string.IsNullOrEmpty(token))
+                if (string.IsNullOrEmpty(tokenProvider.AccessToken))
                 {
-                    return new ResponseBuilder()
-                        .Failed()
-                        .WithMessage("Unauthorized")
-                        .Build();
+                    var result = await RefreshTokenAsync();
+                    if (!result.Success)
+                    {
+                        return new ResponseBuilder()
+                            .Failed()
+                            .WithMessage("Unauthorized")
+                            .Build();
+                    }
+
+                    var response = result.Get<RefreshTokenResponse>()!;
+                    tokenProvider.AccessToken = response.AccessToken;
                 }
 
-                message.Headers.Add("Authorization", $"Bearer {token}");
+                message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
             }
             
             var userAgent = httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString();
@@ -98,24 +109,31 @@ public class ApiClient(
             };
 
             var httpClient = clientFactory.CreateClient("eShop.Client");
-            var httpResponse = await httpClient.SendAsync(message);
+            var httpResponseMessage = await httpClient.SendAsync(message);
 
-            if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
+            if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var refreshResponse = await RefreshAsync();
+                var result = await RefreshTokenAsync();
                 
-                if (!refreshResponse.Success)
+                if (!result.Success)
                 {
                     tokenProvider.Clear();
                     routeManager.Route("/account/login");
                 }
-                else httpResponse = await httpClient.SendAsync(message);
+                else
+                {
+                    var response = result.Get<RefreshTokenResponse>()!;
+                    tokenProvider.AccessToken = response.AccessToken;
+                    message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
+                    
+                    httpResponseMessage = await httpClient.SendAsync(message);
+                }
             }
             
-            var responseJson = await httpResponse.Content.ReadAsStringAsync();
-            var response = JsonSerializer.Deserialize<HttpResponse>(responseJson, serializationOptions)!;
+            var responseJson = await httpResponseMessage.Content.ReadAsStringAsync();
+            var httpResponse = JsonSerializer.Deserialize<HttpResponse>(responseJson, serializationOptions)!;
 
-            return response;
+            return httpResponse;
         }
         catch (Exception ex)
         {
@@ -128,17 +146,24 @@ public class ApiClient(
         }
     }
 
-    private async Task<HttpResponse> RefreshAsync()
+    private async ValueTask<HttpResponse> RefreshTokenAsync()
     {
-        var fetchOptions = new FetchOptions()
+        var gateway = configuration[Key]!;
+        var url = $"{gateway}/api/v1/Security/refresh-token";
+        
+        var request = new HttpRequest
         {
-            Url = "/api/v1/Security/refresh-token",
+            Url = url,
             Method = HttpMethod.Post,
-            Body = null,
-            Credentials = Credentials.Include
+            Data = new RefreshTokenRequest() { UserId = userState.UserId }
+        };
+
+        var options = new HttpOptions
+        {
+            WithBearer = false,
+            Type = DataType.Text
         };
         
-        var response = await fetchClient.FetchAsync(fetchOptions);
-        return response;
+        return await SendAsync(request, options);
     }
 }

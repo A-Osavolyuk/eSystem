@@ -29,4 +29,3 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using Scalar.AspNetCore;
 global using Results = eShop.Domain.Common.API.Results;
-global using TokenHandler = eShop.Auth.Api.Security.Authentication.Token.TokenHandler;
