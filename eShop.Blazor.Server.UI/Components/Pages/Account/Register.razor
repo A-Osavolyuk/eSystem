@@ -1,4 +1,5 @@
 ﻿@page "/account/register"
+
 @inherits PageBase
 
 @inject ISecurityService SecurityService
@@ -27,8 +28,8 @@
                         Immediate
                         Variant="Variant.Outlined"/>
                     <MudTextField
-                        @bind-Value="Model.UserName"
-                        For="(() => Model.UserName)"
+                        @bind-Value="Model.Username"
+                        For="(() => Model.Username)"
                         InputType="InputType.Email"
                         Label="Username"
                         Immediate
@@ -84,7 +85,13 @@
 
         if (form.IsValid)
         {
-            var request = Mapper.Map(Model);
+            var request = new RegistrationRequest()
+            {
+                Email = Model.Email,
+                Password = Model.Password,
+                Username = Model.Username
+            };
+            
             var result = await SecurityService.RegisterAsync(request);
 
             if (result.Success)

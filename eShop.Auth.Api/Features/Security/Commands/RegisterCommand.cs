@@ -31,15 +31,15 @@ public sealed class RegisterCommandHandler(
 
         if (identityOptions.Account.RequireUniqueUserName)
         {
-            var isUserNameTaken = await userManager.IsUsernameTakenAsync(request.Request.UserName, cancellationToken);
+            var isUserNameTaken = await userManager.IsUsernameTakenAsync(request.Request.Username, cancellationToken);
             if (isUserNameTaken) return Results.NotFound("Username is already taken");
         }
 
         var user = new UserEntity()
         {
             Id = Guid.CreateVersion7(),
-            Username = request.Request.UserName,
-            NormalizedUsername = request.Request.UserName.ToUpperInvariant(),
+            Username = request.Request.Username,
+            NormalizedUsername = request.Request.Username.ToUpperInvariant(),
         };
         
         var registrationResult = await userManager.CreateAsync(user, request.Request.Password, cancellationToken);
