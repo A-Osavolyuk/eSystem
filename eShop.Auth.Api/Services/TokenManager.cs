@@ -3,6 +3,7 @@ using System.Security.Claims;
 using eShop.Auth.Api.Types;
 using eShop.Domain.Common.Security.Constants;
 using Microsoft.Extensions.Options;
+using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
@@ -32,22 +33,15 @@ public sealed class TokenManager(
 
         if (existingEntity is null)
         {
-            var refreshTokenExpirationData = DateTime.UtcNow.AddDays(options.RefreshTokenExpirationDays);
-            var jti = Guid.CreateVersion7();
-            var refreshTokenClaims = new List<Claim>()
-            {
-                new(AppClaimTypes.Subject, device.UserId.ToString()),
-                new(AppClaimTypes.Jti, jti.ToString())
-            };
-            
-            var refreshToken = Generate(refreshTokenClaims, refreshTokenExpirationData);
+            var key = KeyGeneration.GenerateRandomKey(50);
+            var refreshToken = Base32Encoding.ToString(key).Take(50).ToString()!;
             
             var entity = new RefreshTokenEntity()
             {
-                Id = jti,
+                Id = Guid.CreateVersion7(),
                 DeviceId = device.Id,
                 Token = refreshToken,
-                ExpireDate = refreshTokenExpirationData,
+                ExpireDate = DateTime.UtcNow.AddDays(options.RefreshTokenExpirationDays),
                 CreateDate = DateTime.UtcNow,
                 UpdateDate = null
             };
