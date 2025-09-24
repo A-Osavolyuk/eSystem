@@ -2,13 +2,13 @@
 @inject IUserService UserService
 @inject UserState UserState
 
-@if (Model is not null)
-{
-    <MudPaper Outlined="true" Class="pa-5">
-        <MudStack Spacing="3">
-            <MudText Typo="Typo.h6">
-                Two-factor authentication (2FA)
-            </MudText>
+<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="3">
+        <MudText Typo="Typo.h6">
+            Two-factor authentication (2FA)
+        </MudText>
+        @if (Model is not null)
+        {
             <MudStack Spacing="2">
                 @foreach (var provider in Model.Providers)
                 {
@@ -80,9 +80,18 @@
                     </MudStack>
                 }
             </MudStack>
-        </MudStack>
-    </MudPaper>
-}
+        }
+        else
+        {
+            <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+                <MudText Align="Align.Center">
+                    <strong>Loading...</strong>
+                </MudText>
+            </MudStack>
+        }
+    </MudStack>
+</MudPaper>
 
 @code {
     private TwoFactorDataModel? Model { get; set; }
