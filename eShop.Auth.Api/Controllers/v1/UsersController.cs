@@ -12,7 +12,7 @@ namespace eShop.Auth.Api.Controllers.v1;
 public class UsersController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
-    
+
     [EndpointSummary("Get user")]
     [EndpointDescription("Gets user")]
     [ProducesResponseType(200)]
@@ -25,7 +25,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user state")]
     [EndpointDescription("Gets user state")]
     [ProducesResponseType(200)]
@@ -38,7 +38,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user password data")]
     [EndpointDescription("Gets user password data")]
     [ProducesResponseType(200)]
@@ -51,7 +51,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user 2fa data")]
     [EndpointDescription("Gets user 2fa data")]
     [ProducesResponseType(200)]
@@ -65,6 +65,19 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Get user linked accounts")]
+    [EndpointDescription("Gets user linked accounts")]
+    [ProducesResponseType(200)]
+    [HttpGet("linked-accounts")]
+    public async ValueTask<IActionResult> GetUserLinkedAccountsDataAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserLinkedAccountsQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+
     [EndpointSummary("Get user emails")]
     [EndpointDescription("Gets user emails")]
     [ProducesResponseType(200)]
@@ -77,7 +90,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user primary email")]
     [EndpointDescription("Gets user primary email")]
     [ProducesResponseType(200)]
@@ -91,21 +104,21 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
-        [EndpointSummary("Get user primary phone number")]
-        [EndpointDescription("Gets user primary phone number")]
-        [ProducesResponseType(200)]
-        [HttpGet("primary-phone-number")]
-        [AllowAnonymous]
-        public async ValueTask<IActionResult> GetUserPrimaryPhoneNumberAsync(Guid id)
-        {
-            var result = await sender.Send(new GetUserPrimaryPhoneNumberQuery(id));
-    
-            return result.Match(
-                s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-                ErrorHandler.Handle);
-        }
-    
+
+    [EndpointSummary("Get user primary phone number")]
+    [EndpointDescription("Gets user primary phone number")]
+    [ProducesResponseType(200)]
+    [HttpGet("primary-phone-number")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> GetUserPrimaryPhoneNumberAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserPrimaryPhoneNumberQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+
     [EndpointSummary("Get user phone numbers")]
     [EndpointDescription("Gets user phone numbers")]
     [ProducesResponseType(200)]
@@ -118,7 +131,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user personal data")]
     [EndpointDescription("Gets user personal data")]
     [ProducesResponseType(200)]
@@ -131,7 +144,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user security data")]
     [EndpointDescription("Gets user security data")]
     [ProducesResponseType(200)]
@@ -144,7 +157,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user devices")]
     [EndpointDescription("Gets user devices")]
     [ProducesResponseType(200)]
@@ -157,7 +170,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user roles")]
     [EndpointDescription("Gets user roles")]
     [ProducesResponseType(200)]
@@ -170,7 +183,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get lockout state")]
     [EndpointDescription("Get lockout state")]
     [ProducesResponseType(200)]
@@ -184,7 +197,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user two-factor providers")]
     [EndpointDescription("Get user two-factor providers")]
     [ProducesResponseType(200)]
@@ -201,7 +214,7 @@ public class UsersController(ISender sender) : ControllerBase
                 .Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Change username")]
     [EndpointDescription("Change username")]
     [ProducesResponseType(200)]
@@ -214,7 +227,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Add personal data")]
     [EndpointDescription("Add personal data")]
     [ProducesResponseType(200)]
@@ -228,7 +241,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Change personal data")]
     [EndpointDescription("Change personal data")]
     [ProducesResponseType(200)]
@@ -242,7 +255,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Remove personal data")]
     [EndpointDescription("Remove personal data")]
     [ProducesResponseType(200)]
