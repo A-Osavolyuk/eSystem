@@ -18,16 +18,6 @@ public sealed class TokenManager(
     public async Task<string> GenerateAsync(UserDeviceEntity device,
         CancellationToken cancellationToken = default)
     {
-        var accessTokenExpirationData = DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes);
-        
-        var claims = new List<Claim>()
-        {
-            new(AppClaimTypes.Subject, device.UserId.ToString()),
-            new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
-        };
-
-        var accessToken = Generate(claims, accessTokenExpirationData);
-
         var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
             x => x.DeviceId == device.Id, cancellationToken);
 
@@ -49,7 +39,15 @@ public sealed class TokenManager(
             await context.SaveChangesAsync(cancellationToken);
         }
         
-        return accessToken;
+        var claims = new List<Claim>()
+        {
+            new(AppClaimTypes.Subject, device.UserId.ToString()),
+            new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
+        };
+
+        var token = Generate(claims);
+        
+        return token;
     }
 
     public async Task<RefreshTokenEntity?> FindAsync(
@@ -69,10 +67,11 @@ public sealed class TokenManager(
         return Result.Success();
     }
 
-    private string Generate(IEnumerable<Claim> claims, DateTime expirationDate)
+    private string Generate(IEnumerable<Claim> claims)
     {
         const string algorithm = SecurityAlgorithms.HmacSha256Signature;
 
+        var expirationDate = DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes);
         var key = Encoding.UTF8.GetBytes(options.Secret);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
 
