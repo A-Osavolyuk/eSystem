@@ -77,6 +77,19 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Get user passkeys")]
+    [EndpointDescription("Gets user passkeys")]
+    [ProducesResponseType(200)]
+    [HttpGet("passkeys")]
+    public async ValueTask<IActionResult> GetUserPasskeysAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserPasskeysQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Get user emails")]
     [EndpointDescription("Gets user emails")]
