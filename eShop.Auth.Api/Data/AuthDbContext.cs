@@ -294,7 +294,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<RefreshTokenEntity>(entity =>
         {
             entity.HasKey(k => k.Id);
-            entity.Property(x => x.Token).HasMaxLength(3000);
+            entity.Property(x => x.Token).HasMaxLength(50);
             
             entity.HasOne(t => t.Device)
                 .WithOne()
