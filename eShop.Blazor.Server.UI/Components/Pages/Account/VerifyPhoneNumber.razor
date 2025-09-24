@@ -103,7 +103,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            RouteManager.Route("/account/phone-numbers");
+            NavigationManager.NavigateTo("/account/phone-numbers");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

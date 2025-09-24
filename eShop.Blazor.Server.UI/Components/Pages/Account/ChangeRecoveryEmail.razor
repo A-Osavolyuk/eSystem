@@ -106,8 +106,7 @@
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">
                                             Lose access to your current recovery email address?
-                                            <MudLink
-                                                OnClick="@(() => RouteManager.Route("account/recovery-email/reset"))">
+                                            <MudLink Href="account/recovery-email/reset">
                                                 Reset it
                                             </MudLink>
                                         </MudText>
@@ -276,7 +275,7 @@
         if (result.Success)
         {
             Snackbar.Add("Recovery email address was successfully changed", Severity.Success);
-            RouteManager.Route("/account/emails");
+            NavigationManager.NavigateTo("/account/emails");
         }
         else
         {

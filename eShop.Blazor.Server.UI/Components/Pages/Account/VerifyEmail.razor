@@ -127,7 +127,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            RouteManager.Route("/account/login");
+            NavigationManager.NavigateTo("/account/login");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

@@ -56,7 +56,7 @@
                     StartIcon="@Icons.Material.Filled.Key"
                     Variant="Variant.Filled"
                     Color="Color.Primary"
-                    OnClick="@(() => RouteManager.Route("/account/passkey/sign-in"))"
+                    OnClick="@(() => NavigationManager.NavigateTo("/account/passkey/sign-in"))"
                     FullWidth="true">
                     Sign In with Passkey
                 </MudLoadingButton>
@@ -112,7 +112,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink OnClick="@(() => RouteManager.Route("/account/register"))">
+                    <MudLink Href="/account/register">
                         Register
                     </MudLink>
                 </MudText>
@@ -120,7 +120,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Forgot your password?
-                    <MudLink OnClick="@(() => RouteManager.Route("/account/password/forgot"))">
+                    <MudLink Href="/account/password/forgot">
                         Reset password
                     </MudLink>
                 </MudText>
@@ -128,7 +128,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Lost access to your account?
-                    <MudLink OnClick="@(() => RouteManager.Route("/account/recover"))">
+                    <MudLink Href="/account/recover">
                         Recover account
                     </MudLink>
                 </MudText>
@@ -162,7 +162,7 @@
                     Snackbar.Add(result.Message, Severity.Success);
                     
                     var url = $"/account/2fa/login?id={response.UserId}";
-                    RouteManager.Route(url);
+                    NavigationManager.NavigateTo(url);
                 }
                 else
                 {
@@ -171,11 +171,11 @@
 
                     if (string.IsNullOrEmpty(ReturnUrl))
                     {
-                        RouteManager.Route("/products");
+                        NavigationManager.NavigateTo("/products");
                     }
                     else
                     {
-                        RouteManager.Route(ReturnUrl, true);
+                        NavigationManager.NavigateTo(ReturnUrl, true);
                     }
                     
                     Snackbar.Add(result.Message, Severity.Success);
@@ -199,7 +199,7 @@
                     var url = $"/account/device/trust?device={device}&user={userId}";
 
                     Snackbar.Add(result.Message, Severity.Info);
-                    RouteManager.Route(url);
+                    NavigationManager.NavigateTo(url);
                     return;
                 }
                 
@@ -208,7 +208,7 @@
                     var url = $"/account/email/verify?id={userId}";
 
                     Snackbar.Add(result.Message, Severity.Info);
-                    RouteManager.Route(url);
+                    NavigationManager.NavigateTo(url);
                     return;
                 }
 
@@ -227,7 +227,7 @@
                 else
                 {
                     var url = $"/account/locked-out?id={userId}";
-                    RouteManager.Route(url);
+                    NavigationManager.NavigateTo(url);
                 }
             }
         }
@@ -236,12 +236,12 @@
     private void OnOAuth(string providerName)
     {
         var gatewayPath = Configuration["services:proxy:http:0"]!;
-        var baseUri = RouteManager.BaseUri;
+        var baseUri = NavigationManager.BaseUri;
         var returnUri = HttpUtility.UrlEncode($"{baseUri}account/oauth/sign-in");
         var fallbackUri = HttpUtility.UrlEncode($"{baseUri}account/oauth/fallback");
         
         var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}&fallbackUri={fallbackUri}";
-        RouteManager.ExternalRoute(url);
+        NavigationManager.NavigateTo(url);
     }
 
 }

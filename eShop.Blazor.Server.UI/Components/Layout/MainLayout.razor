@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-@inject RouteManager RouteManager
+@inject NavigationManager NavigationManager
 
 <MudThemeProvider IsDarkMode/>
 <MudDialogProvider/>
@@ -18,7 +18,7 @@
             Align="Align.Center"
             Typo="Typo.h5"
             Class="ml-3 cursor-pointer"
-            @onclick="@(() => RouteManager.Route("/products"))">
+            @onclick="@(() => NavigationManager.NavigateTo("/products"))">
             eShop
         </MudText>
         <MudSpacer/>
@@ -27,13 +27,13 @@
                 <MudButton
                     StartIcon="@Icons.Material.Filled.Login"
                     Color="Color.Primary"
-                    OnClick="@(() => RouteManager.Route("/account/login"))">
+                    Href="/account/login">
                     Log In
                 </MudButton>
                 <MudButton
                     StartIcon="@Icons.Material.Filled.AppRegistration"
                     Color="Color.Primary"
-                    OnClick="@(() => RouteManager.Route("/account/register"))"
+                    Href="/account/register"
                     Class="ml-3">
                     Register
                 </MudButton>

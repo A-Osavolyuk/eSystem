@@ -16,7 +16,7 @@ public static class Extensions
     {
         var router = new RouteOptions();
         configureRouter(router);
-
+    
         builder.Services.AddSingleton(router);
         builder.Services.AddScoped<RouteManager>();
     }

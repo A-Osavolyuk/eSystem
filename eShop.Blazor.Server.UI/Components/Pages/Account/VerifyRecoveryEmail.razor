@@ -107,7 +107,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            RouteManager.Route("/account/emails");
+            NavigationManager.NavigateTo("/account/emails");
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

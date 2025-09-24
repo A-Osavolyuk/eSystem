@@ -157,7 +157,7 @@
         if (result.Success)
         {
             Snackbar.Add("Secondary email was successfully removed", Severity.Success);
-            RouteManager.Route("/account/emails");
+            NavigationManager.NavigateTo("/account/emails");
         }
         else
         {

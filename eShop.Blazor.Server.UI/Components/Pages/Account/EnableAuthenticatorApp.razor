@@ -225,7 +225,7 @@
 
         var result = await ProvidersService.SubscribeAsync(request);
 
-        if (result.Success) RouteManager.Route("/account/security");
+        if (result.Success) NavigationManager.NavigateTo("/account/security");
         else Snackbar.Add(result.Message, Severity.Error);
     }
 

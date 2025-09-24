@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace eShop.Blazor.Server.Application.Routing;
 
-public partial class RouteManager(
+public class RouteManager(
     NavigationManager navigationManager,
     RouteOptions routeOptions,
     UserState userState)
@@ -17,12 +17,12 @@ public partial class RouteManager(
 
     public string Uri => navigationManager.Uri;
     public string BaseUri => navigationManager.BaseUri;
-    
+
     public void ExternalRoute(string url) => navigationManager.NavigateTo(url);
 
     public void Route(string url, bool isRedirect = false, bool forceLoad = false)
     {
-        var page = MatchRoute(url, routeOptions.Pages);
+        var page = MatchRoute(url);
         var route = GetRoute(page, url, isRedirect);
         navigationManager.NavigateTo(route, forceLoad);
     }
@@ -38,20 +38,20 @@ public partial class RouteManager(
         {
             return OnError(ErrorCode.Unauthorized, url);
         }
-        
+
         if (page is { RequiredRoles.Count: > 0 } or { RequiredPermissions.Count: > 0 })
         {
-            if (!userState.Identity!.HasAnyRole(page.RequiredRoles.ToArray()) 
+            if (!userState.Identity!.HasAnyRole(page.RequiredRoles.ToArray())
                 || !userState.Identity.HasAnyPermission(page.RequiredPermissions.ToArray()))
             {
                 var currentPage = new StringBuilder(Uri).Replace(BaseUri, "").ToString();
-                return OnError(ErrorCode.Forbidden, currentPage); 
+                return OnError(ErrorCode.Forbidden, currentPage);
             }
         }
 
         return isRedirect ? HttpUtility.UrlDecode(url) : url;
     }
-    
+
     private string OnError(ErrorCode errorCode, string? returnUrl = null)
     {
         var baseUrl = errorCode switch
@@ -61,7 +61,7 @@ public partial class RouteManager(
             ErrorCode.Unauthorized => routeOptions.OnUnauthorized,
             _ => throw new NotSupportedException("Unsupported error code"),
         };
-        
+
         var url = new StringBuilder(baseUrl);
 
         if (!string.IsNullOrEmpty(returnUrl))
@@ -69,7 +69,7 @@ public partial class RouteManager(
             var encodedUrl = HttpUtility.UrlEncode(returnUrl);
             url.Append("&returnUrl=").Append(encodedUrl);
         }
-        
+
         return url.ToString();
     }
 
@@ -78,11 +78,11 @@ public partial class RouteManager(
         var regex = new Regex(@"\{[^}]+\}").Replace(pattern, match =>
         {
             var inner = match.Value.Trim('{', '}');
-            
+
             if (!inner.Contains(':')) return "(?<string>[^/]+)";
-            
+
             var parts = inner.Split(':');
-            
+
             return parts[1] switch
             {
                 "int" => @"(?<int>\d+)",
@@ -90,24 +90,23 @@ public partial class RouteManager(
                 "*" => "(?<slug>.+)",
                 _ => "(?<string>[^/]+)"
             };
-
         });
 
         return new Regex("^" + regex + "$", RegexOptions.Compiled);
     }
 
-    private PageRoute? MatchRoute(string route, List<PageRoute> patters)
+    private PageRoute? MatchRoute(string route)
     {
         var path = route.Split('?').First();
 
-        foreach (var pattern in patters)
+        foreach (var page in routeOptions.Pages)
         {
-            foreach (var uri in pattern.Routes)
+            foreach (var uri in page.Routes)
             {
                 var regex = BuildExpression(uri);
 
                 if (regex.IsMatch(path))
-                    return pattern;
+                    return page;
             }
         }
 

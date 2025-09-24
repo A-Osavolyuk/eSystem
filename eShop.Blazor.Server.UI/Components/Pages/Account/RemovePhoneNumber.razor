@@ -159,7 +159,7 @@
         if (result.Success)
         {
             Snackbar.Add("Phone number was successfully removed", Severity.Success);
-            RouteManager.Route("/account/phone-numbers");
+            NavigationManager.NavigateTo("/account/phone-numbers");
         }
         else
         {

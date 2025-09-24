@@ -109,7 +109,7 @@
                                         <MudText Align="Align.Center">
                                             Loose access to your current email address?
                                             <MudLink
-                                                OnClick="@(() => RouteManager.Route("account/email/reset"))">
+                                                Href="account/email/reset">
                                                 Reset it
                                             </MudLink>
                                         </MudText>
@@ -298,7 +298,7 @@
         if (result.Success)
         {
             Snackbar.Add("Email address was successfully changed", Severity.Success);
-            RouteManager.Route("/account/emails");
+            NavigationManager.NavigateTo("/account/emails");
         }
         else
         {

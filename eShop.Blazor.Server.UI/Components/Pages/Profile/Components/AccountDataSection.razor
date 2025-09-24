@@ -1,4 +1,4 @@
-﻿@inject RouteManager RouteManager
+﻿@inject NavigationManager NavigationManager
 
 <MudStack Spacing="2">
     <MudPaper Outlined="true" Class="pt-3 pl-5 pr-5 pb-2">
@@ -52,7 +52,7 @@
                         Icon="@Icons.Material.Filled.Edit"
                         Color="Color.Primary"
                         Variant="Variant.Filled"
-                        OnClick="@(() => RouteManager.Route("/account/email/change"))"/>
+                        OnClick="@(() => NavigationManager.NavigateTo("/account/email/change"))"/>
                 </MudTooltip>
             </MudStack>
             <MudStack Row="true" Spacing="1">
@@ -126,7 +126,7 @@
                                 Icon="@Icons.Material.Filled.Edit"
                                 Color="Color.Primary"
                                 Variant="Variant.Filled"
-                                OnClick="@(() => RouteManager.Route("/account/phone-number/change"))"/>
+                                OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/change"))"/>
                         </MudTooltip>
                     }
                     else
@@ -136,7 +136,7 @@
                                 Icon="@Icons.Material.Filled.Check"
                                 Color="Color.Primary"
                                 Variant="Variant.Filled"
-                                OnClick="@(() => RouteManager.Route("/account/phone-number/verify"))"/>
+                                OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/verify"))"/>
                         </MudTooltip>
                     }
                 }
@@ -147,7 +147,7 @@
                             Icon="@Icons.Material.Filled.Add"
                             Color="Color.Primary"
                             Variant="Variant.Filled"
-                            OnClick="@(() => RouteManager.Route("/account/phone-number/add"))"/>
+                            OnClick="@(() => NavigationManager.NavigateTo("/account/phone-number/add"))"/>
                     </MudTooltip>
                 }
             </MudStack>

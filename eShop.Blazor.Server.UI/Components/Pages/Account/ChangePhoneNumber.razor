@@ -108,8 +108,7 @@
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center">
                                             Loose access to your current phone number?
-                                            <MudLink
-                                                OnClick="@(() => RouteManager.Route("account/phone-number/reset"))">
+                                            <MudLink Href="account/phone-number/reset">
                                                 Reset it
                                             </MudLink>
                                         </MudText>
@@ -306,7 +305,7 @@
         if (result.Success)
         {
             Snackbar.Add("Phone number was successfully changed", Severity.Success);
-            RouteManager.Route("/account/phone-numbers");
+            NavigationManager.NavigateTo("/account/phone-numbers");
         }
         else
         {

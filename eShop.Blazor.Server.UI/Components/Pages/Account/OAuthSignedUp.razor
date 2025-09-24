@@ -195,7 +195,7 @@
             if (result.Success)
             {
                 Snackbar.Add("Username was successfully added", Severity.Success);
-                RouteManager.Route("/products");
+                NavigationManager.NavigateTo("/products");
             }
             else
             {

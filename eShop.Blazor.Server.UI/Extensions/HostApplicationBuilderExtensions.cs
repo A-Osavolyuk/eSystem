@@ -39,7 +39,7 @@ public static class HostApplicationBuilderExtensions
             cfg.OnNotFound = "/not-found";
             cfg.OnForbidden = "/access-denied";
             cfg.OnUnauthorized = "/unathorized";
-
+        
             cfg.Pages =
             [
                 new() { Routes = ["/not-found"] },

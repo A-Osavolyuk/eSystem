@@ -175,7 +175,7 @@
 
         var result = await DeviceService.VerifyAsync(request);
 
-        if (result.Success) RouteManager.Route("/account/devices");
+        if (result.Success) NavigationManager.NavigateTo("/account/devices");
         else Snackbar.Add(result.Message, Severity.Error);
     }
 

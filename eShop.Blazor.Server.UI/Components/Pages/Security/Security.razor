@@ -16,7 +16,7 @@
         <MudItem xs="6">
             <MudStack Spacing="3">
                 <MudText Typo="Typo.h6">Password and authentication</MudText>
-                <MudDivider />
+                <MudDivider/>
                 <MudStack Spacing="2" Justify="Justify.Center">
                     <PasswordSection
                         Model="Model"
@@ -151,41 +151,48 @@
 
     private void OnResetPasswordAsync()
     {
-        RouteManager.Route("/account/password/reset");
+        NavigationManager.NavigateTo("/account/password/reset");
     }
 
     private void OnSubscribe(string provider)
     {
-        if (provider == ProviderTypes.Authenticator) RouteManager.Route("/account/2fa/authenticator/enable");
-        else RouteManager.Route($"/account/2fa/provider/enable?provider={provider}");
+        if (provider == ProviderTypes.Authenticator)
+        {
+            NavigationManager.NavigateTo("/account/2fa/authenticator/enable");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/account/2fa/provider/enable?provider={provider}");
+        }
     }
 
     private void OnUnsubscribe(string provider)
     {
-        RouteManager.Route($"/account/2fa/provider/disable?provider={provider}");
+        NavigationManager.NavigateTo($"/account/2fa/provider/disable?provider={provider}");
     }
-    
+
     private void OnPasskeyRemoveAsync(Guid id)
     {
         var url = $"/account/passkey/remove?passkey={id}";
-        RouteManager.Route(url);
+        NavigationManager.NavigateTo(url);
     }
 
     private void OnDisconnectLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/disconnect?provider={provider}";
-        RouteManager.Route(url);
+        NavigationManager.NavigateTo(url);
     }
 
     private void OnAllowLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/allow?provider={provider}";
-        RouteManager.Route(url);
+        NavigationManager.NavigateTo(url);
     }
 
     private void OnDisallowLinkedAccountAsync(string provider)
     {
         var url = $"/account/linked-account/disallow?provider={provider}";
-        RouteManager.Route(url);
+        NavigationManager.NavigateTo(url);
     }
+
 }

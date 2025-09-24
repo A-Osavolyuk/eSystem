@@ -8,6 +8,7 @@ using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Server.Infrastructure.Implementations;
@@ -18,14 +19,14 @@ public class ApiClient(
     IConfiguration configuration,
     TokenProvider tokenProvider,
     UserState userState,
-    RouteManager routeManager) : IApiClient
+    NavigationManager navigationManager) : IApiClient
 {
     private readonly IHttpClientFactory clientFactory = clientFactory;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IConfiguration configuration = configuration;
     private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly UserState userState = userState;
-    private readonly RouteManager routeManager = routeManager;
+    private readonly NavigationManager navigationManager = navigationManager;
     private const string Key = "services:proxy:http:0";
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
@@ -117,7 +118,7 @@ public class ApiClient(
                 if (!result.Success)
                 {
                     tokenProvider.Clear();
-                    routeManager.Route("/account/login");
+                    navigationManager.NavigateTo("/account/login");
                 }
                 else
                 {

@@ -59,18 +59,18 @@
     private void OnVerifyDeviceAsync(Guid id)
     {
         var url = $"/account/device/verify?device={id}";
-        RouteManager.Route(url);
+        NavigationManager.NavigateTo(url);
     }
 
     private void OnBlockDeviceAsync(Guid id)
     {
         var url = $"/account/device/block?device={id}";
-        RouteManager.Route(url);
+        NavigationManager.NavigateTo(url);
     }
 
     private void OnUnblockDeviceAsync(Guid id)
     {
         var url = $"/account/device/unblock?device={id}";
-        RouteManager.Route(url);
+        NavigationManager.NavigateTo(url);
     }
 }

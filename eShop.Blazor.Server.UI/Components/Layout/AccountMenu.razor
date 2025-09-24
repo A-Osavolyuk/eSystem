@@ -1,5 +1,5 @@
 ﻿@inject AuthenticationManager AuthenticationManager
-@inject RouteManager RouteManager
+@inject NavigationManager NavigationManager
 @inject UserState UserState
 @inject ISnackbar Snackbar
 @inject IUserService UserService
@@ -40,56 +40,56 @@
     </MudDrawerHeader>
     <MudNavMenu Color="Color.Primary" Class="px-3">
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/profile"))"
+            Href="/account/profile"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.AccountBox">
             Profile
         </MudNavLink>
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/orders"))"
+            Href="/account/orders"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.ShoppingCart">
             Orders
         </MudNavLink>
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/orders-history"))"
+            Href="/account/orders-history"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.History">
             Order History
         </MudNavLink>
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/settings"))"
+            Href="/account/settings"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Settings">
             Settings
         </MudNavLink>
         <MudDivider Class="my-2" />
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/security"))"
+            Href="/account/security"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Security">
             Password and authentication
         </MudNavLink>
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/devices"))"
+            Href="/account/devices"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Devices">
             Devices
         </MudNavLink>
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/emails"))"
+            Href="/account/emails"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Email">
             Emails
         </MudNavLink>
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/phone-numbers"))"
+            Href="/account/phone-numbers"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Smartphone">
             Phone numbers
         </MudNavLink>
         <MudNavLink
-            OnClick="@(() => NavigateAsync("/account/recovery"))"
+            Href="/account/recovery"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Autorenew">
             Account recovery
@@ -148,7 +148,7 @@
 
     private void NavigateAsync(string uri)
     {
-        RouteManager.Route(uri);
+        NavigationManager.NavigateTo(uri);
         DrawerToggle();
     }
 

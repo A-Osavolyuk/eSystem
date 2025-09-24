@@ -17,7 +17,7 @@
             Style="text-align:center"
             Class="d-block"
             Typo="Typo.h5"
-            OnClick="@(() => RouteManager.Route("/products"))">
+            Href="/products">
             To main page
         </MudLink>
     }
@@ -27,7 +27,7 @@
             Style="text-align:center"
             Class="d-block"
             Typo="Typo.h5"
-            OnClick="@(() => RouteManager.Route(ReturnUrl, true))">
+            Href="@(ReturnUrl)">
             Go back
         </MudLink>
     }

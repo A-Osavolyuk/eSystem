@@ -42,7 +42,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Have an account with password? Go to
-                    <MudLink OnClick="@(() => RouteManager.Route("/account/login"))">
+                    <MudLink Href="/account/login">
                         Login
                     </MudLink>
                 </MudText>
@@ -50,7 +50,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink OnClick="@(() => RouteManager.Route("/account/register"))">
+                    <MudLink Href="/account/register">
                         Register
                     </MudLink>
                 </MudText>
@@ -58,7 +58,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Or you can sign up with
-                    <MudLink OnClick="@(() => RouteManager.Route("/account/passkey/sign-up"))">
+                    <MudLink Href="/account/passkey/sign-up">
                         Passkey
                     </MudLink>
                 </MudText>
@@ -103,7 +103,7 @@
                     UserState.UserId = response.UserId;
                     await AuthenticationManager.SignInAsync();
                     Snackbar.Add("Successfully signed in.", Severity.Success);
-                    RouteManager.Route("/products");
+                    NavigationManager.NavigateTo("/products");
                 }
                 else
                 {
@@ -118,7 +118,7 @@
                     if (response.IsLockedOut)
                     {
                         var url = $"/account/locked-out?id={response.UserId}";
-                        RouteManager.Route(url);
+                        NavigationManager.NavigateTo(url);
                     }
                     else
                     {

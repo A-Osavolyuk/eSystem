@@ -1,9 +1,5 @@
-﻿@inject RouteManager RouteManager
-
-<MudNavMenu Color="Color.Primary" Bordered="true" Class="pa-2">
-    <MudNavLink
-        Icon="@Icons.Material.Filled.Store"
-        OnClick="@(() => RouteManager.Route("/products"))">
+﻿<MudNavMenu Color="Color.Primary" Bordered="true" Class="pa-2">
+    <MudNavLink Icon="@Icons.Material.Filled.Store" Href="/products">
         Products
     </MudNavLink>
 </MudNavMenu>
