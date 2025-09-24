@@ -9,7 +9,7 @@
     <DialogContent>
         <MudForm
             @ref="form"
-            Model="Model" 
+            Model="Model"
             Validation="Validator.ValidateValue">
             <MudTextField
                 @bind-Value="Model.Username"
@@ -50,7 +50,12 @@
 
         if (form.IsValid)
         {
-            var request = Mapper.Map(Model);
+            var request = new ChangeUsernameRequest()
+            {
+                UserId = Model.Id, 
+                Username = Model.Username
+            };
+            
             var result = await UserService.ChangeUsernameAsync(request);
 
             if (result.Success)
@@ -63,6 +68,6 @@
             }
         }
     }
-    
+
     private void OnCancel() => Dialog?.Close();
 }

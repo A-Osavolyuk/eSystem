@@ -158,7 +158,7 @@
 
         if (form.IsValid)
         {
-            var request = Mapper.Map(Model);
+            var request = new LoginRequest(){ Login = Model.Login, Password = Model.Password };
             var result = await SecurityService.LoginAsync(request);
 
             if (result.Success)

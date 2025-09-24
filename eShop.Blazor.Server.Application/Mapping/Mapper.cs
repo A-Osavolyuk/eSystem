@@ -4,42 +4,6 @@ namespace eShop.Blazor.Server.Application.Mapping;
 
 public static class Mapper
 {
-    public static LoginRequest Map(LoginModel source)
-    {
-        return new LoginRequest()
-        {
-            Login = source.Login,
-            Password = source.Password
-        };
-    }
-    
-    public static TwoFactorLoginRequest Map(TwoFactorLoginModel source)
-    {
-        return new TwoFactorLoginRequest()
-        {
-            Code = source.Code
-        };
-    }
-
-    public static RegistrationRequest Map(RegisterModel source)
-    {
-        return new RegistrationRequest()
-        {
-            UserName = source.UserName,
-            Email = source.Email,
-            Password = source.Password,
-            ConfirmPassword = source.ConfirmPassword
-        };
-    }
-
-    public static SendTwoFactorCodeRequest Map(SendTwoFactorTokenModel source)
-    {
-        return new SendTwoFactorCodeRequest()
-        {
-            Provider = source.Provider
-        };
-    }
-
     public static LockoutModel Map(LockoutStateDto source)
     {
         return new LockoutModel()
@@ -84,15 +48,6 @@ public static class Mapper
             PhoneNumberChangeDate = source.PhoneNumberChangeDate,
             UserName = source.Username,
             UserNameChangeDate = source.UserNameChangeDate,
-        };
-    }
-
-    public static ChangeUsernameRequest Map(ChangeUsernameModel source)
-    {
-        return new()
-        {
-            UserId = source.Id,
-            Username = source.Username
         };
     }
 
@@ -143,15 +98,6 @@ public static class Mapper
             CurrentPassword = source.CurrentPassword,
             NewPassword = source.NewPassword,
             ConfirmNewPassword = source.ConfirmNewPassword,
-        };
-    }
-
-    public static ResetPasswordRequest Map(ResetPasswordModel source)
-    {
-        return new()
-        {
-            NewPassword = source.NewPassword,
-            UserId = source.Id
         };
     }
 

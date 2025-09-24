@@ -276,10 +276,12 @@
 
         if (twoFactorForm.IsValid)
         {
-            var request = Mapper.Map(TwoFactorLoginModel);
-
-            request.Provider = SendTwoFactorTokenModel.Provider;
-            request.UserId = UserId;
+            var request = new TwoFactorLoginRequest
+            {
+                Code = TwoFactorLoginModel.Code,
+                Provider = SendTwoFactorTokenModel.Provider,
+                UserId = UserId
+            };
 
             var result = await TwoFactorService.LoginAsync(request);
 
