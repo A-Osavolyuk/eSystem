@@ -10,6 +10,10 @@ public interface IUserService
     public ValueTask<HttpResponse> GetUserPrimaryPhoneNumberAsync(Guid id);
     public ValueTask<HttpResponse> GetUserEmailsAsync(Guid id);
     public ValueTask<HttpResponse> GetUserDevicesAsync(Guid id);
+    public ValueTask<HttpResponse> GetUserPasswordDatasync(Guid id);
+    public ValueTask<HttpResponse> GetUserTwoFactorDataAsync(Guid id);
+    public ValueTask<HttpResponse> GetUserLinkedAccountsAsync(Guid id);
+    public ValueTask<HttpResponse> GetUserPasskeysAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id);
     public ValueTask<HttpResponse> GetUserStateAsync(Guid id);
     public ValueTask<HttpResponse> GetUserSecurityDataAsync(Guid id);
