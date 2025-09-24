@@ -1,5 +1,5 @@
 ﻿@page "/account/login"
-@using System.Web
+
 @inherits PageBase
 
 @inject ISecurityService SecurityService
@@ -56,7 +56,7 @@
                     StartIcon="@Icons.Material.Filled.Key"
                     Variant="Variant.Filled"
                     Color="Color.Primary"
-                    OnClick="@(() => NavigationManager.NavigateTo("/account/passkey/sign-in"))"
+                    Href="/account/passkey/sign-in"
                     FullWidth="true">
                     Sign In with Passkey
                 </MudLoadingButton>
@@ -144,6 +144,14 @@
 
     private MudForm form = new();
 
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(ReturnUrl))
+        {
+            Snackbar.Add("Your need to authorize first to navigate this page.", Severity.Info);
+        }
+    }
+
     private async Task OnSubmitAsync()
     {
         await form.Validate();
@@ -168,16 +176,7 @@
                 {
                     UserState.UserId = response.UserId;
                     await AuthenticationManager.SignInAsync();
-
-                    if (string.IsNullOrEmpty(ReturnUrl))
-                    {
-                        NavigationManager.NavigateTo("/products");
-                    }
-                    else
-                    {
-                        NavigationManager.NavigateTo(ReturnUrl, true);
-                    }
-                    
+                    NavigationManager.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? "/products" : ReturnUrl);
                     Snackbar.Add(result.Message, Severity.Success);
                 }
             }
@@ -195,7 +194,6 @@
                 if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
                 {
                     var device = response.DeviceId;
-                    
                     var url = $"/account/device/trust?device={device}&user={userId}";
 
                     Snackbar.Add(result.Message, Severity.Info);
@@ -236,9 +234,9 @@
     private void OnOAuth(string providerName)
     {
         var gatewayPath = Configuration["services:proxy:http:0"]!;
-        var baseUri = NavigationManager.BaseUri;
-        var returnUri = HttpUtility.UrlEncode($"{baseUri}account/oauth/sign-in");
-        var fallbackUri = HttpUtility.UrlEncode($"{baseUri}account/oauth/fallback");
+        var baseUri = $"{NavigationManager.BaseUri}account/oauth";
+        var returnUri = HttpUtility.UrlEncode($"{baseUri}/sign-in");
+        var fallbackUri = HttpUtility.UrlEncode($"{baseUri}/fallback");
         
         var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}&fallbackUri={fallbackUri}";
         NavigationManager.NavigateTo(url);
