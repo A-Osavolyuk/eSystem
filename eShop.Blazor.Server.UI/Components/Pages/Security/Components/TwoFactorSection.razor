@@ -26,7 +26,7 @@
                                     Icon="@Icons.Material.Filled.Close"
                                     Variant="Variant.Outlined"
                                     ButtonType="ButtonType.Button"
-                                    OnClick="@(async () => await OnUnsubscribe.InvokeAsync(provider.Name))"/>
+                                    Href="@($"/account/2fa/provider/disable?provider={provider}")"/>
                             </MudTooltip>
                         }
                         else
@@ -46,7 +46,7 @@
                                     Icon="@Icons.Material.Filled.Check"
                                     Variant="Variant.Outlined"
                                     ButtonType="ButtonType.Button"
-                                    OnClick="@(async () => await OnSubscribe.InvokeAsync(provider.Name))"/>
+                                    Href="@OnSubscribe(provider.Name)"/>
                             </MudTooltip>
                         }
                     </MudStack>
@@ -79,6 +79,11 @@
 
 @code {
     [Parameter] public UserSecurityModel Model { get; set; } = new();
-    [Parameter] public EventCallback<string> OnSubscribe { get; set; }
-    [Parameter] public EventCallback<string> OnUnsubscribe { get; set; }
+    
+    private string OnSubscribe(string provider)
+    {
+        return provider == ProviderTypes.Authenticator 
+            ? "/account/2fa/authenticator/enable" 
+            : $"/account/2fa/provider/enable?provider={provider}";
+    }
 }

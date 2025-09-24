@@ -26,7 +26,7 @@
                                 Color="Color.Error"
                                 Variant="Variant.Outlined"
                                 ButtonType="ButtonType.Button"
-                                OnClick="@(async () => await OnRemove.InvokeAsync(passkey.Id))"/>
+                                Href="@($"/account/passkey/remove?passkey={passkey.Id}")"/>
                         </MudStack>
                     </MudStack>
                 </MudStack>
@@ -47,5 +47,4 @@
 @code {
     [Parameter] public UserSecurityModel Model { get; set; } = new();
     [Parameter] public EventCallback OnCreate { get; set; }
-    [Parameter] public EventCallback<Guid> OnRemove { get; set; }
 }

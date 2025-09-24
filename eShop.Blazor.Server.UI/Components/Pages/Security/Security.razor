@@ -21,21 +21,12 @@
                     <PasswordSection
                         Model="Model"
                         OnAdd="@(() => OnAddPasswordAsync())"
-                        OnChange="@(() => OnChangePasswordAsync())"
-                        OnReset="@(() => OnResetPasswordAsync())"/>
+                        OnChange="@(() => OnChangePasswordAsync())"/>
                     <PasskeysSection
                         Model="Model"
-                        OnCreate="@(() => OnCreatePasskeyAsync())"
-                        OnRemove="@((value) => OnPasskeyRemoveAsync(value))"/>
-                    <LinkedAccountsSection
-                        Model="Model"
-                        OnAllow="@((value) => OnAllowLinkedAccountAsync(value))"
-                        OnDisallow="@((value) => OnDisallowLinkedAccountAsync(value))"
-                        OnDisconnect="@((value) => OnDisconnectLinkedAccountAsync(value))"/>
-                    <TwoFactorSection
-                        Model="Model"
-                        OnSubscribe="@((value) => OnSubscribe(value))"
-                        OnUnsubscribe="@((value) => OnUnsubscribe(value))"/>
+                        OnCreate="@(() => OnCreatePasskeyAsync())"/>
+                    <LinkedAccountsSection Model="Model"/>
+                    <TwoFactorSection Model="Model"/>
                 </MudStack>
             </MudStack>
         </MudItem>
@@ -148,51 +139,4 @@
             StateHasChanged();
         }
     }
-
-    private void OnResetPasswordAsync()
-    {
-        NavigationManager.NavigateTo("/account/password/reset");
-    }
-
-    private void OnSubscribe(string provider)
-    {
-        if (provider == ProviderTypes.Authenticator)
-        {
-            NavigationManager.NavigateTo("/account/2fa/authenticator/enable");
-        }
-        else
-        {
-            NavigationManager.NavigateTo($"/account/2fa/provider/enable?provider={provider}");
-        }
-    }
-
-    private void OnUnsubscribe(string provider)
-    {
-        NavigationManager.NavigateTo($"/account/2fa/provider/disable?provider={provider}");
-    }
-
-    private void OnPasskeyRemoveAsync(Guid id)
-    {
-        var url = $"/account/passkey/remove?passkey={id}";
-        NavigationManager.NavigateTo(url);
-    }
-
-    private void OnDisconnectLinkedAccountAsync(string provider)
-    {
-        var url = $"/account/linked-account/disconnect?provider={provider}";
-        NavigationManager.NavigateTo(url);
-    }
-
-    private void OnAllowLinkedAccountAsync(string provider)
-    {
-        var url = $"/account/linked-account/allow?provider={provider}";
-        NavigationManager.NavigateTo(url);
-    }
-
-    private void OnDisallowLinkedAccountAsync(string provider)
-    {
-        var url = $"/account/linked-account/disallow?provider={provider}";
-        NavigationManager.NavigateTo(url);
-    }
-
 }

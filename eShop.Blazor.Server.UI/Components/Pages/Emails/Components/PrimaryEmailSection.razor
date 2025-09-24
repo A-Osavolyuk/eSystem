@@ -14,7 +14,7 @@
                         Icon="@Icons.Material.Filled.Add"
                         Color="Color.Primary"
                         Variant="Variant.Filled"
-                        OnClick="@(() => NavigationManager.NavigateTo("/account/email/add"))"/>
+                        Href="/account/email/add"/>
                 </MudTooltip>
             }
         </MudStack>
@@ -81,7 +81,7 @@
                             Icon="@Icons.Material.Filled.Check"
                             Color="Color.Primary"
                             Variant="Variant.Filled"
-                            OnClick="@(() => NavigationManager.NavigateTo("/account/email/verify"))"/>
+                            Href="/account/email/verify"/>
                     </MudTooltip>
                 }
                 else
@@ -91,21 +91,21 @@
                             Icon="@Icons.Material.Filled.Delete"
                             Color="Color.Error"
                             Variant="Variant.Filled"
-                            OnClick="@(() => NavigationManager.NavigateTo("/account/email/remove"))"/>
+                            Href="/account/email/remove"/>
                     </MudTooltip>
                     <MudTooltip Text="Reset primary email">
                         <MudIconButton
                             Icon="@Icons.Material.Filled.ReplayCircleFilled"
                             Color="Color.Secondary"
                             Variant="Variant.Filled"
-                            OnClick="@(() => NavigationManager.NavigateTo("/account/email/reset"))"/>
+                            Href="/account/email/reset"/>
                     </MudTooltip>
                     <MudTooltip Text="Change primary email">
                         <MudIconButton
                             Icon="@Icons.Material.Filled.Edit"
                             Color="Color.Primary"
                             Variant="Variant.Filled"
-                            OnClick="@(() => NavigationManager.NavigateTo("/account/email/change"))"/>
+                            Href="/account/email/change"/>
                     </MudTooltip>
                 }
             </MudStack>
