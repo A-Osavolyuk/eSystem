@@ -84,13 +84,4 @@ public static class Extensions
         builder.Services.AddScoped<UserState>();
         builder.Services.AddScoped<ProductState>();
     }
-
-    public static void AddRouting(this IHostApplicationBuilder builder, Action<RouteOptions> configureRouter)
-    {
-        var router = new RouteOptions();
-        configureRouter(router);
-
-        builder.Services.AddSingleton(router);
-        builder.Services.AddScoped<RouteManager>();
-    }
 }
