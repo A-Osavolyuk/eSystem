@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using eShop.Application.Attributes;
 using eShop.Application.Documentation.Transformers;

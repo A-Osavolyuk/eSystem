@@ -1,12 +1,9 @@
 ﻿using eShop.Application.Security.Authorization.Requirements;
-using eShop.Auth.Api.Messages;
 using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Messages.Sms;
 using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.Schemes;
-using eShop.Auth.Api.Types;
-using eShop.Domain.Common.Messaging;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
 

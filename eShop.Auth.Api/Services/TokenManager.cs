@@ -1,9 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using eShop.Auth.Api.Types;
 using eShop.Domain.Common.Security.Constants;
 using Microsoft.Extensions.Options;
-using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 

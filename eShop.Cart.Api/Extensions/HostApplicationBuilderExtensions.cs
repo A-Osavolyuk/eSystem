@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace eShop.Cart.Api.Extensions;
+﻿namespace eShop.Cart.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
