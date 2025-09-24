@@ -158,19 +158,6 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Get user security data")]
-    [EndpointDescription("Gets user security data")]
-    [ProducesResponseType(200)]
-    [HttpGet("security")]
-    public async ValueTask<IActionResult> GetUserSecurityDataAsync(Guid id)
-    {
-        var result = await sender.Send(new GetUserSecurityQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Get user devices")]
     [EndpointDescription("Gets user devices")]
     [ProducesResponseType(200)]
