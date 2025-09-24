@@ -1,4 +1,8 @@
-﻿<MudPaper Outlined="true" Class="pa-5">
+﻿@inject ISnackbar Snackbar
+@inject IUserService UserService
+@inject UserState UserState
+
+<MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="3">
         <MudText Typo="Typo.h6">
             Two-factor authentication (2FA)
@@ -78,12 +82,42 @@
 </MudPaper>
 
 @code {
-    [Parameter] public UserSecurityModel Model { get; set; } = new();
+    private TwoFactorDataModel Model { get; set; } = new();
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserTwoFactorDataAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<UserTwoFactorDto>()!;
+            Model = new()
+            {
+                Providers = response.Providers,
+                TwoFactorEnabled = response.TwoFactorEnabled
+            };
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
     
     private string OnSubscribe(string provider)
     {
         return provider == ProviderTypes.Authenticator 
             ? "/account/2fa/authenticator/enable" 
             : $"/account/2fa/provider/enable?provider={provider}";
+    }
+
+    private class TwoFactorDataModel
+    {
+        public List<UserProviderDto> Providers { get; set; } = [];
+        public bool TwoFactorEnabled { get; set; }
     }
 }

@@ -1,4 +1,8 @@
-﻿@if (Model.OAuthProviders.Count > 0)
+﻿@inject IUserService UserService
+@inject ISnackbar Snackbar
+@inject UserState UserState
+
+@if (Model.LinkedAccounts.Count > 0)
 {
     <MudPaper Outlined="true" Class="pt-3 pl-5 pr-5 pb-5">
         <MudStack Spacing="3">
@@ -6,7 +10,7 @@
                 Linked accounts
             </MudText>
             <MudStack Spacing="2">
-                @foreach (var provider in Model.OAuthProviders)
+                @foreach (var provider in Model.LinkedAccounts)
                 {
                     <MudStack Spacing="0">
                         <MudStack Row="true" Spacing="1">
@@ -90,5 +94,33 @@
 }
 
 @code {
-    [Parameter] public UserSecurityModel Model { get; set; } = new();
+    private LinkedAccountDataModel Model { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserLinkedAccountsAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<List<UserOAuthProviderDto>>()!;
+            Model = new()
+            {
+                LinkedAccounts = response
+            };
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private class LinkedAccountDataModel
+    {
+        public List<UserOAuthProviderDto> LinkedAccounts { get; set; } = [];
+    }
 }

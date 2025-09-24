@@ -87,25 +87,6 @@ public static class Mapper
         };
     }
 
-    public static UserSecurityModel Map(UserSecurityDto source)
-    {
-        return new UserSecurityModel()
-        {
-            UserId = source.UserId,
-            RecoveryEmail = source.RecoveryEmail,
-            RecoveryEmailConfirmed = source.RecoveryEmailConfirmed,
-            RecoveryEmailConfirmationDate = source.RecoveryEmailConfirmationDate,
-            RecoveryEmailChangeDate = source.RecoveryEmailChangeDate,
-            HasPassword = source.HasPassword,
-            PasswordChangeDate = source.PasswordChangeDate,
-            TwoFactorEnabled = source.TwoFactorEnabled,
-            Providers = source.Providers,
-            OAuthProviders = source.OAuthProviders,
-            Devices = source.Devices,
-            Passkeys = source.Passkeys
-        };
-    }
-
     public static ChangeUsernameRequest Map(ChangeUsernameModel source)
     {
         return new()

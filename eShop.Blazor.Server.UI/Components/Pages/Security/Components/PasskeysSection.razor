@@ -1,4 +1,9 @@
-﻿<MudPaper Outlined="true" Class="pa-5">
+﻿@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IUserService UserService
+@inject UserState UserState
+
+<MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="3">
         <MudText Typo="Typo.h6">
             Passkeys
@@ -37,7 +42,7 @@
                 Color="Color.Primary"
                 ButtonType="ButtonType.Button"
                 Variant="Variant.Filled"
-                OnClick="@(async () => await OnCreate.InvokeAsync())">
+                OnClick="@(async () => await OnCreatePasskeyAsync())">
                 Create passkey
             </MudButton>
         </MudStack>
@@ -45,6 +50,59 @@
 </MudPaper>
 
 @code {
-    [Parameter] public UserSecurityModel Model { get; set; } = new();
-    [Parameter] public EventCallback OnCreate { get; set; }
+    private PasskeyDataModel Model { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserPasskeysAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<List<UserPasskeyDto>>()!;
+            Model = new()
+            {
+                Passkeys = response
+            };
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+    
+    private async Task OnCreatePasskeyAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var model = new CreatePasskeyModel() { UserId = UserState.UserId };
+
+        var parameters = new DialogParameters<CreatePasskeyDialog>()
+        {
+            { x => x.Model, model }
+        };
+
+        var dialog = await DialogService.ShowAsync<CreatePasskeyDialog>("Create passkey", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private class PasskeyDataModel
+    {
+        public List<UserPasskeyDto> Passkeys { get; set; } = [];
+    }
 }

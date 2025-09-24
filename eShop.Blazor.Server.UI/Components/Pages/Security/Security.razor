@@ -10,133 +10,17 @@
 
 <Title Text="Password and authentication"></Title>
 
-@if (Model is not null)
-{
-    <MudGrid Justify="Justify.Center">
-        <MudItem xs="6">
-            <MudStack Spacing="3">
-                <MudText Typo="Typo.h6">Password and authentication</MudText>
-                <MudDivider/>
-                <MudStack Spacing="2" Justify="Justify.Center">
-                    <PasswordSection
-                        Model="Model"
-                        OnAdd="@(() => OnAddPasswordAsync())"
-                        OnChange="@(() => OnChangePasswordAsync())"/>
-                    <PasskeysSection
-                        Model="Model"
-                        OnCreate="@(() => OnCreatePasskeyAsync())"/>
-                    <LinkedAccountsSection Model="Model"/>
-                    <TwoFactorSection Model="Model"/>
-                </MudStack>
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="6">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h6">Password and authentication</MudText>
+            <MudDivider/>
+            <MudStack Spacing="2" Justify="Justify.Center">
+                <PasswordSection />
+                <PasskeysSection />
+                <LinkedAccountsSection />
+                <TwoFactorSection />
             </MudStack>
-        </MudItem>
-    </MudGrid>
-}
-
-@code {
-    private UserSecurityModel? Model { get; set; }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
-    }
-
-    private async Task LoadAsync()
-    {
-        var result = await UserService.GetUserSecurityDataAsync(UserState.UserId);
-
-        if (result.Success)
-        {
-            var response = result.Get<UserSecurityDto>()!;
-
-            Model = Mapper.Map(response);
-            await UserState.Change();
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task OnCreatePasskeyAsync()
-    {
-        var options = new DialogOptions()
-        {
-            CloseButton = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge
-        };
-
-        var model = new CreatePasskeyModel() { UserId = UserState.UserId };
-
-        var parameters = new DialogParameters<CreatePasskeyDialog>()
-        {
-            { x => x.Model, model }
-        };
-
-        var dialog = await DialogService.ShowAsync<CreatePasskeyDialog>("Create passkey", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result!.Canceled)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnChangePasswordAsync()
-    {
-        var options = new DialogOptions()
-        {
-            CloseButton = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge
-        };
-
-        var model = new ChangePasswordModel() { Id = UserState.UserId };
-
-        var parameters = new DialogParameters<ChangePasswordDialog>()
-        {
-            { x => x.Model, model }
-        };
-
-        var dialog = await DialogService.ShowAsync<ChangePasswordDialog>("Change password", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result!.Canceled)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnAddPasswordAsync()
-    {
-        var options = new DialogOptions()
-        {
-            CloseButton = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge
-        };
-
-        var model = new AddPasswordModel() { UserId = UserState.UserId };
-
-        var parameters = new DialogParameters<AddPasswordDialog>()
-        {
-            { x => x.Model, model }
-        };
-
-        var dialog = await DialogService.ShowAsync<AddPasswordDialog>("Add password", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result!.Canceled)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
-    }
-}
+        </MudStack>
+    </MudItem>
+</MudGrid>

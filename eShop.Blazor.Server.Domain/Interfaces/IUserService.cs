@@ -16,7 +16,6 @@ public interface IUserService
     public ValueTask<HttpResponse> GetUserPasskeysAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id);
     public ValueTask<HttpResponse> GetUserStateAsync(Guid id);
-    public ValueTask<HttpResponse> GetUserSecurityDataAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPersonalDataAsync(Guid id);
     public ValueTask<HttpResponse> GetTwoFactorProvidersAsync(Guid id);
     public ValueTask<HttpResponse> GetLockoutStateAsync(Guid id);
