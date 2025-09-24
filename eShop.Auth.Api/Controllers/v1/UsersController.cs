@@ -39,13 +39,26 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Get user state")]
-    [EndpointDescription("Gets user state")]
+    [EndpointSummary("Get user password data")]
+    [EndpointDescription("Gets user password data")]
     [ProducesResponseType(200)]
     [HttpGet("password")]
     public async ValueTask<IActionResult> GetUserPasswordDataAsync(Guid id)
     {
         var result = await sender.Send(new GetUserPasswordDataQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Get user 2fa data")]
+    [EndpointDescription("Gets user 2fa data")]
+    [ProducesResponseType(200)]
+    [HttpGet("2fa")]
+    public async ValueTask<IActionResult> GetUserTwoFactorDataAsync(Guid id)
+    {
+        var result = await sender.Send(new GetUserTwoFactorDataQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
