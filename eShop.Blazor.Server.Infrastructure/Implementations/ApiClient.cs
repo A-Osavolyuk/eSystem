@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Text.Json;
-using eShop.Blazor.Server.Application.Routing;
 using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Blazor.Server.Infrastructure.Security;

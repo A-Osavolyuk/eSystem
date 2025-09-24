@@ -1,4 +1,4 @@
-﻿@inject RouteManager RouteManager
+﻿@inject NavigationManager NavigationManager
 
 @if (Model is not null)
 {
@@ -14,7 +14,7 @@
                             Icon="@Icons.Material.Filled.Add"
                             Color="Color.Primary"
                             Variant="Variant.Filled"
-                            OnClick="@(() => RouteManager.Route("/account/secondary-email/add"))"/>
+                            Href="/account/secondary-email/add"/>
                     </MudTooltip>
                 }
             </MudStack>
@@ -110,11 +110,11 @@
 
     private void OnVerify(string email)
     {
-        RouteManager.Route($"/account/secondary-email/verify?email={email}");
+        NavigationManager.NavigateTo($"/account/secondary-email/verify?email={email}");
     }
     
     private void OnRemove(string email)
     {
-        RouteManager.Route($"/account/secondary-email/remove?email={email}");
+        NavigationManager.NavigateTo($"/account/secondary-email/remove?email={email}");
     }
 }

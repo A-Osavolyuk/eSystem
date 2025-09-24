@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using eShop.Blazor.Server.Application.Routing;
 using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.DTOs;
 using eShop.Blazor.Server.Domain.Interfaces;
@@ -8,22 +7,23 @@ using eShop.Blazor.Server.Domain.Types;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
+using Microsoft.AspNetCore.Components;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
 
 public class AuthenticationManager(
     AuthenticationStateProvider authenticationStateProvider,
-    RouteManager routeManager,
     UserState userState,
     TokenProvider tokenProvider,
+    NavigationManager navigationManager,
     IFetchClient fetchClient,
     IStorage storage,
     ISecurityService securityService)
 {
     private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
-    private readonly RouteManager routeManager = routeManager;
     private readonly UserState userState = userState;
     private readonly TokenProvider tokenProvider = tokenProvider;
+    private readonly NavigationManager navigationManager = navigationManager;
     private readonly IFetchClient fetchClient = fetchClient;
     private readonly IStorage storage = storage;
     private readonly ISecurityService securityService = securityService;
@@ -42,7 +42,7 @@ public class AuthenticationManager(
             var fetchOptions = new FetchOptions()
             {
                 Method = HttpMethod.Post,
-                Url = $"{routeManager.BaseUri}api/auth/sign-in",
+                Url = $"{navigationManager.BaseUri}api/auth/sign-in",
                 Credentials = Credentials.Include,
                 Body = body
             };
@@ -68,7 +68,7 @@ public class AuthenticationManager(
             var fetchOptions = new FetchOptions()
             {
                 Method = HttpMethod.Post,
-                Url = $"{routeManager.BaseUri}api/auth/sign-out",
+                Url = $"{navigationManager.BaseUri}api/auth/sign-out",
                 Credentials = Credentials.Include,
             };
 
@@ -80,7 +80,7 @@ public class AuthenticationManager(
                 await storage.ClearAsync();
                 tokenProvider.Clear();
                 
-                routeManager.Route("/account/login");
+                navigationManager.NavigateTo("/account/login");
             }
         }
     }
