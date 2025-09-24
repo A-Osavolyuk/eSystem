@@ -33,8 +33,7 @@ public sealed class TokenManager(
 
         if (existingEntity is null)
         {
-            var key = KeyGeneration.GenerateRandomKey(50);
-            var refreshToken = Base32Encoding.ToString(key).Take(50).ToString()!;
+            var refreshToken = KeyGenerator.GenerateKey(50);
             
             var entity = new RefreshTokenEntity()
             {
