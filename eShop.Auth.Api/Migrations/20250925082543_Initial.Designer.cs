@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250925081740_Initial")]
+    [Migration("20250925082543_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1201,7 +1201,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
+                        .WithMany("LoginMethods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1337,6 +1337,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Navigation("LockoutState")
                         .IsRequired();
+
+                    b.Navigation("LoginMethods");
 
                     b.Navigation("Passkeys");
 

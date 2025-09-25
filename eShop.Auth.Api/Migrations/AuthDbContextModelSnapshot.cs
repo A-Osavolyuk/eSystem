@@ -1198,7 +1198,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
+                        .WithMany("LoginMethods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1334,6 +1334,8 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Navigation("LockoutState")
                         .IsRequired();
+
+                    b.Navigation("LoginMethods");
 
                     b.Navigation("Passkeys");
 
