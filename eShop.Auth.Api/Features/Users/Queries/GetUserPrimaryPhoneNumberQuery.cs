@@ -14,7 +14,7 @@ public class GetUserPrimaryPhoneNumberQueryHandler(
         var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID: {request.UserId}.");
         
-        var primaryPhoneNumber = user.PrimaryPhoneNumber;
+        var primaryPhoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary);
         if (primaryPhoneNumber is null) return Results.BadRequest("User does not have a primary phone number.");
 
         var response = new UserPhoneNumberDto()

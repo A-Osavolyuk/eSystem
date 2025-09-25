@@ -24,7 +24,7 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
             Credential = provider.TwoFactorProvider.Name switch
             {
                 ProviderTypes.Email => user.GetEmail(EmailType.Primary)?.Email,
-                ProviderTypes.Sms => user.PrimaryPhoneNumber?.PhoneNumber,
+                ProviderTypes.Sms => user.GetPhoneNumber(PhoneNumberType.Primary)?.PhoneNumber,
                 _ => null
             }
             

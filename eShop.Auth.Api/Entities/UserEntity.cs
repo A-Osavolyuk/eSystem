@@ -33,8 +33,6 @@ public class UserEntity : Entity
     public LockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
     
-    public UserPhoneNumberEntity? PrimaryPhoneNumber 
-        => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Primary);
     public UserLoginMethodEntity GetLoginMethod(LoginType type) 
         => LoginMethods.First(x => x.Method.Type == type);
     public UserEmailEntity? GetEmail(EmailType type) 
