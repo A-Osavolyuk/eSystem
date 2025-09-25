@@ -82,4 +82,18 @@ public class TwoFactorController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Disable 2FA")]
+    [EndpointDescription("Disable 2FA")]
+    [ProducesResponseType(200)]
+    [HttpPost("disable")]
+    [Authorize]
+    public async ValueTask<IActionResult> DisableTwoFactorAsync([FromBody] DisableTwoFactorRequest request)
+    {
+        var result = await sender.Send(new DisableTwoFactorCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
 }
