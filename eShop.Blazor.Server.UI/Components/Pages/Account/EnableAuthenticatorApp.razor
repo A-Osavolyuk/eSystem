@@ -4,7 +4,7 @@
 
 @attribute [Authorize]
 
-@inject IProvidersService ProvidersService
+@inject IProviderService ProviderService
 @inject ITwoFactorService TwoFactorService
 @inject ISecurityService SecurityService
 @inject CodeModelValidator Validator
@@ -223,7 +223,7 @@
             Provider = ProviderTypes.Authenticator
         };
 
-        var result = await ProvidersService.SubscribeAsync(request);
+        var result = await ProviderService.SubscribeAsync(request);
 
         if (result.Success) NavigationManager.NavigateTo("/account/security");
         else Snackbar.Add(result.Message, Severity.Error);

@@ -3,7 +3,7 @@
 
 @attribute [Authorize]
 
-@inject IProvidersService ProvidersService
+@inject IProviderService ProviderService
 @inject ISecurityService SecurityService
 
 <Title Text="2FA with providers"/>
@@ -170,7 +170,7 @@
             Provider = Provider
         };
 
-        var result = await ProvidersService.SubscribeAsync(request);
+        var result = await ProviderService.SubscribeAsync(request);
 
         if (result.Success) NavigationManager.NavigateTo("/account/security");
         else Snackbar.Add(result.Message, Severity.Error);

@@ -4,7 +4,7 @@
 @attribute [Authorize]
 
 @inject ISecurityService SecurityService
-@inject IProvidersService ProvidersService
+@inject IProviderService ProviderService
 
 <Title Text="Passkey remove"></Title>
 
@@ -204,7 +204,7 @@
             Provider = Provider
         };
 
-        var result = await ProvidersService.UnsubscribeAsync(request);
+        var result = await ProviderService.UnsubscribeAsync(request);
 
         if (result.Success)
         {

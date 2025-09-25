@@ -6,9 +6,9 @@ using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Blazor.Server.Infrastructure.Implementations;
 
-public class ProvidersService(
+public class ProviderService(
     IConfiguration configuration, 
-    IApiClient apiClient) : ApiService(configuration, apiClient), IProvidersService
+    IApiClient apiClient) : ApiService(configuration, apiClient), IProviderService
 {
     public async ValueTask<HttpResponse> GetProvidersAsync() => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Providers", Method = HttpMethod.Get },
