@@ -16,7 +16,7 @@ public class RecoverAccountCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var userPrimaryEmail = user.PrimaryEmail;
+        var userPrimaryEmail = user.GetEmail(EmailType.Primary);
         if (userPrimaryEmail is null) return Results.BadRequest("User does not have a primary email.");
         if (!userPrimaryEmail.IsVerified) return Results.BadRequest("User's primary email is not verified.");
 

@@ -20,7 +20,7 @@ public class ResetEmailCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
-        var userCurrentEmail = user.PrimaryEmail;
+        var userCurrentEmail = user.GetEmail(EmailType.Primary);
         if (userCurrentEmail is null) return Results.BadRequest("User's primary email address is missing");
 
         if (identityOptions.Account.RequireUniqueEmail)

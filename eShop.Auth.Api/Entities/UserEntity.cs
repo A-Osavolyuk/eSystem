@@ -32,9 +32,7 @@ public class UserEntity : Entity
     public ICollection<UserLoginMethodEntity> LoginMethods { get; init; } = null!;
     public LockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
-
-    public UserEmailEntity? PrimaryEmail 
-        => Emails.FirstOrDefault(x => x.Type == EmailType.Primary);
+    
     public UserEmailEntity? RecoveryEmail 
         => Emails.FirstOrDefault(x => x.Type == EmailType.Recovery);
     public UserPhoneNumberEntity? PrimaryPhoneNumber 
@@ -43,6 +41,10 @@ public class UserEntity : Entity
         => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Recovery);
     public UserLoginMethodEntity GetLoginMethod(LoginType type) 
         => LoginMethods.First(x => x.Method.Type == type);
+    public UserEmailEntity? GetEmail(EmailType type) 
+        => Emails.FirstOrDefault(x => x.Type == type);
+    public UserPhoneNumberEntity? GetPhoneNumber(PhoneNumberType type) 
+        => PhoneNumbers.FirstOrDefault(x => x.Type == type);
 
     public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);

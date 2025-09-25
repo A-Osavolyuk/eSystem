@@ -17,7 +17,7 @@ public class GetUserStateQueryHandler(IUserManager userManager) : IRequestHandle
         {
             UserId = user.Id,
             Username = user.Username,
-            PrimaryEmail = user.PrimaryEmail?.Email,
+            PrimaryEmail = user.GetEmail(EmailType.Primary)?.Email,
             RecoveryEmail = user.RecoveryEmail?.Email,
             PrimaryPhoneNumber = user.PrimaryPhoneNumber?.PhoneNumber,
             RecoveryPhoneNumber = user.RecoveryPhoneNumber?.PhoneNumber,

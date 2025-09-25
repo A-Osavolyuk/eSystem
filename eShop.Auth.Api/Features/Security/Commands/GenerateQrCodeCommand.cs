@@ -25,7 +25,7 @@ public class GenerateQrCodeCommandHandler(
         if (secret is null) secret = await secretManager.GenerateAsync(user, cancellationToken);
         
         var unprotectedSecret = protector.Unprotect(secret.Secret);
-        var email = user.PrimaryEmail?.Email!;
+        var email = user.GetEmail(EmailType.Primary)?.Email!;
         
         var qrCode = QrCodeGenerator.Generate(email, unprotectedSecret, QrCodeIssuer);
             

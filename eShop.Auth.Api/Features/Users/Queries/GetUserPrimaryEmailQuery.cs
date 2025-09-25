@@ -14,7 +14,7 @@ public class GetUserPrimaryEmailQueryHandler(IUserManager userManager)
         var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID: {request.UserId}.");
 
-        var userPrimaryEmail = user.PrimaryEmail;
+        var userPrimaryEmail = user.GetEmail(EmailType.Primary);
         if (userPrimaryEmail is null) return Results.BadRequest("User does not have a primary email.");
 
         var response = new UserEmailDto()

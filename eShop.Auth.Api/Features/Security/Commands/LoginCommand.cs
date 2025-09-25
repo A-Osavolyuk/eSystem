@@ -69,7 +69,7 @@ public sealed class LoginCommandHandler(
             if (!result.Succeeded) return result;
         }
         
-        var userPrimaryEmail = user.PrimaryEmail!;
+        var userPrimaryEmail = user.GetEmail(EmailType.Primary)!;
         if (identityOptions.SignIn.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
         {
             response = new LoginResponse()
