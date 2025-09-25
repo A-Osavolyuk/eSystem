@@ -54,7 +54,7 @@ public class ChangeEmailMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Email change (step one)" },
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

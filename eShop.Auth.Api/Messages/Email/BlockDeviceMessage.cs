@@ -63,7 +63,7 @@ public class BlockDeviceMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Device block" }
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

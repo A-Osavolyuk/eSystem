@@ -54,7 +54,7 @@ public class ResetEmailMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Email reset" },
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

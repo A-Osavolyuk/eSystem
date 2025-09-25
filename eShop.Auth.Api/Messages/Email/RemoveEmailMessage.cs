@@ -47,7 +47,7 @@ public class RemoveEmailMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Email remove" },
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

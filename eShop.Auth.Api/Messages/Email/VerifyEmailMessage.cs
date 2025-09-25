@@ -47,7 +47,7 @@ public class VerifyEmailMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Email verification" },
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

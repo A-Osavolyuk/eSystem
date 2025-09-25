@@ -48,7 +48,7 @@ public class ConfirmEmailChangeMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Email verification (step two)" },
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

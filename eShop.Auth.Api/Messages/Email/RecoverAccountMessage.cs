@@ -45,7 +45,7 @@ public class RecoverAccountMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Account recovery" },
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

@@ -63,7 +63,7 @@ public class VerifyDeviceMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Device verification" }
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

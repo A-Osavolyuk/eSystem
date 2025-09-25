@@ -54,7 +54,7 @@ public class ForgotPasswordMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Password reset" },
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

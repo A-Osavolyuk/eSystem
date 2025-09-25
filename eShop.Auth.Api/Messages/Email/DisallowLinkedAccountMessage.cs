@@ -51,7 +51,7 @@ public class DisallowLinkedAccountMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", $"Disallow {payload["Provider"]} linked account" }
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

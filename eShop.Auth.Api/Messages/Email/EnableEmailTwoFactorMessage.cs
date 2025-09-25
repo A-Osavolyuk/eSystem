@@ -48,7 +48,7 @@ public class EnableEmailTwoFactorMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Two-factor authentication" }
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

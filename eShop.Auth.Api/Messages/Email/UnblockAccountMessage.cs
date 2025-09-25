@@ -46,7 +46,7 @@ public class UnblockAccountMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Account unlock" },
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }

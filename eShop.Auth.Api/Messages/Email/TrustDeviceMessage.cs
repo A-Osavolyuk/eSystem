@@ -63,7 +63,7 @@ public class TrustDeviceMessage : Message
         Credentials = new()
         {
             { "To", payload["To"] },
-            { "Subject", "Device trust" }
+            { "Subject", $"Verification code {payload["Code"]}" }
         };
         Payload = payload;
     }
