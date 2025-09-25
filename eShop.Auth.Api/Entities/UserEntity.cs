@@ -48,7 +48,7 @@ public class UserEntity : Entity
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);
     public bool HasPhoneNumber(PhoneNumberType type) => PhoneNumbers.Any(x => x.Type == type);
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
-    public bool HasTwoFactor() => TwoFactorProviders.Any(x => x.Subscribed);
+    public bool HasProviders() => TwoFactorProviders.Any(x => x.Subscribed);
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasLoginMethod(LoginType type) => LoginMethods.Any(x => x.Method.Type == type);
 }
