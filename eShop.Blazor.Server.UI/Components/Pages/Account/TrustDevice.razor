@@ -60,7 +60,23 @@
     private string? email;
     private MessageContext? context;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await DeviceService.GetAsync(DeviceId);
+
+            if (result.Success)
+            {
+                Model.Device = result.Get<UserDeviceDto>()!;
+                await LoadAsync();
+                StateHasChanged();
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task LoadAsync()
     {
         var result = await UserService.GetUserPrimaryEmailAsync(UserId);
 
@@ -84,23 +100,10 @@
                     { "Browser", Model.Device.Browser! },
                 }
             };
-        }
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var result = await DeviceService.GetAsync(DeviceId);
-
-            if (result.Success)
-            {
-                Model.Device = result.Get<UserDeviceDto>()!;
-                await SendCodeAsync();
-            }
-            else Snackbar.Add(result.Message, Severity.Error);
+            await SendCodeAsync();
         }
+        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task SendCodeAsync()
