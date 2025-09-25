@@ -20,6 +20,16 @@ public class TwoFactorService(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 
+    public async ValueTask<HttpResponse> EnableAsync(EnableTwoFactorRequest request) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/enable", Method = HttpMethod.Post, Data = request }, 
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
+    public async ValueTask<HttpResponse> DisableAsync(DisableTwoFactorRequest request) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/disable", Method = HttpMethod.Post, Data = request }, 
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<HttpResponse> RevokeRecoveryCodesAsync(RevokeRecoveryCodesRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/recovery-code/revoke", Method = HttpMethod.Post, Data = request }, 
