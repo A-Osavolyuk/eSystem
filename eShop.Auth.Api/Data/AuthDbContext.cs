@@ -320,6 +320,19 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Type).HasEnumConversion();
         });
+
+        builder.Entity<UserLoginMethodEntity>(entity =>
+        {
+            entity.HasKey(x => new { x.UserId, x.MethodId });
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
+            
+            entity.HasOne(x => x.Method)
+                .WithMany()
+                .HasForeignKey(x => x.MethodId);
+        });
         
         builder.Entity<AuthorizationSessionEntity>(entity =>
         {
