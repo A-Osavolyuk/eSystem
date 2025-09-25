@@ -41,9 +41,10 @@ public class UserEntity : Entity
         => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Recovery);
 
     public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
-    public bool HasEmail() => Emails.Any(x => x.Type is EmailType.Primary);
+    public bool HasPrimaryEmail() => Emails.Any(x => x.Type is EmailType.Primary);
     public bool HasRecoveryEmail() => Emails.Any(x => x.Type is EmailType.Recovery);
-    public bool HasPhoneNumber() => PhoneNumbers.Any(x => x.Type is PhoneNumberType.Primary);
+    public bool HasPrimaryPhoneNumber() => PhoneNumbers.Any(x => x.Type is PhoneNumberType.Primary);
+    public bool HasRecoveryPhoneNumber() => PhoneNumbers.Any(x => x.Type is PhoneNumberType.Recovery);
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
     public bool HasTwoFactor() => TwoFactorProviders.Any(x => x.Subscribed);
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;

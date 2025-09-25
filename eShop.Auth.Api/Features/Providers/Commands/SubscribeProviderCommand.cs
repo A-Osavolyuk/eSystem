@@ -32,7 +32,7 @@ public class SubscribeProviderCommandHandler(
                 && user.Emails.Any(x => x is { Type: EmailType.Primary, IsVerified: false }))
                 return Results.BadRequest("You need to confirm your email first.");
 
-            if (!user.HasEmail())
+            if (!user.HasPrimaryEmail())
                 Results.BadRequest("You need to provide a verified email first.");
         }
 
@@ -42,7 +42,7 @@ public class SubscribeProviderCommandHandler(
                 && user.PhoneNumbers.Any(x => x is { Type: PhoneNumberType.Primary, IsVerified: false })) 
                 return Results.BadRequest("You need to confirm your phone number first.");
             
-            if (!user.HasPhoneNumber())
+            if (!user.HasPrimaryPhoneNumber())
                 Results.BadRequest("You need to provide a verified phone number first.");
         }
 
