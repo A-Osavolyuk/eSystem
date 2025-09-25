@@ -1,4 +1,4 @@
-﻿@page "/account/recovery-email/add"
+﻿@page "/account/email/add"
 
 @inherits PageBase
 
@@ -7,7 +7,12 @@
 @inject ISecurityService SecurityService
 @inject CodeModelValidator Validator
 
-<Title Text="Add recovery email"></Title>
+@switch (Type)
+{
+    case EmailTypes.Primary: <Title Text="Add primary email"></Title> break;
+    case EmailTypes.Recovery: <Title Text="Add recovery email"></Title> break;
+    case EmailTypes.Secondary: <Title Text="Add secondary email"></Title> break;
+}
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6" Style="margin-top: 100px">
@@ -16,49 +21,87 @@
                             HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
                             ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
             <ChildContent>
-                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Add" Title="Recovery number">
+                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Add" Title="Add email">
                     <ChildContent>
                         <MudGrid Justify="Justify.Center">
                             <MudItem xs="8">
                                 <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
-                                            Recovery email add
-                                        </MudText>
+                                        @switch (Type)
+                                        {
+                                            case EmailTypes.Primary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Primary email add
+                                                </MudText>
+                                                break;
+                                            }
+                                            case EmailTypes.Recovery:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Recovery email add
+                                                </MudText>
+                                                break;
+                                            }
+                                            case EmailTypes.Secondary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Secondary email add
+                                                </MudText>
+                                                break;
+                                            }
+                                        }
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudForm
-                                            @ref="addPhoneNumberForm"
-                                            Model="EmailModel">
-                                            <MudGrid Spacing="1" Justify="Justify.Center">
-                                                <MudItem xs="12">
-                                                    <MudText Align="Align.Center" Typo="Typo.body1"
-                                                             Style="width: 55ch; margin: auto">
-                                                        To add a recovery email, please enter an email.
-                                                        We will send an email with 6-digit code to this recovery email.
+                                        <MudStack Spacing="3">
+                                            @switch (Type)
+                                            {
+                                                case EmailTypes.Primary:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        To add a primary email, please enter an email.
+                                                        We will send an email with 6-digit code to this email address.
                                                     </MudText>
-                                                    <br/>
-                                                    <MudTextField
-                                                        Label="Recovery email"
-                                                        Class="mt-2"
-                                                        For="@(() => EmailModel.Email)"
-                                                        Variant="Variant.Outlined"
-                                                        Immediate
-                                                        @bind-Value="EmailModel.Email"/>
-                                                </MudItem>
-                                                <MudItem xs="12">
-                                                    <MudLoadingButton
-                                                        Size="Size.Large" FullWidth
-                                                        Variant="Variant.Filled"
-                                                        Class="mt-2"
-                                                        Color="Color.Primary"
-                                                        ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await OnAddAsync())">
-                                                        Send code
-                                                    </MudLoadingButton>
-                                                </MudItem>
-                                            </MudGrid>
-                                        </MudForm>
+
+                                                    break;
+                                                }
+                                                case EmailTypes.Recovery:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        To add a recovery email, please enter an email.
+                                                        We will send an email with 6-digit code to this email address.
+                                                    </MudText>
+
+                                                    break;
+                                                }
+                                                case EmailTypes.Secondary:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        To add a secondary email, please enter an email.
+                                                        We will send an email with 6-digit code to this email address.
+                                                    </MudText>
+
+                                                    break;
+                                                }
+                                            }
+                                            <MudForm @ref="addEmailForm" Model="EmailModel">
+                                                <MudTextField
+                                                    Label="Email"
+                                                    For="@(() => EmailModel.Email)"
+                                                    Variant="Variant.Outlined"
+                                                    Immediate
+                                                    @bind-Value="EmailModel.Email"/>
+                                            </MudForm>
+                                            <MudLoadingButton
+                                                Size="Size.Large" FullWidth
+                                                Variant="Variant.Filled"
+                                                Class="mt-2"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await OnAddAsync())">
+                                                Send code
+                                            </MudLoadingButton>
+                                        </MudStack>
                                     </MudPaper>
                                 </MudStack>
                             </MudItem>
@@ -81,8 +124,7 @@
                                             Model="CodeModel"
                                             Validation="Validator.ValidateValue">
                                             <MudStack Spacing="1">
-                                                <MudText Align="Align.Center" Typo="Typo.body1"
-                                                         Style="width: 55ch; margin: auto">
+                                                <MudText Align="Align.Center">
                                                     Enter the 6-digit code from the email we sent you to:
                                                     <strong>@EmailModel.Email</strong>
                                                 </MudText>
@@ -120,15 +162,19 @@
 </MudGrid>
 
 @code {
+
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = null!;
+
     [SupplyParameterFromForm] private AddEmailModel EmailModel { get; set; } = new();
     [SupplyParameterFromForm] private CodeModel CodeModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
-    private MudForm addPhoneNumberForm = new();
+    private MudForm addEmailForm = new();
     private MudForm verifyCodeForm = new();
     private MessageContext? context;
-    
-    protected override void OnInitialized()
+
+    private async Task SendCodeAsync()
     {
         context = new MessageContext()
         {
@@ -141,10 +187,7 @@
                 { "To", EmailModel.Email }
             }
         };
-    }
-
-    private async Task SendCodeAsync()
-    {
+        
         var request = context!.ToSendCodeRequest();
         var response = await SecurityService.SendCodeAsync(request);
 
@@ -153,15 +196,23 @@
 
     private async Task OnAddAsync()
     {
-        await addPhoneNumberForm.Validate();
+        await addEmailForm.Validate();
 
-        if (addPhoneNumberForm.IsValid)
+        if (addEmailForm.IsValid)
         {
+            var emailType = Type switch
+            {
+                EmailTypes.Primary => EmailType.Primary,
+                EmailTypes.Recovery => EmailType.Recovery,
+                EmailTypes.Secondary => EmailType.Secondary,
+                _ => throw new NotSupportedException("Not supported email type")
+            };
+
             var request = new AddEmailRequest()
             {
                 UserId = UserState.UserId,
                 Email = EmailModel.Email,
-                Type = EmailType.Recovery
+                Type = emailType
             };
 
             var result = await SecurityService.AddEmailAsync(request);
