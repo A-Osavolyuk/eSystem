@@ -12,8 +12,8 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250925080711_AddLoginMethodEntity")]
-    partial class AddLoginMethodEntity
+    [Migration("20250925081740_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -766,7 +766,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasIndex("MethodId");
 
-                    b.ToTable("UserLoginMethodEntity");
+                    b.ToTable("UserLoginMethods");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPasskeyEntity", b =>

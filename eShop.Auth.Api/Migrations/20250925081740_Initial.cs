@@ -30,6 +30,20 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LoginMethods",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginMethods", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OAuthProviders",
                 columns: table => new
                 {
@@ -345,6 +359,32 @@ namespace eShop.Auth.Api.Migrations
                     table.PrimaryKey("PK_UserEmails", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserEmails_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLoginMethods",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MethodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLoginMethods", x => new { x.UserId, x.MethodId });
+                    table.ForeignKey(
+                        name: "FK_UserLoginMethods_LoginMethods_MethodId",
+                        column: x => x.MethodId,
+                        principalTable: "LoginMethods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserLoginMethods_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -742,6 +782,11 @@ namespace eShop.Auth.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserLoginMethods_MethodId",
+                table: "UserLoginMethods",
+                column: "MethodId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserOAuthProviders_ProviderId",
                 table: "UserOAuthProviders",
                 column: "ProviderId");
@@ -824,6 +869,9 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserEmails");
 
             migrationBuilder.DropTable(
+                name: "UserLoginMethods");
+
+            migrationBuilder.DropTable(
                 name: "UserOAuthProviders");
 
             migrationBuilder.DropTable(
@@ -855,6 +903,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserDevices");
+
+            migrationBuilder.DropTable(
+                name: "LoginMethods");
 
             migrationBuilder.DropTable(
                 name: "OAuthProviders");

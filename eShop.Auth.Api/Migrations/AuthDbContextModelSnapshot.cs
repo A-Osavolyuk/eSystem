@@ -763,7 +763,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasIndex("MethodId");
 
-                    b.ToTable("UserLoginMethodEntity");
+                    b.ToTable("UserLoginMethods");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPasskeyEntity", b =>
