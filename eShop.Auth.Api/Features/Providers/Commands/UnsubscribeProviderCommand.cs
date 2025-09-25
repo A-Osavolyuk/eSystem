@@ -7,13 +7,15 @@ public record UnsubscribeProviderCommand(UnsubscribeProviderRequest Request) : I
 
 public class UnsubscribeProviderCommandHandler(
     IUserManager userManager,
-    ITwoFactorProviderManager twoFactorProviderManager,
+    ITwoFactorManager twoFactorManager,
     IVerificationManager verificationManager,
+    ILoginMethodManager loginMethodManager,
     ISecretManager secretManager) : IRequestHandler<UnsubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly ILoginMethodManager loginMethodManager = loginMethodManager;
     private readonly ISecretManager secretManager = secretManager;
 
     public async Task<Result> Handle(UnsubscribeProviderCommand request, CancellationToken cancellationToken)
@@ -21,7 +23,7 @@ public class UnsubscribeProviderCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        var provider = await twoFactorProviderManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user, 
@@ -34,8 +36,18 @@ public class UnsubscribeProviderCommandHandler(
             var secretResult = await secretManager.RemoveAsync(user, cancellationToken);
             if (!secretResult.Succeeded) return secretResult;
         }
+
+        if (user.TwoFactorProviders.Count == 1)
+        {
+            var method = user.GetLoginMethod(LoginType.OAuth);
+            var methodResult = await loginMethodManager.RemoveAsync(method, cancellationToken);
+            if (!methodResult.Succeeded) return methodResult;
+        }
         
-        var result = await twoFactorProviderManager.UnsubscribeAsync(user, provider, cancellationToken);
+        var userProvider = user.TwoFactorProviders.First(
+            x => x.TwoFactorProvider.Name == provider.Name);
+        
+        var result = await twoFactorManager.UnsubscribeAsync([userProvider], cancellationToken);
         return result;
     }
 }

@@ -6,7 +6,7 @@ public interface ILoginMethodManager
         CancellationToken cancellationToken = default);
     public ValueTask<LoginMethodEntity?> FindAsync(LoginType type, 
         CancellationToken cancellationToken = default);
-    public ValueTask<Result> CreateAsync(UserLoginMethodEntity entity, 
+    public ValueTask<Result> CreateAsync(UserEntity user, LoginType type, 
         CancellationToken cancellationToken = default);
     
     public ValueTask<Result> RemoveAsync(UserLoginMethodEntity entity, 

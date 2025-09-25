@@ -21,9 +21,21 @@ public class LoginMethodManager(AuthDbContext context) : ILoginMethodManager
         return entity;
     }
 
-    public async ValueTask<Result> CreateAsync(UserLoginMethodEntity entity, 
+    public async ValueTask<Result> CreateAsync(UserEntity user, LoginType type, 
         CancellationToken cancellationToken = default)
     {
+        var method = await context.LoginMethods.FirstOrDefaultAsync(
+            x => x.Type == type, cancellationToken);
+        
+        if (method is null) return Results.InternalServerError("Unsupported login method type");
+
+        var entity = new UserLoginMethodEntity()
+        {
+            UserId = user.Id,
+            MethodId = method.Id,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+        
         await context.UserLoginMethods.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         

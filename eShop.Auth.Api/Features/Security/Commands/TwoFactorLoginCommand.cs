@@ -9,7 +9,7 @@ public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
 
 public sealed class LoginWith2FaCommandHandler(
     IUserManager userManager,
-    ITwoFactorProviderManager twoFactorProviderManager,
+    ITwoFactorManager twoFactorManager,
     ILockoutManager lockoutManager,
     IRecoverManager recoverManager,
     ILoginManager loginManager,
@@ -21,7 +21,7 @@ public sealed class LoginWith2FaCommandHandler(
     IdentityOptions identityOptions) : IRequestHandler<TwoFactorLoginCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IRecoverManager recoverManager = recoverManager;
     private readonly ILoginManager loginManager = loginManager;
@@ -67,7 +67,7 @@ public sealed class LoginWith2FaCommandHandler(
             if (!result.Succeeded) return result;
         }
         
-        var provider = await twoFactorProviderManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) 
             return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         

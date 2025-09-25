@@ -7,15 +7,17 @@ public record SubscribeProviderCommand(SubscribeProviderRequest Request) : IRequ
 
 public class SubscribeProviderCommandHandler(
     IUserManager userManager,
-    ITwoFactorProviderManager twoFactorProviderManager,
+    ITwoFactorManager twoFactorManager,
     IVerificationManager verificationManager,
     ISecretManager secretManager,
+    ILoginMethodManager loginMethodManager,
     IdentityOptions identityOptions) : IRequestHandler<SubscribeProviderCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorProviderManager twoFactorProviderManager = twoFactorProviderManager;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IVerificationManager verificationManager = verificationManager;
     private readonly ISecretManager secretManager = secretManager;
+    private readonly ILoginMethodManager loginMethodManager = loginMethodManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(SubscribeProviderCommand request, CancellationToken cancellationToken)
@@ -23,7 +25,7 @@ public class SubscribeProviderCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var provider = await twoFactorProviderManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorManager.FindByNameAsync(request.Request.Provider, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
         
         if (provider.Name == ProviderTypes.Email)
@@ -56,8 +58,14 @@ public class SubscribeProviderCommandHandler(
             CodeResource.Provider, CodeType.Subscribe, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
+
+        if (!user.HasLoginMethod(LoginType.TwoFactor))
+        {
+            var methodResult = await loginMethodManager.CreateAsync(user, LoginType.OAuth,  cancellationToken);
+            if (!methodResult.Succeeded) return methodResult;
+        }
         
-        var result = await twoFactorProviderManager.SubscribeAsync(user, provider, cancellationToken);
+        var result = await twoFactorManager.SubscribeAsync(user, provider, cancellationToken);
         return result;
     }
 }

@@ -41,6 +41,8 @@ public class UserEntity : Entity
         => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Primary);
     public UserPhoneNumberEntity? RecoveryPhoneNumber 
         => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Recovery);
+    public UserLoginMethodEntity GetLoginMethod(LoginType type) 
+        => LoginMethods.First(x => x.Method.Type == type);
 
     public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);

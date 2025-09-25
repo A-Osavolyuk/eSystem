@@ -18,6 +18,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     IOAuthSessionManager sessionManager,
     IOAuthProviderManager providerManager,
     ILoginManager loginManager,
+    ILoginMethodManager loginMethodManager,
     IAuthorizationManager authorizationManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<HandleOAuthLoginCommand, Result>
@@ -30,6 +31,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IOAuthSessionManager sessionManager = sessionManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ILoginManager loginManager = loginManager;
+    private readonly ILoginMethodManager loginMethodManager = loginMethodManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
@@ -89,10 +91,17 @@ public sealed class HandleOAuthLoginCommandHandler(
             var createResult = await CreateAccountAsync(user, provider, fallbackUri, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
-            var setResult = await userManager.SetEmailAsync(user, email, 
+            var setResult = await userManager.SetEmailAsync(user, email,
                 EmailType.Primary, cancellationToken);
+
+            if (setResult.Succeeded) return setResult;
             
-            if(setResult.Succeeded) return setResult;
+            var methodResult = await loginMethodManager.CreateAsync(user, LoginType.OAuth, cancellationToken);
+            if (!methodResult.Succeeded)
+            {
+                return RedirectWithError(OAuthErrorType.InternalError,
+                    provider.Name, "Invalid login method type", fallbackUri);
+            }
 
             var role = await roleManager.FindByNameAsync("User", cancellationToken);
 
@@ -111,11 +120,9 @@ public sealed class HandleOAuthLoginCommandHandler(
                 if (!grantResult.Succeeded) return grantResult;
             }
 
-            var deviceResult = await CreateDeviceAsync(user, provider, 
-                httpContextAccessor.HttpContext!, fallbackUri, cancellationToken);
-            
+            var deviceResult = await CreateDeviceAsync(user, provider, fallbackUri, cancellationToken);
             if (!deviceResult.Succeeded) return deviceResult;
-            
+
             await SendMessageAsync(user, provider, cancellationToken);
 
             session.SignType = OAuthSignType.SignUp;
@@ -183,11 +190,21 @@ public sealed class HandleOAuthLoginCommandHandler(
         var checkProviderResult = await CheckUserProviderAsync(user, provider, fallbackUri, cancellationToken);
         if (!checkProviderResult.Succeeded) return checkProviderResult;
 
+        if (!user.HasLoginMethod(LoginType.OAuth))
+        {
+            var methodResult = await loginMethodManager.CreateAsync(user, LoginType.OAuth, cancellationToken);
+            if (!methodResult.Succeeded)
+            {
+                return RedirectWithError(OAuthErrorType.InternalError,
+                    provider.Name, "Invalid login method type", fallbackUri);
+            }
+        }
+
         return await SignInAsync(user, provider, session, device, request.ReturnUri!, token, cancellationToken);
     }
 
-    private async Task<Result> CreateDeviceAsync(UserEntity user, OAuthProviderEntity provider,
-        HttpContext context, string fallbackUri, CancellationToken cancellationToken)
+    private async Task<Result> CreateDeviceAsync(UserEntity user, OAuthProviderEntity provider, 
+        string fallbackUri, CancellationToken cancellationToken)
     {
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
@@ -220,7 +237,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         string fallbackUri, CancellationToken token)
     {
         var result = await deviceManager.TrustAsync(device, token);
-        
+
         if (!result.Succeeded)
             return RedirectWithError(OAuthErrorType.InternalError,
                 provider.Name, result.Message, fallbackUri);
@@ -245,7 +262,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         string fallbackUri, CancellationToken cancellationToken)
     {
         var result = await userManager.CreateAsync(user, cancellationToken: cancellationToken);
-        
+
         if (!result.Succeeded)
             return RedirectWithError(OAuthErrorType.InternalError,
                 provider.Name, result.Message, fallbackUri);
@@ -328,20 +345,18 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         if (sessionResult.Succeeded) return Result.Success();
 
-        return RedirectWithError(OAuthErrorType.InternalError, 
+        return RedirectWithError(OAuthErrorType.InternalError,
             provider.Name, sessionResult.Message, fallbackUri);
-
     }
 
     private Result IsProviderAllowed(UserEntity user, OAuthProviderEntity provider, string fallbackUri)
     {
-        if (!user.LinkedAccounts.Any(x => x.ProviderId == provider.Id && !x.Allowed)) 
+        if (!user.LinkedAccounts.Any(x => x.ProviderId == provider.Id && !x.Allowed))
             return Result.Success();
 
         var error = Uri.EscapeDataString("OAuth provider is disallowed by user");
-        
-        return RedirectWithError(OAuthErrorType.Unavailable, provider.Name, error, fallbackUri);
 
+        return RedirectWithError(OAuthErrorType.Unavailable, provider.Name, error, fallbackUri);
     }
 
     private async Task<Result> CheckUserProviderAsync(UserEntity user, OAuthProviderEntity provider,
@@ -350,12 +365,11 @@ public sealed class HandleOAuthLoginCommandHandler(
         var enableResult = await providerManager.ConnectAsync(user, provider, cancellationToken);
 
         if (enableResult.Succeeded) return Result.Success();
-            
-        var error = Uri.EscapeDataString(enableResult.GetError().Message);
-        
-        return RedirectWithError(OAuthErrorType.InternalError, 
-            provider.Name, error, fallbackUri);
 
+        var error = Uri.EscapeDataString(enableResult.GetError().Message);
+
+        return RedirectWithError(OAuthErrorType.InternalError,
+            provider.Name, error, fallbackUri);
     }
 
     private async Task<Result> SignInAsync(UserEntity user, OAuthProviderEntity provider,
