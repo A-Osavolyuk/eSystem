@@ -20,7 +20,7 @@ public class RecoverAccountCommandHandler(
         if (userPrimaryEmail is null) return Results.BadRequest("User does not have a primary email.");
         if (!userPrimaryEmail.IsVerified) return Results.BadRequest("User's primary email is not verified.");
 
-        var userRecoveryEmail = user.RecoveryEmail;
+        var userRecoveryEmail = user.GetEmail(EmailType.Recovery);
         if (userRecoveryEmail is null) return Results.BadRequest("User does not have a recovery email.");
         if (!userRecoveryEmail.IsVerified) return Results.BadRequest("User's recovery email is not verified.");
 
