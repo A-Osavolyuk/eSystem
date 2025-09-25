@@ -1,5 +1,5 @@
-﻿using eShop.Auth.Api.Features.Providers.Commands;
-using eShop.Auth.Api.Features.Providers.Queries;
+﻿using eShop.Auth.Api.Features.TwoFactor.Commands;
+using eShop.Auth.Api.Features.TwoFactor.Queries;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Auth;
 

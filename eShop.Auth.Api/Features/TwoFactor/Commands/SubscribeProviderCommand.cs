@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.Providers.Commands;
+namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
 public record SubscribeProviderCommand(SubscribeProviderRequest Request) : IRequest<Result>;
 
