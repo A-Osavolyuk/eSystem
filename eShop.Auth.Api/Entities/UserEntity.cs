@@ -35,8 +35,6 @@ public class UserEntity : Entity
     
     public UserPhoneNumberEntity? PrimaryPhoneNumber 
         => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Primary);
-    public UserPhoneNumberEntity? RecoveryPhoneNumber 
-        => PhoneNumbers.FirstOrDefault(x => x.Type == PhoneNumberType.Recovery);
     public UserLoginMethodEntity GetLoginMethod(LoginType type) 
         => LoginMethods.First(x => x.Method.Type == type);
     public UserEmailEntity? GetEmail(EmailType type) 
