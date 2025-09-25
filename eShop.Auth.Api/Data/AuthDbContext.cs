@@ -28,6 +28,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
+    public DbSet<LoginMethodEntity> LoginMethods { get; set; }
     public DbSet<AuthorizationSessionEntity> AuthorizationSessions { get; set; }
     public DbSet<VerificationEntity> Verifications { get; set; }
     
@@ -312,6 +313,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.Device)
                 .WithMany()
                 .HasForeignKey(x => x.DeviceId);
+        });
+
+        builder.Entity<LoginMethodEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Type).HasEnumConversion();
         });
         
         builder.Entity<AuthorizationSessionEntity>(entity =>
