@@ -701,6 +701,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<Guid?>("PersonalDataId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 

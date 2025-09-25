@@ -144,6 +144,7 @@ namespace eShop.Auth.Api.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     PasswordChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     AccountConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
                     CodeResendAttempts = table.Column<int>(type: "int", nullable: false),
                     CodeResendAvailableDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
