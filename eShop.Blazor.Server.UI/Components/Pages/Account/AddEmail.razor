@@ -220,7 +220,7 @@
             if (result.Success)
             {
                 await SendCodeAsync();
-                await StepNextAsync();
+                await stepper.StepNextAsync();
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }
@@ -257,11 +257,4 @@
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
-
-    private async Task StepNextAsync()
-    {
-        var index = stepper!.GetActiveIndex();
-        await stepper!.CompleteStep(index);
-    }
-
 }

@@ -187,7 +187,7 @@
         var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
 
-        if (result.Success) await StepNextAsync();
+        if (result.Success) await stepper.StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
 
@@ -222,11 +222,4 @@
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
-
-    private async Task StepNextAsync()
-    {
-        var index = stepper!.GetActiveIndex();
-        await stepper!.CompleteStep(index);
-    }
-
 }

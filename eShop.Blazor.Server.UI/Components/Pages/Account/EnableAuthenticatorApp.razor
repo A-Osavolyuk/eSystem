@@ -29,31 +29,28 @@
                                         </MudText>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-5">
-                                        <MudGrid Justify="Justify.Center">
-                                            <MudItem xs="12">
-                                                <MudText Align="Align.Center">
-                                                    To enhance the security of your account, we offer Two-Factor
-                                                    Authentication (2FA) using an authenticator app.
-                                                    This adds an extra layer of protection by requiring
-                                                    not just your password, but also a one-time code
-                                                    generated on your mobile device.
-                                                    An authenticator app (such as Google Authenticator,
-                                                    Microsoft Authenticator, or Authy)
-                                                    generates time-based one-time passwords (TOTP) every 30 seconds.
-                                                    These codes are used as your second step when logging in.
-                                                </MudText>
-                                            </MudItem>
-                                            <MudItem xs="12">
-                                                <MudButton
-                                                    Variant="Variant.Filled"
-                                                    Color="Color.Primary"
-                                                    ButtonType="ButtonType.Button"
-                                                    FullWidth="true"
-                                                    OnClick="@(async () => await OnGenerateQrCodeAsync())">
-                                                    Continue
-                                                </MudButton>
-                                            </MudItem>
-                                        </MudGrid>
+                                        <MudStack Spacing="3">
+                                            <MudText Align="Align.Center">
+                                                To enhance the security of your account, we offer Two-Factor
+                                                Authentication (2FA) using an authenticator app.
+                                                This adds an extra layer of protection by requiring
+                                                not just your password, but also a one-time code
+                                                generated on your mobile device.
+                                                An authenticator app (such as Google Authenticator,
+                                                Microsoft Authenticator, or Authy)
+                                                generates time-based one-time passwords (TOTP) every 30 seconds.
+                                                These codes are used as your second step when logging in.
+                                            </MudText>
+                                            
+                                            <MudButton
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                FullWidth="true"
+                                                OnClick="@(async () => await OnGenerateQrCodeAsync())">
+                                                Continue
+                                            </MudButton>
+                                        </MudStack>
                                     </MudPaper>
                                 </MudStack>
                             </MudItem>
@@ -84,7 +81,7 @@
                                                 Color="Color.Primary"
                                                 ButtonType="ButtonType.Button"
                                                 FullWidth="true"
-                                                OnClick="@(async () => await StepNextAsync())">
+                                                OnClick="@(async () => await stepper.StepNextAsync())">
                                                 Continue
                                             </MudButton>
                                         </MudStack>
@@ -111,15 +108,14 @@
                                         </MudText>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-5">
-                                        <MudForm
-                                            @ref="form"
-                                            Model="Model"
-                                            Validation="Validator.ValidateValue">
-                                            <MudStack Spacing="2">
-                                                <MudText Align="Align.Center">
-                                                    Enter 6-digit TOTP code from your authentication app
-                                                </MudText>
-
+                                        <MudStack Spacing="3">
+                                            <MudText Align="Align.Center">
+                                                Enter 6-digit TOTP code from your authentication app
+                                            </MudText>
+                                            <MudForm
+                                                @ref="form"
+                                                Model="Model"
+                                                Validation="Validator.ValidateValue">
                                                 <MudCodeInput
                                                     Count="6"
                                                     Margin="Margin.Normal"
@@ -127,18 +123,17 @@
                                                     Class="d-flex align-items-center"
                                                     @bind-Value="Model.Code"
                                                     Variant="Variant.Outlined"/>
-
-                                                <MudLoadingButton
-                                                    FullWidth="true"
-                                                    Variant="Variant.Filled"
-                                                    Color="Color.Primary"
-                                                    ButtonType="ButtonType.Button"
-                                                    Disabled="@(Model.Code.Length <= 5)"
-                                                    OnClick="@(async () => await OnVerifyAsync())">
-                                                    Verify
-                                                </MudLoadingButton>
-                                            </MudStack>
-                                        </MudForm>
+                                            </MudForm>
+                                            <MudLoadingButton
+                                                FullWidth="true"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                Disabled="@(Model.Code.Length <= 5)"
+                                                OnClick="@(async () => await OnVerifyAsync())">
+                                                Verify
+                                            </MudLoadingButton>
+                                        </MudStack>
                                     </MudPaper>
                                 </MudStack>
                             </MudItem>
@@ -170,7 +165,7 @@
         {
             var response = result.Get<GenerateQrCodeResponse>()!;
             QrCodeModel.QrCode = response.QrCode;
-            await StepNextAsync();
+            await stepper.StepNextAsync();
         }
         else
         {
@@ -228,11 +223,4 @@
         if (result.Success) NavigationManager.NavigateTo("/account/security");
         else Snackbar.Add(result.Message, Severity.Error);
     }
-
-    private async Task StepNextAsync()
-    {
-        var index = stepper!.GetActiveIndex();
-        await stepper!.CompleteStep(index);
-    }
-
 }

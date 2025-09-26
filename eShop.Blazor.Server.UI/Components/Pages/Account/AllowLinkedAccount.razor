@@ -133,8 +133,7 @@
 
         if (result.Success)
         {
-            var index = stepper!.GetActiveIndex();
-            await stepper!.CompleteStep(index);
+            await stepper.StepNextAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

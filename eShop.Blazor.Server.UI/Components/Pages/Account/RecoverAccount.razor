@@ -177,7 +177,7 @@
                     }
                 };
 
-                await StepNextAsync();
+                await stepper.StepNextAsync();
                 await SendCodeAsync();
             }
             else Snackbar.Add(result.Message, Severity.Error);
@@ -219,11 +219,4 @@
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
-
-    private async Task StepNextAsync()
-    {
-        var index = stepper!.GetActiveIndex();
-        await stepper!.CompleteStep(index);
-    }
-
 }

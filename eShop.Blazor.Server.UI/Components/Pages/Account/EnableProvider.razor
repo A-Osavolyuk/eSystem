@@ -127,6 +127,13 @@
 
     private async Task OnSendCodeAsync(SenderType sender)
     {
+        var to = sender switch
+        {
+            SenderType.Email => UserState.Credentials?.PrimaryEmail!,
+            SenderType.Sms => UserState.Credentials?.PrimaryPhoneNumber!,
+            _ => throw new NotSupportedException("Unsupported provider type")
+        };
+
         context = new MessageContext()
         {
             UserId = UserState.UserId,
@@ -135,21 +142,14 @@
             Sender = sender,
             Payload = new()
             {
-                {
-                    "To", sender switch
-                    {
-                        SenderType.Email => UserState.Credentials?.PrimaryEmail!,
-                        SenderType.Sms => UserState.Credentials?.PrimaryPhoneNumber!,
-                        _ => throw new NotSupportedException("Unsupported provider type")
-                    }
-                }
+                { "To", to }
             }
         };
-        
+
         var request = context!.ToSendCodeRequest();
         var result = await SecurityService.SendCodeAsync(request);
 
-        if (result.Success) await StepNextAsync();
+        if (result.Success) await stepper.StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
 
@@ -175,19 +175,4 @@
         if (result.Success) NavigationManager.NavigateTo("/account/security");
         else Snackbar.Add(result.Message, Severity.Error);
     }
-
-    private async Task SendCodeAsync(SenderType sender)
-    {
-        var request = context!.ToSendCodeRequest();
-        var result = await SecurityService.SendCodeAsync(request);
-
-        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private async Task StepNextAsync()
-    {
-        var index = stepper!.GetActiveIndex();
-        await stepper!.CompleteStep(index);
-    }
-
 }
