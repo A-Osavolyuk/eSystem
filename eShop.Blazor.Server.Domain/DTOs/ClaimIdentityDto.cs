@@ -1,4 +1,6 @@
-﻿namespace eShop.Blazor.Server.Domain.DTOs;
+﻿using System.Security.Claims;
+
+namespace eShop.Blazor.Server.Domain.DTOs;
 
 public class ClaimsIdentityDto
 {
