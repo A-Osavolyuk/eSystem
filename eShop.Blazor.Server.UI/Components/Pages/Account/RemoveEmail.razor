@@ -203,10 +203,18 @@
 
     private async Task VerifyAsync()
     {
+        var email = Type switch
+        {
+            EmailTypes.Primary => UserState.Credentials?.PrimaryEmail!,
+            EmailTypes.Recovery => UserState.Credentials?.RecoveryEmail!,
+            EmailTypes.Secondary => Email,
+            _ => throw new NotImplementedException("Unsupported email type")
+        };
+        
         var request = new RemoveEmailRequest()
         {
             UserId = UserState.UserId,
-            Email = Email
+            Email = email
         };
 
         var result = await SecurityService.RemoveEmailAsync(request);
