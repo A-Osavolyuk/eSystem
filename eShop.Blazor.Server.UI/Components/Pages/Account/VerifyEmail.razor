@@ -168,7 +168,7 @@
         var request = new VerifyEmailRequest()
         {
             UserId = UserState.UserId,
-            Email = Email
+            Email = email
         };
 
         var result = await SecurityService.VerifyEmailAsync(request);
