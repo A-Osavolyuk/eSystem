@@ -7,7 +7,11 @@
 @inject CodeModelValidator Validator
 @inject ISecurityService SecurityService
 
-<Title Text="Change email"></Title>
+@switch (Type)
+{
+    case EmailTypes.Primary: <Title Text="Primary email change"></Title> break;
+    case EmailTypes.Recovery: <Title Text="Recovery email change"></Title> break;
+}
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6" Style="margin-top: 100px">
@@ -21,43 +25,74 @@
                             <MudItem xs="8">
                                 <MudStack Spacing="1">
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
-                                            Email change
-                                        </MudText>
+                                        @switch (Type)
+                                        {
+                                            case EmailTypes.Primary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Primary email change
+                                                </MudText>
+
+                                                break;
+                                            }
+                                            case EmailTypes.Recovery:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Recovery email change
+                                                </MudText>
+
+                                                break;
+                                            }
+                                        }
                                     </MudPaper>
                                     <MudPaper Outlined="true" Class="pa-3">
-                                        <MudForm
-                                            @ref="changeEmailForm"
-                                            Model="ChangeEmailModel"
-                                            Validation="ChangeEmailValidator.ValidateValue">
-                                            <MudGrid Justify="Justify.Center">
-                                                <MudItem xs="12">
+                                        <MudStack Spacing="3">
+                                            @switch (Type)
+                                            {
+                                                case EmailTypes.Primary:
+                                                {
                                                     <MudText Class="mb-1" Align="Align.Center">
-                                                        To change email, you should enter new email address.
-                                                        Please, enter new email address.
+                                                        To change your current primary email address,
+                                                        you need to enter new email address,
+                                                        then we will send emails with verification code to your
+                                                        current and new primary email addresses.
                                                     </MudText>
-                                                </MudItem>
-                                                <MudItem xs="12">
-                                                    <MudTextField
-                                                        @bind-Value="ChangeEmailModel.NewEmail"
-                                                        For="() => ChangeEmailModel.NewEmail"
-                                                        Label="New email"
-                                                        Variant="Variant.Outlined"
-                                                        Immediate="true"
-                                                        Clearable="true"/>
-                                                </MudItem>
-                                                <MudItem xs="12">
-                                                    <MudLoadingButton
-                                                        FullWidth="true"
-                                                        Variant="Variant.Filled"
-                                                        Color="Color.Primary"
-                                                        ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await OnSendCurrentCodeAsync())">
-                                                        Change
-                                                    </MudLoadingButton>
-                                                </MudItem>
-                                            </MudGrid>
-                                        </MudForm>
+
+                                                    break;
+                                                }
+                                                case EmailTypes.Recovery:
+                                                {
+                                                    <MudText Class="mb-1" Align="Align.Center">
+                                                        To change your current recovery email address,
+                                                        you need to enter new email address,
+                                                        then we will send emails with verification code to your
+                                                        current and new recovery email addresses.
+                                                    </MudText>
+
+                                                    break;
+                                                }
+                                            }
+                                            <MudForm
+                                                @ref="changeEmailForm"
+                                                Model="ChangeEmailModel"
+                                                Validation="ChangeEmailValidator.ValidateValue">
+                                                <MudTextField
+                                                    @bind-Value="ChangeEmailModel.NewEmail"
+                                                    For="() => ChangeEmailModel.NewEmail"
+                                                    Label="New email"
+                                                    Variant="Variant.Outlined"
+                                                    Immediate="true"
+                                                    Clearable="true"/>
+                                            </MudForm>
+                                            <MudLoadingButton
+                                                FullWidth="true"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await OnSendCurrentCodeAsync())">
+                                                Change
+                                            </MudLoadingButton>
+                                        </MudStack>
                                     </MudPaper>
                                 </MudStack>
                             </MudItem>
@@ -80,9 +115,27 @@
                                             Model="VerifyCurrentEmailModel"
                                             Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
-                                                <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from letter we sent to your current email address
-                                                </MudText>
+                                                @switch (Type)
+                                                {
+                                                    case EmailTypes.Primary:
+                                                    {
+                                                        <MudText Class="mb-2" Align="Align.Center">
+                                                            Enter code from letter we sent to:
+                                                            <strong>@UserState.Credentials?.PrimaryEmail!</strong>
+                                                        </MudText>
+
+                                                        break;
+                                                    }
+                                                    case EmailTypes.Recovery:
+                                                    {
+                                                        <MudText Class="mb-2" Align="Align.Center">
+                                                            Enter code from letter we sent to:
+                                                            <strong>@UserState.Credentials?.RecoveryEmail!</strong>
+                                                        </MudText>
+
+                                                        break;
+                                                    }
+                                                }
 
                                                 <MudCodeInput
                                                     Count="6"
@@ -105,15 +158,17 @@
                                         </MudForm>
                                     </MudPaper>
                                     <CodeResend Context="currentEmailContext"></CodeResend>
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">
-                                            Loose access to your current email address?
-                                            <MudLink
-                                                Href="account/email/reset">
-                                                Reset it
-                                            </MudLink>
-                                        </MudText>
-                                    </MudPaper>
+                                    @if (Type == EmailTypes.Primary)
+                                    {
+                                        <MudPaper Outlined Class="pa-3">
+                                            <MudText Align="Align.Center">
+                                                Lost access to your current primary email address?
+                                                <MudLink Href="account/email/reset">
+                                                    Reset it
+                                                </MudLink>
+                                            </MudText>
+                                        </MudPaper>
+                                    }
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -136,7 +191,7 @@
                                             Validation="Validator.ValidateValue">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from letter we sent you
+                                                    Enter 6-digit code from letter we sent you
                                                     to: @ChangeEmailModel.NewEmail
                                                 </MudText>
 
@@ -172,6 +227,10 @@
 </MudGrid>
 
 @code {
+
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = string.Empty;
+
     [SupplyParameterFromForm] private ChangeEmailModel ChangeEmailModel { get; set; } = new();
     [SupplyParameterFromForm] private CodeModel VerifyCurrentEmailModel { get; set; } = new();
     [SupplyParameterFromForm] private CodeModel ConfirmChangeEmailModel { get; set; } = new();
@@ -190,6 +249,13 @@
 
         if (changeEmailForm.IsValid)
         {
+            var to = Type switch
+            {
+                EmailTypes.Primary => UserState.Credentials?.PrimaryEmail!,
+                EmailTypes.Recovery => UserState.Credentials?.RecoveryEmail!,
+                _ => throw new NotSupportedException("Unsupported email type")
+            };
+            
             currentEmailContext = new MessageContext()
             {
                 UserId = UserState.UserId,
@@ -198,11 +264,11 @@
                 Type = CodeType.Current,
                 Payload = new()
                 {
-                    { "To", UserState.Credentials?.PrimaryEmail! },
                     { "NewEmail", ChangeEmailModel.NewEmail },
+                    { "To", to },
                 }
             };
-            
+
             var request = new CheckEmailRequest()
             {
                 UserId = UserState.UserId,
@@ -216,27 +282,28 @@
                 var response = result.Get<CheckEmailResponse>()!;
 
                 if (!response.IsTaken) await SendCurrentEmailCodeAsync();
-                else switch (response)
-                {
-                    case { IsTaken: true, IsOwn: false }:
+                else
+                    switch (response)
                     {
-                        const string message = "This email address is already taken";
-                        Snackbar.Add(message, Severity.Error);
-                        break;
+                        case { IsTaken: true, IsOwn: false }:
+                        {
+                            const string message = "This email address is already taken";
+                            Snackbar.Add(message, Severity.Error);
+                            break;
+                        }
+                        case { IsTaken: true, IsOwn: true }:
+                        {
+                            const string message = "This email address is already user's";
+                            Snackbar.Add(message, Severity.Info);
+                            break;
+                        }
+                        case { HasLinkedAccount: true }:
+                        {
+                            const string message = "First disconnect linked account.";
+                            Snackbar.Add(message, Severity.Info);
+                            break;
+                        }
                     }
-                    case { IsTaken: true, IsOwn: true }:
-                    {
-                        const string message = "This email address is already user's";
-                        Snackbar.Add(message, Severity.Info);
-                        break;
-                    }
-                    case { HasLinkedAccount: true }:
-                    {
-                        const string message = "First disconnect linked account.";
-                        Snackbar.Add(message, Severity.Info);
-                        break;
-                    }
-                }
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }
@@ -267,7 +334,7 @@
                     { "To", ChangeEmailModel.NewEmail }
                 }
             };
-            
+
             var request = currentEmailContext!.ToVerifyCodeRequest(VerifyCurrentEmailModel.Code);
             var result = await SecurityService.VerifyCodeAsync(request);
 
@@ -286,11 +353,18 @@
 
     private async Task ChangeAsync()
     {
+        var type = Type switch
+        {
+            EmailTypes.Primary => EmailType.Primary,
+            EmailTypes.Recovery => EmailType.Recovery,
+            _ => throw new NotSupportedException("Unsupported email type")
+        };
+        
         var request = new ChangeEmailRequest()
         {
             UserId = UserState.UserId,
-            Type = EmailType.Primary,
             NewEmail = ChangeEmailModel.NewEmail,
+            Type = type,
         };
 
         var result = await SecurityService.ChangeEmailAsync(request);
