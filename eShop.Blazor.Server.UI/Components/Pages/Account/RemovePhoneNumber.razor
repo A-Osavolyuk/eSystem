@@ -208,7 +208,7 @@
             PhoneNumberTypes.Primary => UserState.Credentials?.PrimaryPhoneNumber!,
             PhoneNumberTypes.Recovery => UserState.Credentials?.RecoveryPhoneNumber!,
             PhoneNumberTypes.Secondary => PhoneNumber,
-            _ => throw new NotImplementedException("Unsupported phone number type")
+            _ => throw new NotSupportedException("Unsupported phone number type")
         };
         
         var request = new RemovePhoneNumberRequest()

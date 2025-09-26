@@ -208,7 +208,7 @@
             EmailTypes.Primary => UserState.Credentials?.PrimaryEmail!,
             EmailTypes.Recovery => UserState.Credentials?.RecoveryEmail!,
             EmailTypes.Secondary => Email,
-            _ => throw new NotImplementedException("Unsupported email type")
+            _ => throw new NotSupportedException("Unsupported email type")
         };
         
         var request = new RemoveEmailRequest()

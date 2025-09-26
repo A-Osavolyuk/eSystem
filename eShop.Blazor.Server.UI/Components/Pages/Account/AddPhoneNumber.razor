@@ -212,7 +212,7 @@
                 PhoneNumberTypes.Primary => PhoneNumberType.Primary,
                 PhoneNumberTypes.Recovery => PhoneNumberType.Recovery,
                 PhoneNumberTypes.Secondary => PhoneNumberType.Secondary,
-                _ => throw new NotImplementedException("Unsupported phone number type")
+                _ => throw new NotSupportedException("Unsupported phone number type")
             };
             
             var request = new AddPhoneNumberRequest()
