@@ -81,7 +81,7 @@
                             Icon="@Icons.Material.Filled.Delete"
                             Color="Color.Error"
                             Variant="Variant.Filled"
-                            Href="/account/recovery-email/remove"/>
+                            Href=@($"/account/email/remove?type={EmailTypes.Recovery}")/>
                     </MudTooltip>
                     <MudTooltip Text="Change recovery email">
                         <MudIconButton

@@ -82,7 +82,7 @@
                                     Icon="@Icons.Material.Filled.Delete"
                                     Color="Color.Error"
                                     Variant="Variant.Filled"
-                                    OnClick="@(() => OnRemove(email.Email))"/>
+                                    Href=@($"/account/email/remove?type={EmailTypes.Secondary}&email={email.Email}")/>
                             </MudTooltip>
                         }
                     </MudStack>
@@ -111,10 +111,5 @@
     private void OnVerify(string email)
     {
         NavigationManager.NavigateTo($"/account/secondary-email/verify?email={email}");
-    }
-    
-    private void OnRemove(string email)
-    {
-        NavigationManager.NavigateTo($"/account/secondary-email/remove?email={email}");
     }
 }

@@ -91,7 +91,7 @@
                             Icon="@Icons.Material.Filled.Delete"
                             Color="Color.Error"
                             Variant="Variant.Filled"
-                            Href="/account/email/remove"/>
+                            Href=@($"/account/email/remove?type={EmailTypes.Primary}")/>
                     </MudTooltip>
                     <MudTooltip Text="Reset primary email">
                         <MudIconButton

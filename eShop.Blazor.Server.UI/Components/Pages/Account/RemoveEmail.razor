@@ -6,7 +6,12 @@
 @inject ISecurityService SecurityService
 @inject CodeModelValidator Validator
 
-<Title Text="Email remove"></Title>
+@switch (Type)
+{
+    case EmailTypes.Primary: <Title Text="Primary email remove"></Title> break;
+    case EmailTypes.Recovery: <Title Text="Recovery email remove"></Title> break;
+    case EmailTypes.Secondary: <Title Text="Secondary email remove"></Title> break;
+}
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6" Style="margin-top: 100px">
@@ -20,19 +25,63 @@
                             <MudItem xs="8">
                                 <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
-                                            Email remove
-                                        </MudText>
+                                        @switch (Type)
+                                        {
+                                            case EmailTypes.Primary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Primary email remove
+                                                </MudText>
+                                                break;
+                                            }
+                                            case EmailTypes.Recovery:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Recovery email remove
+                                                </MudText>
+                                                break;
+                                            }
+                                            case EmailTypes.Secondary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Secondary email remove
+                                                </MudText>
+                                                break;
+                                            }
+                                        }
                                     </MudPaper>
                                     <MudPaper Outlined="true" Class="pa-5">
                                         <MudStack Spacing="4">
-                                            <MudText Align="Align.Center">
-                                                Are you sure you want to remove your primary email address?
-                                                Before you continue, please check is your account have some alternative
-                                                authentication methods (passkey). Also check if your account has enabled
-                                                2FA(Two-Factor Authentication) with Email. Check if your account 
-                                                has linked external accounts (Google, Microsoft, etc.).
-                                            </MudText>
+                                            @switch (Type)
+                                            {
+                                                case EmailTypes.Primary:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        Are you sure, that you want to
+                                                        remove your current primary email address:
+                                                        <strong>@UserState.Credentials?.PrimaryEmail</strong>?
+                                                    </MudText>
+                                                    break;
+                                                }
+                                                case EmailTypes.Recovery:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        Are you sure, that you want to
+                                                        remove current recovery email address:
+                                                        <strong>@UserState.Credentials?.RecoveryEmail</strong>?
+                                                    </MudText>
+                                                    break;
+                                                }
+                                                case EmailTypes.Secondary:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        Are you sure, that you want to
+                                                        remove this secondary email address:
+                                                        <strong>@Email</strong>?
+                                                    </MudText>
+                                                    break;
+                                                }
+                                            }
                                             <MudLoadingButton
                                                 FullWidth="true"
                                                 Color="Color.Primary"
@@ -65,7 +114,7 @@
                                             Model="Model">
                                             <MudStack Spacing="2">
                                                 <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from an email we sent you to: 
+                                                    Enter code from an email we sent you to:
                                                     <strong>@UserState.Credentials?.PrimaryEmail!</strong>
                                                 </MudText>
 
@@ -101,7 +150,13 @@
 </MudGrid>
 
 @code {
-    
+
+    [SupplyParameterFromQuery(Name = "email")]
+    public string Email { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = string.Empty;
+
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -151,14 +206,14 @@
         var request = new RemoveEmailRequest()
         {
             UserId = UserState.UserId,
-            Email = UserState.Credentials?.PrimaryEmail!
+            Email = Email
         };
 
         var result = await SecurityService.RemoveEmailAsync(request);
 
         if (result.Success)
         {
-            Snackbar.Add("Secondary email was successfully removed", Severity.Success);
+            Snackbar.Add("Email was successfully removed", Severity.Success);
             NavigationManager.NavigateTo("/account/emails");
         }
         else
@@ -172,4 +227,5 @@
         var index = stepper!.GetActiveIndex();
         await stepper!.CompleteStep(index);
     }
+
 }
