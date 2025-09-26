@@ -9,13 +9,8 @@ namespace eShop.Blazor.Server.Infrastructure.Implementations;
 
 public class SecurityService(
     IApiClient apiClient,
-    IFetchClient fetchClient,
-    IConfiguration configuration,
-    UserState userState) : ApiService(configuration, apiClient), ISecurityService
+    IConfiguration configuration) : ApiService(configuration, apiClient), ISecurityService
 {
-    private readonly IFetchClient fetchClient = fetchClient;
-    private readonly UserState userState = userState;
-
     public async ValueTask<HttpResponse> LoginAsync(LoginRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/login", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
