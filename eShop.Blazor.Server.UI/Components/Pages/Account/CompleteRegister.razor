@@ -1,18 +1,18 @@
-﻿@page "/account/email/verify"
+﻿@page "/account/register/complete"
 @inherits PageBase
 
 @inject ISecurityService SecurityService
 @inject IUserService UserService
 @inject VerifyEmailValidator Validator
 
-<Title Text="Email verification"></Title>
+<Title Text="Registration completion"></Title>
 
 <MudGrid Justify="Justify.Center" Spacing="1">
     <MudItem xs="4" Style="margin-top: 100px">
         <MudStack Spacing="1" Justify="Justify.Center">
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center" Typo="Typo.h4">
-                    Email verification
+                    Registration completion
                 </MudText>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">

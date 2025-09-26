@@ -203,7 +203,7 @@
                 
                 if (!response.IsEmailConfirmed)
                 {
-                    var url = $"/account/email/verify?id={userId}";
+                    var url = $"/account/register/complete?id={userId}";
 
                     Snackbar.Add(result.Message, Severity.Info);
                     NavigationManager.NavigateTo(url);
