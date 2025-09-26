@@ -8,7 +8,12 @@
 @inject AddPhoneNumberValidator AddPhoneNumberValidator
 @inject CodeModelValidator Validator
 
-<Title Text="Add phone number"></Title>
+@switch (Type)
+{
+    case PhoneNumberTypes.Primary: <Title Text="Add primary phone number"></Title> break;
+    case PhoneNumberTypes.Recovery: <Title Text="Add recovery phone number"></Title> break;
+    case PhoneNumberTypes.Secondary: <Title Text="Add secondary phone number"></Title> break;
+}
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6" Style="margin-top: 100px">
@@ -28,39 +33,60 @@
                                         </MudText>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudForm
-                                            @ref="addPhoneNumberForm"
-                                            Model="AddPhoneNumberModel"
-                                            Validation="AddPhoneNumberValidator.ValidateValue">
-                                            <MudGrid Spacing="1" Justify="Justify.Center">
-                                                <MudItem xs="12">
-                                                    <MudText Align="Align.Center" Typo="Typo.body1"
-                                                             Style="width: 55ch; margin: auto">
-                                                        To add phone number, please enter the phone number.
+                                        <MudStack Spacing="3">
+                                            @switch (Type)
+                                            {
+                                                case PhoneNumberTypes.Primary:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        To add primary phone number, you need to enter new phone number.
                                                         We will send SMS with 6-digit code to this phone number
                                                     </MudText>
-                                                    <br/>
-                                                    <MudTextField
-                                                        Label="Phone number"
-                                                        Class="mt-2"
-                                                        For="@(() => AddPhoneNumberModel.PhoneNumber)"
-                                                        Variant="Variant.Outlined"
-                                                        Immediate
-                                                        @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
-                                                </MudItem>
-                                                <MudItem xs="12">
-                                                    <MudLoadingButton
-                                                        Size="Size.Large" FullWidth
-                                                        Variant="Variant.Filled"
-                                                        Class="mt-2"
-                                                        Color="Color.Primary"
-                                                        ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await OnAddAsync())">
-                                                        Send code
-                                                    </MudLoadingButton>
-                                                </MudItem>
-                                            </MudGrid>
-                                        </MudForm>
+                                                    
+                                                    break;
+                                                }
+                                                case PhoneNumberTypes.Recovery:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        To add recovery phone number, you need to enter new phone number.
+                                                        We will send SMS with 6-digit code to this phone number
+                                                    </MudText>
+                                                    
+                                                    break;
+                                                }
+                                                case PhoneNumberTypes.Secondary:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        To add secondary phone number, you need to enter new phone number.
+                                                        We will send SMS with 6-digit code to this phone number
+                                                    </MudText>
+                                                    
+                                                    break;
+                                                }
+                                            }
+                                            <MudForm
+                                                @ref="addPhoneNumberForm"
+                                                Model="AddPhoneNumberModel"
+                                                Validation="AddPhoneNumberValidator.ValidateValue">
+                                                <MudTextField
+                                                    Label="Phone number"
+                                                    Class="mt-2"
+                                                    For="@(() => AddPhoneNumberModel.PhoneNumber)"
+                                                    Variant="Variant.Outlined"
+                                                    Immediate
+                                                    @bind-Value="AddPhoneNumberModel.PhoneNumber"/>
+
+                                            </MudForm>
+                                            <MudLoadingButton
+                                                Size="Size.Large" FullWidth
+                                                Variant="Variant.Filled"
+                                                Class="mt-2"
+                                                Color="Color.Primary"
+                                                ButtonType="ButtonType.Button"
+                                                OnClick="@(async () => await OnAddAsync())">
+                                                Send code
+                                            </MudLoadingButton>
+                                        </MudStack>
                                     </MudPaper>
                                 </MudStack>
                             </MudItem>
@@ -73,9 +99,30 @@
                             <MudItem xs="8">
                                 <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
-                                            Phone number verification
-                                        </MudText>
+                                        @switch (Type)
+                                        {
+                                            case PhoneNumberTypes.Primary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Primary phone number verification
+                                                </MudText>
+                                                break;
+                                            }
+                                            case PhoneNumberTypes.Recovery:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Recovery phone number verification
+                                                </MudText>
+                                                break;
+                                            }
+                                            case PhoneNumberTypes.Secondary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Secondary phone number verification
+                                                </MudText>
+                                                break;
+                                            }
+                                        }
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
                                         <MudForm
@@ -83,8 +130,7 @@
                                             Model="VerifyPhoneNumberModel"
                                             Validation="Validator.ValidateValue">
                                             <MudStack Spacing="1">
-                                                <MudText Align="Align.Center" Typo="Typo.body1"
-                                                         Style="width: 55ch; margin: auto">
+                                                <MudText Align="Align.Center">
                                                     To verify your phone number, please enter the 6-digit code from
                                                     the SMS we sent you to:
                                                     <strong>@AddPhoneNumberModel.PhoneNumber</strong>
@@ -99,7 +145,8 @@
                                                     Variant="Variant.Outlined"/>
 
                                                 <MudLoadingButton
-                                                    Size="Size.Large" FullWidth
+                                                    Size="Size.Large" 
+                                                    FullWidth
                                                     Variant="Variant.Filled"
                                                     Class="mt-2"
                                                     Color="Color.Primary"
@@ -123,6 +170,9 @@
 </MudGrid>
 
 @code {
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = string.Empty;
+    
     [SupplyParameterFromForm] private AddPhoneNumberModel AddPhoneNumberModel { get; set; } = new();
     [SupplyParameterFromForm] private CodeModel VerifyPhoneNumberModel { get; set; } = new();
 
@@ -156,12 +206,20 @@
                     { "To", AddPhoneNumberModel.PhoneNumber }
                 }
             };
+
+            var type = Type switch
+            {
+                PhoneNumberTypes.Primary => PhoneNumberType.Primary,
+                PhoneNumberTypes.Recovery => PhoneNumberType.Recovery,
+                PhoneNumberTypes.Secondary => PhoneNumberType.Secondary,
+                _ => throw new NotImplementedException("Unsupported phone number type")
+            };
             
             var request = new AddPhoneNumberRequest()
             {
                 UserId = UserState.UserId,
                 PhoneNumber = AddPhoneNumberModel.PhoneNumber,
-                Type = PhoneNumberType.Primary
+                Type = type
             };
 
             var result = await SecurityService.AddPhoneNumberAsync(request);
