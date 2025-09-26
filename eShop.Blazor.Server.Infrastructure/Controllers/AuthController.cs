@@ -54,7 +54,13 @@ public class AuthController(
             Scheme = CookieAuthenticationDefaults.AuthenticationScheme
         };
 
-        return Ok(new ResponseBuilder().Succeeded().WithResult(claimsIdentity).Build());
+        var signInResponse = new SignInResponse()
+        {
+            Identity = claimsIdentity,
+            AccessToken = tokenProvider.AccessToken
+        };
+
+        return Ok(new ResponseBuilder().Succeeded().WithResult(signInResponse).Build());
     }
 
     [HttpPost("sign-out")]

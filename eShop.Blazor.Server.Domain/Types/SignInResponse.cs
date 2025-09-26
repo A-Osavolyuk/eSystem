@@ -5,6 +5,6 @@ namespace eShop.Blazor.Server.Domain.Types;
 
 public class SignInResponse
 {
-    public required string AccessToken { get; set; }
-    public required ClaimsIdentityDto Identity { get; set; }
+    public string AccessToken { get; set; } = string.Empty;
+    public ClaimsIdentityDto Identity { get; set; } = null!;
 }
