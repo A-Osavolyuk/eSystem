@@ -6,7 +6,7 @@
         <MudStack Spacing="1">
             <MudStack Row="true" Spacing="1">
                 <MudText Typo="Typo.h6">Secondary emails</MudText>
-                @if (Model.SecondaryEmails.Count == 0)
+                @if (Model.SecondaryEmails.Count <= 3)
                 {
                     <MudSpacer/>
                     <MudTooltip Text="Add secondary email">
@@ -72,7 +72,7 @@
                                     Icon="@Icons.Material.Filled.Check"
                                     Color="Color.Primary"
                                     Variant="Variant.Filled"
-                                    OnClick="@(() => OnVerify(email.Email))"/>
+                                    Href=@($"/account/email/verify?type={EmailTypes.Primary}&email={email.Email}")/>
                             </MudTooltip>
                         }
                         else
@@ -107,9 +107,4 @@
 
 @code {
     [Parameter] public UserEmailsModel? Model { get; set; }
-
-    private void OnVerify(string email)
-    {
-        NavigationManager.NavigateTo($"/account/secondary-email/verify?email={email}");
-    }
 }
