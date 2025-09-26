@@ -6,7 +6,12 @@
 @inject ISecurityService SecurityService
 @inject CodeModelValidator Validator
 
-<Title Text="Phone number remove"></Title>
+@switch (Type)
+{
+    case PhoneNumberTypes.Primary: <Title Text="Primary phone number remove"></Title> break;
+    case PhoneNumberTypes.Recovery: <Title Text="Recovery phone number remove"></Title> break;
+    case PhoneNumberTypes.Secondary: <Title Text="Secondary phone number remove"></Title> break;
+}
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6" Style="margin-top: 100px">
@@ -20,20 +25,64 @@
                             <MudItem xs="8">
                                 <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
-                                            Phone number remove
-                                        </MudText>
+                                        @switch (Type)
+                                        {
+                                            case PhoneNumberTypes.Primary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Primary phone number remove
+                                                </MudText>
+                                                break;
+                                            }
+                                            case PhoneNumberTypes.Recovery:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Recovery phone number remove
+                                                </MudText>
+                                                break;
+                                            }
+                                            case PhoneNumberTypes.Secondary:
+                                            {
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Secondary phone number remove
+                                                </MudText>
+                                                break;
+                                            }
+                                        }
                                     </MudPaper>
                                     <MudPaper Outlined="true" Class="pa-5">
                                         <MudStack Spacing="4">
-                                            <MudText Align="Align.Center">
-                                                Are you sure you want to remove your current phone number?
-                                                Before remove phone number, please check if 
-                                                two-factor authentication (2FA) with SMS is not enabled.
-                                                If you remove it, lose the ability to authenticate with 
-                                                two-factor authentication 2FA via SMS, 
-                                                also we will not be able to send SMS to your current phone number.
-                                            </MudText>
+                                            @switch (Type)
+                                            {
+                                                case PhoneNumberTypes.Primary:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        Are you sure you want to remove your current primary phone number?
+                                                        Before remove phone number, please check if 
+                                                        two-factor authentication (2FA) with SMS is not enabled.
+                                                        If you remove it, lose the ability to authenticate with 
+                                                        two-factor authentication 2FA via SMS, 
+                                                        also we will not be able to send SMS to your current phone number.
+                                                    </MudText>
+                                                    break;
+                                                }
+                                                case PhoneNumberTypes.Recovery:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        Are you sure you want to remove 
+                                                        your current recovery phone number?
+                                                    </MudText>
+                                                    break;
+                                                }
+                                                case PhoneNumberTypes.Secondary:
+                                                {
+                                                    <MudText Align="Align.Center">
+                                                        Are you sure you want to remove 
+                                                        this secondary phone number?
+                                                    </MudText>
+                                                    break;
+                                                }
+                                            }
                                             <MudLoadingButton
                                                 FullWidth="true"
                                                 Color="Color.Primary"
@@ -102,6 +151,12 @@
 </MudGrid>
 
 @code {
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "phoneNumber")]
+    public string PhoneNumber { get; set; } = string.Empty;
+    
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -148,10 +203,18 @@
 
     private async Task VerifyAsync()
     {
+        var phoneNumber = Type switch
+        {
+            PhoneNumberTypes.Primary => UserState.Credentials?.PrimaryPhoneNumber!,
+            PhoneNumberTypes.Recovery => UserState.Credentials?.RecoveryPhoneNumber!,
+            PhoneNumberTypes.Secondary => PhoneNumber,
+            _ => throw new NotImplementedException("Unsupported phone number type")
+        };
+        
         var request = new RemovePhoneNumberRequest()
         {
             UserId = UserState.UserId,
-            PhoneNumber = UserState.Credentials?.PrimaryPhoneNumber!
+            PhoneNumber = phoneNumber
         };
 
         var result = await SecurityService.RemovePhoneNumberAsync(request);
