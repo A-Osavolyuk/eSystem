@@ -6,25 +6,75 @@
 @inject ISecurityService SecurityService
 @inject CodeModelValidator Validator
 
-<Title Text="Phone number verification"></Title>
+@switch (Type)
+{
+    case PhoneNumberTypes.Primary: <Title Text="Primary phone number verification"></Title> break;
+    case PhoneNumberTypes.Recovery: <Title Text="Recovery phone number verification"></Title> break;
+    case PhoneNumberTypes.Secondary: <Title Text="Secondary phone number verification"></Title> break;
+}
 
 <MudGrid Justify="Justify.Center" Spacing="1">
     <MudItem xs="4" Style="margin-top: 100px">
         <MudStack Spacing="1" Justify="Justify.Center">
             <MudPaper Outlined Class="pa-3">
-                <MudText Align="Align.Center" Typo="Typo.h4">
-                    Phone number verification
-                </MudText>
+                @switch (Type)
+                {
+                    case PhoneNumberTypes.Primary:
+                    {
+                        <MudText Align="Align.Center" Typo="Typo.h4">
+                            Primary phone number verification
+                        </MudText>
+                        break;
+                    }
+                    case PhoneNumberTypes.Recovery:
+                    {
+                        <MudText Align="Align.Center" Typo="Typo.h4">
+                            Recovery phone number verification
+                        </MudText>
+                        break;
+                    }
+                    case PhoneNumberTypes.Secondary:
+                    {
+                        <MudText Align="Align.Center" Typo="Typo.h4">
+                            Secondary phone number verification
+                        </MudText>
+                        break;
+                    }
+                }
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
-                <MudForm
-                    @ref="form"
-                    Model="Model"
-                    Validation="Validator.ValidateValue">
-                    <MudStack Spacing="2" Justify="Justify.Center">
-                        <MudText Align="Align.Center">
-                            We have sent a SMS with code to phone number: <strong>@UserState.Credentials?.PrimaryPhoneNumber</strong>
-                        </MudText>
+                <MudStack Spacing="3" Justify="Justify.Center">
+                    @switch (Type)
+                    {
+                        case PhoneNumberTypes.Primary:
+                        {
+                            <MudText Align="Align.Center">
+                                We have sent a SMS with code to:
+                                <strong>@UserState.Credentials?.PrimaryPhoneNumber</strong>
+                            </MudText>
+                            break;
+                        }
+                        case PhoneNumberTypes.Recovery:
+                        {
+                            <MudText Align="Align.Center">
+                                We have sent a SMS with code to:
+                                <strong>@UserState.Credentials?.RecoveryPhoneNumber</strong>
+                            </MudText>
+                            break;
+                        }
+                        case PhoneNumberTypes.Secondary:
+                        {
+                            <MudText Align="Align.Center">
+                                We have sent a SMS with code to:
+                                <strong>@PhoneNumber</strong>
+                            </MudText>
+                            break;
+                        }
+                    }
+                    <MudForm
+                        @ref="form"
+                        Model="Model"
+                        Validation="Validator.ValidateValue">
                         <MudCodeInput
                             Class="d-flex align-items-center"
                             Variant="Variant.Outlined"
@@ -32,18 +82,17 @@
                             Margin="Margin.None"
                             Count="6"
                             @bind-Value="Model.Code"/>
-
-                        <MudLoadingButton
-                            ButtonType="ButtonType.Button"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            FullWidth
-                            Disabled="@(Model.Code.Length <= 5)"
-                            OnClick="@(async () => await OnVerificationAsync())">
-                            Verify
-                        </MudLoadingButton>
-                    </MudStack>
-                </MudForm>
+                    </MudForm>
+                    <MudLoadingButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        FullWidth
+                        Disabled="@(Model.Code.Length <= 5)"
+                        OnClick="@(async () => await OnVerificationAsync())">
+                        Verify
+                    </MudLoadingButton>
+                </MudStack>
             </MudPaper>
             <CodeResend Context="context"></CodeResend>
         </MudStack>
@@ -51,6 +100,13 @@
 </MudGrid>
 
 @code {
+
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "phoneNumber")]
+    public string PhoneNumber { get; set; } = string.Empty;
+
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
@@ -60,6 +116,14 @@
     {
         if (firstRender)
         {
+            var to = Type switch
+            {
+                PhoneNumberTypes.Primary => UserState.Credentials?.PrimaryPhoneNumber!,
+                PhoneNumberTypes.Recovery => UserState.Credentials?.RecoveryPhoneNumber!,
+                PhoneNumberTypes.Secondary => PhoneNumber,
+                _ => throw new NotSupportedException("Unsupported phone number type")
+            };
+            
             context = new MessageContext()
             {
                 UserId = UserState.UserId,
@@ -68,7 +132,7 @@
                 Type = CodeType.Verify,
                 Payload = new()
                 {
-                    { "To", UserState.Credentials?.PrimaryPhoneNumber! }
+                    { "To", to }
                 }
             };
 
@@ -92,10 +156,18 @@
 
     private async Task VerifyAsync()
     {
+        var phoneNumber = Type switch
+        {
+            PhoneNumberTypes.Primary => UserState.Credentials?.PrimaryPhoneNumber!,
+            PhoneNumberTypes.Recovery => UserState.Credentials?.RecoveryPhoneNumber!,
+            PhoneNumberTypes.Secondary => PhoneNumber,
+            _ => throw new NotSupportedException("Unsupported phone number type")
+        };
+        
         var request = new VerifyPhoneNumberRequest()
         {
             UserId = UserState.UserId,
-            PhoneNumber = UserState.Credentials?.PrimaryPhoneNumber!
+            PhoneNumber = phoneNumber
         };
 
         var result = await SecurityService.VerifyPhoneNumberAsync(request);
