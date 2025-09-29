@@ -35,7 +35,7 @@
                     @if (!Model.Enabled)
                     {
                         <MudMenuItem
-                            Href="/account/login/enable?type=oauth"
+                            Href=@($"/account/login/enable?type={LoginTypes.OAuth}")
                             Class="mud-error-text">
                             Disable method
                         </MudMenuItem>
@@ -44,7 +44,7 @@
                     @if (Model.Enabled)
                     {
                         <MudMenuItem
-                            Href="/account/login/disable?type=oauth"
+                            Href=@($"/account/login/disable?type={LoginTypes.OAuth}")
                             Class="mud-error-text">
                             Disable method
                         </MudMenuItem>

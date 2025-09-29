@@ -33,7 +33,7 @@
                 </MudMenuItem>
                 @if (!Model.Enabled)
                 {
-                    <MudMenuItem Href="/account/login/enable?type=passkey">
+                    <MudMenuItem Href=@($"/account/login/enable?type={LoginTypes.Passkey}")>
                         Enable method
                     </MudMenuItem>
                 }
@@ -41,7 +41,7 @@
                 {
                     <MudDivider/>
                     <MudMenuItem
-                        Href="/account/login/disable?type=passkey"
+                        Href=@($"/account/login/disable?type={LoginTypes.Passkey}")
                         Class="mud-error-text">
                         Disable method
                     </MudMenuItem>
