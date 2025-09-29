@@ -1,13 +1,9 @@
-﻿@inject ISnackbar Snackbar
-@inject IUserService UserService
-@inject UserState UserState
-
-<MudStack Spacing="3">
+﻿<MudStack Spacing="3">
     <MudText Typo="Typo.h5">Two-factor authentication (2FA)</MudText>
-    <MudPaper Outlined="true" Class="pa-5">
-        <MudStack Spacing="3">
-            @if (Model is not null)
-            {
+    @if (Model.Enabled)
+    {
+        <MudPaper Outlined="true" Class="pa-5">
+            <MudStack Spacing="3">
                 <MudStack Spacing="2">
                     @foreach (var provider in Model.Providers)
                     {
@@ -79,59 +75,42 @@
                         </MudStack>
                     }
                 </MudStack>
-            }
-            else
-            {
-                <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                    <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
-                    <MudText Align="Align.Center">
-                        <strong>Loading...</strong>
-                    </MudText>
-                </MudStack>
-            }
+            </MudStack>
+        </MudPaper>
+    }
+    else
+    {
+        <MudDivider/>
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center"> 
+                <MudIcon Icon="@Icons.Material.Filled.Lock"/>
+                <MudText Align="Align.Center" Typo="Typo.h6">
+                    Two-factor authentication is not enabled yet.
+                </MudText>
+                <MudText Align="Align.Center" Class="opacity-50">
+                    Two-factor authentication adds an additional layer of security
+                    to your account by requiring more than just a password to sign in.
+                </MudText>
+            </MudStack>
+            <MudButton
+                Variant="Variant.Filled"
+                Color="Color.Success"
+                ButtonType="ButtonType.Button"
+                Href=@($"/account/login/enable?type={LoginTypes.TwoFactor}")>
+                Enable two-factor authentication
+            </MudButton>
         </MudStack>
-    </MudPaper>
+    }
 </MudStack>
 
 @code {
-    private TwoFactorDataModel? Model { get; set; }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
-    }
-
-    private async Task LoadAsync()
-    {
-        var result = await UserService.GetUserTwoFactorDataAsync(UserState.UserId);
-
-        if (result.Success)
-        {
-            var response = result.Get<UserTwoFactorDto>()!;
-            Model = new()
-            {
-                Providers = response.Providers,
-                TwoFactorEnabled = response.TwoFactorEnabled
-            };
-        }
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
+    private TwoFactorData Model { get; set; } = new();
 
     private string OnSubscribe(string provider)
     {
         return provider == ProviderTypes.Authenticator
             ? "/account/2fa/authenticator/enable"
             : $"/account/2fa/provider/enable?provider={provider}";
-    }
-
-    private class TwoFactorDataModel
-    {
-        public List<UserProviderDto> Providers { get; set; } = [];
-        public bool TwoFactorEnabled { get; set; }
     }
 
 }
