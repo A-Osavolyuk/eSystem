@@ -19,7 +19,7 @@ public class GetUserLoginMethodsQueryHandler(
             HasPassword = user.HasLoginMethod(LoginType.Password),
             HasTwoFactor = user.HasLoginMethod(LoginType.TwoFactor),
             HasLinkedAccounts = user.HasLoginMethod(LoginType.OAuth),
-            HasPasskeys = user.HasLoginMethod(LoginType.Password),
+            HasPasskeys = user.HasLoginMethod(LoginType.Passkey),
         };
         
         return Result.Success(response);
