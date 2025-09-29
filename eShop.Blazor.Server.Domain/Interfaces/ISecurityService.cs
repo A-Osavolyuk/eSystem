@@ -13,6 +13,7 @@ public interface ISecurityService
     public ValueTask<HttpResponse> ResetPhoneNumberAsync(ResetPhoneNumberRequest request);
     public ValueTask<HttpResponse> RemovePhoneNumberAsync(RemovePhoneNumberRequest request);
     public ValueTask<HttpResponse> RemoveEmailAsync(RemoveEmailRequest request);
+    public ValueTask<HttpResponse> RemovePasswordAsync(RemovePasswordRequest request);
     public ValueTask<HttpResponse> AddPhoneNumberAsync(AddPhoneNumberRequest request);
     public ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request);
     public ValueTask<HttpResponse> AddPasswordAsync(AddPasswordRequest request);

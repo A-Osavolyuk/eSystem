@@ -102,6 +102,10 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/email/remove", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<HttpResponse> RemovePasswordAsync(RemovePasswordRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Security/password/remove", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<HttpResponse> AddPhoneNumberAsync(AddPhoneNumberRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/phone-number/add", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
