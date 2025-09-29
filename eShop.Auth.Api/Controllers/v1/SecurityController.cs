@@ -200,7 +200,7 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Remove password")]
     [EndpointDescription("Remove password")]
     [ProducesResponseType(200)]
@@ -429,6 +429,19 @@ public class SecurityController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
     {
         var result = await sender.Send(new VerifyCodeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Disable login method")]
+    [EndpointDescription("Disable login method")]
+    [ProducesResponseType(200)]
+    [HttpPost("login/disable-method")]
+    public async ValueTask<IActionResult> DisableLoginMethodAsync([FromBody] DisableMethodRequest request)
+    {
+        var result = await sender.Send(new DisableMethodCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
