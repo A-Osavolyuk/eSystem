@@ -1,127 +1,64 @@
-﻿@inject IUserService UserService
-@inject ISnackbar Snackbar
-@inject UserState UserState
-
-@if (Model.LinkedAccounts.Count > 0)
-{
-    <MudPaper Outlined="true" Class="pt-3 pl-5 pr-5 pb-5">
-        <MudStack Spacing="3">
-            <MudText Typo="Typo.h6">
-                Linked accounts
-            </MudText>
-            <MudStack Spacing="2">
-                @foreach (var provider in Model.LinkedAccounts)
-                {
-                    <MudStack Spacing="0">
-                        <MudStack Row="true" Spacing="1">
-                            <MudText Style="padding-top: 5px"> @provider.Name</MudText>
-                            @if (provider.IsAllowed)
-                            {
-                                <MudChip
-                                    T="string"
-                                    Size="Size.Small"
-                                    Variant="Variant.Outlined"
-                                    Color="Color.Success">
-                                    Allowed
-                                </MudChip>
-                                <MudSpacer/>
-                                <MudTooltip Text="Disallow">
-                                    <MudIconButton
-                                        Color="Color.Error"
-                                        Icon="@Icons.Material.Filled.Close"
-                                        Variant="Variant.Outlined"
-                                        ButtonType="ButtonType.Button"
-                                        Href="@($"/account/linked-account/disallow?provider={provider.Name}")"/>
-                                </MudTooltip>
-                                <MudTooltip Text="Disconnect">
-                                    <MudIconButton
-                                        Color="Color.Warning"
-                                        Icon="@Icons.Material.Filled.Delete"
-                                        Variant="Variant.Outlined"
-                                        ButtonType="ButtonType.Button"
-                                        Href="@($"/account/linked-account/disconnect?provider={provider.Name}")"/>
-                                </MudTooltip>
-                            }
-                            else
-                            {
-                                <MudChip
-                                    T="string"
-                                    Size="Size.Small"
-                                    Variant="Variant.Outlined"
-                                    Color="Color.Error">
-                                    Disallowed
-                                </MudChip>
-                                <MudSpacer/>
-                                <MudTooltip Text="Allow">
-                                    <MudIconButton
-                                        Color="Color.Success"
-                                        Icon="@Icons.Material.Filled.Check"
-                                        Variant="Variant.Outlined"
-                                        ButtonType="ButtonType.Button"
-                                        Href="@($"/account/linked-account/allow?provider={provider.Name}")"/>
-                                </MudTooltip>
-                                <MudTooltip Text="Disconnect">
-                                    <MudIconButton
-                                        Color="Color.Warning"
-                                        Icon="@Icons.Material.Filled.Delete"
-                                        Variant="Variant.Outlined"
-                                        ButtonType="ButtonType.Button"
-                                        Href="@($"/account/linked-account/disconnect?provider={provider.Name}")"/>
-                                </MudTooltip>
-                            }
-                        </MudStack>
-                        @if (provider.IsAllowed)
-                        {
-                            <MudText
-                                Class="opacity-50"
-                                Typo="Typo.caption">
-                                Linked at: @provider.LinkedDate?.ToString("MM/dd/yyyy HH:mm")
-                            </MudText>
-                        }
-                        else
-                        {
-                            <MudText
-                                Class="opacity-50"
-                                Typo="Typo.caption">
-                                Disallowed at: @provider.LinkedDate?.ToString("MM/dd/yyyy HH:mm")
-                            </MudText>
-                        }
-                    </MudStack>
-                }
-            </MudStack>
-        </MudStack>
-    </MudPaper>
-}
+﻿<MudStack Spacing="0" Class="px-3">
+    <MudStack Row="true" Spacing="0">
+        <MudText Typo="Typo.h6" Class="pt-1">Linked accounts</MudText>
+        @if (Model.Enabled)
+        {
+            <MudChip 
+                T="string"
+                Class="mt-2"
+                Color="Color.Success"
+                Variant="Variant.Outlined"
+                Size="Size.Small">
+                Enabled
+            </MudChip>
+        }
+        else
+        {
+            <MudChip 
+                T="string"
+                Class="mt-2"
+                Color="Color.Error"
+                Variant="Variant.Outlined"
+                Size="Size.Small">
+                Disabled
+            </MudChip>
+        }
+        <MudSpacer/>
+        @if (Model.HasLinkedAccounts)
+        {
+            <MudMenu
+                Dense="true">
+                <ActivatorContent>
+                    <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                </ActivatorContent>
+                <ChildContent>
+                    @if (!Model.Enabled)
+                    {
+                        <MudMenuItem
+                            Href="/account/login/enable?type=oauth"
+                            Class="mud-error-text">
+                            Disable method
+                        </MudMenuItem>
+                    }
+                    <MudDivider/>
+                    @if (Model.Enabled)
+                    {
+                        <MudMenuItem
+                            Href="/account/login/disable?type=oauth"
+                            Class="mud-error-text">
+                            Disable method
+                        </MudMenuItem>
+                    }
+                </ChildContent>
+            </MudMenu>
+        }
+    </MudStack>
+    <MudText Class="opacity-50" Typo="Typo.caption">
+        Additional sign-in method. 
+        You can use this method to avoid password sign-in.
+    </MudText>
+</MudStack>
 
 @code {
-    private LinkedAccountDataModel Model { get; set; } = new();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await LoadAsync();
-            StateHasChanged();
-        }
-    }
-
-    private async Task LoadAsync()
-    {
-        var result = await UserService.GetUserLinkedAccountsAsync(UserState.UserId);
-
-        if (result.Success)
-        {
-            var response = result.Get<List<UserOAuthProviderDto>>()!;
-            Model = new()
-            {
-                LinkedAccounts = response
-            };
-        }
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private class LinkedAccountDataModel
-    {
-        public List<UserOAuthProviderDto> LinkedAccounts { get; set; } = [];
-    }
+    [Parameter] public LinkedAccountsData Model { get; set; } = new();
 }

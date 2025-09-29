@@ -1,0 +1,61 @@
+﻿@inject ISnackbar Snackbar
+@inject IUserService UserService
+@inject UserState UserState
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h5">
+        Sign-in methods
+    </MudText>
+    @if (Model is not null)
+    {
+        <MudPaper Class="pt-3 pb-3" Outlined="true">
+            <MudStack Spacing="3">
+                <PasswordSection Model="Model.PasswordData" OnRefreshAsync="RefreshAsync"/>
+                <MudDivider/>
+                <LinkedAccountsSection Model="Model.LinkedAccountsData"/>
+                <MudDivider/>
+                <PasskeysSection Model="Model.PasskeysData"/>
+            </MudStack>
+        </MudPaper>
+    }
+    else
+    {
+        <MudPaper Outlined="true" Class="pa-3">
+            <MudStack Spacing="1" Class="mt-3" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+                <MudText Align="Align.Center">
+                    <strong>Loading...</strong>
+                </MudText>
+            </MudStack>
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    private UserLoginMethodsDto? Model { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task RefreshAsync()
+    {
+        await LoadAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserLoginMethodsAsync(UserState.UserId);
+        if (result.Success)
+        {
+            Model = result.Get<UserLoginMethodsDto>()!;
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+}

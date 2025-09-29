@@ -13,14 +13,8 @@
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6">
         <MudStack Spacing="3">
-            <MudText Typo="Typo.h6">Password and authentication</MudText>
-            <MudDivider/>
-            <MudStack Spacing="2" Justify="Justify.Center">
-                <PasswordSection />
-                <PasskeysSection />
-                <LinkedAccountsSection />
-                <TwoFactorSection />
-            </MudStack>
+            <SignInMethods/>
+            <TwoFactorAuthentication/>
         </MudStack>
     </MudItem>
 </MudGrid>
