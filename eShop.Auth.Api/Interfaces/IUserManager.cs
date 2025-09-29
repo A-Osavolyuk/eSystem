@@ -38,6 +38,9 @@ public interface IUserManager
 
     public ValueTask<Result> RemoveEmailAsync(UserEntity user, string email,
         CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> RemovePasswordAsync(UserEntity user,
+        CancellationToken cancellationToken = default);
 
     public ValueTask<Result> ChangeEmailAsync(UserEntity user, string currentEmail, string newEmail,
         CancellationToken cancellationToken = default);

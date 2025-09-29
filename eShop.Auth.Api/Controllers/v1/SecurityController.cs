@@ -200,6 +200,20 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Remove password")]
+    [EndpointDescription("Remove password")]
+    [ProducesResponseType(200)]
+    [HttpPost("password/remove")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> RemovePasswordAsync(RemovePasswordRequest request)
+    {
+        var result = await sender.Send(new RemovePasswordCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Change email")]
     [EndpointDescription("Change email")]
