@@ -5,7 +5,6 @@ global using eShop.Application.Filters;
 global using eShop.Application.Utilities;
 global using eShop.Auth.Api.Data;
 global using eShop.Auth.Api.Entities;
-global using eShop.Auth.Api.Enums;
 global using eShop.Auth.Api.Extensions;
 global using eShop.Auth.Api.Features.Security.Commands;
 global using eShop.Auth.Api.Interfaces;
