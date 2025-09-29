@@ -104,7 +104,8 @@
 </MudStack>
 
 @code {
-    private TwoFactorData Model { get; set; } = new();
+    [Parameter] 
+    public TwoFactorData Model { get; set; } = new();
 
     private string OnSubscribe(string provider)
     {

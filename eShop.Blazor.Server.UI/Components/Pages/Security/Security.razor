@@ -4,17 +4,52 @@
 @inherits PageBase
 
 @inject IUserService UserService
-@inject IDialogService DialogService
 
 @attribute [Authorize]
 
 <Title Text="Password and authentication"></Title>
 
-<MudGrid Justify="Justify.Center">
-    <MudItem xs="6">
-        <MudStack Spacing="5">
-            <SignInMethods/>
-            <TwoFactorAuthentication/>
-        </MudStack>
-    </MudItem>
-</MudGrid>
+@if (Model is not null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="6">
+            <MudStack Spacing="5">
+                <SignInMethods Model="Model" OnRefreshAsync="RefreshAsync"/>
+                <TwoFactorAuthentication Model="Model.TwoFactorData"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudLoading Text="Loading..." Loading="true"/>
+}
+
+@code {
+    private UserLoginMethodsDto? Model { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task RefreshAsync()
+    {
+        await LoadAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserLoginMethodsAsync(UserState.UserId);
+        if (result.Success)
+        {
+            Model = result.Get<UserLoginMethodsDto>()!;
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+}
