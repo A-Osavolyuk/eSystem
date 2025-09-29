@@ -7,10 +7,11 @@ public class MessageRegistry
     private Dictionary<(SenderType, CodeResource, CodeType), Type> configurations = [];
 
     public void Add<TMessageType>(SenderType sender, CodeResource resource, CodeType type)
+        where TMessageType : Message
     {
-        if (configurations.ContainsKey((sender, resource, type))) 
+        if (configurations.ContainsKey((sender, resource, type)))
             throw new Exception("Message with same key is already registered");
-        
+
         configurations[(sender, resource, type)] = typeof(TMessageType);
     }
 

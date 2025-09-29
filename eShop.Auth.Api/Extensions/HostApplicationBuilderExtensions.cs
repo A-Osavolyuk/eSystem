@@ -264,6 +264,8 @@ public static class HostApplicationBuilderExtensions
             cfg.Add<VerifyDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Verify);
             cfg.Add<TwoFactorCodeEmailMessage>(SenderType.Email, CodeResource.TwoFactor, CodeType.SignIn);
             cfg.Add<EnableEmailTwoFactorMessage>(SenderType.Email, CodeResource.Provider, CodeType.Subscribe);
+            cfg.Add<EnableMethodMessage>(SenderType.Email, CodeResource.LoginMethod, CodeType.Enable);
+            cfg.Add<DisableMethodMessage>(SenderType.Email, CodeResource.LoginMethod, CodeType.Disable);
             cfg.Add<ChangePhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Current);
             cfg.Add<RemovePhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Remove);
             cfg.Add<ResetPhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Reset);
