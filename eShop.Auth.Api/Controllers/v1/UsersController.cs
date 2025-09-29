@@ -90,6 +90,19 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Get user login methods")]
+    [EndpointDescription("Gets user login methods")]
+    [ProducesResponseType(200)]
+    [HttpGet("login-methods")]
+    public async ValueTask<IActionResult> GetUserLoginMethods(Guid id)
+    {
+        var result = await sender.Send(new GetUserLoginMethodsQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Get user emails")]
     [EndpointDescription("Gets user emails")]
