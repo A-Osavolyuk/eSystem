@@ -46,5 +46,6 @@ public class UserEntity : Entity
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
     public bool HasProviders() => TwoFactorProviders.Any(x => x.Subscribed);
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
+    public bool HasPasskeys() => Passkeys.Count > 0;
     public bool HasLoginMethod(LoginType type) => LoginMethods.Any(x => x.Method.Type == type);
 }

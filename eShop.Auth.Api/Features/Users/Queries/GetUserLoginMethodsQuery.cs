@@ -16,12 +16,50 @@ public class GetUserLoginMethodsQueryHandler(
 
         var response = new UserLoginMethodsDto()
         {
-            HasPassword = user.HasLoginMethod(LoginType.Password),
-            HasTwoFactor = user.HasLoginMethod(LoginType.TwoFactor),
-            HasLinkedAccounts = user.HasLoginMethod(LoginType.OAuth),
-            HasPasskeys = user.HasLoginMethod(LoginType.Passkey),
+            PasswordData = new PasswordData()
+            {
+                Enabled = user.HasLoginMethod(LoginType.Password),
+                HasPassword = user.HasPassword(),
+                LastChange = user.PasswordChangeDate
+            },
+            TwoFactorData = new TwoFactorData()
+            {
+                Enabled = user.HasLoginMethod(LoginType.TwoFactor),
+                HasTwoFactor = user.TwoFactorEnabled,
+                Providers = user.TwoFactorProviders.Select(x => new UserProviderDto()
+                {
+                    Id = x.TwoFactorProvider.Id,
+                    Name = x.TwoFactorProvider.Name,
+                    Subscribed = x.Subscribed,
+                    UpdateDate = x.UpdateDate
+                }).ToList()
+            },
+            LinkedAccountsData = new LinkedAccountsData()
+            {
+                Enabled = user.HasLoginMethod(LoginType.OAuth),
+                HasLinkedAccounts = user.HasLinkedAccount(),
+                LinkedAccounts = user.LinkedAccounts.Select(x => new UserOAuthProviderDto()
+                {
+                    Id = x.Provider.Id,
+                    Name = x.Provider.Name,
+                    IsAllowed = x.Allowed,
+                    DisallowedDate = x.UpdateDate,
+                    LinkedDate = x.CreateDate
+                }).ToList()
+            },
+            PasskeysData = new PasskeysData()
+            {
+                Enabled = user.HasLoginMethod(LoginType.Passkey),
+                HasPasskeys = user.HasPasskeys(),
+                Passkeys = user.Passkeys.Select(x => new UserPasskeyDto()
+                {
+                    Id = x.Id,
+                    DisplayName = x.DisplayName,
+                    CreateDate = x.UpdateDate
+                }).ToList()
+            }
         };
-        
+
         return Result.Success(response);
     }
 }
