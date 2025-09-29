@@ -46,6 +46,10 @@ public class UserService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/passkeys", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<HttpResponse> GetUserLoginMethodsAsync(Guid id) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/login-methods", Method = HttpMethod.Get },
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/phone-numbers", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
