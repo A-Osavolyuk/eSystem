@@ -54,4 +54,9 @@ public enum CodeResource
     /// The user's two-factor authentication provider
     /// </summary>
     Provider,
+    
+    /// <summary>
+    /// The user's login method
+    /// </summary>
+    LoginMethod,
 }

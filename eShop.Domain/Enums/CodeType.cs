@@ -84,4 +84,14 @@ public enum CodeType
     /// Represents user's account access recovery
     /// </summary>
     Recover,
+    
+    /// <summary>
+    /// Represents user's login method enable
+    /// </summary>
+    Enable,
+    
+    /// <summary>
+    /// Represents user's login method disable
+    /// </summary>
+    Disable,
 }
