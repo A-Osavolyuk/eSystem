@@ -1,0 +1,128 @@
+﻿@page "/account/login/disable-method"
+
+@inherits PageBase
+
+@inject CodeModelValidator Validator
+@inject ISecurityService SecurityService
+
+@attribute [Authorize]
+
+@switch (Type)
+{
+    case LoginTypes.Password: <Title Text="Password login disable"></Title> break;
+    case LoginTypes.TwoFactor: <Title Text="Two-factor login disable"></Title> break;
+    case LoginTypes.OAuth: <Title Text="Linked account login disable"></Title> break;
+    case LoginTypes.Passkey: <Title Text="Passkey login disable"></Title> break;
+}
+
+<MudGrid Justify="Justify.Center" Spacing="1">
+    <MudItem xs="4" Style="margin-top: 100px">
+        <MudStack Spacing="1" Justify="Justify.Center">
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4">
+                    Login method disable
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudStack Spacing="3" Justify="Justify.Center">
+                    <MudText Align="Align.Center">
+                        We have sent an email with 6-digit code to email:
+                        <strong>@UserState.Credentials?.PrimaryEmail!</strong>
+                    </MudText>
+                    <MudForm
+                        @ref="form"
+                        Model="Model"
+                        Validation="Validator.ValidateValue">
+                        <MudCodeInput
+                            Class="d-flex align-items-center"
+                            Variant="Variant.Outlined"
+                            Spacing="2"
+                            Margin="Margin.None"
+                            Count="6"
+                            @bind-Value="Model.Code"/>
+                    </MudForm>
+                    <MudLoadingButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        FullWidth
+                        Disabled="@(Model.Code.Length <= 5)"
+                        OnClick="@(async () => await OnVerifyAsync())">
+                        Verify
+                    </MudLoadingButton>
+                </MudStack>
+            </MudPaper>
+            <CodeResend Context="context"></CodeResend>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = string.Empty;
+
+    public CodeModel Model { get; set; } = new();
+
+    private MudForm form = new();
+    private MessageContext? context;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            context = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Resource = CodeResource.LoginMethod,
+                Type = CodeType.Disable,
+                Sender = SenderType.Email,
+                Payload = new()
+                {
+                    { "To", UserState.Credentials?.PrimaryEmail! },
+                    { "Method", Type },
+                }
+            };
+
+            var request = context.ToSendCodeRequest();
+            var result = await SecurityService.SendCodeAsync(request);
+            if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = context!.ToVerifyCodeRequest(Model.Code);
+            var result = await SecurityService.VerifyCodeAsync(request);
+            if (result.Success) await EnableAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task EnableAsync()
+    {
+        var method = Type switch
+        {
+            LoginTypes.Passkey => LoginType.Passkey,
+            LoginTypes.Password => LoginType.Password,
+            LoginTypes.OAuth => LoginType.OAuth,
+            LoginTypes.TwoFactor => LoginType.TwoFactor,
+            _ => throw new NotSupportedException("Unsupported login type")
+        };
+
+        var request = new DisableMethodRequest()
+        {
+            UserId = UserState.UserId,
+            Type = method
+        };
+
+        var result = await SecurityService.DisableLoginMethodAsync(request);
+        if (result.Success) NavigationManager.NavigateTo("/account/security");
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+}
