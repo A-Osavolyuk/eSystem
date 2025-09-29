@@ -1,0 +1,70 @@
+﻿<MudStack Spacing="0" Class="px-3 pb-2">
+    <MudStack Row="true" Spacing="0">
+        <MudText Typo="Typo.h6">Two-factor authentication (2FA)</MudText>
+        @if (Model.Enabled)
+        {
+            <MudChip 
+                T="string"
+                Color="Color.Success"
+                Variant="Variant.Outlined"
+                Size="Size.Small">
+                Enabled
+            </MudChip>
+        }
+        else
+        {
+            <MudChip 
+                T="string"
+                Color="Color.Error"
+                Variant="Variant.Outlined"
+                Size="Size.Small">
+                Disabled
+            </MudChip>
+        }
+        <MudSpacer/>
+        @if (!Model.Enabled)
+        {
+            <MudButton
+                Variant="Variant.Filled"
+                Color="Color.Success"
+                ButtonType="ButtonType.Button"
+                Href=@($"/account/login/enable?type={LoginTypes.TwoFactor}")>
+                Enable two-factor authentication
+            </MudButton>
+        }
+        else
+        {
+            <MudMenu
+                Dense="true">
+                <ActivatorContent>
+                    <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                </ActivatorContent>
+                <ChildContent>
+                    @if (Model.Enabled)
+                    {
+                        <MudMenuItem
+                            Href=@($"/account/login/disable?type={LoginTypes.TwoFactor}")
+                            Class="mud-error-text">
+                            Disable method
+                        </MudMenuItem>
+                    }
+                </ChildContent>
+            </MudMenu>
+        }
+    </MudStack>
+    <MudText Class="opacity-50" Typo="Typo.caption">
+        Two-factor authentication adds an additional layer of security
+        to your account by requiring more than just a password to sign in.
+    </MudText>
+</MudStack>
+
+@code {
+    [Parameter] public TwoFactorData Model { get; set; } = new();
+    
+    private string OnSubscribe(string provider)
+    {
+        return provider == ProviderTypes.Authenticator
+            ? "/account/2fa/authenticator/enable"
+            : $"/account/2fa/provider/enable?provider={provider}";
+    }
+}

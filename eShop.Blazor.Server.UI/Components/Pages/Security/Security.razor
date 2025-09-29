@@ -13,9 +13,21 @@
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
-            <MudStack Spacing="5">
-                <SignInMethods Model="Model" OnRefreshAsync="RefreshAsync"/>
-                <TwoFactorAuthentication Model="Model.TwoFactorData"/>
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.h5">
+                    Sign-in methods
+                </MudText>
+                <MudPaper Class="pt-3 pb-3" Outlined="true">
+                    <MudStack Spacing="3">
+                        <PasswordSection Model="Model.PasswordData" OnRefreshAsync="RefreshAsync"/>
+                        <MudDivider/>
+                        <LinkedAccountsSection Model="Model.LinkedAccountsData"/>
+                        <MudDivider/>
+                        <PasskeysSection Model="Model.PasskeysData"/>
+                        <MudDivider/>
+                        <TwoFactorSection Model="Model.TwoFactorData"/>
+                    </MudStack>
+                </MudPaper>
             </MudStack>
         </MudItem>
     </MudGrid>
