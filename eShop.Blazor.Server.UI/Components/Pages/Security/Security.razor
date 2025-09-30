@@ -13,28 +13,31 @@
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
-            <MudStack Spacing="3">
-                <MudText Typo="Typo.h5">
-                    Sign-in methods
-                </MudText>
-                <MudPaper Class="pt-3 pb-3" Outlined="true">
-                    <MudStack Spacing="3">
-                        <PasswordSection Model="Model.PasswordData" OnRefreshAsync="RefreshAsync"/>
-                        <MudDivider/>
-                        <LinkedAccountsSection Model="Model.LinkedAccountsData"/>
-                        <MudDivider/>
-                        <PasskeysSection Model="Model.PasskeysData"/>
-                        <MudDivider/>
-                        <TwoFactorSection Model="Model.TwoFactorData"/>
-                    </MudStack>
-                </MudPaper>
+            <MudStack Spacing="4">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h5">
+                        Sign-in methods
+                    </MudText>
+                    <MudPaper Class="pt-3 pb-3" Outlined="true">
+                        <MudStack Spacing="3">
+                            <PasswordSection Model="Model.PasswordData" OnRefreshAsync="RefreshAsync"/>
+                            <MudDivider/>
+                            <LinkedAccountsSection Model="Model.LinkedAccountsData"/>
+                            <MudDivider/>
+                            <PasskeysSection Model="Model.PasskeysData"/>
+                        </MudStack>
+                    </MudPaper>
+                </MudStack>
+                <TwoFactorSection Model="Model.TwoFactorData"/>
             </MudStack>
         </MudItem>
     </MudGrid>
 }
 else
 {
-    <MudLoading Text="Loading..." Loading="true"/>
+    <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Style="margin-top: 150px">
+        <MudLoading Text="Loading..." Loading="true"/>
+    </MudStack>
 }
 
 @code {
