@@ -2,7 +2,7 @@
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
 public record GenerateQrCodeCommand(GenerateQrCodeRequest Request) : IRequest<Result>;
 
@@ -14,7 +14,7 @@ public class GenerateQrCodeCommandHandler(
     private readonly IUserManager userManager = userManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly SecretProtector protector = protector;
-    private const string QrCodeIssuer = "eShop";
+    private const string QrCodeIssuer = "eAccount";
 
     public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
