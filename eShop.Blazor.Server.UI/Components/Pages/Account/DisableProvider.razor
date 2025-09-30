@@ -106,10 +106,20 @@
                                             @ref="form"
                                             Model="Model">
                                             <MudStack Spacing="2">
-                                                <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from the email we sent you to:
-                                                    <strong>@UserState.Credentials?.PrimaryEmail</strong>
-                                                </MudText>
+                                                @if (Provider == ProviderTypes.Authenticator)
+                                                {
+                                                    <MudText Class="mb-2" Align="Align.Center">
+                                                        Enter code from your Authenticator App
+                                                        (like Google Authenticator, Microsoft Authenticator, etc.)
+                                                    </MudText>
+                                                }
+                                                else
+                                                {
+                                                    <MudText Class="mb-2" Align="Align.Center">
+                                                        Enter code from the email we sent you to:
+                                                        <strong>@UserState.Credentials?.PrimaryEmail</strong>
+                                                    </MudText>
+                                                }
 
                                                 <MudCodeInput
                                                     Count="6"
@@ -169,6 +179,7 @@
                     {
                         SenderType.Email => UserState.Credentials?.PrimaryEmail!,
                         SenderType.Sms => UserState.Credentials?.PrimaryPhoneNumber!,
+                        SenderType.AuthenticatorApp => string.Empty,
                         _ => throw new NotSupportedException("Not supported provider")
                     }
                 }
