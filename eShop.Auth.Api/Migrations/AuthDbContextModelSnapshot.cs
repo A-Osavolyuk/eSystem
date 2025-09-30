@@ -1284,7 +1284,7 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorProviderEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "TwoFactorProvider")
+                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "Provider")
                         .WithMany()
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1296,7 +1296,7 @@ namespace eShop.Auth.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("TwoFactorProvider");
+                    b.Navigation("Provider");
 
                     b.Navigation("User");
                 });
