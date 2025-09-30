@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250925094631_Initial")]
+    [Migration("20250930110314_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -518,10 +518,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
@@ -939,9 +938,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<bool>("Subscribed")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
@@ -983,27 +979,6 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Verifications");
-                });
-
-            modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationProviderEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VerificationProviderEntity");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.AuthorizationSessionEntity", b =>
@@ -1287,7 +1262,7 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorProviderEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "TwoFactorProvider")
+                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "Provider")
                         .WithMany()
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1299,7 +1274,7 @@ namespace eShop.Auth.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("TwoFactorProvider");
+                    b.Navigation("Provider");
 
                     b.Navigation("User");
                 });
