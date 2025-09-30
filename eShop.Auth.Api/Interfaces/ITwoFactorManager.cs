@@ -6,6 +6,5 @@ public interface ITwoFactorManager
         CancellationToken cancellationToken = default);
     public ValueTask<Result> SubscribeAsync(UserEntity user, ProviderType type, bool isPrimary = false,
         CancellationToken cancellationToken = default);
-    public ValueTask<Result> UnsubscribeAsync(List<UserTwoFactorProviderEntity> providers,
-        CancellationToken cancellationToken = default);
+    public ValueTask<Result> UnsubscribeAsync(UserEntity user, CancellationToken cancellationToken = default);
 }

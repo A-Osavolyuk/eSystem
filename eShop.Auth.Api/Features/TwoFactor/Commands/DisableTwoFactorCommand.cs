@@ -6,23 +6,25 @@ public record DisableTwoFactorCommand(DisableTwoFactorRequest Request) : IReques
 
 public class DisableTwoFactorCommandHandler(
     IUserManager userManager,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<DisableTwoFactorCommand, Result>
+    ITwoFactorManager twoFactorManager,
+    IVerificationManager verificationManager) : IRequestHandler<DisableTwoFactorCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(DisableTwoFactorCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         if (!user.TwoFactorEnabled) return Results.BadRequest("2FA already disabled.");
+        
+        var verificationResult = await verificationManager.VerifyAsync(user,
+            CodeResource.TwoFactor, CodeType.Disable, cancellationToken);
 
-        user.TwoFactorEnabled = false;
-        var userResult = await userManager.UpdateAsync(user, cancellationToken);
-        if (!userResult.Succeeded) return userResult;
-
-        var providers = user.TwoFactorProviders.ToList();
-        var providerResult = await twoFactorManager.UnsubscribeAsync(providers, cancellationToken);
+        if (!verificationResult.Succeeded) return verificationResult;
+        
+        var providerResult = await twoFactorManager.UnsubscribeAsync(user, cancellationToken);
         return providerResult;
     }
 }
