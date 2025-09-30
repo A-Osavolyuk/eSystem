@@ -368,10 +368,5 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithMany()
                 .HasForeignKey(x => x.UserId);
         });
-
-        builder.Entity<VerificationProviderEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-        });
     }
 }
