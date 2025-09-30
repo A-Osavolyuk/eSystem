@@ -17,17 +17,9 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
         var providers = user.TwoFactorProviders.ToList();
         var result = providers.Select(provider => new UserProviderDto()
         {
-            Id = provider.TwoFactorProvider.Id,
-            Name = provider.TwoFactorProvider.Name,
-            Subscribed = provider.Subscribed,
+            Id = provider.Provider.Id,
+            Type = provider.Provider.Type,
             UpdateDate = provider.UpdateDate,
-            Credential = provider.TwoFactorProvider.Name switch
-            {
-                ProviderTypes.Email => user.GetEmail(EmailType.Primary)?.Email,
-                ProviderTypes.Sms => user.GetPhoneNumber(PhoneNumberType.Primary)?.PhoneNumber,
-                _ => null
-            }
-            
         }).ToList();
         
         return Result.Success(result);

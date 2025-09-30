@@ -114,26 +114,6 @@ public static class Mapper
         };
     }
 
-    public static UserProviderDto Map(UserTwoFactorProviderEntity source)
-    {
-        return new UserProviderDto()
-        {
-            Id = source.TwoFactorProvider.Id,
-            Name = source.TwoFactorProvider.Name,
-            Subscribed = source.Subscribed,
-            UpdateDate = source.UpdateDate,
-        };
-    }
-    
-    public static ProviderDto Map(TwoFactorProviderEntity source)
-    {
-        return new ProviderDto()
-        {
-            Id = source.Id,
-            Name = source.Name,
-        };
-    }
-
     public static LockoutStateDto Map(LockoutStateEntity source)
     {
         return new()

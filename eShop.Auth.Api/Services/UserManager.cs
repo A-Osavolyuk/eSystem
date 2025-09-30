@@ -18,7 +18,7 @@ public sealed class UserManager(
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorProviders)
-            .ThenInclude(x => x.TwoFactorProvider)
+            .ThenInclude(x => x.Provider)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.LoginMethods)
@@ -47,7 +47,7 @@ public sealed class UserManager(
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorProviders)
-            .ThenInclude(x => x.TwoFactorProvider)
+            .ThenInclude(x => x.Provider)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.LoginMethods)
@@ -72,7 +72,7 @@ public sealed class UserManager(
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorProviders)
-            .ThenInclude(x => x.TwoFactorProvider)
+            .ThenInclude(x => x.Provider)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.LoginMethods)
@@ -99,7 +99,7 @@ public sealed class UserManager(
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorProviders)
-            .ThenInclude(x => x.TwoFactorProvider)
+            .ThenInclude(x => x.Provider)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.LoginMethods)
@@ -128,7 +128,7 @@ public sealed class UserManager(
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorProviders)
-            .ThenInclude(x => x.TwoFactorProvider)
+            .ThenInclude(x => x.Provider)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.LoginMethods)
@@ -465,7 +465,6 @@ public sealed class UserManager(
             UserId = user.Id,
             ProviderId = x.Id,
             CreateDate = DateTimeOffset.UtcNow,
-            Subscribed = false
         }).ToList();
 
         if (!string.IsNullOrEmpty(password))

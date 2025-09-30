@@ -2,5 +2,5 @@
 
 public class SendTwoFactorTokenModel
 {
-    public string Provider { get; set; } = string.Empty;
+    public ProviderType Type { get; set; }
 }

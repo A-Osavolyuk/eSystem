@@ -4,7 +4,7 @@ public interface ITwoFactorManager
 {
     public ValueTask<List<TwoFactorProviderEntity>> GetAllAsync(
         CancellationToken cancellationToken = default);
-    public ValueTask<TwoFactorProviderEntity?> FindByNameAsync(string providerName, 
+    public ValueTask<TwoFactorProviderEntity?> FindByTypeAsync(ProviderType type, 
         CancellationToken cancellationToken = default);
     public ValueTask<TwoFactorProviderEntity?> FindByIdAsync(Guid id, 
         CancellationToken cancellationToken = default);

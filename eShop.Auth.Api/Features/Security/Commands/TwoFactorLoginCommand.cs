@@ -67,9 +67,9 @@ public sealed class LoginWith2FaCommandHandler(
             if (!result.Succeeded) return result;
         }
         
-        var provider = await twoFactorManager.FindByNameAsync(request.Request.Provider, cancellationToken);
+        var provider = await twoFactorManager.FindByTypeAsync(request.Request.Type, cancellationToken);
         if (provider is null) 
-            return Results.NotFound($"Cannot find provider with name {request.Request.Provider}.");
+            return Results.NotFound($"Cannot find provider with type {request.Request.Type}.");
         
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
         if (lockoutState.Enabled) 
@@ -77,11 +77,10 @@ public sealed class LoginWith2FaCommandHandler(
 
         var code = request.Request.Code;
 
-        var sender = provider.Name switch
+        var sender = provider.Type switch
         {
-            ProviderTypes.Email => SenderType.Email,
-            ProviderTypes.Sms => SenderType.Sms,
-            ProviderTypes.Authenticator => SenderType.AuthenticatorApp,
+            ProviderType.Sms => SenderType.Sms,
+            ProviderType.AuthenticatorApp => SenderType.AuthenticatorApp,
             _ => throw new NotSupportedException("Unknown provider type")
         };
         
@@ -144,7 +143,7 @@ public sealed class LoginWith2FaCommandHandler(
         
         response = new LoginResponse() { UserId = user.Id, };
         
-        await loginManager.CreateAsync(device, LoginType.TwoFactor, provider.Name, cancellationToken);
+        await loginManager.CreateAsync(device, LoginType.TwoFactor, provider.Type.ToString(), cancellationToken);
         await authorizationManager.CreateAsync(device, cancellationToken);
         
         return Result.Success(response, "Successfully logged in.");

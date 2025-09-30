@@ -27,13 +27,6 @@ public class RemoveEmailCommandHandler(
                 return Results.BadRequest(
                     "Cannot remove the primary email, because it is the only authentication method");
             }
-            
-            if (user.TwoFactorProviders.Any(x => x is
-                    { Subscribed: true, TwoFactorProvider.Name: ProviderTypes.Email }))
-            {
-                return Results.BadRequest(
-                    "Cannot remove the primary email, because 2FA with Email is enabled.");
-            }
 
             if (user.LinkedAccounts.Count >= 1)
             {

@@ -11,11 +11,11 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return providers;
     }
 
-    public async ValueTask<TwoFactorProviderEntity?> FindByNameAsync(string providerName,
+    public async ValueTask<TwoFactorProviderEntity?> FindByTypeAsync(ProviderType type,
         CancellationToken cancellationToken = default)
     {
         var provider = await context.TwoFactorProviders.FirstOrDefaultAsync(
-            x => x.Name == providerName, cancellationToken);
+            x => x.Type == type, cancellationToken);
         
         return provider;
     }
@@ -40,8 +40,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         {
             return Results.NotFound("Not found user provider");
         }
-
-        userProvider.Subscribed = true;
+        
         userProvider.UpdateDate = DateTimeOffset.UtcNow;
 
         context.UserTwoFactorProviders.Update(userProvider);
@@ -55,7 +54,6 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     {
         foreach (var provider in providers)
         {
-            provider.Subscribed = false;
             provider.UpdateDate = DateTimeOffset.UtcNow;
         }
         

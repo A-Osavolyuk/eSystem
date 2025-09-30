@@ -149,7 +149,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<TwoFactorProviderEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Name).HasMaxLength(64);
+            entity.Property(x => x.Type).HasEnumConversion();
         });
         
         builder.Entity<UserSecretEntity>(entity =>
@@ -170,7 +170,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithMany(x => x.TwoFactorProviders)
                 .HasForeignKey(x => x.UserId);
 
-            entity.HasOne(x => x.TwoFactorProvider)
+            entity.HasOne(x => x.Provider)
                 .WithMany()
                 .HasForeignKey(x => x.ProviderId);
         });
