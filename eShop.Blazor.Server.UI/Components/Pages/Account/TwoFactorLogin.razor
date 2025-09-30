@@ -38,11 +38,12 @@
                                                     You will receive a 6-digit code from the selected provider.
                                                 </MudText>
                                             </MudItem>
-                                            @foreach (var provider in providers.Where(x => x.Subscribed))
+                                            @foreach (var provider in providers)
                                             {
-                                                switch (provider.Name)
+                                                switch (provider.Type)
                                                 {
-                                                    case ProviderTypes.Authenticator:
+                                                    case ProviderType.AuthenticatorApp:
+                                                    {
                                                         <MudItem xs="12">
                                                             <MudLoadingButton
                                                                 ButtonType="ButtonType.Button"
@@ -52,11 +53,13 @@
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
                                                                 FullWidth>
-                                                                Send with @provider.Name
+                                                                Send with @provider.Type.ToString()
                                                             </MudLoadingButton>
                                                         </MudItem>
                                                         break;
-                                                    case ProviderTypes.Sms:
+                                                    }
+                                                    case ProviderType.Sms:
+                                                    {
                                                         <MudItem xs="12">
                                                             <MudLoadingButton
                                                                 ButtonType="ButtonType.Button"
@@ -66,24 +69,11 @@
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
                                                                 FullWidth>
-                                                                Send with @provider.Name
+                                                                Send with @provider.Type.ToString()
                                                             </MudLoadingButton>
                                                         </MudItem>
                                                         break;
-                                                    case ProviderTypes.Email:
-                                                        <MudItem xs="12">
-                                                            <MudLoadingButton
-                                                                ButtonType="ButtonType.Button"
-                                                                StartIcon="@Icons.Material.Filled.Email"
-                                                                OnClick="@(async () => await OnSendCodeAsync(provider))"
-                                                                Variant="Variant.Filled"
-                                                                Color="Color.Primary"
-                                                                Size="Size.Large"
-                                                                FullWidth>
-                                                                Send with @provider.Name
-                                                            </MudLoadingButton>
-                                                        </MudItem>
-                                                        break;
+                                                    }
                                                 }
                                             }
                                         </MudGrid>
@@ -118,20 +108,9 @@
                                         Validation="TwoFactorLoginValidator.ValidateValue">
                                         <MudStack Spacing="2">
 
-                                            @switch (SendTwoFactorTokenModel.Provider)
+                                            @switch (SendTwoFactorTokenModel.Type)
                                             {
-                                                case ProviderTypes.Email:
-                                                {
-                                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
-                                                             Style="width: 50ch; margin: auto">
-                                                        Now enter the 6-digit code we sent to your email address.
-                                                        If you don't receive the code, check your spam folder.
-                                                        If you still don't receive the code, click the send button
-                                                        again.
-                                                    </MudText>
-                                                    break;
-                                                }
-                                                case ProviderTypes.Sms:
+                                                case ProviderType.Sms:
                                                 {
                                                     <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                                              Style="width: 50ch; margin: auto">
@@ -142,7 +121,7 @@
                                                     </MudText>
                                                     break;
                                                 }
-                                                case ProviderTypes.Authenticator:
+                                                case ProviderType.AuthenticatorApp:
                                                 {
                                                     <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                                              Style="width: 50ch; margin: auto">
@@ -174,7 +153,7 @@
                                         </MudStack>
                                     </MudForm>
                                 </MudPaper>
-                                @if (SendTwoFactorTokenModel.Provider != ProviderTypes.Authenticator)
+                                @if (SendTwoFactorTokenModel.Type != ProviderType.AuthenticatorApp)
                                 {
                                     <CodeResend Context="context"></CodeResend>
                                 }
@@ -207,7 +186,7 @@
 
         if (providers.Count == 1)
         {
-            SendTwoFactorTokenModel.Provider = providers.First().Name;
+            SendTwoFactorTokenModel.Type = providers.First().Type;
         }
     }
 
@@ -227,29 +206,27 @@
 
     private async Task OnSendCodeAsync(UserProviderDto provider)
     {
-        SendTwoFactorTokenModel.Provider = provider.Name;
+        SendTwoFactorTokenModel.Type = provider.Type;
         await sendTwoFactorTokenForm.Validate();
 
         if (sendTwoFactorTokenForm.IsValid)
         {
-            if (provider.Name == ProviderTypes.Authenticator)
+            if (provider.Type == ProviderType.AuthenticatorApp)
             {
                 await stepper.StepNextAsync();
             }
             else
             {
-                var sender = provider.Name switch
+                var sender = provider.Type switch
                 {
-                    ProviderTypes.Email => SenderType.Email,
-                    ProviderTypes.Sms => SenderType.Sms,
-                    ProviderTypes.Authenticator => SenderType.AuthenticatorApp,
+                    ProviderType.Sms => SenderType.Sms,
+                    ProviderType.AuthenticatorApp => SenderType.AuthenticatorApp,
                     _ => throw new NotSupportedException()
                 };
 
-                var payload = provider.Name switch
+                var payload = provider.Type switch
                 {
-                    ProviderTypes.Email => new Dictionary<string, string>() { { "To", provider.Credential! } },
-                    ProviderTypes.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
+                    ProviderType.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
                     _ => throw new NotSupportedException()
                 };
 
@@ -279,7 +256,7 @@
             var request = new TwoFactorLoginRequest
             {
                 Code = TwoFactorLoginModel.Code,
-                Provider = SendTwoFactorTokenModel.Provider,
+                Type = SendTwoFactorTokenModel.Type,
                 UserId = UserId
             };
 
@@ -325,4 +302,5 @@
             }
         }
     }
+
 }

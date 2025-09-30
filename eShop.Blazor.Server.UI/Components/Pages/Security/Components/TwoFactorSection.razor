@@ -30,16 +30,4 @@ else
 
 @code {
     [Parameter] public TwoFactorData Model { get; set; } = new();
-
-    private bool expanded = false;
-
-    private void ToggleExpand() => expanded = !expanded;
-
-    private string OnSubscribe(string provider)
-    {
-        return provider == ProviderTypes.Authenticator
-            ? "/account/2fa/authenticator/enable"
-            : $"/account/2fa/provider/enable?provider={provider}";
-    }
-
 }
