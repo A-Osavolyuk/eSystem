@@ -6,7 +6,7 @@
 @inject ISecurityService SecurityService
 @inject IProviderService ProviderService
 
-<Title Text="Passkey remove"></Title>
+<Title Text="Two-factor provider disable"></Title>
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6" Style="margin-top: 100px">
@@ -21,7 +21,7 @@
                                 <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
                                         <MudText Align="Align.Center" Typo="Typo.h4">
-                                            Passkey remove
+                                            Two-factor provider disable
                                         </MudText>
                                     </MudPaper>
                                     <MudPaper Outlined="true" Class="pa-5">
@@ -219,7 +219,7 @@
 
         if (result.Success)
         {
-            Snackbar.Add("Passkey was successfully removed", Severity.Success);
+            Snackbar.Add("Provider was successfully disabled", Severity.Success);
             NavigationManager.NavigateTo("/account/security");
         }
         else
