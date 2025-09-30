@@ -1,7 +1,7 @@
 ﻿@inject ISecurityService SecurityService
 @inject ISnackbar Snackbar
 
-@if (Context is not null)
+@if (Context is not null && Context.Sender != SenderType.AuthenticatorApp)
 {
     <MudPaper Outlined Class="pa-3">
         @if (Context.Sender == SenderType.Email)
