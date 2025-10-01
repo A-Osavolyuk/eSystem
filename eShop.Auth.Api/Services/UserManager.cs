@@ -215,18 +215,20 @@ public sealed class UserManager(
         CancellationToken cancellationToken = default)
     {
         var currentEmail = user.GetEmail(type);
-        if (currentEmail is null) return Results.BadRequest($"User doesn't have email with type {type}.");
+        if (currentEmail is not null)
+        {
+            currentEmail.Type = EmailType.Secondary;
+            currentEmail.UpdateDate = DateTimeOffset.UtcNow;
+            context.UserEmails.Update(currentEmail);
+        }
         
-        currentEmail.Type = EmailType.Secondary;
-        currentEmail.UpdateDate = DateTimeOffset.UtcNow;
-
         var nextEmail = user.GetEmail(email);
         if (nextEmail is null) return Results.BadRequest($"User doesn't have email {email}.");
         
         nextEmail.Type = type;
         nextEmail.UpdateDate = DateTimeOffset.UtcNow;
         
-        context.UserEmails.UpdateRange([currentEmail, nextEmail]);
+        context.UserEmails.Update(nextEmail);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
