@@ -306,6 +306,21 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Manager email")]
+    [EndpointDescription("Manager email")]
+    [ProducesResponseType(200)]
+    [HttpPost("email/manage")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> ManageEmailAsync(
+        [FromBody] ManageEmailRequest request)
+    {
+        var result = await sender.Send(new ManageEmailCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
 
     [EndpointSummary("Add phone number")]
     [EndpointDescription("Add phone number change")]

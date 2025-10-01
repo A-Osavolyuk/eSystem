@@ -94,4 +94,9 @@ public enum CodeType
     /// Represents user's login method disable
     /// </summary>
     Disable,
+    
+    /// <summary>
+    /// Represents user's emails role management
+    /// </summary>
+    Manage,
 }

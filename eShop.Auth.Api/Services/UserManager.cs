@@ -211,6 +211,27 @@ public sealed class UserManager(
         return Result.Success();
     }
 
+    public async ValueTask<Result> ManageEmailAsync(UserEntity user, EmailType type, string email,
+        CancellationToken cancellationToken = default)
+    {
+        var currentEmail = user.GetEmail(type);
+        if (currentEmail is null) return Results.BadRequest($"User doesn't have email with type {type}.");
+        
+        currentEmail.Type = EmailType.Secondary;
+        currentEmail.UpdateDate = DateTimeOffset.UtcNow;
+
+        var nextEmail = user.GetEmail(email);
+        if (nextEmail is null) return Results.BadRequest($"User doesn't have email {email}.");
+        
+        nextEmail.Type = type;
+        nextEmail.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.UserEmails.UpdateRange([currentEmail, nextEmail]);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
     public async ValueTask<Result> VerifyEmailAsync(UserEntity user, string email,
         CancellationToken cancellationToken = default)
     {

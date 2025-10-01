@@ -19,6 +19,9 @@ public interface IUserManager
     public ValueTask<Result> SetUsernameAsync(UserEntity user, string username, 
         CancellationToken cancellationToken = default);
 
+    public ValueTask<Result> ManageEmailAsync(UserEntity user, EmailType type, 
+        string email, CancellationToken cancellationToken = default);
+
     public ValueTask<Result> VerifyEmailAsync(UserEntity user, string email, 
         CancellationToken cancellationToken = default);
     public ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user, string phoneNumber, 

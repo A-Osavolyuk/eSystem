@@ -37,6 +37,9 @@ public class UserEntity : Entity
         => LoginMethods.First(x => x.Method.Type == type);
     public UserEmailEntity? GetEmail(EmailType type) 
         => Emails.FirstOrDefault(x => x.Type == type);
+    
+    public UserEmailEntity? GetEmail(string email) 
+        => Emails.FirstOrDefault(x => x.Email == email);
     public UserPhoneNumberEntity? GetPhoneNumber(PhoneNumberType type) 
         => PhoneNumbers.FirstOrDefault(x => x.Type == type);
 
