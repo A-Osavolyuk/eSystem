@@ -20,7 +20,7 @@ public interface ISecurityService
     public ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request);
     public ValueTask<HttpResponse> AddPasswordAsync(AddPasswordRequest request);
     public ValueTask<HttpResponse> ChangeEmailAsync(ChangeEmailRequest request);
-    public ValueTask<HttpResponse> ChangeRecoveryEmailAsync(ChangeRecoveryEmailRequest request);
+    public ValueTask<HttpResponse> ManageEmailAsync(ManageEmailRequest request);
     public ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request);
     public ValueTask<HttpResponse> ChangePhoneNumberAsync(ChangePhoneNumberRequest request);
     public ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request);
