@@ -251,6 +251,7 @@ public static class HostApplicationBuilderExtensions
             cfg.Add<ChangeEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Current);
             cfg.Add<ResetEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Reset);
             cfg.Add<ConfirmEmailChangeMessage>(SenderType.Email, CodeResource.Email, CodeType.New);
+            cfg.Add<ManageEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Manage);
             cfg.Add<UnblockAccountMessage>(SenderType.Email, CodeResource.Account, CodeType.Unlock);
             cfg.Add<RecoverAccountMessage>(SenderType.Email, CodeResource.Account, CodeType.Recover);
             cfg.Add<AllowLinkedAccountMessage>(SenderType.Email, CodeResource.LinkedAccount, CodeType.Allow);
