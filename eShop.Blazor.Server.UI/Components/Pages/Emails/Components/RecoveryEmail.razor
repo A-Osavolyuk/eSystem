@@ -1,0 +1,42 @@
+﻿@inject NavigationManager NavigationManager
+
+<MudPaper Outlined="true" Class="pa-5">
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="8">
+            <MudStack Spacing="1">
+                <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
+                    Recovery email address
+                </MudTextM3>
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                    Select an email to be used for account recovery. 
+                    Will be user as primary after account recovery.
+                </MudTextM3>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="4">
+            <MudSelect
+                T="string"
+                Value="@Model.RecoveryEmail?.Email"
+                ValueChanged="OnChange"
+                InputClass="py-1"
+                Variant="Variant.Outlined"
+                Immediate="true">
+                @foreach (var email in Model.Emails.Where(x => x.Type != EmailType.Primary))
+                {
+                    <MudSelectItem T="string" Value="email.Email">
+                        @email.Email
+                    </MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@code {
+    [Parameter] public UserEmailsModel Model { get; set; } = null!;
+    
+    private void OnChange(string email)
+    {
+        NavigationManager.NavigateTo($"/account/email/manage?email={email}&type={EmailTypes.Recovery}");
+    }
+}

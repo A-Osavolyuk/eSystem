@@ -1,0 +1,218 @@
+﻿@if (Model is not null)
+{
+    <MudPaper Outlined="true" Class="pa-5">
+        <MudStack Spacing="0">
+            <MudStack Row="true" Spacing="1">
+                <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
+                    @Model.Email
+                </MudTextM3>
+                @switch (Model.Type)
+                {
+                    case EmailType.Primary:
+                    {
+                        <MudTooltip Text="Default email address for eAccount">
+                            <MudChip
+                                T="string"
+                                Class="mx-0"
+                                Color="Color.Info"
+                                Variant="Variant.Outlined"
+                                Size="Size.Small">
+                                Primary
+                            </MudChip>
+                        </MudTooltip>
+                        break;
+                    }
+                    case EmailType.Recovery:
+                    {
+                        <MudTooltip Text="Default email address for an account recovery">
+                            <MudChip
+                                T="string"
+                                Class="mx-0"
+                                Color="Color.Info"
+                                Variant="Variant.Outlined"
+                                Size="Size.Small">
+                                Recovery
+                            </MudChip>
+                        </MudTooltip>
+                        break;
+                    }
+                    case EmailType.Secondary:
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Color="Color.Secondary"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Secondary
+                        </MudChip>
+                        break;
+                    }
+                }
+                @if (Model.IsVerified && Model.VerifiedDate.HasValue)
+                {
+                    <MudTooltip
+                        Text="@($"Verified at: {Model.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Color="Color.Success"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Verified
+                        </MudChip>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudTooltip Text="This email address is not verified">
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Color="Color.Error"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Unverified
+                        </MudChip>
+                    </MudTooltip>
+                }
+                @if (Model.UpdateDate.HasValue)
+                {
+                    <MudTooltip
+                        Text="@($"Last change: {Model.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Color="Color.Warning"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Changed
+                        </MudChip>
+                    </MudTooltip>
+                }
+                <MudSpacer/>
+                <MudMenu
+                    Dense="true">
+                    <ActivatorContent>
+                        <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                    </ActivatorContent>
+                    <ChildContent>
+                        @if (!Model.IsVerified)
+                        {
+                            switch (Model.Type)
+                            {
+                                case EmailType.Primary:
+                                {
+                                    <MudMenuItem Href=@($"/account/email/verify?type={EmailTypes.Primary}")>
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                            Verify email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    break;
+                                }
+                                case EmailType.Recovery:
+                                {
+                                    <MudMenuItem Href=@($"/account/email/verify?type={EmailTypes.Recovery}")>
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                            Verify email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    break;
+                                }
+                                case EmailType.Secondary:
+                                {
+                                    <MudMenuItem Href=@($"/account/email/verify?type={EmailTypes.Secondary}&email={Model.Email}")>
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                            Verify email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            switch (Model.Type)
+                            {
+                                case EmailType.Primary:
+                                {
+                                    <MudMenuItem Href=@($"/account/email/change?type={EmailTypes.Primary}")>
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                            Change email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    <MudDivider/>
+                                    <MudMenuItem Href="/account/email/reset">
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
+                                            Reset email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    <MudMenuItem Href=@($"/account/email/remove?type={EmailTypes.Primary}")>
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
+                                            Remove email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    break;
+                                }
+                                case EmailType.Recovery:
+                                {
+                                    <MudMenuItem Href=@($"/account/email/change?type={EmailTypes.Recovery}")>
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                            Change email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    <MudDivider/>
+                                    <MudMenuItem Href=@($"/account/email/remove?type={EmailTypes.Recovery}")>
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
+                                            Remove email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    break;
+                                }
+                                case EmailType.Secondary:
+                                {
+                                    <MudMenuItem Href=@($"/account/email/remove?type={EmailTypes.Secondary}&email={Model.Email}")>
+                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
+                                            Remove email
+                                        </MudTextM3>
+                                    </MudMenuItem>
+                                    break;
+                                }
+                            }
+                        }
+                    </ChildContent>
+                </MudMenu>
+            </MudStack>
+            @switch (Model.Type)
+            {
+                case EmailType.Primary:
+                {
+                    <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
+                        This email address is default for eAccount security purposes.
+                        Also you will receive notifications and verification codes to this email address.
+                    </MudTextM3>
+                    break;
+                }
+                case EmailType.Recovery:
+                {
+                    <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
+                        This email address is default for eAccount account access recover.
+                    </MudTextM3>
+                    break;
+                }
+                case EmailType.Secondary:
+                {
+                    <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
+                        These email address are additional.
+                        You can change their roles or just use in your personal purposes.
+                    </MudTextM3>
+                    break;
+                }
+            }
+        </MudStack>
+    </MudPaper>
+}
+
+@code {
+    [Parameter] public UserEmailDto? Model { get; set; }
+}

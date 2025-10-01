@@ -3,6 +3,6 @@
 public enum EmailType
 {
     Primary,
-    Secondary,
-    Recovery
+    Recovery,
+    Secondary
 }

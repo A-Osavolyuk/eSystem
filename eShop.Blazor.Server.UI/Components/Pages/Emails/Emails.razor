@@ -13,13 +13,25 @@
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
             <MudStack Spacing="3">
-                <MudText Typo="Typo.h6">Emails</MudText>
-                <MudDivider />
-                <MudStack Spacing="2">
-                    <PrimaryEmailSection Model="Model" />
-                    <SecondaryEmailsSection Model="Model" />
-                    <RecoveryEmailSection Model="Model" />
-                </MudStack>
+                <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">
+                    Emails
+                </MudTextM3>
+                <MudDivider/>
+                @if (Model.Emails.All(x => x.Type != EmailType.Recovery))
+                {
+                    <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                            Your don't have a recovery email.
+                            Add a recovery email to be able to recover an access to the account
+                        </MudTextM3>
+                    </MudAlert>
+                }
+                @foreach (var email in Model.Emails.OrderBy(email => email.Type))
+                {
+                    <Email Model="email"/>
+                }
+                <PrimaryEmail Model="Model"/>
+                <RecoveryEmail Model="Model"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -44,19 +56,13 @@
         if (result.Success)
         {
             var emails = result.Get<List<UserEmailDto>>()!;
-
-            var primaryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Primary);
-            var recoveryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Recovery);
-            var secondaryEmails = emails.Where(x => x.Type == EmailType.Secondary).ToList();
-
-            Model = new UserEmailsModel()
+            Model = new()
             {
-                PrimaryEmail = primaryEmail,
-                SecondaryEmails = secondaryEmails,
-                RecoveryEmail = recoveryEmail
+                Emails = emails,
+                PrimaryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Primary),
+                RecoveryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Recovery)
             };
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
-
 }
