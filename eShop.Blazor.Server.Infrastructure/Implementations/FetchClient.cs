@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using eShop.Blazor.Server.Domain.Interfaces;
+﻿using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Blazor.Server.Domain.Options;
 using Microsoft.JSInterop;
 
