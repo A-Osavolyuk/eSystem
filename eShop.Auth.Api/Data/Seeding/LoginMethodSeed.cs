@@ -16,12 +16,6 @@ public class LoginMethodSeed : Seed<LoginMethodEntity>
             },
             new LoginMethodEntity()
             {
-                Id = Guid.Parse("bda1bd08-ec94-4e36-bd23-541f70649118"),
-                Type = LoginType.TwoFactor,
-                CreateDate = DateTimeOffset.UtcNow
-            },
-            new LoginMethodEntity()
-            {
                 Id = Guid.Parse("497c4c1d-680f-4322-9cf6-008f3b2da475"),
                 Type = LoginType.OAuth,
                 CreateDate = DateTimeOffset.UtcNow

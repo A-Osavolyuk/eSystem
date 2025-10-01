@@ -10,7 +10,6 @@
 @switch (Type)
 {
     case LoginTypes.Password: <Title Text="Password login disable"></Title> break;
-    case LoginTypes.TwoFactor: <Title Text="Two-factor login disable"></Title> break;
     case LoginTypes.OAuth: <Title Text="Linked account login disable"></Title> break;
     case LoginTypes.Passkey: <Title Text="Passkey login disable"></Title> break;
 }
@@ -110,7 +109,6 @@
             LoginTypes.Passkey => LoginType.Passkey,
             LoginTypes.Password => LoginType.Password,
             LoginTypes.OAuth => LoginType.OAuth,
-            LoginTypes.TwoFactor => LoginType.TwoFactor,
             _ => throw new NotSupportedException("Unsupported login type")
         };
 
