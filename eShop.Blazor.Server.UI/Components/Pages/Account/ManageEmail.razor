@@ -1,0 +1,11 @@
+﻿@page "/account/email/manage"
+
+<Title Text="Manage email"></Title>
+
+@code {
+    [SupplyParameterFromQuery(Name = "email")]
+    public string Email { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = string.Empty;
+}
