@@ -18,7 +18,6 @@ public class PasswordData
 public class TwoFactorData
 {
     public bool Enabled { get; set; }
-    public bool HasTwoFactor { get; set; }
     public List<UserProviderDto> Providers { get; set; } = [];
 }
 

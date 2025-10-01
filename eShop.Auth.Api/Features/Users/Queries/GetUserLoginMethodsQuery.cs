@@ -24,8 +24,7 @@ public class GetUserLoginMethodsQueryHandler(
             },
             TwoFactorData = new TwoFactorData()
             {
-                Enabled = user.HasLoginMethod(LoginType.TwoFactor),
-                HasTwoFactor = user.TwoFactorEnabled,
+                Enabled = user.TwoFactorEnabled,
                 Providers = user.TwoFactorProviders.Select(x => new UserProviderDto()
                 {
                     Id = x.Provider.Id,
