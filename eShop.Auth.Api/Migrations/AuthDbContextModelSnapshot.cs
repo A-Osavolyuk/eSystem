@@ -171,27 +171,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("LockoutStates");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.LoginMethodEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LoginMethods");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.LoginSessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -747,27 +726,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserOAuthProviders");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserLoginMethodEntity", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MethodId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("UserId", "MethodId");
-
-                    b.HasIndex("MethodId");
-
-                    b.ToTable("UserLoginMethods");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPasskeyEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1170,25 +1128,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserLoginMethodEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.LoginMethodEntity", "Method")
-                        .WithMany()
-                        .HasForeignKey("MethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany("LoginMethods")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Method");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPasskeyEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
@@ -1315,8 +1254,6 @@ namespace eShop.Auth.Api.Migrations
 
                     b.Navigation("LockoutState")
                         .IsRequired();
-
-                    b.Navigation("LoginMethods");
 
                     b.Navigation("Passkeys");
 
