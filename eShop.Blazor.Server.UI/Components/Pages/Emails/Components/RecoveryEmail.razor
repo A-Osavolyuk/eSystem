@@ -14,20 +14,21 @@
             </MudStack>
         </MudItem>
         <MudItem xs="4">
-            <MudSelect
+            <MudSelectExtended
                 T="string"
+                Margin="Margin.Dense"
+                AnchorOrigin="Origin.BottomCenter"
                 Value="@Model.RecoveryEmail?.Email"
                 ValueChanged="OnChange"
-                InputClass="py-1"
                 Variant="Variant.Outlined"
                 Immediate="true">
                 @foreach (var email in Model.Emails.Where(x => x.Type != EmailType.Primary))
                 {
-                    <MudSelectItem T="string" Value="email.Email">
+                    <MudSelectItemExtended T="string" Value="email.Email">
                         @email.Email
-                    </MudSelectItem>
+                    </MudSelectItemExtended>
                 }
-            </MudSelect>
+            </MudSelectExtended>
         </MudItem>
     </MudGrid>
 </MudPaper>
