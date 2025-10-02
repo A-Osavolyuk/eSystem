@@ -19,6 +19,7 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
         {
             Id = provider.Provider.Id,
             Type = provider.Provider.Type,
+            IsPrimary = provider.IsPrimary,
             UpdateDate = provider.UpdateDate,
         }).ToList();
         

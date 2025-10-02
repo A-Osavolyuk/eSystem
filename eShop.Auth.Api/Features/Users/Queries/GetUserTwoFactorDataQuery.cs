@@ -20,6 +20,7 @@ public class GetUserTwoFactorDataQueryHandler(IUserManager userManager) : IReque
             {
                 Id = x.Provider.Id,
                 Type = x.Provider.Type,
+                IsPrimary = x.IsPrimary,
                 UpdateDate = x.UpdateDate
             }).ToList()
         };

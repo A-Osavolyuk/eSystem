@@ -28,6 +28,7 @@ public class GetUserLoginMethodsQueryHandler(
                 {
                     Id = x.Provider.Id,
                     Type = x.Provider.Type,
+                    IsPrimary = x.IsPrimary,
                     UpdateDate = x.UpdateDate
                 }).ToList()
             },
