@@ -32,23 +32,12 @@
                     <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
                 </ActivatorContent>
                 <ChildContent>
-                    @if (!Model.Enabled)
-                    {
-                        <MudMenuItem
-                            Href=@($"/account/login/enable?type={LoginTypes.OAuth}")
-                            Class="mud-error-text">
-                            Disable method
+                        <MudMenuItem Href="/account/oauth/manage">
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                Manage accounts
+                            </MudTextM3>
                         </MudMenuItem>
-                    }
                     <MudDivider/>
-                    @if (Model.Enabled)
-                    {
-                        <MudMenuItem
-                            Href=@($"/account/login/disable?type={LoginTypes.OAuth}")
-                            Class="mud-error-text">
-                            Disable method
-                        </MudMenuItem>
-                    }
                 </ChildContent>
             </MudMenu>
         }

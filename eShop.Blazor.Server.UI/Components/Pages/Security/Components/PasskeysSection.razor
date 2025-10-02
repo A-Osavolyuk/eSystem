@@ -3,7 +3,7 @@
         <MudText Typo="Typo.h6">Passkeys</MudText>
         @if (Model.Enabled)
         {
-            <MudChip 
+            <MudChip
                 T="string"
                 Color="Color.Success"
                 Variant="Variant.Outlined"
@@ -13,7 +13,7 @@
         }
         else
         {
-            <MudChip 
+            <MudChip
                 T="string"
                 Color="Color.Error"
                 Variant="Variant.Outlined"
@@ -29,29 +29,16 @@
             </ActivatorContent>
             <ChildContent>
                 <MudMenuItem Href="/account/passkeys/add">
-                    Add passkey
+                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                        Add passkey
+                    </MudTextM3>
                 </MudMenuItem>
-                @if (!Model.Enabled)
-                {
-                    <MudMenuItem Href=@($"/account/login/enable?type={LoginTypes.Passkey}")>
-                        Enable method
-                    </MudMenuItem>
-                }
-                @if (Model.Enabled)
-                {
-                    <MudDivider/>
-                    <MudMenuItem
-                        Href=@($"/account/login/disable?type={LoginTypes.Passkey}")
-                        Class="mud-error-text">
-                        Disable method
-                    </MudMenuItem>
-                }
             </ChildContent>
         </MudMenu>
     </MudStack>
     <MudText Class="opacity-50" Typo="Typo.caption">
-        Additional sign-in method. 
-        Works by key-per-device principal. 
+        Additional sign-in method.
+        Works by key-per-device principal.
         You can use this method instead of password one.
     </MudText>
 </MudStack>
