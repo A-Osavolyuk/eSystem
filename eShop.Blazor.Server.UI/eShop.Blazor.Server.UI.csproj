@@ -46,6 +46,8 @@
 	  <_ContentIncludedByDefault Remove="Components\Pages\Seller\SellerDetails.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Pages\Profile\Devices\Devices.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Pages\Profile\Devices\DevicesSection.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Recovery\Components\RecoverySection.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Recovery\Recovery.razor" />
 	</ItemGroup>
 
 	<ItemGroup>
