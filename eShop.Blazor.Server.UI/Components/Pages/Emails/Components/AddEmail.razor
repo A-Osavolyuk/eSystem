@@ -1,4 +1,5 @@
 ﻿@inject UserState UserState
+@inject AddEmailValidator Validator
 @inject ISecurityService SecurityService
 @inject ISnackbar Snackbar
 
@@ -12,14 +13,17 @@
             </MudItem>
             <MudItem xs="5">
                 <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                    <MudTextFieldExtended
-                        Margin="Margin.Dense"
-                        @bind-Value="value"
-                        Variant="Variant.Outlined"
-                        Immediate="true"
-                        Clearable="true"
-                        Error="@showError"
-                        ErrorText="@error"/>
+                    <MudForm Model="Model" @ref="form" Validation="Validator.ValidateValue">
+                        <MudTextFieldExtended
+                            Margin="Margin.Dense"
+                            @bind-Value="Model.Email"
+                            For="() => Model.Email"
+                            Variant="Variant.Outlined"
+                            Immediate="true"
+                            Clearable="true"
+                            Error="@showError"
+                            ErrorText="@error"/>
+                    </MudForm>
                 </MudStack>
             </MudItem>
             <MudItem xs="1">
@@ -45,31 +49,38 @@
 
 @code {
     [Parameter] public EventCallback OnRefresh { get; set; }
-
-    private string? value;
+    
+    private AddEmailModel Model { get; set; } = new();
+    private MudForm form = new();
+    
     private string? error;
     private bool showError = false;
 
     private async Task OnAddAsync()
     {
-        var request = new CheckEmailRequest()
-        {
-            UserId = UserState.UserId,
-            Email = value!
-        };
+        await form.Validate();
 
-        var result = await SecurityService.CheckEmailAsync(request);
+        if (form is { IsValid: true, IsTouched: true })
+        {
+            var request = new CheckEmailRequest()
+            {
+                UserId = UserState.UserId,
+                Email = Model.Email!
+            };
 
-        if (result.Success)
-        {
-            showError = false;
-            error = null;
-            await AddEmailAsync();
-        }
-        else
-        {
-            showError = true;
-            error = result.Message;
+            var result = await SecurityService.CheckEmailAsync(request);
+
+            if (result.Success)
+            {
+                showError = false;
+                error = null;
+                await AddEmailAsync();
+            }
+            else
+            {
+                showError = true;
+                error = result.Message;
+            }
         }
     }
 
@@ -78,7 +89,7 @@
         var request = new AddEmailRequest()
         {
             UserId = UserState.UserId,
-            Email = value!,
+            Email = Model.Email!,
             Type = EmailType.Secondary
         };
 
@@ -86,7 +97,7 @@
 
         if (result.Success)
         {
-            value = null;
+            Model = new();
             await OnRefresh.InvokeAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);
