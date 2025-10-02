@@ -9,9 +9,12 @@
 
 @switch (Type)
 {
-    case EmailTypes.Primary: <Title Text="Primary email verification"></Title> break;
-    case EmailTypes.Recovery: <Title Text="Recovery email verification"></Title> break;
-    case EmailTypes.Secondary: <Title Text="Secondary email verification"></Title> break;
+    case EmailTypes.Primary:
+        <Title Text="Primary email verification"></Title> break;
+    case EmailTypes.Recovery:
+        <Title Text="Recovery email verification"></Title> break;
+    case EmailTypes.Secondary:
+        <Title Text="Secondary email verification"></Title> break;
 }
 
 <MudGrid Justify="Justify.Center" Spacing="1">
@@ -117,28 +120,35 @@
     {
         if (firstRender)
         {
+            var to = Type switch
+            {
+                EmailTypes.Primary => UserState.Credentials?.PrimaryEmail!,
+                EmailTypes.Recovery => UserState.Credentials?.RecoveryEmail!,
+                EmailTypes.Secondary => Email,
+                _ => throw new NotSupportedException("Unsupported email type")
+            };
+
+            context = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Email,
+                Resource = CodeResource.Email,
+                Type = CodeType.Verify,
+                Payload = new()
+                {
+                    { "To", to }
+                }
+            };
+
             await SendCodeAsync();
         }
+    }
 
-        var to = Type switch
-        {
-            EmailTypes.Primary => UserState.Credentials?.PrimaryEmail!,
-            EmailTypes.Recovery => UserState.Credentials?.RecoveryEmail!,
-            EmailTypes.Secondary => Email,
-            _ => throw new NotSupportedException("Unsupported email type")
-        };
-
-        context = new MessageContext()
-        {
-            UserId = UserState.UserId,
-            Sender = SenderType.Email,
-            Resource = CodeResource.Email,
-            Type = CodeType.Verify,
-            Payload = new()
-            {
-                { "To", to }
-            }
-        };
+    private async Task SendCodeAsync()
+    {
+        var request = context!.ToSendCodeRequest();
+        var response = await SecurityService.SendCodeAsync(request);
+        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
 
     private async Task OnVerifyEmailAsync()
@@ -164,7 +174,7 @@
             EmailTypes.Secondary => Email,
             _ => throw new NotSupportedException("Unsupported email type")
         };
-        
+
         var request = new VerifyEmailRequest()
         {
             UserId = UserState.UserId,
@@ -179,13 +189,6 @@
             NavigationManager.NavigateTo("/account/emails");
         }
         else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private async Task SendCodeAsync()
-    {
-        var request = context!.ToSendCodeRequest();
-        var response = await SecurityService.SendCodeAsync(request);
-        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
 
 }
