@@ -277,34 +277,7 @@
 
             var result = await SecurityService.CheckEmailAsync(request);
 
-            if (result.Success)
-            {
-                var response = result.Get<CheckEmailResponse>()!;
-
-                if (!response.IsTaken) await SendCurrentEmailCodeAsync();
-                else
-                    switch (response)
-                    {
-                        case { IsTaken: true, IsOwn: false }:
-                        {
-                            const string message = "This email address is already taken";
-                            Snackbar.Add(message, Severity.Error);
-                            break;
-                        }
-                        case { IsTaken: true, IsOwn: true }:
-                        {
-                            const string message = "This email address is already user's";
-                            Snackbar.Add(message, Severity.Info);
-                            break;
-                        }
-                        case { HasLinkedAccount: true }:
-                        {
-                            const string message = "First disconnect linked account.";
-                            Snackbar.Add(message, Severity.Info);
-                            break;
-                        }
-                    }
-            }
+            if (result.Success) await SendCurrentEmailCodeAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
