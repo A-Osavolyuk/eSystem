@@ -1,53 +1,62 @@
 ﻿<MudStack Spacing="0" Class="px-5">
-    <MudStack Row="true" Spacing="0">
-        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="pt-2 fw-bold">
-            Linked accounts
-        </MudTextM3>
-        @if (Model.HasLinkedAccounts)
-        {
-            <MudChip 
-                T="string"
-                Class="mt-2"
-                Color="Color.Success"
-                Variant="Variant.Outlined"
-                Size="Size.Small">
-                Enabled
-            </MudChip>
-        }
-        else
-        {
-            <MudChip 
-                T="string"
-                Class="mt-2"
-                Color="Color.Error"
-                Variant="Variant.Outlined"
-                Size="Size.Small">
-                Disabled
-            </MudChip>
-        }
+    <MudStack Row="true" Spacing="3">
+        <MudStack>
+            <MudIcon Icon="@Icons.Material.Filled.SupervisorAccount" Class="mt-1"></MudIcon>
+        </MudStack>
+        <MudStack Spacing="0">
+            <MudStack Row="true" Spacing="0">
+                <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="pt-2 fw-bold">
+                    Linked accounts
+                </MudTextM3>
+                @if (Model.HasLinkedAccounts)
+                {
+                    <MudChip
+                        T="string"
+                        Class="mt-2"
+                        Color="Color.Success"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Enabled
+                    </MudChip>
+                }
+                else
+                {
+                    <MudChip
+                        T="string"
+                        Class="mt-2"
+                        Color="Color.Error"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Disabled
+                    </MudChip>
+                }
+            </MudStack>
+            <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
+                Additional sign-in method. 
+                You can use this method to avoid password sign-in.
+            </MudTextM3>
+        </MudStack>
         <MudSpacer/>
-        @if (Model.HasLinkedAccounts)
-        {
-            <MudMenu
-                Dense="true">
-                <ActivatorContent>
-                    <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
-                </ActivatorContent>
-                <ChildContent>
+        <MudStack>
+            @if (Model.HasLinkedAccounts)
+            {
+                <MudMenu
+                    Dense="true">
+                    <ActivatorContent>
+                        <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                    </ActivatorContent>
+                    <ChildContent>
                         <MudMenuItem Href="/account/oauth/manage">
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                 Manage accounts
                             </MudTextM3>
                         </MudMenuItem>
-                    <MudDivider/>
-                </ChildContent>
-            </MudMenu>
-        }
+                        <MudDivider/>
+                    </ChildContent>
+                </MudMenu>
+            }
+        </MudStack>
     </MudStack>
-    <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
-        Additional sign-in method. 
-        You can use this method to avoid password sign-in.
-    </MudTextM3>
 </MudStack>
 
 @code {
