@@ -1,6 +1,8 @@
-﻿<MudStack Spacing="0" Class="px-3">
+﻿<MudStack Spacing="0" Class="px-5">
     <MudStack Row="true" Spacing="0">
-        <MudText Typo="Typo.h6" Class="pt-1">Linked accounts</MudText>
+        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="pt-2 fw-bold">
+            Linked accounts
+        </MudTextM3>
         @if (Model.HasLinkedAccounts)
         {
             <MudChip 
@@ -42,10 +44,10 @@
             </MudMenu>
         }
     </MudStack>
-    <MudText Class="opacity-50" Typo="Typo.caption">
+    <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
         Additional sign-in method. 
         You can use this method to avoid password sign-in.
-    </MudText>
+    </MudTextM3>
 </MudStack>
 
 @code {

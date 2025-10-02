@@ -1,6 +1,8 @@
-﻿<MudStack Spacing="0" Class="px-3 pb-2">
+﻿<MudStack Spacing="0" Class="px-5 pb-2">
     <MudStack Row="true" Spacing="0">
-        <MudText Typo="Typo.h6">Passkeys</MudText>
+        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
+            Passkeys
+        </MudTextM3>
         @if (Model.HasPasskeys)
         {
             <MudChip
@@ -36,11 +38,11 @@
             </ChildContent>
         </MudMenu>
     </MudStack>
-    <MudText Class="opacity-50" Typo="Typo.caption">
+    <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
         Additional sign-in method.
         Works by key-per-device principal.
         You can use this method instead of password one.
-    </MudText>
+    </MudTextM3>
 </MudStack>
 
 @code {
