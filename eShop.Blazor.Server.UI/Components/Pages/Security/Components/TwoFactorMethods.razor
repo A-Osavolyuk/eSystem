@@ -13,14 +13,28 @@
                     <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                         Authenticator app
                     </MudTextM3>
-                    <MudChip
-                        T="string"
-                        Class="mx-0"
-                        Size="Size.Small"
-                        Color="Color.Success"
-                        Variant="Variant.Outlined">
-                        Configured
-                    </MudChip>
+                    @if (Model.Providers.Any(x => x.Type == ProviderType.AuthenticatorApp))
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Success"
+                            Variant="Variant.Outlined">
+                            Configured
+                        </MudChip>
+                    }
+                    else
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Error"
+                            Variant="Variant.Outlined">
+                            Not configured
+                        </MudChip>
+                    }
                 </MudStack>
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
                     Use an authentication app or browser extension
@@ -53,6 +67,28 @@
                         Variant="Variant.Outlined">
                         Less secure
                     </MudChip>
+                    @if (Model.Providers.Any(x => x.Type == ProviderType.Sms))
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Success"
+                            Variant="Variant.Outlined">
+                            Configured
+                        </MudChip>
+                    }
+                    else
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Error"
+                            Variant="Variant.Outlined">
+                            Not configured
+                        </MudChip>
+                    }
                 </MudStack>
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
                     Get one-time codes sent to your phone via SMS to complete authentication requests.
@@ -80,14 +116,28 @@
                     <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                         Secure keys
                     </MudTextM3>
-                    <MudChip
-                        T="string"
-                        Class="mx-0"
-                        Size="Size.Small"
-                        Color="Color.Error"
-                        Variant="Variant.Outlined">
-                        Not configured
-                    </MudChip>
+                    @if (Model.Providers.Any(x => x.Type == ProviderType.Passkey))
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Success"
+                            Variant="Variant.Outlined">
+                            Configured
+                        </MudChip>
+                    }
+                    else
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Error"
+                            Variant="Variant.Outlined">
+                            Not configured
+                        </MudChip>
+                    }
                 </MudStack>
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
                     Security keys are webauthn credentials that can
@@ -144,3 +194,7 @@
         </MudStack>
     </MudStack>
 </MudPaper>
+
+@code{
+    [Parameter] public TwoFactorData Model { get; set; } = new();
+}

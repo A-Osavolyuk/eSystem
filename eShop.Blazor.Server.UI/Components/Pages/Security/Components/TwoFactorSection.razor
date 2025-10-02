@@ -27,7 +27,7 @@
 else
 {
     <MudStack Spacing="3">
-        <MudStack Row="true">
+        <MudStack Row="true" Class="pr-2">
             <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">
                 Two-factor authentication
             </MudTextM3>
@@ -50,8 +50,8 @@ else
             Two-factor authentication adds an additional layer of security
             to your account by requiring more than just a password to sign in.
         </MudTextM3>
-        <TwoFactorPreferredMethod/>
-        <TwoFactorMethods/>
+        <TwoFactorPreferredMethod Model="Model"/>
+        <TwoFactorMethods Model="Model"/>
     </MudStack>
 }
 
