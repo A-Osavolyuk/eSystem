@@ -1,5 +1,6 @@
 ﻿@page "/account/emails"
 @using eShop.Blazor.Server.UI.Components.Pages.Emails.Components
+
 @inherits PageBase
 
 @attribute [Authorize]
@@ -30,6 +31,7 @@
                 {
                     <Email Model="email"/>
                 }
+                <EmailAdd OnRefresh="RefreshAsync"/>
                 <PrimaryEmail Model="Model"/>
                 <RecoveryEmail Model="Model"/>
             </MudStack>
@@ -49,6 +51,12 @@
         }
     }
 
+    private async Task RefreshAsync()
+    {
+        await LoadAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
     private async Task LoadAsync()
     {
         var result = await UserService.GetUserEmailsAsync(UserState.UserId);
@@ -65,4 +73,5 @@
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
+
 }

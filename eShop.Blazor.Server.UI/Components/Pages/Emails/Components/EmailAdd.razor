@@ -1,0 +1,95 @@
+﻿@inject UserState UserState
+@inject ISecurityService SecurityService
+@inject ISnackbar Snackbar
+
+<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="1">
+        <MudGrid Spacing="0">
+            <MudItem xs="12">
+                <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
+                    Add email
+                </MudTextM3>
+            </MudItem>
+            <MudItem xs="5">
+                <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                    <MudTextFieldExtended
+                        Margin="Margin.Dense"
+                        @bind-Value="value"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true"
+                        Error="@showError"
+                        ErrorText="@error"/>
+                </MudStack>
+            </MudItem>
+            <MudItem xs="1">
+                <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                    <MudButton
+                        Class="py-2"
+                        Style="margin-top: 3px"
+                        Variant="Variant.Filled"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await OnAddAsync())">
+                        Add
+                    </MudButton>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+            Enter an email address, that will be used as additional.
+            Also you will be able to set this email as recovery or primary.
+        </MudTextM3>
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter] public EventCallback OnRefresh { get; set; }
+
+    private string? value;
+    private string? error;
+    private bool showError = false;
+
+    private async Task OnAddAsync()
+    {
+        var request = new CheckEmailRequest()
+        {
+            UserId = UserState.UserId,
+            Email = value!
+        };
+
+        var result = await SecurityService.CheckEmailAsync(request);
+
+        if (result.Success)
+        {
+            showError = false;
+            error = null;
+            await AddEmailAsync();
+        }
+        else
+        {
+            showError = true;
+            error = result.Message;
+        }
+    }
+
+    private async Task AddEmailAsync()
+    {
+        var request = new AddEmailRequest()
+        {
+            UserId = UserState.UserId,
+            Email = value!,
+            Type = EmailType.Secondary
+        };
+
+        var result = await SecurityService.AddEmailAsync(request);
+
+        if (result.Success)
+        {
+            value = null;
+            await OnRefresh.InvokeAsync();
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+}
