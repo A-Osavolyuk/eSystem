@@ -12,19 +12,17 @@
                 </MudTextM3>
             </MudItem>
             <MudItem xs="5">
-                <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                    <MudForm Model="Model" @ref="form" Validation="Validator.ValidateValue">
-                        <MudTextFieldExtended
-                            Margin="Margin.Dense"
-                            @bind-Value="Model.Email"
-                            For="() => Model.Email"
-                            Variant="Variant.Outlined"
-                            Immediate="true"
-                            Clearable="true"
-                            Error="@showError"
-                            ErrorText="@error"/>
-                    </MudForm>
-                </MudStack>
+                <MudForm Model="Model" @ref="form" Validation="Validator.ValidateValue" Spacing="0">
+                    <MudTextFieldExtended
+                        Margin="Margin.Dense"
+                        @bind-Value="Model.Email"
+                        For="() => Model.Email"
+                        Variant="Variant.Outlined"
+                        Immediate="true"
+                        Clearable="true"
+                        Error="@showError"
+                        ErrorText="@error"/>
+                </MudForm>
             </MudItem>
             <MudItem xs="1">
                 <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
@@ -49,10 +47,10 @@
 
 @code {
     [Parameter] public EventCallback OnRefresh { get; set; }
-    
+
     private AddEmailModel Model { get; set; } = new();
     private MudForm form = new();
-    
+
     private string? error;
     private bool showError = false;
 

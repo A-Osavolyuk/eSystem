@@ -6,6 +6,6 @@ public class AddEmailValidator : Validator<AddEmailModel>
 {
     public AddEmailValidator()
     {
-        RuleFor(x => x.Email).EmailAddress();
+        RuleFor(x => x.Email).EmailAddress().WithMessage("Invalid email address");
     }
 }
