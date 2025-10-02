@@ -90,7 +90,6 @@
         {
             UserId = UserState.UserId,
             Email = Model.Email!,
-            Type = EmailType.Secondary
         };
 
         var result = await SecurityService.AddEmailAsync(request);
