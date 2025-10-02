@@ -13,7 +13,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
     public DbSet<UserPasskeyEntity> UserPasskeys { get; set; }
-    public DbSet<UserLoginMethodEntity> UserLoginMethods { get; set; }
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<PersonalDataEntity> PersonalData { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
@@ -29,7 +28,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
-    public DbSet<LoginMethodEntity> LoginMethods { get; set; }
     public DbSet<AuthorizationSessionEntity> AuthorizationSessions { get; set; }
     public DbSet<VerificationEntity> Verifications { get; set; }
     
@@ -314,25 +312,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.Device)
                 .WithMany()
                 .HasForeignKey(x => x.DeviceId);
-        });
-
-        builder.Entity<LoginMethodEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Type).HasEnumConversion();
-        });
-
-        builder.Entity<UserLoginMethodEntity>(entity =>
-        {
-            entity.HasKey(x => new { x.UserId, x.MethodId });
-
-            entity.HasOne(x => x.User)
-                .WithMany(x => x.LoginMethods)
-                .HasForeignKey(x => x.UserId);
-            
-            entity.HasOne(x => x.Method)
-                .WithMany()
-                .HasForeignKey(x => x.MethodId);
         });
         
         builder.Entity<AuthorizationSessionEntity>(entity =>

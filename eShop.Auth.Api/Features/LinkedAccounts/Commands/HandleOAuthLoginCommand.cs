@@ -18,7 +18,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     IOAuthSessionManager sessionManager,
     IOAuthProviderManager providerManager,
     ILoginManager loginManager,
-    ILoginMethodManager loginMethodManager,
     IAuthorizationManager authorizationManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<HandleOAuthLoginCommand, Result>
@@ -31,7 +30,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IOAuthSessionManager sessionManager = sessionManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ILoginManager loginManager = loginManager;
-    private readonly ILoginMethodManager loginMethodManager = loginMethodManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
@@ -95,13 +93,6 @@ public sealed class HandleOAuthLoginCommandHandler(
                 EmailType.Primary, cancellationToken);
 
             if (setResult.Succeeded) return setResult;
-            
-            var methodResult = await loginMethodManager.CreateAsync(user, LoginType.OAuth, cancellationToken);
-            if (!methodResult.Succeeded)
-            {
-                return RedirectWithError(OAuthErrorType.InternalError,
-                    provider.Name, "Invalid login method type", fallbackUri);
-            }
 
             var role = await roleManager.FindByNameAsync("User", cancellationToken);
 
@@ -189,16 +180,6 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         var checkProviderResult = await CheckUserProviderAsync(user, provider, fallbackUri, cancellationToken);
         if (!checkProviderResult.Succeeded) return checkProviderResult;
-
-        if (!user.HasLoginMethod(LoginType.OAuth))
-        {
-            var methodResult = await loginMethodManager.CreateAsync(user, LoginType.OAuth, cancellationToken);
-            if (!methodResult.Succeeded)
-            {
-                return RedirectWithError(OAuthErrorType.InternalError,
-                    provider.Name, "Invalid login method type", fallbackUri);
-            }
-        }
 
         return await SignInAsync(user, provider, session, device, request.ReturnUri!, token, cancellationToken);
     }

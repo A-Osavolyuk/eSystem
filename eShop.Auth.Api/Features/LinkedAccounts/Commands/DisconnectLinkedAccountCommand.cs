@@ -7,13 +7,11 @@ public record DisconnectLinkedAccountCommand(DisconnectLinkedAccountRequest Requ
 public class DisconnectLinkedAccountCommandHandler(
     IUserManager userManager,
     IOAuthProviderManager providerManager,
-    IVerificationManager verificationManager,
-    ILoginMethodManager loginMethodManager) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly ILoginMethodManager loginMethodManager = loginMethodManager;
 
     public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
     {
@@ -27,13 +25,6 @@ public class DisconnectLinkedAccountCommandHandler(
             CodeResource.LinkedAccount, CodeType.Disconnect, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
-
-        if (user.LinkedAccounts.Count == 1)
-        {
-            var method = user.GetLoginMethod(LoginType.OAuth);
-            var methodResult = await loginMethodManager.RemoveAsync(method, cancellationToken);
-            if (!methodResult.Succeeded) return methodResult;
-        }
 
         var result = await providerManager.DisconnectAsync(user, provider, cancellationToken);
         return result;

@@ -11,7 +11,6 @@ public sealed class RegisterCommandHandler(
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
-    ILoginMethodManager loginMethodManager,
     IdentityOptions identityOptions) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
@@ -20,7 +19,6 @@ public sealed class RegisterCommandHandler(
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private readonly ILoginMethodManager loginMethodManager = loginMethodManager;
 
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
@@ -51,9 +49,6 @@ public sealed class RegisterCommandHandler(
             EmailType.Primary, cancellationToken);
 
         if (setResult.Succeeded) return setResult;
-
-        var methodResult = await loginMethodManager.CreateAsync(user, LoginType.Password, cancellationToken);
-        if (!methodResult.Succeeded) return methodResult;
 
         var role = await roleManager.FindByNameAsync("User", cancellationToken);
         if (role is null) return Results.NotFound("Cannot find role with name User");

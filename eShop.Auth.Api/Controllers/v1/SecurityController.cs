@@ -449,30 +449,4 @@ public class SecurityController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-
-    [EndpointSummary("Enable login method")]
-    [EndpointDescription("Enable login method")]
-    [ProducesResponseType(200)]
-    [HttpPost("login/enable-method")]
-    public async ValueTask<IActionResult> EnableLoginMethodAsync([FromBody] EnableMethodRequest request)
-    {
-        var result = await sender.Send(new EnableMethodCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Disable login method")]
-    [EndpointDescription("Disable login method")]
-    [ProducesResponseType(200)]
-    [HttpPost("login/disable-method")]
-    public async ValueTask<IActionResult> DisableLoginMethodAsync([FromBody] DisableMethodRequest request)
-    {
-        var result = await sender.Send(new DisableMethodCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
 }

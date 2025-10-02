@@ -18,13 +18,12 @@ public class GetUserLoginMethodsQueryHandler(
         {
             PasswordData = new PasswordData()
             {
-                Enabled = user.HasLoginMethod(LoginType.Password),
                 HasPassword = user.HasPassword(),
                 LastChange = user.PasswordChangeDate
             },
             TwoFactorData = new TwoFactorData()
             {
-                Enabled = user.TwoFactorEnabled,
+                HasTwoFactor = user.TwoFactorEnabled,
                 Providers = user.TwoFactorProviders.Select(x => new UserProviderDto()
                 {
                     Id = x.Provider.Id,
@@ -34,7 +33,6 @@ public class GetUserLoginMethodsQueryHandler(
             },
             LinkedAccountsData = new LinkedAccountsData()
             {
-                Enabled = user.HasLoginMethod(LoginType.OAuth),
                 HasLinkedAccounts = user.HasLinkedAccount(),
                 LinkedAccounts = user.LinkedAccounts.Select(x => new UserOAuthProviderDto()
                 {
@@ -47,7 +45,6 @@ public class GetUserLoginMethodsQueryHandler(
             },
             PasskeysData = new PasskeysData()
             {
-                Enabled = user.HasLoginMethod(LoginType.Passkey),
                 HasPasskeys = user.HasPasskeys(),
                 Passkeys = user.Passkeys.Select(x => new UserPasskeyDto()
                 {

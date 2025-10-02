@@ -10,12 +10,10 @@ public record VerifyPasskeyCommand(VerifyPasskeyRequest Request, HttpContext Htt
 public class VerifyPasskeyCommandHandler(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
-    ILoginMethodManager loginMethodManager,
     IdentityOptions identityOptions) : IRequestHandler<VerifyPasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
-    private readonly ILoginMethodManager loginMethodManager = loginMethodManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(VerifyPasskeyCommand request,
@@ -39,12 +37,6 @@ public class VerifyPasskeyCommandHandler(
         
         var rpHash = SHA256.HashData(Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray()));
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
-
-        if (!user.HasLoginMethod(LoginType.Passkey))
-        {
-            var methodResult = await loginMethodManager.CreateAsync(user, LoginType.Passkey, cancellationToken);
-            if (!methodResult.Succeeded) return methodResult;
-        }
         
         var passkey = new UserPasskeyEntity()
         {

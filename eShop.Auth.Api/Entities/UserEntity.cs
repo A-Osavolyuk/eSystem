@@ -29,12 +29,9 @@ public class UserEntity : Entity
     public ICollection<UserChangesEntity> Changes { get; init; } = null!;
     public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
     public ICollection<UserPasskeyEntity> Passkeys { get; init; } = null!;
-    public ICollection<UserLoginMethodEntity> LoginMethods { get; init; } = null!;
     public LockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
     
-    public UserLoginMethodEntity GetLoginMethod(LoginType type) 
-        => LoginMethods.First(x => x.Method.Type == type);
     public UserEmailEntity? GetEmail(EmailType type) 
         => Emails.FirstOrDefault(x => x.Type == type);
     
@@ -50,5 +47,4 @@ public class UserEntity : Entity
     public bool HasProviders() => TwoFactorProviders.Any();
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasPasskeys() => Passkeys.Count > 0;
-    public bool HasLoginMethod(LoginType type) => LoginMethods.Any(x => x.Method.Type == type);
 }

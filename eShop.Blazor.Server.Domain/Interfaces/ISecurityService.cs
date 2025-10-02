@@ -6,8 +6,6 @@ namespace eShop.Blazor.Server.Domain.Interfaces;
 public interface ISecurityService
 {
     public ValueTask<HttpResponse> LoginAsync(LoginRequest request);
-    public ValueTask<HttpResponse> EnableLoginMethodAsync(EnableMethodRequest request);
-    public ValueTask<HttpResponse> DisableLoginMethodAsync(DisableMethodRequest request);
     public ValueTask<HttpResponse> RegisterAsync(RegistrationRequest request);
     public ValueTask<HttpResponse> ForgotPasswordAsync(ForgotPasswordRequest request);
     public ValueTask<HttpResponse> ResetPasswordAsync(ResetPasswordRequest request);

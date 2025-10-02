@@ -8,13 +8,11 @@ public class RemovePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     IUserManager userManager,
     IVerificationManager verificationManager,
-    ILoginMethodManager loginMethodManager,
     IdentityOptions identityOptions) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly IUserManager userManager = userManager;
     private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly ILoginMethodManager loginMethodManager = loginMethodManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
@@ -32,13 +30,6 @@ public class RemovePasskeyCommandHandler(
             CodeResource.Passkey, CodeType.Remove, cancellationToken);
         
         if (!verificationResult.Succeeded) return verificationResult;
-
-        if (user.Passkeys.Count == 1)
-        {
-            var method = user.GetLoginMethod(LoginType.Passkey);
-            var methodResult = await loginMethodManager.RemoveAsync(method, cancellationToken);
-            if (!methodResult.Succeeded) return methodResult;
-        }
 
         var result = await passkeyManager.DeleteAsync(passkey, cancellationToken);
         return result;
