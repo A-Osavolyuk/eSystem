@@ -14,33 +14,12 @@ public class CheckPhoneNumberCommandHandler(
 
     public async Task<Result> Handle(CheckPhoneNumberCommand request, CancellationToken cancellationToken)
     {
-        CheckPhoneNumberResponse? response;
-        
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
-        if (!isTaken)
-        {
-            response = new CheckPhoneNumberResponse { IsTaken = false };
-            return Result.Success(response);
-        }
+        if (isTaken) return Results.BadRequest("Phone number is already taken.");
         
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(
-            x => x.PhoneNumber == request.Request.PhoneNumber);
-        
-        if (userPhoneNumber is null)
-        {
-            response = new CheckPhoneNumberResponse { IsTaken = true };
-            return Result.Success(response);
-        }
-        
-        response = new CheckPhoneNumberResponse
-        {
-            IsOwn = true,
-            IsTaken = true
-        };
-        
-        return Result.Success(response);
+        return Result.Success();
     }
 }

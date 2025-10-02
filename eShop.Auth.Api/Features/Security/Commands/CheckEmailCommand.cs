@@ -12,45 +12,12 @@ public class CheckEmailCommandHandler(
 
     public async Task<Result> Handle(CheckEmailCommand request, CancellationToken cancellationToken)
     {
-        CheckEmailResponse? response;
-
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var isTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
-        if (!isTaken)
-        {
-            response = new CheckEmailResponse() { IsTaken = false };
-            return Result.Success(response);
-        }
+        if (isTaken) return Results.BadRequest("Email is already taken.");
 
-        var userEmail = user.Emails.FirstOrDefault(x => x.Email == request.Request.Email);
-        if (userEmail is null)
-        {
-            response = new CheckEmailResponse() { IsTaken = true };
-            return Result.Success(response);
-        }
-
-        if (userEmail.Type == EmailType.Primary)
-        {
-            response = new CheckEmailResponse()
-            {
-                IsOwn = true,
-                IsTaken = true,
-                Type = userEmail.Type,
-                HasLinkedAccount = user.HasLinkedAccount()
-            };
-            
-            return Result.Success(response);
-        }
-
-        response = new CheckEmailResponse()
-        {
-            IsOwn = true,
-            IsTaken = true,
-            Type = userEmail.Type,
-        };
-
-        return Result.Success(response);
+        return Result.Success();
     }
 }
