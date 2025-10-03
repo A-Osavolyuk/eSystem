@@ -169,7 +169,7 @@ public sealed class LoginCommandHandler(
             }
         }
 
-        if (user.HasProviders() && user.TwoFactorEnabled)
+        if (user.HasMethods() && user.TwoFactorEnabled)
         {
             response = new LoginResponse()
             {

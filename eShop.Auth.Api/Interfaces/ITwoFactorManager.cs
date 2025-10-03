@@ -2,10 +2,10 @@
 
 public interface ITwoFactorManager
 {
-    public ValueTask<TwoFactorProviderEntity?> FindByTypeAsync(ProviderType type, 
+    public ValueTask<TwoFactorMethodEntity?> FindByTypeAsync(MethodType type, 
         CancellationToken cancellationToken = default);
-    public ValueTask<Result> SubscribeAsync(UserEntity user, ProviderType type, bool isPrimary = false,
+    public ValueTask<Result> SubscribeAsync(UserEntity user, MethodType type, bool isPrimary = false,
         CancellationToken cancellationToken = default);
-    public ValueTask<Result> UnsubscribeAsync(UserEntity user, UserTwoFactorProviderEntity provider, 
+    public ValueTask<Result> UnsubscribeAsync(UserEntity user, UserTwoFactorMethodEntity method, 
         CancellationToken cancellationToken = default);
 }

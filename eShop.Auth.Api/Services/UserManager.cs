@@ -17,8 +17,8 @@ public sealed class UserManager(
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.Providers)
-            .ThenInclude(x => x.Provider)
+            .Include(x => x.Methods)
+            .ThenInclude(x => x.Method)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
@@ -44,8 +44,8 @@ public sealed class UserManager(
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.Providers)
-            .ThenInclude(x => x.Provider)
+            .Include(x => x.Methods)
+            .ThenInclude(x => x.Method)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
@@ -67,8 +67,8 @@ public sealed class UserManager(
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.Providers)
-            .ThenInclude(x => x.Provider)
+            .Include(x => x.Methods)
+            .ThenInclude(x => x.Method)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
@@ -92,8 +92,8 @@ public sealed class UserManager(
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.Providers)
-            .ThenInclude(x => x.Provider)
+            .Include(x => x.Methods)
+            .ThenInclude(x => x.Method)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
@@ -119,8 +119,8 @@ public sealed class UserManager(
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.Providers)
-            .ThenInclude(x => x.Provider)
+            .Include(x => x.Methods)
+            .ThenInclude(x => x.Method)
             .Include(x => x.LinkedAccounts)
             .ThenInclude(x => x.Provider)
             .Include(x => x.Changes)
@@ -473,7 +473,7 @@ public sealed class UserManager(
         };
 
         var providers = await context.TwoFactorProviders.ToListAsync(cancellationToken);
-        var userProviders = providers.Select(x => new UserTwoFactorProviderEntity()
+        var userProviders = providers.Select(x => new UserTwoFactorMethodEntity()
         {
             UserId = user.Id,
             ProviderId = x.Id,

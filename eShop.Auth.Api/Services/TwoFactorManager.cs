@@ -5,7 +5,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
     
-    public async ValueTask<TwoFactorProviderEntity?> FindByTypeAsync(ProviderType type,
+    public async ValueTask<TwoFactorMethodEntity?> FindByTypeAsync(MethodType type,
         CancellationToken cancellationToken = default)
     {
         var provider = await context.TwoFactorProviders.FirstOrDefaultAsync(
@@ -14,13 +14,13 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return provider;
     }
 
-    public async ValueTask<Result> SubscribeAsync(UserEntity user, ProviderType type, bool isPrimary = false,
+    public async ValueTask<Result> SubscribeAsync(UserEntity user, MethodType type, bool isPrimary = false,
         CancellationToken cancellationToken = default)
     {
         var provider = await FindByTypeAsync(type, cancellationToken);
         if (provider is null) return Results.NotFound($"Cannot find 2FA provider with type {type}.");
 
-        var userProvider = new UserTwoFactorProviderEntity()
+        var userProvider = new UserTwoFactorMethodEntity()
         {
             UserId = user.Id,
             ProviderId = provider.Id,
@@ -41,14 +41,14 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> UnsubscribeAsync(UserEntity user, UserTwoFactorProviderEntity provider, 
+    public async ValueTask<Result> UnsubscribeAsync(UserEntity user, UserTwoFactorMethodEntity method, 
         CancellationToken cancellationToken = default)
     {
         user.TwoFactorEnabled = false;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
-        context.UserTwoFactorProviders.Remove(provider);
+        context.UserTwoFactorProviders.Remove(method);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

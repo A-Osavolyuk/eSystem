@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Enums;
 
-public enum ProviderType
+public enum MethodType
 {
     AuthenticatorApp,
     Passkey,

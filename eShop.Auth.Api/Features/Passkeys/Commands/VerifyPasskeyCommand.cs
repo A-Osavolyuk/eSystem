@@ -57,10 +57,10 @@ public class VerifyPasskeyCommandHandler(
         var result = await passkeyManager.CreateAsync(passkey, cancellationToken);
         if (!result.Succeeded) return result;
 
-        if (user.TwoFactorEnabled && !user.HasTwoFactor(ProviderType.Passkey))
+        if (user.TwoFactorEnabled && !user.HasTwoFactor(MethodType.Passkey))
         {
             var methodResult = await twoFactorManager.SubscribeAsync(user,
-                ProviderType.Passkey, cancellationToken: cancellationToken);
+                MethodType.Passkey, cancellationToken: cancellationToken);
 
             if (!methodResult.Succeeded) return methodResult;
         }

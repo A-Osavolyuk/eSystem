@@ -24,10 +24,10 @@ public class GetUserLoginMethodsQueryHandler(
             TwoFactorData = new TwoFactorData()
             {
                 HasTwoFactor = user.TwoFactorEnabled,
-                Providers = user.Providers.Select(x => new UserProviderDto()
+                Providers = user.Methods.Select(x => new UserProviderDto()
                 {
-                    Id = x.Provider.Id,
-                    Type = x.Provider.Type,
+                    Id = x.Method.Id,
+                    Type = x.Method.Type,
                     IsPrimary = x.IsPrimary,
                     UpdateDate = x.UpdateDate
                 }).ToList()

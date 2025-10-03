@@ -42,7 +42,7 @@
                                             {
                                                 switch (provider.Type)
                                                 {
-                                                    case ProviderType.AuthenticatorApp:
+                                                    case MethodType.AuthenticatorApp:
                                                     {
                                                         <MudItem xs="12">
                                                             <MudLoadingButton
@@ -58,7 +58,7 @@
                                                         </MudItem>
                                                         break;
                                                     }
-                                                    case ProviderType.Sms:
+                                                    case MethodType.Sms:
                                                     {
                                                         <MudItem xs="12">
                                                             <MudLoadingButton
@@ -110,7 +110,7 @@
 
                                             @switch (SendTwoFactorTokenModel.Type)
                                             {
-                                                case ProviderType.Sms:
+                                                case MethodType.Sms:
                                                 {
                                                     <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                                              Style="width: 50ch; margin: auto">
@@ -121,7 +121,7 @@
                                                     </MudText>
                                                     break;
                                                 }
-                                                case ProviderType.AuthenticatorApp:
+                                                case MethodType.AuthenticatorApp:
                                                 {
                                                     <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                                              Style="width: 50ch; margin: auto">
@@ -153,7 +153,7 @@
                                         </MudStack>
                                     </MudForm>
                                 </MudPaper>
-                                @if (SendTwoFactorTokenModel.Type != ProviderType.AuthenticatorApp)
+                                @if (SendTwoFactorTokenModel.Type != MethodType.AuthenticatorApp)
                                 {
                                     <CodeResend Context="context"></CodeResend>
                                 }
@@ -211,7 +211,7 @@
 
         if (sendTwoFactorTokenForm.IsValid)
         {
-            if (provider.Type == ProviderType.AuthenticatorApp)
+            if (provider.Type == MethodType.AuthenticatorApp)
             {
                 await stepper.StepNextAsync();
             }
@@ -219,14 +219,14 @@
             {
                 var sender = provider.Type switch
                 {
-                    ProviderType.Sms => SenderType.Sms,
-                    ProviderType.AuthenticatorApp => SenderType.AuthenticatorApp,
+                    MethodType.Sms => SenderType.Sms,
+                    MethodType.AuthenticatorApp => SenderType.AuthenticatorApp,
                     _ => throw new NotSupportedException()
                 };
 
                 var payload = provider.Type switch
                 {
-                    ProviderType.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
+                    MethodType.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
                     _ => throw new NotSupportedException()
                 };
 

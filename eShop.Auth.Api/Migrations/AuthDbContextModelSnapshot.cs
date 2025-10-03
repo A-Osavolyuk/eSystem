@@ -882,7 +882,7 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserSecret");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorProviderEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorMethodEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -1199,7 +1199,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorProviderEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorMethodEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "Provider")
                         .WithMany()

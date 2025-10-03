@@ -14,11 +14,11 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
         var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
 
-        var providers = user.Providers.ToList();
+        var providers = user.Methods.ToList();
         var result = providers.Select(provider => new UserProviderDto()
         {
-            Id = provider.Provider.Id,
-            Type = provider.Provider.Type,
+            Id = provider.Method.Id,
+            Type = provider.Method.Type,
             IsPrimary = provider.IsPrimary,
             UpdateDate = provider.UpdateDate,
         }).ToList();

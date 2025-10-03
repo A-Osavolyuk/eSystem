@@ -79,8 +79,8 @@ public sealed class LoginWith2FaCommandHandler(
 
         var sender = provider.Type switch
         {
-            ProviderType.Sms => SenderType.Sms,
-            ProviderType.AuthenticatorApp => SenderType.AuthenticatorApp,
+            MethodType.Sms => SenderType.Sms,
+            MethodType.AuthenticatorApp => SenderType.AuthenticatorApp,
             _ => throw new NotSupportedException("Unknown provider type")
         };
         

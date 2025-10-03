@@ -8,7 +8,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserRoleEntity> UserRoles { get; set; }
     public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
-    public DbSet<UserTwoFactorProviderEntity> UserTwoFactorProviders { get; set; }
+    public DbSet<UserTwoFactorMethodEntity> UserTwoFactorProviders { get; set; }
     public DbSet<UserChangesEntity> UserChanges { get; set; }
     public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
@@ -18,7 +18,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<CodeEntity> Codes { get; set; }
-    public DbSet<TwoFactorProviderEntity> TwoFactorProviders { get; set; }
+    public DbSet<TwoFactorMethodEntity> TwoFactorProviders { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<LockoutStateEntity> LockoutStates { get; set; }
@@ -144,7 +144,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(ur => ur.PermissionId);
         });
 
-        builder.Entity<TwoFactorProviderEntity>(entity =>
+        builder.Entity<TwoFactorMethodEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Type).HasEnumConversion();
@@ -160,15 +160,15 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey<UserSecretEntity>(x => x.UserId);
         });
 
-        builder.Entity<UserTwoFactorProviderEntity>(entity =>
+        builder.Entity<UserTwoFactorMethodEntity>(entity =>
         {
             entity.HasKey(x => new { x.UserId, x.ProviderId });
 
             entity.HasOne(x => x.User)
-                .WithMany(x => x.Providers)
+                .WithMany(x => x.Methods)
                 .HasForeignKey(x => x.UserId);
 
-            entity.HasOne(x => x.Provider)
+            entity.HasOne(x => x.Method)
                 .WithMany()
                 .HasForeignKey(x => x.ProviderId);
         });
