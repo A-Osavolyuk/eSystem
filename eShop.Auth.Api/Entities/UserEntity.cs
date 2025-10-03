@@ -47,4 +47,6 @@ public class UserEntity : Entity
     public bool HasProviders() => TwoFactorProviders.Any();
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasPasskeys() => Passkeys.Count > 0;
+    public bool HasTwoFactor() 
+        => TwoFactorProviders.Count > 0;
 }
