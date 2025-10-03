@@ -34,7 +34,7 @@ public class TrustDeviceCommandHandler(
         var deviceResult = await deviceManager.TrustAsync(device, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
-        if (user.HasTwoFactor() && user.TwoFactorEnabled)
+        if (user.HasProviders() && user.TwoFactorEnabled)
         {
             return Result.Success(new TrustDeviceResponse()
             {

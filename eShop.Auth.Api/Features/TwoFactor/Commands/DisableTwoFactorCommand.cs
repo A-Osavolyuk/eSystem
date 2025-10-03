@@ -24,7 +24,7 @@ public class DisableTwoFactorCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
         
-        var method = user.TwoFactorProviders.FirstOrDefault(
+        var method = user.Providers.FirstOrDefault(
             x => x.Provider.Type == ProviderType.AuthenticatorApp);
 
         if (method is null) return Results.BadRequest("Two-factor authentication is already disabled.");

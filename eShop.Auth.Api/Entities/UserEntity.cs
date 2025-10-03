@@ -24,7 +24,7 @@ public class UserEntity : Entity
     public ICollection<UserPermissionsEntity> Permissions { get;  init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
     public ICollection<RecoveryCodeEntity> RecoveryCodes { get; init; } = null!;
-    public ICollection<UserTwoFactorProviderEntity> TwoFactorProviders { get; init; } = null!;
+    public ICollection<UserTwoFactorProviderEntity> Providers { get; init; } = null!;
     public ICollection<UserLinkedAccountEntity> LinkedAccounts { get; init; } = null!;
     public ICollection<UserChangesEntity> Changes { get; init; } = null!;
     public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
@@ -44,9 +44,8 @@ public class UserEntity : Entity
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);
     public bool HasPhoneNumber(PhoneNumberType type) => PhoneNumbers.Any(x => x.Type == type);
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
-    public bool HasProviders() => TwoFactorProviders.Any();
+    public bool HasProviders() => Providers.Any();
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasPasskeys() => Passkeys.Count > 0;
-    public bool HasTwoFactor() 
-        => TwoFactorProviders.Count > 0;
+    public bool HasTwoFactor(ProviderType type) => Providers.Any(x => x.Provider.Type == type);
 }

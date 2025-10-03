@@ -16,7 +16,7 @@ public class GetUserTwoFactorDataQueryHandler(IUserManager userManager) : IReque
         var response = new UserTwoFactorDto()
         {
             TwoFactorEnabled = user.TwoFactorEnabled,
-            Providers = user.TwoFactorProviders.Select(x => new UserProviderDto()
+            Providers = user.Providers.Select(x => new UserProviderDto()
             {
                 Id = x.Provider.Id,
                 Type = x.Provider.Type,
