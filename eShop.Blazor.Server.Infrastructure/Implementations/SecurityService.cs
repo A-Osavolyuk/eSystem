@@ -15,18 +15,6 @@ public class SecurityService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/login", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/code/send", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/code/resend", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Security/code/verify", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
-
     public async ValueTask<HttpResponse> RegisterAsync(RegistrationRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Security/register", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });

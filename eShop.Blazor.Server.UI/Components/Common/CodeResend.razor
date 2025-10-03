@@ -1,4 +1,4 @@
-﻿@inject ISecurityService SecurityService
+﻿@inject IVerificationService VerificationService
 @inject ISnackbar Snackbar
 
 @if (Context is not null && Context.Sender != SenderType.AuthenticatorApp)
@@ -35,7 +35,7 @@
             Type = Context!.Type
         };
 
-        var result = await SecurityService.ResendCodeAsync(request);
+        var result = await VerificationService.ResendCodeAsync(request);
         if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
     }
 

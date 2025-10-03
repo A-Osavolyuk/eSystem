@@ -6,6 +6,7 @@
 
 @inject CodeModelValidator Validator
 @inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 
 <Title Text="Manage email"></Title>
 
@@ -81,7 +82,7 @@
             };
 
             var request = context.ToSendCodeRequest();
-            var result = await SecurityService.SendCodeAsync(request);
+            var result = await VerificationService.SendCodeAsync(request);
             if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
             
             StateHasChanged();
@@ -91,7 +92,7 @@
     private async Task OnVerifyAsync()
     {
         var request = context!.ToVerifyCodeRequest(Model.Code);
-        var result = await SecurityService.VerifyCodeAsync(request);
+        var result = await VerificationService.VerifyCodeAsync(request);
 
         if (result.Success) await ManageAsync();
         else Snackbar.Add(result.Message, Severity.Error);

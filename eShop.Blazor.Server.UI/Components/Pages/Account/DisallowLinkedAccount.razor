@@ -5,6 +5,7 @@
 
 @inject IOAuthService OAuthService
 @inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 @inject CodeModelValidator Validator
 
 <Title Text="@($"Disallow {Provider} linked account")"/>
@@ -133,7 +134,7 @@
     private async Task OnSendCodeAsync()
     {
         var request = context!.ToSendCodeRequest();
-        var result = await SecurityService.SendCodeAsync(request);
+        var result = await VerificationService.SendCodeAsync(request);
 
         if (result.Success)
         {
@@ -145,7 +146,7 @@
     private async Task OnVerifyCodeAsync()
     {
         var request = context!.ToVerifyCodeRequest(Model.Code);
-        var result = await SecurityService.VerifyCodeAsync(request);
+        var result = await VerificationService.VerifyCodeAsync(request);
 
         if (result.Success) await VerifyAsync();
         else Snackbar.Add(result.Message, Severity.Error);

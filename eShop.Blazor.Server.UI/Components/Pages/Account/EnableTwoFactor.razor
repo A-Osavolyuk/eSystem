@@ -1,12 +1,13 @@
 ﻿@page "/account/2fa/enable"
 
-@using eShop.Blazor.Server.Infrastructure
 @using eShop.Blazor.Server.Infrastructure.Services
 @using ZXing
+
 @inherits PageBase
 
 @attribute [Authorize]
 
+@inject IVerificationService VerificationService
 @inject ITwoFactorService TwoFactorService
 @inject ISecurityService SecurityService
 @inject CodeModelValidator Validator
@@ -315,7 +316,7 @@
             Code = Model.Code
         };
 
-        var result = await SecurityService.VerifyCodeAsync(request);
+        var result = await VerificationService.VerifyCodeAsync(request);
 
         if (result.Success) await SendRecoveryCodesAsync();
         else Snackbar.Add(result.Message, Severity.Error);

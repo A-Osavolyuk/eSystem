@@ -5,6 +5,7 @@
 
 @inject IDeviceService DeviceService
 @inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 
 <Title Text="Block device"/>
 
@@ -145,7 +146,7 @@
     private async Task OnSendAsync()
     {
         var request = context!.ToSendCodeRequest();
-        var result = await SecurityService.SendCodeAsync(request);
+        var result = await VerificationService.SendCodeAsync(request);
         if (result.Success)
         {
             await stepper.StepNextAsync();
@@ -156,7 +157,7 @@
     private async Task OnVerifyAsync()
     {
         var request = context!.ToVerifyCodeRequest(Model.Code);
-        var result = await SecurityService.VerifyCodeAsync(request);
+        var result = await VerificationService.VerifyCodeAsync(request);
 
         if (result.Success) await VerifyAsync();
         else Snackbar.Add(result.Message, Severity.Error);

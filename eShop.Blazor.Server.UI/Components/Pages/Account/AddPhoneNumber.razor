@@ -5,6 +5,7 @@
 @attribute [Authorize]
 
 @inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 @inject AddPhoneNumberValidator AddPhoneNumberValidator
 @inject CodeModelValidator Validator
 
@@ -184,7 +185,7 @@
     private async Task SendCodeAsync()
     {
         var request = context!.ToSendCodeRequest();
-        var response = await SecurityService.SendCodeAsync(request);
+        var response = await VerificationService.SendCodeAsync(request);
 
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
@@ -240,7 +241,7 @@
         if (verifyCodeForm.IsValid)
         {
             var request = context!.ToVerifyCodeRequest(VerifyPhoneNumberModel.Code);
-            var result = await SecurityService.VerifyCodeAsync(request);
+            var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();
             else Snackbar.Add(result.Message, Severity.Error);

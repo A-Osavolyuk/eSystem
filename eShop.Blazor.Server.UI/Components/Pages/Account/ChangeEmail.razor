@@ -6,6 +6,7 @@
 @inject ChangeEmailValidator ChangeEmailValidator
 @inject CodeModelValidator Validator
 @inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 
 @switch (Type)
 {
@@ -285,7 +286,7 @@
     private async Task SendCurrentEmailCodeAsync()
     {
         var request = currentEmailContext!.ToSendCodeRequest();
-        var result = await SecurityService.SendCodeAsync(request);
+        var result = await VerificationService.SendCodeAsync(request);
         if (result.Success) await stepper.StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
@@ -309,7 +310,7 @@
             };
 
             var request = currentEmailContext!.ToVerifyCodeRequest(VerifyCurrentEmailModel.Code);
-            var result = await SecurityService.VerifyCodeAsync(request);
+            var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await SendNewEmailCodeAsync();
             else Snackbar.Add(result.Message, Severity.Error);
@@ -319,7 +320,7 @@
     private async Task SendNewEmailCodeAsync()
     {
         var request = newEmailContext!.ToSendCodeRequest();
-        var result = await SecurityService.SendCodeAsync(request);
+        var result = await VerificationService.SendCodeAsync(request);
         if (result.Success) await stepper.StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
@@ -360,7 +361,7 @@
         if (confirmChangeEmailForm.IsValid)
         {
             var request = newEmailContext!.ToVerifyCodeRequest(ConfirmChangeEmailModel.Code);
-            var result = await SecurityService.VerifyCodeAsync(request);
+            var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await ChangeAsync();
             else Snackbar.Add(result.Message, Severity.Error);

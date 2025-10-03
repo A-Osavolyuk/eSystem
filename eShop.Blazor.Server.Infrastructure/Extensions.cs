@@ -41,6 +41,7 @@ public static class Extensions
         builder.Services.AddHttpClient<IOAuthService, OAuthService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IDeviceService, DeviceService>(ServiceLifetime.Scoped);
         builder.Services.AddHttpClient<IPasskeyService, PasskeyService>(ServiceLifetime.Scoped);
+        builder.Services.AddHttpClient<IVerificationService, VerificationService>(ServiceLifetime.Scoped);
 
         builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddScoped<IFetchClient, FetchClient>();

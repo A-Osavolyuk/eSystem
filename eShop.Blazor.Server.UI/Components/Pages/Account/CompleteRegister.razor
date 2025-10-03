@@ -3,6 +3,7 @@
 
 @inject ISecurityService SecurityService
 @inject IUserService UserService
+@inject IVerificationService VerificationService
 @inject VerifyEmailValidator Validator
 
 <Title Text="Registration completion"></Title>
@@ -96,7 +97,7 @@
     {
         
         var request = context!.ToSendCodeRequest();
-        var response = await SecurityService.SendCodeAsync(request);
+        var response = await VerificationService.SendCodeAsync(request);
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
     
@@ -107,7 +108,7 @@
         if (form.IsValid)
         {
             var request = context!.ToVerifyCodeRequest(Model.Code);
-            var result = await SecurityService.VerifyCodeAsync(request);
+            var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();
             else Snackbar.Add(result.Message, Severity.Error);

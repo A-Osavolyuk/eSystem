@@ -4,6 +4,7 @@
 @inject IDeviceService DeviceService
 @inject ISecurityService SecurityService
 @inject IUserService UserService
+@inject IVerificationService VerificationService
 
 <Title Text="Device trust"></Title>
 
@@ -109,7 +110,7 @@
     private async Task SendCodeAsync()
     {
         var request = context!.ToSendCodeRequest();
-        var result = await SecurityService.SendCodeAsync(request);
+        var result = await VerificationService.SendCodeAsync(request);
         if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
     }
 
@@ -120,7 +121,7 @@
         if (form.IsValid)
         {
             var request = context!.ToVerifyCodeRequest(Model.Code);
-            var result = await SecurityService.VerifyCodeAsync(request);
+            var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success)
             {

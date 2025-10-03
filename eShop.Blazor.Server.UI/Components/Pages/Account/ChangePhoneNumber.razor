@@ -4,6 +4,7 @@
 @attribute [Authorize]
 
 @inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 @inject ChangePhoneNumberValidator ChangePhoneNumberValidator
 @inject CodeModelValidator Validator
 
@@ -276,7 +277,7 @@
         };
 
         var request = currentPhoneNumberContext!.ToSendCodeRequest();
-        var result = await SecurityService.SendCodeAsync(request);
+        var result = await VerificationService.SendCodeAsync(request);
 
         if (result.Success) await stepper.StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
@@ -289,7 +290,7 @@
         if (verifyNewPhoneNumberForm.IsValid)
         {
             var request = currentPhoneNumberContext!.ToVerifyCodeRequest(VerifyCurrentPhoneNumberModel.Code);
-            var result = await SecurityService.VerifyCodeAsync(request);
+            var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await SendNewCodeAsync();
             else Snackbar.Add(result.Message, Severity.Error);
@@ -311,7 +312,7 @@
         };
 
         var request = newPhoneNumberContext!.ToSendCodeRequest();
-        var result = await SecurityService.SendCodeAsync(request);
+        var result = await VerificationService.SendCodeAsync(request);
 
         if (result.Success) await stepper.StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
@@ -324,7 +325,7 @@
         if (confirmChangePhoneNumberForm.IsValid)
         {
             var request = newPhoneNumberContext!.ToVerifyCodeRequest(ConfirmChangePhoneNumberModel.Code);
-            var result = await SecurityService.VerifyCodeAsync(request);
+            var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await ChangeAsync();
             else Snackbar.Add(result.Message, Severity.Error);

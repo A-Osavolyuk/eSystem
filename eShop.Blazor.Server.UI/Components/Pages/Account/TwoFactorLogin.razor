@@ -5,6 +5,7 @@
 @inject ITwoFactorService TwoFactorService
 @inject IUserService UserService
 @inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 @inject TwoFactorLoginValidator TwoFactorLoginValidator
 
 <Title Text="Login with 2FA"/>
@@ -240,7 +241,7 @@
                 };
 
                 var request = context!.ToSendCodeRequest();
-                var result = await SecurityService.SendCodeAsync(request);
+                var result = await VerificationService.SendCodeAsync(request);
                 if (result.Success) await stepper.StepNextAsync();
                 else Snackbar.Add(result.Message, Severity.Error);
             }
