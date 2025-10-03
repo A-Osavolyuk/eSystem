@@ -472,7 +472,7 @@ public sealed class UserManager(
             CreateDate = DateTimeOffset.UtcNow,
         };
 
-        var providers = await context.TwoFactorProviders.ToListAsync(cancellationToken);
+        var providers = await context.TwoFactorMethods.ToListAsync(cancellationToken);
         var userProviders = providers.Select(x => new UserTwoFactorMethodEntity()
         {
             UserId = user.Id,
@@ -491,7 +491,7 @@ public sealed class UserManager(
 
         await context.Users.AddAsync(user, cancellationToken);
         await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
-        await context.UserTwoFactorProviders.AddRangeAsync(userProviders, cancellationToken);
+        await context.UserTwoFactorMethods.AddRangeAsync(userProviders, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

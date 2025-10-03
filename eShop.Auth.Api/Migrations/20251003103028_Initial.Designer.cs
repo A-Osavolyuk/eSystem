@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251002111632_Initial")]
+    [Migration("20251003103028_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -488,7 +488,7 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.TwoFactorProviderEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.TwoFactorMethodEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -506,7 +506,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TwoFactorProviders");
+                    b.ToTable("TwoFactorMethods");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserChangesEntity", b =>
@@ -885,7 +885,7 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserSecret");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorProviderEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorMethodEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -906,7 +906,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("UserTwoFactorProviders");
+                    b.ToTable("UserTwoFactorMethods");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationEntity", b =>
@@ -1202,21 +1202,21 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorProviderEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorMethodEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "Provider")
+                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorMethodEntity", "Method")
                         .WithMany()
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany("TwoFactorProviders")
+                        .WithMany("Methods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Provider");
+                    b.Navigation("Method");
 
                     b.Navigation("User");
                 });
@@ -1258,6 +1258,8 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("LockoutState")
                         .IsRequired();
 
+                    b.Navigation("Methods");
+
                     b.Navigation("Passkeys");
 
                     b.Navigation("Permissions");
@@ -1267,8 +1269,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("RecoveryCodes");
 
                     b.Navigation("Roles");
-
-                    b.Navigation("TwoFactorProviders");
                 });
 #pragma warning restore 612, 618
         }

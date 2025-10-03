@@ -91,7 +91,7 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TwoFactorProviders",
+                name: "TwoFactorMethods",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -101,7 +101,7 @@ namespace eShop.Auth.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TwoFactorProviders", x => x.Id);
+                    table.PrimaryKey("PK_TwoFactorMethods", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -463,7 +463,7 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserTwoFactorProviders",
+                name: "UserTwoFactorMethods",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -474,15 +474,15 @@ namespace eShop.Auth.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserTwoFactorProviders", x => new { x.UserId, x.ProviderId });
+                    table.PrimaryKey("PK_UserTwoFactorMethods", x => new { x.UserId, x.ProviderId });
                     table.ForeignKey(
-                        name: "FK_UserTwoFactorProviders_TwoFactorProviders_ProviderId",
+                        name: "FK_UserTwoFactorMethods_TwoFactorMethods_ProviderId",
                         column: x => x.ProviderId,
-                        principalTable: "TwoFactorProviders",
+                        principalTable: "TwoFactorMethods",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserTwoFactorProviders_Users_UserId",
+                        name: "FK_UserTwoFactorMethods_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -767,8 +767,8 @@ namespace eShop.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserTwoFactorProviders_ProviderId",
-                table: "UserTwoFactorProviders",
+                name: "IX_UserTwoFactorMethods_ProviderId",
+                table: "UserTwoFactorMethods",
                 column: "ProviderId");
 
             migrationBuilder.CreateIndex(
@@ -829,7 +829,7 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserSecret");
 
             migrationBuilder.DropTable(
-                name: "UserTwoFactorProviders");
+                name: "UserTwoFactorMethods");
 
             migrationBuilder.DropTable(
                 name: "Verifications");
@@ -850,7 +850,7 @@ namespace eShop.Auth.Api.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "TwoFactorProviders");
+                name: "TwoFactorMethods");
 
             migrationBuilder.DropTable(
                 name: "Users");

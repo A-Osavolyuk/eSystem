@@ -485,7 +485,7 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.TwoFactorProviderEntity", b =>
+            modelBuilder.Entity("eShop.Auth.Api.Entities.TwoFactorMethodEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -503,7 +503,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TwoFactorProviders");
+                    b.ToTable("TwoFactorMethods");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserChangesEntity", b =>
@@ -903,7 +903,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("UserTwoFactorProviders");
+                    b.ToTable("UserTwoFactorMethods");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationEntity", b =>
@@ -1201,19 +1201,19 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserTwoFactorMethodEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorProviderEntity", "Provider")
+                    b.HasOne("eShop.Auth.Api.Entities.TwoFactorMethodEntity", "Method")
                         .WithMany()
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany("TwoFactorProviders")
+                        .WithMany("Methods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Provider");
+                    b.Navigation("Method");
 
                     b.Navigation("User");
                 });
@@ -1255,6 +1255,8 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("LockoutState")
                         .IsRequired();
 
+                    b.Navigation("Methods");
+
                     b.Navigation("Passkeys");
 
                     b.Navigation("Permissions");
@@ -1264,8 +1266,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("RecoveryCodes");
 
                     b.Navigation("Roles");
-
-                    b.Navigation("TwoFactorProviders");
                 });
 #pragma warning restore 612, 618
         }

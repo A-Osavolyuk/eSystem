@@ -29,7 +29,7 @@ public class DisableTwoFactorCommandHandler(
 
         if (method is null) return Results.BadRequest("Two-factor authentication is already disabled.");
         
-        var providerResult = await twoFactorManager.UnsubscribeAsync(user, method, cancellationToken);
+        var providerResult = await twoFactorManager.UnsubscribeAsync(user, cancellationToken);
         return providerResult;
     }
 }

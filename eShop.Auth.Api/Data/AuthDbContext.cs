@@ -8,7 +8,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserRoleEntity> UserRoles { get; set; }
     public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
-    public DbSet<UserTwoFactorMethodEntity> UserTwoFactorProviders { get; set; }
+    public DbSet<UserTwoFactorMethodEntity> UserTwoFactorMethods { get; set; }
     public DbSet<UserChangesEntity> UserChanges { get; set; }
     public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
@@ -18,7 +18,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<CodeEntity> Codes { get; set; }
-    public DbSet<TwoFactorMethodEntity> TwoFactorProviders { get; set; }
+    public DbSet<TwoFactorMethodEntity> TwoFactorMethods { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<LockoutStateEntity> LockoutStates { get; set; }

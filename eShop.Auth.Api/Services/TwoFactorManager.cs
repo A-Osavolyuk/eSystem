@@ -8,7 +8,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     public async ValueTask<TwoFactorMethodEntity?> FindByTypeAsync(MethodType type,
         CancellationToken cancellationToken = default)
     {
-        var provider = await context.TwoFactorProviders.FirstOrDefaultAsync(
+        var provider = await context.TwoFactorMethods.FirstOrDefaultAsync(
             x => x.Type == type, cancellationToken);
         
         return provider;
@@ -35,20 +35,20 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         }
 
         context.Users.Update(user);
-        await context.UserTwoFactorProviders.AddAsync(userProvider, cancellationToken);
+        await context.UserTwoFactorMethods.AddAsync(userProvider, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public async ValueTask<Result> UnsubscribeAsync(UserEntity user, UserTwoFactorMethodEntity method, 
+    public async ValueTask<Result> UnsubscribeAsync(UserEntity user, 
         CancellationToken cancellationToken = default)
     {
         user.TwoFactorEnabled = false;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
-        context.UserTwoFactorProviders.Remove(method);
+        context.UserTwoFactorMethods.RemoveRange(user.Methods);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
