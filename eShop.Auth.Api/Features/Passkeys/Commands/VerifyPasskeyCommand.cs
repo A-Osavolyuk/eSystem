@@ -2,6 +2,7 @@
 using eShop.Auth.Api.Types;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
@@ -22,8 +23,8 @@ public class VerifyPasskeyCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var response = request.Request.Response;
-        var clientData = ClientData.Parse(response.Response.ClientDataJson);
+        var credentialResponse = request.Request.Response;
+        var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
@@ -33,7 +34,7 @@ public class VerifyPasskeyCommandHandler(
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
         
-        var authData = AuthenticationData.Parse(response.Response.AttestationObject);
+        var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
         
         var rpHash = SHA256.HashData(Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray()));
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
@@ -52,6 +53,9 @@ public class VerifyPasskeyCommandHandler(
         };
 
         var result = await passkeyManager.CreateAsync(passkey, cancellationToken);
-        return result;
+        if (!result.Succeeded) return result;
+
+        var response = new VerifyPasskeyResponse() { PasskeyId = passkey.Id };
+        return Result.Success(response);
     }
 }
