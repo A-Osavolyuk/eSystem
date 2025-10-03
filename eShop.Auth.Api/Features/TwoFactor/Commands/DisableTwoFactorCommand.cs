@@ -24,7 +24,12 @@ public class DisableTwoFactorCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
         
-        var providerResult = await twoFactorManager.UnsubscribeAsync(user, cancellationToken);
+        var method = user.TwoFactorProviders.FirstOrDefault(
+            x => x.Provider.Type == ProviderType.AuthenticatorApp);
+
+        if (method is null) return Results.BadRequest("Two-factor authentication is already disabled.");
+        
+        var providerResult = await twoFactorManager.UnsubscribeAsync(user, method, cancellationToken);
         return providerResult;
     }
 }

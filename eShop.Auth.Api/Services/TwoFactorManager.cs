@@ -41,13 +41,14 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> UnsubscribeAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> UnsubscribeAsync(UserEntity user, UserTwoFactorProviderEntity provider, 
+        CancellationToken cancellationToken = default)
     {
         user.TwoFactorEnabled = false;
         user.UpdateDate = DateTimeOffset.UtcNow;
         
         context.Users.Update(user);
-        context.UserTwoFactorProviders.RemoveRange(user.TwoFactorProviders);
+        context.UserTwoFactorProviders.Remove(provider);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
