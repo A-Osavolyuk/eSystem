@@ -5,7 +5,7 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
-public record VerifyPasskeySignInCommand(VerifyPasskeySignInRequest Request, HttpContext HttpContext) : IRequest<Result>;
+public record VerifyPasskeySignInCommand(VerifyPasskeySignInRequest Request) : IRequest<Result>;
 
 public class VerifyPasskeySignInCommandHandler(
     IUserManager userManager,
@@ -22,7 +22,7 @@ public class VerifyPasskeySignInCommandHandler(
     private readonly ILoginManager loginManager = loginManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
-    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
+    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(VerifyPasskeySignInCommand request,
         CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ public class VerifyPasskeySignInCommandHandler(
         if (clientData.Type != ClientDataTypes.Get) return Results.BadRequest("Invalid type");
 
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
-        var savedChallenge = request.HttpContext.Session.GetString("webauthn_assertion_challenge");
+        var savedChallenge = httpContext.Session.GetString("webauthn_assertion_challenge");
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
@@ -70,8 +70,8 @@ public class VerifyPasskeySignInCommandHandler(
             return Results.BadRequest("Account is locked out", lockoutResponse);
         }
         
-        var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipV4 = httpContextAccessor.HttpContext?.GetIpV4()!;
+        var userAgent = httpContext.GetUserAgent()!;
+        var ipV4 = httpContext.GetIpV4()!;
 
         var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
         if (device is null) return Results.NotFound($"Invalid device.");

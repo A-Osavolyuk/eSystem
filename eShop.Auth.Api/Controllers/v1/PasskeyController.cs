@@ -34,7 +34,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> CreatePasskeyAsync([FromBody] CreatePasskeyRequest request)
     {
-        var result = await sender.Send(new CreatePasskeyCommand(request, HttpContext));
+        var result = await sender.Send(new CreatePasskeyCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -48,7 +48,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> VerifyPasskeyAsync([FromBody] VerifyPasskeyRequest request)
     {
-        var result = await sender.Send(new VerifyPasskeyCommand(request, HttpContext));
+        var result = await sender.Send(new VerifyPasskeyCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -62,7 +62,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> PasskeySignInAsync([FromBody] PasskeySignInRequest request)
     {
-        var result = await sender.Send(new PasskeySignInCommand(request, HttpContext));
+        var result = await sender.Send(new PasskeySignInCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
@@ -76,7 +76,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> VerifyPasskeySignInAsync([FromBody] VerifyPasskeySignInRequest request)
     {
-        var result = await sender.Send(new VerifyPasskeySignInCommand(request, HttpContext));
+        var result = await sender.Send(new VerifyPasskeySignInCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

@@ -2,14 +2,16 @@
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
-public record PasskeySignInCommand(PasskeySignInRequest Request, HttpContext Context) : IRequest<Result>;
+public record PasskeySignInCommand(PasskeySignInRequest Request) : IRequest<Result>;
 
 public class PasskeySignInCommandHandler(
     IUserManager userManager,
+    IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<PasskeySignInCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(PasskeySignInCommand request, CancellationToken cancellationToken)
     {
@@ -19,7 +21,7 @@ public class PasskeySignInCommandHandler(
         var challenge = CredentialGenerator.GenerateChallenge();
         var options = CredentialGenerator.CreateRequestOptions(user, challenge, identityOptions.Credentials);
 
-        request.Context.Session.SetString("webauthn_assertion_challenge", challenge);
+        httpContext.Session.SetString("webauthn_assertion_challenge", challenge);
 
         return Result.Success(options);
     }

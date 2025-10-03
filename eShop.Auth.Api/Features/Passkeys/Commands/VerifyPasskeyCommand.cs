@@ -6,18 +6,20 @@ using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
-public record VerifyPasskeyCommand(VerifyPasskeyRequest Request, HttpContext HttpContext) : IRequest<Result>;
+public record VerifyPasskeyCommand(VerifyPasskeyRequest Request) : IRequest<Result>;
 
 public class VerifyPasskeyCommandHandler(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
     ITwoFactorManager twoFactorManager,
+    IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<VerifyPasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(VerifyPasskeyCommand request,
         CancellationToken cancellationToken)
@@ -30,9 +32,9 @@ public class VerifyPasskeyCommandHandler(
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
-
+        
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
-        var savedChallenge = request.HttpContext.Session.GetString("webauthn_attestation_challenge");
+        var savedChallenge = httpContext.Session.GetString("webauthn_attestation_challenge");
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
