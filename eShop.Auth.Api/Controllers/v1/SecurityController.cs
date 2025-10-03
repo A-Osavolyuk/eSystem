@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Features.Verification.Commands;
-using eShop.Domain.Common.Http;
+﻿using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.API.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;
@@ -403,48 +402,6 @@ public class SecurityController(ISender sender) : ControllerBase
         [FromBody] ResetPhoneNumberRequest request)
     {
         var result = await sender.Send(new ResetPhoneNumberCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Send code")]
-    [EndpointDescription("Sends code")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpPost("code/send")]
-    public async ValueTask<IActionResult> SendCodeAsync([FromBody] SendCodeRequest request)
-    {
-        var result = await sender.Send(new SendCodeCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Resend code")]
-    [EndpointDescription("Resend code")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpPost("code/resend")]
-    public async ValueTask<IActionResult> ResendCodeAsync([FromBody] ResendCodeRequest request)
-    {
-        var result = await sender.Send(new ResendCodeCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Verify code")]
-    [EndpointDescription("Verify code")]
-    [ProducesResponseType(200)]
-    [AllowAnonymous]
-    [HttpPost("code/verify")]
-    public async ValueTask<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
-    {
-        var result = await sender.Send(new VerifyCodeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

@@ -2,7 +2,7 @@
 using eShop.Domain.Requests.API.Auth;
 using eShop.Domain.Responses.API.Auth;
 
-namespace eShop.Auth.Api.Features.Verification.Commands;
+namespace eShop.Auth.Api.Features.Security.Commands;
 
 public record ResendCodeCommand(ResendCodeRequest Request) : IRequest<Result>;
 
