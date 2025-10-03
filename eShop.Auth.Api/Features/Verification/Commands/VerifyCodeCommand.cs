@@ -1,6 +1,6 @@
 ﻿using eShop.Domain.Requests.API.Auth;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.Verification.Commands;
 
 public record VerifyCodeCommand(VerifyCodeRequest Request) : IRequest<Result>;
 
