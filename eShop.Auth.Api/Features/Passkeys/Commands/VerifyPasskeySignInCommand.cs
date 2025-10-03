@@ -27,7 +27,8 @@ public class VerifyPasskeySignInCommandHandler(
     public async Task<Result> Handle(VerifyPasskeySignInCommand request,
         CancellationToken cancellationToken)
     {
-        var credentialId = CredentialUtils.ToBase64String(request.Request.Credential.Id);
+        var credential = request.Request.Credential;
+        var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
         var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null) return Results.BadRequest("Invalid credential");
@@ -35,27 +36,11 @@ public class VerifyPasskeySignInCommandHandler(
         var user = await userManager.FindByIdAsync(passkey.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {passkey.UserId}.");
 
-        var authenticatorAssertionResponse = request.Request.Credential.Response;
-        var clientData = ClientData.Parse(authenticatorAssertionResponse.ClientDataJson);
-
-        if (clientData is null) return Results.BadRequest("Invalid client data");
-        if (clientData.Type != ClientDataTypes.Get) return Results.BadRequest("Invalid type");
-
-        var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
         var savedChallenge = httpContext.Session.GetString("webauthn_assertion_challenge");
+        if (string.IsNullOrEmpty(savedChallenge)) return Results.BadRequest("Invalid challenge");
 
-        if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
-
-        var valid = CredentialUtils.VerifySignature(authenticatorAssertionResponse, passkey.PublicKey);
-        if (!valid) return Results.BadRequest("Invalid client data");
-
-        var signCount = CredentialUtils.ParseSignCount(authenticatorAssertionResponse.AuthenticatorData);
-
-        passkey.SignCount = signCount;
-        passkey.UpdateDate = DateTimeOffset.UtcNow;
-
-        var result = await passkeyManager.UpdateAsync(passkey, cancellationToken);
-        if (!result.Succeeded) return result;
+        var signInResult = await passkeyManager.SignInAsync(passkey, credential, savedChallenge, cancellationToken);
+        if (!signInResult.Succeeded) return signInResult;
 
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 
@@ -69,16 +54,16 @@ public class VerifyPasskeySignInCommandHandler(
 
             return Results.BadRequest("Account is locked out", lockoutResponse);
         }
-        
+
         var userAgent = httpContext.GetUserAgent()!;
         var ipV4 = httpContext.GetIpV4()!;
 
         var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
         if (device is null) return Results.NotFound($"Invalid device.");
-        
+
         await loginManager.CreateAsync(device, LoginType.Passkey, cancellationToken);
         await authorizationManager.CreateAsync(device, cancellationToken);
-        
+
         var response = new VerifyPasskeySignInResponse()
         {
             UserId = user.Id,
