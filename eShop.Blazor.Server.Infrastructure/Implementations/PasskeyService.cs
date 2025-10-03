@@ -14,6 +14,10 @@ public class PasskeyService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/{id}", Method = HttpMethod.Get },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<HttpResponse> SetPasskeyNameAsync(SetPasskeyNameRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/set-name", Method = HttpMethod.Post, Data = request },
+        new HttpOptions { WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<HttpResponse> CreatePasskeyAsync(CreatePasskeyRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/create", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
