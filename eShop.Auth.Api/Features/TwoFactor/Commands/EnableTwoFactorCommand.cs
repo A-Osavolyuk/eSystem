@@ -23,6 +23,14 @@ public class EnableTwoFactorCommandHandler(
             CodeResource.TwoFactor, CodeType.Enable, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
+
+        if (user.HasPasskeys() && !user.HasTwoFactor(ProviderType.Passkey))
+        {
+            var passkeyResult = await twoFactorManager.SubscribeAsync(user, 
+                ProviderType.Passkey, cancellationToken: cancellationToken);
+
+            if (!passkeyResult.Succeeded) return passkeyResult;
+        }
         
         var providerResult = await twoFactorManager.SubscribeAsync(user, 
             ProviderType.AuthenticatorApp, true, cancellationToken);
