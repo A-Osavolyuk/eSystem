@@ -85,6 +85,11 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
+                RouteId = "verification-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Verification/{**catch-all}" }
+            },
+            new RouteConfig
+            {
                 RouteId = "files-route", ClusterId = "files-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Files/{**catch-all}" }
             },
