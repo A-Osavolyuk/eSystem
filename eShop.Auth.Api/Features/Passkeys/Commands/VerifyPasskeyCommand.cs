@@ -11,10 +11,12 @@ public record VerifyPasskeyCommand(VerifyPasskeyRequest Request, HttpContext Htt
 public class VerifyPasskeyCommandHandler(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
+    ITwoFactorManager twoFactorManager,
     IdentityOptions identityOptions) : IRequestHandler<VerifyPasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(VerifyPasskeyCommand request,
@@ -33,12 +35,12 @@ public class VerifyPasskeyCommandHandler(
         var savedChallenge = request.HttpContext.Session.GetString("webauthn_attestation_challenge");
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
-        
+
         var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
-        
+
         var rpHash = SHA256.HashData(Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray()));
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
-        
+
         var passkey = new UserPasskeyEntity()
         {
             Id = Guid.CreateVersion7(),
@@ -54,6 +56,14 @@ public class VerifyPasskeyCommandHandler(
 
         var result = await passkeyManager.CreateAsync(passkey, cancellationToken);
         if (!result.Succeeded) return result;
+
+        if (user.TwoFactorEnabled && !user.HasTwoFactor(ProviderType.Passkey))
+        {
+            var methodResult = await twoFactorManager.SubscribeAsync(user,
+                ProviderType.Passkey, cancellationToken: cancellationToken);
+
+            if (!methodResult.Succeeded) return methodResult;
+        }
 
         var response = new VerifyPasskeyResponse() { PasskeyId = passkey.Id };
         return Result.Success(response);
