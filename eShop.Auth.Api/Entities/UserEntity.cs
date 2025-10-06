@@ -49,4 +49,6 @@ public class UserEntity : Entity
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasPasskeys() => Passkeys.Count > 0;
     public bool HasTwoFactor(MethodType type) => Methods.Any(x => x.Method.Type == type);
+    public bool HasVerificationMethod(VerificationMethod method) 
+        => VerificationMethods.Any(x => x.Method.Method == method);
 }
