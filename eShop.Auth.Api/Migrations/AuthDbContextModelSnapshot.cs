@@ -906,6 +906,30 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserTwoFactorMethods");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserVerificationMethodEntity", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MethodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("UserId", "MethodId");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("UserVerificationMethods");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -937,6 +961,27 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Verifications");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationMethodEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VerificationMethods");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.AuthorizationSessionEntity", b =>
@@ -1218,6 +1263,25 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserVerificationMethodEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.VerificationMethodEntity", "Method")
+                        .WithMany()
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany("VerificationMethods")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Method");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.VerificationEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
@@ -1266,6 +1330,8 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("RecoveryCodes");
 
                     b.Navigation("Roles");
+
+                    b.Navigation("VerificationMethods");
                 });
 #pragma warning restore 612, 618
         }
