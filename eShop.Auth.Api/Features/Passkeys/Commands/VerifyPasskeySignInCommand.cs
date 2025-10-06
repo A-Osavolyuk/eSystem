@@ -39,8 +39,8 @@ public class VerifyPasskeySignInCommandHandler(
         var savedChallenge = httpContext.Session.GetString("webauthn_assertion_challenge");
         if (string.IsNullOrEmpty(savedChallenge)) return Results.BadRequest("Invalid challenge");
 
-        var signInResult = await passkeyManager.SignInAsync(passkey, credential, savedChallenge, cancellationToken);
-        if (!signInResult.Succeeded) return signInResult;
+        var result = await passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
+        if (!result.Succeeded) return result;
 
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
 

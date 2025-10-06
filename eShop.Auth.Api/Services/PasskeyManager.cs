@@ -25,7 +25,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         return entity;
     }
 
-    public async ValueTask<Result> SignInAsync(UserPasskeyEntity passkey, PublicKeyCredential credential, 
+    public async ValueTask<Result> VerifyAsync(UserPasskeyEntity passkey, PublicKeyCredential credential, 
         string storedChallenge, CancellationToken cancellationToken)
     {
         var authenticatorAssertionResponse = credential.Response;
