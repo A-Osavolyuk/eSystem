@@ -30,6 +30,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
     public DbSet<AuthorizationSessionEntity> AuthorizationSessions { get; set; }
     public DbSet<VerificationEntity> Verifications { get; set; }
+    public DbSet<VerificationMethodEntity> VerificationMethods { get; set; }
+    public DbSet<UserVerificationMethodEntity> UserVerificationMethods { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -346,6 +348,25 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.User)
                 .WithMany()
                 .HasForeignKey(x => x.UserId);
+        });
+
+        builder.Entity<VerificationMethodEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Method).HasEnumConversion();
+        });
+
+        builder.Entity<UserVerificationMethodEntity>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.MethodId });
+            
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.VerificationMethods)
+                .HasForeignKey(x => x.UserId);
+            
+            entity.HasOne(x => x.Method)
+                .WithMany()
+                .HasForeignKey(x => x.MethodId);
         });
     }
 }
