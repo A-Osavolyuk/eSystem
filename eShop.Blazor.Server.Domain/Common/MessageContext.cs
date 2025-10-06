@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Requests.API.Auth;
+﻿using eShop.Domain.Requests.Auth;
 
 namespace eShop.Blazor.Server.Domain.Common;
 

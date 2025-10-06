@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.Messaging;
-using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Verification.Commands;
 

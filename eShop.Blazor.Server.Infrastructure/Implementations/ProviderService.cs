@@ -2,7 +2,7 @@
 using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
-using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Requests.Auth;
 
 namespace eShop.Blazor.Server.Infrastructure.Implementations;
 

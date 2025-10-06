@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Common.Http;
-using eShop.Domain.Requests.API.Auth;
+using eShop.Domain.Requests.Auth;
 
 namespace eShop.Blazor.Server.Domain.Interfaces;
 

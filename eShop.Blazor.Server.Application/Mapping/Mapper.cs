@@ -1,4 +1,5 @@
 ﻿using eShop.Blazor.Server.Domain.Models;
+using eShop.Domain.Requests.Auth;
 
 namespace eShop.Blazor.Server.Application.Mapping;
 

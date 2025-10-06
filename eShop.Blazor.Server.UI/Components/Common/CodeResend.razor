@@ -1,4 +1,5 @@
-﻿@inject IVerificationService VerificationService
+﻿@using eShop.Domain.Requests.Auth
+@inject IVerificationService VerificationService
 @inject ISnackbar Snackbar
 
 @if (Context is not null && Context.Sender != SenderType.AuthenticatorApp)

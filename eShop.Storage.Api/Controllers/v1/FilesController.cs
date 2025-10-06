@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using eShop.Application.Utilities;
 using eShop.Domain.Common.Http;
-using eShop.Domain.Requests.API.Storage;
+using eShop.Domain.Requests.Storage;
 using eShop.Storage.Api.Features.Commands;
 
 namespace eShop.Storage.Api.Controllers.v1;

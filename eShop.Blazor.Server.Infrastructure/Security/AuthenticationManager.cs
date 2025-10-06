@@ -3,7 +3,6 @@ using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Blazor.Server.Domain.Options;
 using eShop.Blazor.Server.Domain.Types;
 using eShop.Domain.Common.Http;
-using eShop.Domain.Requests.API.Auth;
 using Microsoft.AspNetCore.Components;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
