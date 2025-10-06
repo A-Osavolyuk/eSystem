@@ -94,6 +94,6 @@ public sealed class RegisterCommandHandler(
             UserId = user.Id,
         };
 
-        return Result.Success(response, "Your account have been successfully registered.");
+        return Result.Success(response);
     }
 }
