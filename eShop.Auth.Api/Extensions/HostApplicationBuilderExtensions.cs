@@ -26,6 +26,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddLogging();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
+        builder.AddVerification();
         
         builder.Services.AddControllers()
             .AddJsonOptions(cfg => cfg.JsonSerializerOptions.WriteIndented = true);
@@ -239,6 +240,16 @@ public static class HostApplicationBuilderExtensions
                 var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
                 cfg.Host(connectionString);
             });
+        });
+    }
+
+    private static void AddVerification(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddVerification(cfg =>
+        {
+            cfg.AddMethod(VerificationMethod.Email);
+            cfg.AddMethod(VerificationMethod.Passkey);
+            cfg.AddMethod(VerificationMethod.AuthenticatorApp);
         });
     }
 
