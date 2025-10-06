@@ -62,9 +62,7 @@ public sealed class CodeManager(
             }
 
             var unprotectedSecret = protector.Unprotect(userSecret.Secret);
-            var secretBytes = Base32Encoding.ToBytes(unprotectedSecret);
-            var totp = new Totp(secretBytes);
-            var isVerifiedCode = totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
+            var isVerifiedCode = AuthenticatorUtils.VerifyCode(code, unprotectedSecret);
 
             return !isVerifiedCode ? Results.BadRequest("Invalid code") : Result.Success();
         }

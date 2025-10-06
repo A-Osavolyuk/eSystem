@@ -1,0 +1,13 @@
+﻿using OtpNet;
+
+namespace eShop.Auth.Api.Utilities;
+
+public static class AuthenticatorUtils
+{
+    public static bool VerifyCode(string code, string secret)
+    {
+        var secretBytes = Base32Encoding.ToBytes(secret);
+        var totp = new Totp(secretBytes);
+        return totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
+    }
+}
