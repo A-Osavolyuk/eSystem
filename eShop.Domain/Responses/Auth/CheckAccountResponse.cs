@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Responses.API.Auth;
+﻿namespace eShop.Domain.Responses.Auth;
 
 public class CheckAccountResponse
 {

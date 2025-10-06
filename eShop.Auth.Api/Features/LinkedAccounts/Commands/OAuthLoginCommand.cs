@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Responses.API.Auth;
+﻿using eShop.Domain.Responses.Auth;
 using Microsoft.AspNetCore.Authentication;
 using OtpNet;
 

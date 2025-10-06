@@ -4,7 +4,7 @@ using eShop.Blazor.Server.Domain.Types;
 using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.Auth;
-using eShop.Domain.Responses.API.Auth;
+using eShop.Domain.Responses.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;

@@ -5,7 +5,7 @@ using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;
 using eShop.Domain.Requests.Auth;
-using eShop.Domain.Responses.API.Auth;
+using eShop.Domain.Responses.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 

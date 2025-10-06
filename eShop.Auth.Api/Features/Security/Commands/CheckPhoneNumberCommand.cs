@@ -1,5 +1,4 @@
 ﻿using eShop.Domain.Requests.Auth;
-using eShop.Domain.Responses.API.Auth;
 
 namespace eShop.Auth.Api.Features.Security.Commands;
 

@@ -1,5 +1,5 @@
 ﻿using eShop.Domain.Requests.Auth;
-using eShop.Domain.Responses.API.Auth;
+using eShop.Domain.Responses.Auth;
 
 namespace eShop.Auth.Api.Features.Devices.Commands;
 

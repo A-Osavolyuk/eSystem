@@ -1,4 +1,4 @@
-﻿namespace eShop.Domain.Responses.API.Storage;
+﻿namespace eShop.Domain.Responses.Storage;
 
 public class LoadFilesResponse
 {
