@@ -146,6 +146,6 @@ public sealed class LoginWith2FaCommandHandler(
         await loginManager.CreateAsync(device, LoginType.TwoFactor, provider.Type.ToString(), cancellationToken);
         await authorizationManager.CreateAsync(device, cancellationToken);
         
-        return Result.Success(response, "Successfully logged in.");
+        return Result.Success(response);
     }
 }
