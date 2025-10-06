@@ -1,0 +1,81 @@
+﻿@inject UserState UserState
+
+@if (Confirmed)
+{
+    @AccessConfirmed
+}
+else
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="4">
+            <MudStack Justify="Justify.Center">
+                <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
+                    Confirm access
+                </MudTextM3>
+                <MudPaper Outlined="true" Class="pa-5">
+                    <MudGrid>
+                        <MudItem xs="1">
+                            <MudAvatar Size="Size.Medium">
+                                <MudImage
+                                    Src="/images/avatar.jpg"
+                                    Alt="Avatar"
+                                    FallbackSrc="/images/avatar.jpg"/>
+                            </MudAvatar>
+                        </MudItem>
+                        <MudItem xs="10">
+                            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                <MudTextM3 Class="pt-2">
+                                    Signed-in as <strong>@UserState.Credentials?.Username</strong>
+                                </MudTextM3>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+                @switch (Method)
+                {
+                    case VerificationMethod.Email:
+                    {
+                        <EmailVerification OnAccessConfirmed="ConfirmAccessAsync"/> 
+                        break;
+                    }
+                    case VerificationMethod.Passkey:
+                    {
+                        <PasskeyVerification OnAccessConfirmed="ConfirmAccessAsync"/> 
+                        break;
+                    }
+                    case VerificationMethod.AuthenticatorApp:
+                    {
+                        <AuthenticatorAppVerification OnAccessConfirmed="ConfirmAccessAsync"/> 
+                        break;
+                    }
+                }
+                <ProblemsSection Method="Method" OnChangeMethod="ChangeMethodAsync"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+
+<style>
+    input {
+        text-align: center;
+    }
+</style>
+
+@code {
+    [Parameter] public RenderFragment AccessConfirmed { get; set; } = null!;
+    
+    private VerificationMethod Method { get; set; }
+    private bool Confirmed { get; set; } = false;
+
+    private async Task ChangeMethodAsync(VerificationMethod method)
+    {
+        Method = method;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ConfirmAccessAsync()
+    {
+        Confirmed = true;
+        await InvokeAsync(StateHasChanged);
+    }
+}

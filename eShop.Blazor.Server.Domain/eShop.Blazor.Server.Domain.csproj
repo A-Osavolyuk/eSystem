@@ -12,4 +12,8 @@
       <ProjectReference Include="..\eShop.Domain\eShop.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Enums\" />
+    </ItemGroup>
+
 </Project>
