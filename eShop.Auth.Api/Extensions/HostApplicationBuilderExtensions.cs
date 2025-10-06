@@ -176,17 +176,6 @@ public static class HostApplicationBuilderExtensions
             });
     }
 
-    private static IServiceCollection AddIdentity(this IServiceCollection services,
-        Action<IdentityOptions> configureOptions)
-    {
-        var options = new IdentityOptions();
-        configureOptions(options);
-
-        services.AddSingleton(options);
-
-        return services;
-    }
-
     private static IServiceCollection AddEncryption(this IServiceCollection services)
     {
         services.AddDataProtection();
