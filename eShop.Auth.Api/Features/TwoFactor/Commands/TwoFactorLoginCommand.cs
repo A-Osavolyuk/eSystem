@@ -1,8 +1,7 @@
-﻿using eShop.Domain.Common.Security.Constants;
-using eShop.Domain.Requests.Auth;
+﻿using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
 public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
     : IRequest<Result>;
