@@ -2,7 +2,6 @@
 
 public interface IUserManager
 {
-    public ValueTask<List<UserEntity>> GetAllAsync(CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default);

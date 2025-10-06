@@ -10,32 +10,6 @@ public sealed class UserManager(
     private readonly AuthDbContext context = context;
     private readonly Hasher hasher = hasher;
 
-    public async ValueTask<List<UserEntity>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        var users = await context.Users
-            .Include(x => x.Roles)
-            .ThenInclude(x => x.Role)
-            .Include(x => x.Permissions)
-            .ThenInclude(x => x.Permission)
-            .Include(x => x.Methods)
-            .ThenInclude(x => x.Method)
-            .Include(x => x.LinkedAccounts)
-            .ThenInclude(x => x.Provider)
-            .Include(x => x.VerificationMethods)
-            .ThenInclude(x => x.Method)
-            .Include(x => x.Changes)
-            .Include(x => x.RecoveryCodes)
-            .Include(x => x.PersonalData)
-            .Include(x => x.LockoutState)
-            .Include(x => x.Devices)
-            .Include(x => x.Passkeys)
-            .Include(x => x.Emails)
-            .Include(x => x.PhoneNumbers)
-            .ToListAsync(cancellationToken);
-
-        return users;
-    }
-
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToUpper();
