@@ -1,5 +1,4 @@
-﻿using eShop.Domain.Common.Security.Constants;
-using eShop.Domain.DTOs;
+﻿using eShop.Domain.DTOs;
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 

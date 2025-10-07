@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using eShop.Blazor.Server.Domain.DTOs;
+﻿using eShop.Blazor.Server.Domain.DTOs;
 
 namespace eShop.Blazor.Server.Domain.Types;
 

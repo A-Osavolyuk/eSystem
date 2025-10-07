@@ -1,6 +1,5 @@
 ﻿using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
-using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 

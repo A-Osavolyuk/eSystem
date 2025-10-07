@@ -1,5 +1,4 @@
-﻿using eShop.Blazor.Server.Application.State;
-using eShop.Blazor.Server.Domain.Abstraction.Services;
+﻿using eShop.Blazor.Server.Domain.Abstraction.Services;
 using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Enums;

@@ -1,6 +1,4 @@
-﻿using eShop.Auth.Api.Types;
-using eShop.Domain.Common.Security.Constants;
-using eShop.Domain.Requests.Auth;
+﻿using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;

@@ -1,6 +1,5 @@
 ﻿using eShop.Auth.Api.Security.Protection;
 using eShop.Domain.Requests.Auth;
-using OtpNet;
 
 namespace eShop.Auth.Api.Features.Verification.Commands;
 
