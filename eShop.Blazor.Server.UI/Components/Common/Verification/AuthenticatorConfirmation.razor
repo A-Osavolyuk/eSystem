@@ -1,4 +1,6 @@
 ﻿@inject UserState UserState
+@inject ISnackbar Snackbar
+@inject IVerificationService VerificationService
 
 <MudStack Spacing="3">
     <MudPaper Outlined="true" Class="pa-5">
@@ -21,7 +23,8 @@
                 Color="Color.Success"
                 Size="Size.Small"
                 FullWidth="true"
-                Disabled="@(Model.Code.Length <= 5)">
+                Disabled="@(Model.Code.Length <= 5)"
+                OnClick="@(async () => await OnVerifyAsync())">
                 Verify code
             </MudLoadingButton>
         </MudStack>
@@ -67,9 +70,20 @@
     private PatternMask mask = new PatternMask("000000");
     private MudForm form = new();
 
-    private Task OnSendAsync()
+    private async Task OnVerifyAsync()
     {
-        return Task.CompletedTask;
+        var request = new VerifyAuthenticatorCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Code = Model.Code,
+            Action = Context.Action,
+            Purpose = Context.Purpose
+        };
+
+        var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);
+
+        if (result.Success) await OnAccessConfirmed.InvokeAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
 }
