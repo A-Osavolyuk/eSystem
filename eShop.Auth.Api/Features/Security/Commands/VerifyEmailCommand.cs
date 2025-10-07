@@ -18,7 +18,7 @@ public sealed class VerifyEmailCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.Email, CodeType.Verify, cancellationToken);
+            PurposeType.Email, ActionType.Verify, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

@@ -22,7 +22,7 @@ public class DisconnectLinkedAccountCommandHandler(
         if (provider is null) return Results.NotFound($"Cannot find provider with ID {request.Request.Provider}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.LinkedAccount, CodeType.Disconnect, cancellationToken);
+            PurposeType.LinkedAccount, ActionType.Disconnect, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

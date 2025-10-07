@@ -124,8 +124,8 @@
                 context = new MessageContext()
                 {
                     UserId = UserState.UserId,
-                    Type = CodeType.Block,
-                    Resource = CodeResource.Device,
+                    Action = ActionType.Block,
+                    Purpose = PurposeType.Device,
                     Sender = SenderType.Email,
                     Payload = new Dictionary<string, string>()
                     {

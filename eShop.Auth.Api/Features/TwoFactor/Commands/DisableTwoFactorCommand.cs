@@ -20,7 +20,7 @@ public class DisableTwoFactorCommandHandler(
         if (!user.TwoFactorEnabled) return Results.BadRequest("2FA already disabled.");
         
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.TwoFactor, CodeType.Disable, cancellationToken);
+            PurposeType.TwoFactor, ActionType.Disable, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
         

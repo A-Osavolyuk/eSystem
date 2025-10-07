@@ -29,7 +29,7 @@ public class ResetPhoneNumberCommandHandler(
         }
         
         var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.PhoneNumber, CodeType.Reset, cancellationToken);
+            PurposeType.PhoneNumber, ActionType.Reset, cancellationToken);
         
         if (!verificationResult.Succeeded) return verificationResult;
         

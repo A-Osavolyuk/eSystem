@@ -73,8 +73,8 @@
             context = new()
             {
                 UserId = UserState.UserId,
-                Resource = CodeResource.Email,
-                Type = CodeType.Manage,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Manage,
                 Sender = SenderType.Email,
                 Payload = new()
                 {

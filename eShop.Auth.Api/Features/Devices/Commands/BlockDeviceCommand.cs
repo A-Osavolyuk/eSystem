@@ -22,7 +22,7 @@ public class BlockDeviceCommandHandler(
         if (device is null) return Results.NotFound($"Cannot find device with ID {request.Request.DeviceId}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.Device, CodeType.Block, cancellationToken);
+            PurposeType.Device, ActionType.Block, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

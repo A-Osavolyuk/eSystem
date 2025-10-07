@@ -249,35 +249,35 @@ public static class HostApplicationBuilderExtensions
     {
         builder.Services.AddMessaging(cfg =>
         {
-            cfg.Add<VerifyEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Verify);
-            cfg.Add<RemoveEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Remove);
-            cfg.Add<ChangeEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Current);
-            cfg.Add<ResetEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Reset);
-            cfg.Add<ConfirmEmailChangeMessage>(SenderType.Email, CodeResource.Email, CodeType.New);
-            cfg.Add<ManageEmailMessage>(SenderType.Email, CodeResource.Email, CodeType.Manage);
-            cfg.Add<UnblockAccountMessage>(SenderType.Email, CodeResource.Account, CodeType.Unlock);
-            cfg.Add<RecoverAccountMessage>(SenderType.Email, CodeResource.Account, CodeType.Recover);
-            cfg.Add<AllowLinkedAccountMessage>(SenderType.Email, CodeResource.LinkedAccount, CodeType.Allow);
-            cfg.Add<DisallowLinkedAccountMessage>(SenderType.Email, CodeResource.LinkedAccount, CodeType.Disallow);
-            cfg.Add<DisconnectLinkedAccountMessage>(SenderType.Email, CodeResource.LinkedAccount, CodeType.Disconnect);
-            cfg.Add<ForgotPasswordMessage>(SenderType.Email, CodeResource.Password, CodeType.Reset);
-            cfg.Add<RemovePasskeyMessage>(SenderType.Email, CodeResource.Passkey, CodeType.Remove);
-            cfg.Add<BlockDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Block);
-            cfg.Add<TrustDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Trust);
-            cfg.Add<UnblockDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Unblock);
-            cfg.Add<VerifyDeviceMessage>(SenderType.Email, CodeResource.Device, CodeType.Verify);
-            cfg.Add<TwoFactorCodeEmailMessage>(SenderType.Email, CodeResource.TwoFactor, CodeType.SignIn);
-            cfg.Add<EnableEmailTwoFactorMessage>(SenderType.Email, CodeResource.Provider, CodeType.Subscribe);
-            cfg.Add<DisableEmailTwoFactorMessage>(SenderType.Email, CodeResource.Provider, CodeType.Unsubscribe);
-            cfg.Add<EnableMethodMessage>(SenderType.Email, CodeResource.LoginMethod, CodeType.Enable);
-            cfg.Add<DisableMethodMessage>(SenderType.Email, CodeResource.LoginMethod, CodeType.Disable);
-            cfg.Add<ChangePhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Current);
-            cfg.Add<RemovePhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Remove);
-            cfg.Add<ResetPhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Reset);
-            cfg.Add<VerifyPhoneNumberMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.Verify);
-            cfg.Add<ConfirmPhoneNumberChangeMessage>(SenderType.Sms, CodeResource.PhoneNumber, CodeType.New);
-            cfg.Add<TwoFactorCodeSmsMessage>(SenderType.Sms, CodeResource.TwoFactor, CodeType.SignIn);
-            cfg.Add<EnableSmsTwoFactorMessage>(SenderType.Sms, CodeResource.Provider, CodeType.Subscribe);
+            cfg.Add<VerifyEmailMessage>(SenderType.Email, PurposeType.Email, ActionType.Verify);
+            cfg.Add<RemoveEmailMessage>(SenderType.Email, PurposeType.Email, ActionType.Remove);
+            cfg.Add<ChangeEmailMessage>(SenderType.Email, PurposeType.Email, ActionType.Current);
+            cfg.Add<ResetEmailMessage>(SenderType.Email, PurposeType.Email, ActionType.Reset);
+            cfg.Add<ConfirmEmailChangeMessage>(SenderType.Email, PurposeType.Email, ActionType.New);
+            cfg.Add<ManageEmailMessage>(SenderType.Email, PurposeType.Email, ActionType.Manage);
+            cfg.Add<UnblockAccountMessage>(SenderType.Email, PurposeType.Account, ActionType.Unlock);
+            cfg.Add<RecoverAccountMessage>(SenderType.Email, PurposeType.Account, ActionType.Recover);
+            cfg.Add<AllowLinkedAccountMessage>(SenderType.Email, PurposeType.LinkedAccount, ActionType.Allow);
+            cfg.Add<DisallowLinkedAccountMessage>(SenderType.Email, PurposeType.LinkedAccount, ActionType.Disallow);
+            cfg.Add<DisconnectLinkedAccountMessage>(SenderType.Email, PurposeType.LinkedAccount, ActionType.Disconnect);
+            cfg.Add<ForgotPasswordMessage>(SenderType.Email, PurposeType.Password, ActionType.Reset);
+            cfg.Add<RemovePasskeyMessage>(SenderType.Email, PurposeType.Passkey, ActionType.Remove);
+            cfg.Add<BlockDeviceMessage>(SenderType.Email, PurposeType.Device, ActionType.Block);
+            cfg.Add<TrustDeviceMessage>(SenderType.Email, PurposeType.Device, ActionType.Trust);
+            cfg.Add<UnblockDeviceMessage>(SenderType.Email, PurposeType.Device, ActionType.Unblock);
+            cfg.Add<VerifyDeviceMessage>(SenderType.Email, PurposeType.Device, ActionType.Verify);
+            cfg.Add<TwoFactorCodeEmailMessage>(SenderType.Email, PurposeType.TwoFactor, ActionType.SignIn);
+            cfg.Add<EnableEmailTwoFactorMessage>(SenderType.Email, PurposeType.Provider, ActionType.Subscribe);
+            cfg.Add<DisableEmailTwoFactorMessage>(SenderType.Email, PurposeType.Provider, ActionType.Unsubscribe);
+            cfg.Add<EnableMethodMessage>(SenderType.Email, PurposeType.LoginMethod, ActionType.Enable);
+            cfg.Add<DisableMethodMessage>(SenderType.Email, PurposeType.LoginMethod, ActionType.Disable);
+            cfg.Add<ChangePhoneNumberMessage>(SenderType.Sms, PurposeType.PhoneNumber, ActionType.Current);
+            cfg.Add<RemovePhoneNumberMessage>(SenderType.Sms, PurposeType.PhoneNumber, ActionType.Remove);
+            cfg.Add<ResetPhoneNumberMessage>(SenderType.Sms, PurposeType.PhoneNumber, ActionType.Reset);
+            cfg.Add<VerifyPhoneNumberMessage>(SenderType.Sms, PurposeType.PhoneNumber, ActionType.Verify);
+            cfg.Add<ConfirmPhoneNumberChangeMessage>(SenderType.Sms, PurposeType.PhoneNumber, ActionType.New);
+            cfg.Add<TwoFactorCodeSmsMessage>(SenderType.Sms, PurposeType.TwoFactor, ActionType.SignIn);
+            cfg.Add<EnableSmsTwoFactorMessage>(SenderType.Sms, PurposeType.Provider, ActionType.Subscribe);
         });
     }
 }

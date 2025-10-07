@@ -30,7 +30,7 @@ public class ResetEmailCommandHandler(
         }
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.Email, CodeType.Reset, cancellationToken);
+            PurposeType.Email, ActionType.Reset, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

@@ -171,8 +171,8 @@
         {
             UserId = UserState.UserId,
             Sender = SenderType.Email,
-            Resource = CodeResource.Email,
-            Type = CodeType.Remove,
+            Purpose = PurposeType.Email,
+            Action = ActionType.Remove,
             Payload = new()
             {
                 { "To", UserState.Credentials?.PrimaryEmail! }

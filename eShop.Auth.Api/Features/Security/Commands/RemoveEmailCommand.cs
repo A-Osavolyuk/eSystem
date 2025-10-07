@@ -36,7 +36,7 @@ public class RemoveEmailCommandHandler(
         }
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.Email, CodeType.Remove, cancellationToken);
+            PurposeType.Email, ActionType.Remove, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
         

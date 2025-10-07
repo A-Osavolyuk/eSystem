@@ -6,8 +6,8 @@ public class MessageContext
 {
     public Guid UserId { get; set; }
     public SenderType Sender { get; set; }
-    public CodeResource Resource { get; set; }
-    public CodeType Type { get; set; }
+    public PurposeType Purpose { get; set; }
+    public ActionType Action { get; set; }
     public Dictionary<string, string> Payload { get; set; } = [];
 
     public SendCodeRequest ToSendCodeRequest()
@@ -16,8 +16,8 @@ public class MessageContext
         {
             UserId = UserId,
             Sender = Sender,
-            Resource = Resource,
-            Type = Type,
+            Purpose = Purpose,
+            Action = Action,
             Payload = Payload
         };
     }
@@ -28,8 +28,8 @@ public class MessageContext
         {
             UserId = UserId,
             Sender = Sender,
-            Resource = Resource,
-            Type = Type,
+            Purpose = Purpose,
+            Action = Action,
             Code = code
         };
     }

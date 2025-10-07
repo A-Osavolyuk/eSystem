@@ -92,8 +92,8 @@
         {
             UserId = UserState.UserId,
             Sender = SenderType.Email,
-            Resource = Context.Resource,
-            Type = Context.Type,
+            Purpose = Context.Purpose,
+            Action = Context.Action,
             Payload = new()
             {
                 { "To", UserState.Credentials?.PrimaryEmail! }
@@ -116,8 +116,8 @@
             {
                 UserId = UserState.UserId,
                 Code = Model.Code,
-                Resource = Context.Resource,
-                Type = Context.Type,
+                Purpose = Context.Purpose,
+                Action = Context.Action,
                 Sender = SenderType.Email
             };
 

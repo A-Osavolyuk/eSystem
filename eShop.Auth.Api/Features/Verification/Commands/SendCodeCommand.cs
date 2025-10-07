@@ -27,11 +27,11 @@ public class SendCodeCommandHandler(
         }
 
         var sender = request.Request.Sender;
-        var codeType = request.Request.Type;
-        var codeResource = request.Request.Resource;
+        var action = request.Request.Action;
+        var purpose = request.Request.Purpose;
         var payload = request.Request.Payload;
 
-        var code = await codeManager.GenerateAsync(user, sender, codeType, codeResource, cancellationToken);
+        var code = await codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
 
         payload["Code"] = code;
 
@@ -39,9 +39,9 @@ public class SendCodeCommandHandler(
 
         var metadata = new MessageMetadata()
         {
-            Resource = codeResource,
+            Purpose = purpose,
             Sender = sender,
-            Type = codeType,
+            Action = action,
         };
 
         var message = messageRegistry.Create(metadata, payload);

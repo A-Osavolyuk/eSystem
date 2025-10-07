@@ -262,8 +262,8 @@
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
-                Resource = CodeResource.Email,
-                Type = CodeType.Current,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Current,
                 Payload = new()
                 {
                     { "NewEmail", ChangeEmailModel.NewEmail },
@@ -302,8 +302,8 @@
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
-                Resource = CodeResource.Email,
-                Type = CodeType.New,
+                Purpose = PurposeType.Email,
+                Action = ActionType.New,
                 Payload = new()
                 {
                     { "To", ChangeEmailModel.NewEmail }

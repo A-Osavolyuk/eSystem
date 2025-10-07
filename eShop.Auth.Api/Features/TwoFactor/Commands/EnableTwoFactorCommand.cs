@@ -20,7 +20,7 @@ public class EnableTwoFactorCommandHandler(
         if (user.TwoFactorEnabled) return Results.BadRequest("2FA already enabled.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.TwoFactor, CodeType.Enable, cancellationToken);
+            PurposeType.TwoFactor, ActionType.Enable, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

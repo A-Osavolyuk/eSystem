@@ -133,8 +133,8 @@
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
-                Resource = CodeResource.Device,
-                Type = CodeType.Verify,
+                Purpose = PurposeType.Device,
+                Action = ActionType.Verify,
                 Payload = new()
                 {
                     { "To", UserState.Credentials?.PrimaryEmail! },

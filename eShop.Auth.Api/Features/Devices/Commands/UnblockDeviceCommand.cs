@@ -22,7 +22,7 @@ public class UnblockDeviceCommandHandler(
         if (device is null) return Results.NotFound($"Cannot find device with ID {request.Request.DeviceId}.");
         
         var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.Device, CodeType.Unblock, cancellationToken);
+            PurposeType.Device, ActionType.Unblock, cancellationToken);
         
         if(!verificationResult.Succeeded) return verificationResult;
         

@@ -3,7 +3,7 @@
 /// <summary>
 /// Defines the types of resources that can be associated with a verification code
 /// </summary>
-public enum CodeResource
+public enum PurposeType
 {
     /// <summary>
     /// The user's primary email address.

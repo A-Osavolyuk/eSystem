@@ -125,8 +125,8 @@
                 context = new MessageContext()
                 {
                     UserId = UserState.UserId,
-                    Resource = CodeResource.Passkey,
-                    Type = CodeType.Remove,
+                    Purpose = PurposeType.Passkey,
+                    Action = ActionType.Remove,
                     Sender = SenderType.Email,
                     Payload = new Dictionary<string, string>()
                     {

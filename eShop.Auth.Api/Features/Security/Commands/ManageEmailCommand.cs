@@ -20,7 +20,7 @@ public class ManageEmailCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.Email, CodeType.Manage, cancellationToken);
+            PurposeType.Email, ActionType.Manage, cancellationToken);
         
         if (!verificationResult.Succeeded) return verificationResult;
 

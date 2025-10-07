@@ -20,13 +20,13 @@ public class VerifyCodeCommandHandler(
 
         var code = request.Request.Code;
         var sender = request.Request.Sender;
-        var type = request.Request.Type;
-        var resource = request.Request.Resource;
+        var action = request.Request.Action;
+        var purpose = request.Request.Purpose;
         
-        var codeResult = await codeManager.VerifyAsync(user, code, sender, type, resource, cancellationToken);
+        var codeResult = await codeManager.VerifyAsync(user, code, sender, action, purpose, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var result = await verificationManager.CreateAsync(user, resource, type, cancellationToken);
+        var result = await verificationManager.CreateAsync(user, purpose, action, cancellationToken);
         return result;
     }
 }

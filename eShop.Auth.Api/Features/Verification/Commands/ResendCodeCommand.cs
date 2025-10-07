@@ -2,7 +2,7 @@
 using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Features.Verification.Commands;
 
 public record ResendCodeCommand(ResendCodeRequest Request) : IRequest<Result>;
 
@@ -54,11 +54,11 @@ public class ResendCodeCommandHandler(
         if (!userUpdateResult.Succeeded) return userUpdateResult;
 
         var sender = request.Request.Sender;
-        var type = request.Request.Type;
-        var resource = request.Request.Resource;
+        var action = request.Request.Action;
+        var purpose = request.Request.Purpose;
         var payload = request.Request.Payload;
 
-        var code = await codeManager.GenerateAsync(user, sender, type, resource, cancellationToken);
+        var code = await codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
         payload["Code"] = code;
 
         if (sender == SenderType.Email) payload["UserName"] = user.Username;
@@ -66,8 +66,8 @@ public class ResendCodeCommandHandler(
         var metadata = new MessageMetadata()
         {
             Sender = sender,
-            Type = type,
-            Resource = resource
+            Action = action,
+            Purpose = purpose
         };
 
         var message = messageRegistry.Create(metadata, payload);

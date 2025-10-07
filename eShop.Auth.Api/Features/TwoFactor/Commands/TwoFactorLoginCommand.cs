@@ -80,7 +80,7 @@ public sealed class LoginWith2FaCommandHandler(
         };
         
         var codeResult = await codeManager.VerifyAsync(user, code, sender, 
-            CodeType.SignIn, CodeResource.TwoFactor, cancellationToken);
+            ActionType.SignIn, PurposeType.TwoFactor, cancellationToken);
         
         if (!codeResult.Succeeded)
         {

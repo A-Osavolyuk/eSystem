@@ -29,9 +29,9 @@ public class VerifyAuthenticatorCodeCommandHandler(
         var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, unprotectedSecret);
         if (!verified) return Results.BadRequest("Invalid authenticator code");
         
-        var resource = request.Request.Resource;
-        var type = request.Request.Type;
-        var result = await verificationManager.CreateAsync(user, resource, type, cancellationToken);
+        var purpose = request.Request.Purpose;
+        var action = request.Request.Action;
+        var result = await verificationManager.CreateAsync(user, purpose, action, cancellationToken);
         return result;
     }
 }

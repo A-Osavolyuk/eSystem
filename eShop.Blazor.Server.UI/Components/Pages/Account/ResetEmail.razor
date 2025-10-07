@@ -137,8 +137,8 @@
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
-                Resource = CodeResource.Email,
-                Type = CodeType.Reset,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Reset,
                 Payload = new()
                 {
                     { "To", ResetEmailModel.NewEmail }

@@ -172,8 +172,8 @@
                 {
                     UserId = userId,
                     Sender = SenderType.Email,
-                    Resource = CodeResource.Account,
-                    Type = CodeType.Recover,
+                    Purpose = PurposeType.Account,
+                    Action = ActionType.Recover,
                     Payload = new()
                     {
                         { "To", recoveryEmail! }

@@ -75,8 +75,8 @@
             {
                 UserId = UserId,
                 Sender = SenderType.Email,
-                Resource = CodeResource.Email,
-                Type = CodeType.Verify,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Verify,
                 Payload = new()
                 {
                     { "To", email! }

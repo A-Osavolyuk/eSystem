@@ -3,7 +3,7 @@
 /// <summary>
 /// Defines the various states or actions related to the verification process.
 /// </summary>
-public enum CodeType
+public enum ActionType
 {
     /// <summary>
     /// Verification of an existing resource, such as the current email or phone number.
@@ -99,4 +99,9 @@ public enum CodeType
     /// Represents user's emails role management
     /// </summary>
     Manage,
+    
+    /// <summary>
+    /// Represents user's passkey creation
+    /// </summary>
+    Create,
 }

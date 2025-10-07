@@ -4,20 +4,20 @@ namespace eShop.Domain.Common.Messaging;
 
 public class MessageRegistry
 {
-    private Dictionary<(SenderType, CodeResource, CodeType), Type> configurations = [];
+    private Dictionary<(SenderType, PurposeType, ActionType), Type> configurations = [];
 
-    public void Add<TMessageType>(SenderType sender, CodeResource resource, CodeType type)
+    public void Add<TMessageType>(SenderType sender, PurposeType purpose, ActionType action)
         where TMessageType : Message
     {
-        if (configurations.ContainsKey((sender, resource, type)))
+        if (configurations.ContainsKey((sender, purpose, action)))
             throw new Exception("Message with same key is already registered");
 
-        configurations[(sender, resource, type)] = typeof(TMessageType);
+        configurations[(sender, purpose, action)] = typeof(TMessageType);
     }
 
     public Message? Create(MessageMetadata metadata, Dictionary<string, string> payload)
     {
-        if (!configurations.TryGetValue((metadata.Sender, metadata.Resource, metadata.Type), out var messageType))
+        if (!configurations.TryGetValue((metadata.Sender, metadata.Purpose, metadata.Action), out var messageType))
             return null;
 
         var message = (Message?)Activator.CreateInstance(messageType);
@@ -31,6 +31,6 @@ public class MessageRegistry
 public class MessageMetadata
 {
     public required SenderType Sender { get; set; }
-    public required CodeType Type { get; set; }
-    public required CodeResource Resource { get; set; }
+    public required ActionType Action { get; set; }
+    public required PurposeType Purpose { get; set; }
 }

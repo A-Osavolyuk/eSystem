@@ -25,7 +25,7 @@ public class RecoverAccountCommandHandler(
         if (!userRecoveryEmail.IsVerified) return Results.BadRequest("User's recovery email is not verified.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.Account, CodeType.Recover, cancellationToken);
+            PurposeType.Account, ActionType.Recover, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

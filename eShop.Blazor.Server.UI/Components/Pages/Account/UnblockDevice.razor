@@ -129,8 +129,8 @@
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
-                Resource = CodeResource.Device,
-                Type = CodeType.Unblock,
+                Purpose = PurposeType.Device,
+                Action = ActionType.Unblock,
                 Payload = new()
                 {
                     { "To", UserState.Credentials?.PrimaryEmail! },

@@ -30,7 +30,7 @@ public class UnlockAccountCommandHandler(
         
         var code = request.Request.Code;
         var verificationResult = await codeManager.VerifyAsync(user, code, SenderType.Email, 
-            CodeType.Unlock, CodeResource.Account, cancellationToken);
+            ActionType.Unlock, PurposeType.Account, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

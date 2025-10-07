@@ -269,8 +269,8 @@
         {
             UserId = UserState.UserId,
             Sender = SenderType.Sms,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.Current,
+            Purpose = PurposeType.PhoneNumber,
+            Action = ActionType.Current,
             Payload = new()
             {
                 { "To", to }
@@ -304,8 +304,8 @@
         {
             UserId = UserState.UserId,
             Sender = SenderType.Sms,
-            Resource = CodeResource.PhoneNumber,
-            Type = CodeType.New,
+            Purpose = PurposeType.PhoneNumber,
+            Action = ActionType.New,
             Payload = new()
             {
                 { "To", ChangePhoneNumberModel.NewPhoneNumber }

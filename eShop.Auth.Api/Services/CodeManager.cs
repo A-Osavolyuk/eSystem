@@ -17,11 +17,11 @@ public sealed class CodeManager(
     private readonly Hasher hasher = hasher;
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
-        CodeType type, CodeResource resource, CancellationToken cancellationToken = default)
+        ActionType action, PurposeType purpose, CancellationToken cancellationToken = default)
     {
         var entity = await context.Codes
             .FirstOrDefaultAsync(x => x.UserId == user.Id 
-                                      && x.Type == type 
+                                      && x.Action == action 
                                       && x.Sender == sender, cancellationToken);
 
         if (entity is not null)
@@ -38,9 +38,9 @@ public sealed class CodeManager(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             CodeHash = codeHash,
-            Type = type,
+            Action = action,
             Sender = sender,
-            Resource = resource,
+            Purpose = purpose,
             CreateDate = DateTime.UtcNow,
             ExpireDate = DateTime.UtcNow.AddMinutes(10)
         }, cancellationToken);
@@ -49,8 +49,8 @@ public sealed class CodeManager(
         return code;
     }
 
-    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, CodeType type,
-        CodeResource resource, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, ActionType action,
+        PurposeType purpose, CancellationToken cancellationToken = default)
     {
         if (sender == SenderType.AuthenticatorApp)
         {
@@ -69,9 +69,9 @@ public sealed class CodeManager(
         
         var entity = await context.Codes
             .SingleOrDefaultAsync(x => x.UserId == user.Id
-                                       && x.Type == type
+                                       && x.Action == action
                                        && x.Sender == sender
-                                       && x.Resource == resource
+                                       && x.Purpose == purpose
                                        && x.ExpireDate > DateTime.UtcNow, cancellationToken: cancellationToken);
 
         if (entity is null)

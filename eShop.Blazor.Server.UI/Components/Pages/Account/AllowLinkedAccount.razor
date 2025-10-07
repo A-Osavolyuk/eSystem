@@ -117,8 +117,8 @@
         context = new MessageContext()
         {
             UserId = UserState.UserId,
-            Type = CodeType.Allow,
-            Resource = CodeResource.LinkedAccount,
+            Action = ActionType.Allow,
+            Purpose = PurposeType.LinkedAccount,
             Sender = SenderType.Email,
             Payload = new Dictionary<string, string>()
             {

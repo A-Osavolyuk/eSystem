@@ -22,7 +22,7 @@ public class VerifyDeviceCommandHandler(
         if (device is null) return Results.NotFound($"Cannot find user with ID {request.Request.DeviceId}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.Device, CodeType.Verify, cancellationToken);
+            PurposeType.Device, ActionType.Verify, cancellationToken);
         
         if(!verificationResult.Succeeded) return verificationResult;
         

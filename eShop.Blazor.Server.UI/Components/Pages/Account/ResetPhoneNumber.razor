@@ -137,8 +137,8 @@
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Sms,
-                Resource = CodeResource.PhoneNumber,
-                Type = CodeType.Reset,
+                Purpose = PurposeType.PhoneNumber,
+                Action = ActionType.Reset,
                 Payload = new()
                 {
                     { "To", ResetPhoneNumberModel.NewPhoneNumber }

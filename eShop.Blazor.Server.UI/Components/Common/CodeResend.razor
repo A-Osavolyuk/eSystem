@@ -31,9 +31,9 @@
         {
             UserId = Context!.UserId,
             Payload = Context!.Payload,
-            Resource = Context!.Resource,
+            Purpose = Context!.Purpose,
             Sender = Context!.Sender,
-            Type = Context!.Type
+            Action = Context!.Action
         };
 
         var result = await VerificationService.ResendCodeAsync(request);

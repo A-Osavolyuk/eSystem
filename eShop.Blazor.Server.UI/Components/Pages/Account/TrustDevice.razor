@@ -92,8 +92,8 @@
             {
                 UserId = UserId,
                 Sender = SenderType.Email,
-                Resource = CodeResource.Device,
-                Type = CodeType.Trust,
+                Purpose = PurposeType.Device,
+                Action = ActionType.Trust,
                 Payload = new()
                 {
                     { "To", email! },

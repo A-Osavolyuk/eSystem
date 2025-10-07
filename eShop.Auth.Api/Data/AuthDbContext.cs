@@ -94,9 +94,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.CodeHash).HasMaxLength(200);
-            entity.Property(x => x.Type).HasEnumConversion();
+            entity.Property(x => x.Action).HasEnumConversion();
             entity.Property(x => x.Sender).HasEnumConversion();
-            entity.Property(x => x.Resource).HasEnumConversion();
+            entity.Property(x => x.Purpose).HasEnumConversion();
         });
 
         builder.Entity<UserRoleEntity>(entity =>
@@ -331,8 +331,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<VerificationEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Purpose).HasEnumConversion();
             entity.Property(x => x.Resource).HasEnumConversion();
-            entity.Property(x => x.Type).HasEnumConversion();
             
             entity.HasOne(x => x.User)
                 .WithMany()

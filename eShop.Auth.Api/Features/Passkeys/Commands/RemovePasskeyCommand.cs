@@ -27,7 +27,7 @@ public class RemovePasskeyCommandHandler(
             return Results.BadRequest("You need to enable another authentication method first.");
 
         var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.Passkey, CodeType.Remove, cancellationToken);
+            PurposeType.Passkey, ActionType.Remove, cancellationToken);
         
         if (!verificationResult.Succeeded) return verificationResult;
 

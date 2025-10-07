@@ -19,7 +19,7 @@ public sealed class ResetPasswordCommandHandler(
         if (!user.HasPassword()) return Results.BadRequest("User does not have a password.");
         
         var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.Password, CodeType.Reset, cancellationToken);
+            PurposeType.Password, ActionType.Reset, cancellationToken);
         
         if(!verificationResult.Succeeded)  return verificationResult;
         

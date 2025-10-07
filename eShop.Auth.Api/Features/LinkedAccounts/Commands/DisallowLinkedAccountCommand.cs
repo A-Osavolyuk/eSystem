@@ -22,7 +22,7 @@ public class DisallowLinkedAccountCommandHandler(
         if (provider is null) return Results.NotFound($"Cannot find provider with ID {request.Request.Provider}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.LinkedAccount, CodeType.Disallow, cancellationToken);
+            PurposeType.LinkedAccount, ActionType.Disallow, cancellationToken);
         
         if(!verificationResult.Succeeded) return verificationResult;
 

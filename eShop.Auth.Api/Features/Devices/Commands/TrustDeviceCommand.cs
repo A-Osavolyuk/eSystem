@@ -27,7 +27,7 @@ public class TrustDeviceCommandHandler(
         if (device is null) return Results.NotFound($"Cannot find user with ID {request.Request.DeviceId}.");
         
         var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.Device, CodeType.Trust, cancellationToken);
+            PurposeType.Device, ActionType.Trust, cancellationToken);
         
         if(!verificationResult.Succeeded) return verificationResult;
         

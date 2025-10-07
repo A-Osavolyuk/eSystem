@@ -62,7 +62,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Resource")
+                    b.Property<string>("Purpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -70,7 +70,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Action")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -115,7 +115,7 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Action")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -190,7 +190,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Action")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -601,7 +601,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Action")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -736,7 +736,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<long>("SignCount")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Action")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
@@ -792,7 +792,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasMaxLength(18)
                         .HasColumnType("nvarchar(18)");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Action")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -931,11 +931,11 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Resource")
+                    b.Property<string>("Purpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Action")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1019,13 +1019,13 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.PermissionEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.ResourceEntity", "Resource")
+                    b.HasOne("eShop.Auth.Api.Entities.ResourceEntity", "Purpose")
                         .WithMany()
                         .HasForeignKey("ResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Resource");
+                    b.Navigation("Purpose");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.RecoveryCodeEntity", b =>

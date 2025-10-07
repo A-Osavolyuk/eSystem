@@ -18,7 +18,7 @@ public sealed class VerifyPhoneNumberCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID ${request.Request.UserId}");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
-            CodeResource.PhoneNumber, CodeType.Verify, cancellationToken);
+            PurposeType.PhoneNumber, ActionType.Verify, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

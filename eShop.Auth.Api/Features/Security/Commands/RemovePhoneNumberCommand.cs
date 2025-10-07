@@ -24,7 +24,7 @@ public class RemovePhoneNumberCommandHandler(
             return Results.BadRequest("Cannot remove phone number. First disable 2FA with SMS.");
         
         var verificationResult = await verificationManager.VerifyAsync(user, 
-            CodeResource.PhoneNumber, CodeType.Remove, cancellationToken);
+            PurposeType.PhoneNumber, ActionType.Remove, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 

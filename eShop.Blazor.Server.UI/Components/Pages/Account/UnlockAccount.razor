@@ -67,8 +67,8 @@
         {
             UserId = UserState.UserId,
             Sender = SenderType.Email,
-            Resource = CodeResource.Account,
-            Type = CodeType.Unlock,
+            Purpose = PurposeType.Account,
+            Action = ActionType.Unlock,
             Payload = new()
             {
                 { "To", UserState.Credentials?.PrimaryEmail! }

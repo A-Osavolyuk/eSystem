@@ -130,8 +130,8 @@
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Sms,
-                Resource = CodeResource.PhoneNumber,
-                Type = CodeType.Verify,
+                Purpose = PurposeType.PhoneNumber,
+                Action = ActionType.Verify,
                 Payload = new()
                 {
                     { "To", to }
