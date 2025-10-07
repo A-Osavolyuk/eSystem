@@ -91,13 +91,26 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Get user login methods")]
-    [EndpointDescription("Gets user login methods")]
+    [EndpointSummary("Get user's login methods")]
+    [EndpointDescription("Get user's login methods")]
     [ProducesResponseType(200)]
     [HttpGet("login-methods")]
     public async ValueTask<IActionResult> GetUserLoginMethods(Guid id)
     {
         var result = await sender.Send(new GetUserLoginMethodsQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Get user's verification methods")]
+    [EndpointDescription("Gets user's verification methods")]
+    [ProducesResponseType(200)]
+    [HttpGet("verification-methods")]
+    public async ValueTask<IActionResult> GetUserVerificationMethods(Guid id)
+    {
+        var result = await sender.Send(new GetUserVerificationMethodsQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
