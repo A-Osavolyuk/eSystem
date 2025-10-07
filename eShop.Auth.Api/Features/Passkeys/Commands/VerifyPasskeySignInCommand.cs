@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.Auth;
+﻿using eShop.Domain.Common.Security.Constants;
+using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
@@ -34,7 +35,7 @@ public class VerifyPasskeySignInCommandHandler(
         var user = await userManager.FindByIdAsync(passkey.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {passkey.UserId}.");
 
-        var savedChallenge = httpContext.Session.GetString("webauthn_assertion_challenge");
+        var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
         if (string.IsNullOrEmpty(savedChallenge)) return Results.BadRequest("Invalid challenge");
 
         var result = await passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);

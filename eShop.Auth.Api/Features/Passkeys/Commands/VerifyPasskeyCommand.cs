@@ -36,7 +36,7 @@ public class VerifyPasskeyCommandHandler(
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
         
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
-        var savedChallenge = httpContext.Session.GetString("webauthn_attestation_challenge");
+        var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Attestation);
 
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 

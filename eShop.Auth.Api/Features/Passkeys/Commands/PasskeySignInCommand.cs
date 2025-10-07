@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.Auth;
+﻿using eShop.Domain.Common.Security.Constants;
+using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
@@ -21,7 +22,7 @@ public class PasskeySignInCommandHandler(
         var challenge = CredentialGenerator.GenerateChallenge();
         var options = CredentialGenerator.CreateRequestOptions(user, challenge, identityOptions.Credentials);
 
-        httpContext.Session.SetString("webauthn_assertion_challenge", challenge);
+        httpContext.Session.SetString(ChallengeSessionKeys.Assertion, challenge);
 
         return Result.Success(options);
     }
