@@ -27,7 +27,7 @@ public class GetUserLoginMethodsQueryHandler(
                 Providers = user.Methods.Select(x => new UserProviderDto()
                 {
                     Method = x.Method,
-                    IsPrimary = x.IsPrimary,
+                    Preferred = x.Preferred,
                     UpdateDate = x.UpdateDate
                 }).ToList()
             },

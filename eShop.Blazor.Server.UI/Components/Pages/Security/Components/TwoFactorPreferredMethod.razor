@@ -64,7 +64,7 @@
 
     protected override void OnInitialized()
     {
-        var primaryProvider = Model.Providers.First(x => x.IsPrimary);
+        var primaryProvider = Model.Providers.First(x => x.Preferred);
         Type = primaryProvider.Method switch
         {
             TwoFactorMethod.AuthenticatorApp => TwoFactorTypes.AuthenticatorApp,

@@ -49,7 +49,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         {
             UserId = user.Id,
             Method = method,
-            IsPrimary = isPrimary,
+            Preferred = isPrimary,
             CreateDate = DateTimeOffset.UtcNow
         };
         

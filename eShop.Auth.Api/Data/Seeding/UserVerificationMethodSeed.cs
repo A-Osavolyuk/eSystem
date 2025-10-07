@@ -12,7 +12,7 @@ public class UserVerificationMethodSeed : Seed<UserVerificationMethodEntity>
             {
                 UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
                 Method = VerificationMethod.Email,
-                IsPrimary = true,
+                Preferred = true,
                 CreateDate = DateTimeOffset.UtcNow,
             }
         ];

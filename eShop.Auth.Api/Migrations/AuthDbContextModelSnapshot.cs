@@ -870,7 +870,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<bool>("IsPrimary")
+                    b.Property<bool>("Preferred")
                         .HasColumnType("bit");
 
                     b.Property<string>("Method")
@@ -899,7 +899,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<bool>("IsPrimary")
+                    b.Property<bool>("Preferred")
                         .HasColumnType("bit");
 
                     b.Property<string>("Method")

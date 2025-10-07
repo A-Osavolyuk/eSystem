@@ -12,7 +12,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         {
             UserId = user.Id,
             Method = method,
-            IsPrimary = isPrimary,
+            Preferred = isPrimary,
             CreateDate = DateTimeOffset.UtcNow
         };
 
