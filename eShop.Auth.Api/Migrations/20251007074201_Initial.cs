@@ -105,20 +105,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "VerificationMethods",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Method = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VerificationMethods", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -507,25 +493,20 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserVerificationMethods",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MethodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false),
+                    Method = table.Column<int>(type: "int", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserVerificationMethods", x => new { x.UserId, x.MethodId });
+                    table.PrimaryKey("PK_UserVerificationMethods", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserVerificationMethods_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserVerificationMethods_VerificationMethods_MethodId",
-                        column: x => x.MethodId,
-                        principalTable: "VerificationMethods",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -813,9 +794,9 @@ namespace eShop.Auth.Api.Migrations
                 column: "ProviderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserVerificationMethods_MethodId",
+                name: "IX_UserVerificationMethods_UserId",
                 table: "UserVerificationMethods",
-                column: "MethodId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Verifications_UserId",
@@ -900,9 +881,6 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "TwoFactorMethods");
-
-            migrationBuilder.DropTable(
-                name: "VerificationMethods");
 
             migrationBuilder.DropTable(
                 name: "Users");
