@@ -4,8 +4,8 @@
 public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
-    
-    public async ValueTask<Result> SubscribeAsync(UserEntity user, TwoFactorMethod method, 
+
+    public async ValueTask<Result> SubscribeAsync(UserEntity user, TwoFactorMethod method,
         bool preferred = false, CancellationToken cancellationToken = default)
     {
         if (preferred && user.Methods.Any(x => x.Preferred))
@@ -13,10 +13,10 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
             var preferredMethod = user.Methods.First(x => x.Preferred);
             preferredMethod.Preferred = false;
             preferredMethod.UpdateDate = DateTimeOffset.UtcNow;
-            
+
             context.UserTwoFactorMethods.Update(preferredMethod);
         }
-        
+
         var userProvider = new UserTwoFactorMethodEntity()
         {
             UserId = user.Id,
@@ -38,14 +38,23 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         return Result.Success();
     }
 
-    public async ValueTask<Result> UnsubscribeAsync(UserEntity user, 
+    public async ValueTask<Result> UnsubscribeAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
         user.TwoFactorEnabled = false;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         context.UserTwoFactorMethods.RemoveRange(user.Methods);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> UnsubscribeAsync(UserTwoFactorMethodEntity method,
+        CancellationToken cancellationToken = default)
+    {
+        context.UserTwoFactorMethods.Remove(method);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
