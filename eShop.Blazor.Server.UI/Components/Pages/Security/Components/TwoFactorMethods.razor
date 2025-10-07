@@ -35,6 +35,17 @@
                             Not configured
                         </MudChip>
                     }
+                    @if (Model.Providers.Any(x => x is { Method: TwoFactorMethod.AuthenticatorApp, Preferred: true }))
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Info"
+                            Variant="Variant.Outlined">
+                            Preferred
+                        </MudChip>
+                    }
                 </MudStack>
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
                     Use an authentication app or browser extension
@@ -89,6 +100,17 @@
                             Not configured
                         </MudChip>
                     }
+                    @if (Model.Providers.Any(x => x is { Method: TwoFactorMethod.Sms, Preferred: true }))
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Info"
+                            Variant="Variant.Outlined">
+                            Preferred
+                        </MudChip>
+                    }
                 </MudStack>
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
                     Get one-time codes sent to your phone via SMS to complete authentication requests.
@@ -136,6 +158,17 @@
                             Color="Color.Error"
                             Variant="Variant.Outlined">
                             Not configured
+                        </MudChip>
+                    }
+                    @if (Model.Providers.Any(x => x is { Method: TwoFactorMethod.Passkey, Preferred: true }))
+                    {
+                        <MudChip
+                            T="string"
+                            Class="mx-0"
+                            Size="Size.Small"
+                            Color="Color.Info"
+                            Variant="Variant.Outlined">
+                            Preferred
                         </MudChip>
                     }
                 </MudStack>
