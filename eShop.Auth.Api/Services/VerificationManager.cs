@@ -45,15 +45,10 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         if (user.HasVerificationMethod(method))
             return Results.BadRequest("Verification method is already subscribed");
 
-        var methodEntity = await context.VerificationMethods.SingleOrDefaultAsync(
-            x => x.Method == method, cancellationToken);
-
-        if (methodEntity is null) return Results.BadRequest("Unsupported verification method");
-
         var entity = new UserVerificationMethodEntity()
         {
             UserId = user.Id,
-            MethodId = methodEntity.Id,
+            Method = method,
             IsPrimary = isPrimary,
             CreateDate = DateTimeOffset.UtcNow
         };
