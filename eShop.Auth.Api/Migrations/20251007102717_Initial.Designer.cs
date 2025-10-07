@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251007095138_Initial")]
+    [Migration("20251007102717_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -928,6 +928,10 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
@@ -935,10 +939,6 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Purpose")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Resource")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
