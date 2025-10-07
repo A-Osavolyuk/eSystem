@@ -6,7 +6,7 @@ public class VerificationEntity : Entity
     public Guid UserId { get; set; }
 
     public PurposeType Purpose { get; set; }
-    public ActionType Resource { get; set; }
+    public ActionType Action { get; set; }
 
     public DateTimeOffset ExpireDate { get; set; }
     public UserEntity User { get; set; } = null!;

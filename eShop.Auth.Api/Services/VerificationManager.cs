@@ -4,14 +4,21 @@
 public class VerificationManager(AuthDbContext context) : IVerificationManager
 {
     public async ValueTask<Result> CreateAsync(UserEntity user,
-        PurposeType purpose, ActionType type, CancellationToken cancellationToken = default)
+        PurposeType purpose, ActionType action, CancellationToken cancellationToken = default)
     {
+        var existedEntity = await context.Verifications.FirstOrDefaultAsync(
+            x => x.UserId == user.Id 
+                 && x.Purpose == purpose 
+                 && x.Action == action, cancellationToken);
+
+        if (existedEntity is not null) context.Verifications.Remove(existedEntity);
+        
         var entity = new VerificationEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Purpose = purpose,
-            Resource = type,
+            Action = action,
             ExpireDate = DateTimeOffset.UtcNow.AddMinutes(10),
             CreateDate = DateTimeOffset.UtcNow
         };
@@ -23,12 +30,12 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
     }
 
     public async ValueTask<Result> VerifyAsync(UserEntity user,
-        PurposeType resource, ActionType type, CancellationToken cancellationToken = default)
+        PurposeType resource, ActionType action, CancellationToken cancellationToken = default)
     {
         var entity = await context.Verifications.SingleOrDefaultAsync(
             x => x.UserId == user.Id
                  && x.Purpose == resource
-                 && x.Resource == type, cancellationToken);
+                 && x.Action == action, cancellationToken);
 
         if (entity is null) return Results.NotFound("Verification not found");
         if (entity.ExpireDate < DateTimeOffset.Now) return Results.BadRequest("Verification is expired");

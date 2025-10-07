@@ -332,7 +332,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Purpose).HasEnumConversion();
-            entity.Property(x => x.Resource).HasEnumConversion();
+            entity.Property(x => x.Action).HasEnumConversion();
             
             entity.HasOne(x => x.User)
                 .WithMany()
