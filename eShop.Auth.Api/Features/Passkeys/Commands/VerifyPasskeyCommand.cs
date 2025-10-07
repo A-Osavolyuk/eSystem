@@ -13,11 +13,13 @@ public class VerifyPasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
+    IVerificationManager verificationManager,
     IdentityOptions identityOptions) : IRequestHandler<VerifyPasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -61,10 +63,18 @@ public class VerifyPasskeyCommandHandler(
 
         if (user.TwoFactorEnabled && !user.HasTwoFactor(TwoFactorMethod.Passkey))
         {
-            var methodResult = await twoFactorManager.SubscribeAsync(user,
+            var twoFactorResult = await twoFactorManager.SubscribeAsync(user,
                 TwoFactorMethod.Passkey, cancellationToken: cancellationToken);
 
-            if (!methodResult.Succeeded) return methodResult;
+            if (!twoFactorResult.Succeeded) return twoFactorResult;
+        }
+
+        if (!user.HasVerificationMethod(VerificationMethod.Passkey))
+        {
+            var verificationMethodResult = await verificationManager.SubscribeAsync(user, 
+                VerificationMethod.Passkey, cancellationToken: cancellationToken);
+            
+            if (!verificationMethodResult.Succeeded) return verificationMethodResult;
         }
 
         var response = new VerifyPasskeyResponse() { PasskeyId = passkey.Id };

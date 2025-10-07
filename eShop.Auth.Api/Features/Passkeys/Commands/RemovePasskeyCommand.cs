@@ -8,11 +8,13 @@ public class RemovePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     IUserManager userManager,
     IVerificationManager verificationManager,
+    ITwoFactorManager twoFactorManager,
     IdentityOptions identityOptions) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly IUserManager userManager = userManager;
     private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IdentityOptions identityOptions = identityOptions;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
@@ -30,6 +32,23 @@ public class RemovePasskeyCommandHandler(
             PurposeType.Passkey, ActionType.Remove, cancellationToken);
         
         if (!verificationResult.Succeeded) return verificationResult;
+
+        if (user.Passkeys.Count == 1)
+        {
+            if (user.HasTwoFactor(TwoFactorMethod.Passkey))
+            {
+                var twoFactorMethod = user.GetTwoFactorMethod(TwoFactorMethod.Passkey)!;
+                var twoFactorResult = await twoFactorManager.UnsubscribeAsync(twoFactorMethod, cancellationToken);
+                if (!twoFactorResult.Succeeded) return twoFactorResult;
+            }
+
+            if (user.HasVerificationMethod(VerificationMethod.Passkey))
+            {
+                var verificationMethod = user.GetVerificationMethod(VerificationMethod.Passkey)!;
+                var methodResult = await verificationManager.UnsubscribeAsync(verificationMethod, cancellationToken);
+                if (!methodResult.Succeeded) return methodResult;
+            }
+        }
 
         var result = await passkeyManager.DeleteAsync(passkey, cancellationToken);
         return result;

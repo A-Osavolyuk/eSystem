@@ -26,15 +26,25 @@ public class EnableTwoFactorCommandHandler(
 
         if (user.HasPasskeys() && !user.HasTwoFactor(TwoFactorMethod.Passkey))
         {
-            var passkeyResult = await twoFactorManager.SubscribeAsync(user, 
+            var passkeyResult = await twoFactorManager.SubscribeAsync(user,
                 TwoFactorMethod.Passkey, cancellationToken: cancellationToken);
 
             if (!passkeyResult.Succeeded) return passkeyResult;
+
+            var passkeySubscriptionResult = await verificationManager.SubscribeAsync(user,
+                VerificationMethod.Passkey, preferred: false, cancellationToken);
+
+            if (!passkeySubscriptionResult.Succeeded) return passkeySubscriptionResult;
         }
-        
-        var providerResult = await twoFactorManager.SubscribeAsync(user, 
+
+        var authenticatorResult = await twoFactorManager.SubscribeAsync(user,
             TwoFactorMethod.AuthenticatorApp, true, cancellationToken);
 
-        return providerResult;
+        if (!authenticatorResult.Succeeded) return authenticatorResult;
+
+        var authenticatorSubscriptionResult = await verificationManager.SubscribeAsync(user, 
+            VerificationMethod.Passkey, true, cancellationToken);
+
+        return authenticatorSubscriptionResult;
     }
 }
