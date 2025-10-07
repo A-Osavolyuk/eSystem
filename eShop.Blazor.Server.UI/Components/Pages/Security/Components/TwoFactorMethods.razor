@@ -13,7 +13,7 @@
                     <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                         Authenticator app
                     </MudTextM3>
-                    @if (Model.Providers.Any(x => x.Type == MethodType.AuthenticatorApp))
+                    @if (Model.Providers.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp))
                     {
                         <MudChip
                             T="string"
@@ -67,7 +67,7 @@
                         Variant="Variant.Outlined">
                         Less secure
                     </MudChip>
-                    @if (Model.Providers.Any(x => x.Type == MethodType.Sms))
+                    @if (Model.Providers.Any(x => x.Method == TwoFactorMethod.Sms))
                     {
                         <MudChip
                             T="string"
@@ -116,7 +116,7 @@
                     <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                         Secure keys
                     </MudTextM3>
-                    @if (Model.Providers.Any(x => x.Type == MethodType.Passkey))
+                    @if (Model.Providers.Any(x => x.Method == TwoFactorMethod.Passkey))
                     {
                         <MudChip
                             T="string"

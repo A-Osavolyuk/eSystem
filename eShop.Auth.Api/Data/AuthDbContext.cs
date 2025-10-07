@@ -18,7 +18,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<CodeEntity> Codes { get; set; }
-    public DbSet<TwoFactorMethodEntity> TwoFactorMethods { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<LockoutStateEntity> LockoutStates { get; set; }
@@ -144,12 +143,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithMany()
                 .HasForeignKey(ur => ur.PermissionId);
         });
-
-        builder.Entity<TwoFactorMethodEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Type).HasEnumConversion();
-        });
         
         builder.Entity<UserSecretEntity>(entity =>
         {
@@ -163,15 +156,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
 
         builder.Entity<UserTwoFactorMethodEntity>(entity =>
         {
-            entity.HasKey(x => new { x.UserId, x.ProviderId });
-
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Method).HasEnumConversion();
+            
             entity.HasOne(x => x.User)
                 .WithMany(x => x.Methods)
                 .HasForeignKey(x => x.UserId);
-
-            entity.HasOne(x => x.Method)
-                .WithMany()
-                .HasForeignKey(x => x.ProviderId);
         });
         
         builder.Entity<ResourceEntity>(entity =>
@@ -352,6 +342,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<UserVerificationMethodEntity>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.Property(x => x.Method).HasEnumConversion();
             
             entity.HasOne(x => x.User)
                 .WithMany(x => x.VerificationMethods)

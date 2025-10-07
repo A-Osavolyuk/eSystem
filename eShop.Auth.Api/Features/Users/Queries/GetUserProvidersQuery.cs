@@ -17,8 +17,7 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
         var providers = user.Methods.ToList();
         var result = providers.Select(provider => new UserProviderDto()
         {
-            Id = provider.Method.Id,
-            Type = provider.Method.Type,
+            Method = provider.Method,
             IsPrimary = provider.IsPrimary,
             UpdateDate = provider.UpdateDate,
         }).ToList();

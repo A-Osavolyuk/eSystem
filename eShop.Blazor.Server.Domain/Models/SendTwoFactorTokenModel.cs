@@ -2,5 +2,5 @@
 
 public class SendTwoFactorTokenModel
 {
-    public MethodType Type { get; set; }
+    public TwoFactorMethod Type { get; set; }
 }

@@ -43,9 +43,9 @@
                                             </MudItem>
                                             @foreach (var provider in providers)
                                             {
-                                                switch (provider.Type)
+                                                switch (provider.Method)
                                                 {
-                                                    case MethodType.AuthenticatorApp:
+                                                    case TwoFactorMethod.AuthenticatorApp:
                                                     {
                                                         <MudItem xs="12">
                                                             <MudLoadingButton
@@ -56,12 +56,12 @@
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
                                                                 FullWidth>
-                                                                Send with @provider.Type.ToString()
+                                                                Send with @provider.Method.ToString()
                                                             </MudLoadingButton>
                                                         </MudItem>
                                                         break;
                                                     }
-                                                    case MethodType.Sms:
+                                                    case TwoFactorMethod.Sms:
                                                     {
                                                         <MudItem xs="12">
                                                             <MudLoadingButton
@@ -72,7 +72,7 @@
                                                                 Color="Color.Primary"
                                                                 Size="Size.Large"
                                                                 FullWidth>
-                                                                Send with @provider.Type.ToString()
+                                                                Send with @provider.Method.ToString()
                                                             </MudLoadingButton>
                                                         </MudItem>
                                                         break;
@@ -113,7 +113,7 @@
 
                                             @switch (SendTwoFactorTokenModel.Type)
                                             {
-                                                case MethodType.Sms:
+                                                case TwoFactorMethod.Sms:
                                                 {
                                                     <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                                              Style="width: 50ch; margin: auto">
@@ -124,7 +124,7 @@
                                                     </MudText>
                                                     break;
                                                 }
-                                                case MethodType.AuthenticatorApp:
+                                                case TwoFactorMethod.AuthenticatorApp:
                                                 {
                                                     <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
                                                              Style="width: 50ch; margin: auto">
@@ -156,7 +156,7 @@
                                         </MudStack>
                                     </MudForm>
                                 </MudPaper>
-                                @if (SendTwoFactorTokenModel.Type != MethodType.AuthenticatorApp)
+                                @if (SendTwoFactorTokenModel.Type != TwoFactorMethod.AuthenticatorApp)
                                 {
                                     <CodeResend Context="context"></CodeResend>
                                 }
@@ -189,7 +189,7 @@
 
         if (providers.Count == 1)
         {
-            SendTwoFactorTokenModel.Type = providers.First().Type;
+            SendTwoFactorTokenModel.Type = providers.First().Method;
         }
     }
 
@@ -209,27 +209,27 @@
 
     private async Task OnSendCodeAsync(UserProviderDto provider)
     {
-        SendTwoFactorTokenModel.Type = provider.Type;
+        SendTwoFactorTokenModel.Type = provider.Method;
         await sendTwoFactorTokenForm.Validate();
 
         if (sendTwoFactorTokenForm.IsValid)
         {
-            if (provider.Type == MethodType.AuthenticatorApp)
+            if (provider.Method == TwoFactorMethod.AuthenticatorApp)
             {
                 await stepper.StepNextAsync();
             }
             else
             {
-                var sender = provider.Type switch
+                var sender = provider.Method switch
                 {
-                    MethodType.Sms => SenderType.Sms,
-                    MethodType.AuthenticatorApp => SenderType.AuthenticatorApp,
+                    TwoFactorMethod.Sms => SenderType.Sms,
+                    TwoFactorMethod.AuthenticatorApp => SenderType.AuthenticatorApp,
                     _ => throw new NotSupportedException()
                 };
 
-                var payload = provider.Type switch
+                var payload = provider.Method switch
                 {
-                    MethodType.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
+                    TwoFactorMethod.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
                     _ => throw new NotSupportedException()
                 };
 

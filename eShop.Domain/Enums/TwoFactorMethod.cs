@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Enums;
 
-public enum MethodType
+public enum TwoFactorMethod
 {
     AuthenticatorApp,
     Passkey,

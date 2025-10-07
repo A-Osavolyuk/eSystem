@@ -18,8 +18,7 @@ public class GetUserTwoFactorDataQueryHandler(IUserManager userManager) : IReque
             TwoFactorEnabled = user.TwoFactorEnabled,
             Providers = user.Methods.Select(x => new UserProviderDto()
             {
-                Id = x.Method.Id,
-                Type = x.Method.Type,
+                Method = x.Method,
                 IsPrimary = x.IsPrimary,
                 UpdateDate = x.UpdateDate
             }).ToList()

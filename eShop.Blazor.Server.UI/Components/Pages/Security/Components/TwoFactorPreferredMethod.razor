@@ -16,9 +16,9 @@
                     AnchorOrigin="Origin.BottomCenter"
                     Immediate="true"
                     Disabled="@(Model.Providers.Count == 1)">
-                    @foreach (var provider in Model.Providers.Where(x => x.Type != MethodType.Sms))
+                    @foreach (var provider in Model.Providers.Where(x => x.Method != TwoFactorMethod.Sms))
                     {
-                        if (provider.Type == MethodType.AuthenticatorApp)
+                        if (provider.Method == TwoFactorMethod.AuthenticatorApp)
                         {
                             <MudSelectItemExtended 
                                 T="string" 
@@ -26,7 +26,7 @@
                                 Text="Authenticator app"/>
                         }
 
-                        if (provider.Type == MethodType.Passkey)
+                        if (provider.Method == TwoFactorMethod.Passkey)
                         {
                             <MudSelectItemExtended 
                                 T="string" 
@@ -65,10 +65,10 @@
     protected override void OnInitialized()
     {
         var primaryProvider = Model.Providers.First(x => x.IsPrimary);
-        Type = primaryProvider.Type switch
+        Type = primaryProvider.Method switch
         {
-            MethodType.AuthenticatorApp => TwoFactorTypes.AuthenticatorApp,
-            MethodType.Passkey => TwoFactorTypes.Passkeys,
+            TwoFactorMethod.AuthenticatorApp => TwoFactorTypes.AuthenticatorApp,
+            TwoFactorMethod.Passkey => TwoFactorTypes.Passkeys,
             _ => throw new NotSupportedException("Unsupported 2FA type")
         };
     }

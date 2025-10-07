@@ -20,7 +20,7 @@ public class RemovePhoneNumberCommandHandler(
         if (!user.HasPhoneNumber(PhoneNumberType.Primary)) return Results.BadRequest(
             "Cannot remove phone number. Phone number is not provided.");
 
-        if (user.Methods.Any(x => x.Method.Type == MethodType.Sms))
+        if (user.HasTwoFactor(TwoFactorMethod.Sms))
             return Results.BadRequest("Cannot remove phone number. First disable 2FA with SMS.");
         
         var verificationResult = await verificationManager.VerifyAsync(user, 
