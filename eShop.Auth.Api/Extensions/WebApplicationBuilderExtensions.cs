@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Extensions;
 
-public static class WebApplicationBuilder
+public static class WebApplicationBuilderExtensions
 {
     public static async Task MapApiServices(this WebApplication app)
     {

@@ -176,12 +176,10 @@ public static class HostApplicationBuilderExtensions
             });
     }
 
-    private static IServiceCollection AddEncryption(this IServiceCollection services)
+    private static void AddEncryption(this IServiceCollection services)
     {
         services.AddDataProtection();
         services.AddSingleton<SecretProtector>();
-
-        return services;
     }
 
     private static IServiceCollection AddHashing(this IServiceCollection services)
@@ -191,7 +189,7 @@ public static class HostApplicationBuilderExtensions
         return services;
     }
 
-    private static IServiceCollection AddAuthorization(this IServiceCollection services)
+    private static void AddAuthorization(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
             .AddPolicy("DeleteAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("DELETE_ACCOUNT")))
@@ -216,8 +214,6 @@ public static class HostApplicationBuilderExtensions
             .AddPolicy("ReadPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("READ_PERMISSIONS")))
             .AddPolicy("GrantPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("GRANT_PERMISSIONS")))
             .AddPolicy("RevokePermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("REVOKE_PERMISSIONS")));
-
-        return services;
     }
 
     private static void AddMessageBus(this IHostApplicationBuilder builder)
