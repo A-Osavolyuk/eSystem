@@ -38,6 +38,7 @@ else
                     case VerificationMethod.Email:
                     {
                         <EmailConfirmation
+                            Methods="Methods"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync"
                             OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -45,7 +46,8 @@ else
                     }
                     case VerificationMethod.Passkey:
                     {
-                        <PasskeyConfirmation 
+                        <PasskeyConfirmation
+                            Methods="Methods"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync"
                             OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -54,6 +56,7 @@ else
                     case VerificationMethod.AuthenticatorApp:
                     {
                         <AuthenticatorConfirmation
+                            Methods="Methods"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync" 
                             OnAccessConfirmed="ConfirmAccessAsync"/>
