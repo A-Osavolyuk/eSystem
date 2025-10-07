@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251007075959_Initial")]
+    [Migration("20251007095138_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -54,6 +54,10 @@ namespace eShop.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CodeHash")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -65,15 +69,11 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Resource")
+                    b.Property<string>("Purpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Sender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -934,11 +934,11 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Resource")
+                    b.Property<string>("Purpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Resource")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
