@@ -1,4 +1,9 @@
-﻿<MudStack Spacing="3">
+﻿@inject UserState UserState
+@inject PasskeyManager PasskeyManager
+@inject IVerificationService VerificationService
+@inject ISnackbar Snackbar
+
+<MudStack Spacing="3">
     <MudPaper Outlined="true" Class="pa-5">
         <MudStack>
             @if (isLoading)
@@ -61,4 +66,34 @@
     [Parameter] public List<UserVerificationMethodDto> Methods { get; set; } = [];
 
     private bool isLoading = false;
+
+    private async Task OnVerifyAsync()
+    {
+        var request = new GeneratePasskeyChallengeRequest() { UserId = UserState.UserId };
+        var result = await VerificationService.GeneratePasskeyChallengeAsync(request);
+
+        if (result.Success)
+        {
+            var options = result.Get<PublicKeyCredentialRequestOptions>()!;
+            await VerifyAsync(options);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task VerifyAsync(PublicKeyCredentialRequestOptions options)
+    {
+        var credential = await PasskeyManager.AuthenticateAsync(options);
+        var request = new VerifyPasskeyChallengeRequest()
+        {
+            UserId = UserState.UserId,
+            Purpose = Context.Purpose,
+            Action = Context.Action,
+            Credential = credential
+        };
+        
+        var result = await VerificationService.VerifyPasskeyChallengeAsync(request);
+
+        if (result.Success) await OnAccessConfirmed.InvokeAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
 }
