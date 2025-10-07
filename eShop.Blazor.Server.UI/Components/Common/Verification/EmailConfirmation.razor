@@ -1,0 +1,130 @@
+﻿@inject UserState UserState
+@inject ISnackbar Snackbar
+@inject IVerificationService VerificationService
+
+<MudStack Spacing="3">
+    <MudPaper Outlined="true" Class="pa-5">
+        <MudStack>
+            @if (sendStage)
+            {
+                <MudButton
+                    Color="Color.Success"
+                    Variant="Variant.Filled"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Small"
+                    OnClick="@(async () => await OnSendAsync())">
+                    Send verification code
+                </MudButton>
+            }
+            else
+            {
+                <MudTextM3 Align="Align.Center">
+                    We have sent code to:
+                    <strong>@UserState.Credentials?.PrimaryEmail!</strong>
+                </MudTextM3>
+                <MudForm @ref="form" Model="Model">
+                    <MudTextFieldExtended
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        Immediate="true"
+                        Mask="@mask"
+                        Placeholder="XXXXXX"
+                        @bind-Value="Model.Code"/>
+                </MudForm>
+                <MudLoadingButton
+                    ButtonType="ButtonType.Button"
+                    Variant="Variant.Filled"
+                    Color="Color.Success"
+                    Size="Size.Small"
+                    FullWidth="true"
+                    Disabled="@(Model.Code.Length <= 5)"
+                    OnClick="@(async () => await OnVerifyAsync())">
+                    Verify code
+                </MudLoadingButton>
+            }
+        </MudStack>
+    </MudPaper>
+    @if (Methods.Any(x => x.Method != VerificationMethod.Email))
+    {
+        <MudPaper Outlined="true" Class="py-3 px-5">
+            <MudStack>
+                <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
+                    Having problems?
+                </MudTextM3>
+                <ul>
+                    @if (Methods.Any(x => x.Method == VerificationMethod.AuthenticatorApp))
+                    {
+                        <li>
+                            <MudLink OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.AuthenticatorApp))">
+                                Confirm access with authenticator app
+                            </MudLink>
+                        </li>
+                    }
+                    @if (Methods.Any(x => x.Method == VerificationMethod.Passkey))
+                    {
+                        <li>
+                            <MudLink OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Passkey))">
+                                Confirm access with passkey
+                            </MudLink>
+                        </li>
+                    }
+                </ul>
+            </MudStack>
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    [Parameter] public EventCallback OnAccessConfirmed { get; set; }
+    [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
+    [Parameter] public ConfirmationContext Context { get; set; } = null!;
+    [Parameter] public List<UserVerificationMethodDto> Methods { get; set; } = [];
+
+    private CodeModel Model { get; set; } = new();
+
+    private PatternMask mask = new PatternMask("000000");
+    private MudForm form = new();
+    private bool sendStage = true;
+
+    private async Task OnSendAsync()
+    {
+        var request = new SendCodeRequest()
+        {
+            UserId = UserState.UserId,
+            Sender = SenderType.Email,
+            Resource = Context.Resource,
+            Type = Context.Type,
+            Payload = new()
+            {
+                { "To", UserState.Credentials?.PrimaryEmail! }
+            }
+        };
+        
+        var result = await VerificationService.SendCodeAsync(request);
+
+        if (result.Success) sendStage = false;
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new VerifyCodeRequest()
+            {
+                UserId = UserState.UserId,
+                Code = Model.Code,
+                Resource = Context.Resource,
+                Type = Context.Type,
+                Sender = SenderType.Email
+            };
+
+            var result = await VerificationService.VerifyCodeAsync(request);
+
+            if (result.Success) await OnAccessConfirmed.InvokeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+}

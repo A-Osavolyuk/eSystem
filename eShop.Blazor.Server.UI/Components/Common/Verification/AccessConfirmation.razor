@@ -1,4 +1,6 @@
 ﻿@inject UserState UserState
+@inject IUserService UserService
+@inject ISnackbar Snackbar
 
 @if (Confirmed)
 {
@@ -12,7 +14,7 @@ else
                 <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
                     Confirm access
                 </MudTextM3>
-                <MudPaper Outlined="true" Class="pa-5">
+                <MudPaper Outlined="true" Class="px-5 py-4">
                     <MudGrid>
                         <MudItem xs="1">
                             <MudAvatar Size="Size.Medium">
@@ -35,21 +37,29 @@ else
                 {
                     case VerificationMethod.Email:
                     {
-                        <EmailVerification OnAccessConfirmed="ConfirmAccessAsync"/> 
+                        <EmailConfirmation
+                            Context="Context"
+                            OnMethodChanged="ChangeMethodAsync"
+                            OnAccessConfirmed="ConfirmAccessAsync"/>
                         break;
                     }
                     case VerificationMethod.Passkey:
                     {
-                        <PasskeyVerification OnAccessConfirmed="ConfirmAccessAsync"/> 
+                        <PasskeyConfirmation 
+                            Context="Context"
+                            OnMethodChanged="ChangeMethodAsync"
+                            OnAccessConfirmed="ConfirmAccessAsync"/>
                         break;
                     }
                     case VerificationMethod.AuthenticatorApp:
                     {
-                        <AuthenticatorAppVerification OnAccessConfirmed="ConfirmAccessAsync"/> 
+                        <AuthenticatorConfirmation
+                            Context="Context"
+                            OnMethodChanged="ChangeMethodAsync" 
+                            OnAccessConfirmed="ConfirmAccessAsync"/>
                         break;
                     }
                 }
-                <ProblemsSection Method="Method" OnChangeMethod="ChangeMethodAsync"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -62,10 +72,17 @@ else
 </style>
 
 @code {
+    [Parameter] public ConfirmationContext Context { get; set; } = null!;
     [Parameter] public RenderFragment AccessConfirmed { get; set; } = null!;
-    
+
+    public List<UserVerificationMethodDto> Methods { get; set; } = [];
     private VerificationMethod Method { get; set; }
     private bool Confirmed { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
 
     private async Task ChangeMethodAsync(VerificationMethod method)
     {
@@ -78,4 +95,19 @@ else
         Confirmed = true;
         await InvokeAsync(StateHasChanged);
     }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserVerificationMethodsAsync(UserState.UserId);
+
+        if (result.Success)
+        {
+            var response = result.Get<List<UserVerificationMethodDto>>()!;
+
+            Method = response.First(method => method.Preferred).Method;
+            Methods = response;
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
 }
