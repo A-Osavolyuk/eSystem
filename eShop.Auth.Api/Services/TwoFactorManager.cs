@@ -5,14 +5,23 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;
     
-    public async ValueTask<Result> SubscribeAsync(UserEntity user, TwoFactorMethod method, bool isPrimary = false,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> SubscribeAsync(UserEntity user, TwoFactorMethod method, 
+        bool preferred = false, CancellationToken cancellationToken = default)
     {
+        if (preferred && user.Methods.Any(x => x.Preferred))
+        {
+            var preferredMethod = user.Methods.First(x => x.Preferred);
+            preferredMethod.Preferred = false;
+            preferredMethod.UpdateDate = DateTimeOffset.UtcNow;
+            
+            context.UserTwoFactorMethods.Update(preferredMethod);
+        }
+        
         var userProvider = new UserTwoFactorMethodEntity()
         {
             UserId = user.Id,
             Method = method,
-            Preferred = isPrimary,
+            Preferred = preferred,
             CreateDate = DateTimeOffset.UtcNow
         };
 
