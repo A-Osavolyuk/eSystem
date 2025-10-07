@@ -50,16 +50,16 @@ public class UserService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/login-methods", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<HttpResponse> GetUserVerificationMethodsAsync(Guid id) => await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/verification-methods", Method = HttpMethod.Get },
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/phone-numbers", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GetUserStateAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/state", Method = HttpMethod.Get },
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> GetUserSecurityDataAsync(Guid id) => await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/security", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GetUserPersonalDataAsync(Guid id) => await ApiClient.SendAsync(
