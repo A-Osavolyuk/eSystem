@@ -9,7 +9,7 @@ public interface IVerificationManager
         ActionType action, CancellationToken cancellationToken = default);
     
     public ValueTask<Result> SubscribeAsync(UserEntity user, VerificationMethod method, 
-        bool isPrimary = false, CancellationToken cancellationToken = default);
+        bool preferred = false, CancellationToken cancellationToken = default);
     
     public ValueTask<Result> UnsubscribeAsync(UserVerificationMethodEntity method, 
         CancellationToken cancellationToken = default);

@@ -47,16 +47,25 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
     }
 
     public async ValueTask<Result> SubscribeAsync(UserEntity user, VerificationMethod method, 
-        bool isPrimary = false, CancellationToken cancellationToken = default)
+        bool preferred = false, CancellationToken cancellationToken = default)
     {
         if (user.HasVerificationMethod(method))
             return Results.BadRequest("Verification method is already subscribed");
+
+        if (preferred && user.VerificationMethods.Any(x => x.Preferred))
+        {
+            var preferredMethod = user.VerificationMethods.First(x => x.Preferred);
+            preferredMethod.Preferred = false;
+            preferredMethod.UpdateDate = DateTimeOffset.UtcNow;
+            
+            context.UserVerificationMethods.Update(preferredMethod);
+        }
 
         var entity = new UserVerificationMethodEntity()
         {
             UserId = user.Id,
             Method = method,
-            Preferred = isPrimary,
+            Preferred = preferred,
             CreateDate = DateTimeOffset.UtcNow
         };
         
