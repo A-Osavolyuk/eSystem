@@ -67,6 +67,13 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddAuthorization();
         builder.Services.AddEncryption();
         builder.Services.AddHashing();
+        
+        builder.Services.Add2FA(cfg =>
+        {
+            cfg.AddMethod(TwoFactorMethod.Sms);
+            cfg.AddMethod(TwoFactorMethod.AuthenticatorApp);
+            cfg.AddMethod(TwoFactorMethod.Passkey);
+        });
 
         builder.Services.AddIdentity(options =>
         {

@@ -18,4 +18,12 @@ public static class ServiceCollectionExtensions
         
         services.AddSingleton(options);
     }
+
+    public static void Add2FA(this IServiceCollection services, Action<TwoFactorOptions> configure)
+    {
+        var options = new TwoFactorOptions();
+        configure(options);
+        
+        services.AddSingleton(options);
+    }
 }
