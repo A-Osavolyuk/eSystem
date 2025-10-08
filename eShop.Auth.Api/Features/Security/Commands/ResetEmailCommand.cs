@@ -29,10 +29,15 @@ public class ResetEmailCommandHandler(
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
-        var verificationResult = await verificationManager.VerifyAsync(user,
+        var resetVerificationResult = await verificationManager.VerifyAsync(user,
             PurposeType.Email, ActionType.Reset, cancellationToken);
 
-        if (!verificationResult.Succeeded) return verificationResult;
+        if (!resetVerificationResult.Succeeded) return resetVerificationResult;
+        
+        var verifyVerificationResult = await verificationManager.VerifyAsync(user,
+            PurposeType.Email, ActionType.Verify, cancellationToken);
+
+        if (!verifyVerificationResult.Succeeded) return verifyVerificationResult;
 
         var result = await userManager.ResetEmailAsync(user, userCurrentEmail.Email, newEmail, cancellationToken);
         return result;

@@ -32,12 +32,12 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         }
 
         var currentPhoneNumberVerificationResult = await verificationManager.VerifyAsync(user,
-            PurposeType.PhoneNumber, ActionType.Current, cancellationToken);
+            PurposeType.PhoneNumber, ActionType.Change, cancellationToken);
 
         if (!currentPhoneNumberVerificationResult.Succeeded) return currentPhoneNumberVerificationResult;
 
         var newPhoneNumberVerificationResult = await verificationManager.VerifyAsync(user,
-            PurposeType.PhoneNumber, ActionType.New, cancellationToken);
+            PurposeType.PhoneNumber, ActionType.Verify, cancellationToken);
 
         if (!newPhoneNumberVerificationResult.Succeeded) return newPhoneNumberVerificationResult;
 

@@ -19,10 +19,15 @@ public class EnableTwoFactorCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         if (user.TwoFactorEnabled) return Results.BadRequest("2FA already enabled.");
 
-        var verificationResult = await verificationManager.VerifyAsync(user,
+        var enableVerificationResult = await verificationManager.VerifyAsync(user,
             PurposeType.TwoFactor, ActionType.Enable, cancellationToken);
 
-        if (!verificationResult.Succeeded) return verificationResult;
+        if (!enableVerificationResult.Succeeded) return enableVerificationResult;
+        
+        var subscribeVerificationResult = await verificationManager.VerifyAsync(user,
+            PurposeType.AuthenticatorApp, ActionType.Subscribe, cancellationToken);
+
+        if (!subscribeVerificationResult.Succeeded) return subscribeVerificationResult;
 
         if (user.HasPasskeys() && !user.HasTwoFactor(TwoFactorMethod.Passkey))
         {

@@ -35,12 +35,12 @@ public sealed class RequestChangeEmailCommandHandler(
             return Results.BadRequest("Cannot change email, first disconnect linked accounts.");
 
         var currentEmailVerificationResult = await verificationManager.VerifyAsync(user,
-            PurposeType.Email, ActionType.Current, cancellationToken);
+            PurposeType.Email, ActionType.Change, cancellationToken);
 
         if (!currentEmailVerificationResult.Succeeded) return currentEmailVerificationResult;
 
         var newEmailVerificationResult = await verificationManager.VerifyAsync(user,
-            PurposeType.Email, ActionType.New, cancellationToken);
+            PurposeType.Email, ActionType.Verify, cancellationToken);
 
         if (!newEmailVerificationResult.Succeeded) return newEmailVerificationResult;
 

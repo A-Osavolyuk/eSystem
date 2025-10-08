@@ -28,10 +28,15 @@ public class ResetPhoneNumberCommandHandler(
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
         
-        var verificationResult = await verificationManager.VerifyAsync(user, 
+        var resetVerificationResult = await verificationManager.VerifyAsync(user,
             PurposeType.PhoneNumber, ActionType.Reset, cancellationToken);
+
+        if (!resetVerificationResult.Succeeded) return resetVerificationResult;
         
-        if (!verificationResult.Succeeded) return verificationResult;
+        var verifyVerificationResult = await verificationManager.VerifyAsync(user,
+            PurposeType.PhoneNumber, ActionType.Verify, cancellationToken);
+
+        if (!verifyVerificationResult.Succeeded) return verifyVerificationResult;
         
         var newPhoneNumber = request.Request.NewPhoneNumber;
         
