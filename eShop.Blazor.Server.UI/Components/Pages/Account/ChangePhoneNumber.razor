@@ -10,215 +10,147 @@
 
 @switch (Type)
 {
-    case PhoneNumberTypes.Primary:
-        <Title Text="Primary phone number change"></Title> break;
-    case PhoneNumberTypes.Recovery:
-        <Title Text="Recovery phone number change"></Title> break;
+    case PhoneNumberTypes.Primary: <Title Text="Primary phone number change"></Title> break;
+    case PhoneNumberTypes.Recovery: <Title Text="Recovery phone number change"></Title> break;
 }
 
-<MudGrid Justify="Justify.Center">
-    <MudItem xs="6" Style="margin-top: 100px">
-        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
-                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
-                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
-            <ChildContent>
-                <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
+<AccessConfirmation Context="confirmationContext">
+    <AccessConfirmed>
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="6" Style="margin-top: 100px">
+                <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                                    HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                                    ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
                     <ChildContent>
-                        <MudGrid Justify="Justify.Center">
-                            <MudItem xs="8">
-                                <MudStack Spacing="1" Justify="Justify.Center">
-                                    <MudPaper Outlined Class="pa-3">
-                                        @switch (Type)
-                                        {
-                                            case PhoneNumberTypes.Primary:
-                                            {
-                                                <MudText Align="Align.Center" Typo="Typo.h4">
-                                                    Primary phone number change
-                                                </MudText>
-                                                break;
-                                            }
-                                            case PhoneNumberTypes.Recovery:
-                                            {
-                                                <MudText Align="Align.Center" Typo="Typo.h4">
-                                                    Recovery phone number change
-                                                </MudText>
-                                                break;
-                                            }
-                                        }
-                                    </MudPaper>
-                                    <MudPaper Outlined="true" Class="pa-5">
-                                        <MudStack Spacing="3">
-                                            @switch (Type)
-                                            {
-                                                case PhoneNumberTypes.Primary:
+                        <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
+                            <ChildContent>
+                                <MudGrid Justify="Justify.Center">
+                                    <MudItem xs="8">
+                                        <MudStack Spacing="1" Justify="Justify.Center">
+                                            <MudPaper Outlined Class="pa-3">
+                                                @switch (Type)
                                                 {
-                                                    <MudText Class="mb-1" Align="Align.Center">
-                                                        To change your current primary phone number,
-                                                        you need to enter new phone number,
-                                                        then we will send SMS with verification code to your
-                                                        current and new primary phone numbers.
-                                                    </MudText>
-                                                    break;
+                                                    case PhoneNumberTypes.Primary:
+                                                    {
+                                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                                            Primary phone number change
+                                                        </MudText>
+                                                        break;
+                                                    }
+                                                    case PhoneNumberTypes.Recovery:
+                                                    {
+                                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                                            Recovery phone number change
+                                                        </MudText>
+                                                        break;
+                                                    }
                                                 }
-                                                case PhoneNumberTypes.Recovery:
-                                                {
-                                                    <MudText Class="mb-1" Align="Align.Center">
-                                                        To change your current recovery phone number,
-                                                        you need to enter new phone number,
-                                                        then we will send SMS with verification code to your
-                                                        current and new recovery phone numbers.
-                                                    </MudText>
-                                                    break;
-                                                }
-                                            }
-                                            <MudForm
-                                                @ref="changePhoneNumberForm"
-                                                Validation="ChangePhoneNumberValidator.ValidateValue"
-                                                Model="ChangePhoneNumberModel">
-                                                <MudTextField
-                                                    @bind-Value="ChangePhoneNumberModel.NewPhoneNumber"
-                                                    For="() => ChangePhoneNumberModel.NewPhoneNumber"
-                                                    Label="New phone number"
-                                                    Variant="Variant.Outlined"
-                                                    Immediate="true"
-                                                    Clearable="true"/>
-                                            </MudForm>
-                                            <MudLoadingButton
-                                                FullWidth="true"
-                                                Variant="Variant.Filled"
-                                                Color="Color.Primary"
-                                                ButtonType="ButtonType.Button"
-                                                OnClick="@(async () => await OnSendCurrentCodeAsync())">
-                                                Change
-                                            </MudLoadingButton>
+                                            </MudPaper>
+                                            <MudPaper Outlined="true" Class="pa-5">
+                                                <MudStack Spacing="3">
+                                                    @switch (Type)
+                                                    {
+                                                        case PhoneNumberTypes.Primary:
+                                                        {
+                                                            <MudText Class="mb-1" Align="Align.Center">
+                                                                To change your current primary phone number,
+                                                                you need to enter new phone number,
+                                                                then we will send SMS with verification code to your
+                                                                current and new primary phone numbers.
+                                                            </MudText>
+                                                            break;
+                                                        }
+                                                        case PhoneNumberTypes.Recovery:
+                                                        {
+                                                            <MudText Class="mb-1" Align="Align.Center">
+                                                                To change your current recovery phone number,
+                                                                you need to enter new phone number,
+                                                                then we will send SMS with verification code to your
+                                                                current and new recovery phone numbers.
+                                                            </MudText>
+                                                            break;
+                                                        }
+                                                    }
+                                                    <MudForm
+                                                        @ref="changeForm"
+                                                        Validation="ChangePhoneNumberValidator.ValidateValue"
+                                                        Model="ChangePhoneNumberModel">
+                                                        <MudTextField
+                                                            @bind-Value="ChangePhoneNumberModel.NewPhoneNumber"
+                                                            For="() => ChangePhoneNumberModel.NewPhoneNumber"
+                                                            Label="New phone number"
+                                                            Variant="Variant.Outlined"
+                                                            Immediate="true"
+                                                            Clearable="true"/>
+                                                    </MudForm>
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnSendNewCodeAsync())">
+                                                        Change
+                                                    </MudLoadingButton>
+                                                </MudStack>
+                                            </MudPaper>
                                         </MudStack>
-                                    </MudPaper>
-                                </MudStack>
-                            </MudItem>
-                        </MudGrid>
-                    </ChildContent>
-                </MudStepExtended>
-                <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Confirmation">
-                    <ChildContent>
-                        <MudGrid Justify="Justify.Center">
-                            <MudItem xs="8">
-                                <MudStack Spacing="1" Justify="Justify.Center">
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
-                                            Code confirmation
-                                        </MudText>
-                                    </MudPaper>
-                                    <MudPaper Outlined="true" Class="pa-5">
-                                        <MudStack Spacing="3">
-                                            @switch (Type)
-                                            {
-                                                case PhoneNumberTypes.Primary:
-                                                {
-                                                    <MudText Align="Align.Center">
-                                                        Enter code from SMS we sent you to:
-                                                        <strong>@UserState.Credentials?.PrimaryPhoneNumber!</strong>
-                                                    </MudText>
-                                                    break;
-                                                }
-                                                case PhoneNumberTypes.Recovery:
-                                                {
-                                                    <MudText Align="Align.Center">
-                                                        Enter code from SMS we sent you to:
-                                                        <strong>@UserState.Credentials?.RecoveryPhoneNumber!</strong>
-                                                    </MudText>
-                                                    break;
-                                                }
-                                            }
-                                            <MudForm
-                                                @ref="verifyNewPhoneNumberForm"
-                                                Validation="Validator.ValidateValue"
-                                                Model="ConfirmChangePhoneNumberModel">
-                                                <MudCodeInput
-                                                    Count="6"
-                                                    Margin="Margin.Normal"
-                                                    Spacing="2"
-                                                    Class="d-flex align-items-center"
-                                                    @bind-Value="VerifyCurrentPhoneNumberModel.Code"
-                                                    Variant="Variant.Outlined"/>
-                                            </MudForm>
-                                            <MudLoadingButton
-                                                FullWidth="true"
-                                                Variant="Variant.Filled"
-                                                Color="Color.Primary"
-                                                ButtonType="ButtonType.Button"
-                                                Disabled="@(VerifyCurrentPhoneNumberModel.Code.Length <= 5)"
-                                                OnClick="@(async () => await OnSendNewCodeAsync())">
-                                                Confirm
-                                            </MudLoadingButton>
-                                        </MudStack>
-                                    </MudPaper>
-                                    <CodeResend Context="currentPhoneNumberContext"></CodeResend>
-                                    @if(Type == PhoneNumberTypes.Primary){
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center">
-                                            Lost access to your current phone number?
-                                            <MudLink Href="account/phone-number/reset">
-                                                Reset it
-                                            </MudLink>
-                                        </MudText>
-                                    </MudPaper>
-                                    }
-                                </MudStack>
-                            </MudItem>
-                        </MudGrid>
-                    </ChildContent>
-                </MudStepExtended>
-                <MudStepExtended Order="2" Icon="@Icons.Material.Filled.Check" Title="Verification">
-                    <ChildContent>
-                        <MudGrid Justify="Justify.Center">
-                            <MudItem xs="8">
-                                <MudStack Spacing="1" Justify="Justify.Center">
-                                    <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
-                                            Phone number verification
-                                        </MudText>
-                                    </MudPaper>
-                                    <MudPaper Outlined="true" Class="pa-5">
-                                        <MudForm
-                                            @ref="confirmChangePhoneNumberForm"
-                                            Model="ConfirmChangePhoneNumberModel"
-                                            Validation="Validator.ValidateValue">
-                                            <MudStack Spacing="2">
-                                                <MudText Class="mb-2" Align="Align.Center">
-                                                    Enter code from SMS we sent you to: 
-                                                    <strong>@ChangePhoneNumberModel.NewPhoneNumber</strong>
+                                    </MudItem>
+                                </MudGrid>
+                            </ChildContent>
+                        </MudStepExtended>
+                        <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Verification">
+                            <ChildContent>
+                                <MudGrid Justify="Justify.Center">
+                                    <MudItem xs="8">
+                                        <MudStack Spacing="1" Justify="Justify.Center">
+                                            <MudPaper Outlined Class="pa-3">
+                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                    Phone number verification
                                                 </MudText>
+                                            </MudPaper>
+                                            <MudPaper Outlined="true" Class="pa-5">
+                                                <MudForm
+                                                    @ref="confirmForm"
+                                                    Model="ConfirmChangePhoneNumberModel"
+                                                    Validation="Validator.ValidateValue">
+                                                    <MudStack Spacing="2">
+                                                        <MudText Class="mb-2" Align="Align.Center">
+                                                            Enter code from SMS we sent you to:
+                                                            <strong>@ChangePhoneNumberModel.NewPhoneNumber</strong>
+                                                        </MudText>
 
-                                                <MudCodeInput
-                                                    Count="6"
-                                                    Margin="Margin.Normal"
-                                                    Spacing="2"
-                                                    Class="d-flex align-items-center"
-                                                    @bind-Value="ConfirmChangePhoneNumberModel.Code"
-                                                    Variant="Variant.Outlined"/>
+                                                        <MudCodeInput
+                                                            Count="6"
+                                                            Margin="Margin.Normal"
+                                                            Spacing="2"
+                                                            Class="d-flex align-items-center"
+                                                            @bind-Value="ConfirmChangePhoneNumberModel.Code"
+                                                            Variant="Variant.Outlined"/>
 
-                                                <MudLoadingButton
-                                                    FullWidth="true"
-                                                    Variant="Variant.Filled"
-                                                    Color="Color.Primary"
-                                                    ButtonType="ButtonType.Button"
-                                                    Disabled="@(ConfirmChangePhoneNumberModel.Code.Length <= 5)"
-                                                    OnClick="@(async () => await OnChangeAsync())">
-                                                    Verify
-                                                </MudLoadingButton>
-                                            </MudStack>
-                                        </MudForm>
-                                    </MudPaper>
-                                    <CodeResend Context="newPhoneNumberContext"></CodeResend>
-                                </MudStack>
-                            </MudItem>
-                        </MudGrid>
+                                                        <MudLoadingButton
+                                                            FullWidth="true"
+                                                            Variant="Variant.Filled"
+                                                            Color="Color.Primary"
+                                                            ButtonType="ButtonType.Button"
+                                                            Disabled="@(ConfirmChangePhoneNumberModel.Code.Length <= 5)"
+                                                            OnClick="@(async () => await OnChangeAsync())">
+                                                            Verify
+                                                        </MudLoadingButton>
+                                                    </MudStack>
+                                                </MudForm>
+                                            </MudPaper>
+                                            <CodeResend Context="messageContext"></CodeResend>
+                                        </MudStack>
+                                    </MudItem>
+                                </MudGrid>
+                            </ChildContent>
+                        </MudStepExtended>
                     </ChildContent>
-                </MudStepExtended>
-            </ChildContent>
-        </MudStepperExtended>
-    </MudItem>
-</MudGrid>
+                </MudStepperExtended>
+            </MudItem>
+        </MudGrid>
+    </AccessConfirmed>
+</AccessConfirmation>
 
 @code {
 
@@ -226,105 +158,57 @@
     public string Type { get; set; } = string.Empty;
 
     [SupplyParameterFromForm] private ChangePhoneNumberModel ChangePhoneNumberModel { get; set; } = new();
-    [SupplyParameterFromForm] private CodeModel VerifyCurrentPhoneNumberModel { get; set; } = new();
+
     [SupplyParameterFromForm] private CodeModel ConfirmChangePhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
-    private MudForm changePhoneNumberForm = new();
-    private MudForm verifyNewPhoneNumberForm = new();
-    private MudForm confirmChangePhoneNumberForm = new();
-    private MessageContext currentPhoneNumberContext = new();
-    private MessageContext newPhoneNumberContext = new();
+    private MudForm changeForm = new();
+    private MudForm confirmForm = new();
+    private MessageContext messageContext = new();
+    private ConfirmationContext? confirmationContext;
 
-    private async Task OnSendCurrentCodeAsync()
+    protected override void OnInitialized()
     {
-        await changePhoneNumberForm.Validate();
-
-        if (changePhoneNumberForm.IsValid)
+        confirmationContext = new ConfirmationContext()
         {
-            var request = new CheckPhoneNumberRequest()
-            {
-                UserId = UserState.UserId,
-                PhoneNumber = ChangePhoneNumberModel.NewPhoneNumber
-            };
-
-            var result = await SecurityService.CheckPhoneNumberAsync(request);
-
-            if (result.Success) await SendCurrentCodeAsync();
-            else Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task SendCurrentCodeAsync()
-    {
-        var to = Type switch
-        {
-            PhoneNumberTypes.Primary => UserState.Credentials?.PrimaryPhoneNumber!,
-            PhoneNumberTypes.Recovery => UserState.Credentials?.RecoveryPhoneNumber!,
-            _ => throw new NotSupportedException("Unsupported phone number type")
-        };
-        
-        currentPhoneNumberContext = new MessageContext()
-        {
-            UserId = UserState.UserId,
-            Sender = SenderType.Sms,
             Purpose = PurposeType.PhoneNumber,
-            Action = ActionType.Current,
-            Payload = new()
-            {
-                { "To", to }
-            }
+            Action = ActionType.Change
         };
-
-        var request = currentPhoneNumberContext!.ToSendCodeRequest();
-        var result = await VerificationService.SendCodeAsync(request);
-
-        if (result.Success) await stepper.StepNextAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnSendNewCodeAsync()
     {
-        await verifyNewPhoneNumberForm.Validate();
+        await changeForm.Validate();
 
-        if (verifyNewPhoneNumberForm.IsValid)
+        if (changeForm.IsValid)
         {
-            var request = currentPhoneNumberContext!.ToVerifyCodeRequest(VerifyCurrentPhoneNumberModel.Code);
-            var result = await VerificationService.VerifyCodeAsync(request);
+            messageContext = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Sms,
+                Purpose = PurposeType.PhoneNumber,
+                Action = ActionType.Verify,
+                Payload = new()
+                {
+                    { "To", ChangePhoneNumberModel.NewPhoneNumber }
+                }
+            };
 
-            if (result.Success) await SendNewCodeAsync();
+            var request = messageContext!.ToSendCodeRequest();
+            var result = await VerificationService.SendCodeAsync(request);
+
+            if (result.Success) await stepper.StepNextAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
-    private async Task SendNewCodeAsync()
-    {
-        newPhoneNumberContext = new MessageContext()
-        {
-            UserId = UserState.UserId,
-            Sender = SenderType.Sms,
-            Purpose = PurposeType.PhoneNumber,
-            Action = ActionType.New,
-            Payload = new()
-            {
-                { "To", ChangePhoneNumberModel.NewPhoneNumber }
-            }
-        };
-
-        var request = newPhoneNumberContext!.ToSendCodeRequest();
-        var result = await VerificationService.SendCodeAsync(request);
-
-        if (result.Success) await stepper.StepNextAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
-
     private async Task OnChangeAsync()
     {
-        await confirmChangePhoneNumberForm.Validate();
+        await confirmForm.Validate();
 
-        if (confirmChangePhoneNumberForm.IsValid)
+        if (confirmForm.IsValid)
         {
-            var request = newPhoneNumberContext!.ToVerifyCodeRequest(ConfirmChangePhoneNumberModel.Code);
+            var request = messageContext!.ToVerifyCodeRequest(ConfirmChangePhoneNumberModel.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await ChangeAsync();
@@ -340,7 +224,7 @@
             PhoneNumberTypes.Recovery => PhoneNumberType.Recovery,
             _ => throw new NotSupportedException("Unsupported phone number type")
         };
-        
+
         var request = new ChangePhoneNumberRequest()
         {
             UserId = UserState.UserId,
@@ -360,4 +244,5 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
+
 }
