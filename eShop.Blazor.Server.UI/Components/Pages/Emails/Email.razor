@@ -1,4 +1,9 @@
-﻿@if (Model is not null)
+﻿@inject ISecurityService SecurityService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject UserState UserState
+
+@if (Model is not null)
 {
     <MudPaper Outlined="true" Class="pa-5">
         <MudStack Spacing="0">
@@ -103,7 +108,7 @@
                             {
                                 case EmailType.Primary:
                                 {
-                                    <MudMenuItem Href=@($"/account/email/verify?type={EmailTypes.Primary}")>
+                                    <MudMenuItem Href=@(OnVerify(EmailTypes.Primary))>
                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                             Verify email
                                         </MudTextM3>
@@ -112,7 +117,7 @@
                                 }
                                 case EmailType.Recovery:
                                 {
-                                    <MudMenuItem Href=@($"/account/email/verify?type={EmailTypes.Recovery}")>
+                                    <MudMenuItem Href=@(OnVerify(EmailTypes.Recovery))>
                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                             Verify email
                                         </MudTextM3>
@@ -121,7 +126,7 @@
                                 }
                                 case EmailType.Secondary:
                                 {
-                                    <MudMenuItem Href=@($"/account/email/verify?type={EmailTypes.Secondary}&email={Model.Email}")>
+                                    <MudMenuItem Href=@(OnVerify(EmailTypes.Secondary, Model.Email))>
                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                             Verify email
                                         </MudTextM3>
@@ -136,13 +141,13 @@
                             {
                                 case EmailType.Primary:
                                 {
-                                    <MudMenuItem Href=@($"/account/email/change?type={EmailTypes.Primary}")>
+                                    <MudMenuItem Href=@(OnChange(EmailTypes.Primary))>
                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                             Change email
                                         </MudTextM3>
                                     </MudMenuItem>
                                     <MudDivider/>
-                                    <MudMenuItem Href="/account/email/reset">
+                                    <MudMenuItem Href=@(OnReset(EmailTypes.Primary))>
                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
                                             Reset email
                                         </MudTextM3>
@@ -151,13 +156,13 @@
                                 }
                                 case EmailType.Recovery:
                                 {
-                                    <MudMenuItem Href=@($"/account/email/change?type={EmailTypes.Recovery}")>
+                                    <MudMenuItem Href=@(OnChange(EmailTypes.Recovery))>
                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                             Change email
                                         </MudTextM3>
                                     </MudMenuItem>
                                     <MudDivider/>
-                                    <MudMenuItem Href=@($"/account/email/remove?type={EmailTypes.Recovery}")>
+                                    <MudMenuItem OnClick=@(async () => await OnRemove(UserState.Credentials?.RecoveryEmail!))>
                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
                                             Remove email
                                         </MudTextM3>
@@ -166,7 +171,7 @@
                                 }
                                 case EmailType.Secondary:
                                 {
-                                    <MudMenuItem Href=@($"/account/email/remove?type={EmailTypes.Secondary}&email={Model.Email}")>
+                                    <MudMenuItem OnClick=@(async () => await OnRemove(Model.Email))>
                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
                                             Remove email
                                         </MudTextM3>
@@ -209,5 +214,79 @@
 }
 
 @code {
-    [Parameter] public UserEmailDto? Model { get; set; }
+    [Parameter] 
+    public UserEmailDto? Model { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnRefresh { get; set; }
+    
+    private readonly string returnUrl = HttpUtility.UrlEncode("/account/emails");
+
+    private string OnVerify(string type, string? email = null)
+    {
+        if (type == EmailTypes.Secondary && !string.IsNullOrEmpty(email))
+        {
+            return $"/account/email/verify?type={type}&email={email}&return_url={returnUrl}";
+        }
+
+        return $"/account/email/verify?type={type}&return_url={returnUrl}";
+    }
+    
+        
+    private string OnChange(string type)
+    {
+        return $"/account/email/change?type={type}&return_url={returnUrl}";
+    }
+    
+    private string OnReset(string type)
+    {
+        return $"/account/email/reset?type={type}&return_url={returnUrl}";
+    }
+    
+    private async Task OnRemove(string email)
+    {
+        var context = new ConfirmationContext()
+        {
+            Action = ActionType.Remove,
+            Purpose = PurposeType.Email
+        };
+
+        var parameters = new DialogParameters<AccessConfirmationDialog>()
+        {
+            { dialog => dialog.Context, context }
+        };
+
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        const string title = "Confirm access";
+        var dialog = await DialogService.ShowAsync<AccessConfirmationDialog>(title, parameters, options);
+        var dialogResult = await dialog.Result;
+
+        if (!dialogResult!.Canceled)
+        {
+            var request = new RemoveEmailRequest()
+            {
+                UserId = UserState.UserId,
+                Email = email
+            };
+            
+            var result = await SecurityService.RemoveEmailAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Email was successfully removed", Severity.Success);
+                await OnRefresh.InvokeAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
 }

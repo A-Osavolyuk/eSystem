@@ -1,6 +1,4 @@
 ﻿@page "/account/emails"
-@using eShop.Blazor.Server.UI.Components.Pages.Emails.Components
-@using AddEmail = eShop.Blazor.Server.UI.Components.Pages.Emails.Components.AddEmail
 
 @inherits PageBase
 
@@ -30,7 +28,7 @@
                 }
                 @foreach (var email in Model.Emails.OrderBy(email => email.Type))
                 {
-                    <Email Model="email"/>
+                    <Email OnRefresh="RefreshAsync" Model="email"/>
                 }
                 <AddEmail OnRefresh="RefreshAsync"/>
                 <PrimaryEmail Model="Model"/>
