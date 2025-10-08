@@ -51,11 +51,6 @@ public enum PurposeType
     TwoFactor,
     
     /// <summary>
-    /// The user's two-factor authentication provider
-    /// </summary>
-    Provider,
-    
-    /// <summary>
     /// The user's login method
     /// </summary>
     LoginMethod,
