@@ -5,14 +5,6 @@ namespace eShop.Application.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddMessaging(this IServiceCollection services, Action<MessageRegistry> cfg)
-    {
-        var messageRegistry = new MessageRegistry();
-        cfg(messageRegistry);
-        
-        services.AddSingleton(messageRegistry);
-    }
-    
     public static void AddHttpClient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>
         (this IServiceCollection services, ServiceLifetime lifetime)
         where TImplementation : class, TService
