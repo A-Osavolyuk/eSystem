@@ -20,11 +20,11 @@
                     </MudText>
                     <MudPaper Class="pt-3 pb-3" Outlined="true">
                         <MudStack Spacing="3">
-                            <PasswordSection Model="Model.PasswordData" OnRefreshAsync="RefreshAsync"/>
+                            <PasswordSection Model="Model.PasswordData" OnRefresh="RefreshAsync"/>
                             <MudDivider/>
                             <LinkedAccountsSection Model="Model.LinkedAccountsData"/>
                             <MudDivider/>
-                            <PasskeysSection Model="Model.PasskeysData"/>
+                            <PasskeysSection OnRefresh="RefreshAsync" Model="Model.PasskeysData"/>
                         </MudStack>
                     </MudPaper>
                 </MudStack>

@@ -1,0 +1,57 @@
+﻿<MudStack Row="true" Spacing="0">
+    <MudStack Spacing="1">
+        <MudStack Row="true" Spacing="3">
+            <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50 pt-1">
+                @Model.DisplayName
+            </MudTextM3>
+            <MudChip
+                T="string"
+                Class="m-0"
+                Variant="Variant.Outlined"
+                Color="Color.Default"
+                Size="Size.Small"
+                Text="Seen from this browser"/>
+        </MudStack>
+        <MudStack Row="true" Spacing="1">
+            <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                Added on Oct 3, 2025 | Last used about 4 hours ago
+            </MudTextM3>
+        </MudStack>
+    </MudStack>
+    <MudSpacer/>
+    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+        <MudStack>
+            <MudTooltip Text="Edit passkey nickname">
+                <MudIconButton
+                    Color="Color.Default"
+                    Variant="Variant.Outlined"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Small"
+                    OnClick="@(async () => await OnEdit.InvokeAsync(Model))"
+                    Icon="@Icons.Material.Outlined.Edit"/>
+            </MudTooltip>
+        </MudStack>
+        <MudStack>
+            <MudTooltip Text="@($"Delete '{Model.DisplayName}' passkey")">
+                <MudIconButton
+                    Color="Color.Error"
+                    Variant="Variant.Outlined"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Small"
+                    OnClick="@(async () => await OnDelete.InvokeAsync(Model))"
+                    Icon="@Icons.Material.Outlined.Delete"/>
+            </MudTooltip>
+        </MudStack>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] 
+    public UserPasskeyDto Model { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<UserPasskeyDto> OnDelete { get; set; }
+    
+    [Parameter]
+    public EventCallback<UserPasskeyDto> OnEdit { get; set; }
+}
