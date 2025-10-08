@@ -5,7 +5,12 @@
 
 <MudStack Spacing="3">
     <MudPaper Outlined="true" Class="pa-5">
-        <MudStack>
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Key"/>
+            <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">Passkey</MudTextM3>
+            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                When you are ready, authenticate using the button below.
+            </MudTextM3>
             @if (isLoading)
             {
                 <MudStack Row="true" Justify="Justify.Center" AlignItems="AlignItems.Center">

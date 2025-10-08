@@ -7,21 +7,29 @@
         <MudStack>
             @if (sendStage)
             {
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+                    When you are ready, trigger a mailer to verify your identity.
+                </MudTextM3>
                 <MudButton
                     Color="Color.Success"
                     Variant="Variant.Filled"
                     ButtonType="ButtonType.Button"
                     Size="Size.Small"
                     OnClick="@(async () => await OnSendAsync())">
-                    Send verification code
+                    Verify via email
                 </MudButton>
             }
             else
             {
-                <MudTextM3 Align="Align.Center">
-                    We have sent code to:
-                    <strong>@UserState.Credentials?.PrimaryEmail!</strong>
-                </MudTextM3>
+                <MudStack Spacing="1">
+                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                        Enter the code sent to:
+                        <strong>@UserState.Credentials?.PrimaryEmail!</strong>
+                    </MudTextM3>
+                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                        If it doesn’t appear within a few minutes, check your spam folder.
+                    </MudTextM3>
+                </MudStack>
                 <MudForm @ref="form" Model="Model">
                     <MudTextFieldExtended
                         Variant="Variant.Outlined"
