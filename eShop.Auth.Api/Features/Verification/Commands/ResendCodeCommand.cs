@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Messaging;
+﻿using eShop.Auth.Api.Messages.Email;
+using eShop.Auth.Api.Messages.Sms;
 using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 
@@ -10,14 +11,12 @@ public class ResendCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
     IMessageService messageService,
-    IdentityOptions identityOptions,
-    MessageRegistry messageRegistry) : IRequestHandler<ResendCodeCommand, Result>
+    IdentityOptions identityOptions) : IRequestHandler<ResendCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
     private readonly IdentityOptions identityOptions = identityOptions;
-    private readonly MessageRegistry messageRegistry = messageRegistry;
     public async Task<Result> Handle(ResendCodeCommand request, CancellationToken cancellationToken)
     {
         ResendCodeResponse? response;
@@ -59,20 +58,19 @@ public class ResendCodeCommandHandler(
         var payload = request.Request.Payload;
 
         var code = await codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
-        payload["Code"] = code;
+        payload["Code"] = code; 
+        payload["UserName"] = user.Username;
 
-        if (sender == SenderType.Email) payload["UserName"] = user.Username;
-
-        var metadata = new MessageMetadata()
+        Message? message = sender switch
         {
-            Sender = sender,
-            Action = action,
-            Purpose = purpose
+            SenderType.Email => new VerificationCodeEmailMessage(),
+            SenderType.Sms => new VerificationCodeSmsMessage(),
+            _ => null
         };
-
-        var message = messageRegistry.Create(metadata, payload);
+        
         if (message is null) return Results.BadRequest("Invalid message type.");
 
+        message.Initialize(payload);
         await messageService.SendMessageAsync(sender, message, cancellationToken);
 
         response = new ResendCodeResponse()

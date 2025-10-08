@@ -1,4 +1,6 @@
-﻿using eShop.Domain.Common.Messaging;
+﻿using eShop.Auth.Api.Messages.Email;
+using eShop.Auth.Api.Messages.Sms;
+using eShop.Domain.Common.Messaging;
 using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Verification.Commands;
@@ -8,13 +10,11 @@ public record SendCodeCommand(SendCodeRequest Request) : IRequest<Result>;
 public class SendCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IMessageService messageService,
-    MessageRegistry messageRegistry) : IRequestHandler<SendCodeCommand, Result>
+    IMessageService messageService) : IRequestHandler<SendCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
-    private readonly MessageRegistry messageRegistry = messageRegistry;
 
     public async Task<Result> Handle(SendCodeCommand request, CancellationToken cancellationToken)
     {
@@ -34,19 +34,18 @@ public class SendCodeCommandHandler(
         var code = await codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
 
         payload["Code"] = code;
+        payload["UserName"] = user.Username;
 
-        if (sender == SenderType.Email) payload["UserName"] = user.Username;
-
-        var metadata = new MessageMetadata()
+        Message? message = sender switch
         {
-            Purpose = purpose,
-            Sender = sender,
-            Action = action,
+            SenderType.Email => new VerificationCodeEmailMessage(),
+            SenderType.Sms => new VerificationCodeSmsMessage(),
+            _ => null
         };
-
-        var message = messageRegistry.Create(metadata, payload);
+        
         if (message is null) return Results.BadRequest("Invalid message type.");
 
+        message.Initialize(payload);
         await messageService.SendMessageAsync(sender, message, cancellationToken);
 
         return Result.Success();

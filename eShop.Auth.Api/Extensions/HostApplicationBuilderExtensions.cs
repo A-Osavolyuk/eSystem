@@ -278,6 +278,7 @@ public static class HostApplicationBuilderExtensions
             cfg.Add<ConfirmPhoneNumberChangeMessage>(SenderType.Sms, PurposeType.PhoneNumber, ActionType.New);
             cfg.Add<TwoFactorCodeSmsMessage>(SenderType.Sms, PurposeType.TwoFactor, ActionType.SignIn);
             cfg.Add<EnableSmsTwoFactorMessage>(SenderType.Sms, PurposeType.Provider, ActionType.Subscribe);
+            cfg.Add<VerificationCodeEmailMessage>(SenderType.Email, PurposeType.Passkey, ActionType.Create);
         });
     }
 }
