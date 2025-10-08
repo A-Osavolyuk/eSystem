@@ -29,12 +29,17 @@ public class VerifyPasskeyCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
+        var verificationResult = await verificationManager.VerifyAsync(user,
+            PurposeType.Passkey, ActionType.Create, cancellationToken);
+
+        if (!verificationResult.Succeeded) return verificationResult;
+
         var credentialResponse = request.Request.Response;
         var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
 
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
-        
+
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
         var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Attestation);
 
@@ -71,9 +76,9 @@ public class VerifyPasskeyCommandHandler(
 
         if (!user.HasVerificationMethod(VerificationMethod.Passkey))
         {
-            var verificationMethodResult = await verificationManager.SubscribeAsync(user, 
+            var verificationMethodResult = await verificationManager.SubscribeAsync(user,
                 VerificationMethod.Passkey, cancellationToken: cancellationToken);
-            
+
             if (!verificationMethodResult.Succeeded) return verificationMethodResult;
         }
 
