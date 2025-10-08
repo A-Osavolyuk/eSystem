@@ -6,16 +6,6 @@
 public enum ActionType
 {
     /// <summary>
-    /// Verification of an existing resource, such as the current email or phone number.
-    /// </summary>
-    Current,
-
-    /// <summary>
-    /// Verification of a newly added resource, such as a new email address or phone number.
-    /// </summary>
-    New,
-
-    /// <summary>
     /// Generic verification of a resource or process, e.g. email or phone confirmation.
     /// </summary>
     Verify,
@@ -104,4 +94,9 @@ public enum ActionType
     /// Represents user's passkey creation
     /// </summary>
     Create,
+    
+    /// <summary>
+    /// Represents user's credential change
+    /// </summary>
+    Change,
 }
