@@ -119,7 +119,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Forgot your password?
-                    <MudLink Href="/account/password/forgot">
+                    <MudLink Href="@OnForgotPassword()">
                         Reset password
                     </MudLink>
                 </MudText>
@@ -239,6 +239,12 @@
         
         var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}&fallbackUri={fallbackUri}";
         NavigationManager.NavigateTo(url);
+    }
+
+    private string OnForgotPassword()
+    {
+        var returnUrl = HttpUtility.UrlEncode("/account/login");
+        return $"/account/password/forgot?return_url={returnUrl}";
     }
 
 }
