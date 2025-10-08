@@ -156,10 +156,15 @@
 
     [SupplyParameterFromQuery(Name = "type")]
     public string Type { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = null!;
 
-    [SupplyParameterFromForm] private ChangePhoneNumberModel ChangePhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] 
+    private ChangePhoneNumberModel ChangePhoneNumberModel { get; set; } = new();
 
-    [SupplyParameterFromForm] private CodeModel ConfirmChangePhoneNumberModel { get; set; } = new();
+    [SupplyParameterFromForm] 
+    private CodeModel ConfirmChangePhoneNumberModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm changeForm = new();
@@ -237,7 +242,7 @@
         if (result.Success)
         {
             Snackbar.Add("Phone number was successfully changed", Severity.Success);
-            NavigationManager.NavigateTo("/account/phone-numbers");
+            NavigationManager.NavigateTo(ReturnUrl);
         }
         else
         {

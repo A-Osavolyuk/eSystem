@@ -43,7 +43,8 @@
                 Variant="Variant.Outlined"
                 ButtonType="ButtonType.Button"
                 Size="Size.Small"
-                OnClick="@(() => NavigationManager.NavigateTo("/account/passkeys/add"))">
+                OnClick="@(() => NavigationManager.NavigateTo(OnAdd()))"
+                Href="@(OnAdd())">
                 Add
             </MudButton>
         </MudStack>
@@ -52,4 +53,10 @@
 
 @code {
     [Parameter] public PasskeysData Model { get; set; } = new();
+
+    private string OnAdd()
+    {
+        var returnUrl = HttpUtility.UrlEncode("/account/security");
+        return $"/account/passkeys/add?return_url={returnUrl}";
+    }
 }

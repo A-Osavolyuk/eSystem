@@ -85,6 +85,14 @@
                                                         OnClick="@(async () => await stepper.StepNextAsync())">
                                                         Continue
                                                     </MudButton>
+                                                    <MudButton
+                                                        Variant="Variant.Text"
+                                                        Color="Color.Info"
+                                                        ButtonType="ButtonType.Button"
+                                                        Href="@ReturnUrl"
+                                                        Size="Size.Small">
+                                                        Cancel
+                                                    </MudButton>
                                                 </MudStack>
                                             </MudPaper>
                                         </MudStack>
@@ -283,7 +291,7 @@
                                                     Variant="Variant.Filled"
                                                     Color="Color.Success"
                                                     Size="Size.Small"
-                                                    Href="/account/security">
+                                                    Href="@ReturnUrl">
                                                     Done
                                                 </MudButton>
                                             </MudStack>
@@ -300,6 +308,10 @@
 </AccessConfirmation>
 
 @code {
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = null!;
+    
+    [SupplyParameterFromForm]
     private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();

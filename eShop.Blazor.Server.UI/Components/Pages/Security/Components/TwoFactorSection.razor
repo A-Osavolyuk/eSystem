@@ -18,7 +18,7 @@
                 Color="Color.Success"
                 Variant="Variant.Filled"
                 ButtonType="ButtonType.Button"
-                Href="/account/2fa/enable">
+                Href="@(OnEnable())">
                 Enable two-factor
             </MudButton>
         </MudStack>
@@ -37,7 +37,7 @@ else
                     <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
                 </ActivatorContent>
                 <ChildContent>
-                    <MudMenuItem Href="/account/2fa/disable">
+                    <MudMenuItem Href="@OnDisable()">
                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
                             Disable two-factor
                         </MudTextM3>
@@ -56,5 +56,18 @@ else
 }
 
 @code {
-    [Parameter] public TwoFactorData Model { get; set; } = new();
+    [Parameter] 
+    public TwoFactorData Model { get; set; } = new();
+
+    private readonly string returnUrl = HttpUtility.UrlEncode("/account/security");
+    
+    private string OnEnable()
+    {
+        return $"/account/2fa/enable?return_url={returnUrl}";
+    }
+    
+    private string OnDisable()
+    {
+        return $"/account/2fa/disable?return_url={returnUrl}";
+    }
 }

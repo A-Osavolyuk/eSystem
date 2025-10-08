@@ -10,8 +10,10 @@
 
 @switch (Type)
 {
-    case EmailTypes.Primary: <Title Text="Primary email change"></Title> break;
-    case EmailTypes.Recovery: <Title Text="Recovery email change"></Title> break;
+    case EmailTypes.Primary:
+        <Title Text="Primary email change"></Title> break;
+    case EmailTypes.Recovery:
+        <Title Text="Recovery email change"></Title> break;
 }
 
 <AccessConfirmation Context="confirmationContext">
@@ -32,69 +34,81 @@
                                                 {
                                                     case EmailTypes.Primary:
                                                     {
-                                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline"
+                                                                   Size="Size.Small">
                                                             Primary email change
-                                                        </MudText>
+                                                        </MudTextM3>
 
                                                         break;
                                                     }
                                                     case EmailTypes.Recovery:
                                                     {
-                                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline"
+                                                                   Size="Size.Small">
                                                             Recovery email change
-                                                        </MudText>
+                                                        </MudTextM3>
 
                                                         break;
                                                     }
                                                 }
                                             </MudPaper>
-                                            <MudPaper Outlined="true" Class="pa-3">
-                                                <MudStack Spacing="3">
+                                            <MudPaper Outlined="true" Class="px-5 py-4">
+                                                <MudStack Spacing="2">
                                                     @switch (Type)
                                                     {
                                                         case EmailTypes.Primary:
                                                         {
-                                                            <MudText Class="mb-1" Align="Align.Center">
+                                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                                                 To change your current primary email address,
                                                                 you need to enter new email address,
                                                                 then we will send emails with verification code to your
                                                                 current and new primary email addresses.
-                                                            </MudText>
+                                                            </MudTextM3>
 
                                                             break;
                                                         }
                                                         case EmailTypes.Recovery:
                                                         {
-                                                            <MudText Class="mb-1" Align="Align.Center">
+                                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                                                 To change your current recovery email address,
                                                                 you need to enter new email address,
                                                                 then we will send emails with verification code to your
                                                                 current and new recovery email addresses.
-                                                            </MudText>
+                                                            </MudTextM3>
 
                                                             break;
                                                         }
                                                     }
                                                     <MudForm
                                                         @ref="changeForm"
-                                                        Model="Change"
+                                                        Model="ChangeModel"
                                                         Validation="ChangeEmailValidator.ValidateValue">
-                                                        <MudTextField
-                                                            @bind-Value="Change.NewEmail"
-                                                            For="() => Change.NewEmail"
+                                                        <MudTextFieldExtended
+                                                            Margin="Margin.Dense"
+                                                            @bind-Value="ChangeModel.NewEmail"
+                                                            For="() => ChangeModel.NewEmail"
                                                             Label="New email"
                                                             Variant="Variant.Outlined"
                                                             Immediate="true"
                                                             Clearable="true"/>
                                                     </MudForm>
                                                     <MudLoadingButton
-                                                        FullWidth="true"
+                                                        Size="Size.Small"
                                                         Variant="Variant.Filled"
-                                                        Color="Color.Primary"
+                                                        Color="Color.Success"
                                                         ButtonType="ButtonType.Button"
-                                                        OnClick="@(async () => await OnSendNewCodeAsync())">
+                                                        OnClick="@(async () => await OnSendCode())">
                                                         Change
                                                     </MudLoadingButton>
+                                                    <MudButton
+                                                        Size="Size.Small"
+                                                        Variant="Variant.Text"
+                                                        Color="Color.Info"
+                                                        ButtonType="ButtonType.Button"
+                                                        Href="@ReturnUrl"
+                                                        OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
+                                                        Cancel
+                                                    </MudButton>
                                                 </MudStack>
                                             </MudPaper>
                                         </MudStack>
@@ -108,40 +122,48 @@
                                     <MudItem xs="8">
                                         <MudStack Spacing="1" Justify="Justify.Center">
                                             <MudPaper Outlined="true" Class="pa-3">
-                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                                                     Email verification
-                                                </MudText>
+                                                </MudTextM3>
                                             </MudPaper>
-                                            <MudPaper Outlined="true" Class="pa-5">
-                                                <MudForm
-                                                    @ref="confirmForm"
-                                                    Model="ConfirmModel"
-                                                    Validation="Validator.ValidateValue">
-                                                    <MudStack Spacing="2">
-                                                        <MudText Class="mb-2" Align="Align.Center">
-                                                            Enter 6-digit code from letter we sent you
-                                                            to: @Change.NewEmail
-                                                        </MudText>
-
-                                                        <MudCodeInput
-                                                            Count="6"
-                                                            Margin="Margin.Normal"
-                                                            Spacing="2"
-                                                            Class="d-flex align-items-center"
+                                            <MudPaper Outlined="true" Class="px-5 py-4">
+                                                <MudStack Spacing="2">
+                                                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                                        Enter 6-digit code from letter we sent you
+                                                        to: @ChangeModel.NewEmail
+                                                    </MudTextM3>
+                                                    <MudForm
+                                                        @ref="confirmForm"
+                                                        Model="ConfirmModel"
+                                                        Validation="Validator.ValidateValue">
+                                                        <MudTextFieldExtended
                                                             @bind-Value="ConfirmModel.Code"
-                                                            Variant="Variant.Outlined"/>
-
-                                                        <MudLoadingButton
-                                                            FullWidth="true"
-                                                            Variant="Variant.Filled"
-                                                            Color="Color.Primary"
-                                                            ButtonType="ButtonType.Button"
-                                                            Disabled="@(ConfirmModel.Code.Length <= 5)"
-                                                            OnClick="@(async () => await OnChangeAsync())">
-                                                            Verify
-                                                        </MudLoadingButton>
-                                                    </MudStack>
-                                                </MudForm>
+                                                            Variant="Variant.Outlined"
+                                                            Margin="Margin.Dense"
+                                                            Placeholder="XXXXXX"
+                                                            Mask="mask"
+                                                            Clearable="true"
+                                                            Immediate="true"/>
+                                                    </MudForm>
+                                                    <MudLoadingButton
+                                                        Size="Size.Small"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Success"
+                                                        ButtonType="ButtonType.Button"
+                                                        Disabled="@(ConfirmModel.Code.Length <= 5)"
+                                                        OnClick="@(async () => await OnChangeAsync())">
+                                                        Verify
+                                                    </MudLoadingButton>
+                                                    <MudButton
+                                                        Size="Size.Small"
+                                                        Variant="Variant.Text"
+                                                        Color="Color.Info"
+                                                        ButtonType="ButtonType.Button"
+                                                        Href="@ReturnUrl"
+                                                        OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
+                                                        Cancel
+                                                    </MudButton>
+                                                </MudStack>
                                             </MudPaper>
                                             <CodeResend Context="messageContext"></CodeResend>
                                         </MudStack>
@@ -161,12 +183,16 @@
     [SupplyParameterFromQuery(Name = "type")]
     public string Type { get; set; } = string.Empty;
 
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = null!;
+
     [SupplyParameterFromForm] 
-    private ChangeEmailModel Change { get; set; } = new();
-    
+    private ChangeEmailModel ChangeModel { get; set; } = new();
+
     [SupplyParameterFromForm] 
     private CodeModel ConfirmModel { get; set; } = new();
 
+    private PatternMask mask = new("000000");
     private MudStepperExtended stepper = new();
     private MudForm changeForm = new();
     private MudForm confirmForm = new();
@@ -182,7 +208,7 @@
         };
     }
 
-    private async Task OnSendNewCodeAsync()
+    private async Task OnSendCode()
     {
         await changeForm.Validate();
 
@@ -196,7 +222,7 @@
                 Action = ActionType.Verify,
                 Payload = new()
                 {
-                    { "To", Change.NewEmail }
+                    { "To", ChangeModel.NewEmail }
                 }
             };
 
@@ -219,7 +245,7 @@
         var request = new ChangeEmailRequest()
         {
             UserId = UserState.UserId,
-            NewEmail = Change.NewEmail,
+            NewEmail = ChangeModel.NewEmail,
             Type = type,
         };
 
@@ -228,7 +254,7 @@
         if (result.Success)
         {
             Snackbar.Add("Email address was successfully changed", Severity.Success);
-            NavigationManager.NavigateTo("/account/emails");
+            NavigationManager.NavigateTo(ReturnUrl);
         }
         else
         {

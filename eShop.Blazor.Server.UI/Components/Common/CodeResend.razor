@@ -6,17 +6,19 @@
     <MudPaper Outlined Class="pa-3">
         @if (Context.Sender == SenderType.Email)
         {
-            <MudText Align="Align.Center"> Didn't received an email?
+            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                Didn't received an email?
                 <strong @onclick="async () => await ResendCodeAsync()"
                         class="cursor-pointer">Resend</strong>
-            </MudText>
+            </MudTextM3>
         }
         else if (Context.Sender == SenderType.Sms)
         {
-            <MudText Align="Align.Center"> Didn't received a SMS?
+            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                 Didn't received a SMS?
                 <strong @onclick="async () => await ResendCodeAsync()"
                         class="cursor-pointer">Resend</strong>
-            </MudText>
+            </MudTextM3>
         }
     </MudPaper>
 }

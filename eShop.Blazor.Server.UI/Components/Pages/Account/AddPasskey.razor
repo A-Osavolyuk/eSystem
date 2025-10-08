@@ -60,7 +60,7 @@
                                                     Variant="Variant.Text"
                                                     Size="Size.Small"
                                                     ButtonType="ButtonType.Button"
-                                                    Href="/account/security">
+                                                    Href="@ReturnUrl">
                                                     Cancel
                                                 </MudButton>
                                             </MudStack>
@@ -125,6 +125,9 @@
 </AccessConfirmation>
 
 @code {
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = null!;
+    
     private CreatePasskeyModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -197,7 +200,7 @@
 
             var result = await PasskeyService.SetPasskeyNameAsync(request);
 
-            if (result.Success) NavigationManager.NavigateTo("/account/security");
+            if (result.Success) NavigationManager.NavigateTo(ReturnUrl);
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }

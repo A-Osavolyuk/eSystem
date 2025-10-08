@@ -22,53 +22,53 @@
                 {
                     case PhoneNumberTypes.Primary:
                     {
-                        <MudText Align="Align.Center" Typo="Typo.h4">
+                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                             Primary phone number verification
-                        </MudText>
+                        </MudTextM3>
                         break;
                     }
                     case PhoneNumberTypes.Recovery:
                     {
-                        <MudText Align="Align.Center" Typo="Typo.h4">
+                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                             Recovery phone number verification
-                        </MudText>
+                        </MudTextM3>
                         break;
                     }
                     case PhoneNumberTypes.Secondary:
                     {
-                        <MudText Align="Align.Center" Typo="Typo.h4">
+                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                             Secondary phone number verification
-                        </MudText>
+                        </MudTextM3>
                         break;
                     }
                 }
             </MudPaper>
-            <MudPaper Outlined Class="pa-3">
-                <MudStack Spacing="3" Justify="Justify.Center">
+            <MudPaper Outlined Class="py-4 px-5">
+                <MudStack Spacing="2" Justify="Justify.Center">
                     @switch (Type)
                     {
                         case PhoneNumberTypes.Primary:
                         {
-                            <MudText Align="Align.Center">
+                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                 We have sent a SMS with code to:
                                 <strong>@UserState.Credentials?.PrimaryPhoneNumber</strong>
-                            </MudText>
+                            </MudTextM3>
                             break;
                         }
                         case PhoneNumberTypes.Recovery:
                         {
-                            <MudText Align="Align.Center">
+                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                 We have sent a SMS with code to:
                                 <strong>@UserState.Credentials?.RecoveryPhoneNumber</strong>
-                            </MudText>
+                            </MudTextM3>
                             break;
                         }
                         case PhoneNumberTypes.Secondary:
                         {
-                            <MudText Align="Align.Center">
+                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                 We have sent a SMS with code to:
                                 <strong>@PhoneNumber</strong>
-                            </MudText>
+                            </MudTextM3>
                             break;
                         }
                     }
@@ -76,23 +76,33 @@
                         @ref="form"
                         Model="Model"
                         Validation="Validator.ValidateValue">
-                        <MudCodeInput
-                            Class="d-flex align-items-center"
+                        <MudTextFieldExtended
+                            @bind-Value="Model.Code"
                             Variant="Variant.Outlined"
-                            Spacing="2"
-                            Margin="Margin.None"
-                            Count="6"
-                            @bind-Value="Model.Code"/>
+                            Margin="Margin.Dense"
+                            Placeholder="XXXXXX"
+                            Mask="mask"
+                            Clearable="true"
+                            Immediate="true"/>
                     </MudForm>
                     <MudLoadingButton
                         ButtonType="ButtonType.Button"
                         Variant="Variant.Filled"
                         Color="Color.Primary"
-                        FullWidth
+                        Size="Size.Small"
                         Disabled="@(Model.Code.Length <= 5)"
                         OnClick="@(async () => await OnVerificationAsync())">
                         Verify
                     </MudLoadingButton>
+                    <MudButton
+                        Size="Size.Small"
+                        Variant="Variant.Text"
+                        Color="Color.Info"
+                        ButtonType="ButtonType.Button"
+                        Href="@ReturnUrl"
+                        OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
+                        Cancel
+                    </MudButton>
                 </MudStack>
             </MudPaper>
             <CodeResend Context="context"></CodeResend>
@@ -101,6 +111,8 @@
 </MudGrid>
 
 @code {
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = null!;
 
     [SupplyParameterFromQuery(Name = "type")]
     public string Type { get; set; } = string.Empty;
@@ -108,8 +120,10 @@
     [SupplyParameterFromQuery(Name = "phoneNumber")]
     public string PhoneNumber { get; set; } = string.Empty;
 
-    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
+    [SupplyParameterFromForm] 
+    private CodeModel Model { get; set; } = new();
 
+    private PatternMask mask = new("000000");
     private MudForm form = new();
     private MessageContext? context;
 
@@ -176,7 +190,7 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            NavigationManager.NavigateTo("/account/phone-numbers");
+            NavigationManager.NavigateTo(ReturnUrl);
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

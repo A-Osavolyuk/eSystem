@@ -24,44 +24,47 @@
                                     <MudItem xs="8">
                                         <MudStack Spacing="1" Justify="Justify.Center">
                                             <MudPaper Style="margin-bottom: 10px" Outlined Class="pa-3">
-                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                                                     Phone number reset
-                                                </MudText>
+                                                </MudTextM3>
                                             </MudPaper>
                                             <MudPaper Outlined="true" Class="pa-5">
-                                                <MudForm
-                                                    @ref="resetForm"
-                                                    Model="ResetModel"
-                                                    Validation="ResetPhoneNumberValidator.ValidateValue">
-                                                    <MudGrid Justify="Justify.Center">
-                                                        <MudItem xs="12">
-                                                            <MudText Class="mb-1" Align="Align.Center">
-                                                                To reset phone number, you should enter new phone
-                                                                number.
-                                                                Please, enter new phone number.
-                                                            </MudText>
-                                                        </MudItem>
-                                                        <MudItem xs="12">
-                                                            <MudTextField
-                                                                @bind-Value="ResetModel.NewPhoneNumber"
-                                                                For="() => ResetModel.NewPhoneNumber"
-                                                                Label="New phone number"
-                                                                Variant="Variant.Outlined"
-                                                                Immediate="true"
-                                                                Clearable="true"/>
-                                                        </MudItem>
-                                                        <MudItem xs="12">
-                                                            <MudLoadingButton
-                                                                FullWidth="true"
-                                                                Variant="Variant.Filled"
-                                                                Color="Color.Primary"
-                                                                ButtonType="ButtonType.Button"
-                                                                OnClick="@(async () => await OnSendCodeAsync())">
-                                                                Change
-                                                            </MudLoadingButton>
-                                                        </MudItem>
-                                                    </MudGrid>
-                                                </MudForm>
+                                                <MudStack Spacing="3">
+                                                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                                        To reset phone number, you should enter new phone
+                                                        number.
+                                                        Please, enter new phone number.
+                                                    </MudTextM3>
+                                                    <MudForm
+                                                        @ref="resetForm"
+                                                        Model="ResetModel"
+                                                        Validation="ResetPhoneNumberValidator.ValidateValue">
+                                                        <MudTextField
+                                                            @bind-Value="ResetModel.NewPhoneNumber"
+                                                            For="() => ResetModel.NewPhoneNumber"
+                                                            Label="New phone number"
+                                                            Variant="Variant.Outlined"
+                                                            Immediate="true"
+                                                            Clearable="true"/>
+                                                    </MudForm>
+                                                    <MudLoadingButton
+                                                        FullWidth="true"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnSendCodeAsync())">
+                                                        Change
+                                                    </MudLoadingButton>
+                                                    <MudButton
+                                                        Size="Size.Small"
+                                                        Variant="Variant.Text"
+                                                        Color="Color.Info"
+                                                        ButtonType="ButtonType.Button"
+                                                        Href="@ReturnUrl"
+                                                        OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
+                                                        Cancel
+                                                    </MudButton>
+                                                </MudStack>
                                             </MudPaper>
                                         </MudStack>
                                     </MudItem>
@@ -74,29 +77,29 @@
                                     <MudItem xs="8">
                                         <MudStack Spacing="1" Justify="Justify.Center">
                                             <MudPaper Outlined Class="pa-3">
-                                                <MudText Align="Align.Center" Typo="Typo.h4">
+                                                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                                                     Phone number verification
-                                                </MudText>
+                                                </MudTextM3>
                                             </MudPaper>
                                             <MudPaper Outlined="true" Class="pa-3">
-                                                <MudForm
-                                                    @ref="confirmForm"
-                                                    Model="ConfirmModel"
-                                                    Validation="Validator.ValidateValue">
-                                                    <MudStack Spacing="2">
-                                                        <MudText Class="mb-2" Align="Align.Center">
-                                                            Enter code from the SMS we sent you
-                                                            to: <strong>@ResetModel.NewPhoneNumber</strong>
-                                                        </MudText>
-
-                                                        <MudCodeInput
-                                                            Count="6"
-                                                            Margin="Margin.Normal"
-                                                            Spacing="2"
-                                                            Class="d-flex align-items-center"
-                                                            @bind-Value="ConfirmModel.Code"
-                                                            Variant="Variant.Outlined"/>
-
+                                                <MudStack Spacing="3">
+                                                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                                        Enter code from the SMS we sent you
+                                                        to: <strong>@ResetModel.NewPhoneNumber</strong>
+                                                    </MudTextM3>
+                                                    <MudForm
+                                                        @ref="confirmForm"
+                                                        Model="ConfirmModel"
+                                                        Validation="Validator.ValidateValue">
+                                                        <MudStack Spacing="2">
+                                                            <MudCodeInput
+                                                                Count="6"
+                                                                Margin="Margin.Normal"
+                                                                Spacing="2"
+                                                                Class="d-flex align-items-center"
+                                                                @bind-Value="ConfirmModel.Code"
+                                                                Variant="Variant.Outlined"/>
+                                                        </MudStack>
                                                         <MudLoadingButton
                                                             FullWidth="true"
                                                             Variant="Variant.Filled"
@@ -106,8 +109,8 @@
                                                             OnClick="@(async () => await OnVerifyAsync())">
                                                             Verify
                                                         </MudLoadingButton>
-                                                    </MudStack>
-                                                </MudForm>
+                                                    </MudForm>
+                                                </MudStack>
                                             </MudPaper>
                                             <CodeResend Context="messageContext"></CodeResend>
                                         </MudStack>
@@ -123,7 +126,12 @@
 </AccessConfirmation>
 
 @code {
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = null!;
+
     [SupplyParameterFromForm] private ResetPhoneNumberModel ResetModel { get; set; } = new();
+
     [SupplyParameterFromForm] private CodeModel ConfirmModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -208,7 +216,7 @@
         if (result.Success)
         {
             Snackbar.Add("Phone number was successfully reset", Severity.Success);
-            NavigationManager.NavigateTo("/account/phone-numbers");
+            NavigationManager.NavigateTo(ReturnUrl);
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
