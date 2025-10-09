@@ -1,4 +1,9 @@
 ﻿@inject CodeModelValidator Validator
+@inject AuthenticationManager AuthenticationManager
+@inject UserState UserState
+@inject NavigationManager NavigationManager
+@inject ITwoFactorService TwoFactorService
+@inject ISnackbar Snackbar
 
 <MudStack Spacing="4">
     <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
@@ -20,7 +25,8 @@
             Size="Size.Medium"
             Color="Color.Success"
             Variant="Variant.Filled"
-            ButtonType="ButtonType.Button">
+            ButtonType="ButtonType.Button"
+            OnClick="@(async () => await OnSignInAsync())">
             Verify
         </MudButton>
         <MudButton
@@ -59,6 +65,12 @@
     [Parameter] 
     public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
     
+    [SupplyParameterFromQuery(Name = "id")]
+    public Guid UserId { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
+    
     [SupplyParameterFromForm] 
     public CodeModel Model { get; set; } = new();
     
@@ -68,4 +80,32 @@
 
     private void Expand() => expanded = !expanded;
     private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
+
+    private async Task OnSignInAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new AuthenticatorSignInRequest()
+            {
+                UserId = UserId,
+                Code = Model.Code
+            };
+            
+            var result = await TwoFactorService.AuthenticatorSignInAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<LoginResponse>()!;
+
+                UserState.UserId = response.UserId;
+                await AuthenticationManager.SignInAsync();
+
+                var url = string.IsNullOrEmpty(ReturnUrl) ? "/products" : ReturnUrl;
+                NavigationManager.NavigateTo(url);
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
 }
