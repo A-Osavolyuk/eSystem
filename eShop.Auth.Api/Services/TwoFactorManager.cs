@@ -59,4 +59,23 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 
         return Result.Success();
     }
+
+    public async ValueTask<Result> PreferAsync(UserEntity user,
+        TwoFactorMethod method, CancellationToken cancellationToken = default)
+    {
+        if (user.Methods.Count == 1) return Results.BadRequest("Cannot change the only preferred method");
+
+        var currentPreferredMethod = user.Methods.Single(x => x.Preferred);
+        currentPreferredMethod.Preferred = false;
+        currentPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
+        
+        var nextPreferredMethod = user.GetTwoFactorMethod(method)!;
+        nextPreferredMethod.Preferred = true;
+        nextPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.UserTwoFactorMethods.UpdateRange([currentPreferredMethod, nextPreferredMethod]);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
 }

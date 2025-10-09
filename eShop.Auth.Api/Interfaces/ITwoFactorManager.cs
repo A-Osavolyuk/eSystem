@@ -7,4 +7,6 @@ public interface ITwoFactorManager
     public ValueTask<Result> UnsubscribeAsync(UserEntity user, CancellationToken cancellationToken = default);
     public ValueTask<Result> UnsubscribeAsync(UserTwoFactorMethodEntity method, 
         CancellationToken cancellationToken = default);
+    public ValueTask<Result> PreferAsync(UserEntity user, 
+        TwoFactorMethod method, CancellationToken cancellationToken = default);
 }
