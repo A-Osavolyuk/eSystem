@@ -439,11 +439,11 @@ public sealed class UserManager(
     public async ValueTask<Result> CreateAsync(UserEntity user, string? password,
         CancellationToken cancellationToken = default)
     {
-        var lockoutState = new LockoutStateEntity()
+        var lockoutState = new UserLockoutStateEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            ReasonId = null,
+            Type = LockoutType.None,
             Enabled = false,
             CreateDate = DateTimeOffset.UtcNow,
         };

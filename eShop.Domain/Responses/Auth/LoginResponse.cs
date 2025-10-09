@@ -10,7 +10,7 @@ public record LoginResponse
     public bool IsTwoFactorEnabled { get; set; }
     
     public bool IsLockedOut { get; set; }
-    public LockoutReasonDto? Reason { get; set; }
+    public LockoutType? Type { get; set; }
     
     public int MaxFailedLoginAttempts { get; set; }
     public int FailedLoginAttempts { get; set; }

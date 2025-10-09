@@ -6,7 +6,7 @@ public class LockoutModel
     public string? Description { get; set; }
     public bool Enabled { get; set; }
     public bool Permanent { get; set; }
-    public LockoutReasonModel? Reason { get; set; }
+    public LockoutType? Type { get; set; }
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
 }

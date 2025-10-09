@@ -2,13 +2,13 @@
 
 namespace eShop.Auth.Api.Data.Seeding;
 
-public class LockoutSeed : Seed<LockoutStateEntity>
+public class LockoutSeed : Seed<UserLockoutStateEntity>
 {
-    public override List<LockoutStateEntity> Get()
+    public override List<UserLockoutStateEntity> Get()
     {
         return
         [
-            new LockoutStateEntity()
+            new UserLockoutStateEntity()
             {
                 Id = Guid.CreateVersion7(),
                 UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),

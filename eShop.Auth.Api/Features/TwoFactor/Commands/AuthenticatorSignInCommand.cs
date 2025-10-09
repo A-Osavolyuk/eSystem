@@ -13,7 +13,6 @@ public sealed class LoginWith2FaCommandHandler(
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     IDeviceManager deviceManager,
-    IReasonManager reasonManager,
     IHttpContextAccessor httpContextAccessor,
     ISecretManager secretManager,
     SecretProtector protector,
@@ -24,7 +23,6 @@ public sealed class LoginWith2FaCommandHandler(
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IReasonManager reasonManager = reasonManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly ISecretManager secretManager = secretManager;
     private readonly SecretProtector protector = protector;
@@ -64,10 +62,9 @@ public sealed class LoginWith2FaCommandHandler(
             var result = await deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-
-        var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
-        if (lockoutState.Enabled)
-            return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
+        
+        if (user.LockoutState.Enabled)
+            return Results.BadRequest($"This user account is locked out with reason: {user.LockoutState.Type}.");
 
         var code = request.Request.Code;
         var userSecret = await secretManager.FindAsync(user, cancellationToken);
@@ -95,14 +92,7 @@ public sealed class LoginWith2FaCommandHandler(
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var reason = await reasonManager.FindByTypeAsync(
-                LockoutType.TooManyFailedLoginAttempts, cancellationToken);
-
-            if (reason is null)
-                return Results.NotFound(
-                    $"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
-
-            var lockoutResult = await lockoutManager.BlockAsync(user, reason,
+            var lockoutResult = await lockoutManager.BlockAsync(user, LockoutType.TooManyFailedLoginAttempts,
                 permanent: true, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
@@ -113,7 +103,7 @@ public sealed class LoginWith2FaCommandHandler(
                 IsLockedOut = true,
                 FailedLoginAttempts = user.FailedLoginAttempts,
                 MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
-                Reason = Mapper.Map(reason)
+                Type = LockoutType.TooManyFailedLoginAttempts
             };
 
             return Results.BadRequest("Account is locked out due to too many failed login attempts", response);

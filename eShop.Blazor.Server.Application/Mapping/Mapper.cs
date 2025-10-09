@@ -14,23 +14,8 @@ public static class Mapper
             Enabled = source.Enabled,
             EndDate = source.EndDate,
             Permanent = source.Permanent,
-            Reason = Map(source.Reason),
-            StartDate = source.StartDate,
-        };
-    }
-
-    public static LockoutReasonModel Map(LockoutReasonDto? source)
-    {
-        if (source is null) return new();
-        
-        return new LockoutReasonModel()
-        {
-            Description = source.Description,
-            Id = source.Id,
-            Name = source.Name,
-            Period = source.Period,
             Type = source.Type,
-            Code = source.Code,
+            StartDate = source.StartDate,
         };
     }
 

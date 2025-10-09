@@ -5,6 +5,8 @@
 /// </summary>
 public enum LockoutType
 {
+    None,
+    
     /// <summary>
     /// The account has been locked due to exceeding the allowed number of failed login attempts.
     /// </summary>

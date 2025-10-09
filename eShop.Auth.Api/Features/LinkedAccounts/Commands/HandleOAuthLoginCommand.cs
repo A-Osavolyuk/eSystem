@@ -164,10 +164,8 @@ public sealed class HandleOAuthLoginCommandHandler(
             var deviceResult = await TrustDeviceAsync(device, provider, fallbackUri, cancellationToken);
             if (!deviceResult.Succeeded) return deviceResult;
         }
-
-        var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
-
-        if (lockoutState.Enabled) return LockedOut(lockoutState, provider, fallbackUri);
+        
+        if (user.LockoutState.Enabled) return LockedOut(user.LockoutState, provider, fallbackUri);
 
         session.SignType = OAuthSignType.SignIn;
         session.UserId = user.Id;
@@ -313,9 +311,9 @@ public sealed class HandleOAuthLoginCommandHandler(
         return Result.Success(link);
     }
 
-    private Result LockedOut(LockoutStateEntity lockoutState, OAuthProviderEntity provider, string fallbackUri)
+    private Result LockedOut(UserLockoutStateEntity userLockoutState, OAuthProviderEntity provider, string fallbackUri)
     {
-        var error = Uri.EscapeDataString($"This user account is locked out with reason: {lockoutState.Reason}.");
+        var error = Uri.EscapeDataString($"This user account is locked out with reason: {userLockoutState.Type}.");
         return RedirectWithError(OAuthErrorType.InternalError, provider.Name, error, fallbackUri);
     }
 

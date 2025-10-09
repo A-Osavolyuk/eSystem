@@ -114,32 +114,17 @@ public static class Mapper
         };
     }
 
-    public static LockoutStateDto Map(LockoutStateEntity source)
+    public static LockoutStateDto Map(UserLockoutStateEntity source)
     {
         return new()
         {
             Id = source.Id,
-            Reason = Map(source.Reason),
+            Type = source.Type,
             Enabled = source.Enabled,
             Permanent = source.Permanent,
             Description = source.Description,
             EndDate = source.EndDate,
             StartDate = source.StartDate,
-        };
-    }
-
-    public static LockoutReasonDto Map(LockoutReasonEntity? source)
-    {
-        if (source is null) return new();
-        
-        return new()
-        {
-            Id = source.Id,
-            Code = source.Code,
-            Description = source.Description,
-            Name = source.Name,
-            Period = source.Period,
-            Type = source.Type
         };
     }
 

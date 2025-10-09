@@ -8,7 +8,6 @@ public sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
 public sealed class LoginCommandHandler(
     IUserManager userManager,
     ILockoutManager lockoutManager,
-    IReasonManager reasonManager,
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     IDeviceManager deviceManager,
@@ -17,7 +16,6 @@ public sealed class LoginCommandHandler(
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
-    private readonly IReasonManager reasonManager = reasonManager;
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
@@ -80,15 +78,14 @@ public sealed class LoginCommandHandler(
 
             return Results.BadRequest("User's primary email is not verified.", response);
         }
-
-        var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
-        if (lockoutState.Enabled)
+        
+        if (user.LockoutState.Enabled)
         {
             response = new LoginResponse()
             {
                 UserId = user.Id,
-                IsLockedOut = lockoutState.Enabled,
-                Reason = Mapper.Map(lockoutState.Reason),
+                IsLockedOut = true,
+                Type = user.LockoutState.Type,
             };
 
             return Results.BadRequest("Account is locked out", response);
@@ -119,11 +116,7 @@ public sealed class LoginCommandHandler(
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var reason = await reasonManager.FindByTypeAsync(LockoutType.TooManyFailedLoginAttempts, cancellationToken);
-            if (reason is null) return Results.NotFound(
-                $"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
-
-            var lockoutResult = await lockoutManager.BlockAsync(user, reason,
+            var lockoutResult = await lockoutManager.BlockAsync(user, LockoutType.TooManyFailedLoginAttempts,
                 permanent: true, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
@@ -134,7 +127,7 @@ public sealed class LoginCommandHandler(
                 IsLockedOut = true,
                 FailedLoginAttempts = user.FailedLoginAttempts,
                 MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
-                Reason = Mapper.Map(reason)
+                Type = LockoutType.TooManyFailedLoginAttempts
             };
         
             return Results.BadRequest("Account is locked out due to too many failed login attempts", response);

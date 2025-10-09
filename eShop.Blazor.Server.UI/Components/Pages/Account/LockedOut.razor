@@ -6,7 +6,7 @@
 <MudGrid Justify="Justify.Center">
     <MudItem xs="4">
         <MudStack Spacing="1" Justify="Justify.Center">
-            @if (Model.Reason is not null)
+            @if (Model.Enabled)
             {
                 <MudPaper Outlined="true" Class="pa-3" Style="margin-top: 150px">
                     <MudText Align="Align.Center" Typo="Typo.h4">
@@ -16,7 +16,7 @@
                 <MudPaper Outlined="true" Class="pa-3">
                     <MudStack Spacing="1" Justify="Justify.Center">
                         <MudText Align="Align.Center" Typo="Typo.h6">
-                            @Model.Reason.Name
+                            @Model.Type
                         </MudText>
                         <MudText Align="Align.Center" Typo="Typo.subtitle1" Class="px-4">
                             @Model.Description

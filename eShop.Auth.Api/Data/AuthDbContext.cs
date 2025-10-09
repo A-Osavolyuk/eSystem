@@ -20,8 +20,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<CodeEntity> Codes { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
-    public DbSet<LockoutStateEntity> LockoutStates { get; set; }
-    public DbSet<LockoutReasonEntity> LockoutReasons { get; set; }
+    public DbSet<UserLockoutStateEntity> LockoutStates { get; set; }
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
     public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
@@ -187,30 +186,14 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(x => x.PermissionId);
         });
 
-        builder.Entity<LockoutStateEntity>(entity =>
+        builder.Entity<UserLockoutStateEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Description).HasMaxLength(3000);
             
             entity.HasOne(p => p.User)
                 .WithOne(u => u.LockoutState)
-                .HasForeignKey<LockoutStateEntity>(x => x.UserId);
-            
-            entity.HasOne(p => p.Reason)
-                .WithMany()
-                .HasForeignKey(x => x.ReasonId)
-                .IsRequired(false);
-        });
-
-        builder.Entity<LockoutReasonEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            
-            entity.Property(x => x.Description).HasMaxLength(3000);
-            entity.Property(x => x.Name).HasMaxLength(64);
-            entity.Property(x => x.Code).HasMaxLength(64);
-            entity.Property(x => x.Type).HasEnumConversion();
-            entity.Property(x => x.Period).HasEnumConversion();
+                .HasForeignKey<UserLockoutStateEntity>(x => x.UserId);
         });
 
         builder.Entity<ResourceOwnerEntity>(entity =>

@@ -41,14 +41,12 @@ public class VerifyPasskeySignInCommandHandler(
         var result = await passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!result.Succeeded) return result;
 
-        var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
-
-        if (lockoutState.Enabled)
+        if (user.LockoutState.Enabled)
         {
             var lockoutResponse = new VerifyPasskeySignInResponse()
             {
                 UserId = user.Id,
-                IsLockedOut = lockoutState.Enabled,
+                IsLockedOut = user.LockoutState.Enabled,
             };
 
             return Results.BadRequest("Account is locked out", lockoutResponse);
