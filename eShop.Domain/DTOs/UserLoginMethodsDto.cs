@@ -17,7 +17,7 @@ public class PasswordData
 public class TwoFactorData
 {
     public bool HasTwoFactor { get; set; }
-    public List<UserProviderDto> Providers { get; set; } = [];
+    public List<UserTwoFactorMethod> Providers { get; set; } = [];
 }
 
 public class LinkedAccountsData
