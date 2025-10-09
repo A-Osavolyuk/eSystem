@@ -12,24 +12,6 @@ namespace eShop.Auth.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "LockoutReasons",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Period = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LockoutReasons", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OAuthProviders",
                 columns: table => new
                 {
@@ -171,7 +153,7 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ReasonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
                     Permanent = table.Column<bool>(type: "bit", nullable: false),
@@ -183,11 +165,6 @@ namespace eShop.Auth.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LockoutStates", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LockoutStates_LockoutReasons_ReasonId",
-                        column: x => x.ReasonId,
-                        principalTable: "LockoutReasons",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_LockoutStates_Users_UserId",
                         column: x => x.UserId,
@@ -665,11 +642,6 @@ namespace eShop.Auth.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LockoutStates_ReasonId",
-                table: "LockoutStates",
-                column: "ReasonId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_LockoutStates_UserId",
                 table: "LockoutStates",
                 column: "UserId",
@@ -844,9 +816,6 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Verifications");
-
-            migrationBuilder.DropTable(
-                name: "LockoutReasons");
 
             migrationBuilder.DropTable(
                 name: "UserDevices");

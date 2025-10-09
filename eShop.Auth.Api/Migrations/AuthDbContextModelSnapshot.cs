@@ -87,90 +87,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("Codes");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.LockoutReasonEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(3000)
-                        .HasColumnType("nvarchar(3000)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("Period")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LockoutReasons");
-                });
-
-            modelBuilder.Entity("eShop.Auth.Api.Entities.LockoutStateEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(3000)
-                        .HasColumnType("nvarchar(3000)");
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("EndDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("Permanent")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ReasonId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("StartDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReasonId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("LockoutStates");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.LoginSessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -705,6 +621,48 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserOAuthProviders");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserLockoutStateEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("EndDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Permanent")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("StartDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("LockoutStates");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPasskeyEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -974,23 +932,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.LockoutStateEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.LockoutReasonEntity", "Reason")
-                        .WithMany()
-                        .HasForeignKey("ReasonId");
-
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithOne("LockoutState")
-                        .HasForeignKey("eShop.Auth.Api.Entities.LockoutStateEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reason");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.LoginSessionEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
@@ -1137,6 +1078,17 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Provider");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserLockoutStateEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithOne("LockoutState")
+                        .HasForeignKey("eShop.Auth.Api.Entities.UserLockoutStateEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
