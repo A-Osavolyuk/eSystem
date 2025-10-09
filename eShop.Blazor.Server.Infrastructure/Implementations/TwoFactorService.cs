@@ -10,7 +10,7 @@ public class TwoFactorService(
     IApiClient client,
     IConfiguration configuration) : ApiService(configuration, client), ITwoFactorService
 {
-    public async ValueTask<HttpResponse> AuthenticatorAppSignInAsync(AuthenticatorSignInRequest request) =>
+    public async ValueTask<HttpResponse> AuthenticatorSignInAsync(AuthenticatorSignInRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/TwoFactor/login", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });

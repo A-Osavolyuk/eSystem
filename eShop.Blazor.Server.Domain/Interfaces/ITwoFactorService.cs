@@ -5,7 +5,7 @@ namespace eShop.Blazor.Server.Domain.Interfaces;
 
 public interface ITwoFactorService
 {
-    public ValueTask<HttpResponse> AuthenticatorAppSignInAsync(AuthenticatorSignInRequest request);
+    public ValueTask<HttpResponse> AuthenticatorSignInAsync(AuthenticatorSignInRequest request);
     public ValueTask<HttpResponse> EnableAsync(EnableTwoFactorRequest request);
     public ValueTask<HttpResponse> DisableAsync(DisableTwoFactorRequest request);
     public ValueTask<HttpResponse> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request);
