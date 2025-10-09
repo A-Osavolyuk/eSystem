@@ -38,58 +38,6 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-
-    [EndpointSummary("Get user password data")]
-    [EndpointDescription("Gets user password data")]
-    [ProducesResponseType(200)]
-    [HttpGet("password")]
-    public async ValueTask<IActionResult> GetUserPasswordDataAsync(Guid id)
-    {
-        var result = await sender.Send(new GetUserPasswordDataQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Get user 2fa data")]
-    [EndpointDescription("Gets user 2fa data")]
-    [ProducesResponseType(200)]
-    [HttpGet("2fa")]
-    public async ValueTask<IActionResult> GetUserTwoFactorDataAsync(Guid id)
-    {
-        var result = await sender.Send(new GetUserTwoFactorDataQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Get user linked accounts")]
-    [EndpointDescription("Gets user linked accounts")]
-    [ProducesResponseType(200)]
-    [HttpGet("linked-accounts")]
-    public async ValueTask<IActionResult> GetUserLinkedAccountsDataAsync(Guid id)
-    {
-        var result = await sender.Send(new GetUserLinkedAccountsQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Get user passkeys")]
-    [EndpointDescription("Gets user passkeys")]
-    [ProducesResponseType(200)]
-    [HttpGet("passkeys")]
-    public async ValueTask<IActionResult> GetUserPasskeysAsync(Guid id)
-    {
-        var result = await sender.Send(new GetUserPasskeysQuery(id));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
-            ErrorHandler.Handle);
-    }
     
     [EndpointSummary("Get user's login methods")]
     [EndpointDescription("Get user's login methods")]
@@ -231,7 +179,7 @@ public class UsersController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserTwoFactorProvidersState(Guid id)
     {
-        var result = await sender.Send(new GetUserProvidersQuery(id));
+        var result = await sender.Send(new GetUserTwoFactorMethodsQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder()
