@@ -50,7 +50,7 @@ else
             Two-factor authentication adds an additional layer of security
             to your account by requiring more than just a password to sign in.
         </MudTextM3>
-        <TwoFactorPreferredMethod Model="Model"/>
+        <TwoFactorPreferredMethod Model="Model" OnRefresh="OnRefresh"/>
         <TwoFactorMethods Model="Model"/>
     </MudStack>
 }
@@ -58,6 +58,9 @@ else
 @code {
     [Parameter] 
     public TwoFactorData Model { get; set; } = new();
+    
+    [Parameter] 
+    public EventCallback OnRefresh { get; set; }
 
     private readonly string returnUrl = HttpUtility.UrlEncode("/account/security");
     

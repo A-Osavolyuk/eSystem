@@ -1,4 +1,8 @@
-﻿<MudPaper Outlined="true" Class="pa-5">
+﻿@inject UserState UserState
+@inject ITwoFactorService TwoFactorService
+@inject ISnackbar Snackbar
+
+<MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="1">
         <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
             Preferred 2FA method
@@ -10,7 +14,8 @@
             <MudItem xs="3">
                 <MudSelectExtended
                     T="string"
-                    @bind-Value="Type"
+                    Value="Type"
+                    ValueChanged="@(async (value) => await OnChangeAsync(value))"
                     Variant="Variant.Outlined"
                     Margin="Margin.Dense"
                     AnchorOrigin="Origin.BottomCenter"
@@ -58,7 +63,11 @@
 </MudPaper>
 
 @code {
-    [Parameter] public TwoFactorData Model { get; set; } = new();
+    [Parameter] 
+    public EventCallback OnRefresh { get; set; }
+    
+    [Parameter] 
+    public TwoFactorData Model { get; set; } = new();
 
     private string? Type { get; set; }
 
@@ -71,6 +80,31 @@
             TwoFactorMethod.Passkey => TwoFactorTypes.Passkeys,
             _ => throw new NotSupportedException("Unsupported 2FA type")
         };
+    }
+
+    private async Task OnChangeAsync(string value)
+    {
+        var method = value switch
+        {
+            TwoFactorTypes.AuthenticatorApp => TwoFactorMethod.AuthenticatorApp,
+            TwoFactorTypes.Passkeys => TwoFactorMethod.Passkey,
+            _ => throw new NotSupportedException("Unsupported 2FA type")
+        };
+
+        var request = new PreferTwoFactorMethodRequest()
+        {
+            UserId = UserState.UserId,
+            PreferredMethod = method
+        };
+        
+        var result = await TwoFactorService.PreferAsync(request);
+
+        if (result.Success)
+        {
+            Type = value;
+            await OnRefresh.InvokeAsync();
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
 }
