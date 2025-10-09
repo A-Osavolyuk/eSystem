@@ -77,28 +77,28 @@
 
         if (form.IsValid)
         {
-            var request = new PasskeySignInRequest()
+            var request = new GenerateRequestOptionsRequest()
             {
                 Username = Model.Username
             };
 
-            var result = await PasskeyService.CreateSignInOptionsAsync(request);
+            var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
             if (result.Success)
             {
                 var options = result.Get<PublicKeyCredentialRequestOptions>()!;
                 var credential = await PasskeyManager.AuthenticateAsync(options);
 
-                var verificationRequest = new VerifyPasskeySignInRequest()
+                var verificationRequest = new PasskeySignInRequest()
                 {
                     Credential = credential
                 };
 
-                var verificationResult = await PasskeyService.VerifySignInOptionsAsync(verificationRequest);
+                var verificationResult = await PasskeyService.SignInAsync(verificationRequest);
 
                 if (verificationResult.Success)
                 {
-                    var response = verificationResult.Get<VerifyPasskeySignInResponse>()!;
+                    var response = verificationResult.Get<PasskeySignInResponse>()!;
                     UserState.UserId = response.UserId;
                     await AuthenticationManager.SignInAsync();
                     Snackbar.Add("Successfully signed in.", Severity.Success);
@@ -112,7 +112,7 @@
                         return;
                     }
 
-                    var response = verificationResult.Get<VerifyPasskeySignInResponse>()!;
+                    var response = verificationResult.Get<PasskeySignInResponse>()!;
 
                     if (response.IsLockedOut)
                     {

@@ -148,13 +148,13 @@
 
     private async Task OnAddPasskeyAsync()
     {
-        var request = new CreatePasskeyRequest()
+        var request = new GenerateCreationOptionsRequest()
         {
             UserId = UserState.UserId,
             DisplayName = displayName
         };
 
-        var result = await PasskeyService.CreatePasskeyAsync(request);
+        var result = await PasskeyService.GenerateCreationOptionsAsync(request);
 
         if (result.Success)
         {
@@ -167,17 +167,17 @@
     private async Task VerifyPasskeyAsync(PublicKeyCredentialCreationOptions options)
     {
         var assertResponse = await PasskeyManager.AssertAsync(options);
-        var request = new VerifyPasskeyRequest()
+        var request = new CreatePasskeyRequest()
         {
             UserId = UserState.UserId,
             DisplayName = displayName,
             Response = assertResponse
         };
 
-        var result = await PasskeyService.VerifyPasskeyAsync(request);
+        var result = await PasskeyService.CreatAsync(request);
         if (result.Success)
         {
-            var response = result.Get<VerifyPasskeyResponse>()!;
+            var response = result.Get<CreatePasskeyResponse>()!;
             keyId = response.PasskeyId;
 
             await stepper.StepNextAsync();
@@ -198,7 +198,7 @@
                 DisplayName = Model.DisplayName
             };
 
-            var result = await PasskeyService.SetPasskeyNameAsync(request);
+            var result = await PasskeyService.SetNameAsync(request);
 
             if (result.Success) NavigationManager.NavigateTo(ReturnUrl);
             else Snackbar.Add(result.Message, Severity.Error);

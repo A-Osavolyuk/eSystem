@@ -26,11 +26,7 @@ public class VerificationService(
         new HttpRequest { Url = $"{Gateway}/api/v1/Verification/authenticator/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GeneratePasskeyChallengeAsync(GeneratePasskeyChallengeRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Verification/passkey/challenge/generate", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> VerifyPasskeyChallengeAsync(VerifyPasskeyChallengeRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/api/v1/Verification/passkey/challenge/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 }

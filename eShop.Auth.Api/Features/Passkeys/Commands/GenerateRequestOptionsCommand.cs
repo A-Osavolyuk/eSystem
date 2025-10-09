@@ -1,0 +1,29 @@
+﻿using eShop.Domain.Common.Security.Constants;
+using eShop.Domain.Requests.Auth;
+
+namespace eShop.Auth.Api.Features.Passkeys.Commands;
+
+public record GenerateRequestOptionsCommand(GenerateRequestOptionsRequest RequestOptionsRequest) : IRequest<Result>;
+
+public class GenerateRequestOptionsCommandHandler(
+    IUserManager userManager,
+    IHttpContextAccessor httpContextAccessor,
+    IdentityOptions identityOptions) : IRequestHandler<GenerateRequestOptionsCommand, Result>
+{
+    private readonly IUserManager userManager = userManager;
+    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
+
+    public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByUsernameAsync(request.RequestOptionsRequest.Username, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with name {request.RequestOptionsRequest.Username}.");
+
+        var challenge = CredentialGenerator.GenerateChallenge();
+        var options = CredentialGenerator.CreateRequestOptions(user, challenge, identityOptions.Credentials);
+
+        httpContext.Session.SetString(ChallengeSessionKeys.Assertion, challenge);
+
+        return Result.Success(options);
+    }
+}

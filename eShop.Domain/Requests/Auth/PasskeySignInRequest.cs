@@ -1,6 +1,8 @@
-﻿namespace eShop.Domain.Requests.Auth;
+﻿using eShop.Domain.Common.Security.Credentials;
+
+namespace eShop.Domain.Requests.Auth;
 
 public class PasskeySignInRequest
 {
-    public string Username { get; set; } = string.Empty;
+    public required PublicKeyCredential Credential { get; set; }
 }

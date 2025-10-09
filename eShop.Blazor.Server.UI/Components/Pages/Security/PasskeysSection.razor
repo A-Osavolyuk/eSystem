@@ -147,7 +147,7 @@
                 KeyId = passkey.Id
             };
 
-            var result = await PasskeyService.RemovePasskeyAsync(request);
+            var result = await PasskeyService.RemoveAsync(request);
             if (result.Success) await OnRefresh.InvokeAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }

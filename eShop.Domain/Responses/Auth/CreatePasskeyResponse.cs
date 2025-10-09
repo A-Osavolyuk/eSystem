@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.Responses.Auth;
 
-public class VerifyPasskeyResponse
+public class CreatePasskeyResponse
 {
     public Guid PasskeyId { get; set; }
 }

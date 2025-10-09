@@ -64,28 +64,14 @@ public class VerificationController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Generate passkey verification challenge")]
-    [EndpointDescription("Generate passkey verification challenge")]
+    [EndpointSummary("Verify passkey verification")]
+    [EndpointDescription("Verify passkey verification")]
     [ProducesResponseType(200)]
-    [HttpPost("passkey/challenge/generate")]
-    public async ValueTask<IActionResult> GeneratePasskeyChallengeAsync(
-        [FromBody] GeneratePasskeyChallengeRequest request)
+    [HttpPost("passkey/verify")]
+    public async ValueTask<IActionResult> VerifyPasskeyAsync(
+        [FromBody] VerifyPasskeyRequest request)
     {
-        var result = await sender.Send(new GeneratePasskeyChallengeCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Verify passkey verification challenge")]
-    [EndpointDescription("Verify passkey verification challenge")]
-    [ProducesResponseType(200)]
-    [HttpPost("passkey/challenge/verify")]
-    public async ValueTask<IActionResult> VerifyPasskeyChallengeAsync(
-        [FromBody] VerifyPasskeyChallengeRequest request)
-    {
-        var result = await sender.Send(new VerifyPasskeyChallengeCommand(request));
+        var result = await sender.Send(new VerifyPasskeyCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

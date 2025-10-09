@@ -1,6 +1,7 @@
 ﻿@inject UserState UserState
 @inject PasskeyManager PasskeyManager
 @inject IVerificationService VerificationService
+@inject IPasskeyService PasskeyService
 @inject ISnackbar Snackbar
 
 <MudStack Spacing="3">
@@ -74,21 +75,26 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = new GeneratePasskeyChallengeRequest() { UserId = UserState.UserId };
-        var result = await VerificationService.GeneratePasskeyChallengeAsync(request);
+        isLoading = true;
+        var request = new GenerateRequestOptionsRequest() { Username = UserState.Credentials!.Username! };
+        var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
         if (result.Success)
         {
             var options = result.Get<PublicKeyCredentialRequestOptions>()!;
             await VerifyAsync(options);
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else
+        {
+            isLoading = false;
+            Snackbar.Add(result.Message, Severity.Error);
+        }
     }
 
     private async Task VerifyAsync(PublicKeyCredentialRequestOptions options)
     {
         var credential = await PasskeyManager.AuthenticateAsync(options);
-        var request = new VerifyPasskeyChallengeRequest()
+        var request = new VerifyPasskeyRequest()
         {
             UserId = UserState.UserId,
             Purpose = Context.Purpose,
@@ -96,9 +102,11 @@
             Credential = credential
         };
         
-        var result = await VerificationService.VerifyPasskeyChallengeAsync(request);
+        var result = await VerificationService.VerifyPasskeyAsync(request);
 
         if (result.Success) await OnAccessConfirmed.InvokeAsync();
         else Snackbar.Add(result.Message, Severity.Error);
+        
+        isLoading = false;
     }
 }
