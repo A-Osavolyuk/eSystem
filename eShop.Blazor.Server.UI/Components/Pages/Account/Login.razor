@@ -138,7 +138,9 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "returnUrl")] public string? ReturnUrl { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; } = string.Empty;
+
     [SupplyParameterFromForm] private LoginModel Model { get; set; } = new();
 
     private MudForm form = new();
@@ -157,27 +159,36 @@
 
         if (form.IsValid)
         {
-            var request = new LoginRequest(){ Login = Model.Login, Password = Model.Password };
+            var request = new LoginRequest() { Login = Model.Login, Password = Model.Password };
             var result = await SecurityService.LoginAsync(request);
 
             if (result.Success)
             {
                 var response = result.Get<LoginResponse>()!;
 
-                if (response!.IsTwoFactorEnabled)
+                if (response.IsTwoFactorEnabled)
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    
-                    var url = $"/account/2fa/login?id={response.UserId}";
-                    NavigationManager.NavigateTo(url);
+
+                    if (string.IsNullOrEmpty(ReturnUrl))
+                    {
+                        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
+                        var url = $"/account/2fa/login?id={response.UserId}&return_url={returnUrl}";
+                        NavigationManager.NavigateTo(url);
+                    }
+                    else
+                    {
+                        var url = $"/account/2fa/login?id={response.UserId}";
+                        NavigationManager.NavigateTo(url);
+                    }
+
+                    return;
                 }
-                else
-                {
-                    UserState.UserId = response.UserId;
-                    await AuthenticationManager.SignInAsync();
-                    NavigationManager.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? "/products" : ReturnUrl);
-                    Snackbar.Add(result.Message, Severity.Success);
-                }
+
+                UserState.UserId = response.UserId;
+                await AuthenticationManager.SignInAsync();
+                NavigationManager.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? "/products" : ReturnUrl);
+                Snackbar.Add(result.Message, Severity.Success);
             }
             else
             {
@@ -199,7 +210,7 @@
                     NavigationManager.NavigateTo(url);
                     return;
                 }
-                
+
                 if (!response.IsEmailConfirmed)
                 {
                     var url = $"/account/register/complete?id={userId}";
@@ -216,7 +227,7 @@
                     Snackbar.Add(message, Severity.Error);
                     return;
                 }
-                
+
                 if (response is { FailedLoginAttempts: 0, IsLockedOut: false })
                 {
                     Snackbar.Add(result.Message, Severity.Error);
@@ -236,7 +247,7 @@
         var baseUri = $"{NavigationManager.BaseUri}account/oauth";
         var returnUri = HttpUtility.UrlEncode($"{baseUri}/sign-in");
         var fallbackUri = HttpUtility.UrlEncode($"{baseUri}/fallback");
-        
+
         var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}&fallbackUri={fallbackUri}";
         NavigationManager.NavigateTo(url);
     }

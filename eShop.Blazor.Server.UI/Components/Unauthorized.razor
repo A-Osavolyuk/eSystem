@@ -23,7 +23,7 @@
 </MudStack>
 
 @code {
-    [SupplyParameterFromQuery(Name = "returnUrl")]
+    [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
 
     private void ToLoginPage()
@@ -35,7 +35,7 @@
         else
         {
             var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-            NavigationManager.NavigateTo($"/account/login?returnUrl={returnUrl}");
+            NavigationManager.NavigateTo($"/account/login?return_url={returnUrl}");
         }
     }
 }
