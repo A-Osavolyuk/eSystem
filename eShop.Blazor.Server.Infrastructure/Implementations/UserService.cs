@@ -30,22 +30,6 @@ public class UserService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/devices", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GetUserPasswordDatasync(Guid id) => await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/password", Method = HttpMethod.Get },
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> GetUserTwoFactorDataAsync(Guid id) => await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/2fa", Method = HttpMethod.Get },
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> GetUserLinkedAccountsAsync(Guid id) => await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/linked-accounts", Method = HttpMethod.Get },
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> GetUserPasskeysAsync(Guid id) => await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/passkeys", Method = HttpMethod.Get },
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
-
     public async ValueTask<HttpResponse> GetUserLoginMethodsAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/login-methods", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
@@ -66,7 +50,7 @@ public class UserService(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/personal", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GetTwoFactorProvidersAsync(Guid id) => await ApiClient.SendAsync(
+    public async ValueTask<HttpResponse> GetTwoFactorMethodsAsync(Guid id) => await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/api/v1/Users/{id}/2fa/providers", Method = HttpMethod.Get },
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 

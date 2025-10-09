@@ -10,16 +10,12 @@ public interface IUserService
     public ValueTask<HttpResponse> GetUserPrimaryPhoneNumberAsync(Guid id);
     public ValueTask<HttpResponse> GetUserEmailsAsync(Guid id);
     public ValueTask<HttpResponse> GetUserDevicesAsync(Guid id);
-    public ValueTask<HttpResponse> GetUserPasswordDatasync(Guid id);
-    public ValueTask<HttpResponse> GetUserTwoFactorDataAsync(Guid id);
-    public ValueTask<HttpResponse> GetUserLinkedAccountsAsync(Guid id);
-    public ValueTask<HttpResponse> GetUserPasskeysAsync(Guid id);
     public ValueTask<HttpResponse> GetUserLoginMethodsAsync(Guid id);
     public ValueTask<HttpResponse> GetUserVerificationMethodsAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id);
     public ValueTask<HttpResponse> GetUserStateAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPersonalDataAsync(Guid id);
-    public ValueTask<HttpResponse> GetTwoFactorProvidersAsync(Guid id);
+    public ValueTask<HttpResponse> GetTwoFactorMethodsAsync(Guid id);
     public ValueTask<HttpResponse> GetLockoutStateAsync(Guid id);
     public ValueTask<HttpResponse> ChangeUsernameAsync(ChangeUsernameRequest request);
     public ValueTask<HttpResponse> AddPersonalDataAsync(AddPersonalDataRequest request);
