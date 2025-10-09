@@ -1,0 +1,57 @@
+﻿<MudStack Spacing="4" Class="w-100">
+    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+        Authenticate using your passkey.
+    </MudTextM3>
+    <MudStack Spacing="2">
+        <MudButton
+            FullWidth="true"
+            Size="Size.Medium"
+            Color="Color.Success"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button">
+            Use passkey
+        </MudButton>
+        <MudButton
+            FullWidth="true"
+            Color="Color.Default"
+            Variant="Variant.Outlined"
+            ButtonType="ButtonType.Button"
+            Size="Size.Medium"
+            OnClick="@(() => Expand())"
+            EndIcon="@GetIcon()">
+            More options
+        </MudButton>
+        <MudCollapse Expanded="expanded" Class="w-100">
+            <MudDivider Class="my-2"/>
+            <MudStack Spacing="2">
+                <MudButton
+                    FullWidth="true"
+                    Color="Color.Default"
+                    Variant="Variant.Outlined"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium"
+                    OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.AuthenticatorApp))">
+                    Authenticator app
+                </MudButton>
+                <MudButton
+                    FullWidth="true"
+                    Color="Color.Error"
+                    Variant="Variant.Outlined"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium">
+                    Recovery codes
+                </MudButton>
+            </MudStack>
+        </MudCollapse>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] 
+    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    
+    private bool expanded;
+
+    private void Expand() => expanded = !expanded;
+    private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
+}

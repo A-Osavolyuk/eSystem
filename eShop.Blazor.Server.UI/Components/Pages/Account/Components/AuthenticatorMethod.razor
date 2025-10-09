@@ -1,0 +1,71 @@
+﻿@inject CodeModelValidator Validator
+
+<MudStack Spacing="4">
+    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+        Enter the code from your two-factor authentication app or browser extension below.
+    </MudTextM3>
+    <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
+        <MudTextFieldExtended
+            Mask="mask"
+            Placeholder="XXXXXX"
+            Variant="Variant.Outlined"
+            Margin="Margin.Dense"
+            Clearable="true"
+            Immediate="true"
+            @bind-Value="Model.Code"
+            For="() => Model.Code"/>
+    </MudForm>
+    <MudStack Spacing="2">
+        <MudButton
+            Size="Size.Medium"
+            Color="Color.Success"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button">
+            Verify
+        </MudButton>
+        <MudButton
+            Color="Color.Default"
+            Variant="Variant.Outlined"
+            ButtonType="ButtonType.Button"
+            Size="Size.Medium"
+            OnClick="@(() => Expand())"
+            EndIcon="@GetIcon()">
+            More options
+        </MudButton>
+        <MudCollapse Expanded="expanded">
+            <MudDivider Class="my-2"/>
+            <MudStack Spacing="2">
+                <MudButton
+                    Color="Color.Default"
+                    Variant="Variant.Outlined"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium"
+                    OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Passkey))">
+                    Passkey
+                </MudButton>
+                <MudButton
+                    Color="Color.Error"
+                    Variant="Variant.Outlined"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium">
+                    Recovery codes
+                </MudButton>
+            </MudStack>
+        </MudCollapse>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] 
+    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    
+    [SupplyParameterFromForm] 
+    public CodeModel Model { get; set; } = new();
+    
+    private MudForm form = new();
+    private PatternMask mask = new("000000");
+    private bool expanded;
+
+    private void Expand() => expanded = !expanded;
+    private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
+}

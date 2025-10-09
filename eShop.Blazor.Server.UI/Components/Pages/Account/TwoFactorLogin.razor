@@ -1,306 +1,40 @@
 ﻿@page "/account/2fa/login"
 @inherits PageBase
 
-@inject ITwoFactorService TwoFactorService
-@inject IUserService UserService
-@inject ISecurityService SecurityService
-@inject IVerificationService VerificationService
-@inject TwoFactorLoginValidator TwoFactorLoginValidator
-
 <Title Text="Login with 2FA"/>
 
-<MudGrid Justify="Justify.Center" Spacing="1">
-    <MudItem xs="6" Style="margin-top: 100px">
-
-        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
-                            HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
-                            ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
-            <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Info" Title="Send code">
-                <ChildContent>
-                    <MudGrid Spacing="1" Justify="Justify.Center">
-                        <MudItem xs="8">
-                            <MudStack Spacing="1" Justify="Justify.Center">
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center" Typo="Typo.h4">
-                                        Two-factor verification
-                                    </MudText>
-                                </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudForm
-                                        @ref="sendTwoFactorTokenForm"
-                                        Model="SendTwoFactorTokenModel">
-                                        <MudGrid Spacing="1" Justify="Justify.Center">
-                                            <MudItem xs="12" Class="mb-4">
-                                                <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
-                                                         Style="width: 50ch; margin: auto">
-                                                    Your account has enabled 2-FA (Two-factor authentication).
-                                                    To verify a log in attempt, please select the provider.
-                                                    You will receive a 6-digit code from the selected provider.
-                                                </MudText>
-                                            </MudItem>
-                                            @foreach (var provider in providers)
-                                            {
-                                                switch (provider.Method)
-                                                {
-                                                    case TwoFactorMethod.AuthenticatorApp:
-                                                    {
-                                                        <MudItem xs="12">
-                                                            <MudLoadingButton
-                                                                ButtonType="ButtonType.Button"
-                                                                StartIcon="@Icons.Material.Filled.Smartphone"
-                                                                OnClick="@(async () => await OnSendCodeAsync(provider))"
-                                                                Variant="Variant.Filled"
-                                                                Color="Color.Primary"
-                                                                Size="Size.Large"
-                                                                FullWidth>
-                                                                Send with @provider.Method.ToString()
-                                                            </MudLoadingButton>
-                                                        </MudItem>
-                                                        break;
-                                                    }
-                                                    case TwoFactorMethod.Sms:
-                                                    {
-                                                        <MudItem xs="12">
-                                                            <MudLoadingButton
-                                                                ButtonType="ButtonType.Button"
-                                                                StartIcon="@Icons.Material.Filled.Sms"
-                                                                OnClick="@(async () => await OnSendCodeAsync(provider))"
-                                                                Variant="Variant.Filled"
-                                                                Color="Color.Primary"
-                                                                Size="Size.Large"
-                                                                FullWidth>
-                                                                Send with @provider.Method.ToString()
-                                                            </MudLoadingButton>
-                                                        </MudItem>
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        </MudGrid>
-                                    </MudForm>
-                                </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center">You can read more about 2FA
-                                        <MudLink Href="/faq/security/2fa">
-                                            here
-                                        </MudLink>
-                                    </MudText>
-                                </MudPaper>
-                            </MudStack>
-                        </MudItem>
-                    </MudGrid>
-                </ChildContent>
-            </MudStepExtended>
-            <MudStepExtended Icon="@Icons.Material.Filled.Login" Title="Code verification" Order="2">
-                <ChildContent>
-                    <MudGrid Justify="Justify.Center" Spacing="1">
-                        <MudItem xs="8">
-                            <MudStack Spacing="1" Justify="Justify.Center">
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudText Align="Align.Center" Typo="Typo.h4">
-                                        Code verification
-                                    </MudText>
-                                </MudPaper>
-                                <MudPaper Outlined Class="pa-3">
-                                    <MudForm
-                                        @ref="twoFactorForm"
-                                        Model="TwoFactorLoginModel"
-                                        Validation="TwoFactorLoginValidator.ValidateValue">
-                                        <MudStack Spacing="2">
-
-                                            @switch (SendTwoFactorTokenModel.Type)
-                                            {
-                                                case TwoFactorMethod.Sms:
-                                                {
-                                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
-                                                             Style="width: 50ch; margin: auto">
-                                                        Now enter the 6-digit code we sent to your mobile phone.
-                                                        If you don't receive the code, check your spam folder.
-                                                        If you still don't receive the code, click the send button
-                                                        again.
-                                                    </MudText>
-                                                    break;
-                                                }
-                                                case TwoFactorMethod.AuthenticatorApp:
-                                                {
-                                                    <MudText Class="mt-2" Align="Align.Center" Typo="Typo.body1"
-                                                             Style="width: 50ch; margin: auto">
-                                                        Now enter the 6-digit code we sent to your authenticator
-                                                        app.
-                                                    </MudText>
-                                                    break;
-                                                }
-                                            }
-
-                                            <MudCodeInput
-                                                Count="6"
-                                                Margin="Margin.Normal"
-                                                Spacing="2"
-                                                Class="d-flex align-items-center"
-                                                @bind-Value="TwoFactorLoginModel.Code"
-                                                Variant="Variant.Outlined"/>
-
-                                            <MudLoadingButton
-                                                ButtonType="ButtonType.Button"
-                                                Disabled="TwoFactorLoginModel.Code.Length <= 5"
-                                                StartIcon="@Icons.Material.Filled.Login"
-                                                OnClick="@(async () => await OnVerifyAsync())"
-                                                Variant="Variant.Filled"
-                                                Color="Color.Primary"
-                                                FullWidth>
-                                                Verify
-                                            </MudLoadingButton>
-                                        </MudStack>
-                                    </MudForm>
-                                </MudPaper>
-                                @if (SendTwoFactorTokenModel.Type != TwoFactorMethod.AuthenticatorApp)
-                                {
-                                    <CodeResend Context="context"></CodeResend>
-                                }
-                            </MudStack>
-                        </MudItem>
-                    </MudGrid>
-                </ChildContent>
-            </MudStepExtended>
-        </MudStepperExtended>
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="3">
+        <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.LockPerson"/>
+            <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                Two-factor authentication
+            </MudTextM3>
+            @switch (PreferredMethod)
+            {
+                case TwoFactorMethod.AuthenticatorApp:
+                {
+                    <AuthenticatorMethod OnChangeMethod="ChangeMethod"/>
+                    break;
+                }
+                case TwoFactorMethod.Passkey:
+                {
+                    <PasskeyMethod OnChangeMethod="ChangeMethod"/>
+                    break;
+                }
+            }
+        </MudStack>
     </MudItem>
 </MudGrid>
 
 @code {
-    [SupplyParameterFromForm] private SendTwoFactorTokenModel SendTwoFactorTokenModel { get; set; } = new();
-    [SupplyParameterFromForm] private TwoFactorLoginModel TwoFactorLoginModel { get; set; } = new();
-
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
 
-    private MudForm sendTwoFactorTokenForm = new();
-    private MudForm twoFactorForm = new();
-    private MessageContext context = new();
+    private TwoFactorMethod PreferredMethod { get; set; }
 
-    private MudStepperExtended stepper = new();
-    private List<UserProviderDto> providers = [];
-
-    protected override async Task OnInitializedAsync()
+    private void ChangeMethod(TwoFactorMethod method)
     {
-        await LoadProvidersAsync();
-
-        if (providers.Count == 1)
-        {
-            SendTwoFactorTokenModel.Type = providers.First().Method;
-        }
+        PreferredMethod = method;
     }
-
-    private async Task LoadProvidersAsync()
-    {
-        var result = await UserService.GetTwoFactorProvidersAsync(UserId);
-
-        if (result.Success)
-        {
-            providers = result.Get<List<UserProviderDto>>()!;
-        }
-        else
-        {
-            Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
-    private async Task OnSendCodeAsync(UserProviderDto provider)
-    {
-        SendTwoFactorTokenModel.Type = provider.Method;
-        await sendTwoFactorTokenForm.Validate();
-
-        if (sendTwoFactorTokenForm.IsValid)
-        {
-            if (provider.Method == TwoFactorMethod.AuthenticatorApp)
-            {
-                await stepper.StepNextAsync();
-            }
-            else
-            {
-                var sender = provider.Method switch
-                {
-                    TwoFactorMethod.Sms => SenderType.Sms,
-                    TwoFactorMethod.AuthenticatorApp => SenderType.AuthenticatorApp,
-                    _ => throw new NotSupportedException()
-                };
-
-                var payload = provider.Method switch
-                {
-                    TwoFactorMethod.Sms => new Dictionary<string, string>() { { "To", provider.Credential! } },
-                    _ => throw new NotSupportedException()
-                };
-
-                context = new MessageContext()
-                {
-                    UserId = UserId,
-                    Sender = sender,
-                    Action = ActionType.SignIn,
-                    Purpose = PurposeType.TwoFactor,
-                    Payload = payload
-                };
-
-                var request = context!.ToSendCodeRequest();
-                var result = await VerificationService.SendCodeAsync(request);
-                if (result.Success) await stepper.StepNextAsync();
-                else Snackbar.Add(result.Message, Severity.Error);
-            }
-        }
-    }
-
-    private async Task OnVerifyAsync()
-    {
-        await twoFactorForm.Validate();
-
-        if (twoFactorForm.IsValid)
-        {
-            var request = new TwoFactorLoginRequest
-            {
-                Code = TwoFactorLoginModel.Code,
-                Type = SendTwoFactorTokenModel.Type,
-                UserId = UserId
-            };
-
-            var result = await TwoFactorService.LoginAsync(request);
-
-            if (result.Success)
-            {
-                var response = result.Get<LoginResponse>()!;
-
-                UserState.UserId = response.UserId;
-                await AuthenticationManager.SignInAsync();
-                Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo("/products");
-            }
-            else
-            {
-                if (result.Result is null)
-                {
-                    Snackbar.Add(result.Message, Severity.Error);
-                    return;
-                }
-
-                var response = result.Get<LoginResponse>()!;
-                var userId = response.UserId;
-
-                if (response.FailedLoginAttempts < response.MaxFailedLoginAttempts && !response.IsLockedOut)
-                {
-                    var attemptsLeft = response.MaxFailedLoginAttempts - response.FailedLoginAttempts;
-                    var message = $"Incorrect code. You have {attemptsLeft} attempts left, then account will be locked out.";
-                    Snackbar.Add(message, Severity.Error);
-                    return;
-                }
-
-                if (response is { FailedLoginAttempts: 0, IsLockedOut: false })
-                {
-                    Snackbar.Add(result.Message, Severity.Error);
-                }
-                else
-                {
-                    var url = $"/account/locked-out?id={userId}";
-                    NavigationManager.NavigateTo(url);
-                }
-            }
-        }
-    }
-
 }
