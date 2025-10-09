@@ -1,44 +1,43 @@
-﻿using eShop.Domain.Requests.Auth;
+﻿using eShop.Auth.Api.Security.Protection;
+using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
-public sealed record TwoFactorLoginCommand(TwoFactorLoginRequest Request)
+public sealed record AuthenticatorSignInCommand(AuthenticatorSignInRequest Request)
     : IRequest<Result>;
 
 public sealed class LoginWith2FaCommandHandler(
     IUserManager userManager,
-    ITwoFactorManager twoFactorManager,
     ILockoutManager lockoutManager,
-    IRecoverManager recoverManager,
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     IDeviceManager deviceManager,
     IReasonManager reasonManager,
-    ICodeManager codeManager,
     IHttpContextAccessor httpContextAccessor,
-    IdentityOptions identityOptions) : IRequestHandler<TwoFactorLoginCommand, Result>
+    ISecretManager secretManager,
+    SecretProtector protector,
+    IdentityOptions identityOptions) : IRequestHandler<AuthenticatorSignInCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
-    private readonly IRecoverManager recoverManager = recoverManager;
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IReasonManager reasonManager = reasonManager;
-    private readonly ICodeManager codeManager = codeManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
+    private readonly ISecretManager secretManager = secretManager;
+    private readonly SecretProtector protector = protector;
     private readonly IdentityOptions identityOptions = identityOptions;
 
-    public async Task<Result> Handle(TwoFactorLoginCommand request,
+    public async Task<Result> Handle(AuthenticatorSignInCommand request,
         CancellationToken cancellationToken)
     {
         LoginResponse? response;
-        
+
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        
+
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
         var clientInfo = httpContextAccessor.HttpContext?.GetClientInfo()!;
@@ -65,82 +64,75 @@ public sealed class LoginWith2FaCommandHandler(
             var result = await deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-        
+
         var lockoutState = await lockoutManager.FindAsync(user, cancellationToken);
-        if (lockoutState.Enabled) 
+        if (lockoutState.Enabled)
             return Results.BadRequest($"This user account is locked out with reason: {lockoutState.Reason}.");
 
         var code = request.Request.Code;
+        var userSecret = await secretManager.FindAsync(user, cancellationToken);
+        if (userSecret is null) return Results.NotFound("Not found user secret");
 
-        var sender = request.Request.Type switch
+        var unprotectedSecret = protector.Unprotect(userSecret.Secret);
+        var isVerifiedCode = AuthenticatorUtils.VerifyCode(code, unprotectedSecret);
+
+        if (!isVerifiedCode)
         {
-            TwoFactorMethod.Sms => SenderType.Sms,
-            TwoFactorMethod.AuthenticatorApp => SenderType.AuthenticatorApp,
-            _ => throw new NotSupportedException("Unknown provider type")
-        };
-        
-        var codeResult = await codeManager.VerifyAsync(user, code, sender, 
-            ActionType.SignIn, PurposeType.TwoFactor, cancellationToken);
-        
-        if (!codeResult.Succeeded)
-        {
-            var recoveryCodeResult = await recoverManager.VerifyAsync(user, code, cancellationToken);
-            if (!recoveryCodeResult.Succeeded)
+            user.FailedLoginAttempts += 1;
+
+            if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
             {
-                user.FailedLoginAttempts += 1;
-
-                if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
-                {
-                    response = new LoginResponse()
-                    {
-                        UserId = user.Id,
-                        FailedLoginAttempts = user.FailedLoginAttempts,
-                        MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
-                    };
-                    
-                    return Results.BadRequest($"Invalid two-factor code {code}.", response);
-                }
-                
-                var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
-                if (!deviceBlockResult.Succeeded) return deviceBlockResult;
-
-                var reason = await reasonManager.FindByTypeAsync(
-                    LockoutType.TooManyFailedLoginAttempts, cancellationToken);
-                
-                if (reason is null) return Results.NotFound(
-                    $"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
-
-                var lockoutResult = await lockoutManager.BlockAsync(user, reason,
-                    permanent: true, cancellationToken: cancellationToken);
-
-                if (!lockoutResult.Succeeded) return lockoutResult;
-
                 response = new LoginResponse()
                 {
                     UserId = user.Id,
-                    IsLockedOut = true,
                     FailedLoginAttempts = user.FailedLoginAttempts,
                     MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
-                    Reason = Mapper.Map(reason)
                 };
-        
-                return Results.BadRequest("Account is locked out due to too many failed login attempts", response);
+
+                return Results.BadRequest($"Invalid two-factor code {code}.", response);
             }
+
+            var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
+            if (!deviceBlockResult.Succeeded) return deviceBlockResult;
+
+            var reason = await reasonManager.FindByTypeAsync(
+                LockoutType.TooManyFailedLoginAttempts, cancellationToken);
+
+            if (reason is null)
+                return Results.NotFound(
+                    $"Cannot find lockout type {LockoutType.TooManyFailedLoginAttempts}.");
+
+            var lockoutResult = await lockoutManager.BlockAsync(user, reason,
+                permanent: true, cancellationToken: cancellationToken);
+
+            if (!lockoutResult.Succeeded) return lockoutResult;
+
+            response = new LoginResponse()
+            {
+                UserId = user.Id,
+                IsLockedOut = true,
+                FailedLoginAttempts = user.FailedLoginAttempts,
+                MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+                Reason = Mapper.Map(reason)
+            };
+
+            return Results.BadRequest("Account is locked out due to too many failed login attempts", response);
         }
 
         if (user.FailedLoginAttempts > 0)
         {
             user.FailedLoginAttempts = 0;
-            
+
             var userUpdateResult = await userManager.UpdateAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
-        
+
         response = new LoginResponse() { UserId = user.Id, };
-        
-        await loginManager.CreateAsync(device, LoginType.TwoFactor, request.Request.Type.ToString(), cancellationToken);
+
+        const string method = nameof(TwoFactorMethod.AuthenticatorApp);
+        await loginManager.CreateAsync(device, LoginType.TwoFactor, method, cancellationToken);
         await authorizationManager.CreateAsync(device, cancellationToken);
-        
+
         return Result.Success(response);
     }
 }

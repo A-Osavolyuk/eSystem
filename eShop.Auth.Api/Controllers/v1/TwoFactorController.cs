@@ -12,15 +12,14 @@ public class TwoFactorController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
     
-    [EndpointSummary("Login two-factor")]
-    [EndpointDescription("Login with two-factor")]
+    [EndpointSummary("Authenticator app sign-in")]
+    [EndpointDescription("Authenticator app sign-in")]
     [ProducesResponseType(200)]
-    [HttpPost("login")]
+    [HttpPost("sign-in")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> LoginWithTwoFactorAuthenticationCode(
-        [FromBody] TwoFactorLoginRequest request)
+    public async ValueTask<IActionResult> AuthenticatorAppSignInAsync([FromBody] AuthenticatorSignInRequest request)
     {
-        var result = await sender.Send(new TwoFactorLoginCommand(request));
+        var result = await sender.Send(new AuthenticatorSignInCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),

@@ -3,7 +3,7 @@ using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Validation;
 
-public class TwoFactorLoginValidator : Validator<TwoFactorLoginRequest>
+public class TwoFactorLoginValidator : Validator<AuthenticatorSignInRequest>
 {
     public TwoFactorLoginValidator()
     {
