@@ -49,12 +49,15 @@
                             Confirm access with email
                         </MudLink>
                     </li>
-                    <li>
-                        <MudLink
-                            OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.AuthenticatorApp))">
-                            Confirm access with authenticator app
-                        </MudLink>
-                    </li>
+                    @if (Methods.Any(x => x.Method == VerificationMethod.AuthenticatorApp))
+                    {
+                        <li>
+                            <MudLink
+                                OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.AuthenticatorApp))">
+                                Confirm access with authenticator app
+                            </MudLink>
+                        </li>
+                    }
                 </ul>
             </MudStack>
         </MudPaper>
