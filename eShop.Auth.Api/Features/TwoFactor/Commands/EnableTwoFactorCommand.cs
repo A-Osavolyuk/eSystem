@@ -23,7 +23,7 @@ public class EnableTwoFactorCommandHandler(
             PurposeType.TwoFactor, ActionType.Enable, cancellationToken);
 
         if (!enableVerificationResult.Succeeded) return enableVerificationResult;
-        
+
         var subscribeVerificationResult = await verificationManager.VerifyAsync(user,
             PurposeType.AuthenticatorApp, ActionType.Subscribe, cancellationToken);
 
@@ -37,19 +37,24 @@ public class EnableTwoFactorCommandHandler(
             if (!passkeyResult.Succeeded) return passkeyResult;
 
             var passkeySubscriptionResult = await verificationManager.SubscribeAsync(user,
-                VerificationMethod.Passkey, preferred: false, cancellationToken);
+                VerificationMethod.Passkey, cancellationToken: cancellationToken);
 
             if (!passkeySubscriptionResult.Succeeded) return passkeySubscriptionResult;
         }
 
-        var authenticatorSubscriptionResult = await verificationManager.SubscribeAsync(user, 
+        var authenticatorSubscriptionResult = await verificationManager.SubscribeAsync(user,
             VerificationMethod.AuthenticatorApp, true, cancellationToken);
-        
+
         if (!authenticatorSubscriptionResult.Succeeded) return authenticatorSubscriptionResult;
-        
+
         var authenticatorResult = await twoFactorManager.SubscribeAsync(user,
             TwoFactorMethod.AuthenticatorApp, true, cancellationToken);
 
-        return authenticatorResult;
+        if (!authenticatorResult.Succeeded) return authenticatorResult;
+
+        var recoveryCodesResult = await twoFactorManager.SubscribeAsync(user,
+            TwoFactorMethod.RecoveryCode, cancellationToken: cancellationToken);
+
+        return recoveryCodesResult;
     }
 }
