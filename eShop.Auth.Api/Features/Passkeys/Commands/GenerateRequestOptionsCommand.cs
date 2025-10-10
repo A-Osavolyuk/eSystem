@@ -3,7 +3,7 @@ using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
-public record GenerateRequestOptionsCommand(GenerateRequestOptionsRequest RequestOptionsRequest) : IRequest<Result>;
+public record GenerateRequestOptionsCommand(GenerateRequestOptionsRequest Request) : IRequest<Result>;
 
 public class GenerateRequestOptionsCommandHandler(
     IUserManager userManager,
@@ -16,9 +16,14 @@ public class GenerateRequestOptionsCommandHandler(
 
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByUsernameAsync(request.RequestOptionsRequest.Username, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with name {request.RequestOptionsRequest.Username}.");
-
+        var user = await userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
+        
+        if (user is null)
+        {
+            user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+            if (user is null) return Results.NotFound("Cannot find user.");
+        }
+        
         var challenge = CredentialGenerator.GenerateChallenge();
         var options = CredentialGenerator.CreateRequestOptions(user, challenge, identityOptions.Credentials);
 
