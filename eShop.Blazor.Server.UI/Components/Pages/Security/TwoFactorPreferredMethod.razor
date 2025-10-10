@@ -20,8 +20,8 @@
                     Margin="Margin.Dense"
                     AnchorOrigin="Origin.BottomCenter"
                     Immediate="true"
-                    Disabled="@(Model.Providers.Count == 1)">
-                    @foreach (var provider in Model.Providers.Where(x => x.Method != TwoFactorMethod.Sms))
+                    Disabled="@(Model.Methods.Count == 1)">
+                    @foreach (var provider in Model.Methods.Where(x => x.Method != TwoFactorMethod.Sms))
                     {
                         if (provider.Method == TwoFactorMethod.AuthenticatorApp)
                         {
@@ -73,7 +73,7 @@
 
     protected override void OnInitialized()
     {
-        var primaryProvider = Model.Providers.First(x => x.Preferred);
+        var primaryProvider = Model.Methods.First(x => x.Preferred);
         Type = primaryProvider.Method switch
         {
             TwoFactorMethod.AuthenticatorApp => TwoFactorTypes.AuthenticatorApp,

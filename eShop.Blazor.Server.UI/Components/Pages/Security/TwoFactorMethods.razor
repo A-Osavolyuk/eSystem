@@ -13,7 +13,7 @@
                     <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                         Authenticator app
                     </MudTextM3>
-                    @if (Model.Providers.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp))
+                    @if (Model.Methods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp))
                     {
                         <MudChip
                             T="string"
@@ -35,7 +35,7 @@
                             Not configured
                         </MudChip>
                     }
-                    @if (Model.Providers.Any(x => x is { Method: TwoFactorMethod.AuthenticatorApp, Preferred: true }))
+                    @if (Model.Methods.Any(x => x is { Method: TwoFactorMethod.AuthenticatorApp, Preferred: true }))
                     {
                         <MudChip
                             T="string"
@@ -78,7 +78,7 @@
                         Variant="Variant.Outlined">
                         Less secure
                     </MudChip>
-                    @if (Model.Providers.Any(x => x.Method == TwoFactorMethod.Sms))
+                    @if (Model.Methods.Any(x => x.Method == TwoFactorMethod.Sms))
                     {
                         <MudChip
                             T="string"
@@ -100,7 +100,7 @@
                             Not configured
                         </MudChip>
                     }
-                    @if (Model.Providers.Any(x => x is { Method: TwoFactorMethod.Sms, Preferred: true }))
+                    @if (Model.Methods.Any(x => x is { Method: TwoFactorMethod.Sms, Preferred: true }))
                     {
                         <MudChip
                             T="string"
@@ -138,7 +138,7 @@
                     <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                         Secure keys
                     </MudTextM3>
-                    @if (Model.Providers.Any(x => x.Method == TwoFactorMethod.Passkey))
+                    @if (Model.Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
                     {
                         <MudChip
                             T="string"
@@ -160,7 +160,7 @@
                             Not configured
                         </MudChip>
                     }
-                    @if (Model.Providers.Any(x => x is { Method: TwoFactorMethod.Passkey, Preferred: true }))
+                    @if (Model.Methods.Any(x => x is { Method: TwoFactorMethod.Passkey, Preferred: true }))
                     {
                         <MudChip
                             T="string"
@@ -179,12 +179,25 @@
             </MudStack>
             <MudSpacer/>
             <MudStack>
-                <MudButton
-                    ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    Size="Size.Small">
-                    Edit
-                </MudButton>
+                @if (Model.Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                {
+                    <MudButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Edit
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small"
+                        Href="@(OnAddPasskey())">
+                        Add
+                    </MudButton>
+                }
             </MudStack>
         </MudStack>
         <MudDivider/>
@@ -232,11 +245,8 @@
 @code{
     [Parameter] public TwoFactorData Model { get; set; } = new();
 
-    private const string ReturnUrl = "/account/security";
+    private readonly string returnUrl = HttpUtility.UrlEncode("/account/security");
 
-    private string OnViewRecoveryCodes()
-    {
-        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-        return $"/account/2fa/recovery-codes?return_url={returnUrl}";
-    }
+    private string OnViewRecoveryCodes() => $"/account/2fa/recovery-codes?return_url={returnUrl}";
+    private string OnAddPasskey() => $"/account/passkeys/add?return_url={returnUrl}";
 }
