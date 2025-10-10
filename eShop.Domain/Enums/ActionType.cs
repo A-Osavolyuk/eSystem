@@ -99,4 +99,9 @@ public enum ActionType
     /// Represents user's credential change
     /// </summary>
     Change,
+    
+    /// <summary>
+    /// Represents user's recovery codes display
+    /// </summary>
+    Show
 }

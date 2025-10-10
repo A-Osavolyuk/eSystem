@@ -54,4 +54,9 @@ public enum PurposeType
     /// The user's login method
     /// </summary>
     LoginMethod,
+    
+    /// <summary>
+    /// The user's 2FA recovery codes
+    /// </summary>
+    RecoveryCodes
 }
