@@ -170,7 +170,7 @@
                 {
                     Snackbar.Add(result.Message, Severity.Success);
 
-                    if (string.IsNullOrEmpty(ReturnUrl))
+                    if (!string.IsNullOrEmpty(ReturnUrl))
                     {
                         var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
                         var url = $"/account/2fa/login?id={response.UserId}&return_url={returnUrl}";
