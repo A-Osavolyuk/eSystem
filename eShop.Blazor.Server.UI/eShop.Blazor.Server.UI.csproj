@@ -54,4 +54,8 @@
 	  <AdditionalFiles Include="Components\Pages\Devices\Devices.razor" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Components\Pages\Profile\" />
+	</ItemGroup>
+
 </Project>
