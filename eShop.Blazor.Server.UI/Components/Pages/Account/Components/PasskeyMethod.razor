@@ -1,4 +1,11 @@
-﻿<MudStack Spacing="4" Class="w-100">
+﻿@inject UserState UserState
+@inject NavigationManager NavigationManager
+@inject PasskeyManager PasskeyManager
+@inject AuthenticationManager AuthenticationManager
+@inject ISnackbar Snackbar
+@inject IPasskeyService PasskeyService
+
+<MudStack Spacing="4" Class="w-100">
     <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
         Authenticate using your passkey.
     </MudTextM3>
@@ -8,7 +15,8 @@
             Size="Size.Medium"
             Color="Color.Success"
             Variant="Variant.Filled"
-            ButtonType="ButtonType.Button">
+            ButtonType="ButtonType.Button"
+            OnClick="@(async () => await OnSignInAsync())">
             Use passkey
         </MudButton>
         <MudButton
@@ -50,8 +58,46 @@
     [Parameter] 
     public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
     
+    [SupplyParameterFromQuery(Name = "id")]
+    public Guid UserId { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
+    
     private bool expanded;
 
     private void Expand() => expanded = !expanded;
     private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
+
+    private async Task OnSignInAsync()
+    {
+        var request = new GenerateRequestOptionsRequest() { UserId = UserId };
+        var result = await PasskeyService.GenerateRequestOptionsAsync(request);
+
+        if (result.Success)
+        {
+            var options = result.Get<PublicKeyCredentialRequestOptions>()!;
+            var credential = await PasskeyManager.AuthenticateAsync(options);
+            await SignInAsync(credential);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task SignInAsync(PublicKeyCredential credential)
+    {
+        var request = new PasskeySignInRequest() { Credential = credential };
+        var result = await PasskeyService.SignInAsync(request);
+
+        if (result.Success)
+        {
+            var response = result.Get<PasskeySignInResponse>()!;
+
+            UserState.UserId = response.UserId;
+            await AuthenticationManager.SignInAsync();
+
+            var url = string.IsNullOrEmpty(ReturnUrl) ? "/products" : ReturnUrl;
+            NavigationManager.NavigateTo(url);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
 }
