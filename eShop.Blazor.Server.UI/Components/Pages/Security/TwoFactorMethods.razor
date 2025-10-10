@@ -220,7 +220,8 @@
                 <MudButton
                     ButtonType="ButtonType.Button"
                     Variant="Variant.Outlined"
-                    Size="Size.Small">
+                    Size="Size.Small"
+                    Href="@(OnViewRecoveryCodes())">
                     View
                 </MudButton>
             </MudStack>
@@ -230,4 +231,12 @@
 
 @code{
     [Parameter] public TwoFactorData Model { get; set; } = new();
+
+    private const string ReturnUrl = "/account/security";
+
+    private string OnViewRecoveryCodes()
+    {
+        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
+        return $"/account/2fa/recovery-codes?return_url={returnUrl}";
+    }
 }
