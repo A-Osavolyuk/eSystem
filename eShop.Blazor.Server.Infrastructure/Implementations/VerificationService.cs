@@ -27,6 +27,6 @@ public class VerificationService(
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Verification/passkey/challenge/verify", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/api/v1/Verification/passkey/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 }
