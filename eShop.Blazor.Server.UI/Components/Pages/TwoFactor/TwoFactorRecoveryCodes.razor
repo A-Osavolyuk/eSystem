@@ -13,6 +13,19 @@
         <MudGrid Justify="Justify.Center">
             <MudItem xs="4">
                 <MudStack Spacing="3">
+                    @if (recoveryCodesRegenerated)
+                    {
+                        <MudAlert 
+                            Variant="Variant.Outlined" 
+                            Severity="Severity.Success" 
+                            ShowCloseIcon="true"
+                            CloseIconClicked="@(() => Close())">
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                New two-factor recovery codes successfully generated. 
+                                Save them in a safe, durable location and discard your previous codes.
+                            </MudTextM3>
+                        </MudAlert>
+                    }
                     <MudStack Spacing="2">
                         <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
                             Two-factor recovery codes
@@ -34,31 +47,62 @@
                                     a password manager such as 1Password, Authy, or Keeper.
                                 </MudTextM3>
                             </MudStack>
-                            <MudAlert
-                                Class="px-5"
-                                Square="true"
-                                Severity="Severity.Error"
-                                NoIcon="true"
-                                Variant="Variant.Outlined"
-                                Style="border-left:none; border-right: none">
-                                <MudStack Row="true">
-                                    <MudIcon
-                                        Class="mt-1"
-                                        Size="Size.Medium"
-                                        Color="Color.Error"
-                                        Icon="@Icons.Material.Outlined.WarningAmber"/>
-                                    <MudStack Spacing="1">
-                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="fw-bold">
-                                            These new codes have replaced your old codes. Save them in a safe spot.
-                                        </MudTextM3>
-                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                                            These codes are the last resort for accessing your account
-                                            in case you lose your password and second factors.
-                                            If you cannot find these codes, you will lose access to your account.
-                                        </MudTextM3>
+                            @if (recoveryCodesRegenerated)
+                            {
+                                <MudAlert
+                                    Class="px-5"
+                                    Square="true"
+                                    Severity="Severity.Error"
+                                    NoIcon="true"
+                                    Variant="Variant.Outlined"
+                                    Style="border-left:none; border-right: none">
+                                    <MudStack Row="true">
+                                        <MudIcon
+                                            Class="mt-1"
+                                            Size="Size.Medium"
+                                            Color="Color.Error"
+                                            Icon="@Icons.Material.Outlined.WarningAmber"/>
+                                        <MudStack Spacing="1">
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="fw-bold">
+                                                These new codes have replaced your old codes. Save them in a safe spot.
+                                            </MudTextM3>
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                These codes are the last resort for accessing your account
+                                                in case you lose your password and second factors.
+                                                If you cannot find these codes, you will lose access to your account.
+                                            </MudTextM3>
+                                        </MudStack>
                                     </MudStack>
-                                </MudStack>
-                            </MudAlert>
+                                </MudAlert>
+                            }
+                            else
+                            {
+                                <MudAlert
+                                    Class="px-5"
+                                    Square="true"
+                                    Severity="Severity.Info"
+                                    NoIcon="true"
+                                    Variant="Variant.Outlined"
+                                    Style="border-left:none; border-right: none">
+                                    <MudStack Row="true">
+                                        <MudIcon
+                                            Class="mt-1"
+                                            Size="Size.Medium"
+                                            Color="Color.Info"
+                                            Icon="@Icons.Material.Outlined.WarningAmber"/>
+                                        <MudStack Spacing="1">
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="fw-bold">
+                                                Keep your recovery codes in a safe spot.
+                                            </MudTextM3>
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                These codes are the last resort for accessing your account in case you
+                                                lose your password and second factors.
+                                                If you cannot find these codes, you will lose access to your account.
+                                            </MudTextM3>
+                                        </MudStack>
+                                    </MudStack>
+                                </MudAlert>
+                            }
                             <MudStack>
                                 <MudStack Spacing="5" Justify="Justify.Center" AlignItems="AlignItems.Center"
                                           Class="pb-5 px-5">
@@ -120,7 +164,8 @@
                                 Variant="Variant.Outlined"
                                 Color="Color.Default"
                                 ButtonType="ButtonType.Button"
-                                Size="Size.Small">
+                                Size="Size.Small"
+                                OnClick="@(async () => await OnGenerateAsync())">
                                 Generate new recovery codes
                             </MudButton>
                         </MudStack>
@@ -146,6 +191,7 @@
     ];
 
     private ConfirmationContext? confirmationContext;
+    private bool recoveryCodesRegenerated;
 
     protected override void OnInitialized()
     {
@@ -156,4 +202,18 @@
         };
     }
 
+    private void Close() => recoveryCodesRegenerated = !recoveryCodesRegenerated;
+
+    private async Task OnGenerateAsync()
+    {
+        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
+        var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
+
+        if (result.Success)
+        {
+            Codes = result.Get<List<string>>()!;
+            recoveryCodesRegenerated = true;
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
 }
