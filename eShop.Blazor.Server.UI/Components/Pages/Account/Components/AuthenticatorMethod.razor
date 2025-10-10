@@ -41,19 +41,23 @@
         <MudCollapse Expanded="expanded">
             <MudDivider Class="my-2"/>
             <MudStack Spacing="2">
-                <MudButton
-                    Color="Color.Default"
-                    Variant="Variant.Outlined"
-                    ButtonType="ButtonType.Button"
-                    Size="Size.Medium"
-                    OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Passkey))">
-                    Passkey
-                </MudButton>
+                @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                {
+                    <MudButton
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Passkey))">
+                        Passkey
+                    </MudButton>
+                }
                 <MudButton
                     Color="Color.Error"
                     Variant="Variant.Outlined"
                     ButtonType="ButtonType.Button"
-                    Size="Size.Medium">
+                    Size="Size.Medium"
+                    Href="@(OnRecovery())">
                     Recovery codes
                 </MudButton>
             </MudStack>
@@ -64,6 +68,9 @@
 @code {
     [Parameter] 
     public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    
+    [Parameter] 
+    public List<UserTwoFactorMethod> Methods { get; set; } = [];
     
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
@@ -77,9 +84,6 @@
     private MudForm form = new();
     private readonly PatternMask mask = new("000000");
     private bool expanded;
-
-    private void Expand() => expanded = !expanded;
-    private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
 
     private async Task OnSignInAsync()
     {
@@ -107,5 +111,16 @@
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }
+    }
+    
+    private void Expand() => expanded = !expanded;
+    private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
+
+    private string OnRecovery()
+    {
+        if (string.IsNullOrEmpty(ReturnUrl)) return $"/account/2fa/recovery?id={UserId}";
+
+        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
+        return $"/account/2fa/recovery?id={UserId}&return_url={returnUrl}";
     }
 }

@@ -1,9 +1,10 @@
 ﻿@page "/account/2fa/login"
+
 @inherits PageBase
 
 @inject IUserService UserService
 
-<Title Text="Login with 2FA"/>
+<Title Text="Two-factor login"/>
 
 @if (Methods.Any())
 {
@@ -18,12 +19,16 @@
                 {
                     case TwoFactorMethod.AuthenticatorApp:
                     {
-                        <AuthenticatorMethod OnChangeMethod="ChangeMethod"/>
+                        <AuthenticatorMethod
+                            Methods="Methods"
+                            OnChangeMethod="ChangeMethod"/>
                         break;
                     }
                     case TwoFactorMethod.Passkey:
                     {
-                        <PasskeyMethod OnChangeMethod="ChangeMethod"/>
+                        <PasskeyMethod
+                            Methods="Methods"
+                            OnChangeMethod="ChangeMethod"/>
                         break;
                     }
                 }
