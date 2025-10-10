@@ -37,19 +37,17 @@
                     @if (Methods.Any(x => x.Method == VerificationMethod.Passkey))
                     {
                         <li>
-                            <MudLink OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Passkey))">
+                            <MudLink
+                                OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Passkey))">
                                 Confirm access with passkey
                             </MudLink>
                         </li>
                     }
-                    @if (Methods.Any(x => x.Method == VerificationMethod.Email))
-                    {
-                        <li>
-                            <MudLink OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Email))">
-                                Confirm access with email
-                            </MudLink>
-                        </li>
-                    }
+                    <li>
+                        <MudLink OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Email))">
+                            Confirm access with email
+                        </MudLink>
+                    </li>
                 </ul>
             </MudStack>
         </MudPaper>

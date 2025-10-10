@@ -60,18 +60,17 @@
                     Having problems?
                 </MudTextM3>
                 <ul>
-                    @if (Methods.Any(x => x.Method == VerificationMethod.AuthenticatorApp))
-                    {
-                        <li>
-                            <MudLink OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.AuthenticatorApp))">
-                                Confirm access with authenticator app
-                            </MudLink>
-                        </li>
-                    }
+                    <li>
+                        <MudLink
+                            OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.AuthenticatorApp))">
+                            Confirm access with authenticator app
+                        </MudLink>
+                    </li>
                     @if (Methods.Any(x => x.Method == VerificationMethod.Passkey))
                     {
                         <li>
-                            <MudLink OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Passkey))">
+                            <MudLink
+                                OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Passkey))">
                                 Confirm access with passkey
                             </MudLink>
                         </li>
@@ -107,7 +106,7 @@
                 { "To", UserState.Credentials?.PrimaryEmail! }
             }
         };
-        
+
         var result = await VerificationService.SendCodeAsync(request);
 
         if (result.Success) sendStage = false;
@@ -135,4 +134,5 @@
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
+
 }
