@@ -31,7 +31,7 @@ public sealed class LoginWith2FaCommandHandler(
     public async Task<Result> Handle(AuthenticatorSignInCommand request,
         CancellationToken cancellationToken)
     {
-        LoginResponse? response;
+        AuthenticatorSignInResponse? response;
 
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
@@ -62,24 +62,21 @@ public sealed class LoginWith2FaCommandHandler(
             var result = await deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-        
-        if (user.LockoutState.Enabled)
-            return Results.BadRequest($"This user account is locked out with reason: {user.LockoutState.Type}.");
 
         var code = request.Request.Code;
         var userSecret = await secretManager.FindAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
-        var isVerifiedCode = AuthenticatorUtils.VerifyCode(code, unprotectedSecret);
+        var isCodeVerified = AuthenticatorUtils.VerifyCode(code, unprotectedSecret);
 
-        if (!isVerifiedCode)
+        if (!isCodeVerified)
         {
             user.FailedLoginAttempts += 1;
 
             if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
             {
-                response = new LoginResponse()
+                response = new AuthenticatorSignInResponse()
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
@@ -97,7 +94,7 @@ public sealed class LoginWith2FaCommandHandler(
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            response = new LoginResponse()
+            response = new AuthenticatorSignInResponse()
             {
                 UserId = user.Id,
                 IsLockedOut = true,
@@ -117,7 +114,7 @@ public sealed class LoginWith2FaCommandHandler(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        response = new LoginResponse() { UserId = user.Id, };
+        response = new AuthenticatorSignInResponse() { UserId = user.Id, };
 
         const string method = nameof(TwoFactorMethod.AuthenticatorApp);
         await loginManager.CreateAsync(device, LoginType.TwoFactor, method, cancellationToken);

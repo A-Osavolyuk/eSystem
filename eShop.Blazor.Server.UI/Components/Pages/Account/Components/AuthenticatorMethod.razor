@@ -75,7 +75,7 @@
     public CodeModel Model { get; set; } = new();
     
     private MudForm form = new();
-    private PatternMask mask = new("000000");
+    private readonly PatternMask mask = new("000000");
     private bool expanded;
 
     private void Expand() => expanded = !expanded;
@@ -97,7 +97,7 @@
 
             if (result.Success)
             {
-                var response = result.Get<LoginResponse>()!;
+                var response = result.Get<AuthenticatorSignInResponse>()!;
 
                 UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
