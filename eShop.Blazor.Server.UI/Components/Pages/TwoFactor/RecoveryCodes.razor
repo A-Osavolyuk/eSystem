@@ -1,0 +1,17 @@
+﻿<MudAlert Square="false" NoIcon="true" Severity="Severity.Normal" Variant="Variant.Filled">
+    <MudGrid Justify="Justify.Center" Spacing="1">
+        @foreach (var recoveryCode in Codes)
+        {
+            <MudItem xs="6">
+                <MudTextM3 Align="Align.Center" Typo="TypoM3.Title"
+                           Size="Size.Large">
+                    @("• " + recoveryCode)
+                </MudTextM3>
+            </MudItem>
+        }
+    </MudGrid>
+</MudAlert>
+
+@code {
+    [Parameter] public List<string> Codes { get; set; } = [];
+}
