@@ -23,17 +23,17 @@ public class DisableTwoFactorCommandHandler(
             PurposeType.TwoFactor, ActionType.Disable, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
-
-        var authenticatorMethod = user.GetVerificationMethod(VerificationMethod.AuthenticatorApp)!;
-        var authenticatorResult = await verificationManager.UnsubscribeAsync(authenticatorMethod, cancellationToken);
-        if (!authenticatorResult.Succeeded) return authenticatorResult;
-
+        
         var preferredMethod = user.HasVerificationMethod(VerificationMethod.Passkey)
             ? VerificationMethod.Passkey
             : VerificationMethod.Email;
         
         var result = await verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
         if (!result.Succeeded) return result;
+
+        var authenticatorMethod = user.GetVerificationMethod(VerificationMethod.AuthenticatorApp)!;
+        var authenticatorResult = await verificationManager.UnsubscribeAsync(authenticatorMethod, cancellationToken);
+        if (!authenticatorResult.Succeeded) return authenticatorResult;
         
         var methodResult = await twoFactorManager.UnsubscribeAsync(user, cancellationToken);
         return methodResult;

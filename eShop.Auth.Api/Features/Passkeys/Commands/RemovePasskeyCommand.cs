@@ -44,16 +44,16 @@ public class RemovePasskeyCommandHandler(
 
             if (user.HasVerificationMethod(VerificationMethod.Passkey))
             {
-                var method = user.GetVerificationMethod(VerificationMethod.Passkey)!;
-                var unsubscribeResult = await verificationManager.UnsubscribeAsync(method, cancellationToken);
-                if (!unsubscribeResult.Succeeded) return unsubscribeResult;
-                
                 var preferredMethod = user.HasVerificationMethod(VerificationMethod.AuthenticatorApp) 
                     ? VerificationMethod.AuthenticatorApp 
                     : VerificationMethod.Email;
                 
                 var methodResult = await verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
                 if (!methodResult.Succeeded) return methodResult;
+                
+                var method = user.GetVerificationMethod(VerificationMethod.Passkey)!;
+                var unsubscribeResult = await verificationManager.UnsubscribeAsync(method, cancellationToken);
+                if (!unsubscribeResult.Succeeded) return unsubscribeResult;
             }
         }
 
