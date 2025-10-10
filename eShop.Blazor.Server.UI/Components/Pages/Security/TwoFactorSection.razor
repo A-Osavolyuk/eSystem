@@ -1,4 +1,9 @@
-﻿@if (!Model.HasTwoFactor)
+﻿@inject ITwoFactorService TwoFactorService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject UserState UserState
+
+@if (!Model.HasTwoFactor)
 {
     <MudStack Spacing="3">
         <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">
@@ -37,7 +42,7 @@ else
                     <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
                 </ActivatorContent>
                 <ChildContent>
-                    <MudMenuItem Href="@OnDisable()">
+                    <MudMenuItem OnClick="@(async () => await OnDisableAsync())">
                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
                             Disable two-factor
                         </MudTextM3>
@@ -56,21 +61,50 @@ else
 }
 
 @code {
-    [Parameter] 
-    public TwoFactorData Model { get; set; } = new();
-    
-    [Parameter] 
-    public EventCallback OnRefresh { get; set; }
+    [Parameter] public TwoFactorData Model { get; set; } = new();
+
+    [Parameter] public EventCallback OnRefresh { get; set; }
 
     private readonly string returnUrl = HttpUtility.UrlEncode("/account/security");
-    
+
     private string OnEnable()
     {
         return $"/account/2fa/enable?return_url={returnUrl}";
     }
-    
-    private string OnDisable()
+
+    private async Task OnDisableAsync()
     {
-        return $"/account/2fa/disable?return_url={returnUrl}";
+        var context = new ConfirmationContext()
+        {
+            Action = ActionType.Disable,
+            Purpose = PurposeType.TwoFactor
+        };
+
+        var parameters = new DialogParameters<AccessConfirmationDialog>()
+        {
+            { dialog => dialog.Context, context }
+        };
+
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        const string title = "Access confirmation";
+        var dialog = await DialogService.ShowAsync<AccessConfirmationDialog>(title, parameters, options);
+        var dialogResult = await dialog.Result;
+
+        if (!dialogResult!.Canceled)
+        {
+            var request = new DisableTwoFactorRequest() { UserId = UserState.UserId };
+            var result = await TwoFactorService.DisableAsync(request);
+
+            if (result.Success) await OnRefresh.InvokeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
     }
+
 }
