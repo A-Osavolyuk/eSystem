@@ -13,4 +13,7 @@ public interface IVerificationManager
     
     public ValueTask<Result> UnsubscribeAsync(UserVerificationMethodEntity method, 
         CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> PreferAsync(UserEntity user, VerificationMethod method, 
+        CancellationToken cancellationToken = default);
 }

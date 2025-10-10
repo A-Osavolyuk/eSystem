@@ -83,4 +83,27 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         
         return Result.Success();
     }
+
+    public async ValueTask<Result> PreferAsync(UserEntity user, VerificationMethod method, 
+        CancellationToken cancellationToken = default)
+    {
+        var currentPreferredMethod = user.VerificationMethods.First(x => x.Preferred);
+
+        if (currentPreferredMethod.Method == method) return Results.BadRequest("Method is already preferred");
+
+        currentPreferredMethod.Preferred = false;
+        currentPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
+
+        var nextPreferredMethod = user.GetVerificationMethod(method);
+        
+        if (nextPreferredMethod is null) return Results.BadRequest($"User doesn't have verification method {method}.");
+        
+        nextPreferredMethod.Preferred = true;
+        nextPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.UserVerificationMethods.UpdateRange(currentPreferredMethod, nextPreferredMethod);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
 }
