@@ -454,11 +454,21 @@ public sealed class UserManager(
             user.PasswordHash = passwordHash;
         }
 
+        var verificationMethod = new UserVerificationMethodEntity()
+        {
+            UserId = user.Id,
+            Id = Guid.CreateVersion7(),
+            Method = VerificationMethod.Email,
+            Preferred = true,
+            CreateDate = DateTimeOffset.UtcNow
+        };
+
         user.NormalizedUsername = user.Username.ToUpper();
         user.CreateDate = DateTimeOffset.UtcNow;
 
         await context.Users.AddAsync(user, cancellationToken);
         await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
+        await context.UserVerificationMethods.AddAsync(verificationMethod, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
