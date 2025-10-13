@@ -12,25 +12,23 @@ public class JwtAuthenticationStateProvider(
     UserState userState) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
-    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
+    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
     private readonly UserState userState = userState;
     private readonly IUserService userService = userService;
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        if (httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true)
-        {
-            var principal = httpContextAccessor.HttpContext!.User;
-            var authenticationState = new AuthenticationState(principal);
-
-            var subjectClaim = principal.Claims.Single(x => x.Type == AppClaimTypes.Subject);
-            var userId = Guid.Parse(subjectClaim.Value);
-            userState.UserId = userId;
-            
-            return Task.FromResult(authenticationState);
-        }
+        if (httpContext.User.Identity?.IsAuthenticated != true) return Task.FromResult(anonymous);
         
-        return Task.FromResult(anonymous);
+        var principal = httpContext.User;
+        var authenticationState = new AuthenticationState(principal);
+
+        var subjectClaim = principal.Claims.Single(x => x.Type == AppClaimTypes.Subject);
+        var userId = Guid.Parse(subjectClaim.Value);
+        userState.UserId = userId;
+            
+        return Task.FromResult(authenticationState);
+
     }
 
     public async Task SignInAsync(ClaimsPrincipal principal)
