@@ -22,7 +22,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<UserLockoutStateEntity> LockoutStates { get; set; }
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
-    public DbSet<UserRecoveryCodeEntity> RecoveryCodes { get; set; }
+    public DbSet<UserRecoveryCodeEntity> UserRecoveryCodes { get; set; }
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }

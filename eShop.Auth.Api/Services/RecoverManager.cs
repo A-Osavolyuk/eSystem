@@ -21,7 +21,7 @@ public sealed class RecoverManager(
 
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        if (user.RecoveryCodes.Count > 0) context.RecoveryCodes.RemoveRange(user.RecoveryCodes);
+        if (user.RecoveryCodes.Count > 0) context.UserRecoveryCodes.RemoveRange(user.RecoveryCodes);
 
         var codes = Generate();
         var entities = codes
@@ -35,7 +35,7 @@ public sealed class RecoverManager(
             })
             .ToList();
 
-        await context.RecoveryCodes.AddRangeAsync(entities, cancellationToken);
+        await context.UserRecoveryCodes.AddRangeAsync(entities, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return codes;
@@ -50,7 +50,7 @@ public sealed class RecoverManager(
         var entity = user.RecoveryCodes.FirstOrDefault(x => code.Equals(protectedCode));
         if (entity is null) return Results.BadRequest("Invalid recovery code.");
 
-        context.RecoveryCodes.Remove(entity);
+        context.UserRecoveryCodes.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -58,11 +58,11 @@ public sealed class RecoverManager(
 
     public async ValueTask<Result> RevokeAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var codes = await context.RecoveryCodes
+        var codes = await context.UserRecoveryCodes
             .Where(x => x.UserId == user.Id)
             .ToListAsync(cancellationToken);
         
-        context.RecoveryCodes.RemoveRange(codes);
+        context.UserRecoveryCodes.RemoveRange(codes);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
