@@ -15,11 +15,7 @@
                 <MudStack Spacing="3">
                     @if (recoveryCodesRegenerated)
                     {
-                        <MudAlert 
-                            Variant="Variant.Outlined" 
-                            Severity="Severity.Success" 
-                            ShowCloseIcon="true"
-                            CloseIconClicked="@(() => Close())">
+                        <MudAlert Variant="Variant.Outlined" Severity="Severity.Success" >
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                 New two-factor recovery codes successfully generated. 
                                 Save them in a safe, durable location and discard your previous codes.
@@ -222,8 +218,6 @@
             Purpose = PurposeType.RecoveryCodes
         };
     }
-
-    private void Close() => recoveryCodesRegenerated = !recoveryCodesRegenerated;
 
     private async Task OnGenerateAsync()
     {
