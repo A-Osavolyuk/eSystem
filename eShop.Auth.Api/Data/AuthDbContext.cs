@@ -22,7 +22,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<UserLockoutStateEntity> LockoutStates { get; set; }
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
-    public DbSet<RecoveryCodeEntity> RecoveryCodes { get; set; }
+    public DbSet<UserRecoveryCodeEntity> RecoveryCodes { get; set; }
     public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
@@ -202,10 +202,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Name).HasMaxLength(64);
         });
 
-        builder.Entity<RecoveryCodeEntity>(entity =>
+        builder.Entity<UserRecoveryCodeEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.CodeHash).HasMaxLength(200);
+            entity.Property(x => x.ProtectedCode).HasMaxLength(150);
             
             entity.HasOne(x => x.User)
                 .WithMany(x => x.RecoveryCodes)

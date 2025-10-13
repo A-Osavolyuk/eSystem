@@ -23,7 +23,7 @@ public class UserEntity : Entity
     public ICollection<UserPhoneNumberEntity> PhoneNumbers { get; set; } = null!;
     public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
-    public ICollection<RecoveryCodeEntity> RecoveryCodes { get; init; } = null!;
+    public ICollection<UserRecoveryCodeEntity> RecoveryCodes { get; init; } = null!;
     public ICollection<UserTwoFactorMethodEntity> Methods { get; init; } = null!;
     public ICollection<UserLinkedAccountEntity> LinkedAccounts { get; init; } = null!;
     public ICollection<UserChangesEntity> Changes { get; init; } = null!;

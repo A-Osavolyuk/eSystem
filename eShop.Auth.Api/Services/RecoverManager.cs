@@ -22,11 +22,11 @@ public sealed class RecoverManager(
 
         var entities = codes
             .Select(code => hasher.Hash(code))
-            .Select(hash => new RecoveryCodeEntity()
+            .Select(hash => new UserRecoveryCodeEntity()
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                CodeHash = hash,
+                ProtectedCode = hash,
                 CreateDate = DateTimeOffset.UtcNow
             })
             .ToList();
@@ -45,7 +45,7 @@ public sealed class RecoverManager(
             return Results.BadRequest("Recovery codes not generated or already used.");
         }
 
-        var entity = user.RecoveryCodes.FirstOrDefault(x => hasher.VerifyHash(code, x.CodeHash));
+        var entity = user.RecoveryCodes.FirstOrDefault(x => hasher.VerifyHash(code, x.ProtectedCode));
 
         if (entity is null)
         {
