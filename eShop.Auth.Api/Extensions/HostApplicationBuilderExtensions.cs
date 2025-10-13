@@ -185,7 +185,9 @@ public static class HostApplicationBuilderExtensions
     private static void AddEncryption(this IServiceCollection services)
     {
         services.AddDataProtection();
+        
         services.AddSingleton<SecretProtector>();
+        services.AddSingleton<CodeProtector>();
     }
 
     private static IServiceCollection AddHashing(this IServiceCollection services)
