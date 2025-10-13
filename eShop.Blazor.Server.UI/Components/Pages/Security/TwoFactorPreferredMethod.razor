@@ -20,7 +20,7 @@
                     Margin="Margin.Dense"
                     AnchorOrigin="Origin.BottomCenter"
                     Immediate="true"
-                    Disabled="@(Model.Methods.Count == 1)">
+                    Disabled="@(IsDisabled())">
                     @foreach (var provider in Model.Methods.Where(x => x.Method != TwoFactorMethod.Sms))
                     {
                         if (provider.Method == TwoFactorMethod.AuthenticatorApp)
@@ -105,6 +105,12 @@
             await OnRefresh.InvokeAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private bool IsDisabled()
+    {
+        return Model.Methods.Count(
+            x => x.Method is TwoFactorMethod.AuthenticatorApp or TwoFactorMethod.Passkey) == 1;
     }
 
 }
