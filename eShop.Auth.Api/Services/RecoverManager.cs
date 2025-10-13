@@ -1,27 +1,31 @@
-﻿using eShop.Auth.Api.Security.Hashing;
+﻿
+using eShop.Auth.Api.Security.Protection;
+using OtpNet;
 
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IRecoverManager), ServiceLifetime.Scoped)]
 public sealed class RecoverManager(
     AuthDbContext context,
-    Hasher hasher) : IRecoverManager
+    CodeProtector codeProtector) : IRecoverManager
 {
     private readonly AuthDbContext context = context;
-    private readonly Hasher hasher = hasher;
+    private readonly CodeProtector codeProtector = codeProtector;
+    private const int CodesAmount = 16;
+    private const int CodesLength = 10;
+
+    public List<string> Unprotect(UserEntity user)
+    {
+        return user.RecoveryCodes.Select(code => codeProtector.Unprotect(code.ProtectedCode)).ToList();
+    }
 
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        if (user.RecoveryCodes.Count > 0)
-        {
-            context.RecoveryCodes.RemoveRange(user.RecoveryCodes);
-            await context.SaveChangesAsync(cancellationToken);
-        }
+        if (user.RecoveryCodes.Count > 0) context.RecoveryCodes.RemoveRange(user.RecoveryCodes);
 
-        var codes = CodeGenerator.GenerateMany(6);
-
+        var codes = Generate();
         var entities = codes
-            .Select(code => hasher.Hash(code))
+            .Select(code => codeProtector.Protect(code))
             .Select(hash => new UserRecoveryCodeEntity()
             {
                 Id = Guid.CreateVersion7(),
@@ -40,17 +44,11 @@ public sealed class RecoverManager(
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code,
         CancellationToken cancellationToken = default)
     {
-        if (user.RecoveryCodes.Count == 0)
-        {
-            return Results.BadRequest("Recovery codes not generated or already used.");
-        }
+        if (user.RecoveryCodes.Count == 0) return Results.BadRequest("User does not have any recovery code.");
 
-        var entity = user.RecoveryCodes.FirstOrDefault(x => hasher.VerifyHash(code, x.ProtectedCode));
-
-        if (entity is null)
-        {
-            return Results.BadRequest("Invalid recovery code.");
-        }
+        var protectedCode = codeProtector.Protect(code);
+        var entity = user.RecoveryCodes.FirstOrDefault(x => code.Equals(protectedCode));
+        if (entity is null) return Results.BadRequest("Invalid recovery code.");
 
         context.RecoveryCodes.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
@@ -68,5 +66,19 @@ public sealed class RecoverManager(
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
+    }
+
+    private List<string> Generate()
+    {
+        var codes = new List<string>();
+        for (var i = 0; i < CodesAmount; i++)
+        {
+            var keyBytes = KeyGeneration.GenerateRandomKey(CodesLength);
+            var keyString = Base32Encoding.ToString(keyBytes);
+            var key = keyString[..CodesLength]!;
+            codes.Add(key);
+        }
+        
+        return codes;
     }
 }
