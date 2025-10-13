@@ -10,33 +10,35 @@ public class PasskeyService(
     IConfiguration configuration, 
     IApiClient apiClient) : ApiService(configuration, apiClient), IPasskeyService
 {
+    private const string BasePath = "api/v1/Passkey";
+    
     public async ValueTask<HttpResponse> GetAsync(Guid id) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/{id}", Method = HttpMethod.Get },
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/{id}", Method = HttpMethod.Get },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> SetNameAsync(SetPasskeyNameRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/set-name", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/set-name", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GenerateCreationOptionsAsync(GenerateCreationOptionsRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/options/attestation", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/options/attestation", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
     
     public async ValueTask<HttpResponse> GenerateRequestOptionsAsync(
         GenerateRequestOptionsRequest requestOptionsRequest) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/options/assertion", Method = HttpMethod.Post, Data = requestOptionsRequest },
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/options/assertion", Method = HttpMethod.Post, Data = requestOptionsRequest },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> CreatAsync(CreatePasskeyRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/create", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/create", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> SignInAsync(
         PasskeySignInRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/sign-in", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/sign-in", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> RemoveAsync(RemovePasskeyRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/api/v1/Passkey/remove", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/remove", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 }

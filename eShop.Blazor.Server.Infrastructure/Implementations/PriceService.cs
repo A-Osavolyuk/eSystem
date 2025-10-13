@@ -9,8 +9,10 @@ public class PriceService(
     IConfiguration configuration, 
     IApiClient apiClient) : ApiService(configuration, apiClient), IPriceService
 {
+    private const string BasePath = "api/v1/Price";
+    
     public async ValueTask<HttpResponse> GetAllAsync() =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/api/v1/Price/", Method = HttpMethod.Get }, 
+            new HttpRequest { Url = $"{Gateway}/{BasePath}", Method = HttpMethod.Get }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 }
