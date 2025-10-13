@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251013075628_Initial")]
+    [Migration("20251013090545_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -770,7 +770,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RecoveryCodes");
+                    b.ToTable("UserRecoveryCodes");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserRoleEntity", b =>

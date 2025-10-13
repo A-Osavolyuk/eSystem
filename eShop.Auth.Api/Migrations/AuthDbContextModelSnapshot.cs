@@ -767,7 +767,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RecoveryCodes");
+                    b.ToTable("UserRecoveryCodes");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserRoleEntity", b =>

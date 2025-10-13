@@ -202,27 +202,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RecoveryCodes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProtectedCode = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RecoveryCodes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RecoveryCodes_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserChanges",
                 columns: table => new
                 {
@@ -372,6 +351,27 @@ namespace eShop.Auth.Api.Migrations
                     table.PrimaryKey("PK_UserPhoneNumbers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserPhoneNumbers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRecoveryCodes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProtectedCode = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRecoveryCodes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserRecoveryCodes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -668,11 +668,6 @@ namespace eShop.Auth.Api.Migrations
                 column: "ResourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RecoveryCodes_UserId",
-                table: "RecoveryCodes",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_DeviceId",
                 table: "RefreshTokens",
                 column: "DeviceId",
@@ -721,6 +716,11 @@ namespace eShop.Auth.Api.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UserPhoneNumbers_UserId",
                 table: "UserPhoneNumbers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRecoveryCodes_UserId",
+                table: "UserRecoveryCodes",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -776,9 +776,6 @@ namespace eShop.Auth.Api.Migrations
                 name: "OAuthSessions");
 
             migrationBuilder.DropTable(
-                name: "RecoveryCodes");
-
-            migrationBuilder.DropTable(
                 name: "RefreshTokens");
 
             migrationBuilder.DropTable(
@@ -801,6 +798,9 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserPhoneNumbers");
+
+            migrationBuilder.DropTable(
+                name: "UserRecoveryCodes");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
