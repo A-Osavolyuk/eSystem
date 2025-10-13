@@ -98,7 +98,11 @@
                 var response = result.Get<RegistrationResponse>()!;
 
                 Snackbar.Add(result.Message, Severity.Success);
-                NavigationManager.NavigateTo($"/account/register/complete?id={response.UserId}");
+
+                var returnUrl = HttpUtility.UrlEncode("/account/login");
+                var url = $"/account/register/complete?id={response.UserId}&return_url={returnUrl}";
+                
+                NavigationManager.NavigateTo(url);
             }
             else
             {

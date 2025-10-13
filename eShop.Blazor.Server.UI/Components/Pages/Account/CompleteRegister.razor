@@ -8,99 +8,105 @@
 
 <Title Text="Registration completion"></Title>
 
-<MudGrid Justify="Justify.Center" Spacing="1">
-    <MudItem xs="4" Style="margin-top: 100px">
-        <MudStack Spacing="1" Justify="Justify.Center">
-            <MudPaper Outlined Class="pa-3">
-                <MudText Align="Align.Center" Typo="Typo.h4">
-                    Registration completion
-                </MudText>
-            </MudPaper>
-            <MudPaper Outlined Class="pa-3">
-                <MudForm
-                    @ref="form"
-                    Model="Model"
-                    Validation="Validator.ValidateValue">
+@if (email is not null)
+{
+    <MudGrid Justify="Justify.Center" Spacing="1">
+        <MudItem xs="4" Style="margin-top: 100px">
+            <MudStack Spacing="1" Justify="Justify.Center">
+                <MudPaper Outlined Class="pa-3">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                        Registration completion
+                    </MudTextM3>
+                </MudPaper>
+                <MudPaper Outlined Class="px-5 py-4">
                     <MudStack Spacing="2" Justify="Justify.Center">
-                        <MudText Align="Align.Center">
-                            We have sent an email with code to email: <strong>@email</strong>
-                        </MudText>
-
-                        <MudCodeInput
-                            Class="d-flex align-items-center"
-                            Variant="Variant.Outlined"
-                            Spacing="2"
-                            Margin="Margin.None"
-                            Count="6"
-                            @bind-Value="Model.Code"/>
-
+                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                            We have sent an email with code to email: <strong>@email?.Email</strong>
+                        </MudTextM3>
+                        <MudForm
+                            @ref="form"
+                            Model="Model"
+                            Validation="Validator.ValidateValue">
+                            <MudTextFieldExtended
+                                @bind-Value="Model.Code"
+                                Variant="Variant.Outlined"
+                                Margin="Margin.Dense"
+                                Placeholder="XXXXXX"
+                                Mask="mask"
+                                Clearable="true"
+                                Immediate="true"/>
+                        </MudForm>
                         <MudLoadingButton
+                            Size="Size.Small"
                             ButtonType="ButtonType.Button"
                             Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            FullWidth
+                            Color="Color.Success"
                             Disabled="@(Model.Code.Length <= 5)"
                             OnClick="@(async () => await OnVerifyEmailAsync())">
                             Verify
                         </MudLoadingButton>
                     </MudStack>
-                </MudForm>
-            </MudPaper>
-            <CodeResend Context="context"/>
-        </MudStack>
-    </MudItem>
-</MudGrid>
+                </MudPaper>
+                <CodeResend Context="context"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
 
 @code {
 
     [SupplyParameterFromQuery(Name = "id")]
     private Guid UserId { get; set; }
 
-    [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
+    [SupplyParameterFromQuery(Name = "return_url")]
+    private string ReturnUrl { get; set; } = string.Empty;
+
+    [SupplyParameterFromForm] 
+    private VerifyEmailModel Model { get; set; } = new();
 
     private MudForm form = new();
-    private string? email;
+    private PatternMask mask = new("000000");
+
+    private UserEmailDto? email;
     private MessageContext? context;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var result = await UserService.GetUserPrimaryEmailAsync(UserId);
-        if (result.Success)
-        {
-            var response = result.Get<UserEmailDto>()!;
-            email = response.Email;
-
-            context = new MessageContext()
-            {
-                UserId = UserId,
-                Sender = SenderType.Email,
-                Purpose = PurposeType.Email,
-                Action = ActionType.Verify,
-                Payload = new()
-                {
-                    { "To", email! }
-                }
-            };
-        }
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await SendCodeAsync();
+            var result = await UserService.GetUserPrimaryEmailAsync(UserId);
+            if (result.Success)
+            {
+                var response = result.Get<UserEmailDto>()!;
+                email = response;
+                StateHasChanged();
+                
+                await SendCodeAsync();
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
         }
     }
 
     private async Task SendCodeAsync()
     {
+        context = new MessageContext()
+        {
+            UserId = UserId,
+            Sender = SenderType.Email,
+            Purpose = PurposeType.Email,
+            Action = ActionType.Verify,
+            Payload = new()
+            {
+                { "To", email!.Email! }
+            }
+        };
         
         var request = context!.ToSendCodeRequest();
         var response = await VerificationService.SendCodeAsync(request);
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
+        StateHasChanged();
     }
-    
+
     private async Task OnVerifyEmailAsync()
     {
         await form.Validate();
@@ -120,7 +126,7 @@
         var request = new VerifyEmailRequest()
         {
             UserId = UserId,
-            Email = email!
+            Email = email?.Email!
         };
 
         var result = await SecurityService.VerifyEmailAsync(request);
@@ -128,8 +134,9 @@
         if (result.Success)
         {
             Snackbar.Add(result.Message, Severity.Success);
-            NavigationManager.NavigateTo("/account/login");
+            NavigationManager.NavigateTo(ReturnUrl);
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
+
 }
