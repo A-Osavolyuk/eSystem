@@ -246,33 +246,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("PersonalData");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.RecoveryCodeEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CodeHash")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RecoveryCodes");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.RefreshTokenEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -770,6 +743,33 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("UserPhoneNumbers");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserRecoveryCodeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ProtectedCode")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RecoveryCodes");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserRoleEntity", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -969,17 +969,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Resource");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.RecoveryCodeEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany("RecoveryCodes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.RefreshTokenEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
@@ -1127,6 +1116,17 @@ namespace eShop.Auth.Api.Migrations
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
                         .WithMany("PhoneNumbers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserRecoveryCodeEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithMany("RecoveryCodes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

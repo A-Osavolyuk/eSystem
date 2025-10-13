@@ -207,7 +207,7 @@ namespace eShop.Auth.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CodeHash = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    ProtectedCode = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
