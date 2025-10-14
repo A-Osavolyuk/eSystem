@@ -1,6 +1,6 @@
 ﻿namespace eShop.Blazor.Server.Domain.Constants;
 
-public class ExternalLinks
+public static class ExternalLinks
 {
     public const string OnePassword = "https://1password.com/";
     public const string Authy = "https://www.authy.com/";
