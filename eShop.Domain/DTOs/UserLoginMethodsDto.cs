@@ -20,7 +20,7 @@ public class TwoFactorData
     public bool AuthenticatorEnabled { get; set; }
     public bool PasskeyEnabled { get; set; }
     public bool SmsEnabled { get; set; }
-    public TwoFactorMethod PreferredMethod { get; set; }
+    public TwoFactorMethod? PreferredMethod { get; set; }
 }
 
 public class LinkedAccountsData

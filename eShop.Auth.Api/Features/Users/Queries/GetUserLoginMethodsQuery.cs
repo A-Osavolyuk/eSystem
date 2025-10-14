@@ -27,7 +27,7 @@ public class GetUserLoginMethodsQueryHandler(
                 AuthenticatorEnabled = user.HasTwoFactor(TwoFactorMethod.AuthenticatorApp),
                 PasskeyEnabled = user.HasTwoFactor(TwoFactorMethod.Passkey),
                 SmsEnabled = user.HasTwoFactor(TwoFactorMethod.Sms),
-                PreferredMethod = user.Methods.Single(x => x.Preferred).Method,
+                PreferredMethod = user.Methods.SingleOrDefault(x => x.Preferred)?.Method,
             },
             LinkedAccountsData = new LinkedAccountsData()
             {
