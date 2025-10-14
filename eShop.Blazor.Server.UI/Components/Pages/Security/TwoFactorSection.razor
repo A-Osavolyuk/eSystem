@@ -3,7 +3,7 @@
 @inject ISnackbar Snackbar
 @inject UserState UserState
 
-@if (!Model.HasTwoFactor)
+@if (!Model.Enabled)
 {
     <MudStack Spacing="3">
         <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">

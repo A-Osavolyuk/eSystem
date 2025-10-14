@@ -16,8 +16,11 @@ public class PasswordData
 
 public class TwoFactorData
 {
-    public bool HasTwoFactor { get; set; }
-    public List<UserTwoFactorMethod> Methods { get; set; } = [];
+    public bool Enabled { get; set; }
+    public bool AuthenticatorEnabled { get; set; }
+    public bool PasskeyEnabled { get; set; }
+    public bool SmsEnabled { get; set; }
+    public TwoFactorMethod PreferredMethod { get; set; }
 }
 
 public class LinkedAccountsData

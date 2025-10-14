@@ -20,25 +20,15 @@
                     Margin="Margin.Dense"
                     AnchorOrigin="Origin.BottomCenter"
                     Immediate="true"
-                    Disabled="@(IsDisabled())">
-                    @foreach (var provider in Model.Methods.Where(x => x.Method != TwoFactorMethod.Sms))
-                    {
-                        if (provider.Method == TwoFactorMethod.AuthenticatorApp)
-                        {
-                            <MudSelectItemExtended 
-                                T="string" 
-                                Value="@TwoFactorTypes.AuthenticatorApp" 
-                                Text="Authenticator app"/>
-                        }
-
-                        if (provider.Method == TwoFactorMethod.Passkey)
-                        {
-                            <MudSelectItemExtended 
-                                T="string" 
-                                Value="@TwoFactorTypes.Passkeys" 
-                                Text="Passkey"/>
-                        }
-                    }
+                    Disabled="@(!Model.AuthenticatorEnabled || !Model.PasskeyEnabled)">
+                    <MudSelectItemExtended 
+                        T="string" 
+                        Value="@TwoFactorTypes.AuthenticatorApp"
+                        Text="Authenticator app"/>
+                    <MudSelectItemExtended 
+                        T="string" 
+                        Value="@TwoFactorTypes.Passkeys" 
+                        Text="Passkey"/>
                 </MudSelectExtended>
             </MudItem>
             <MudItem xs="9">
@@ -63,18 +53,15 @@
 </MudPaper>
 
 @code {
-    [Parameter] 
-    public EventCallback OnRefresh { get; set; }
-    
-    [Parameter] 
-    public TwoFactorData Model { get; set; } = new();
+    [Parameter] public EventCallback OnRefresh { get; set; }
+
+    [Parameter] public TwoFactorData Model { get; set; } = new();
 
     private string? Type { get; set; }
 
     protected override void OnInitialized()
     {
-        var primaryProvider = Model.Methods.First(x => x.Preferred);
-        Type = primaryProvider.Method switch
+        Type = Model.PreferredMethod switch
         {
             TwoFactorMethod.AuthenticatorApp => TwoFactorTypes.AuthenticatorApp,
             TwoFactorMethod.Passkey => TwoFactorTypes.Passkeys,
@@ -96,7 +83,7 @@
             UserId = UserState.UserId,
             PreferredMethod = method
         };
-        
+
         var result = await TwoFactorService.PreferAsync(request);
 
         if (result.Success)
@@ -105,12 +92,6 @@
             await OnRefresh.InvokeAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private bool IsDisabled()
-    {
-        return Model.Methods.Count(
-            x => x.Method is TwoFactorMethod.AuthenticatorApp or TwoFactorMethod.Passkey) == 1;
     }
 
 }

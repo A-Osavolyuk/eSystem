@@ -23,13 +23,11 @@ public class GetUserLoginMethodsQueryHandler(
             },
             TwoFactorData = new TwoFactorData()
             {
-                HasTwoFactor = user.TwoFactorEnabled,
-                Methods = user.Methods.Select(x => new UserTwoFactorMethod()
-                {
-                    Method = x.Method,
-                    Preferred = x.Preferred,
-                    UpdateDate = x.UpdateDate
-                }).ToList()
+                Enabled = user.TwoFactorEnabled,
+                AuthenticatorEnabled = user.HasTwoFactor(TwoFactorMethod.AuthenticatorApp),
+                PasskeyEnabled = user.HasTwoFactor(TwoFactorMethod.Passkey),
+                SmsEnabled = user.HasTwoFactor(TwoFactorMethod.Sms),
+                PreferredMethod = user.Methods.Single(x => x.Preferred).Method,
             },
             LinkedAccountsData = new LinkedAccountsData()
             {

@@ -13,7 +13,7 @@
                     <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                         Authenticator app
                     </MudTextM3>
-                    @if (Model.Methods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp))
+                    @if (Model.AuthenticatorEnabled)
                     {
                         <MudChip
                             T="string"
@@ -35,7 +35,7 @@
                             Not configured
                         </MudChip>
                     }
-                    @if (Model.Methods.Any(x => x is { Method: TwoFactorMethod.AuthenticatorApp, Preferred: true }))
+                    @if (Model.PreferredMethod == TwoFactorMethod.AuthenticatorApp)
                     {
                         <MudChip
                             T="string"
@@ -78,7 +78,7 @@
                         Variant="Variant.Outlined">
                         Less secure
                     </MudChip>
-                    @if (Model.Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+                    @if (Model.SmsEnabled)
                     {
                         <MudChip
                             T="string"
@@ -100,7 +100,7 @@
                             Not configured
                         </MudChip>
                     }
-                    @if (Model.Methods.Any(x => x is { Method: TwoFactorMethod.Sms, Preferred: true }))
+                    @if (Model.PreferredMethod == TwoFactorMethod.Sms)
                     {
                         <MudChip
                             T="string"
@@ -138,7 +138,7 @@
                     <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                         Secure keys
                     </MudTextM3>
-                    @if (Model.Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                    @if (Model.PasskeyEnabled)
                     {
                         <MudChip
                             T="string"
@@ -160,7 +160,7 @@
                             Not configured
                         </MudChip>
                     }
-                    @if (Model.Methods.Any(x => x is { Method: TwoFactorMethod.Passkey, Preferred: true }))
+                    @if (Model.PreferredMethod == TwoFactorMethod.Passkey)
                     {
                         <MudChip
                             T="string"
@@ -179,7 +179,7 @@
             </MudStack>
             <MudSpacer/>
             <MudStack>
-                @if (Model.Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                @if (Model.PasskeyEnabled)
                 {
                     <MudButton
                         ButtonType="ButtonType.Button"
