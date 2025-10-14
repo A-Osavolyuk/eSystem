@@ -31,7 +31,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("recovery-code/generate")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> GenerateRecoveryCodes([FromBody] GenerateRecoveryCodesRequest request)
+    public async ValueTask<IActionResult> GenerateRecoveryCodesAsync([FromBody] GenerateRecoveryCodesRequest request)
     {
         var result = await sender.Send(new GenerateRecoveryCodesCommand(request));
 
@@ -59,9 +59,23 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("recovery-code/revoke")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> RevokeRecoveryCodes([FromBody] RevokeRecoveryCodesRequest request)
+    public async ValueTask<IActionResult> RevokeRecoveryCodesAsync([FromBody] RevokeRecoveryCodesRequest request)
     {
         var result = await sender.Send(new RevokeRecoveryCodesCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Verify recovery code")]
+    [EndpointDescription("Verify recovery code")]
+    [ProducesResponseType(200)]
+    [HttpPost("recovery-code/verify")]
+    [ValidationFilter]
+    public async ValueTask<IActionResult> VerifyRecoveryCodeAsync([FromBody] VerifyRecoveryCodeRequest codeRequest)
+    {
+        var result = await sender.Send(new VerifyRecoveryCodeCommand(codeRequest));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
