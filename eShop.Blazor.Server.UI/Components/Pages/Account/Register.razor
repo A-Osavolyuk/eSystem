@@ -64,7 +64,7 @@
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">Already have an account?
-                    <MudLink Href="/account/login">
+                    <MudLink Href="@Links.LoginPage">
                         Log In
                     </MudLink>
                 </MudText>
@@ -99,8 +99,8 @@
 
                 Snackbar.Add(result.Message, Severity.Success);
 
-                var returnUrl = HttpUtility.UrlEncode("/account/login");
-                var url = $"/account/register/complete?id={response.UserId}&return_url={returnUrl}";
+                var returnUrl = HttpUtility.UrlEncode(Links.LoginPage);
+                var url = $"{Links.CompleteRegistrationPage}?id={response.UserId}&return_url={returnUrl}";
                 
                 NavigationManager.NavigateTo(url);
             }

@@ -113,8 +113,14 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromForm] private RecoverAccountModel RecoverAccountModel { get; set; } = new();
-    [SupplyParameterFromForm] private CodeModel CodeModel { get; set; } = new();
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
+    
+    [SupplyParameterFromForm] 
+    private RecoverAccountModel RecoverAccountModel { get; set; } = new();
+    
+    [SupplyParameterFromForm] 
+    private CodeModel CodeModel { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm checkAccountForm = new();
@@ -215,7 +221,7 @@
         {
             const string message = "Account was successfully recovered. Now sign-in with your recovery email";
             Snackbar.Add(message, Severity.Success);
-            NavigationManager.NavigateTo("/account/login");
+            NavigationManager.NavigateTo(ReturnUrl);
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

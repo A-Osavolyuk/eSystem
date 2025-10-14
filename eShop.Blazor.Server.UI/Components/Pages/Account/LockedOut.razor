@@ -38,7 +38,7 @@
                 <MudPaper Class="pa-3" Outlined="true">
                     <MudText Align="Align.Center">
                         Want to unlock my account?
-                        <MudLink OnClick="@(() => NavigationManager.NavigateTo($"/account/unlock?id={UserId}"))">
+                        <MudLink Href="@($"{Links.AccountUnlockPage}?id={UserId}")">
                             Unlock
                         </MudLink>
                     </MudText>
@@ -52,6 +52,9 @@
 
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
 
     private LockoutModel Model { get; set; } = new();
 
@@ -69,5 +72,4 @@
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
-
 }

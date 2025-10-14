@@ -17,10 +17,7 @@
                 <MudDivider/>
                 <MudStack Spacing="2" Justify="Justify.Center">
                     <DevicesSection
-                        Model="Model"
-                        OnVerify="@((value) => OnVerifyDeviceAsync(value))"
-                        OnBlock="@((value) => OnBlockDeviceAsync(value))"
-                        OnUnblock="@((value) => OnUnblockDeviceAsync(value))"/>
+                        Model="Model"/>
                 </MudStack>
             </MudStack>
         </MudItem>
@@ -53,23 +50,5 @@
         {
             Snackbar.Add(result.Message, Severity.Error);
         }
-    }
-    
-    private void OnVerifyDeviceAsync(Guid id)
-    {
-        var url = $"/account/device/verify?device={id}";
-        NavigationManager.NavigateTo(url);
-    }
-
-    private void OnBlockDeviceAsync(Guid id)
-    {
-        var url = $"/account/device/block?device={id}";
-        NavigationManager.NavigateTo(url);
-    }
-
-    private void OnUnblockDeviceAsync(Guid id)
-    {
-        var url = $"/account/device/unblock?device={id}";
-        NavigationManager.NavigateTo(url);
     }
 }

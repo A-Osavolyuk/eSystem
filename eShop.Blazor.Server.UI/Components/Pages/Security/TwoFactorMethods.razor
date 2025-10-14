@@ -245,8 +245,8 @@
 @code{
     [Parameter] public TwoFactorData Model { get; set; } = new();
 
-    private readonly string returnUrl = HttpUtility.UrlEncode("/account/security");
+    private readonly string returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
 
-    private string OnViewRecoveryCodes() => $"/account/2fa/recovery-codes?return_url={returnUrl}";
-    private string OnAddPasskey() => $"/account/passkeys/add?return_url={returnUrl}";
+    private string OnViewRecoveryCodes() => $"{Links.RecoveryCodesPage}?return_url={returnUrl}";
+    private string OnAddPasskey() => $"{Links.PasskeyAddPage}?return_url={returnUrl}";
 }

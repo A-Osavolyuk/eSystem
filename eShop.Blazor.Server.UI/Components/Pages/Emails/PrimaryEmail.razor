@@ -33,13 +33,14 @@
     </MudGrid>
 </MudPaper>
 
-@code {
+@code{
     [Parameter] public UserEmailsModel Model { get; set; } = null!;
 
     private void OnChange(string email)
     {
-        var returnUrl = HttpUtility.UrlEncode("/account/emails");
-        var url = $"/account/email/manage?email={email}&type={EmailTypes.Primary}&return_url={returnUrl}";
+        var returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
+        var url = $"{Links.EmailManagePage}?email={email}&type={EmailTypes.Primary}&return_url={returnUrl}";
         NavigationManager.NavigateTo(url);
     }
+
 }

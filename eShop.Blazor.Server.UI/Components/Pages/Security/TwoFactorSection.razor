@@ -65,11 +65,11 @@ else
 
     [Parameter] public EventCallback OnRefresh { get; set; }
 
-    private readonly string returnUrl = HttpUtility.UrlEncode("/account/security");
+    private readonly string returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
 
     private string OnEnable()
     {
-        return $"/account/2fa/enable?return_url={returnUrl}";
+        return $"{Links.EnableTwoFactorPage}?return_url={returnUrl}";
     }
 
     private async Task OnDisableAsync()

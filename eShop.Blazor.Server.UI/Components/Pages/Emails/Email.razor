@@ -220,27 +220,27 @@
     [Parameter] 
     public EventCallback OnRefresh { get; set; }
     
-    private readonly string returnUrl = HttpUtility.UrlEncode("/account/emails");
+    private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
 
     private string OnVerify(string type, string? email = null)
     {
         if (type == EmailTypes.Secondary && !string.IsNullOrEmpty(email))
         {
-            return $"/account/email/verify?type={type}&email={email}&return_url={returnUrl}";
+            return $"{Links.EmailVerifyPage}?type={type}&email={email}&return_url={returnUrl}";
         }
 
-        return $"/account/email/verify?type={type}&return_url={returnUrl}";
+        return $"{Links.EmailVerifyPage}?type={type}&return_url={returnUrl}";
     }
     
         
     private string OnChange(string type)
     {
-        return $"/account/email/change?type={type}&return_url={returnUrl}";
+        return $"{Links.EmailChangePage}?type={type}&return_url={returnUrl}";
     }
     
     private string OnReset(string type)
     {
-        return $"/account/email/reset?type={type}&return_url={returnUrl}";
+        return $"{Links.EmailResetPage}?type={type}&return_url={returnUrl}";
     }
     
     private async Task OnRemove(string email)

@@ -58,6 +58,9 @@
 
     [SupplyParameterFromQuery(Name = "type")]
     public string Type { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
 
     public CodeModel Model { get; set; } = new();
 
@@ -118,7 +121,7 @@
         if (result.Success)
         {
             await UserState.Change();
-            NavigationManager.NavigateTo("/account/emails");
+            NavigationManager.NavigateTo(ReturnUrl);
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

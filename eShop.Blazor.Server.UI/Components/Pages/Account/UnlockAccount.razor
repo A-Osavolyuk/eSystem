@@ -54,6 +54,9 @@
 
     [SupplyParameterFromQuery(Name = "id")]
     private Guid UserId { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
 
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
@@ -92,7 +95,7 @@
             if (result.Success)
             {
                 Snackbar.Add("Account was successfully recovered", Severity.Success);
-                NavigationManager.NavigateTo("/account/login");
+                NavigationManager.NavigateTo(ReturnUrl);
             }
             else
             {

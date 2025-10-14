@@ -30,12 +30,12 @@
     {
         if (string.IsNullOrEmpty(ReturnUrl))
         {
-            NavigationManager.NavigateTo("/account/login");
+            NavigationManager.NavigateTo(Links.LoginPage);
         }
         else
         {
             var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-            NavigationManager.NavigateTo($"/account/login?return_url={returnUrl}");
+            NavigationManager.NavigateTo($"{Links.LoginPage}?return_url={returnUrl}");
         }
     }
 }

@@ -19,7 +19,7 @@
             Align="Align.Center"
             Typo="Typo.h5"
             Class="ml-3 cursor-pointer"
-            @onclick="@(() => NavigationManager.NavigateTo("/products"))">
+            @onclick="@(() => NavigationManager.NavigateTo(Links.ProductsPage))">
             eShop
         </MudText>
         <MudSpacer/>
@@ -28,13 +28,13 @@
                 <MudButton
                     StartIcon="@Icons.Material.Filled.Login"
                     Color="Color.Primary"
-                    Href="/account/login">
+                    Href="@Links.LoginPage">
                     Log In
                 </MudButton>
                 <MudButton
                     StartIcon="@Icons.Material.Filled.AppRegistration"
                     Color="Color.Primary"
-                    Href="/account/register"
+                    Href="@Links.RegisterPage"
                     Class="ml-3">
                     Register
                 </MudButton>

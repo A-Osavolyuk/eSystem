@@ -154,14 +154,14 @@
             if (response!.IsTwoFactorEnabled)
             {
                 Snackbar.Add("Device successfully trusted", Severity.Success);
-                var url = $"/account/2fa/login?id={response.UserId}";
+                var url = $"{Links.TwoFactorLoginPage}?id={response.UserId}";
                 NavigationManager.NavigateTo(url);
             }
             else
             {
                 UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
-                NavigationManager.NavigateTo("/products");
+                NavigationManager.NavigateTo(Links.ProductsPage);
                 Snackbar.Add(result.Message, Severity.Success);
             }
         }

@@ -1,4 +1,5 @@
 ﻿@page "/account/login"
+@using OpenTelemetry.Trace
 @inherits PageBase
 
 @inject ISecurityService SecurityService
@@ -55,7 +56,7 @@
                     StartIcon="@Icons.Material.Filled.Key"
                     Variant="Variant.Filled"
                     Color="Color.Primary"
-                    Href="/account/passkey/sign-in"
+                    Href="@Links.PasskeySignInPage"
                     FullWidth="true">
                     Sign In with Passkey
                 </MudLoadingButton>
@@ -111,7 +112,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink Href="/account/register">
+                    <MudLink Href="@Links.RegisterPage">
                         Register
                     </MudLink>
                 </MudText>
@@ -127,7 +128,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Lost access to your account?
-                    <MudLink Href="/account/recover">
+                    <MudLink Href="@OnRecoverAccount()">
                         Recover account
                     </MudLink>
                 </MudText>
@@ -173,12 +174,12 @@
                     if (!string.IsNullOrEmpty(ReturnUrl))
                     {
                         var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-                        var url = $"/account/2fa/login?id={response.UserId}&return_url={returnUrl}";
+                        var url = $"{Links.TwoFactorLoginPage}?id={response.UserId}&return_url={returnUrl}";
                         NavigationManager.NavigateTo(url);
                     }
                     else
                     {
-                        var url = $"/account/2fa/login?id={response.UserId}";
+                        var url = $"{Links.TwoFactorLoginPage}?id={response.UserId}";
                         NavigationManager.NavigateTo(url);
                     }
 
@@ -187,7 +188,7 @@
 
                 UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
-                NavigationManager.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? "/products" : ReturnUrl);
+                NavigationManager.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? Links.ProductsPage : ReturnUrl);
                 Snackbar.Add(result.Message, Severity.Success);
             }
             else
@@ -204,7 +205,7 @@
                 if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
                 {
                     var device = response.DeviceId;
-                    var url = $"/account/device/trust?device={device}&user={userId}";
+                    var url = $"{Links.DeviceTrustPage}?device={device}&user={userId}";
 
                     Snackbar.Add(result.Message, Severity.Info);
                     NavigationManager.NavigateTo(url);
@@ -213,7 +214,7 @@
 
                 if (!response.IsEmailConfirmed)
                 {
-                    var url = $"/account/register/complete?id={userId}";
+                    var url = $"{Links.CompleteRegistrationPage}?id={userId}";
 
                     Snackbar.Add(result.Message, Severity.Info);
                     NavigationManager.NavigateTo(url);
@@ -234,7 +235,7 @@
                 }
                 else
                 {
-                    var url = $"/account/locked-out?id={userId}";
+                    var url = $"{Links.LockedOutPage}?id={userId}";
                     NavigationManager.NavigateTo(url);
                 }
             }
@@ -254,8 +255,13 @@
 
     private string OnForgotPassword()
     {
-        var returnUrl = HttpUtility.UrlEncode("/account/login");
-        return $"/account/password/forgot?return_url={returnUrl}";
+        var returnUrl = HttpUtility.UrlEncode(Links.LoginPage);
+        return $"{Links.ForgotPasswordPage}?return_url={returnUrl}";
     }
 
+    private string OnRecoverAccount()
+    {
+        var returnUrl = HttpUtility.UrlEncode(Links.LoginPage);
+        return $"{Links.RecoverPage}?return_url={returnUrl}";
+    }
 }
