@@ -45,8 +45,27 @@
                                                             Setup authenticator app
                                                         </MudTextM3>
                                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="opacity-50">
-                                                            Authenticator apps and browser extensions like 1Password,
-                                                            Authy, Microsoft Authenticator, etc. generate one-time 
+                                                            Authenticator apps and browser extensions like 
+                                                            <MudLink
+                                                                Typo="Typo.caption"
+                                                                Class="text-decoration-underline"
+                                                                Color="Color.Default"
+                                                                Href="@ExternalLinks.OnePassword">
+                                                                1Password</MudLink>,
+                                                            <MudLink
+                                                                Typo="Typo.caption"
+                                                                Class="text-decoration-underline"
+                                                                Color="Color.Default"
+                                                                Href="@ExternalLinks.Authy">
+                                                                Authy</MudLink>,
+                                                            <MudLink
+                                                                Typo="Typo.caption"
+                                                                Class="text-decoration-underline"
+                                                                Color="Color.Default"
+                                                                Href="@ExternalLinks.MicrosoftAuthenticator">
+                                                                Microsoft Authenticator
+                                                            </MudLink>,
+                                                            etc. generate one-time 
                                                             passwords that are used as a second factor to verify your 
                                                             identity when prompted during sign-in.
                                                         </MudTextM3>
@@ -124,7 +143,7 @@
                                                         <MudLoadingButton
                                                             Size="Size.Small"
                                                             Variant="Variant.Filled"
-                                                            Color="Color.Primary"
+                                                            Color="Color.Success"
                                                             Disabled="@(Model.Code.Length <= 5)"
                                                             ButtonType="ButtonType.Button"
                                                             OnClick="@(async () => await OnVerifyAsync())">

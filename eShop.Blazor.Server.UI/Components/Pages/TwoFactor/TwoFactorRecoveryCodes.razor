@@ -40,7 +40,28 @@
                                 </MudTextM3>
                                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
                                     Keep your recovery codes as safe as your password. We recommend saving them with
-                                    a password manager such as 1Password, Authy, or Keeper.
+                                    a password manager such as                                                            
+                                    <MudLink
+                                        Typo="Typo.caption"
+                                        Class="text-decoration-underline"
+                                        Color="Color.Default"
+                                        Href="@ExternalLinks.OnePassword">
+                                        1Password
+                                    </MudLink>,
+                                    <MudLink
+                                        Typo="Typo.caption"
+                                        Class="text-decoration-underline"
+                                        Color="Color.Default"
+                                        Href="@ExternalLinks.Authy">
+                                        Authy
+                                    </MudLink> or
+                                    <MudLink
+                                        Typo="Typo.caption"
+                                        Class="text-decoration-underline"
+                                        Color="Color.Default"
+                                        Href="@ExternalLinks.Keeper">
+                                        Keeper
+                                    </MudLink>,.
                                 </MudTextM3>
                             </MudStack>
                             @if (recoveryCodesRegenerated)
