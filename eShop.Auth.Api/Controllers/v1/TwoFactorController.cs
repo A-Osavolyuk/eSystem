@@ -73,6 +73,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("recovery-code/verify")]
     [ValidationFilter]
+    [AllowAnonymous]
     public async ValueTask<IActionResult> VerifyRecoveryCodeAsync([FromBody] VerifyRecoveryCodeRequest codeRequest)
     {
         var result = await sender.Send(new VerifyRecoveryCodeCommand(codeRequest));
