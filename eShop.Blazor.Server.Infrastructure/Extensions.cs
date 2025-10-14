@@ -46,6 +46,7 @@ public static class Extensions
         builder.Services.AddScoped<IFetchClient, FetchClient>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
         builder.Services.AddScoped<DownloadManager>();
+        builder.Services.AddScoped<ClipboardManager>();
     }
 
     private static void AddJwtAuthentication(this IHostApplicationBuilder builder)
