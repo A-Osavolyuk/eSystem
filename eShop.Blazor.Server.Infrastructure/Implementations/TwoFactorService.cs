@@ -36,6 +36,11 @@ public class TwoFactorService(
             new HttpRequest { Url = $"{Gateway}/{BasePath}/recovery-code/revoke", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
+    public async ValueTask<HttpResponse> VerifyRecoveryCodeAsync(VerifyRecoveryCodeRequest request) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/{BasePath}/recovery-code/verify", Method = HttpMethod.Post, Data = request }, 
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
+
     public async ValueTask<HttpResponse> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/{BasePath}/qr-code/generate", Method = HttpMethod.Post, Data = request }, 
