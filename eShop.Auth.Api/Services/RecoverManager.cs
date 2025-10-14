@@ -45,9 +45,10 @@ public sealed class RecoverManager(
         CancellationToken cancellationToken = default)
     {
         if (user.RecoveryCodes.Count == 0) return Results.BadRequest("User does not have any recovery code.");
-
-        var protectedCode = codeProtector.Protect(code);
-        var entity = user.RecoveryCodes.FirstOrDefault(x => code.Equals(protectedCode));
+        
+        var entity = user.RecoveryCodes.FirstOrDefault(
+            x => codeProtector.Unprotect(x.ProtectedCode) == code);
+        
         if (entity is null) return Results.BadRequest("Invalid recovery code.");
 
         context.UserRecoveryCodes.Remove(entity);
