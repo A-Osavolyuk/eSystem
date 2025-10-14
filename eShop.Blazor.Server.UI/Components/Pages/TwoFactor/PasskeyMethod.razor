@@ -41,13 +41,24 @@
                     OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.AuthenticatorApp))">
                     Authenticator app
                 </MudButton>
+                @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+                {
+                    <MudButton
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Sms))">
+                        SMS
+                    </MudButton>
+                }
                 <MudButton
                     FullWidth="true"
                     Color="Color.Error"
                     Variant="Variant.Outlined"
                     ButtonType="ButtonType.Button"
                     Size="Size.Medium"
-                    Href="@(OnRecovery())">
+                    OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.RecoveryCode))">
                     Recovery codes
                 </MudButton>
             </MudStack>
@@ -102,13 +113,4 @@
 
     private void Expand() => expanded = !expanded;
     private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
-
-    private string OnRecovery()
-    {
-        if (string.IsNullOrEmpty(ReturnUrl)) return $"/account/2fa/recovery?id={UserId}";
-
-        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-        return $"/account/2fa/recovery?id={UserId}&return_url={returnUrl}";
-    }
-
 }

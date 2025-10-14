@@ -12,9 +12,18 @@
         <MudItem xs="3">
             <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
                 <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.LockPerson"/>
-                <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
-                    Two-factor authentication
-                </MudTextM3>
+                @if (PreferredMethod != TwoFactorMethod.RecoveryCode)
+                {
+                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                        Two-factor authentication
+                    </MudTextM3>
+                }
+                else
+                {
+                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                        Two-factor recovery
+                    </MudTextM3>
+                }
                 @switch (PreferredMethod)
                 {
                     case TwoFactorMethod.AuthenticatorApp:
@@ -27,6 +36,13 @@
                     case TwoFactorMethod.Passkey:
                     {
                         <PasskeyMethod
+                            Methods="Methods"
+                            OnChangeMethod="ChangeMethod"/>
+                        break;
+                    }
+                    case TwoFactorMethod.RecoveryCode:
+                    {
+                        <RecoveryCodeMethod
                             Methods="Methods"
                             OnChangeMethod="ChangeMethod"/>
                         break;

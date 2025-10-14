@@ -1,5 +1,4 @@
-﻿@inject CodeModelValidator Validator
-@inject AuthenticationManager AuthenticationManager
+﻿@inject AuthenticationManager AuthenticationManager
 @inject UserState UserState
 @inject NavigationManager NavigationManager
 @inject ITwoFactorService TwoFactorService
@@ -7,12 +6,12 @@
 
 <MudStack Spacing="4">
     <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
-        Enter the code from your two-factor authentication app or browser extension below.
+        Enter one of the 16 recovery codes saved during 2FA configuration.
     </MudTextM3>
-    <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
+    <MudForm @ref="form" Model="Model">
         <MudTextFieldExtended
             Mask="mask"
-            Placeholder="XXXXXX"
+            Placeholder="XXXXXXXXXX"
             Variant="Variant.Outlined"
             Margin="Margin.Dense"
             Clearable="true"
@@ -26,6 +25,7 @@
             Color="Color.Success"
             Variant="Variant.Filled"
             ButtonType="ButtonType.Button"
+            Disabled="@(Model.Code.Length < 9)"
             OnClick="@(async () => await OnSignInAsync())">
             Verify
         </MudButton>
@@ -52,6 +52,17 @@
                         Passkey
                     </MudButton>
                 }
+                @if (Methods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp))
+                {
+                    <MudButton
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.AuthenticatorApp))">
+                        Authenticator app
+                    </MudButton>
+                }
                 @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
                 {
                     <MudButton
@@ -63,14 +74,6 @@
                         SMS
                     </MudButton>
                 }
-                <MudButton
-                    Color="Color.Error"
-                    Variant="Variant.Outlined"
-                    ButtonType="ButtonType.Button"
-                    Size="Size.Medium"
-                    OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.RecoveryCode))">
-                    Recovery codes
-                </MudButton>
             </MudStack>
         </MudCollapse>
     </MudStack>
@@ -85,15 +88,15 @@
     
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
-    
+
     [SupplyParameterFromQuery(Name = "return_url")]
-    public string? ReturnUrl { get; set; }
+    public string ReturnUrl { get; set; } = string.Empty;
     
     [SupplyParameterFromForm] 
     public CodeModel Model { get; set; } = new();
     
     private MudForm form = new();
-    private readonly PatternMask mask = new("000000");
+    private readonly PatternMask mask = new("**********");
     private bool expanded;
 
     private async Task OnSignInAsync()
@@ -102,17 +105,17 @@
 
         if (form.IsValid)
         {
-            var request = new AuthenticatorSignInRequest()
+            var request = new VerifyRecoveryCodeRequest()
             {
                 UserId = UserId,
                 Code = Model.Code
             };
             
-            var result = await TwoFactorService.AuthenticatorSignInAsync(request);
+            var result = await TwoFactorService.VerifyRecoveryCodeAsync(request);
 
             if (result.Success)
             {
-                var response = result.Get<AuthenticatorSignInResponse>()!;
+                var response = result.Get<VerifyRecoveryCodeResponse>()!;
 
                 UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
