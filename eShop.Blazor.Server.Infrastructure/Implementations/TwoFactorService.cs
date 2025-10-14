@@ -14,7 +14,7 @@ public class TwoFactorService(
     
     public async ValueTask<HttpResponse> AuthenticatorSignInAsync(AuthenticatorSignInRequest request) =>
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/{BasePath}/login", Method = HttpMethod.Post, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/{BasePath}/sign-in", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> EnableAsync(EnableTwoFactorRequest request) =>
