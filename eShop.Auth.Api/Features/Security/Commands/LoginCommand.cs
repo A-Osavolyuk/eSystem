@@ -116,8 +116,8 @@ public sealed class LoginCommandHandler(
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var lockoutResult = await lockoutManager.BlockAsync(user, LockoutType.TooManyFailedLoginAttempts,
-                permanent: true, cancellationToken: cancellationToken);
+            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user, 
+                LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 

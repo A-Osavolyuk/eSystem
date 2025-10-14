@@ -23,10 +23,10 @@ public sealed class LoginWith2FaCommandHandler(
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly ISecretManager secretManager = secretManager;
     private readonly SecretProtector protector = protector;
     private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(AuthenticatorSignInCommand request,
         CancellationToken cancellationToken)
@@ -36,9 +36,9 @@ public sealed class LoginWith2FaCommandHandler(
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
-        var clientInfo = httpContextAccessor.HttpContext?.GetClientInfo()!;
+        var userAgent = httpContext.GetUserAgent()!;
+        var ipAddress = httpContext.GetIpV4()!;
+        var clientInfo = httpContext.GetClientInfo()!;
 
         var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
 
@@ -89,8 +89,8 @@ public sealed class LoginWith2FaCommandHandler(
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var lockoutResult = await lockoutManager.BlockAsync(user, LockoutType.TooManyFailedLoginAttempts,
-                permanent: true, cancellationToken: cancellationToken);
+            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user, 
+                LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 

@@ -444,7 +444,6 @@ public sealed class UserManager(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Type = LockoutType.None,
-            Enabled = false,
             CreateDate = DateTimeOffset.UtcNow,
         };
 

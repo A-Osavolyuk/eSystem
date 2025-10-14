@@ -6,7 +6,5 @@ public enum LockoutPeriod
     Week,
     Month,
     Quarter,
-    Year,
-    Permanent,
-    Custom,
+    Year
 }
