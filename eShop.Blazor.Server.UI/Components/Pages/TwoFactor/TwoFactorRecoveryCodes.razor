@@ -5,6 +5,8 @@
 @attribute [Authorize]
 
 @inject ITwoFactorService TwoFactorService
+@inject DownloadManager DownloadManager
+@inject ClipboardManager ClipboardManager
 
 <Title Text="Two-factor recovery codes"></Title>
 
@@ -152,7 +154,8 @@
                                             Color="Color.Default"
                                             ButtonType="ButtonType.Button"
                                             Size="Size.Small"
-                                            StartIcon="@Icons.Material.Outlined.Download">
+                                            StartIcon="@Icons.Material.Outlined.Download"
+                                            OnClick="@(async () => await OnDownloadAsync())">
                                             Download
                                         </MudButton>
                                         <MudButton
@@ -168,7 +171,8 @@
                                             Color="Color.Default"
                                             ButtonType="ButtonType.Button"
                                             Size="Size.Small"
-                                            StartIcon="@Icons.Material.Outlined.ContentCopy">
+                                            StartIcon="@Icons.Material.Outlined.ContentCopy"
+                                            OnClick="@(async () => await OnCopyAsync())">
                                             Copy
                                         </MudButton>
                                     </MudStack>
@@ -211,6 +215,8 @@
     public string ReturnUrl { get; set; } = string.Empty;
 
     private List<string> Codes { get; set; } = [];
+    private ConfirmationContext? confirmationContext;
+    private bool recoveryCodesRegenerated;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -227,9 +233,6 @@
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
-
-    private ConfirmationContext? confirmationContext;
-    private bool recoveryCodesRegenerated;
 
     protected override void OnInitialized()
     {
@@ -251,5 +254,18 @@
             recoveryCodesRegenerated = true;
         }
         else Snackbar.Add(result.Message, Severity.Error);
+    }
+    
+    private async Task OnDownloadAsync()
+    {
+        await DownloadManager.DownloadAsync("eaccount-recovery-codes.txt", Codes);
+        Snackbar.Add("Downloaded", Severity.Success);
+    }
+
+    private async Task OnCopyAsync()
+    {
+        var codes = string.Join(' ', Codes);
+        await ClipboardManager.CopyAsync(codes);
+        Snackbar.Add("Copied", Severity.Success);
     }
 }
