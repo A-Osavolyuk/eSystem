@@ -2,18 +2,18 @@
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 
-public record DisableTwoFactorCommand(DisableTwoFactorRequest Request) : IRequest<Result>;
+public record DisableCommand(DisableTwoFactorRequest Request) : IRequest<Result>;
 
 public class DisableTwoFactorCommandHandler(
     IUserManager userManager,
     ITwoFactorManager twoFactorManager,
-    IVerificationManager verificationManager) : IRequestHandler<DisableTwoFactorCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<DisableCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IVerificationManager verificationManager = verificationManager;
 
-    public async Task<Result> Handle(DisableTwoFactorCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DisableCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");

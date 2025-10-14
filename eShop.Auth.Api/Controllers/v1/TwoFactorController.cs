@@ -90,7 +90,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> EnableTwoFactorAsync([FromBody] EnableTwoFactorRequest request)
     {
-        var result = await sender.Send(new EnableTwoFactorCommand(request));
+        var result = await sender.Send(new EnableCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
@@ -104,7 +104,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> DisableTwoFactorAsync([FromBody] DisableTwoFactorRequest request)
     {
-        var result = await sender.Send(new DisableTwoFactorCommand(request));
+        var result = await sender.Send(new DisableCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
