@@ -4,8 +4,21 @@
 
 @attribute [Authorize]
 
-<Title Text="Recovery codes print"></Title>
+@inject PrintManager PrintManager
+
+<PageTitle>Recovery codes</PageTitle>
+
+<script>
+    window.addEventListener("afterprint", () => window.close());
+</script>
 
 @code {
-    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await PrintManager.PrintAsync();
+        }
+    }
+
 }

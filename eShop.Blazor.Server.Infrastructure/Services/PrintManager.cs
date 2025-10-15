@@ -8,6 +8,6 @@ public class PrintManager(IJSRuntime jsRuntime)
 
     public async Task PrintAsync()
     {
-        await jsRuntime.InvokeVoidAsync("print");
+        await jsRuntime.InvokeVoidAsync("triggerPrint");
     }
 }
