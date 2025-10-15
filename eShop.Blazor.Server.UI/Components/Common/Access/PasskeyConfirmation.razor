@@ -23,15 +23,40 @@
             }
             else
             {
-                <MudButton
-                    ButtonType="ButtonType.Button"
-                    Variant="Variant.Filled"
-                    Color="Color.Success"
-                    Size="Size.Small"
-                    FullWidth="true"
-                    OnClick="@(async () => await OnVerifyAsync())">
-                    Use passkey
-                </MudButton>
+                if (showError)
+                {
+                    <MudButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Success"
+                        Size="Size.Small"
+                        FullWidth="true"
+                        OnClick="@(async () => await OnVerifyAsync())">
+                        Retry passkey
+                    </MudButton>
+                    <MudAlert 
+                        Severity="Severity.Error" 
+                        Variant="Variant.Outlined" 
+                        Class="w-100" 
+                        Dense="true" 
+                        ContentAlignment="HorizontalAlignment.Center">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center" Class="w-100">
+                            Failed on using passkey
+                        </MudTextM3>
+                    </MudAlert>
+                }
+                else
+                {
+                    <MudButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Success"
+                        Size="Size.Small"
+                        FullWidth="true"
+                        OnClick="@(async () => await OnVerifyAsync())">
+                        Use passkey
+                    </MudButton>
+                }
             }
         </MudStack>
     </MudPaper>
@@ -70,11 +95,13 @@
     [Parameter] public ConfirmationContext Context { get; set; } = null!;
     [Parameter] public List<UserVerificationMethodDto> Methods { get; set; } = [];
 
-    private bool isLoading = false;
+    private bool isLoading;
+    private bool showError;
 
     private async Task OnVerifyAsync()
     {
         isLoading = true;
+        showError = false;
         var request = new GenerateRequestOptionsRequest() { Username = UserState.Credentials!.Username! };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
@@ -85,6 +112,7 @@
         }
         else
         {
+            showError = true;
             isLoading = false;
             Snackbar.Add(result.Message, Severity.Error);
         }
@@ -92,21 +120,33 @@
 
     private async Task VerifyAsync(PublicKeyCredentialRequestOptions options)
     {
-        var credential = await PasskeyManager.AuthenticateAsync(options);
-        var request = new VerifyPasskeyRequest()
+        try
         {
-            UserId = UserState.UserId,
-            Purpose = Context.Purpose,
-            Action = Context.Action,
-            Credential = credential
-        };
+            var credential = await PasskeyManager.AuthenticateAsync(options);
+            var request = new VerifyPasskeyRequest()
+            {
+                UserId = UserState.UserId,
+                Purpose = Context.Purpose,
+                Action = Context.Action,
+                Credential = credential
+            };
 
-        var result = await VerificationService.VerifyPasskeyAsync(request);
+            var result = await VerificationService.VerifyPasskeyAsync(request);
 
-        if (result.Success) await OnAccessConfirmed.InvokeAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
+            if (result.Success)
+            {
+                await OnAccessConfirmed.InvokeAsync();
+                showError = false;
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
 
-        isLoading = false;
+            isLoading = false;
+        }
+        catch (Exception)
+        {
+            isLoading = false;
+            showError = true;
+        }
     }
 
 }
