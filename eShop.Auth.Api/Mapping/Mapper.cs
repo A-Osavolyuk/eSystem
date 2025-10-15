@@ -19,16 +19,6 @@ public static class Mapper
         };
     }
 
-    public static UserPasskeyDto Map(UserPasskeyEntity source)
-    {
-        return new()
-        {
-            Id = source.Id,
-            DisplayName = source.DisplayName,
-            CreateDate = source.CreateDate,
-        };
-    }
-
     public static UserPersonalDto Map(PersonalDataEntity source)
     {
         return new UserPersonalDto()
