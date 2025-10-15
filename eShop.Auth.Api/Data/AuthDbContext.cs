@@ -146,7 +146,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<UserSecretEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Secret).HasMaxLength(20);
+            entity.Property(x => x.Secret).HasMaxLength(50);
 
             entity.HasOne(x => x.User)
                 .WithOne()
