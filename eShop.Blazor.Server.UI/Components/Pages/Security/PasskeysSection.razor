@@ -60,7 +60,10 @@
                     <MudDivider/>
                     @foreach (var passkey in Model.Passkeys)
                     {
-                        <Passkey Model="passkey" OnDelete="OnDelete" />
+                        <Passkey 
+                            Model="passkey" 
+                            OnDelete="@(async (value) => await OnDelete(value))"
+                            OnChange="@(async (value) => await OnChange(value))"/>
                     }
                 </MudStack>
             }
@@ -112,6 +115,21 @@
     {
         var returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
         return $"{Links.PasskeyAddPage}?return_url={returnUrl}";
+    }
+
+    private async Task OnChange(UserPasskeyDto passkey)
+    {
+        var request = new SetPasskeyNameRequest()
+        {
+            UserId = UserState.UserId,
+            PasskeyId = passkey.Id,
+            DisplayName = passkey.DisplayName
+        };
+        
+        var result = await PasskeyService.SetNameAsync(request);
+
+        if (result.Success) await OnRefresh.InvokeAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnDelete(UserPasskeyDto passkey)

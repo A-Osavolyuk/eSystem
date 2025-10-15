@@ -1,57 +1,112 @@
 ﻿<MudStack Row="true" Spacing="0">
-    <MudStack Spacing="1">
-        <MudStack Row="true" Spacing="3">
-            <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50 pt-1">
-                @Model.DisplayName
-            </MudTextM3>
-            <MudChip
-                T="string"
-                Class="m-0"
-                Variant="Variant.Outlined"
-                Color="Color.Default"
-                Size="Size.Small"
-                Text="Seen from this browser"/>
-        </MudStack>
-        <MudStack Row="true" Spacing="1">
-            <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
-                @(Model.GetInfo())
-            </MudTextM3>
-        </MudStack>
-    </MudStack>
-    <MudSpacer/>
-    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
-        <MudStack>
-            <MudTooltip Text="Edit passkey nickname">
-                <MudIconButton
+    @if (!editMode)
+    {
+        <MudStack Spacing="1">
+            <MudStack Row="true" Spacing="3">
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50 pt-1">
+                    @Model.DisplayName
+                </MudTextM3>
+                <MudChip
+                    T="string"
+                    Class="m-0"
+                    Variant="Variant.Outlined"
                     Color="Color.Default"
-                    Variant="Variant.Outlined"
-                    ButtonType="ButtonType.Button"
                     Size="Size.Small"
-                    OnClick="@(async () => await OnEdit.InvokeAsync(Model))"
-                    Icon="@Icons.Material.Outlined.Edit"/>
-            </MudTooltip>
+                    Text="Seen from this browser"/>
+            </MudStack>
+            <MudStack Row="true" Spacing="1">
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                    @(Model.GetInfo())
+                </MudTextM3>
+            </MudStack>
         </MudStack>
-        <MudStack>
-            <MudTooltip Text="@($"Delete '{Model.DisplayName}' passkey")">
-                <MudIconButton
-                    Color="Color.Error"
-                    Variant="Variant.Outlined"
-                    ButtonType="ButtonType.Button"
-                    Size="Size.Small"
-                    OnClick="@(async () => await OnDelete.InvokeAsync(Model))"
-                    Icon="@Icons.Material.Outlined.Delete"/>
-            </MudTooltip>
+        <MudSpacer/>
+        <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+            <MudStack>
+                <MudTooltip Text="Edit passkey nickname">
+                    <MudIconButton
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Small"
+                        OnClick="@(() => ToggleEditMode())"
+                        Icon="@Icons.Material.Outlined.Edit"/>
+                </MudTooltip>
+            </MudStack>
+            <MudStack>
+                <MudTooltip Text="@($"Delete '{Model.DisplayName}' passkey")">
+                    <MudIconButton
+                        Color="Color.Error"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Small"
+                        OnClick="@(async () => await OnDelete.InvokeAsync(Model))"
+                        Icon="@Icons.Material.Outlined.Delete"/>
+                </MudTooltip>
+            </MudStack>
         </MudStack>
-    </MudStack>
+    }
+    else
+    {
+        <MudStack Spacing="0">
+            <MudTextM3 Typo="TypoM3.Label" Size="Size.Medium">
+                Nickname:
+            </MudTextM3>
+            <MudStack Row="true" Spacing="2">
+                <MudForm Model="Model" @ref="form">
+                    <MudTextFieldExtended
+                        Style="width: 400px;"
+                        Typo="Typo.body2"
+                        @bind-Value="Model.DisplayName"
+                        For="() => Model.DisplayName"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        Immediate="true"
+                        Clearable="true"/>
+                </MudForm>
+                <MudStack Justify="Justify.Center" Row="true" Class="py-1">
+                    <MudButton
+                        Size="Size.Small"
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"
+                        OnClick="@(async () => await OnSaveAsync())">
+                        Save
+                    </MudButton>
+                </MudStack>
+                <MudStack Justify="Justify.Center" Row="true" Class="py-1">
+                    <MudButton
+                        Variant="Variant.Text"
+                        Color="Color.Default"
+                        Size="Size.Small"
+                        ButtonType="ButtonType.Button"
+                        OnClick="@(() => ToggleEditMode())">
+                        Cancel
+                    </MudButton>
+                </MudStack>
+            </MudStack>
+        </MudStack>
+    }
 </MudStack>
 
 @code {
     [Parameter] 
     public UserPasskeyDto Model { get; set; } = new();
-    
-    [Parameter]
+
+    [Parameter] 
     public EventCallback<UserPasskeyDto> OnDelete { get; set; }
-    
-    [Parameter]
-    public EventCallback<UserPasskeyDto> OnEdit { get; set; }
+
+    [Parameter] 
+    public EventCallback<UserPasskeyDto> OnChange { get; set; }
+
+    private MudForm form = new();
+    private bool editMode;
+
+    private void ToggleEditMode() => editMode = !editMode;
+
+    private async Task OnSaveAsync()
+    {
+        await OnChange.InvokeAsync(Model);
+        ToggleEditMode();
+    }
 }
