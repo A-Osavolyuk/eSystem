@@ -1,4 +1,4 @@
-﻿async function clipboardCopy(text){
+﻿async function clipboard(text){
     try {
         await navigator.clipboard.writeText(text);
         return true;
