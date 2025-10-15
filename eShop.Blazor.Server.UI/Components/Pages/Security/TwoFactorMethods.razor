@@ -247,6 +247,6 @@
 
     private readonly string returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
 
-    private string OnViewRecoveryCodes() => $"{Links.RecoveryCodesPage}?return_url={returnUrl}";
+    private string OnViewRecoveryCodes() => $"{Links.RecoveryCodesViewPage}?return_url={returnUrl}";
     private string OnAddPasskey() => $"{Links.PasskeyAddPage}?return_url={returnUrl}";
 }

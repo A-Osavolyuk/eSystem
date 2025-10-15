@@ -1,4 +1,4 @@
-﻿@page "/account/2fa/recovery-codes"
+﻿@page "/account/2fa/recovery-codes/view"
 
 @inherits PageBase
 
@@ -163,7 +163,9 @@
                                             Color="Color.Default"
                                             ButtonType="ButtonType.Button"
                                             Size="Size.Small"
-                                            StartIcon="@Icons.Material.Outlined.Print">
+                                            StartIcon="@Icons.Material.Outlined.Print"
+                                            Href="@Links.RecoveryCodesPrintPage"
+                                            Target="@LinkTargets.Blank">
                                             Print
                                         </MudButton>
                                         <MudButton
@@ -267,5 +269,11 @@
         var codes = string.Join(' ', Codes);
         await ClipboardManager.CopyAsync(codes);
         Snackbar.Add("Copied", Severity.Success);
+    }
+
+    private void OnPrint()
+    {
+        Snackbar.Add("Not implemented yet", Severity.Warning);
+        //TODO: Implement recovery codes print
     }
 }

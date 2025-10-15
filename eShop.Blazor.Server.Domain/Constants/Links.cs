@@ -15,7 +15,8 @@ public static class Links
     public const string PasskeySignInPage = "/account/passkeys/sign-in";
     public const string PasskeyAddPage = "/account/passkeys/add";
     public const string TwoFactorLoginPage = "/account/2fa/sign-in";
-    public const string RecoveryCodesPage = "/account/2fa/recovery-codes";
+    public const string RecoveryCodesViewPage = "/account/2fa/recovery-codes/view";
+    public const string RecoveryCodesPrintPage = "/account/2fa/recovery-codes/print";
     public const string EnableTwoFactorPage = "/account/2fa/enable";
     public const string OAuthSignedUpPage = "/account/oauth/signed-up";
     public const string EmailsPage = "/account/emails";
