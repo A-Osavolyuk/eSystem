@@ -32,7 +32,7 @@ public class GenerateQrCodeCommandHandler(
         var response = new GenerateQrCodeResponse()
         {
             QrCode = qrCode,
-            Secret = secret.Secret
+            Secret = unprotectedSecret
         };
             
         return Result.Success(response);
