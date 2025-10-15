@@ -19,9 +19,8 @@ public sealed class SecretManager(
 
     public async ValueTask<UserSecretEntity> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var secretKey = KeyGeneration.GenerateRandomKey(20);
-        var base32Secret = Base32Encoding.ToString(secretKey);
-        var protectedSecret = protector.Protect(base32Secret);
+        var secretKey = KeyGenerator.GenerateKey(20);
+        var protectedSecret = protector.Protect(secretKey);
         
         var entity = new UserSecretEntity()
         {
