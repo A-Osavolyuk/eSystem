@@ -1,0 +1,15 @@
+﻿<MudDialog Style="width: 450px">
+    <TitleContent>
+        Your two-factor secret
+    </TitleContent>
+    <DialogContent>
+        <MudTextM3 Size="Size.Medium" Typo="TypoM3.Body">
+            @Secret
+        </MudTextM3>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter] 
+    public string Secret { get; set; } = string.Empty;
+}

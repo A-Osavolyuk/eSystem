@@ -7,6 +7,7 @@
 @inject IVerificationService VerificationService
 @inject ITwoFactorService TwoFactorService
 @inject IUserService UserService
+@inject IDialogService DialogService
 @inject CodeModelValidator Validator
 @inject DownloadManager DownloadManager
 
@@ -76,7 +77,7 @@
                                                         </MudTextM3>
                                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="opacity-50">
                                                             Use an authenticator app or browser extension to scan QR
-                                                            code.
+                                                            code. 
                                                         </MudTextM3>
                                                     </MudStack>
                                                     <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
@@ -86,6 +87,28 @@
                                                             Height="300"
                                                             Width="300"/>
                                                     </MudStack>
+                                                    <div>
+                                                        <MudTextM3 
+                                                            Typo="TypoM3.Body" 
+                                                            Size="Size.Medium"
+                                                            Class="opacity-50" 
+                                                            Inline="true">
+                                                            Unable to scan? You can use the
+                                                        </MudTextM3>
+                                                        <MudLink
+                                                            Color="Color.Info"
+                                                            Typo="Typo.body2"
+                                                            OnClick="@(async () => await ShowSetupKeyAsync())">
+                                                            setup key 
+                                                        </MudLink>
+                                                        <MudTextM3 
+                                                            Typo="TypoM3.Body" 
+                                                            Size="Size.Medium"
+                                                            Class="opacity-50" 
+                                                            Inline="true">
+                                                            to manually configure your authenticator app.
+                                                        </MudTextM3>
+                                                    </div>
                                                     <MudStack Spacing="2">
                                                         <MudButton
                                                             Size="Size.Small"
@@ -284,6 +307,7 @@
 
     private bool DownloadedCodes { get; set; }
     private string QrCode { get; set; } = string.Empty;
+    private string Secret { get; set; } = string.Empty;
     private List<string> Codes { get; set; } = [];
     private List<UserTwoFactorMethod> Methods { get; set; } = [];
 
@@ -314,6 +338,7 @@
         {
             var response = result.Get<GenerateQrCodeResponse>()!;
             QrCode = response.QrCode;
+            Secret = response.Secret;
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
@@ -345,6 +370,24 @@
             await stepper.StepNextAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task ShowSetupKeyAsync()
+    {
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var parameters = new DialogParameters<SetupKeyDialog>()
+        {
+            { dialog => dialog.Secret, Secret }
+        };
+
+        await DialogService.ShowAsync<SetupKeyDialog>("Your two-factor secret", parameters, options);
     }
 
     private async Task OnDownloadAsync()
