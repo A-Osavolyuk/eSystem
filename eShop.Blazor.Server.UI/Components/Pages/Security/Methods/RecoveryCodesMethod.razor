@@ -1,0 +1,39 @@
+﻿<MudStack Row="true" Class="px-5">
+    <MudIcon Icon="@Icons.Material.Outlined.Key" Size="Size.Medium" Class="mt-1"/>
+    <MudStack Spacing="0">
+        <MudStack Row="true" Spacing="1">
+            <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
+                Recovery codes
+            </MudTextM3>
+            <MudChip
+                T="string"
+                Class="mx-0"
+                Size="Size.Small"
+                Color="Color.Success"
+                Variant="Variant.Outlined">
+                Viewed
+            </MudChip>
+        </MudStack>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+            Recovery codes can be used to access your account in the event you
+            lose access to your device and cannot receive two-factor authentication codes.
+        </MudTextM3>
+    </MudStack>
+    <MudSpacer/>
+    <MudStack>
+        <MudButton
+            ButtonType="ButtonType.Button"
+            Variant="Variant.Outlined"
+            Size="Size.Small"
+            Href="@(OnViewRecoveryCodes())">
+            View
+        </MudButton>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] public TwoFactorData Model { get; set; } = new();
+
+    private readonly string returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
+    private string OnViewRecoveryCodes() => $"{Links.RecoveryCodesViewPage}?return_url={returnUrl}";
+}
