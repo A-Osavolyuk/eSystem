@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Passkeys.Queries;
+﻿using eShop.Domain.DTOs;
+
+namespace eShop.Auth.Api.Features.Passkeys.Queries;
 
 public record GetPasskeyQuery(Guid Id) : IRequest<Result>;
 
@@ -11,7 +13,13 @@ public class GetPasskeyQueryHandler(IPasskeyManager passkeyManager) : IRequestHa
         var passkey = await passkeyManager.FindByIdAsync(request.Id, cancellationToken);
         if (passkey is null) return Results.NotFound($"Cannot find passkey with ID {request.Id}");
         
-        var response = Mapper.Map(passkey);
+        var response = new UserPasskeyDto()
+        {
+            Id = passkey.Id,
+            DisplayName = passkey.DisplayName,
+            LastSeenDate = passkey.LastSeenDate,
+            CreateDate = passkey.CreateDate,
+        };;
         return Result.Success(response);
     }
 }

@@ -43,6 +43,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         var signCount = CredentialUtils.ParseSignCount(authenticatorAssertionResponse.AuthenticatorData);
 
         passkey.SignCount = signCount;
+        passkey.LastSeenDate = DateTimeOffset.UtcNow;
         passkey.UpdateDate = DateTimeOffset.UtcNow;
 
         context.UserPasskeys.Update(passkey);

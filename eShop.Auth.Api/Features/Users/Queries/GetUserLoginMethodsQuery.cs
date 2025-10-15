@@ -32,23 +32,24 @@ public class GetUserLoginMethodsQueryHandler(
             LinkedAccountsData = new LinkedAccountsData()
             {
                 HasLinkedAccounts = user.HasLinkedAccount(),
-                LinkedAccounts = user.LinkedAccounts.Select(x => new UserOAuthProviderDto()
+                LinkedAccounts = user.LinkedAccounts.Select(linkedAccount => new UserOAuthProviderDto()
                 {
-                    Id = x.Provider.Id,
-                    Name = x.Provider.Name,
-                    IsAllowed = x.Allowed,
-                    DisallowedDate = x.UpdateDate,
-                    LinkedDate = x.CreateDate
+                    Id = linkedAccount.Provider.Id,
+                    Name = linkedAccount.Provider.Name,
+                    IsAllowed = linkedAccount.Allowed,
+                    DisallowedDate = linkedAccount.UpdateDate,
+                    LinkedDate = linkedAccount.CreateDate
                 }).ToList()
             },
             PasskeysData = new PasskeysData()
             {
                 HasPasskeys = user.HasPasskeys(),
-                Passkeys = user.Passkeys.Select(x => new UserPasskeyDto()
+                Passkeys = user.Passkeys.Select(passkey => new UserPasskeyDto()
                 {
-                    Id = x.Id,
-                    DisplayName = x.DisplayName,
-                    CreateDate = x.UpdateDate
+                    Id = passkey.Id,
+                    DisplayName = passkey.DisplayName,
+                    LastSeenDate = passkey.LastSeenDate,
+                    CreateDate = passkey.UpdateDate
                 }).ToList()
             }
         };
