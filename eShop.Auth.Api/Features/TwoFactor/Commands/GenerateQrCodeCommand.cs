@@ -29,7 +29,11 @@ public class GenerateQrCodeCommandHandler(
         
         var qrCode = QrCodeGenerator.Generate(email, unprotectedSecret, QrCodeIssuer);
             
-        var response = new GenerateQrCodeResponse() { QrCode = qrCode };
+        var response = new GenerateQrCodeResponse()
+        {
+            QrCode = qrCode,
+            Secret = secret.Secret
+        };
             
         return Result.Success(response);
     }

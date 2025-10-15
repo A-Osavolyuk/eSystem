@@ -2,5 +2,6 @@
 
 public class GenerateQrCodeResponse
 {
-    public string QrCode { get; set; } = string.Empty;
+    public required string QrCode { get; set; }
+    public required string Secret { get; set; }
 }
