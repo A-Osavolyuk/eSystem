@@ -47,6 +47,7 @@ public static class Extensions
         builder.Services.AddScoped<IStorage, LocalStorage>();
         builder.Services.AddScoped<DownloadManager>();
         builder.Services.AddScoped<ClipboardManager>();
+        builder.Services.AddScoped<PrintManager>();
     }
 
     private static void AddJwtAuthentication(this IHostApplicationBuilder builder)
