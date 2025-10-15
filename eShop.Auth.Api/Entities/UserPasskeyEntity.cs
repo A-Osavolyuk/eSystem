@@ -11,5 +11,8 @@ public class UserPasskeyEntity : Entity
     public string Domain { get; set; } = string.Empty;
     public uint SignCount { get; set; }
     public string Type { get; set; } = string.Empty;
+    
+    public DateTimeOffset? LastSeenDate { get; set; }
+    
     public UserEntity User { get; set; } = null!;
 }
