@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using eShop.Auth.Api.Constants;
 using eShop.Auth.Api.Types;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Requests.Auth;
@@ -47,13 +48,15 @@ public class CreatePasskeyCommandHandler(
 
         var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
 
-        var rpHash = SHA256.HashData(Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray()));
+        var source = Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray());
+        var rpHash = SHA256.HashData(source);
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
 
         var passkey = new UserPasskeyEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            AuthenticatorId = new Guid(authData.AaGuid),
             DisplayName = request.Request.DisplayName,
             Domain = clientData.Origin,
             CredentialId = Convert.ToBase64String(authData.CredentialId),
