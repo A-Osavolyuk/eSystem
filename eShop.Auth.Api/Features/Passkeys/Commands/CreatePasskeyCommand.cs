@@ -15,12 +15,14 @@ public class CreatePasskeyCommandHandler(
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
     IVerificationManager verificationManager,
+    IDeviceManager deviceManager,
     IdentityOptions identityOptions) : IRequestHandler<CreatePasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -29,6 +31,12 @@ public class CreatePasskeyCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+
+        var userAgent = httpContext.GetUserAgent();
+        var ipAddress = httpContext.GetIpV4();
+
+        var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        if (device is null) return Results.BadRequest("Invalid device.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
             PurposeType.Passkey, ActionType.Create, cancellationToken);
@@ -56,6 +64,7 @@ public class CreatePasskeyCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             AuthenticatorId = new Guid(authData.AaGuid),
+            DeviceId = device.Id,
             DisplayName = request.Request.DisplayName,
             Domain = clientData.Origin,
             CredentialId = Convert.ToBase64String(authData.CredentialId),
