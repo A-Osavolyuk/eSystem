@@ -1,15 +1,39 @@
-﻿namespace eShop.Domain.Common.Security.Credentials;
+﻿using System.Text.Json.Serialization;
+
+namespace eShop.Domain.Common.Security.Credentials;
 
 public class PublicKeyCredentialCreationResponse
 {
-    public required string Id { get; set; }
-    public required string RawId { get; set; }
-    public required string Type { get; set; }
-    public required CredentialResponse Response { get; set; }
+    [JsonPropertyName("id")]
+    public string Id { get; set; } = null!;
+    
+    [JsonPropertyName("rawId")]
+    public string RawId { get; set; } = null!;
+    
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = null!;
+    
+    [JsonPropertyName("response")]
+    public CredentialResponse Response { get; set; } = null!;
 }
 
 public class CredentialResponse
 {
-    public required string AttestationObject { get; set; }
-    public required string ClientDataJson { get; set; }
+    [JsonPropertyName("attestationObject")]
+    public string AttestationObject { get; set; } = null!;
+    
+    [JsonPropertyName("clientDataJSON")]
+    public string ClientDataJson { get; set; } = null!;
+    
+    [JsonPropertyName("authenticatorData")]
+    public string AuthenticatorData { get; set; } = null!;
+    
+    [JsonPropertyName("publicKey")]
+    public string PublicKey { get; set; } = null!;
+    
+    [JsonPropertyName("publicKeyAlgorithm")]
+    public int PublicKeyAlgorithm { get; set; }
+
+    [JsonPropertyName("transports")] 
+    public string[] Transports { get; set; } = null!;
 }
