@@ -38,20 +38,32 @@ public class RemovePasskeyCommandHandler(
             if (user.HasTwoFactor(TwoFactorMethod.Passkey))
             {
                 var twoFactorMethod = user.GetTwoFactorMethod(TwoFactorMethod.Passkey)!;
+
+                if (twoFactorMethod.Preferred)
+                {
+                    var preferredResult = await twoFactorManager.PreferAsync(user, 
+                        TwoFactorMethod.AuthenticatorApp, cancellationToken);
+                    if (!preferredResult.Succeeded) return preferredResult;
+                }
+                
                 var twoFactorResult = await twoFactorManager.UnsubscribeAsync(twoFactorMethod, cancellationToken);
                 if (!twoFactorResult.Succeeded) return twoFactorResult;
             }
 
             if (user.HasVerificationMethod(VerificationMethod.Passkey))
             {
-                var preferredMethod = user.HasVerificationMethod(VerificationMethod.AuthenticatorApp) 
-                    ? VerificationMethod.AuthenticatorApp 
-                    : VerificationMethod.Email;
-                
-                var methodResult = await verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
-                if (!methodResult.Succeeded) return methodResult;
-                
                 var method = user.GetVerificationMethod(VerificationMethod.Passkey)!;
+
+                if (method.Preferred)
+                {
+                    var preferredMethod = user.HasVerificationMethod(VerificationMethod.AuthenticatorApp) 
+                        ? VerificationMethod.AuthenticatorApp 
+                        : VerificationMethod.Email;
+                
+                    var methodResult = await verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
+                    if (!methodResult.Succeeded) return methodResult;
+                }
+                
                 var unsubscribeResult = await verificationManager.UnsubscribeAsync(method, cancellationToken);
                 if (!unsubscribeResult.Succeeded) return unsubscribeResult;
             }
