@@ -47,14 +47,36 @@
                                                     Passkeys can be used for sign-in as a simple and secure alternative
                                                     to your password and two-factor credentials.
                                                 </MudTextM3>
-                                                <MudButton
-                                                    Color="Color.Success"
-                                                    Variant="Variant.Filled"
-                                                    ButtonType="ButtonType.Button"
-                                                    Size="Size.Small"
-                                                    OnClick="@(async () => await OnAddPasskeyAsync())">
-                                                    Add passkey
-                                                </MudButton>
+                                                @if (!showError)
+                                                {
+                                                    <MudButton
+                                                        Color="Color.Success"
+                                                        Variant="Variant.Filled"
+                                                        ButtonType="ButtonType.Button"
+                                                        Size="Size.Small"
+                                                        OnClick="@(async () => await OnAddPasskeyAsync())">
+                                                        Add passkey
+                                                    </MudButton>
+                                                }
+                                                else
+                                                {
+                                                    <MudAlert
+                                                        ContentAlignment="HorizontalAlignment.Center"
+                                                        Variant="Variant.Outlined"
+                                                        Dense="true"
+                                                        Severity="Severity.Error"
+                                                        Class="w-100">
+                                                        Failure on adding passkey
+                                                    </MudAlert>
+                                                    <MudButton
+                                                        Color="Color.Success"
+                                                        Variant="Variant.Filled"
+                                                        ButtonType="ButtonType.Button"
+                                                        Size="Size.Small"
+                                                        OnClick="@(async () => await OnAddPasskeyAsync())">
+                                                        Retry add passkey
+                                                    </MudButton>
+                                                }
                                                 <MudButton
                                                     Color="Color.Info"
                                                     Variant="Variant.Text"
@@ -125,9 +147,10 @@
 </AccessConfirmation>
 
 @code {
+
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
-    
+
     private CreatePasskeyModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
@@ -136,6 +159,7 @@
 
     private readonly string displayName = $"eAccount-passkey-{Guid.CreateVersion7()}";
     private Guid keyId;
+    private bool showError;
 
     protected override void OnInitialized()
     {
@@ -148,6 +172,7 @@
 
     private async Task OnAddPasskeyAsync()
     {
+        showError = false;
         var request = new GenerateCreationOptionsRequest()
         {
             UserId = UserState.UserId,
@@ -166,23 +191,30 @@
 
     private async Task VerifyPasskeyAsync(PublicKeyCredentialCreationOptions options)
     {
-        var assertResponse = await PasskeyManager.AssertAsync(options);
-        var request = new CreatePasskeyRequest()
+        try
         {
-            UserId = UserState.UserId,
-            DisplayName = displayName,
-            Response = assertResponse
-        };
+            var assertResponse = await PasskeyManager.AssertAsync(options);
+            var request = new CreatePasskeyRequest()
+            {
+                UserId = UserState.UserId,
+                DisplayName = displayName,
+                Response = assertResponse
+            };
 
-        var result = await PasskeyService.CreatAsync(request);
-        if (result.Success)
-        {
-            var response = result.Get<CreatePasskeyResponse>()!;
-            keyId = response.PasskeyId;
+            var result = await PasskeyService.CreatAsync(request);
+            if (result.Success)
+            {
+                var response = result.Get<CreatePasskeyResponse>()!;
+                keyId = response.PasskeyId;
 
-            await stepper.StepNextAsync();
+                await stepper.StepNextAsync();
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        catch (Exception)
+        {
+            showError = true;
+        }
     }
 
     private async Task OnSetPasskeyNameAsync()
