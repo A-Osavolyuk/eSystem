@@ -34,7 +34,7 @@ public static class CredentialGenerator
             AuthenticatorSelection = new AuthenticatorSelection
             {
                 AuthenticatorAttachment = AuthenticatorAttachments.Platform,
-                UserVerification = UserVerifications.Preferred,
+                UserVerification = UserVerifications.Required,
                 ResidentKey = ResidentKeys.Preferred
             },
             PublicKeyCredentialParameters =
@@ -71,7 +71,7 @@ public static class CredentialGenerator
             Challenge = challenge,
             Timeout = credentialOptions.Timeout,
             Domain = credentialOptions.Domain,
-            UserVerification = UserVerifications.Preferred,
+            UserVerification = UserVerifications.Required,
             AllowedCredentials = allowedCredentials
         };
         
