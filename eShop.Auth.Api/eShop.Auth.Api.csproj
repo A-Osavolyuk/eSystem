@@ -44,8 +44,4 @@
         <ProjectReference Include="..\eShop.Domain\eShop.Domain.csproj"/>
         <ProjectReference Include="..\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Enums\" />
-    </ItemGroup>
 </Project>

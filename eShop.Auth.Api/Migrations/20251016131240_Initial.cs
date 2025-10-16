@@ -307,32 +307,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserPasskeys",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CredentialId = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    PublicKey = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    SignCount = table.Column<long>(type: "bigint", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserPasskeys", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserPasskeys_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserPhoneNumbers",
                 columns: table => new
                 {
@@ -556,6 +530,34 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Passkeys",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AuthenticatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CredentialId = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PublicKey = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    SignCount = table.Column<long>(type: "bigint", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    LastSeenDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Passkeys", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Passkeys_UserDevices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "UserDevices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RefreshTokens",
                 columns: table => new
                 {
@@ -662,6 +664,12 @@ namespace eShop.Auth.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Passkeys_DeviceId",
+                table: "Passkeys",
+                column: "DeviceId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_ResourceId",
                 table: "Permissions",
                 column: "ResourceId");
@@ -701,11 +709,6 @@ namespace eShop.Auth.Api.Migrations
                 name: "IX_UserOAuthProviders_ProviderId",
                 table: "UserOAuthProviders",
                 column: "ProviderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserPasskeys_UserId",
-                table: "UserPasskeys",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPermissions_PermissionId",
@@ -775,6 +778,9 @@ namespace eShop.Auth.Api.Migrations
                 name: "OAuthSessions");
 
             migrationBuilder.DropTable(
+                name: "Passkeys");
+
+            migrationBuilder.DropTable(
                 name: "RefreshTokens");
 
             migrationBuilder.DropTable(
@@ -788,9 +794,6 @@ namespace eShop.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserOAuthProviders");
-
-            migrationBuilder.DropTable(
-                name: "UserPasskeys");
 
             migrationBuilder.DropTable(
                 name: "UserPermissions");

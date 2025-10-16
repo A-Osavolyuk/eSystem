@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251015104707_Initial")]
+    [Migration("20251016131240_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -182,6 +182,62 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("OAuthSessions");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.PasskeyEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthenticatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CredentialId")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Domain")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("LastSeenDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<byte[]>("PublicKey")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<long>("SignCount")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId")
+                        .IsUnique();
+
+                    b.ToTable("Passkeys");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.PermissionEntity", b =>
@@ -636,55 +692,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("LockoutStates");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserPasskeyEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("CredentialId")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Domain")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<byte[]>("PublicKey")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<long>("SignCount")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserPasskeys");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -958,6 +965,17 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.PasskeyEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
+                        .WithOne("Passkey")
+                        .HasForeignKey("eShop.Auth.Api.Entities.PasskeyEntity", "DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.PermissionEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.ResourceEntity", "Resource")
@@ -1082,17 +1100,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.UserPasskeyEntity", b =>
-                {
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany("Passkeys")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserPermissionsEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.PermissionEntity", "Permission")
@@ -1210,6 +1217,11 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Roles");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.UserDeviceEntity", b =>
+                {
+                    b.Navigation("Passkey");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
                     b.Navigation("Changes");
@@ -1224,8 +1236,6 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Methods");
-
-                    b.Navigation("Passkeys");
 
                     b.Navigation("Permissions");
 
