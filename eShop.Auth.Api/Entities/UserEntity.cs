@@ -53,7 +53,7 @@ public class UserEntity : Entity
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
     public bool HasMethods() => Methods.Count > 0;
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
-    public bool HasPasskeys() => Devices.Select(x => x.Passkey).Any();
+    public bool HasPasskeys() => Devices.Select(x => x.Passkey).Any(x => x is not null);
     public int CountPasskeys() => Devices.Select(x => x.Passkey).Count();
     public bool HasTwoFactor(TwoFactorMethod type) => Methods.Any(x => x.Method == type);
 
