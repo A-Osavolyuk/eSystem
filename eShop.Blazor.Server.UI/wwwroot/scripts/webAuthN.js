@@ -12,9 +12,19 @@ async function assert(options)
 {
     options.challenge = base64ToUint8Array(options.challenge);
     options.user.id = base64ToUint8Array(options.user.id);
-    return await navigator.credentials.create({
-        publicKey: options
-    });
+    try {
+        const credential = await navigator.credentials.create({ publicKey: options });
+        return { success: true,  data: credential }
+    }
+    catch (error) {
+        return {
+            success: false,
+            error: {
+                message: error?.message ?? "Unknown error",
+                type: error?.name?? "UnknownError"
+            }
+        }
+    }
 }
 
 async function authenticate(options)
@@ -23,8 +33,17 @@ async function authenticate(options)
     for (let cred of options.allowedCredentials) {
         cred.id = base64ToUint8Array(cred.id);
     }
-    
-    return await navigator.credentials.get({ 
-        publicKey: options 
-    });
+    try {
+        const credential = await navigator.credentials.get({ publicKey: options });
+        return { success: true,  data: credential }
+    }
+    catch (error) {
+        return {
+            success: false,
+            error: {
+                message: error?.message ?? "Unknown error",
+                type: error?.name?? "UnknownError"
+            }
+        }
+    }
 }
