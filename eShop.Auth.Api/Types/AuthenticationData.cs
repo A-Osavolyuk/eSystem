@@ -1,9 +1,10 @@
 ﻿using System.Buffers.Binary;
+using eShop.Auth.Api.Constants;
 using PeterO.Cbor;
 
 namespace eShop.Auth.Api.Types;
 
-public class AuthenticationData
+public sealed class AuthenticationData
 {
     public byte[] RpIdHash { get; set; } = null!;
     public byte Flags { get; set; }
