@@ -191,9 +191,10 @@
 
     private async Task VerifyPasskeyAsync(PublicKeyCredentialCreationOptions options)
     {
-        try
+        var assertResult = await PasskeyManager.AssertAsync(options);
+        if (assertResult.Success)
         {
-            var assertResponse = await PasskeyManager.AssertAsync(options);
+            var assertResponse = assertResult.Get<PublicKeyCredentialCreationResponse>();
             var request = new CreatePasskeyRequest()
             {
                 UserId = UserState.UserId,
@@ -211,10 +212,7 @@
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }
-        catch (Exception)
-        {
-            showError = true;
-        }
+        else showError = true;
     }
 
     private async Task OnSetPasskeyNameAsync()

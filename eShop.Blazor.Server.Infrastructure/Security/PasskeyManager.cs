@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Security.Credentials;
+﻿using eShop.Blazor.Server.Domain.Common;
+using eShop.Domain.Common.Security.Credentials;
 using Microsoft.JSInterop;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
@@ -7,15 +8,13 @@ public class PasskeyManager(IJSRuntime jsRuntime)
 {
     private readonly IJSRuntime jsRuntime = jsRuntime;
 
-    public async Task<PublicKeyCredentialCreationResponse> AssertAsync(PublicKeyCredentialCreationOptions options)
+    public async Task<JsResult> AssertAsync(PublicKeyCredentialCreationOptions options)
     {
-        var response = await jsRuntime.InvokeAsync<PublicKeyCredentialCreationResponse>("assert", options);
-        return response;
+        return await jsRuntime.InvokeAsync<JsResult>("assert", options);
     }
     
-    public async Task<PublicKeyCredential> AuthenticateAsync(PublicKeyCredentialRequestOptions options)
+    public async Task<JsResult> AuthenticateAsync(PublicKeyCredentialRequestOptions options)
     {
-        var credential = await jsRuntime.InvokeAsync<PublicKeyCredential>("authenticate", options);
-        return credential;
+        return await jsRuntime.InvokeAsync<JsResult>("authenticate", options);
     }
 }

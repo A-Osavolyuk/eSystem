@@ -34,11 +34,11 @@
                         OnClick="@(async () => await OnVerifyAsync())">
                         Retry passkey
                     </MudButton>
-                    <MudAlert 
-                        Severity="Severity.Error" 
-                        Variant="Variant.Outlined" 
-                        Class="w-100" 
-                        Dense="true" 
+                    <MudAlert
+                        Severity="Severity.Error"
+                        Variant="Variant.Outlined"
+                        Class="w-100"
+                        Dense="true"
                         ContentAlignment="HorizontalAlignment.Center">
                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center" Class="w-100">
                             Failed on using passkey
@@ -120,9 +120,10 @@
 
     private async Task VerifyAsync(PublicKeyCredentialRequestOptions options)
     {
-        try
+        var authenticateResult = await PasskeyManager.AuthenticateAsync(options);
+        if (authenticateResult.Success)
         {
-            var credential = await PasskeyManager.AuthenticateAsync(options);
+            var credential = authenticateResult.Get<PublicKeyCredential>();
             var request = new VerifyPasskeyRequest()
             {
                 UserId = UserState.UserId,
@@ -142,11 +143,7 @@
 
             isLoading = false;
         }
-        catch (Exception)
-        {
-            isLoading = false;
-            showError = true;
-        }
+        else showError = true;
     }
 
 }

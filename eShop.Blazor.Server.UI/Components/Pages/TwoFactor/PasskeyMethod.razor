@@ -87,8 +87,12 @@
         if (result.Success)
         {
             var options = result.Get<PublicKeyCredentialRequestOptions>()!;
-            var credential = await PasskeyManager.AuthenticateAsync(options);
-            await SignInAsync(credential);
+            var authenticateResult = await PasskeyManager.AuthenticateAsync(options);
+            if (authenticateResult.Success)
+            {
+                var credential = authenticateResult.Get<PublicKeyCredential>();
+                await SignInAsync(credential);
+            }
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
