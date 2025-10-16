@@ -4,7 +4,7 @@ public class UserPasskeyEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
-
+    public Guid AuthenticatorId { get; set; }
     public string CredentialId { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
     public byte[] PublicKey { get; set; } = [];
