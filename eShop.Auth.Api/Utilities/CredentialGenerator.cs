@@ -47,7 +47,7 @@ public static class CredentialGenerator
                 Domain = credentialOptions.Domain,
                 Name = credentialOptions.Server,
             },
-            Attestation = Attestations.None,
+            Attestation = Attestations.Direct,
             Timeout = credentialOptions.Timeout,
         };
         
