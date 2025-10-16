@@ -28,7 +28,6 @@ public class UserEntity : Entity
     public ICollection<UserLinkedAccountEntity> LinkedAccounts { get; init; } = null!;
     public ICollection<UserChangesEntity> Changes { get; init; } = null!;
     public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
-    public ICollection<UserPasskeyEntity> Passkeys { get; init; } = null!;
     public ICollection<UserVerificationMethodEntity> VerificationMethods { get; init; } = null!;
     public UserLockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
@@ -54,7 +53,8 @@ public class UserEntity : Entity
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
     public bool HasMethods() => Methods.Count > 0;
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
-    public bool HasPasskeys() => Passkeys.Count > 0;
+    public bool HasPasskeys() => Devices.Select(x => x.Passkey).Any();
+    public int CountPasskeys() => Devices.Select(x => x.Passkey).Count();
     public bool HasTwoFactor(TwoFactorMethod type) => Methods.Any(x => x.Method == type);
 
     public bool HasVerificationMethod(VerificationMethod method)

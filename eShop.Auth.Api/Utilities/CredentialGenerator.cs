@@ -55,16 +55,18 @@ public static class CredentialGenerator
     }
 
     public static PublicKeyCredentialRequestOptions CreateRequestOptions(
-        UserEntity user,
+        PasskeyEntity passkey,
         string challenge,
         CredentialOptions credentialOptions)
     {
-        var allowedCredentials = user.Passkeys
-            .Select(x => new AllowedCredential()
+        var allowedCredentials = new List<AllowedCredential>()
+        {
+            new AllowedCredential()
             {
                 Type = KeyType.PublicKey,
-                Id = x.CredentialId
-            }).ToList();
+                Id = passkey.CredentialId
+            }
+        };
 
         var options = new PublicKeyCredentialRequestOptions()
         {

@@ -9,23 +9,27 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 {
     private readonly AuthDbContext context = context;
 
-    public async ValueTask<UserPasskeyEntity?> FindByCredentialIdAsync(string credentialId, CancellationToken cancellationToken)
+    public async ValueTask<PasskeyEntity?> FindByCredentialIdAsync(string credentialId, CancellationToken cancellationToken)
     {
-        var entity = await context.UserPasskeys
-            .FirstOrDefaultAsync(x => x.CredentialId == credentialId, cancellationToken);
+        var entity = await context.Passkeys
+            .Where(x => x.CredentialId == credentialId)
+            .Include(x => x.Device)
+            .FirstOrDefaultAsync(cancellationToken);
         
         return entity;
     }
     
-    public async ValueTask<UserPasskeyEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async ValueTask<PasskeyEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await context.UserPasskeys
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var entity = await context.Passkeys
+            .Where(x => x.Id == id)
+            .Include(x => x.Device)
+            .FirstOrDefaultAsync(cancellationToken);
         
         return entity;
     }
 
-    public async ValueTask<Result> VerifyAsync(UserPasskeyEntity passkey, PublicKeyCredential credential, 
+    public async ValueTask<Result> VerifyAsync(PasskeyEntity passkey, PublicKeyCredential credential, 
         string storedChallenge, CancellationToken cancellationToken)
     {
         var authenticatorAssertionResponse = credential.Response;
@@ -46,31 +50,31 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         passkey.LastSeenDate = DateTimeOffset.UtcNow;
         passkey.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.UserPasskeys.Update(passkey);
+        context.Passkeys.Update(passkey);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
 
-    public async ValueTask<Result> CreateAsync(UserPasskeyEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
     {
-        await context.UserPasskeys.AddAsync(entity, cancellationToken);
+        await context.Passkeys.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
 
-    public async ValueTask<Result> UpdateAsync(UserPasskeyEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> UpdateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
     {
-        context.UserPasskeys.Update(entity);
+        context.Passkeys.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
 
-    public async ValueTask<Result> DeleteAsync(UserPasskeyEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> DeleteAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
     {
-        context.UserPasskeys.Remove(entity);
+        context.Passkeys.Remove(entity);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();

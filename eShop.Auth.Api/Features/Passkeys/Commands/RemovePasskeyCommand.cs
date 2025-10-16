@@ -33,7 +33,7 @@ public class RemovePasskeyCommandHandler(
         
         if (!verificationResult.Succeeded) return verificationResult;
 
-        if (user.Passkeys.Count == 1)
+        if (user.CountPasskeys() == 1)
         {
             if (user.HasTwoFactor(TwoFactorMethod.Passkey))
             {

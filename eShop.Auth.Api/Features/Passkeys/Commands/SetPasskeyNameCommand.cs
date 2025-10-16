@@ -15,9 +15,14 @@ public class SetPasskeyNameCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (!user.HasPasskeys()) return Results.BadRequest("User does not have any passkeys.");
 
-        var passkey = user.Passkeys.FirstOrDefault(x => x.Id == request.Request.PasskeyId);
-        if (passkey is null) return Results.NotFound($"Cannot find user's passkey.");
+        var passkey = user.Devices
+            .Where(x => x.Passkey is not null)
+            .Select(x => x.Passkey!)
+            .FirstOrDefault(x => x.Id == request.Request.PasskeyId);
+        
+        if (passkey is null) return Results.NotFound("Cannot find user's passkey.");
 
         passkey.DisplayName = request.Request.DisplayName;
         passkey.UpdateDate = DateTimeOffset.UtcNow;

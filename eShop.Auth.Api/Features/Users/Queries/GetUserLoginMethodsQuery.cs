@@ -44,13 +44,16 @@ public class GetUserLoginMethodsQueryHandler(
             PasskeysData = new PasskeysData()
             {
                 HasPasskeys = user.HasPasskeys(),
-                Passkeys = user.Passkeys.Select(passkey => new UserPasskeyDto()
-                {
-                    Id = passkey.Id,
-                    DisplayName = passkey.DisplayName,
-                    LastSeenDate = passkey.LastSeenDate,
-                    CreateDate = passkey.UpdateDate
-                }).ToList()
+                Passkeys = user.Devices
+                    .Where(x => x.Passkey is not null)
+                    .Select(x => x.Passkey!)
+                    .Select(passkey => new UserPasskeyDto()
+                    {
+                        Id = passkey.Id,
+                        DisplayName = passkey.DisplayName,
+                        LastSeenDate = passkey.LastSeenDate,
+                        CreateDate = passkey.UpdateDate
+                    }).ToList()
             }
         };
 

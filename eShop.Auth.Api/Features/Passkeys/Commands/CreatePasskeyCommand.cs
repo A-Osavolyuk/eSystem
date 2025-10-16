@@ -52,10 +52,9 @@ public class CreatePasskeyCommandHandler(
         var rpHash = SHA256.HashData(source);
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
 
-        var passkey = new UserPasskeyEntity()
+        var passkey = new PasskeyEntity()
         {
             Id = Guid.CreateVersion7(),
-            UserId = user.Id,
             AuthenticatorId = new Guid(authData.AaGuid),
             DisplayName = request.Request.DisplayName,
             Domain = clientData.Origin,

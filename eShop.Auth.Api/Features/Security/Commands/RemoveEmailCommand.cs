@@ -21,7 +21,7 @@ public class RemoveEmailCommandHandler(
 
         if (userEmail.Type == EmailType.Primary)
         {
-            if (user.Passkeys.Count == 0)
+            if (user.CountPasskeys() == 0)
             {
                 return Results.BadRequest(
                     "Cannot remove the primary email, because it is the only authentication method");

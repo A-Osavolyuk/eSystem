@@ -12,7 +12,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserChangesEntity> UserChanges { get; set; }
     public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
-    public DbSet<UserPasskeyEntity> UserPasskeys { get; set; }
+    public DbSet<PasskeyEntity> Passkeys { get; set; }
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<PersonalDataEntity> PersonalData { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
@@ -297,7 +297,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey<AuthorizationSessionEntity>(x => x.DeviceId);
         });
 
-        builder.Entity<UserPasskeyEntity>(entity =>
+        builder.Entity<PasskeyEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
             
@@ -306,9 +306,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.DisplayName).HasMaxLength(100);
             entity.Property(x => x.Type).HasMaxLength(32);
             
-            entity.HasOne(x => x.User)
-                .WithMany(x => x.Passkeys)
-                .HasForeignKey(x => x.UserId);
+            entity.HasOne(x => x.Device)
+                .WithOne(x => x.Passkey)
+                .HasForeignKey<PasskeyEntity>(x => x.DeviceId);
         });
 
         builder.Entity<VerificationEntity>(entity =>

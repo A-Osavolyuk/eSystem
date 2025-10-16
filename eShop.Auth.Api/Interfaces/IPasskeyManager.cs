@@ -4,11 +4,11 @@ namespace eShop.Auth.Api.Interfaces;
 
 public interface IPasskeyManager
 {
-    public ValueTask<UserPasskeyEntity?> FindByCredentialIdAsync(string credentialId, CancellationToken cancellationToken);
-    public ValueTask<UserPasskeyEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken);
-    public ValueTask<Result> CreateAsync(UserPasskeyEntity entity, CancellationToken cancellationToken = default);
-    public ValueTask<Result> UpdateAsync(UserPasskeyEntity entity, CancellationToken cancellationToken = default);
-    public ValueTask<Result> DeleteAsync(UserPasskeyEntity entity, CancellationToken cancellationToken = default);
-    public ValueTask<Result> VerifyAsync(UserPasskeyEntity passkey, PublicKeyCredential credential,
+    public ValueTask<PasskeyEntity?> FindByCredentialIdAsync(string credentialId, CancellationToken cancellationToken);
+    public ValueTask<PasskeyEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken);
+    public ValueTask<Result> CreateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> UpdateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> DeleteAsync(PasskeyEntity entity, CancellationToken cancellationToken = default);
+    public ValueTask<Result> VerifyAsync(PasskeyEntity passkey, PublicKeyCredential credential,
         string storedChallenge, CancellationToken cancellationToken);
 }
