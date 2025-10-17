@@ -1,5 +1,4 @@
 ﻿using System.Buffers.Binary;
-using eShop.Auth.Api.Constants;
 using PeterO.Cbor;
 
 namespace eShop.Auth.Api.Types;
