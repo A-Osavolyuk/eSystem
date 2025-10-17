@@ -23,6 +23,12 @@ public class PublicKeyCredentialRequestOptions
 
 public class AllowedCredential
 {
-    public required string Type { get; set; }
+    [JsonPropertyName("id")]
     public required string Id { get; set; }
+    
+    [JsonPropertyName("type")]
+    public required string Type { get; set; }
+
+    [JsonPropertyName("transports")]
+    public List<string>? Transports { get; set; }
 }
