@@ -30,7 +30,7 @@ async function assert(options)
 async function authenticate(options)
 {
     options.challenge = base64ToUint8Array(options.challenge);
-    for (let cred of options.allowedCredentials) {
+    for (let cred of options.allowCredentials) {
         cred.id = base64ToUint8Array(cred.id);
     }
     try {
