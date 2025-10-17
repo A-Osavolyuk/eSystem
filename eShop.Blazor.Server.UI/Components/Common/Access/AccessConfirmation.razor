@@ -72,7 +72,7 @@ else
     [Parameter] public ConfirmationContext Context { get; set; } = null!;
     [Parameter] public RenderFragment AccessConfirmed { get; set; } = null!;
 
-    public List<UserVerificationMethodDto> Methods { get; set; } = [];
+    public List<UserVerificationMethod> Methods { get; set; } = [];
     private VerificationMethod Method { get; set; }
     private bool Confirmed { get; set; } = false;
 
@@ -99,7 +99,7 @@ else
 
         if (result.Success)
         {
-            var response = result.Get<List<UserVerificationMethodDto>>()!;
+            var response = result.Get<List<UserVerificationMethod>>()!;
 
             Method = response.First(method => method.Preferred).Method;
             Methods = response;

@@ -69,7 +69,7 @@
 
     [Parameter] public ConfirmationContext Context { get; set; } = null!;
 
-    public List<UserVerificationMethodDto> Methods { get; set; } = [];
+    public List<UserVerificationMethod> Methods { get; set; } = [];
     private VerificationMethod Method { get; set; }
     private bool Confirmed { get; set; } = false;
 
@@ -94,11 +94,11 @@
 
     private async Task LoadAsync()
     {
-        var result = await UserService.GetUserVerificationMethodsAsync(UserState.UserId);
+        var result = await UserService.GetUserVerificationDataAsync(UserState.UserId);
 
         if (result.Success)
         {
-            var response = result.Get<List<UserVerificationMethodDto>>()!;
+            var response = result.Get<List<UserVerificationMethod>>()!;
 
             Method = response.First(method => method.Preferred).Method;
             Methods = response;
