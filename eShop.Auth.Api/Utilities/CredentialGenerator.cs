@@ -64,7 +64,8 @@ public static class CredentialGenerator
             new AllowedCredential()
             {
                 Type = KeyType.PublicKey,
-                Id = passkey.CredentialId
+                Id = passkey.CredentialId,
+                Transports = [CredentialTransports.Internal]
             }
         };
 
@@ -76,7 +77,7 @@ public static class CredentialGenerator
             UserVerification = UserVerifications.Required,
             AllowedCredentials = allowedCredentials
         };
-        
+
         return options;
     }
     
