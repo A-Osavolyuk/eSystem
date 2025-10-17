@@ -119,14 +119,14 @@
 
     private async Task OnChange(UserPasskeyDto passkey)
     {
-        var request = new SetPasskeyNameRequest()
+        var request = new ChangePasskeyNameRequest()
         {
             UserId = UserState.UserId,
             PasskeyId = passkey.Id,
             DisplayName = passkey.DisplayName
         };
         
-        var result = await PasskeyService.SetNameAsync(request);
+        var result = await PasskeyService.ChangeNameAsync(request);
 
         if (result.Success) await OnRefresh.InvokeAsync();
         else Snackbar.Add(result.Message, Severity.Error);

@@ -2,16 +2,16 @@
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
 
-public record SetPasskeyNameCommand(SetPasskeyNameRequest Request) : IRequest<Result>;
+public record ChangePasskeyNameCommand(ChangePasskeyNameRequest Request) : IRequest<Result>;
 
-public class SetPasskeyNameCommandHandler(
+public class ChangePasskeyNameCommandHandler(
     IUserManager userManager,
-    IPasskeyManager passkeyManager) : IRequestHandler<SetPasskeyNameCommand, Result>
+    IPasskeyManager passkeyManager) : IRequestHandler<ChangePasskeyNameCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
 
-    public async Task<Result> Handle(SetPasskeyNameCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(ChangePasskeyNameCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");

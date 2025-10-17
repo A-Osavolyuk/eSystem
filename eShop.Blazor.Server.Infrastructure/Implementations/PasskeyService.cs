@@ -16,8 +16,8 @@ public class PasskeyService(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/{id}", Method = HttpMethod.Get },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> SetNameAsync(SetPasskeyNameRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/set-name", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> ChangeNameAsync(ChangePasskeyNameRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/change-name", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GenerateCreationOptionsAsync(GenerateCreationOptionsRequest request) => await ApiClient.SendAsync(

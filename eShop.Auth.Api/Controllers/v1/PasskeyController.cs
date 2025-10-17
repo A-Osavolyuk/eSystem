@@ -102,9 +102,9 @@ public class PasskeyController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("set-name")]
     [Authorize]
-    public async ValueTask<IActionResult> SetPasskeyNameAsync([FromBody] SetPasskeyNameRequest request)
+    public async ValueTask<IActionResult> SetPasskeyNameAsync([FromBody] ChangePasskeyNameRequest request)
     {
-        var result = await sender.Send(new SetPasskeyNameCommand(request));
+        var result = await sender.Send(new ChangePasskeyNameCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
