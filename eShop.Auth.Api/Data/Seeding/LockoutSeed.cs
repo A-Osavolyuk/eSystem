@@ -11,7 +11,7 @@ public class LockoutSeed : Seed<UserLockoutStateEntity>
             new UserLockoutStateEntity()
             {
                 Id = Guid.CreateVersion7(),
-                UserId = Guid.Parse("abb9d2ed-c3d2-4df9-ba88-eab018b95bc3"),
+                UserId = Guid.Parse("188c7286-b0b9-4cb1-8f7f-503c6349bc65"),
                 Permanent = false,
                 CreateDate = DateTimeOffset.UtcNow,
             }
