@@ -57,6 +57,6 @@ public class UserEntity : Entity
     public int CountPasskeys() => Devices.Select(x => x.Passkey).Count();
     public bool HasTwoFactor(TwoFactorMethod type) => Methods.Any(x => x.Method == type);
 
-    public bool HasVerificationMethod(VerificationMethod method)
+    public bool HasVerification(VerificationMethod method)
         => VerificationMethods.Any(x => x.Method == method);
 }

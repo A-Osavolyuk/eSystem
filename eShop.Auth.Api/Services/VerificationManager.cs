@@ -46,7 +46,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
     public async ValueTask<Result> SubscribeAsync(UserEntity user, VerificationMethod method, 
         bool preferred = false, CancellationToken cancellationToken = default)
     {
-        if (user.HasVerificationMethod(method))
+        if (user.HasVerification(method))
             return Results.BadRequest("Verification method is already subscribed");
 
         if (preferred && user.VerificationMethods.Any(x => x.Preferred))

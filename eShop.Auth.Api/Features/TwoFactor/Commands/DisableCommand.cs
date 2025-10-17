@@ -24,7 +24,7 @@ public class DisableTwoFactorCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
         
-        var preferredMethod = user.HasVerificationMethod(VerificationMethod.Passkey)
+        var preferredMethod = user.HasVerification(VerificationMethod.Passkey)
             ? VerificationMethod.Passkey
             : VerificationMethod.Email;
         

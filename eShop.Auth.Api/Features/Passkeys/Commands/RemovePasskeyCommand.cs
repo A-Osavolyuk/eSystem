@@ -50,13 +50,13 @@ public class RemovePasskeyCommandHandler(
                 if (!twoFactorResult.Succeeded) return twoFactorResult;
             }
 
-            if (user.HasVerificationMethod(VerificationMethod.Passkey))
+            if (user.HasVerification(VerificationMethod.Passkey))
             {
                 var method = user.GetVerificationMethod(VerificationMethod.Passkey)!;
 
                 if (method.Preferred)
                 {
-                    var preferredMethod = user.HasVerificationMethod(VerificationMethod.AuthenticatorApp) 
+                    var preferredMethod = user.HasVerification(VerificationMethod.AuthenticatorApp) 
                         ? VerificationMethod.AuthenticatorApp 
                         : VerificationMethod.Email;
                 

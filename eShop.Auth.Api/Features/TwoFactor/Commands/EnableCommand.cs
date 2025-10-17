@@ -36,7 +36,7 @@ public class EnableTwoFactorCommandHandler(
 
             if (!passkeyResult.Succeeded) return passkeyResult;
 
-            if (!user.HasVerificationMethod(VerificationMethod.Passkey))
+            if (!user.HasVerification(VerificationMethod.Passkey))
             {
                 var passkeySubscriptionResult = await verificationManager.SubscribeAsync(user,
                     VerificationMethod.Passkey, cancellationToken: cancellationToken);
