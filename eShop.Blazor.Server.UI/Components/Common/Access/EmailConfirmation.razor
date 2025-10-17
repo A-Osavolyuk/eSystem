@@ -88,7 +88,7 @@
     [Parameter] public EventCallback OnAccessConfirmed { get; set; }
     [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
     [Parameter] public ConfirmationContext Context { get; set; } = null!;
-    [Parameter] public List<UserVerificationMethodDto> Methods { get; set; } = [];
+    [Parameter] public List<UserVerificationMethod> Methods { get; set; } = [];
 
     private CodeModel Model { get; set; } = new();
 

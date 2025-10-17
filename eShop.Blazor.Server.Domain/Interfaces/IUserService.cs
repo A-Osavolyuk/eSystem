@@ -11,7 +11,7 @@ public interface IUserService
     public ValueTask<HttpResponse> GetUserEmailsAsync(Guid id);
     public ValueTask<HttpResponse> GetUserDevicesAsync(Guid id);
     public ValueTask<HttpResponse> GetUserLoginMethodsAsync(Guid id);
-    public ValueTask<HttpResponse> GetUserVerificationMethodsAsync(Guid id);
+    public ValueTask<HttpResponse> GetUserVerificationDataAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id);
     public ValueTask<HttpResponse> GetUserStateAsync(Guid id);
     public ValueTask<HttpResponse> GetUserPersonalDataAsync(Guid id);

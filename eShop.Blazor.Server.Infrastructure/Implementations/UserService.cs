@@ -35,8 +35,8 @@ public class UserService(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/{id}/login-methods", Method = HttpMethod.Get },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GetUserVerificationMethodsAsync(Guid id) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/{id}/verification-methods", Method = HttpMethod.Get },
+    public async ValueTask<HttpResponse> GetUserVerificationDataAsync(Guid id) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/{id}/verification-data", Method = HttpMethod.Get },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GetUserPhoneNumbersAsync(Guid id) => await ApiClient.SendAsync(

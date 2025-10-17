@@ -95,7 +95,7 @@ else
 
     private async Task LoadAsync()
     {
-        var result = await UserService.GetUserVerificationMethodsAsync(UserState.UserId);
+        var result = await UserService.GetUserVerificationDataAsync(UserState.UserId);
 
         if (result.Success)
         {
