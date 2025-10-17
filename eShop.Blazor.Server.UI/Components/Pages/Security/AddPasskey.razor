@@ -22,7 +22,8 @@
                     HeaderBadgeView="HeaderBadgeView.All"
                     ShowNextButton="false"
                     ShowPreviousButton="false"
-                    ShowSkipButton="false">
+                    ShowSkipButton="false"
+                    Linear="true">
                     <ChildContent>
                         <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Key" Title="Add passkey">
                             <ChildContent>
@@ -47,18 +48,24 @@
                                                     Passkeys can be used for sign-in as a simple and secure alternative
                                                     to your password and two-factor credentials.
                                                 </MudTextM3>
-                                                @if (!showError)
-                                                {
-                                                    <MudButton
-                                                        Color="Color.Success"
-                                                        Variant="Variant.Filled"
-                                                        ButtonType="ButtonType.Button"
-                                                        Size="Size.Small"
-                                                        OnClick="@(async () => await OnAddPasskeyAsync())">
-                                                        Add passkey
-                                                    </MudButton>
-                                                }
-                                                else
+                                                <MudDivider />
+                                                <MudStack Spacing="1">
+                                                    <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium">
+                                                        Passkey nickname
+                                                    </MudTextM3>
+                                                    <MudForm 
+                                                        @ref="form" 
+                                                        Model="Model" 
+                                                        Validation="Validator.ValidateValue">
+                                                        <MudTextFieldExtended
+                                                            @bind-Value="Model.DisplayName"
+                                                            Margin="Margin.Dense"
+                                                            Variant="Variant.Outlined"
+                                                            Immediate="true"
+                                                            Clearable="true"/>
+                                                    </MudForm>
+                                                </MudStack>
+                                                @if (showError)
                                                 {
                                                     <MudAlert
                                                         ContentAlignment="HorizontalAlignment.Center"
@@ -68,15 +75,15 @@
                                                         Class="w-100">
                                                         Failure on adding passkey
                                                     </MudAlert>
-                                                    <MudButton
-                                                        Color="Color.Success"
-                                                        Variant="Variant.Filled"
-                                                        ButtonType="ButtonType.Button"
-                                                        Size="Size.Small"
-                                                        OnClick="@(async () => await OnAddPasskeyAsync())">
-                                                        Retry add passkey
-                                                    </MudButton>
                                                 }
+                                                <MudButton
+                                                    Color="Color.Success"
+                                                    Variant="Variant.Filled"
+                                                    ButtonType="ButtonType.Button"
+                                                    Size="Size.Small"
+                                                    OnClick="@(async () => await OnAddPasskeyAsync())">
+                                                    @(showError ? "Retry add passkey" : "Add passkey")
+                                                </MudButton>
                                                 <MudButton
                                                     Color="Color.Info"
                                                     Variant="Variant.Text"
@@ -104,32 +111,27 @@
                                                             Size="Size.Large"
                                                             Color="Color.Success"/>
                                                     </MudStack>
-                                                    <MudTextM3 Typo="TypoM3.Title" Size="Size.Large"
-                                                               Align="Align.Center">
+                                                    <MudTextM3 
+                                                        Typo="TypoM3.Title" 
+                                                        Size="Size.Large" 
+                                                        Align="Align.Center">
                                                         Successfully added a passkey
                                                     </MudTextM3>
                                                     <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                                                        From now on, you can use this passkey to sign-in to eAccount.
+                                                        From now on, you can use this passkey to sign-in to eAccount
+                                                        from this browser.
                                                     </MudTextM3>
-                                                    <MudDivider/>
-                                                    <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium">
-                                                        Passkey nickname
+                                                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                        Also you can configure hardware security keys (USB/NFC) to 
+                                                        sign-in to eAccount from any device.
                                                     </MudTextM3>
-                                                    <MudForm @ref="form" Model="Model"
-                                                             Validation="Validator.ValidateValue">
-                                                        <MudTextFieldExtended
-                                                            @bind-Value="Model.DisplayName"
-                                                            Margin="Margin.Dense"
-                                                            Variant="Variant.Outlined"
-                                                            Immediate="true"
-                                                            Clearable="true"/>
-                                                    </MudForm>
                                                     <MudButton
+                                                        Class="mt-2"
                                                         Color="Color.Success"
                                                         Variant="Variant.Filled"
                                                         ButtonType="ButtonType.Button"
                                                         Size="Size.Small"
-                                                        OnClick="@(async () => await OnSetPasskeyNameAsync())">
+                                                        Href="@ReturnUrl">
                                                         Done
                                                     </MudButton>
                                                 </MudStack>
@@ -152,13 +154,9 @@
     public string ReturnUrl { get; set; } = null!;
 
     private CreatePasskeyModel Model { get; set; } = new();
-
     private MudStepperExtended stepper = new();
     private ConfirmationContext? context;
     private MudForm form = new();
-
-    private readonly string displayName = $"eAccount-passkey-{Guid.CreateVersion7()}";
-    private Guid keyId;
     private bool showError;
 
     protected override void OnInitialized()
@@ -173,20 +171,25 @@
     private async Task OnAddPasskeyAsync()
     {
         showError = false;
-        var request = new GenerateCreationOptionsRequest()
-        {
-            UserId = UserState.UserId,
-            DisplayName = displayName
-        };
+        await form.Validate();
 
-        var result = await PasskeyService.GenerateCreationOptionsAsync(request);
-
-        if (result.Success)
+        if (form.IsValid)
         {
-            var options = result.Get<PublicKeyCredentialCreationOptions>()!;
-            await VerifyPasskeyAsync(options);
+            var request = new GenerateCreationOptionsRequest()
+            {
+                UserId = UserState.UserId,
+                DisplayName = Model.DisplayName
+            };
+
+            var result = await PasskeyService.GenerateCreationOptionsAsync(request);
+
+            if (result.Success)
+            {
+                var options = result.Get<PublicKeyCredentialCreationOptions>()!;
+                await VerifyPasskeyAsync(options);
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
         }
-        else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task VerifyPasskeyAsync(PublicKeyCredentialCreationOptions options)
@@ -198,41 +201,14 @@
             var request = new CreatePasskeyRequest()
             {
                 UserId = UserState.UserId,
-                DisplayName = displayName,
+                DisplayName = Model.DisplayName,
                 Response = assertResponse
             };
 
             var result = await PasskeyService.CreatAsync(request);
-            if (result.Success)
-            {
-                var response = result.Get<CreatePasskeyResponse>()!;
-                keyId = response.PasskeyId;
-
-                await stepper.StepNextAsync();
-            }
+            if (result.Success) await stepper.StepNextAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }
         else showError = true;
     }
-
-    private async Task OnSetPasskeyNameAsync()
-    {
-        await form.Validate();
-
-        if (form.IsValid)
-        {
-            var request = new SetPasskeyNameRequest()
-            {
-                UserId = UserState.UserId,
-                PasskeyId = keyId,
-                DisplayName = Model.DisplayName
-            };
-
-            var result = await PasskeyService.SetNameAsync(request);
-
-            if (result.Success) NavigationManager.NavigateTo(ReturnUrl);
-            else Snackbar.Add(result.Message, Severity.Error);
-        }
-    }
-
 }
