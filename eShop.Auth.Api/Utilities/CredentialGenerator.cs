@@ -17,17 +17,19 @@ public static class CredentialGenerator
         UserEntity user, 
         string displayName, 
         string challenge,
+        string fingerprint,
         CredentialOptions credentialOptions)
     {
-        var userIdBytes = user.Id.ToByteArray();
-        var userIdBase64 = Convert.ToBase64String(userIdBytes);
+        var identifier = $"{user.Id}_{fingerprint}";
+        var identifierBytes = Encoding.UTF8.GetBytes(identifier);
+        var identifierBase64 = Convert.ToBase64String(identifierBytes);
         
         var options = new PublicKeyCredentialCreationOptions()
         {
             Challenge = challenge,
             PublicKeyCredentialUser = new PublicKeyCredentialUser
             {
-                Id = userIdBase64,
+                Id = identifierBase64,
                 Name = user.Username,
                 DisplayName = displayName,
             },
