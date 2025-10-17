@@ -37,6 +37,12 @@ public class GetUserVerificationMethodsQueryHandler(
             }).ToList()
         };
 
+        if (device.Passkey is null)
+        {
+            var passkeyMethod = response.Methods.Single(x => x.Method == VerificationMethod.Passkey);
+            response.Methods.Remove(passkeyMethod);
+        }
+
         return Result.Success(response);
     }
 }
