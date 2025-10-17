@@ -5,6 +5,7 @@ namespace eShop.Domain.DTOs;
 public class UserPasskeyDto
 {
     public Guid Id { get; set; }
+    public bool CurrentKey { get; set; }
     public string DisplayName { get; set; } = string.Empty;
     public DateTimeOffset? LastSeenDate { get; set; }
     public DateTimeOffset? CreateDate { get; set; }

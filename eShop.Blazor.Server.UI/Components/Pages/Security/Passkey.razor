@@ -6,13 +6,16 @@
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50 pt-1">
                     @Model.DisplayName
                 </MudTextM3>
-                <MudChip
-                    T="string"
-                    Class="m-0"
-                    Variant="Variant.Outlined"
-                    Color="Color.Default"
-                    Size="Size.Small"
-                    Text="Seen from this browser"/>
+                @if (Model.CurrentKey)
+                {
+                    <MudChip
+                        T="string"
+                        Class="m-0"
+                        Variant="Variant.Outlined"
+                        Color="Color.Default"
+                        Size="Size.Small"
+                        Text="Seen from this browser"/>
+                }
             </MudStack>
             <MudStack Row="true" Spacing="1">
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
