@@ -59,9 +59,9 @@ public static class CredentialGenerator
         string challenge,
         CredentialOptions credentialOptions)
     {
-        var allowedCredentials = new List<AllowedCredential>()
+        var allowCredentials = new List<AllowCredential>()
         {
-            new AllowedCredential()
+            new()
             {
                 Type = KeyType.PublicKey,
                 Id = passkey.CredentialId,
@@ -75,7 +75,7 @@ public static class CredentialGenerator
             Timeout = credentialOptions.Timeout,
             Domain = credentialOptions.Domain,
             UserVerification = UserVerifications.Required,
-            AllowedCredentials = allowedCredentials
+            AllowCredentials = allowCredentials
         };
 
         return options;
