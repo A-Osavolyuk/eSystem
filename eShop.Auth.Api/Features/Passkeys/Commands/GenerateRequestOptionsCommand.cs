@@ -7,12 +7,10 @@ public record GenerateRequestOptionsCommand(GenerateRequestOptionsRequest Reques
 
 public class GenerateRequestOptionsCommandHandler(
     IUserManager userManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -28,8 +26,7 @@ public class GenerateRequestOptionsCommandHandler(
 
         var userAgent = httpContext.GetUserAgent();
         var ipAddress = httpContext.GetIpV4();
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
         if (device.Passkey is null) return Results.BadRequest("This device does not have a passkey.");
 

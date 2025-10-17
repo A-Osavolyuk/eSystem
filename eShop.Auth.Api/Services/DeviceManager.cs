@@ -11,17 +11,6 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         return device;
     }
 
-    public async ValueTask<UserDeviceEntity?> FindAsync(UserEntity user, string userAgent, 
-        string ipAddress, CancellationToken cancellationToken = default)
-    {
-        var device = await context.UserDevices.FirstOrDefaultAsync(
-            x => x.UserId == user.Id 
-                 && x.UserAgent == userAgent 
-                 && x.IpAddress == ipAddress, cancellationToken);
-
-        return device;
-    }
-
     public async ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
         if (device.Device == "Other")

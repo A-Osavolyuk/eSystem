@@ -14,7 +14,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
     IRoleManager roleManager,
-    ILockoutManager lockoutManager,
     IOAuthSessionManager sessionManager,
     IOAuthProviderManager providerManager,
     ILoginManager loginManager,
@@ -26,7 +25,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly IRoleManager roleManager = roleManager;
-    private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly ILoginManager loginManager = loginManager;
@@ -129,8 +127,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
         var clientInfo = httpContextAccessor.HttpContext?.GetClientInfo()!;
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = user.GetDevice(userAgent, ipAddress);
 
         if (device is null)
         {

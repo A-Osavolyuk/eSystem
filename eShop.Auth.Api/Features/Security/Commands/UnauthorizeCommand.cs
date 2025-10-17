@@ -8,13 +8,11 @@ public class UnauthorizeCommandHandler(
     IUserManager userManager,
     ITokenManager tokenManager,
     IAuthorizationManager authorizationManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<UnauthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
     public async Task<Result> Handle(UnauthorizeCommand request, CancellationToken cancellationToken)
@@ -23,9 +21,8 @@ public class UnauthorizeCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipV4 = httpContextAccessor.HttpContext?.GetIpV4()!;
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
+        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound("Invalid device.");
         
         var refreshToken = await tokenManager.FindAsync(device, cancellationToken);

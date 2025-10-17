@@ -6,11 +6,9 @@ public record GetUserVerificationDataQuery(Guid UserId) : IRequest<Result>;
 
 public class GetUserVerificationMethodsQueryHandler(
     IUserManager userManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserVerificationDataQuery request, CancellationToken cancellationToken)
@@ -19,9 +17,8 @@ public class GetUserVerificationMethodsQueryHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
         
         var userAgent = httpContext.GetUserAgent();
-        var ip = httpContext.GetIpV4();
-        
-        var device = await deviceManager.FindAsync(user, userAgent, ip, cancellationToken);
+        var ipAddress = httpContext.GetIpV4();
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
 
         var response = new UserVerificationData()

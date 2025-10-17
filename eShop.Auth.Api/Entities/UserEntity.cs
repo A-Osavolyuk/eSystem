@@ -32,6 +32,9 @@ public class UserEntity : Entity
     public UserLockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
 
+    public UserDeviceEntity? GetDevice(string userAgent, string ipAddress)
+        => Devices.FirstOrDefault(x => x.UserAgent == userAgent && x.IpAddress == ipAddress);
+
     public UserEmailEntity? GetEmail(EmailType type)
         => Emails.FirstOrDefault(x => x.Type == type);
 
@@ -43,7 +46,7 @@ public class UserEntity : Entity
 
     public UserTwoFactorMethodEntity? GetTwoFactorMethod(TwoFactorMethod method)
         => Methods.FirstOrDefault(x => x.Method == method);
-    
+
     public UserVerificationMethodEntity? GetVerificationMethod(VerificationMethod method)
         => VerificationMethods.FirstOrDefault(x => x.Method == method);
 

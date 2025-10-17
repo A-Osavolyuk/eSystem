@@ -7,12 +7,10 @@ public record GenerateCreationOptionsCommand(GenerateCreationOptionsRequest Requ
 
 public class GenerateCreationOptionsCommandHandler(
     IUserManager userManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IdentityOptions identityOptions) : IRequestHandler<GenerateCreationOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -23,9 +21,8 @@ public class GenerateCreationOptionsCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var userAgent = httpContext.GetUserAgent();
-        var ip = httpContext.GetIpV4();
-
-        var device = await deviceManager.FindAsync(user, userAgent, ip, cancellationToken);
+        var ipAddress = httpContext.GetIpV4();
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
 
         var challenge = CredentialGenerator.GenerateChallenge();

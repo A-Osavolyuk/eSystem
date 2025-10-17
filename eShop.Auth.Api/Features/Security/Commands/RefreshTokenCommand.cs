@@ -8,13 +8,11 @@ public record RefreshTokenCommand(RefreshTokenRequest Request) : IRequest<Result
 public class RefreshTokenCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IAuthorizationManager authorizationManager) : IRequestHandler<RefreshTokenCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
 
@@ -24,9 +22,8 @@ public class RefreshTokenCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with id {request.Request.UserId}.");
         
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipV4 = httpContextAccessor.HttpContext?.GetIpV4()!;
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
+        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound("Invalid device.");
         
         var refreshToken = await tokenManager.FindAsync(device, cancellationToken);

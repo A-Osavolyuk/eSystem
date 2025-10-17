@@ -24,8 +24,7 @@ public class UnlockAccountCommandHandler(
 
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
         
         var code = request.Request.Code;

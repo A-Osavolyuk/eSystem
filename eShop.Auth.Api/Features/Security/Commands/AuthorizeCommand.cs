@@ -8,13 +8,11 @@ public record AuthorizeCommand(AuthorizeRequest Request) : IRequest<Result>;
 public class AuthorizeCommandHandler(
     IUserManager userManager,
     ITokenManager tokenManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IAuthorizationManager authorizationManager) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
 
@@ -24,9 +22,8 @@ public class AuthorizeCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipV4 = httpContextAccessor.HttpContext?.GetIpV4()!;
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
+        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound("Invalid device.");
 
         var session = await authorizationManager.FindAsync(device, cancellationToken);

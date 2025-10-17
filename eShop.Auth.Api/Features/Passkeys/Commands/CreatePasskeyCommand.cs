@@ -14,14 +14,12 @@ public class CreatePasskeyCommandHandler(
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
     IVerificationManager verificationManager,
-    IDeviceManager deviceManager,
     IdentityOptions identityOptions) : IRequestHandler<CreatePasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -33,8 +31,7 @@ public class CreatePasskeyCommandHandler(
 
         var userAgent = httpContext.GetUserAgent();
         var ipAddress = httpContext.GetIpV4();
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,

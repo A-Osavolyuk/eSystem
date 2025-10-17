@@ -39,8 +39,7 @@ public sealed class LoginWith2FaCommandHandler(
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
         var clientInfo = httpContext.GetClientInfo()!;
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = user.GetDevice(userAgent, ipAddress);
 
         if (device is null)
         {

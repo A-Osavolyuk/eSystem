@@ -11,13 +11,11 @@ public class PasskeySignInCommandHandler(
     IPasskeyManager passkeyManager,
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<PasskeySignInCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ILoginManager loginManager = loginManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -51,9 +49,8 @@ public class PasskeySignInCommandHandler(
         }
 
         var userAgent = httpContext.GetUserAgent()!;
-        var ipV4 = httpContext.GetIpV4()!;
-
-        var device = await deviceManager.FindAsync(user, userAgent, ipV4, cancellationToken);
+        var ipAddress = httpContext.GetIpV4()!;
+        var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound($"Invalid device.");
 
         await loginManager.CreateAsync(device, LoginType.Passkey, cancellationToken);
