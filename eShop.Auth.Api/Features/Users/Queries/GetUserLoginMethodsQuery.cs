@@ -55,7 +55,7 @@ public class GetUserLoginMethodsQueryHandler(
                         CurrentKey = device.UserAgent!.Equals(userAgent),
                         DisplayName = device.Passkey!.DisplayName,
                         LastSeenDate = device.Passkey!.LastSeenDate,
-                        CreateDate = device.Passkey!.UpdateDate
+                        CreateDate = device.Passkey!.CreateDate
                     })
                     .ToList()
             }
