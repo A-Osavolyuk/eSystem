@@ -18,10 +18,10 @@ public class PublicKeyCredentialRequestOptions
     public required string UserVerification { get; set; } = UserVerifications.Preferred;
     
     [JsonPropertyName("allowCredentials")]
-    public required List<AllowCredential> AllowCredentials { get; set; }
+    public required List<PublicKeyCredentialDescriptor> AllowCredentials { get; set; }
 }
 
-public class AllowCredential
+public class PublicKeyCredentialDescriptor
 {
     [JsonPropertyName("id")]
     public required string Id { get; set; }

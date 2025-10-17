@@ -59,7 +59,7 @@ public static class CredentialGenerator
         string challenge,
         CredentialOptions credentialOptions)
     {
-        var allowCredentials = new List<AllowCredential>()
+        var allowCredentials = new List<PublicKeyCredentialDescriptor>()
         {
             new()
             {
