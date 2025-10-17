@@ -41,17 +41,14 @@ public class CreatePasskeyCommandHandler(
 
         var credentialResponse = request.Request.Response;
         var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
-
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
 
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
         var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Attestation);
-
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
         var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
-
         var source = Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray());
         var rpHash = SHA256.HashData(source);
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
@@ -88,8 +85,7 @@ public class CreatePasskeyCommandHandler(
 
             if (!verificationMethodResult.Succeeded) return verificationMethodResult;
         }
-
-        var response = new CreatePasskeyResponse() { PasskeyId = passkey.Id };
-        return Result.Success(response);
+        
+        return Result.Success();
     }
 }
