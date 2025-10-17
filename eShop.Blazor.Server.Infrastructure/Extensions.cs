@@ -71,6 +71,7 @@ public static class Extensions
                 options.LoginPath = "/account/login";
                 options.LogoutPath = "/account/logout";
                 options.AccessDeniedPath = "/access-denied";
+                options.ReturnUrlParameter = "return_url";
             })
             .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(
                 JwtBearerDefaults.AuthenticationScheme, _ => { });
