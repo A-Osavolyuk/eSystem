@@ -86,6 +86,7 @@ else
     private async Task ChangeMethodAsync(VerificationMethod method)
     {
         await InvokeAsync(StateHasChanged);
+        Model.PreferredMethod = method;
     }
 
     private async Task ConfirmAccessAsync()
