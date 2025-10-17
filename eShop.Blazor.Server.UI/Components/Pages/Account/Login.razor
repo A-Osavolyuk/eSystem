@@ -146,14 +146,6 @@
 
     private MudForm form = new();
 
-    protected override void OnInitialized()
-    {
-        if (!string.IsNullOrEmpty(ReturnUrl))
-        {
-            Snackbar.Add("Your need to authorize first to navigate this page.", Severity.Info);
-        }
-    }
-
     private async Task OnSubmitAsync()
     {
         await form.Validate();
@@ -205,10 +197,20 @@
                 if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
                 {
                     var device = response.DeviceId;
-                    var url = $"{Links.DeviceTrustPage}?device={device}&user={userId}";
 
+                    if (string.IsNullOrEmpty(ReturnUrl))
+                    {
+                        var url = $"{Links.DeviceTrustPage}?device={device}&user={userId}";
+                        NavigationManager.NavigateTo(url);
+                    }
+                    else
+                    {
+                        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
+                        var url = $"{Links.DeviceTrustPage}?device={device}&user={userId}&return_url={returnUrl}";
+                        NavigationManager.NavigateTo(url);
+                    }
+                    
                     Snackbar.Add(result.Message, Severity.Info);
-                    NavigationManager.NavigateTo(url);
                     return;
                 }
 
@@ -264,4 +266,5 @@
         var returnUrl = HttpUtility.UrlEncode(Links.LoginPage);
         return $"{Links.RecoverPage}?return_url={returnUrl}";
     }
+
 }
