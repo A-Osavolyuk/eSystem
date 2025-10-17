@@ -52,13 +52,13 @@ public class UsersController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
-    [EndpointSummary("Get user's verification methods")]
-    [EndpointDescription("Gets user's verification methods")]
+    [EndpointSummary("Get user's verification data")]
+    [EndpointDescription("Gets user's verification data")]
     [ProducesResponseType(200)]
-    [HttpGet("verification-methods")]
+    [HttpGet("verification-data")]
     public async ValueTask<IActionResult> GetUserVerificationMethods(Guid id)
     {
-        var result = await sender.Send(new GetUserVerificationMethodsQuery(id));
+        var result = await sender.Send(new GetUserVerificationDataQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
