@@ -60,40 +60,44 @@
             }
         </MudStack>
     </MudPaper>
-    @if (Methods.Any(x => x.Method != VerificationMethod.Passkey))
-    {
-        <MudPaper Outlined="true" Class="py-3 px-5">
-            <MudStack>
-                <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
-                    Having problems?
-                </MudTextM3>
-                <ul>
+    <MudPaper Outlined="true" Class="py-3 px-5">
+        <MudStack>
+            <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
+                Having problems?
+            </MudTextM3>
+            <ul>
+                <li>
+                    <MudLink
+                        OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Email))">
+                        Confirm access with email
+                    </MudLink>
+                </li>
+                @if (Model.AuthenticatorEnabled)
+                {
                     <li>
                         <MudLink
-                            OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Email))">
-                            Confirm access with email
+                            OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.AuthenticatorApp))">
+                            Confirm access with authenticator app
                         </MudLink>
                     </li>
-                    @if (Methods.Any(x => x.Method == VerificationMethod.AuthenticatorApp))
-                    {
-                        <li>
-                            <MudLink
-                                OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.AuthenticatorApp))">
-                                Confirm access with authenticator app
-                            </MudLink>
-                        </li>
-                    }
-                </ul>
-            </MudStack>
-        </MudPaper>
-    }
+                }
+            </ul>
+        </MudStack>
+    </MudPaper>
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback OnAccessConfirmed { get; set; }
-    [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
-    [Parameter] public ConfirmationContext Context { get; set; } = null!;
-    [Parameter] public List<UserVerificationMethod> Methods { get; set; } = [];
+    [Parameter] 
+    public EventCallback OnAccessConfirmed { get; set; }
+    
+    [Parameter] 
+    public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
+    
+    [Parameter] 
+    public ConfirmationContext Context { get; set; } = null!;
+    
+    [Parameter] 
+    public UserVerificationData Model { get; set; } = new();
 
     private bool isLoading;
     private bool showError;

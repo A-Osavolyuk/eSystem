@@ -30,14 +30,14 @@
                         If it doesn’t appear within a few minutes, check your spam folder.
                     </MudTextM3>
                 </MudStack>
-                <MudForm @ref="form" Model="Model">
+                <MudForm @ref="form" Model="CodeModel">
                     <MudTextFieldExtended
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         Immediate="true"
                         Mask="@mask"
                         Placeholder="XXXXXX"
-                        @bind-Value="Model.Code"/>
+                        @bind-Value="CodeModel.Code"/>
                 </MudForm>
                 <MudLoadingButton
                     ButtonType="ButtonType.Button"
@@ -45,14 +45,14 @@
                     Color="Color.Success"
                     Size="Size.Small"
                     FullWidth="true"
-                    Disabled="@(Model.Code.Length <= 5)"
+                    Disabled="@(CodeModel.Code.Length <= 5)"
                     OnClick="@(async () => await OnVerifyAsync())">
                     Verify code
                 </MudLoadingButton>
             }
         </MudStack>
     </MudPaper>
-    @if (Methods.Any(x => x.Method != VerificationMethod.Email))
+    @if (Model.Methods.Any(x => x.Method != VerificationMethod.Email))
     {
         <MudPaper Outlined="true" Class="py-3 px-5">
             <MudStack>
@@ -60,7 +60,7 @@
                     Having problems?
                 </MudTextM3>
                 <ul>
-                    @if (Methods.Any(x => x.Method == VerificationMethod.AuthenticatorApp))
+                    @if (Model.AuthenticatorEnabled)
                     {
                         <li>
                             <MudLink
@@ -69,7 +69,7 @@
                             </MudLink>
                         </li>
                     }
-                    @if (Methods.Any(x => x.Method == VerificationMethod.Passkey))
+                    @if (Model.PasskeyEnabled)
                     {
                         <li>
                             <MudLink
@@ -85,12 +85,19 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback OnAccessConfirmed { get; set; }
-    [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
-    [Parameter] public ConfirmationContext Context { get; set; } = null!;
-    [Parameter] public List<UserVerificationMethod> Methods { get; set; } = [];
+    [Parameter] 
+    public EventCallback OnAccessConfirmed { get; set; }
+    
+    [Parameter] 
+    public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
+    
+    [Parameter] 
+    public ConfirmationContext Context { get; set; } = null!;
+    
+    [Parameter] 
+    public UserVerificationData Model { get; set; } = new();
 
-    private CodeModel Model { get; set; } = new();
+    private CodeModel CodeModel { get; set; } = new();
 
     private PatternMask mask = new PatternMask("000000");
     private MudForm form = new();
@@ -125,7 +132,7 @@
             var request = new VerifyCodeRequest()
             {
                 UserId = UserState.UserId,
-                Code = Model.Code,
+                Code = CodeModel.Code,
                 Purpose = Context.Purpose,
                 Action = Context.Action,
                 Sender = SenderType.Email

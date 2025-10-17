@@ -8,7 +8,9 @@
 }
 else
 {
-    <MudGrid Justify="Justify.Center">
+    if (Model.Methods.Count > 0)
+    {
+        <MudGrid Justify="Justify.Center">
         <MudItem xs="3">
             <MudStack Justify="Justify.Center">
                 <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
@@ -33,12 +35,12 @@ else
                         </MudItem>
                     </MudGrid>
                 </MudPaper>
-                @switch (Method)
+                @switch (Model.PreferredMethod)
                 {
                     case VerificationMethod.Email:
                     {
                         <EmailConfirmation
-                            Methods="Methods"
+                            Model="Model"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync"
                             OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -47,7 +49,7 @@ else
                     case VerificationMethod.Passkey:
                     {
                         <PasskeyConfirmation
-                            Methods="Methods"
+                            Model="Model"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync"
                             OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -56,7 +58,7 @@ else
                     case VerificationMethod.AuthenticatorApp:
                     {
                         <AuthenticatorConfirmation
-                            Methods="Methods"
+                            Model="Model"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync" 
                             OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -66,14 +68,14 @@ else
             </MudStack>
         </MudItem>
     </MudGrid>
+    }
 }
 
 @code {
     [Parameter] public ConfirmationContext Context { get; set; } = null!;
     [Parameter] public RenderFragment AccessConfirmed { get; set; } = null!;
 
-    public List<UserVerificationMethod> Methods { get; set; } = [];
-    private VerificationMethod Method { get; set; }
+    private UserVerificationData Model { get; set; } = new();
     private bool Confirmed { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
@@ -83,7 +85,6 @@ else
 
     private async Task ChangeMethodAsync(VerificationMethod method)
     {
-        Method = method;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -97,13 +98,7 @@ else
     {
         var result = await UserService.GetUserVerificationDataAsync(UserState.UserId);
 
-        if (result.Success)
-        {
-            var response = result.Get<List<UserVerificationMethod>>()!;
-
-            Method = response.First(method => method.Preferred).Method;
-            Methods = response;
-        }
+        if (result.Success) Model = result.Get<UserVerificationData>()!;
         else Snackbar.Add(result.Message, Severity.Error);
     }
 

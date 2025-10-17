@@ -2,7 +2,7 @@
 @inject IUserService UserService
 @inject ISnackbar Snackbar
 
-@if (Methods.Count > 0)
+@if (Model.Methods.Count > 0)
 {
     <MudDialog Style="width: 600px">
     <TitleContent>
@@ -29,12 +29,12 @@
                     </MudItem>
                 </MudGrid>
             </MudPaper>
-            @switch (Method)
+            @switch (Model.PreferredMethod)
             {
                 case VerificationMethod.Email:
                 {
                     <EmailConfirmation
-                        Methods="Methods"
+                        Model="Model"
                         Context="Context"
                         OnMethodChanged="ChangeMethodAsync"
                         OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -43,7 +43,7 @@
                 case VerificationMethod.Passkey:
                 {
                     <PasskeyConfirmation
-                        Methods="Methods"
+                        Model="Model"
                         Context="Context"
                         OnMethodChanged="ChangeMethodAsync"
                         OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -52,7 +52,7 @@
                 case VerificationMethod.AuthenticatorApp:
                 {
                     <AuthenticatorConfirmation
-                        Methods="Methods"
+                        Model="Model"
                         Context="Context"
                         OnMethodChanged="ChangeMethodAsync"
                         OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -69,8 +69,7 @@
 
     [Parameter] public ConfirmationContext Context { get; set; } = null!;
 
-    public List<UserVerificationMethod> Methods { get; set; } = [];
-    private VerificationMethod Method { get; set; }
+    private UserVerificationData Model { get; set; } = new();
     private bool Confirmed { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
@@ -80,7 +79,6 @@
 
     private async Task ChangeMethodAsync(VerificationMethod method)
     {
-        Method = method;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -96,13 +94,7 @@
     {
         var result = await UserService.GetUserVerificationDataAsync(UserState.UserId);
 
-        if (result.Success)
-        {
-            var response = result.Get<List<UserVerificationMethod>>()!;
-
-            Method = response.First(method => method.Preferred).Method;
-            Methods = response;
-        }
+        if (result.Success) Model = result.Get<UserVerificationData>()!;
         else Snackbar.Add(result.Message, Severity.Error);
     }
 
