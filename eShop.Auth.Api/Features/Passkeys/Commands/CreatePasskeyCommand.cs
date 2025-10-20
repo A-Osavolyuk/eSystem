@@ -13,12 +13,14 @@ public class CreatePasskeyCommandHandler(
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
     IVerificationManager verificationManager,
+    ISessionStorage sessionStorage,
     IdentityOptions identityOptions) : IRequestHandler<CreatePasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly ISessionStorage sessionStorage = sessionStorage;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -44,7 +46,7 @@ public class CreatePasskeyCommandHandler(
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
 
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
-        var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Attestation);
+        var savedChallenge = sessionStorage.Get(ChallengeSessionKeys.Attestation);
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
         var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);

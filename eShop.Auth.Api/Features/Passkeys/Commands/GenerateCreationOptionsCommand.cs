@@ -8,9 +8,11 @@ public record GenerateCreationOptionsCommand(GenerateCreationOptionsRequest Requ
 public class GenerateCreationOptionsCommandHandler(
     IUserManager userManager,
     IHttpContextAccessor httpContextAccessor,
+    ISessionStorage sessionStorage,
     IdentityOptions identityOptions) : IRequestHandler<GenerateCreationOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly ISessionStorage sessionStorage = sessionStorage;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -33,8 +35,7 @@ public class GenerateCreationOptionsCommandHandler(
         var options = CredentialGenerator.CreateCreationOptions(user,
             displayName, challenge, fingerprint, identityOptions.Credentials);
 
-        httpContext.Session.SetString(ChallengeSessionKeys.Attestation, challenge);
-
+        sessionStorage.Set(ChallengeSessionKeys.Attestation, challenge);
         return Result.Success(options);
     }
 }

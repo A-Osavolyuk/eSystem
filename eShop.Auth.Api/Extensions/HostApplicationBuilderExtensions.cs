@@ -1,5 +1,6 @@
 ﻿
 using eShop.Auth.Api.Security.Schemes;
+using eShop.Auth.Api.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -22,12 +23,18 @@ public static class HostApplicationBuilderExtensions
         builder.AddExceptionHandler();
         builder.AddDocumentation();
         builder.AddVerification();
+        builder.AddSession();
         
         builder.Services.AddControllers()
             .AddJsonOptions(cfg => cfg.JsonSerializerOptions.WriteIndented = true);
         
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddDistributedMemoryCache();
+    }
+
+    private static void AddSession(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<ISessionStorage, SessionStorage>();
         builder.Services.AddSession(options =>
         {
             options.IdleTimeout = TimeSpan.FromMinutes(5);
