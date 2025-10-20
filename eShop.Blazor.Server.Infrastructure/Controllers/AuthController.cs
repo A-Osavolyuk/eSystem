@@ -1,7 +1,6 @@
 ﻿using eShop.Blazor.Server.Domain.DTOs;
 using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Blazor.Server.Domain.Requests;
-using eShop.Blazor.Server.Domain.Responses;
 using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.Auth;
@@ -9,6 +8,7 @@ using eShop.Domain.Responses.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using SignInResponse = eShop.Blazor.Server.Domain.Responses.SignInResponse;
 
 namespace eShop.Blazor.Server.Infrastructure.Controllers;
 
