@@ -132,7 +132,7 @@ public static class HostApplicationBuilderExtensions
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = "Authentication.External";
+                options.Cookie.Name = "eAccount.Authentication.External";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                 options.Cookie.SameSite = SameSiteMode.Lax;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
