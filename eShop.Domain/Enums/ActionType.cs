@@ -103,5 +103,10 @@ public enum ActionType
     /// <summary>
     /// Represents user's recovery codes display
     /// </summary>
-    Show
+    Show,
+    
+    /// <summary>
+    /// Represents user's 2FA authenticator app re-configuration
+    /// </summary>
+    Reconfigure
 }
