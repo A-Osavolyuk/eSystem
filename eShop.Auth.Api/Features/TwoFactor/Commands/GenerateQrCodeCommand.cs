@@ -34,7 +34,7 @@ public class GenerateQrCodeCommandHandler(
                 CreateDate = DateTimeOffset.UtcNow,
             };
             
-            var secretResult = await secretManager.SaveAsync(userSecret, cancellationToken);
+            var secretResult = await secretManager.AddAsync(userSecret, cancellationToken);
             if (!secretResult.Succeeded) return secretResult;
         }
 

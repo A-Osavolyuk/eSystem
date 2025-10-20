@@ -29,7 +29,7 @@ public class ReconfigureAuthenticatorCommandHandler(
         userSecret.Secret = protectedSecret;
         userSecret.UpdateDate = DateTimeOffset.UtcNow;
 
-        var result = await secretManager.SaveAsync(userSecret, cancellationToken);
+        var result = await secretManager.UpdateAsync(userSecret, cancellationToken);
         return result;
     }
 }

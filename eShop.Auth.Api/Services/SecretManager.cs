@@ -17,10 +17,18 @@ public sealed class SecretManager(
         return userSecret;
     }
 
-    public async ValueTask<Result> SaveAsync(UserSecretEntity secret,
+    public async ValueTask<Result> AddAsync(UserSecretEntity secret,
         CancellationToken cancellationToken = default)
     {
         await context.UserSecret.AddAsync(secret, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        return Result.Success();
+    }
+    
+    public async ValueTask<Result> UpdateAsync(UserSecretEntity secret,
+        CancellationToken cancellationToken = default)
+    {
+        context.UserSecret.Update(secret);
         await context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
@@ -43,5 +51,5 @@ public sealed class SecretManager(
 
     public string Generate() => KeyGenerator.GenerateKey(20);
     public string Protect(string unprotectedSecret) => protector.Protect(unprotectedSecret);
-    public string Unprotect(string protectedSecret) => protector.Protect(protectedSecret);
+    public string Unprotect(string protectedSecret) => protector.Unprotect(protectedSecret);
 }
