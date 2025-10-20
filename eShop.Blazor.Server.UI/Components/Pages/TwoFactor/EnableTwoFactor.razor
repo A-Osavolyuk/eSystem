@@ -35,7 +35,8 @@
                                     <MudItem xs="8">
                                         <MudStack Spacing="1" Justify="Justify.Center">
                                             <MudPaper Outlined Class="pa-3">
-                                                <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
+                                                <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small"
+                                                           Align="Align.Center">
                                                     Configure authenticator app
                                                 </MudTextM3>
                                             </MudPaper>
@@ -45,29 +46,35 @@
                                                         <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium">
                                                             Setup authenticator app
                                                         </MudTextM3>
-                                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="opacity-50">
-                                                            Authenticator apps and browser extensions like 
+                                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium"
+                                                                   Class="opacity-50">
+                                                            Authenticator apps and browser extensions like
                                                             <MudLink
-                                                                Typo="Typo.caption"
+                                                                Typo="Typo.body2"
                                                                 Class="text-decoration-underline"
                                                                 Color="Color.Default"
                                                                 Href="@ExternalLinks.OnePassword">
-                                                                1Password</MudLink>,
+                                                                1Password
+                                                            </MudLink>
+                                                            ,
                                                             <MudLink
-                                                                Typo="Typo.caption"
+                                                                Typo="Typo.body2"
                                                                 Class="text-decoration-underline"
                                                                 Color="Color.Default"
                                                                 Href="@ExternalLinks.Authy">
-                                                                Authy</MudLink>,
+                                                                Authy
+                                                            </MudLink>
+                                                            ,
                                                             <MudLink
-                                                                Typo="Typo.caption"
+                                                                Typo="Typo.body2"
                                                                 Class="text-decoration-underline"
                                                                 Color="Color.Default"
                                                                 Href="@ExternalLinks.MicrosoftAuthenticator">
                                                                 Microsoft Authenticator
-                                                            </MudLink>,
-                                                            etc. generate one-time 
-                                                            passwords that are used as a second factor to verify your 
+                                                            </MudLink>
+                                                            ,
+                                                            etc. generate one-time
+                                                            passwords that are used as a second factor to verify your
                                                             identity when prompted during sign-in.
                                                         </MudTextM3>
                                                     </MudStack>
@@ -75,23 +82,24 @@
                                                         <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium">
                                                             Scan QR code with your app/browser extension
                                                         </MudTextM3>
-                                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="opacity-50">
+                                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium"
+                                                                   Class="opacity-50">
                                                             Use an authenticator app or browser extension to scan QR
-                                                            code. 
+                                                            code.
                                                         </MudTextM3>
                                                     </MudStack>
-                                                    <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                                    <MudStack>
                                                         <MudBarcode
                                                             BarcodeFormat="BarcodeFormat.QR_CODE"
                                                             @bind-Value="@(QrCode.Value)"
-                                                            Height="300"
-                                                            Width="300"/>
+                                                            Height="200"
+                                                            Width="200"/>
                                                     </MudStack>
                                                     <div>
-                                                        <MudTextM3 
-                                                            Typo="TypoM3.Body" 
+                                                        <MudTextM3
+                                                            Typo="TypoM3.Body"
                                                             Size="Size.Medium"
-                                                            Class="opacity-50" 
+                                                            Class="opacity-50"
                                                             Inline="true">
                                                             Unable to scan? You can use the
                                                         </MudTextM3>
@@ -99,79 +107,53 @@
                                                             Color="Color.Info"
                                                             Typo="Typo.body2"
                                                             OnClick="@(async () => await ShowSetupKeyAsync())">
-                                                            setup key 
+                                                            setup key
                                                         </MudLink>
-                                                        <MudTextM3 
-                                                            Typo="TypoM3.Body" 
+                                                        <MudTextM3
+                                                            Typo="TypoM3.Body"
                                                             Size="Size.Medium"
-                                                            Class="opacity-50" 
+                                                            Class="opacity-50"
                                                             Inline="true">
                                                             to manually configure your authenticator app.
                                                         </MudTextM3>
                                                     </div>
-                                                    <MudStack Spacing="2">
-                                                        <MudButton
-                                                            Size="Size.Small"
-                                                            Color="Color.Success"
-                                                            Variant="Variant.Filled"
-                                                            ButtonType="ButtonType.Button"
-                                                            OnClick="@(async () => await stepper.StepNextAsync())">
-                                                            Continue
-                                                        </MudButton>
-                                                        <MudButton
-                                                            Variant="Variant.Text"
-                                                            Color="Color.Info"
-                                                            ButtonType="ButtonType.Button"
-                                                            Href="@ReturnUrl"
-                                                            Size="Size.Small">
-                                                            Cancel
-                                                        </MudButton>
+                                                    <MudStack Spacing="1" Style="max-width: 300px">
+                                                        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium">
+                                                            Verify the code from the app
+                                                        </MudTextM3>
+                                                        <MudForm
+                                                            @ref="form"
+                                                            Model="Model"
+                                                            Validation="Validator.ValidateValue">
+                                                            <MudStack Row="true" Spacing="1">
+                                                                <MudTextFieldExtended
+                                                                    Variant="Variant.Outlined"
+                                                                    Margin="Margin.Dense"
+                                                                    Immediate="true"
+                                                                    Mask="@mask"
+                                                                    Placeholder="XXXXXX"
+                                                                    @bind-Value="Model.Code"/>
+                                                            </MudStack>
+                                                        </MudForm>
+                                                        @if (showError)
+                                                        {
+                                                            <MudAlert
+                                                                Severity="Severity.Error"
+                                                                Dense="true"
+                                                                Variant="Variant.Outlined">
+                                                                Invalid code
+                                                            </MudAlert>
+                                                        }
                                                     </MudStack>
-                                                </MudStack>
-                                            </MudPaper>
-                                        </MudStack>
-                                    </MudItem>
-                                </MudGrid>
-                            </ChildContent>
-                        </MudStepExtended>
-                        <MudStepExtended Order="2" Icon="@Icons.Material.Filled.Smartphone" Title="Verify app">
-                            <ChildContent>
-                                <MudGrid Justify="Justify.Center">
-                                    <MudItem xs="8">
-                                        <MudStack Spacing="1" Justify="Justify.Center">
-                                            <MudPaper Outlined Class="pa-3">
-                                                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline"
-                                                           Size="Size.Small">
-                                                    Enter TOTP code from your app/extension
-                                                </MudTextM3>
-                                            </MudPaper>
-                                            <MudPaper Outlined Class="pa-5">
-                                                <MudStack Spacing="3">
-                                                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium" Class="opacity-50">
-                                                        Enter the 6-digit code your authenticator app/browser extension
-                                                    </MudTextM3>
-                                                    <MudForm
-                                                        @ref="form"
-                                                        Model="Model"
-                                                        Validation="Validator.ValidateValue">
-                                                        <MudTextFieldExtended
-                                                            Variant="Variant.Outlined"
-                                                            Margin="Margin.Dense"
-                                                            Immediate="true"
-                                                            Mask="@mask"
-                                                            Placeholder="XXXXXX"
-                                                            @bind-Value="Model.Code"/>
-                                                    </MudForm>
                                                     <MudStack Spacing="2">
-                                                        <MudLoadingButton
+                                                        <MudButton
                                                             Size="Size.Small"
-                                                            Variant="Variant.Filled"
                                                             Color="Color.Success"
-                                                            Disabled="@(Model.Code.Length <= 5)"
+                                                            Variant="Variant.Filled"
                                                             ButtonType="ButtonType.Button"
                                                             OnClick="@(async () => await OnVerifyAsync())">
-                                                            Confirm
-                                                        </MudLoadingButton>
+                                                            Verify
+                                                        </MudButton>
                                                         <MudButton
                                                             Variant="Variant.Text"
                                                             Color="Color.Info"
@@ -188,13 +170,14 @@
                                 </MudGrid>
                             </ChildContent>
                         </MudStepExtended>
-                        <MudStepExtended Order="3" Icon="@Icons.Material.Filled.Download" Title="Download codes">
+                        <MudStepExtended Order="2" Icon="@Icons.Material.Filled.Download" Title="Download codes">
                             <ChildContent>
                                 <MudGrid Justify="Justify.Center">
                                     <MudItem xs="8">
                                         <MudStack Spacing="1" Justify="Justify.Center">
                                             <MudPaper Outlined Class="pa-5">
-                                                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                                                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline"
+                                                           Size="Size.Small">
                                                     Download your recovery codes
                                                 </MudTextM3>
                                             </MudPaper>
@@ -202,8 +185,9 @@
                                                 <MudStack Spacing="3">
                                                     <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Medium">
                                                         You can use recovery codes as a second factor to authenticate in
-                                                        case you lose access to your device.  We recommend saving them 
-                                                        with a secure password manager such as 1Password, Authy, or Keeper.
+                                                        case you lose access to your device. We recommend saving them
+                                                        with a secure password manager such as 1Password, Authy, or
+                                                        Keeper.
                                                     </MudTextM3>
                                                     <MudAlert
                                                         Severity="Severity.Info"
@@ -254,7 +238,7 @@
                                 </MudGrid>
                             </ChildContent>
                         </MudStepExtended>
-                        <MudStepExtended Order="4" Icon="@Icons.Material.Filled.Check" Title="Done">
+                        <MudStepExtended Order="3" Icon="@Icons.Material.Filled.Check" Title="Done">
                             <ChildContent>
                                 <MudGrid Justify="Justify.Center">
                                     <MudItem xs="10">
@@ -297,13 +281,13 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
 
-    [SupplyParameterFromForm] 
-    private CodeModel Model { get; set; } = new();
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended stepper = new();
     private MudForm form = new();
     private ConfirmationContext? confirmationContext;
     private readonly PatternMask mask = new("000000");
+    private bool showError;
 
     private bool DownloadedCodes { get; set; }
     private QrCode QrCode { get; set; } = new();
@@ -339,6 +323,7 @@
 
     private async Task OnVerifyAsync()
     {
+        showError = false;
         var request = new VerifyAuthenticatorCodeRequest()
         {
             UserId = UserState.UserId,
@@ -349,11 +334,11 @@
 
         var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);
 
-        if (result.Success) await SendRecoveryCodesAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
+        if (result.Success) await GenerateRecoveryCodesAsync();
+        else showError = true;
     }
 
-    private async Task SendRecoveryCodesAsync()
+    private async Task GenerateRecoveryCodesAsync()
     {
         var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
