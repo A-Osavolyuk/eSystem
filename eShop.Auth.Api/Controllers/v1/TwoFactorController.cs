@@ -84,6 +84,21 @@ public class TwoFactorController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
     
+    [EndpointSummary("Regenerate QR code")]
+    [EndpointDescription("Regenerate QR code")]
+    [ProducesResponseType(200)]
+    [HttpPost("qr-code/regenerate")]
+    [Authorize]
+    public async ValueTask<IActionResult> RegenerateQrCodeAsync(
+        [FromBody] RegenerateQrCodeRequest request)
+    {
+        var result = await sender.Send(new RegenerateQrCodeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
+    
     [EndpointSummary("Enable 2FA")]
     [EndpointDescription("Enable 2FA")]
     [ProducesResponseType(200)]
