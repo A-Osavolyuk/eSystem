@@ -1,6 +1,7 @@
 ﻿using eShop.Blazor.Server.Domain.DTOs;
 using eShop.Blazor.Server.Domain.Interfaces;
-using eShop.Blazor.Server.Domain.Types;
+using eShop.Blazor.Server.Domain.Requests;
+using eShop.Blazor.Server.Domain.Responses;
 using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.Auth;

@@ -1,6 +1,6 @@
 ﻿using eShop.Blazor.Server.Domain.DTOs;
 
-namespace eShop.Blazor.Server.Domain.Types;
+namespace eShop.Blazor.Server.Domain.Responses;
 
 public class SignInResponse
 {

@@ -1,7 +1,8 @@
 ﻿using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Blazor.Server.Domain.Options;
-using eShop.Blazor.Server.Domain.Types;
+using eShop.Blazor.Server.Domain.Requests;
+using eShop.Blazor.Server.Domain.Responses;
 using eShop.Domain.Common.Http;
 using Microsoft.AspNetCore.Components;
 

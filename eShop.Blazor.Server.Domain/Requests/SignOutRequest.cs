@@ -1,4 +1,4 @@
-﻿namespace eShop.Blazor.Server.Domain.Types;
+﻿namespace eShop.Blazor.Server.Domain.Requests;
 
 public class SignOutRequest
 {
