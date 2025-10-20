@@ -12,5 +12,7 @@ public interface ITwoFactorService
     public ValueTask<HttpResponse> RevokeRecoveryCodesAsync(RevokeRecoveryCodesRequest request);
     public ValueTask<HttpResponse> VerifyRecoveryCodeAsync(VerifyRecoveryCodeRequest request);
     public ValueTask<HttpResponse> GenerateQrCodeAsync(GenerateQrCodeRequest request);
+    public ValueTask<HttpResponse> RegenerateQrCodeAsync(RegenerateQrCodeRequest request);
     public ValueTask<HttpResponse> PreferAsync(PreferTwoFactorMethodRequest request);
+    public ValueTask<HttpResponse> ReconfigureAuthenticatorAsync(ReconfigureAuthenticatorRequest request);
 }
