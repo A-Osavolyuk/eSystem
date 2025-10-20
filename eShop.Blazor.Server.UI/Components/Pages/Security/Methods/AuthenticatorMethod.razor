@@ -1,4 +1,8 @@
-﻿<MudStack Row="true" Class="px-5">
+﻿@using eShop.Blazor.Server.UI.Components.Pages.TwoFactor
+
+@inject IDialogService DialogService
+
+<MudStack Row="true" Class="px-5">
     <MudIcon Icon="@Icons.Material.Outlined.Smartphone" Size="Size.Medium" Class="mt-1"/>
     <MudStack Spacing="0">
         <MudStack Row="true" Spacing="1">
@@ -39,17 +43,26 @@
                 </MudChip>
             }
         </MudStack>
-        <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
-            Use an authentication app or browser extension
-            to get two-factor authentication codes when prompted.
-        </MudTextM3>
+        @if (showConfiguration)
+        {
+            <AuthenticatorAppConfiguration OnCancel="@(() => ToggleConfiguration())"/>
+        }
+        else
+        {
+            <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                Use an authentication app or browser extension
+                to get two-factor authentication codes when prompted.
+            </MudTextM3>
+        }
     </MudStack>
     <MudSpacer/>
     <MudStack>
         <MudButton
             ButtonType="ButtonType.Button"
             Variant="Variant.Outlined"
-            Size="Size.Small">
+            Size="Size.Small"
+            OnClick="@(async () => await ShowAsync())"
+            Disabled="showConfiguration">
             Edit
         </MudButton>
     </MudStack>
@@ -57,4 +70,36 @@
 
 @code {
     [Parameter] public TwoFactorData Model { get; set; } = new();
+
+    private bool showConfiguration;
+
+    private async Task ShowAsync()
+    {
+        var confirmationContext = new ConfirmationContext()
+        {
+            Action = ActionType.Reconfigure,
+            Purpose = PurposeType.AuthenticatorApp
+        };
+
+        var parameters = new DialogParameters<AccessConfirmationDialog>()
+        {
+            { dialog => dialog.Context, confirmationContext }
+        };
+
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            CloseOnEscapeKey = true,
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        const string title = "Access confirmation";
+        var dialog = await DialogService.ShowAsync<AccessConfirmationDialog>(title, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled) ToggleConfiguration();
+    }
+
+    private void ToggleConfiguration() => showConfiguration = !showConfiguration;
 }
