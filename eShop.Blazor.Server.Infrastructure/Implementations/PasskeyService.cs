@@ -33,11 +33,6 @@ public class PasskeyService(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/create", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> SignInAsync(
-        PasskeySignInRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/sign-in", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
-
     public async ValueTask<HttpResponse> RemoveAsync(RemovePasskeyRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/remove", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });

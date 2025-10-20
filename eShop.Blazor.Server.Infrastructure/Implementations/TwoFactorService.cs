@@ -11,11 +11,6 @@ public class TwoFactorService(
     IConfiguration configuration) : ApiService(configuration, client), ITwoFactorService
 {
     private const string BasePath = "api/v1/TwoFactor";
-    
-    public async ValueTask<HttpResponse> AuthenticatorSignInAsync(AuthenticatorSignInRequest request) =>
-        await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/{BasePath}/sign-in", Method = HttpMethod.Post, Data = request }, 
-            new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> EnableAsync(EnableTwoFactorRequest request) =>
         await ApiClient.SendAsync(

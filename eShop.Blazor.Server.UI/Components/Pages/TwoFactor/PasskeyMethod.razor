@@ -4,6 +4,7 @@
 @inject AuthenticationManager AuthenticationManager
 @inject ISnackbar Snackbar
 @inject IPasskeyService PasskeyService
+@inject ISecurityService SecurityService
 
 <MudStack Spacing="4" Class="w-100">
     <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
@@ -99,12 +100,16 @@
 
     private async Task SignInAsync(PublicKeyCredential credential)
     {
-        var request = new PasskeySignInRequest() { Credential = credential };
-        var result = await PasskeyService.SignInAsync(request);
+        var request = new SignInRequest()
+        {
+            Type = SignInType.Passkey,
+            Credentials = new() { { "Credential", credential } }
+        };
+        var result = await SecurityService.SignInAsync(request);
 
         if (result.Success)
         {
-            var response = result.Get<PasskeySignInResponse>()!;
+            var response = result.Get<SignInResponse>()!;
 
             UserState.UserId = response.UserId;
             await AuthenticationManager.SignInAsync();

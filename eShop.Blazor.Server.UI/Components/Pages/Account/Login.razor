@@ -152,12 +152,20 @@
 
         if (form.IsValid)
         {
-            var request = new LoginRequest() { Login = Model.Login, Password = Model.Password };
-            var result = await SecurityService.LoginAsync(request);
+            var request = new SignInRequest()
+            {
+                Type = SignInType.Password,
+                Credentials = new()
+                {
+                    { "Password", Model.Password },
+                    { "Login", Model.Login },
+                }
+            };
+            var result = await SecurityService.SignInAsync(request);
 
             if (result.Success)
             {
-                var response = result.Get<LoginResponse>()!;
+                var response = result.Get<SignInResponse>()!;
 
                 if (response.IsTwoFactorEnabled)
                 {
@@ -191,7 +199,7 @@
                     return;
                 }
 
-                var response = result.Get<LoginResponse>()!;
+                var response = result.Get<SignInResponse>()!;
                 var userId = response.UserId;
 
                 if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
@@ -209,7 +217,7 @@
                         var url = $"{Links.DeviceTrustPage}?device={device}&user={userId}&return_url={returnUrl}";
                         NavigationManager.NavigateTo(url);
                     }
-                    
+
                     Snackbar.Add(result.Message, Severity.Info);
                     return;
                 }

@@ -1,48 +1,52 @@
-﻿using eShop.Domain.Requests.Auth;
-using eShop.Domain.Responses.Auth;
+﻿using eShop.Domain.Responses.Auth;
 
-namespace eShop.Auth.Api.Features.Security.Commands;
+namespace eShop.Auth.Api.Security.Authentication;
 
-public sealed record LoginCommand(LoginRequest Request) : IRequest<Result>;
-
-public sealed class LoginCommandHandler(
+public sealed class PasswordSignInStrategy(
     IUserManager userManager,
     ILockoutManager lockoutManager,
+    IDeviceManager deviceManager,
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
-    IDeviceManager deviceManager,
-    IHttpContextAccessor httpContextAccessor,
-    IdentityOptions identityOptions) : IRequestHandler<LoginCommand, Result>
+    IHttpContextAccessor accessor,
+    IdentityOptions identityOptions) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
+    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly HttpContext httpContext = accessor.HttpContext!;
 
-    public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials,
+        CancellationToken cancellationToken = default)
     {
+        var login = credentials["Login"].ToString();
+        var password = credentials["Password"].ToString();
+
+        if (string.IsNullOrEmpty(login)) return Results.BadRequest("Empty login");
+        if (string.IsNullOrEmpty(password)) return Results.BadRequest("Empty password");
+
         UserEntity? user = null;
-        LoginResponse? response;
+        SignInResponse? response;
 
         if (identityOptions.SignIn.AllowUserNameLogin)
         {
-            user = await userManager.FindByUsernameAsync(request.Request.Login, cancellationToken);
+            user = await userManager.FindByUsernameAsync(login, cancellationToken);
         }
 
         if (user is null && identityOptions.SignIn.AllowEmailLogin)
         {
-            user = await userManager.FindByEmailAsync(request.Request.Login, cancellationToken);
+            user = await userManager.FindByEmailAsync(login, cancellationToken);
         }
 
-        if (user is null) return Results.NotFound($"Cannot find user with login {request.Request.Login}.");
+        if (user is null) return Results.NotFound($"Cannot find user with login {password}.");
         if (!user.HasPassword()) return Results.BadRequest("Cannot log in, you don't have a password.");
 
-        var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
-        var clientInfo = httpContextAccessor.HttpContext?.GetClientInfo()!;
+        var userAgent = httpContext.GetUserAgent()!;
+        var ipAddress = httpContext.GetIpV4()!;
+        var clientInfo = httpContext.GetClientInfo()!;
         var device = user.GetDevice(userAgent, ipAddress);
 
         if (device is null)
@@ -65,11 +69,11 @@ public sealed class LoginCommandHandler(
             var result = await deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-        
+
         var userPrimaryEmail = user.GetEmail(EmailType.Primary)!;
         if (identityOptions.SignIn.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
         {
-            response = new LoginResponse()
+            response = new SignInResponse()
             {
                 UserId = user.Id,
                 IsEmailConfirmed = false
@@ -77,10 +81,10 @@ public sealed class LoginCommandHandler(
 
             return Results.BadRequest("User's primary email is not verified.", response);
         }
-        
+
         if (user.LockoutState.Enabled)
         {
-            response = new LoginResponse()
+            response = new SignInResponse()
             {
                 UserId = user.Id,
                 IsLockedOut = true,
@@ -92,7 +96,7 @@ public sealed class LoginCommandHandler(
 
         if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
-        var isValidPassword = userManager.CheckPassword(user, request.Request.Password);
+        var isValidPassword = userManager.CheckPassword(user, password);
         if (!isValidPassword)
         {
             user.FailedLoginAttempts += 1;
@@ -102,7 +106,7 @@ public sealed class LoginCommandHandler(
 
             if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
             {
-                response = new LoginResponse()
+                response = new SignInResponse()
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
@@ -115,12 +119,12 @@ public sealed class LoginCommandHandler(
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user, 
+            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user,
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            response = new LoginResponse()
+            response = new SignInResponse()
             {
                 UserId = user.Id,
                 IsLockedOut = true,
@@ -128,7 +132,7 @@ public sealed class LoginCommandHandler(
                 MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
-        
+
             return Results.BadRequest("Account is locked out due to too many failed login attempts", response);
         }
 
@@ -142,14 +146,14 @@ public sealed class LoginCommandHandler(
 
         if (identityOptions.SignIn.RequireTrustedDevice)
         {
-            response = new LoginResponse()
+            response = new SignInResponse()
             {
                 UserId = user.Id,
                 DeviceId = device.Id,
                 IsDeviceTrusted = device.IsTrusted,
                 IsDeviceBlocked = device.IsBlocked,
             };
-            
+
             if (device.IsBlocked)
             {
                 return Results.BadRequest("Cannot sign in, device is blocked.", response);
@@ -163,7 +167,7 @@ public sealed class LoginCommandHandler(
 
         if (user.HasMethods() && user.TwoFactorEnabled)
         {
-            response = new LoginResponse()
+            response = new SignInResponse()
             {
                 UserId = user.Id,
                 IsTwoFactorEnabled = true,
@@ -171,8 +175,8 @@ public sealed class LoginCommandHandler(
 
             return Result.Success(response);
         }
-        
-        response = new LoginResponse() { UserId = user.Id, };
+
+        response = new SignInResponse() { UserId = user.Id, };
 
         await loginManager.CreateAsync(device, LoginType.Password, cancellationToken);
         await authorizationManager.CreateAsync(device, cancellationToken);

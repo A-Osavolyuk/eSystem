@@ -1,30 +1,37 @@
 ﻿using eShop.Domain.Common.Security.Constants;
-using eShop.Domain.Requests.Auth;
+using eShop.Domain.Common.Security.Credentials;
 using eShop.Domain.Responses.Auth;
 
-namespace eShop.Auth.Api.Features.Passkeys.Commands;
+namespace eShop.Auth.Api.Security.Authentication;
 
-public record PasskeySignInCommand(PasskeySignInRequest Request) : IRequest<Result>;
-
-public class PasskeySignInCommandHandler(
+public class PasskeySignInStrategy(
     IUserManager userManager,
+    IDeviceManager deviceManager,
+    ILockoutManager lockoutManager,
     IPasskeyManager passkeyManager,
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<PasskeySignInCommand, Result>
+    IHttpContextAccessor accessor,
+    IdentityOptions identityOptions) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IDeviceManager deviceManager = deviceManager;
+    private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
-    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
+    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly HttpContext httpContext = accessor.HttpContext!;
 
-    public async Task<Result> Handle(PasskeySignInCommand request,
-        CancellationToken cancellationToken)
+    public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 
+        CancellationToken cancellationToken = default)
     {
-        var credential = request.Request.Credential;
+        SignInResponse response;   
+        
+        var credential = credentials["Credential"] as PublicKeyCredential;
+        if (credential is null) return Results.BadRequest("Credential is empty");
+        
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
-
         var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null) return Results.BadRequest("Invalid credential");
 
@@ -39,13 +46,13 @@ public class PasskeySignInCommandHandler(
 
         if (user.LockoutState.Enabled)
         {
-            var lockoutResponse = new PasskeySignInResponse()
+            response = new SignInResponse()
             {
                 UserId = user.Id,
                 IsLockedOut = user.LockoutState.Enabled,
             };
 
-            return Results.BadRequest("Account is locked out", lockoutResponse);
+            return Results.BadRequest("Account is locked out", response);
         }
 
         var userAgent = httpContext.GetUserAgent()!;
@@ -56,11 +63,7 @@ public class PasskeySignInCommandHandler(
         await loginManager.CreateAsync(device, LoginType.Passkey, cancellationToken);
         await authorizationManager.CreateAsync(device, cancellationToken);
 
-        var response = new PasskeySignInResponse()
-        {
-            UserId = user.Id,
-        };
-
+        response = new SignInResponse() { UserId = user.Id, };
         return Result.Success(response);
     }
 }

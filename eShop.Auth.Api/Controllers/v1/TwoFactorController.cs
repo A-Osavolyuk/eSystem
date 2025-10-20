@@ -12,20 +12,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
     
-    [EndpointSummary("Authenticator app sign-in")]
-    [EndpointDescription("Authenticator app sign-in")]
-    [ProducesResponseType(200)]
-    [HttpPost("sign-in")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> AuthenticatorAppSignInAsync([FromBody] AuthenticatorSignInRequest request)
-    {
-        var result = await sender.Send(new AuthenticatorSignInCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
-    }
-    
     [EndpointSummary("Generate recovery codes")]
     [EndpointDescription("Generate recovery codes")]
     [ProducesResponseType(200)]

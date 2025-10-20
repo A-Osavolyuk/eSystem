@@ -1,40 +1,42 @@
 ﻿using eShop.Auth.Api.Security.Protection;
-using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 
-namespace eShop.Auth.Api.Features.TwoFactor.Commands;
+namespace eShop.Auth.Api.Security.Authentication;
 
-public sealed record AuthenticatorSignInCommand(AuthenticatorSignInRequest Request)
-    : IRequest<Result>;
-
-public sealed class LoginWith2FaCommandHandler(
+public class AuthenticatorSignInStrategy(
     IUserManager userManager,
     ILockoutManager lockoutManager,
+    IDeviceManager deviceManager,
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
-    IDeviceManager deviceManager,
-    IHttpContextAccessor httpContextAccessor,
     ISecretManager secretManager,
+    IHttpContextAccessor accessor,
     IProtectorFactory protectorFactory,
-    IdentityOptions identityOptions) : IRequestHandler<AuthenticatorSignInCommand, Result>
+    IdentityOptions identityOptions) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
+    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ISecretManager secretManager = secretManager;
+    private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
     private readonly IdentityOptions identityOptions = identityOptions;
-    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
-    public async Task<Result> Handle(AuthenticatorSignInCommand request,
-        CancellationToken cancellationToken)
+    public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 
+        CancellationToken cancellationToken = default)
     {
-        AuthenticatorSignInResponse? response;
+        SignInResponse? response;
+        
+        var userId = credentials["UserId"].ToString();
+        var code = credentials["Code"].ToString();
 
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (string.IsNullOrEmpty(code)) return Results.BadRequest("Code is empty");
+        if (string.IsNullOrEmpty(userId)) return Results.BadRequest("User ID is empty");
+
+        var user = await userManager.FindByIdAsync(Guid.Parse(userId), cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {userId}.");
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
@@ -61,8 +63,7 @@ public sealed class LoginWith2FaCommandHandler(
             var result = await deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-
-        var code = request.Request.Code;
+        
         var userSecret = await secretManager.FindAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
@@ -75,7 +76,7 @@ public sealed class LoginWith2FaCommandHandler(
 
             if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
             {
-                response = new AuthenticatorSignInResponse()
+                response = new SignInResponse()
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
@@ -93,7 +94,7 @@ public sealed class LoginWith2FaCommandHandler(
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            response = new AuthenticatorSignInResponse()
+            response = new SignInResponse()
             {
                 UserId = user.Id,
                 IsLockedOut = true,
@@ -113,7 +114,7 @@ public sealed class LoginWith2FaCommandHandler(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        response = new AuthenticatorSignInResponse() { UserId = user.Id, };
+        response = new SignInResponse() { UserId = user.Id, };
 
         const string method = nameof(TwoFactorMethod.AuthenticatorApp);
         await loginManager.CreateAsync(device, LoginType.TwoFactor, method, cancellationToken);

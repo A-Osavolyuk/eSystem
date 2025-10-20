@@ -69,20 +69,6 @@ public class PasskeyController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Verify sign in with passkey")]
-    [EndpointDescription("Verify sign in with passkey")]
-    [ProducesResponseType(200)]
-    [HttpPost("sign-in")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> PasskeySignInAsync([FromBody] PasskeySignInRequest request)
-    {
-        var result = await sender.Send(new PasskeySignInCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
     [EndpointSummary("Remove passkey")]
     [EndpointDescription("Remove passkey")]
     [ProducesResponseType(200)]

@@ -2,6 +2,7 @@
 @inherits PageBase
 
 @inject IPasskeyService PasskeyService
+@inject ISecurityService SecurityService
 @inject PasskeySignInValidator Validator
 @inject PasskeyManager PasskeyManager
 
@@ -96,16 +97,20 @@
         if (authenticateResult.Success)
         {
             var credential = authenticateResult.Get<PublicKeyCredential>();
-            var request = new PasskeySignInRequest()
+            var request = new SignInRequest()
             {
-                Credential = credential
+                Type = SignInType.Passkey,
+                Credentials = new()
+                {
+                    { "Credential", credential }
+                }
             };
 
-            var result = await PasskeyService.SignInAsync(request);
+            var result = await SecurityService.SignInAsync(request);
 
             if (result.Success)
             {
-                var response = result.Get<PasskeySignInResponse>()!;
+                var response = result.Get<SignInResponse>()!;
                 UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
                 Snackbar.Add("Successfully signed in.", Severity.Success);
@@ -119,7 +124,7 @@
                     return;
                 }
 
-                var response = result.Get<PasskeySignInResponse>()!;
+                var response = result.Get<SignInResponse>()!;
 
                 if (response.IsLockedOut)
                 {

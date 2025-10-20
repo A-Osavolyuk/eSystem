@@ -11,9 +11,9 @@ public class SecurityService(
     IConfiguration configuration) : ApiService(configuration, apiClient), ISecurityService
 {
     private const string BasePath = "api/v1/Security";
-    
-    public async ValueTask<HttpResponse> LoginAsync(LoginRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/login", Method = HttpMethod.Post, Data = request },
+
+    public async ValueTask<HttpResponse> SignInAsync(SignInRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/sign-in", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = false, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> RegisterAsync(RegistrationRequest request) => await ApiClient.SendAsync(

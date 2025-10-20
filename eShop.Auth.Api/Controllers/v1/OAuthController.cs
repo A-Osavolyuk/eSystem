@@ -43,7 +43,9 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
             ExternalAuthenticationDefaults.AuthenticationScheme);
         
         var result = await sender.Send(new HandleOAuthLoginCommand(authenticationResult, remoteError, returnUri));
-        return result.Match(s => Redirect(s.Message), ErrorHandler.Handle);
+        return result.Match(
+            s => Redirect(s.Message),
+            f => Redirect(f.Value!.ToString()!));
     }
     
     [EndpointSummary("Load OAuth session")]

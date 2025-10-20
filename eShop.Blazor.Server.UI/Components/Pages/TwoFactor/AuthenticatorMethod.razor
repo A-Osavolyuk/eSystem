@@ -3,6 +3,7 @@
 @inject UserState UserState
 @inject NavigationManager NavigationManager
 @inject ITwoFactorService TwoFactorService
+@inject ISecurityService SecurityService
 @inject ISnackbar Snackbar
 
 <MudStack Spacing="4">
@@ -102,17 +103,21 @@
 
         if (form.IsValid)
         {
-            var request = new AuthenticatorSignInRequest()
+            var request = new SignInRequest()
             {
-                UserId = UserId,
-                Code = Model.Code
+                Type = SignInType.AuthenticatorApp,
+                Credentials = new()
+                {
+                    { "UserId", UserId },
+                    { "Code", Model.Code },
+                }
             };
             
-            var result = await TwoFactorService.AuthenticatorSignInAsync(request);
+            var result = await SecurityService.SignInAsync(request);
 
             if (result.Success)
             {
-                var response = result.Get<AuthenticatorSignInResponse>()!;
+                var response = result.Get<SignInResponse>()!;
 
                 UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
