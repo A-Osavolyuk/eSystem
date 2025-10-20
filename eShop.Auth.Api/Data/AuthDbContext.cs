@@ -149,7 +149,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Secret).HasMaxLength(200);
 
             entity.HasOne(x => x.User)
-                .WithOne()
+                .WithOne(x => x.Secret)
                 .HasForeignKey<UserSecretEntity>(x => x.UserId);
         });
 

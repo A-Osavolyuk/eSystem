@@ -31,6 +31,7 @@ public class UserEntity : Entity
     public ICollection<UserVerificationMethodEntity> VerificationMethods { get; init; } = null!;
     public UserLockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
+    public UserSecretEntity? Secret { get; set; } = null!;
 
     public UserDeviceEntity? GetDevice(string userAgent, string ipAddress)
         => Devices.FirstOrDefault(x => x.UserAgent == userAgent && x.IpAddress == ipAddress);
