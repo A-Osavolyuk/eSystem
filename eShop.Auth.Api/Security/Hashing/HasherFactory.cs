@@ -4,12 +4,5 @@ public class HasherFactory(IServiceProvider serviceProvider) : IHasherFactory
 {
     private readonly IServiceProvider serviceProvider = serviceProvider;
 
-    public Hasher Create(HashAlgorithm algorithm)
-    {
-        return algorithm switch
-        {
-            HashAlgorithm.Pbkdf2 => serviceProvider.GetRequiredKeyedService<Pbkdf2Hasher>(algorithm),
-            _ => throw new NotSupportedException("Unknown hash algorithm")
-        };
-    }
+    public Hasher Create(HashAlgorithm algorithm) => serviceProvider.GetRequiredKeyedService<Hasher>(algorithm);
 }

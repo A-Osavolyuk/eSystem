@@ -4,13 +4,5 @@ public class ProtectorFactory(IServiceProvider serviceProvider) : IProtectorFact
 {
     private readonly IServiceProvider serviceProvider = serviceProvider;
 
-    public Protector Create(ProtectorType type)
-    {
-        return type switch
-        {
-            ProtectorType.Code => serviceProvider.GetRequiredKeyedService<CodeProtector>(type),
-            ProtectorType.Secret => serviceProvider.GetRequiredKeyedService<SecretProtector>(type),
-            _ => throw new NotSupportedException("Unknown protector type")
-        };
-    }
+    public Protector Create(ProtectorType type) => serviceProvider.GetRequiredKeyedService<Protector>(type);
 }
