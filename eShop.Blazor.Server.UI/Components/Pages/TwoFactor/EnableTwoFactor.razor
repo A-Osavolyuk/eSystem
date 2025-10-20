@@ -83,7 +83,7 @@
                                                     <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
                                                         <MudBarcode
                                                             BarcodeFormat="BarcodeFormat.QR_CODE"
-                                                            @bind-Value="QrCode"
+                                                            @bind-Value="@(QrCode.Value)"
                                                             Height="300"
                                                             Width="300"/>
                                                     </MudStack>
@@ -306,8 +306,7 @@
     private readonly PatternMask mask = new("000000");
 
     private bool DownloadedCodes { get; set; }
-    private string QrCode { get; set; } = string.Empty;
-    private string Secret { get; set; } = string.Empty;
+    private QrCode QrCode { get; set; } = new();
     private List<string> Codes { get; set; } = [];
     private List<UserTwoFactorMethod> Methods { get; set; } = [];
 
@@ -334,12 +333,7 @@
         var request = new GenerateQrCodeRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateQrCodeAsync(request);
 
-        if (result.Success)
-        {
-            var response = result.Get<GenerateQrCodeResponse>()!;
-            QrCode = response.QrCode;
-            Secret = response.Secret;
-        }
+        if (result.Success) QrCode = result.Get<QrCode>()!;
         else Snackbar.Add(result.Message, Severity.Error);
     }
 
@@ -384,7 +378,7 @@
 
         var parameters = new DialogParameters<SetupKeyDialog>()
         {
-            { dialog => dialog.Secret, Secret }
+            { dialog => dialog.Secret, QrCode.Secret }
         };
 
         await DialogService.ShowAsync<SetupKeyDialog>("Your two-factor secret", parameters, options);
