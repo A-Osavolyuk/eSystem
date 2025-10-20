@@ -5,10 +5,10 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(IUserManager), ServiceLifetime.Scoped)]
 public sealed class UserManager(
     AuthDbContext context,
-    Hasher hasher) : IUserManager
+    IHasherFactory hasherFactory) : IUserManager
 {
     private readonly AuthDbContext context = context;
-    private readonly Hasher hasher = hasher;
+    private readonly Hasher hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {

@@ -6,10 +6,10 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(ICodeManager), ServiceLifetime.Scoped)]
 public sealed class CodeManager(
     AuthDbContext context,
-    Hasher hasher) : ICodeManager
+    IHasherFactory hasherFactory) : ICodeManager
 {
     private readonly AuthDbContext context = context;
-    private readonly Hasher hasher = hasher;
+    private readonly Hasher hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
         ActionType action, PurposeType purpose, CancellationToken cancellationToken = default)
