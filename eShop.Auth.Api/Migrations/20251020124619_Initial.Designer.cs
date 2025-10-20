@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251016131240_Initial")]
+    [Migration("20251020124619_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1163,7 +1163,7 @@ namespace eShop.Auth.Api.Migrations
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserSecretEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithOne()
+                        .WithOne("Secret")
                         .HasForeignKey("eShop.Auth.Api.Entities.UserSecretEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1244,6 +1244,8 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("RecoveryCodes");
 
                     b.Navigation("Roles");
+
+                    b.Navigation("Secret");
 
                     b.Navigation("VerificationMethods");
                 });
