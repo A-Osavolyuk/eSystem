@@ -9,12 +9,12 @@ public class VerifyAuthenticatorCodeCommandHandler(
     IUserManager userManager,
     ISecretManager secretManager,
     IVerificationManager verificationManager,
-    SecretProtector secretProtector) : IRequestHandler<VerifyAuthenticatorCodeCommand, Result>
+    IProtectorFactory protectorFactory) : IRequestHandler<VerifyAuthenticatorCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly SecretProtector secretProtector = secretProtector;
+    private readonly Protector secretProtector = protectorFactory.Create(ProtectorType.Secret);
 
     public async Task<Result> Handle(VerifyAuthenticatorCodeCommand request, CancellationToken cancellationToken)
     {

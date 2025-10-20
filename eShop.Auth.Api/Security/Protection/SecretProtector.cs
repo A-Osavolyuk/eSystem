@@ -2,10 +2,9 @@
 
 namespace eShop.Auth.Api.Security.Protection;
 
-public class SecretProtector(IDataProtectionProvider protectionProvider)
+public sealed class SecretProtector(IDataProtectionProvider protectionProvider) : Protector
 {
-    private readonly IDataProtector protector = protectionProvider.CreateProtector("TOTP.Secret");
-    
-    public string Unprotect(string protectedText) => protector.Unprotect(protectedText);
-    public string Protect(string unprotectedText) => protector.Protect(unprotectedText);
+    private readonly IDataProtector protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+    public override string Unprotect(string protectedText) => protector.Unprotect(protectedText);
+    public override string Protect(string unprotectedText) => protector.Protect(unprotectedText);
 }

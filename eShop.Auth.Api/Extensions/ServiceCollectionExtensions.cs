@@ -1,4 +1,8 @@
-﻿using eShop.Auth.Api.Security.Hashing;
+﻿using eShop.Application.Security.Authorization.Requirements;
+using eShop.Auth.Api.Security.Authentication;
+using eShop.Auth.Api.Security.Hashing;
+using eShop.Auth.Api.Security.Protection;
+
 namespace eShop.Auth.Api.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -11,12 +15,12 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(options);
     }
-    
+
     public static void AddVerification(this IServiceCollection services, Action<VerificationOptions> configure)
     {
         var options = new VerificationOptions();
         configure(options);
-        
+
         services.AddSingleton(options);
     }
 
@@ -24,8 +28,25 @@ public static class ServiceCollectionExtensions
     {
         var options = new TwoFactorOptions();
         configure(options);
-        
+
         services.AddSingleton(options);
+    }
+
+    public static void AddSignInStrategies(this IServiceCollection services)
+    {
+        services.AddScoped<ISignInResolver, SignInResolver>();
+        services.AddKeyedScoped<SignInStrategy, PasswordSignInStrategy>(SignInType.Password);
+        services.AddKeyedScoped<SignInStrategy, PasskeySignInStrategy>(SignInType.Passkey);
+        services.AddKeyedScoped<SignInStrategy, AuthenticatorSignInStrategy>(SignInType.AuthenticatorApp);
+        services.AddKeyedScoped<SignInStrategy, LinkedAccountSignInStrategy>(SignInType.LinkedAccount);
+    }
+
+    public static void AddProtection(this IServiceCollection services)
+    {
+        services.AddDataProtection();
+        services.AddScoped<IProtectorFactory, ProtectorFactory>();
+        services.AddKeyedScoped<Protector, CodeProtector>(ProtectorType.Code);
+        services.AddKeyedScoped<Protector, SecretProtector>(ProtectorType.Secret);
     }
 
     public static void AddHashing(this IServiceCollection services)

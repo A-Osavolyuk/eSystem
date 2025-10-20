@@ -7,16 +7,16 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(IRecoverManager), ServiceLifetime.Scoped)]
 public sealed class RecoverManager(
     AuthDbContext context,
-    CodeProtector codeProtector) : IRecoverManager
+    IProtectorFactory protectorFactory) : IRecoverManager
 {
     private readonly AuthDbContext context = context;
-    private readonly CodeProtector codeProtector = codeProtector;
+    private readonly Protector protector = protectorFactory.Create(ProtectorType.Code);
     private const int CodesAmount = 16;
     private const int CodesLength = 10;
 
     public List<string> Unprotect(UserEntity user)
     {
-        return user.RecoveryCodes.Select(code => codeProtector.Unprotect(code.ProtectedCode)).ToList();
+        return user.RecoveryCodes.Select(code => protector.Unprotect(code.ProtectedCode)).ToList();
     }
 
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -25,7 +25,7 @@ public sealed class RecoverManager(
 
         var codes = Generate();
         var entities = codes
-            .Select(code => codeProtector.Protect(code))
+            .Select(code => protector.Protect(code))
             .Select(hash => new UserRecoveryCodeEntity()
             {
                 Id = Guid.CreateVersion7(),
@@ -47,7 +47,7 @@ public sealed class RecoverManager(
         if (user.RecoveryCodes.Count == 0) return Results.BadRequest("User does not have any recovery code.");
         
         var entity = user.RecoveryCodes.FirstOrDefault(
-            x => codeProtector.Unprotect(x.ProtectedCode) == code);
+            x => protector.Unprotect(x.ProtectedCode) == code);
         
         if (entity is null) return Results.BadRequest("Invalid recovery code.");
 

@@ -9,11 +9,11 @@ public record GenerateQrCodeCommand(GenerateQrCodeRequest Request) : IRequest<Re
 public class GenerateQrCodeCommandHandler(
     IUserManager userManager,
     ISecretManager secretManager,
-    SecretProtector protector) : IRequestHandler<GenerateQrCodeCommand, Result>
+    IProtectorFactory protectorFactory) : IRequestHandler<GenerateQrCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISecretManager secretManager = secretManager;
-    private readonly SecretProtector protector = protector;
+    private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
     private const string QrCodeIssuer = "eAccount";
 
     public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)

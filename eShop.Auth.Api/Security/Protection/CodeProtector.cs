@@ -2,10 +2,9 @@
 
 namespace eShop.Auth.Api.Security.Protection;
 
-public class CodeProtector(IDataProtectionProvider protectionProvider)
+public sealed class CodeProtector(IDataProtectionProvider protectionProvider) : Protector
 {
-    private readonly IDataProtector protector = protectionProvider.CreateProtector("2FA.RecoveryCodes");
-    
-    public string Unprotect(string protectedText) => protector.Unprotect(protectedText);
-    public string Protect(string unprotectedText) => protector.Protect(unprotectedText);
+    private readonly IDataProtector protector = protectionProvider.CreateProtector(ProtectionPurposes.RecoveryCode);
+    public override string Unprotect(string protectedText) => protector.Unprotect(protectedText);
+    public override string Protect(string unprotectedText) => protector.Protect(unprotectedText);
 }

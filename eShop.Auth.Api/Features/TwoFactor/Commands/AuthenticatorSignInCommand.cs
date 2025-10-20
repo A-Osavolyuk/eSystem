@@ -15,7 +15,7 @@ public sealed class LoginWith2FaCommandHandler(
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     ISecretManager secretManager,
-    SecretProtector protector,
+    IProtectorFactory protectorFactory,
     IdentityOptions identityOptions) : IRequestHandler<AuthenticatorSignInCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
@@ -24,7 +24,7 @@ public sealed class LoginWith2FaCommandHandler(
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ISecretManager secretManager = secretManager;
-    private readonly SecretProtector protector = protector;
+    private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 

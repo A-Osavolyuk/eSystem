@@ -6,10 +6,10 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(ISecretManager), ServiceLifetime.Scoped)]
 public sealed class SecretManager(
     AuthDbContext context,
-    SecretProtector protector) : ISecretManager
+    IProtectorFactory protectorFactory) : ISecretManager
 {
     private readonly AuthDbContext context = context;
-    private readonly SecretProtector protector = protector;
+    private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
 
     public async ValueTask<UserSecretEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
