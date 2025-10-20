@@ -17,24 +17,12 @@ public sealed class SecretManager(
         return userSecret;
     }
 
-    public async ValueTask<UserSecretEntity> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> SaveAsync(UserSecretEntity secret,
+        CancellationToken cancellationToken = default)
     {
-        var secretKey = KeyGenerator.GenerateKey(20);
-        var protectedSecret = protector.Protect(secretKey);
-        
-        var entity = new UserSecretEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            Secret = protectedSecret,
-            UserId = user.Id,
-            CreateDate = DateTime.UtcNow,
-            UpdateDate = null
-        };
-        
-        await context.UserSecret.AddAsync(entity, cancellationToken);
+        await context.UserSecret.AddAsync(secret, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
-        return entity;
+        return Result.Success();
     }
 
     public async ValueTask<Result> RemoveAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -46,10 +34,14 @@ public sealed class SecretManager(
         {
             return Results.NotFound("Cannot find user secret or doesn't exists");
         }
-        
+
         context.UserSecret.Remove(secret);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
+
+    public string Generate() => KeyGenerator.GenerateKey(20);
+    public string Protect(string unprotectedSecret) => protector.Protect(unprotectedSecret);
+    public string Unprotect(string protectedSecret) => protector.Protect(protectedSecret);
 }
