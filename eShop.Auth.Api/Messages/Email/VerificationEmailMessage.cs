@@ -1,6 +1,6 @@
 ﻿namespace eShop.Auth.Api.Messages.Email;
 
-public class VerificationCodeEmailMessage : Message
+public class VerificationEmailMessage : Message
 {
     public override string Build()
     {
