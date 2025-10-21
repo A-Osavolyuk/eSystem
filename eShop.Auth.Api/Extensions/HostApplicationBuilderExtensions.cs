@@ -1,4 +1,5 @@
 ﻿
+using eShop.Auth.Api.Security.Jwt;
 using eShop.Auth.Api.Security.Schemes;
 using eShop.Auth.Api.Services;
 using MassTransit;
@@ -63,8 +64,6 @@ public static class HostApplicationBuilderExtensions
     private static void AddSecurity(this IHostApplicationBuilder builder)
     {
         var configuration = builder.Configuration;
-
-        builder.Services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
 
         builder.Services.AddAuthorization();
         builder.Services.AddProtection();

@@ -77,7 +77,10 @@ public static class ServiceCollectionExtensions
 
     public static void AddJwt(this IServiceCollection services)
     {
+        var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
+        
         services.AddScoped<ITokenFactory, JwtTokenFactory>();
+        services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
     }
 
     public static void AddAuthorization(this IServiceCollection services)

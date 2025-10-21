@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using eShop.Auth.Api.Security.Cryptography;
+using eShop.Auth.Api.Security.Jwt;
 using eShop.Auth.Api.Security.Tokens;
 using eShop.Domain.Common.Security.Constants;
 using Microsoft.Extensions.Options;
