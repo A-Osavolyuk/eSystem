@@ -12,13 +12,13 @@ public class GenerateCreationOptionsCommandHandler(
     ISessionStorage sessionStorage,
     ICredentialFactory credentialFactory,
     IChallengeFactory challengeFactory,
-    IdentityOptions identityOptions) : IRequestHandler<GenerateCreationOptionsCommand, Result>
+    CredentialOptions credentialOptions) : IRequestHandler<GenerateCreationOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISessionStorage sessionStorage = sessionStorage;
     private readonly ICredentialFactory credentialFactory = credentialFactory;
     private readonly IChallengeFactory challengeFactory = challengeFactory;
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly CredentialOptions credentialOptions = credentialOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GenerateCreationOptionsCommand request,
@@ -38,7 +38,7 @@ public class GenerateCreationOptionsCommandHandler(
         var fingerprint = $"{device.Device}_{browser}";
         
         var options = credentialFactory.CreateCreationOptions(user,
-            displayName, challenge, fingerprint, identityOptions.Credentials);
+            displayName, challenge, fingerprint, credentialOptions);
 
         sessionStorage.Set(ChallengeSessionKeys.Attestation, challenge);
         return Result.Success(options);

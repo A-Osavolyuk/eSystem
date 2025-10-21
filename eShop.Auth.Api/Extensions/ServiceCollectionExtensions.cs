@@ -69,8 +69,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICodeFactory, CodeFactory>();
     }
 
-    public static void AddCredentials(this IServiceCollection services)
+    public static void AddCredentials(this IServiceCollection services, Action<CredentialOptions> configure)
     {
+        var options = new CredentialOptions();
+        configure(options);
+        
+        services.AddSingleton(options);
         services.AddScoped<IChallengeFactory, ChallengeFactory>();
         services.AddScoped<ICredentialFactory, CredentialFactory>();
     }

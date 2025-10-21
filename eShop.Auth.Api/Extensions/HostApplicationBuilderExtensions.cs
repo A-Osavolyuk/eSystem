@@ -69,7 +69,13 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddProtection();
         builder.Services.AddHashing();
         builder.Services.AddSignInStrategies();
-        builder.Services.AddCredentials();
+        builder.Services.AddCredentials(options =>
+        {
+            options.Domain = "localhost";
+            options.Server = "eAccount";
+            options.Timeout = 60000;
+        });
+        
         builder.Services.AddCryptography();
         builder.Services.AddJwt();
         
@@ -82,10 +88,6 @@ public static class HostApplicationBuilderExtensions
 
         builder.Services.AddIdentity(options =>
         {
-            options.Credentials.Domain = "localhost";
-            options.Credentials.Server = "eAccount";
-            options.Credentials.Timeout = 60000;
-            
             options.Password.RequiredLength = 8;
             options.Password.RequireUppercase = true;
             options.Password.RequiredUppercase = 1;

@@ -14,14 +14,14 @@ public class CreatePasskeyCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     IVerificationManager verificationManager,
     ISessionStorage sessionStorage,
-    IdentityOptions identityOptions) : IRequestHandler<CreatePasskeyCommand, Result>
+    CredentialOptions credentialOptions) : IRequestHandler<CreatePasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IVerificationManager verificationManager = verificationManager;
     private readonly ISessionStorage sessionStorage = sessionStorage;
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly CredentialOptions credentialOptions = credentialOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(CreatePasskeyCommand request,
@@ -50,7 +50,7 @@ public class CreatePasskeyCommandHandler(
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
         var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
-        var source = Encoding.UTF8.GetBytes(identityOptions.Credentials.Domain.ToArray());
+        var source = Encoding.UTF8.GetBytes(credentialOptions.Domain.ToArray());
         var rpHash = SHA256.HashData(source);
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
 
