@@ -1,6 +1,6 @@
-﻿@inject IVerificationService VerificationService
+﻿@using eShop.Blazor.Server.UI.Components.Pages.TwoFactor
+
 @inject ITwoFactorService TwoFactorService
-@inject IUserService UserService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject UserState UserState
@@ -77,7 +77,7 @@
             to manually configure your authenticator app.
         </MudTextM3>
     </div>
-    <MudStack Spacing="1" Style="max-width: 300px">
+    <MudStack Spacing="1">
         <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium">
             Verify the code from the app
         </MudTextM3>
@@ -85,18 +85,20 @@
             @ref="form"
             Model="Model"
             Validation="Validator.ValidateValue">
-            <MudStack Row="true" Spacing="1" Justify="Justify.Center">
-                <MudTextFieldExtended
-                    Variant="Variant.Outlined"
-                    Margin="Margin.Dense"
-                    Immediate="true"
-                    Mask="@mask"
-                    Placeholder="XXXXXX"
-                    @bind-Value="Model.Code"
-                    Disabled="codeValid"/>
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudStack Row="true" Style="width: 300px">
+                    <MudTextFieldExtended
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        Immediate="true"
+                        Mask="@mask"
+                        Placeholder="XXXXXX"
+                        @bind-Value="Model.Code"
+                        Disabled="codeValid"/>
+                </MudStack>
                 @if (codeValid)
                 {
-                    <MudIcon Size="Size.Small" Color="Color.Success" Icon="@Icons.Material.Filled.Check"/>
+                    <MudIcon Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.Check"/>
                 }
             </MudStack>
         </MudForm>
@@ -126,7 +128,7 @@
                         Color="Color.Success"
                         Variant="Variant.Filled"
                         ButtonType="ButtonType.Button"
-                        Disabled="@(Model.Code.Length < 5)"
+                        Disabled="@(Model.Code.Length < 6)"
                         OnClick="@(async () => await OnVerifyCodeAsync())">
                         Verify
                     </MudButton>
@@ -136,7 +138,7 @@
                     Color="Color.Info"
                     ButtonType="ButtonType.Button"
                     Size="Size.Small"
-                    OnClick="@(async () => await OnCancel.InvokeAsync())">
+                    OnClick="@(async () => await OnClose.InvokeAsync())">
                     Cancel
                 </MudButton>
             </MudStack>
@@ -145,16 +147,16 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
 
     private CodeModel Model { get; set; } = new();
     private QrCode QrCode { get; set; } = new();
 
     private MudForm form = new();
-    private PatternMask mask = new ("000000");
+    private PatternMask mask = new("000000");
     private bool codeValid;
     private bool showError;
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -163,7 +165,7 @@
             StateHasChanged();
         }
     }
-    
+
     private async Task OnGenerateQrCodeAsync()
     {
         var request = new RegenerateQrCodeRequest() { UserId = UserState.UserId };
@@ -175,7 +177,7 @@
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
-    
+
     private async Task ShowSetupKeyAsync()
     {
         var options = new DialogOptions()
@@ -197,15 +199,14 @@
     private async Task OnVerifyCodeAsync()
     {
         showError = false;
-        var request = new VerifyAuthenticatorCodeRequest()
+        var request = new VerifyAuthenticatorRequest()
         {
             UserId = UserState.UserId,
             Code = Model.Code,
-            Action = ActionType.Verify,
-            Purpose = PurposeType.AuthenticatorApp
+            Secret = QrCode.Secret
         };
-        
-        var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);
+
+        var result = await TwoFactorService.VerifyAuthenticatorAsync(request);
 
         if (result.Success) codeValid = true;
         else showError = true;
@@ -218,10 +219,15 @@
             UserId = UserState.UserId,
             Secret = QrCode.Secret
         };
-        
+
         var result = await TwoFactorService.ReconfigureAuthenticatorAsync(request);
 
-        if (result.Success) Snackbar.Add("Authenticator app was successfully configured.", Severity.Success);
+        if (result.Success)
+        {
+            Snackbar.Add("Authenticator app was successfully configured.", Severity.Success);
+            await OnClose.InvokeAsync();
+        }
         else Snackbar.Add(result.Message, Severity.Error);
     }
+
 }

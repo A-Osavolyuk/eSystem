@@ -35,6 +35,11 @@ public class TwoFactorService(
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/{BasePath}/recovery-code/verify", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = false, Type = DataType.Text });
+    
+    public async ValueTask<HttpResponse> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request) =>
+        await ApiClient.SendAsync(
+            new HttpRequest { Url = $"{Gateway}/{BasePath}/recovery-code/generate", Method = HttpMethod.Post, Data = request }, 
+            new HttpOptions { WithBearer = true, Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GenerateQrCodeAsync(GenerateQrCodeRequest request) =>
         await ApiClient.SendAsync(
@@ -55,8 +60,8 @@ public class TwoFactorService(
             new HttpRequest { Url = $"{Gateway}/{BasePath}/authenticator/reconfigure", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request) =>
+    public async ValueTask<HttpResponse> VerifyAuthenticatorAsync(VerifyAuthenticatorRequest request) => 
         await ApiClient.SendAsync(
-            new HttpRequest { Url = $"{Gateway}/{BasePath}/recovery-code/generate", Method = HttpMethod.Post, Data = request }, 
+            new HttpRequest { Url = $"{Gateway}/{BasePath}/authenticator/verify", Method = HttpMethod.Post, Data = request }, 
             new HttpOptions { WithBearer = true, Type = DataType.Text });
 }

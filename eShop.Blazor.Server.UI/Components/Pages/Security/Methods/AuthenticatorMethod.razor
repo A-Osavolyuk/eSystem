@@ -45,7 +45,7 @@
         </MudStack>
         @if (showConfiguration)
         {
-            <AuthenticatorAppConfiguration OnCancel="@(() => ToggleConfiguration())"/>
+            <AuthenticatorAppConfiguration OnClose="@(() => ToggleConfiguration())"/>
         }
         else
         {
