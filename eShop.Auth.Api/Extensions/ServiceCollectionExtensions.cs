@@ -15,10 +15,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddVerification(this IServiceCollection services, Action<VerificationOptions> configure)
     {
-        var options = new VerificationOptions();
-        configure(options);
-
-        services.AddSingleton(options);
+        services.Configure(configure);
     }
 
     public static void Add2FA(this IServiceCollection services)
@@ -58,10 +55,7 @@ public static class ServiceCollectionExtensions
 
     public static void AddCredentials(this IServiceCollection services, Action<CredentialOptions> configure)
     {
-        var options = new CredentialOptions();
-        configure(options);
-        
-        services.AddSingleton(options);
+        services.Configure(configure);
         services.AddScoped<IChallengeFactory, ChallengeFactory>();
         services.AddScoped<ICredentialFactory, CredentialFactory>();
     }
