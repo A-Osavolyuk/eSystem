@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Security.Hashing;
+﻿using eShop.Auth.Api.Security.Cryptography.Hashing;
 
 namespace eShop.Auth.Api.Services;
 

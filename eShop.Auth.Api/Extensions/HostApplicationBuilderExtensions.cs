@@ -1,7 +1,8 @@
 ﻿
+using eShop.Auth.Api.Security.Authorization.OAuth;
 using eShop.Auth.Api.Security.Credentials.PublicKey;
-using eShop.Auth.Api.Security.Jwt;
 using eShop.Auth.Api.Security.Schemes;
+using eShop.Auth.Api.Security.Tokens.Jwt;
 using eShop.Auth.Api.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;

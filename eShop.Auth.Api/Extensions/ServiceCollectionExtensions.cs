@@ -1,13 +1,19 @@
 ﻿using eShop.Application.Security.Authorization.Requirements;
 using eShop.Auth.Api.Security.Authentication;
+using eShop.Auth.Api.Security.Authentication.SignIn;
+using eShop.Auth.Api.Security.Authentication.SignIn.Strategies;
+using eShop.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
+using eShop.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eShop.Auth.Api.Security.Credentials.PublicKey;
 using eShop.Auth.Api.Security.Cryptography;
-using eShop.Auth.Api.Security.Hashing;
-using eShop.Auth.Api.Security.Jwt;
-using eShop.Auth.Api.Security.Protection;
+using eShop.Auth.Api.Security.Cryptography.Codes;
+using eShop.Auth.Api.Security.Cryptography.Hashing;
+using eShop.Auth.Api.Security.Cryptography.Hashing.Hashers;
+using eShop.Auth.Api.Security.Cryptography.Keys;
+using eShop.Auth.Api.Security.Cryptography.Protection;
+using eShop.Auth.Api.Security.Cryptography.Protection.Protectors;
 using eShop.Auth.Api.Security.Tokens;
-using eShop.Auth.Api.Security.TwoFactor.Authenticator;
-using eShop.Auth.Api.Security.TwoFactor.Recovery;
+using eShop.Auth.Api.Security.Tokens.Jwt;
 
 namespace eShop.Auth.Api.Extensions;
 

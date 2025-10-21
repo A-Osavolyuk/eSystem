@@ -1,5 +1,5 @@
-﻿using eShop.Auth.Api.Security.Protection;
-using eShop.Auth.Api.Security.TwoFactor.Recovery;
+﻿using eShop.Auth.Api.Security.Authentication.TwoFactor.Recovery;
+using eShop.Auth.Api.Security.Cryptography.Protection;
 
 namespace eShop.Auth.Api.Services;
 

@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Security.Protection;
+﻿using eShop.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Verification.Commands;

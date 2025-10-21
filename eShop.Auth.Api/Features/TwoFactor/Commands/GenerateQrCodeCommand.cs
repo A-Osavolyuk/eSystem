@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Security.Constants;
-using eShop.Auth.Api.Security.TwoFactor.Authenticator;
+﻿using eShop.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eShop.Domain.DTOs;
 using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;

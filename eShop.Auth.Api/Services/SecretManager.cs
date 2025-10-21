@@ -1,5 +1,6 @@
 ﻿using eShop.Auth.Api.Security.Cryptography;
-using eShop.Auth.Api.Security.Protection;
+using eShop.Auth.Api.Security.Cryptography.Keys;
+using eShop.Auth.Api.Security.Cryptography.Protection;
 
 namespace eShop.Auth.Api.Services;
 

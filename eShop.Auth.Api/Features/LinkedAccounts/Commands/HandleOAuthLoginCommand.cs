@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Security.Authentication;
+using eShop.Auth.Api.Security.Authentication.Results;
+using eShop.Auth.Api.Security.Authentication.SignIn;
 
 namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 

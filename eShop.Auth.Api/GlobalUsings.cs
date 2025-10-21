@@ -9,7 +9,6 @@ global using eShop.Auth.Api.Extensions;
 global using eShop.Auth.Api.Features.Security.Commands;
 global using eShop.Auth.Api.Interfaces;
 global using eShop.Auth.Api.Mapping;
-global using eShop.Auth.Api.Options;
 global using eShop.Auth.Api.Utilities;
 global using eShop.Domain.Abstraction.Data.Entities;
 global using eShop.Domain.Abstraction.Messaging;
