@@ -1,5 +1,6 @@
 ﻿using eShop.Blazor.Server.Application;
 using eShop.Blazor.Server.Infrastructure;
+using eShop.Blazor.Server.UI.Utilities;
 using MudBlazor.Services;
 using MudExtensions.Services;
 
@@ -18,6 +19,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddControllers();
         builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
         builder.Services.AddMudExtensions();
+        builder.Services.AddScoped<ConfirmationManager>();
         builder.Services.AddMudServices(config =>
         {
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
