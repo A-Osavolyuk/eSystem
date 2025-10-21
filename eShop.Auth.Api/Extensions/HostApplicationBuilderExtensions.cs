@@ -1,4 +1,5 @@
 ﻿
+using eShop.Auth.Api.Security.Credentials.PublicKey;
 using eShop.Auth.Api.Security.Jwt;
 using eShop.Auth.Api.Security.Schemes;
 using eShop.Auth.Api.Services;
@@ -72,11 +73,13 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddCryptography();
         builder.Services.AddJwt();
         builder.Services.Add2FA();
-        builder.Services.AddCredentials(options =>
+        builder.Services.AddCredentials(cfg =>
         {
-            options.Domain = "localhost";
-            options.Server = "eAccount";
-            options.Timeout = 60000;
+            var options = configuration.Get<CredentialOptions>("Configuration:Security:Credentials");
+            
+            cfg.Domain = options.Domain;
+            cfg.Server = options.Server;
+            cfg.Timeout = options.Timeout;
         });
 
         builder.Services.AddIdentity(options =>
