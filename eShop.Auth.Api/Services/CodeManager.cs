@@ -1,14 +1,16 @@
-﻿using eShop.Auth.Api.Security.Hashing;
-using eShop.Auth.Api.Security.Protection;
+﻿using eShop.Auth.Api.Security.Cryptography;
+using eShop.Auth.Api.Security.Hashing;
 
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ICodeManager), ServiceLifetime.Scoped)]
 public sealed class CodeManager(
     AuthDbContext context,
-    IHasherFactory hasherFactory) : ICodeManager
+    IHasherFactory hasherFactory,
+    ICodeFactory codeFactory) : ICodeManager
 {
     private readonly AuthDbContext context = context;
+    private readonly ICodeFactory codeFactory = codeFactory;
     private readonly Hasher hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
@@ -25,7 +27,7 @@ public sealed class CodeManager(
             await context.SaveChangesAsync(cancellationToken);
         }
 
-        var code = CodeGenerator.Generate(6);
+        var code = codeFactory.Create();
         var codeHash = hasher.Hash(code);
 
         await context.Codes.AddAsync(new CodeEntity()

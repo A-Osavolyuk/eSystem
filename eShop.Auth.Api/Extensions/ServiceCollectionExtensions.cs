@@ -62,6 +62,7 @@ public static class ServiceCollectionExtensions
     public static void AddCryptography(this IServiceCollection services)
     {
         services.AddScoped<IKeyFactory, KeyFactory>();
+        services.AddScoped<ICodeFactory, CodeFactory>();
     }
 
     public static void AddCredentials(this IServiceCollection services)
