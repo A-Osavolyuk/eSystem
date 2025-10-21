@@ -7,6 +7,7 @@ using eShop.Auth.Api.Security.Jwt;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.Tokens;
 using eShop.Auth.Api.Security.TwoFactor.Authenticator;
+using eShop.Auth.Api.Security.TwoFactor.Recovery;
 
 namespace eShop.Auth.Api.Extensions;
 
@@ -36,6 +37,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(options);
         services.AddScoped<IQrCodeFactory, QrCodeFactory>();
+        services.AddScoped<IRecoveryCodeFactory, RecoveryCodeFactory>();
     }
 
     public static void AddSignInStrategies(this IServiceCollection services)

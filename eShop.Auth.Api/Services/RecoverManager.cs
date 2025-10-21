@@ -1,18 +1,17 @@
-﻿
-using eShop.Auth.Api.Security.Protection;
-using OtpNet;
+﻿using eShop.Auth.Api.Security.Protection;
+using eShop.Auth.Api.Security.TwoFactor.Recovery;
 
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IRecoverManager), ServiceLifetime.Scoped)]
 public sealed class RecoverManager(
     AuthDbContext context,
-    IProtectorFactory protectorFactory) : IRecoverManager
+    IProtectorFactory protectorFactory,
+    IRecoveryCodeFactory recoveryCodeFactory) : IRecoverManager
 {
     private readonly AuthDbContext context = context;
+    private readonly IRecoveryCodeFactory recoveryCodeFactory = recoveryCodeFactory;
     private readonly Protector protector = protectorFactory.Create(ProtectorType.Code);
-    private const int CodesAmount = 16;
-    private const int CodesLength = 10;
 
     public List<string> Unprotect(UserEntity user)
     {
@@ -23,7 +22,7 @@ public sealed class RecoverManager(
     {
         if (user.RecoveryCodes.Count > 0) context.UserRecoveryCodes.RemoveRange(user.RecoveryCodes);
 
-        var codes = Generate();
+        var codes = recoveryCodeFactory.Create().ToList();
         var entities = codes
             .Select(code => protector.Protect(code))
             .Select(hash => new UserRecoveryCodeEntity()
@@ -67,19 +66,5 @@ public sealed class RecoverManager(
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
-    }
-
-    private List<string> Generate()
-    {
-        var codes = new List<string>();
-        for (var i = 0; i < CodesAmount; i++)
-        {
-            var keyBytes = KeyGeneration.GenerateRandomKey(CodesLength);
-            var keyString = Base32Encoding.ToString(keyBytes);
-            var key = keyString[..CodesLength]!;
-            codes.Add(key);
-        }
-        
-        return codes;
     }
 }
