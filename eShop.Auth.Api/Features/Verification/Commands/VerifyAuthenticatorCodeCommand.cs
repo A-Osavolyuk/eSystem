@@ -8,13 +8,11 @@ public record VerifyAuthenticatorCodeCommand(VerifyAuthenticatorCodeRequest Requ
 public class VerifyAuthenticatorCodeCommandHandler(
     IUserManager userManager,
     ISecretManager secretManager,
-    IVerificationManager verificationManager,
-    IProtectorFactory protectorFactory) : IRequestHandler<VerifyAuthenticatorCodeCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<VerifyAuthenticatorCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly Protector secretProtector = protectorFactory.Create(ProtectorType.Secret);
 
     public async Task<Result> Handle(VerifyAuthenticatorCodeCommand request, CancellationToken cancellationToken)
     {
@@ -24,7 +22,7 @@ public class VerifyAuthenticatorCodeCommandHandler(
         var userSecret = await secretManager.FindAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
-        var unprotectedSecret = secretProtector.Unprotect(userSecret.Secret);
+        var unprotectedSecret = secretManager.Unprotect(userSecret.Secret);
         var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, unprotectedSecret);
         if (!verified) return Results.BadRequest("Invalid authenticator code");
         
