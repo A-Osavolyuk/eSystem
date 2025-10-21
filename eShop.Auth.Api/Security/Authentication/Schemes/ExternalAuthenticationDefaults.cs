@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Security.Schemes;
+﻿namespace eShop.Auth.Api.Security.Authentication.Schemes;
 
 public class ExternalAuthenticationDefaults
 {

@@ -1,13 +1,13 @@
-﻿using eShop.Auth.Api.Security.Identity;
+﻿using eShop.Auth.Api.Security.Identity.Options;
 
-namespace eShop.Auth.Api.Extensions;
+namespace eShop.Auth.Api.Security.Identity;
 
 public static class IdentityExtensions
 {
-    public static void AddIdentity(this IServiceCollection services, Action<IdentityBuilder> configurator)
+    public static void AddIdentity(this IHostApplicationBuilder builder, Action<IdentityBuilder> configurator)
     {
-        var builder = new IdentityBuilder(services);
-        configurator(builder);
+        var identityBuilder = new IdentityBuilder(builder.Services);
+        configurator(identityBuilder);
     }
 }
 
