@@ -39,7 +39,7 @@ public class SendCodeCommandHandler(
         Message? message = sender switch
         {
             SenderType.Email => new VerificationEmailMessage(),
-            SenderType.Sms => new VerificationCodeSmsMessage(),
+            SenderType.Sms => new VerificationSmsMessage(),
             _ => null
         };
         
