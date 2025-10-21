@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Responses.Auth;
+﻿using eShop.Auth.Api.Security.Identity;
+using eShop.Domain.Responses.Auth;
 
 namespace eShop.Auth.Api.Security.Authentication;
 

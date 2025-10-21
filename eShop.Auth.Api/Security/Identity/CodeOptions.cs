@@ -1,4 +1,4 @@
-﻿namespace eShop.Auth.Api.Options;
+﻿namespace eShop.Auth.Api.Security.Identity;
 
 public class CodeOptions
 {

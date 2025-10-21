@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Requests.Auth;
+﻿using eShop.Auth.Api.Security.Identity;
+using eShop.Domain.Requests.Auth;
 using Microsoft.AspNetCore.Identity;
 
 namespace eShop.Auth.Api.Features.Security.Commands;

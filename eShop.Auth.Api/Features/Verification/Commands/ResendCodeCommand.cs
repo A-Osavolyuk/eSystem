@@ -1,5 +1,6 @@
 ﻿using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Messages.Sms;
+using eShop.Auth.Api.Security.Identity;
 using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 

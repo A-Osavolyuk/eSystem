@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Extensions;
+﻿using eShop.Auth.Api.Security.Identity;
+
+namespace eShop.Auth.Api.Extensions;
 
 public static class IdentityExtensions
 {
