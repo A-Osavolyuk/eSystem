@@ -69,21 +69,14 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddProtection();
         builder.Services.AddHashing();
         builder.Services.AddSignInStrategies();
+        builder.Services.AddCryptography();
+        builder.Services.AddJwt();
+        builder.Services.Add2FA();
         builder.Services.AddCredentials(options =>
         {
             options.Domain = "localhost";
             options.Server = "eAccount";
             options.Timeout = 60000;
-        });
-        
-        builder.Services.AddCryptography();
-        builder.Services.AddJwt();
-        
-        builder.Services.Add2FA(cfg =>
-        {
-            cfg.AddMethod(TwoFactorMethod.Sms);
-            cfg.AddMethod(TwoFactorMethod.AuthenticatorApp);
-            cfg.AddMethod(TwoFactorMethod.Passkey);
         });
 
         builder.Services.AddIdentity(options =>

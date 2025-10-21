@@ -30,12 +30,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton(options);
     }
 
-    public static void Add2FA(this IServiceCollection services, Action<TwoFactorOptions> configure)
+    public static void Add2FA(this IServiceCollection services)
     {
-        var options = new TwoFactorOptions();
-        configure(options);
-
-        services.AddSingleton(options);
         services.AddScoped<IQrCodeFactory, QrCodeFactory>();
         services.AddScoped<IRecoveryCodeFactory, RecoveryCodeFactory>();
     }
