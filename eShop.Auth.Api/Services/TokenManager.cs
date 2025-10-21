@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using eShop.Auth.Api.Security.Cryptography;
 using eShop.Domain.Common.Security.Constants;
 using Microsoft.Extensions.Options;
 
@@ -8,9 +9,11 @@ namespace eShop.Auth.Api.Services;
 [Injectable(typeof(ITokenManager), ServiceLifetime.Scoped)]
 public sealed class TokenManager(
     AuthDbContext context,
-    IOptions<JwtOptions> options) : ITokenManager
+    IOptions<JwtOptions> options,
+    IKeyFactory keyFactory) : ITokenManager
 {
     private readonly AuthDbContext context = context;
+    private readonly IKeyFactory keyFactory = keyFactory;
     private readonly JwtOptions options = options.Value;
 
     public async Task<string> GenerateAsync(UserDeviceEntity device,
@@ -21,8 +24,8 @@ public sealed class TokenManager(
 
         if (existingEntity is null)
         {
-            var refreshToken = KeyGenerator.GenerateKey(50);
-            
+            var refreshToken = keyFactory.Create(50);
+
             var entity = new RefreshTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
@@ -36,7 +39,7 @@ public sealed class TokenManager(
             await context.RefreshTokens.AddAsync(entity, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
-        
+
         var claims = new List<Claim>()
         {
             new(AppClaimTypes.Subject, device.UserId.ToString()),
@@ -44,7 +47,7 @@ public sealed class TokenManager(
         };
 
         var token = Generate(claims);
-        
+
         return token;
     }
 

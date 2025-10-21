@@ -1,14 +1,16 @@
-﻿using eShop.Auth.Api.Security.Protection;
-using OtpNet;
+﻿using eShop.Auth.Api.Security.Cryptography;
+using eShop.Auth.Api.Security.Protection;
 
 namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ISecretManager), ServiceLifetime.Scoped)]
 public sealed class SecretManager(
     AuthDbContext context,
-    IProtectorFactory protectorFactory) : ISecretManager
+    IProtectorFactory protectorFactory,
+    IKeyFactory keyFactory) : ISecretManager
 {
     private readonly AuthDbContext context = context;
+    private readonly IKeyFactory keyFactory = keyFactory;
     private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
 
     public async ValueTask<UserSecretEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -49,7 +51,7 @@ public sealed class SecretManager(
         return Result.Success();
     }
 
-    public string Generate() => KeyGenerator.GenerateKey(20);
+    public string Generate() => keyFactory.Create(20);
     public string Protect(string unprotectedSecret) => protector.Protect(unprotectedSecret);
     public string Unprotect(string protectedSecret) => protector.Unprotect(protectedSecret);
 }

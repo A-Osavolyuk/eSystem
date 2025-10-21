@@ -1,6 +1,7 @@
 ﻿using eShop.Application.Security.Authorization.Requirements;
 using eShop.Auth.Api.Security.Authentication;
 using eShop.Auth.Api.Security.Credentials.PublicKey;
+using eShop.Auth.Api.Security.Cryptography;
 using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
 using eShop.Auth.Api.Security.TwoFactor.Authenticator;
@@ -56,6 +57,11 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IHasherFactory, HasherFactory>();
         services.AddKeyedScoped<Hasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
+    }
+
+    public static void AddCryptography(this IServiceCollection services)
+    {
+        services.AddScoped<IKeyFactory, KeyFactory>();
     }
 
     public static void AddCredentials(this IServiceCollection services)
