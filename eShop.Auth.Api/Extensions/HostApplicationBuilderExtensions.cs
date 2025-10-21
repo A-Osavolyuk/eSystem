@@ -70,6 +70,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddProtection();
         builder.Services.AddHashing();
         builder.Services.AddSignInStrategies();
+        builder.Services.AddCredentials();
         
         builder.Services.Add2FA(cfg =>
         {
