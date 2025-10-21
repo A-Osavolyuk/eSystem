@@ -155,4 +155,19 @@ public class TwoFactorController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
     }
+    
+    [EndpointSummary("Verify authenticator app")]
+    [EndpointDescription("Verify authenticator app")]
+    [ProducesResponseType(200)]
+    [HttpPost("authenticator/verify")]
+    [Authorize]
+    public async ValueTask<IActionResult> VerifyAuthenticatorAsync(
+        [FromBody] VerifyAuthenticatorRequest request)
+    {
+        var result = await sender.Send(new VerifyAuthenticatorCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            ErrorHandler.Handle);
+    }
 }
