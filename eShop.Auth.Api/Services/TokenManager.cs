@@ -18,7 +18,7 @@ public sealed class TokenManager(
     private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly JwtOptions options = options.Value;
 
-    public async Task<string> GenerateAsync(UserDeviceEntity device,
+    public async Task<string> CreateAsync(UserDeviceEntity device,
         CancellationToken cancellationToken = default)
     {
         var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
