@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Types;
+﻿using eShop.Auth.Api.Security.Authentication;
 
 namespace eShop.Auth.Api.Interfaces;
 

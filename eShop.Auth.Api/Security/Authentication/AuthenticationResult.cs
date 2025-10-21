@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 
-namespace eShop.Auth.Api.Types;
+namespace eShop.Auth.Api.Security.Authentication;
 
 public class AuthenticationResult
 {
