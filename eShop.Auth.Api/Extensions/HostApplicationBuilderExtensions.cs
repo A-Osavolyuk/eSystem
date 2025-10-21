@@ -72,6 +72,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddSignInStrategies();
         builder.Services.AddCredentials();
         builder.Services.AddCryptography();
+        builder.Services.AddJwt();
         
         builder.Services.Add2FA(cfg =>
         {

@@ -1,6 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using eShop.Auth.Api.Security.Cryptography;
+using eShop.Auth.Api.Security.Tokens;
 using eShop.Domain.Common.Security.Constants;
 using Microsoft.Extensions.Options;
 
@@ -10,10 +10,12 @@ namespace eShop.Auth.Api.Services;
 public sealed class TokenManager(
     AuthDbContext context,
     IOptions<JwtOptions> options,
-    IKeyFactory keyFactory) : ITokenManager
+    IKeyFactory keyFactory,
+    ITokenFactory tokenFactory) : ITokenManager
 {
     private readonly AuthDbContext context = context;
     private readonly IKeyFactory keyFactory = keyFactory;
+    private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly JwtOptions options = options.Value;
 
     public async Task<string> GenerateAsync(UserDeviceEntity device,
@@ -46,8 +48,7 @@ public sealed class TokenManager(
             new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
         };
 
-        var token = Generate(claims);
-
+        var token = tokenFactory.Create(claims);
         return token;
     }
 
@@ -66,26 +67,5 @@ public sealed class TokenManager(
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
-    }
-
-    private string Generate(IEnumerable<Claim> claims)
-    {
-        const string algorithm = SecurityAlgorithms.HmacSha256Signature;
-
-        var expirationDate = DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes);
-        var key = Encoding.UTF8.GetBytes(options.Secret);
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
-
-        var securityToken = new JwtSecurityToken(
-            audience: options.Audience,
-            issuer: options.Issuer,
-            claims: claims,
-            expires: expirationDate,
-            signingCredentials: signingCredentials);
-
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.WriteToken(securityToken);
-
-        return token;
     }
 }

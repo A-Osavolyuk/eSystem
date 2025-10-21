@@ -3,7 +3,9 @@ using eShop.Auth.Api.Security.Authentication;
 using eShop.Auth.Api.Security.Credentials.PublicKey;
 using eShop.Auth.Api.Security.Cryptography;
 using eShop.Auth.Api.Security.Hashing;
+using eShop.Auth.Api.Security.Jwt;
 using eShop.Auth.Api.Security.Protection;
+using eShop.Auth.Api.Security.Tokens;
 using eShop.Auth.Api.Security.TwoFactor.Authenticator;
 
 namespace eShop.Auth.Api.Extensions;
@@ -69,6 +71,11 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IChallengeFactory, ChallengeFactory>();
         services.AddScoped<ICredentialFactory, CredentialFactory>();
+    }
+
+    public static void AddJwt(this IServiceCollection services)
+    {
+        services.AddScoped<ITokenFactory, JwtTokenFactory>();
     }
 
     public static void AddAuthorization(this IServiceCollection services)
