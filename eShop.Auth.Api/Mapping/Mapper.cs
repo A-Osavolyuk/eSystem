@@ -35,17 +35,20 @@ public static class Mapper
 
     public static UserDto Map(UserEntity source)
     {
+        var primaryEmail = source.GetEmail(EmailType.Primary);
+        var primaryPhoneNumber = source.GetPhoneNumber(PhoneNumberType.Primary);
+        
         return new()
         {
             Id = source.Id,
-            Email = source.Emails.FirstOrDefault(x => x.Type is EmailType.Primary)?.Email,
-            EmailConfirmed = source.Emails.FirstOrDefault(x => x.Type is EmailType.Primary)?.IsVerified,
-            EmailChangeDate = source.Emails.FirstOrDefault(x => x.Type is EmailType.Primary)?.UpdateDate,
-            EmailConfirmationDate = source.Emails.FirstOrDefault(x => x.Type is EmailType.Primary)?.VerifiedDate,
-            PhoneNumber = source.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary)?.PhoneNumber,
-            PhoneNumberConfirmed = source.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary)?.IsVerified,
-            PhoneNumberChangeDate = source.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary)?.UpdateDate,
-            PhoneNumberConfirmationDate = source.PhoneNumbers.FirstOrDefault(x => x.Type is PhoneNumberType.Primary)?.VerifiedDate,
+            Email = primaryEmail?.Email,
+            EmailConfirmed = primaryEmail?.IsVerified,
+            EmailChangeDate = primaryEmail?.UpdateDate,
+            EmailConfirmationDate = primaryEmail?.VerifiedDate,
+            PhoneNumber = primaryPhoneNumber?.PhoneNumber,
+            PhoneNumberConfirmed = primaryPhoneNumber?.IsVerified,
+            PhoneNumberChangeDate = primaryPhoneNumber?.UpdateDate,
+            PhoneNumberConfirmationDate = primaryPhoneNumber?.VerifiedDate,
             Username = source.Username,
             UserNameChangeDate = source.UsernameChangeDate,
         };
@@ -99,8 +102,8 @@ public static class Mapper
         return new RoleDto()
         {
             Id = source.Id,
-            Name = source.Name ?? string.Empty,
-            NormalizedName = source.NormalizedName ?? string.Empty
+            Name = source.Name,
+            NormalizedName = source.NormalizedName
         };
     }
 
