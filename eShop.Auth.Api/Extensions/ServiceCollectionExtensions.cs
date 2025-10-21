@@ -13,11 +13,6 @@ namespace eShop.Auth.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddVerification(this IServiceCollection services, Action<VerificationOptions> configure)
-    {
-        services.Configure(configure);
-    }
-
     public static void Add2FA(this IServiceCollection services)
     {
         services.AddScoped<IQrCodeFactory, QrCodeFactory>();
