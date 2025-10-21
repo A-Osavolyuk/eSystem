@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Security.Constants;
+﻿using eShop.Auth.Api.Security.Credentials.PublicKey;
+using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
@@ -9,10 +10,14 @@ public class GenerateRequestOptionsCommandHandler(
     IUserManager userManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
+    IChallengeFactory challengeFactory,
+    ICredentialFactory credentialFactory,
     IdentityOptions identityOptions) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISessionStorage sessionStorage = sessionStorage;
+    private readonly IChallengeFactory challengeFactory = challengeFactory;
+    private readonly ICredentialFactory credentialFactory = credentialFactory;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -32,8 +37,8 @@ public class GenerateRequestOptionsCommandHandler(
         if (device is null) return Results.BadRequest("Invalid device.");
         if (device.Passkey is null) return Results.BadRequest("This device does not have a passkey.");
 
-        var challenge = CredentialGenerator.GenerateChallenge();
-        var options = CredentialGenerator.CreateRequestOptions(device.Passkey, challenge, identityOptions.Credentials);
+        var challenge = challengeFactory.Create();
+        var options = credentialFactory.CreateRequestOptions(device.Passkey, challenge, identityOptions.Credentials);
 
         sessionStorage.Set(ChallengeSessionKeys.Assertion, challenge);
         return Result.Success(options);

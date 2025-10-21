@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Security.Constants;
+﻿using eShop.Auth.Api.Security.Credentials.PublicKey;
+using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Passkeys.Commands;
@@ -9,10 +10,14 @@ public class GenerateCreationOptionsCommandHandler(
     IUserManager userManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
+    ICredentialFactory credentialFactory,
+    IChallengeFactory challengeFactory,
     IdentityOptions identityOptions) : IRequestHandler<GenerateCreationOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISessionStorage sessionStorage = sessionStorage;
+    private readonly ICredentialFactory credentialFactory = credentialFactory;
+    private readonly IChallengeFactory challengeFactory = challengeFactory;
     private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -27,12 +32,12 @@ public class GenerateCreationOptionsCommandHandler(
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
 
-        var challenge = CredentialGenerator.GenerateChallenge();
+        var challenge = challengeFactory.Create();
         var displayName = request.Request.DisplayName;
         var browser = device.Browser!.Split(" ").First();
         var fingerprint = $"{device.Device}_{browser}";
         
-        var options = CredentialGenerator.CreateCreationOptions(user,
+        var options = credentialFactory.CreateCreationOptions(user,
             displayName, challenge, fingerprint, identityOptions.Credentials);
 
         sessionStorage.Set(ChallengeSessionKeys.Attestation, challenge);
