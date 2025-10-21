@@ -14,14 +14,14 @@ public class CreatePasskeyCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     IVerificationManager verificationManager,
     ISessionStorage sessionStorage,
-    CredentialOptions credentialOptions) : IRequestHandler<CreatePasskeyCommand, Result>
+    IOptions<CredentialOptions> options) : IRequestHandler<CreatePasskeyCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
     private readonly IVerificationManager verificationManager = verificationManager;
     private readonly ISessionStorage sessionStorage = sessionStorage;
-    private readonly CredentialOptions credentialOptions = credentialOptions;
+    private readonly CredentialOptions credentialOptions = options.Value;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(CreatePasskeyCommand request,

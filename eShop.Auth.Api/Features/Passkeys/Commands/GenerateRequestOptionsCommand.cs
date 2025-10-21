@@ -12,13 +12,13 @@ public class GenerateRequestOptionsCommandHandler(
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
     ICredentialFactory credentialFactory,
-    CredentialOptions credentialOptions) : IRequestHandler<GenerateRequestOptionsCommand, Result>
+    IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISessionStorage sessionStorage = sessionStorage;
     private readonly IChallengeFactory challengeFactory = challengeFactory;
     private readonly ICredentialFactory credentialFactory = credentialFactory;
-    private readonly CredentialOptions credentialOptions = credentialOptions;
+    private readonly CredentialOptions credentialOptions = options.Value;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
