@@ -81,45 +81,57 @@ public static class HostApplicationBuilderExtensions
             cfg.Server = options.Server;
             cfg.Timeout = options.Timeout;
         });
-
-        builder.Services.AddIdentity(options =>
+        
+        builder.Services.AddIdentity(cfg =>
         {
-            options.Password.RequiredLength = 8;
-            options.Password.RequireUppercase = true;
-            options.Password.RequiredUppercase = 1;
-            options.Password.RequireLowercase = true;
-            options.Password.RequiredLowercase = 1;
-            options.Password.RequireDigit = true;
-            options.Password.RequiredDigits = 1;
-            options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequiredNonAlphanumeric = 1;
-            options.Password.RequireUniqueChars = false;
-
-            options.Account.RequireUniqueEmail = true;
-            options.Account.RequireUniqueRecoveryEmail = true;
-            options.Account.RequireUniquePhoneNumber = true;
-            options.Account.RequireUniqueUserName = true;
+            cfg.ConfigurePassword(options =>
+            {
+                options.RequiredLength = 8;
+                options.RequireUppercase = true;
+                options.RequiredUppercase = 1;
+                options.RequireLowercase = true;
+                options.RequiredLowercase = 1;
+                options.RequireDigit = true;
+                options.RequiredDigits = 1;
+                options.RequireNonAlphanumeric = true;
+                options.RequiredNonAlphanumeric = 1;
+                options.RequireUniqueChars = false;
+            });
             
-            options.Account.PrimaryEmailMaxCount = 1;
-            options.Account.SecondaryEmailMaxCount = 3;
-            options.Account.RecoveryEmailMaxCount = 1;
+            cfg.ConfigureAccount(options =>
+            {
+                options.RequireUniqueEmail = true;
+                options.RequireUniqueRecoveryEmail = true;
+                options.RequireUniquePhoneNumber = true;
+                options.RequireUniqueUserName = true;
+            
+                options.PrimaryEmailMaxCount = 1;
+                options.SecondaryEmailMaxCount = 3;
+                options.RecoveryEmailMaxCount = 1;
 
-            options.Account.PrimaryPhoneNumberMaxCount = 1;
-            options.Account.SecondaryPhoneNumberMaxCount = 3;
-            options.Account.RecoveryPhoneNumberMaxCount = 1;
-
-            options.SignIn.AllowUserNameLogin = true;
-            options.SignIn.AllowEmailLogin = true;
-            options.SignIn.AllowOAuthLogin = true;
-            options.SignIn.RequireConfirmedAccount = true;
-            options.SignIn.RequireConfirmedEmail = true;
-            options.SignIn.RequireConfirmedPhoneNumber = true;
-            options.SignIn.RequireConfirmedRecoveryEmail = true;
-            options.SignIn.RequireTrustedDevice = true;
-            options.SignIn.MaxFailedLoginAttempts = 5;
-
-            options.Code.MaxCodeResendAttempts = 5;
-            options.Code.CodeResendUnavailableTime = 2;
+                options.PrimaryPhoneNumberMaxCount = 1;
+                options.SecondaryPhoneNumberMaxCount = 3;
+                options.RecoveryPhoneNumberMaxCount = 1;
+            });
+            
+            cfg.ConfigureSignIn(options =>
+            {
+                options.AllowUserNameLogin = true;
+                options.AllowEmailLogin = true;
+                options.AllowOAuthLogin = true;
+                options.RequireConfirmedAccount = true;
+                options.RequireConfirmedEmail = true;
+                options.RequireConfirmedPhoneNumber = true;
+                options.RequireConfirmedRecoveryEmail = true;
+                options.RequireTrustedDevice = true;
+                options.MaxFailedLoginAttempts = 5;
+            });
+            
+            cfg.ConfigureCode(options =>
+            {
+                options.MaxCodeResendAttempts = 5;
+                options.CodeResendUnavailableTime = 2;
+            });
         });
 
         builder.Services.AddAuthentication(options =>
