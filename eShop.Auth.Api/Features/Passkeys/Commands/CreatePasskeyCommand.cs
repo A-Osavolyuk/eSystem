@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using eShop.Auth.Api.Security.Credentials.PublicKey;
 using eShop.Auth.Api.Types;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Requests.Auth;

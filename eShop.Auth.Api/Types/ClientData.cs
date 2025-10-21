@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using eShop.Auth.Api.Security.Credentials.PublicKey;
 
 namespace eShop.Auth.Api.Types;
 

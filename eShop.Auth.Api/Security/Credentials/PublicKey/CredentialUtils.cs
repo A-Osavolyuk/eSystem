@@ -2,7 +2,7 @@
 using eShop.Domain.Common.Security.Credentials;
 using PeterO.Cbor;
 
-namespace eShop.Auth.Api.Utilities;
+namespace eShop.Auth.Api.Security.Credentials.PublicKey;
 
 public static class CredentialUtils
 {
