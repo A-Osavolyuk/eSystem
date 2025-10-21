@@ -1,7 +1,7 @@
 ﻿@inject ISecurityService SecurityService
-@inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject UserState UserState
+@inject ConfirmationManager ConfirmationManager
 
 @if (Model is not null)
 {
@@ -245,30 +245,8 @@
     
     private async Task OnRemove(string email)
     {
-        var context = new ConfirmationContext()
-        {
-            Action = ActionType.Remove,
-            Purpose = PurposeType.Email
-        };
-
-        var parameters = new DialogParameters<AccessConfirmationDialog>()
-        {
-            { dialog => dialog.Context, context }
-        };
-
-        var options = new DialogOptions()
-        {
-            BackdropClick = true,
-            CloseButton = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge
-        };
-
-        const string title = "Confirm access";
-        var dialog = await DialogService.ShowAsync<AccessConfirmationDialog>(title, parameters, options);
-        var dialogResult = await dialog.Result;
-
-        if (!dialogResult!.Canceled)
+        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Email, ActionType.Remove);
+        if (!confirmationResult!.Canceled)
         {
             var request = new RemoveEmailRequest()
             {

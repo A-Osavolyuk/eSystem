@@ -1,5 +1,4 @@
-﻿@using eShop.Blazor.Server.UI.Components.Pages.TwoFactor
-
+﻿@inject ConfirmationManager ConfirmationManager
 @inject IDialogService DialogService
 
 <MudStack Row="true" Class="px-5">
@@ -75,30 +74,10 @@
 
     private async Task ShowAsync()
     {
-        var confirmationContext = new ConfirmationContext()
-        {
-            Action = ActionType.Reconfigure,
-            Purpose = PurposeType.AuthenticatorApp
-        };
-
-        var parameters = new DialogParameters<AccessConfirmationDialog>()
-        {
-            { dialog => dialog.Context, confirmationContext }
-        };
-
-        var options = new DialogOptions()
-        {
-            BackdropClick = true,
-            CloseOnEscapeKey = true,
-            CloseButton = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge
-        };
-
-        const string title = "Access confirmation";
-        var dialog = await DialogService.ShowAsync<AccessConfirmationDialog>(title, parameters, options);
-        var result = await dialog.Result;
-
-        if (!result!.Canceled) ToggleConfiguration();
+        var confirmationResult = await ConfirmationManager.InitiateAsync(
+            PurposeType.AuthenticatorApp, ActionType.Reconfigure);
+        
+        if (!confirmationResult!.Canceled) ToggleConfiguration();
     }
 
     private void ToggleConfiguration() => showConfiguration = !showConfiguration;

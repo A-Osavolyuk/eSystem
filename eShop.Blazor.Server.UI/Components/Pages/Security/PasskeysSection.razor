@@ -1,8 +1,10 @@
-﻿@inject NavigationManager NavigationManager
+﻿
+@inject NavigationManager NavigationManager
 @inject UserState UserState
 @inject IPasskeyService PasskeyService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject ConfirmationManager ConfirmationManager
 
 <MudStack Spacing="0" Class="px-5 pb-2">
     <MudStack Row="true" Spacing="3">
@@ -134,30 +136,8 @@
 
     private async Task OnDelete(UserPasskeyDto passkey)
     {
-        var context = new ConfirmationContext()
-        {
-            Action = ActionType.Remove,
-            Purpose = PurposeType.Passkey
-        };
-
-        var parameters = new DialogParameters<AccessConfirmationDialog>()
-        {
-            { dialog => dialog.Context, context }
-        };
-
-        var options = new DialogOptions()
-        {
-            BackdropClick = true,
-            CloseButton = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge
-        };
-        
-        const string title = "Access confirmation";
-        var dialog = await DialogService.ShowAsync<AccessConfirmationDialog>(title, parameters, options);
-        var dialogResult = await dialog.Result;
-
-        if (!dialogResult!.Canceled)
+        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Passkey, ActionType.Remove);
+        if (!confirmationResult!.Canceled)
         {
             var request = new RemovePasskeyRequest()
             {
