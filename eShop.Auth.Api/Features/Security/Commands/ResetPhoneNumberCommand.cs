@@ -7,9 +7,9 @@ public record ResetPhoneNumberCommand(ResetPhoneNumberRequest Request) : IReques
 public class ResetPhoneNumberCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager,
-    IdentityOptions identityOptions) : IRequestHandler<ResetPhoneNumberCommand, Result>
+    IOptions<AccountOptions> options) : IRequestHandler<ResetPhoneNumberCommand, Result>
 {
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly AccountOptions options = options.Value;
     private readonly IUserManager userManager = userManager;
     private readonly IVerificationManager verificationManager = verificationManager;
 
@@ -22,7 +22,7 @@ public class ResetPhoneNumberCommandHandler(
         var userCurrentPhoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary);
         if (userCurrentPhoneNumber is null) return Results.BadRequest("User's primary phone number is missing");
         
-        if (identityOptions.Account.RequireUniquePhoneNumber)
+        if (options.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");

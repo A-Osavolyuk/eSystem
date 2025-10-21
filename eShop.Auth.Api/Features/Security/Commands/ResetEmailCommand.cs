@@ -7,11 +7,11 @@ public record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
 public class ResetEmailCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager,
-    IdentityOptions identityOptions) : IRequestHandler<ResetEmailCommand, Result>
+    IOptions<AccountOptions> options) : IRequestHandler<ResetEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly AccountOptions options = options.Value;
 
     public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
     {
@@ -23,7 +23,7 @@ public class ResetEmailCommandHandler(
         var userCurrentEmail = user.GetEmail(EmailType.Primary);
         if (userCurrentEmail is null) return Results.BadRequest("User's primary email address is missing");
 
-        if (identityOptions.Account.RequireUniqueEmail)
+        if (options.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");

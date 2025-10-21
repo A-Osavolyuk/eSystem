@@ -13,7 +13,7 @@ public class VerifyRecoveryCodeCommandHandler(
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     ILockoutManager lockoutManager,
-    IdentityOptions identityOptions) : IRequestHandler<VerifyRecoveryCodeCommand, Result>
+    IOptions<SignInOptions> options) : IRequestHandler<VerifyRecoveryCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IRecoverManager recoveryManager = recoveryManager;
@@ -22,7 +22,7 @@ public class VerifyRecoveryCodeCommandHandler(
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly SignInOptions options = options.Value;
 
     public async Task<Result> Handle(VerifyRecoveryCodeCommand request, CancellationToken cancellationToken)
     {
@@ -62,13 +62,13 @@ public class VerifyRecoveryCodeCommandHandler(
         {
             user.FailedLoginAttempts += 1;
 
-            if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
+            if (user.FailedLoginAttempts < options.MaxFailedLoginAttempts)
             {
                 response = new VerifyRecoveryCodeResponse()
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+                    MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 };
 
                 return Results.BadRequest("Invalid code.", response);
@@ -87,7 +87,7 @@ public class VerifyRecoveryCodeCommandHandler(
                 UserId = user.Id,
                 IsLockedOut = true,
                 FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+                MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 

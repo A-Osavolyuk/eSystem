@@ -9,16 +9,16 @@ public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string
 public sealed class OAuthLoginCommandHandler(
     IOAuthProviderManager providerManager,
     IOAuthSessionManager sessionManager,
-    IdentityOptions identityOptions) : IRequestHandler<OAuthLoginCommand, Result>
+    IOptions<SignInOptions> options) : IRequestHandler<OAuthLoginCommand, Result>
 {
     private readonly IOAuthProviderManager providerManager = providerManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly SignInOptions options = options.Value;
 
     public async Task<Result> Handle(OAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
-        if (!identityOptions.SignIn.AllowOAuthLogin)
+        if (!options.AllowOAuthLogin)
         {
             return Failure(request.FallbackUri, request.Provider, OAuthErrorType.Unavailable);
         }

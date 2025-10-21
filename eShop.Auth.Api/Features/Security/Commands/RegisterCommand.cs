@@ -11,25 +11,25 @@ public sealed class RegisterCommandHandler(
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
-    IdentityOptions identityOptions) : IRequestHandler<RegisterCommand, Result>
+    IOptions<AccountOptions> options) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
     private readonly IRoleManager roleManager = roleManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
+    private readonly AccountOptions options = options.Value;
 
     public async Task<Result> Handle(RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        if (identityOptions.Account.RequireUniqueEmail)
+        if (options.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
-        if (identityOptions.Account.RequireUniqueUserName)
+        if (options.RequireUniqueUserName)
         {
             var isUserNameTaken = await userManager.IsUsernameTakenAsync(request.Request.Username, cancellationToken);
             if (isUserNameTaken) return Results.NotFound("Username is already taken");

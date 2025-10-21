@@ -11,12 +11,12 @@ public class ResendCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
     IMessageService messageService,
-    IdentityOptions identityOptions) : IRequestHandler<ResendCodeCommand, Result>
+    IOptions<CodeOptions> options) : IRequestHandler<ResendCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ICodeManager codeManager = codeManager;
     private readonly IMessageService messageService = messageService;
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly CodeOptions options = options.Value;
     public async Task<Result> Handle(ResendCodeCommand request, CancellationToken cancellationToken)
     {
         ResendCodeResponse? response;
@@ -29,12 +29,12 @@ public class ResendCodeCommandHandler(
             return Result.Success("Code successfully sent. Please, check your authenticator app.");
         }
 
-        if (user.CodeResendAttempts >= identityOptions.Code.MaxCodeResendAttempts)
+        if (user.CodeResendAttempts >= options.MaxCodeResendAttempts)
         {
             response = new ResendCodeResponse()
             {
                 CodeResendAttempts = user.CodeResendAttempts,
-                MaxCodeResendAttempts = identityOptions.Code.MaxCodeResendAttempts,
+                MaxCodeResendAttempts = options.MaxCodeResendAttempts,
                 CodeResendAvailableDate = user.CodeResendAvailableDate
             };
 
@@ -43,10 +43,10 @@ public class ResendCodeCommandHandler(
 
         user.CodeResendAttempts += 1;
 
-        if (user.CodeResendAttempts == identityOptions.Code.MaxCodeResendAttempts)
+        if (user.CodeResendAttempts == options.MaxCodeResendAttempts)
         {
             user.CodeResendAvailableDate = DateTimeOffset.UtcNow.AddMinutes(
-                identityOptions.Code.CodeResendUnavailableTime);
+                options.CodeResendUnavailableTime);
         }
 
         var userUpdateResult = await userManager.UpdateAsync(user, cancellationToken);
@@ -76,7 +76,7 @@ public class ResendCodeCommandHandler(
         response = new ResendCodeResponse()
         {
             CodeResendAttempts = user.CodeResendAttempts,
-            MaxCodeResendAttempts = identityOptions.Code.MaxCodeResendAttempts,
+            MaxCodeResendAttempts = options.MaxCodeResendAttempts,
             CodeResendAvailableDate = user.CodeResendAvailableDate
         };
         

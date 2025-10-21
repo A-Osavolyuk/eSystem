@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using eShop.Auth.Api.Security.Tokens;
-using Microsoft.Extensions.Options;
 
 namespace eShop.Auth.Api.Security.Jwt;
 

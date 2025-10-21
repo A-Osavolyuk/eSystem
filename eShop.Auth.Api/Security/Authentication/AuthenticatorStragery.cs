@@ -12,7 +12,7 @@ public class AuthenticatorSignInStrategy(
     ISecretManager secretManager,
     IHttpContextAccessor accessor,
     IProtectorFactory protectorFactory,
-    IdentityOptions identityOptions) : SignInStrategy
+    IOptions<SignInOptions> options) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
@@ -22,7 +22,7 @@ public class AuthenticatorSignInStrategy(
     private readonly ISecretManager secretManager = secretManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly SignInOptions options = options.Value;
 
     public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 
         CancellationToken cancellationToken = default)
@@ -74,13 +74,13 @@ public class AuthenticatorSignInStrategy(
         {
             user.FailedLoginAttempts += 1;
 
-            if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
+            if (user.FailedLoginAttempts < options.MaxFailedLoginAttempts)
             {
                 response = new SignInResponse()
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+                    MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 };
 
                 return Results.BadRequest($"Invalid two-factor code {code}.", response);
@@ -99,7 +99,7 @@ public class AuthenticatorSignInStrategy(
                 UserId = user.Id,
                 IsLockedOut = true,
                 FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+                MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 

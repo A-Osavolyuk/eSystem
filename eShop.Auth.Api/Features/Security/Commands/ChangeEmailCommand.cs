@@ -7,11 +7,11 @@ public sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<R
 public sealed class RequestChangeEmailCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager,
-    IdentityOptions identityOptions) : IRequestHandler<ChangeEmailCommand, Result>
+    IOptions<AccountOptions> options) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly AccountOptions options = options.Value;
 
     public async Task<Result> Handle(ChangeEmailCommand request,
         CancellationToken cancellationToken)
@@ -25,7 +25,7 @@ public sealed class RequestChangeEmailCommandHandler(
         var currentEmail = user.Emails.FirstOrDefault(x => x.Type == request.Request.Type);
         if (currentEmail is null) return Results.BadRequest("User's primary email address is missing");
 
-        if (identityOptions.Account.RequireUniqueEmail)
+        if (options.RequireUniqueEmail)
         {
             var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");

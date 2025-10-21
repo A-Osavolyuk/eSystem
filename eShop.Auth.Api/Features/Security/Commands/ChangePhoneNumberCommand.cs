@@ -7,11 +7,11 @@ public sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request) 
 public sealed class RequestChangePhoneNumberCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager,
-    IdentityOptions identityOptions) : IRequestHandler<ChangePhoneNumberCommand, Result>
+    IOptions<AccountOptions> options) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
+    private readonly AccountOptions options = options.Value;
 
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
@@ -25,7 +25,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type == request.Request.Type);
         if (userPhoneNumber is null) return Results.BadRequest("User's phone number is missing.");
 
-        if (identityOptions.Account.RequireUniquePhoneNumber)
+        if (options.RequireUniquePhoneNumber)
         {
             var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");

@@ -9,15 +9,15 @@ public sealed class PasswordSignInStrategy(
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     IHttpContextAccessor accessor,
-    IdentityOptions identityOptions) : SignInStrategy
+    IOptions<SignInOptions> options) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = accessor.HttpContext!;
+    private readonly SignInOptions options = options.Value;
 
     public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials,
         CancellationToken cancellationToken = default)
@@ -31,12 +31,12 @@ public sealed class PasswordSignInStrategy(
         UserEntity? user = null;
         SignInResponse? response;
 
-        if (identityOptions.SignIn.AllowUserNameLogin)
+        if (options.AllowUserNameLogin)
         {
             user = await userManager.FindByUsernameAsync(login, cancellationToken);
         }
 
-        if (user is null && identityOptions.SignIn.AllowEmailLogin)
+        if (user is null && options.AllowEmailLogin)
         {
             user = await userManager.FindByEmailAsync(login, cancellationToken);
         }
@@ -71,7 +71,7 @@ public sealed class PasswordSignInStrategy(
         }
 
         var userPrimaryEmail = user.GetEmail(EmailType.Primary)!;
-        if (identityOptions.SignIn.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
+        if (options.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
         {
             response = new SignInResponse()
             {
@@ -104,13 +104,13 @@ public sealed class PasswordSignInStrategy(
             var updateResult = await userManager.UpdateAsync(user, cancellationToken);
             if (!updateResult.Succeeded) return updateResult;
 
-            if (user.FailedLoginAttempts < identityOptions.SignIn.MaxFailedLoginAttempts)
+            if (user.FailedLoginAttempts < options.MaxFailedLoginAttempts)
             {
                 response = new SignInResponse()
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+                    MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 };
 
                 return Results.BadRequest("The password is not valid.", response);
@@ -129,7 +129,7 @@ public sealed class PasswordSignInStrategy(
                 UserId = user.Id,
                 IsLockedOut = true,
                 FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = identityOptions.SignIn.MaxFailedLoginAttempts,
+                MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 
@@ -144,7 +144,7 @@ public sealed class PasswordSignInStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        if (identityOptions.SignIn.RequireTrustedDevice)
+        if (options.RequireTrustedDevice)
         {
             response = new SignInResponse()
             {

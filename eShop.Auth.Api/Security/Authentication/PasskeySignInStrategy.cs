@@ -7,21 +7,15 @@ namespace eShop.Auth.Api.Security.Authentication;
 
 public class PasskeySignInStrategy(
     IUserManager userManager,
-    IDeviceManager deviceManager,
-    ILockoutManager lockoutManager,
     IPasskeyManager passkeyManager,
     ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
-    IHttpContextAccessor accessor,
-    IdentityOptions identityOptions) : SignInStrategy
+    IHttpContextAccessor accessor) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
-    private readonly IdentityOptions identityOptions = identityOptions;
     private readonly HttpContext httpContext = accessor.HttpContext!;
 
     public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 
