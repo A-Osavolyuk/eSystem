@@ -3,6 +3,7 @@ using eShop.Auth.Api.Security.Authentication;
 using eShop.Auth.Api.Security.Credentials.PublicKey;
 using eShop.Auth.Api.Security.Hashing;
 using eShop.Auth.Api.Security.Protection;
+using eShop.Auth.Api.Security.TwoFactor.Authenticator;
 
 namespace eShop.Auth.Api.Extensions;
 
@@ -31,6 +32,7 @@ public static class ServiceCollectionExtensions
         configure(options);
 
         services.AddSingleton(options);
+        services.AddScoped<IQrCodeFactory, QrCodeFactory>();
     }
 
     public static void AddSignInStrategies(this IServiceCollection services)

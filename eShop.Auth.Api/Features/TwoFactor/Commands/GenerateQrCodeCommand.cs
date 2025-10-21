@@ -1,4 +1,5 @@
 ﻿using eShop.Auth.Api.Security.Constants;
+using eShop.Auth.Api.Security.TwoFactor.Authenticator;
 using eShop.Domain.DTOs;
 using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
@@ -9,9 +10,11 @@ public record GenerateQrCodeCommand(GenerateQrCodeRequest Request) : IRequest<Re
 
 public class GenerateQrCodeCommandHandler(
     IUserManager userManager,
+    IQrCodeFactory qrCodeFactory,
     ISecretManager secretManager) : IRequestHandler<GenerateQrCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IQrCodeFactory qrCodeFactory = qrCodeFactory;
     private readonly ISecretManager secretManager = secretManager;
 
     public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)
@@ -39,13 +42,8 @@ public class GenerateQrCodeCommandHandler(
         }
 
         var unprotectedSecret = secretManager.Unprotect(userSecret.Secret);
-        var qrCode = QrCodeGenerator.Generate(email, unprotectedSecret, QrCodeConfiguration.Issuer);
-        var response = new QrCode()
-        {
-            Value = qrCode,
-            Secret = unprotectedSecret
-        };
+        var qrCode = qrCodeFactory.Create(email, unprotectedSecret, QrCodeConfiguration.Issuer);
 
-        return Result.Success(response);
+        return Result.Success(qrCode);
     }
 }
