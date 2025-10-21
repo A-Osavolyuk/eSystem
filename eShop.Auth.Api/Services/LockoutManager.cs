@@ -1,4 +1,4 @@
-﻿using eShop.Auth.Api.Types;
+﻿using eShop.Auth.Api.Common.Constants;
 
 namespace eShop.Auth.Api.Services;
 

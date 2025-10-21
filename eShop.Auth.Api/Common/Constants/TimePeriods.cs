@@ -1,6 +1,6 @@
-﻿namespace eShop.Auth.Api.Types;
+﻿namespace eShop.Auth.Api.Common.Constants;
 
-public class TimePeriods
+public static class TimePeriods
 {
     public const int Day = 1;
     public const int Week = 7;
