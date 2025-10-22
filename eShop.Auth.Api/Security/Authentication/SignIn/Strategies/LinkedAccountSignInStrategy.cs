@@ -85,9 +85,12 @@ public class LinkedAccountSignInStrategy(
             Type = linkedAccountType,
             CreateDate = DateTimeOffset.UtcNow,
         };
-        
-        var connectResult = await providerManager.CreateAsync(linkedAccount, cancellationToken);
-        if (!connectResult.Succeeded) return Result.Failure(connectResult.GetError(), fallbackUri);
+
+        if (!user.HasLinkedAccount(linkedAccountType))
+        {
+            var connectResult = await providerManager.CreateAsync(linkedAccount, cancellationToken);
+            if (!connectResult.Succeeded) return Result.Failure(connectResult.GetError(), fallbackUri);
+        }
 
         var session = await sessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
         if (session is null) return Results.BadRequest("Cannot find session with id {sessionId}.", fallbackUri);
