@@ -38,7 +38,7 @@ public class GetUserLoginMethodsQueryHandler(
                 LinkedAccounts = user.LinkedAccounts.Select(linkedAccount => new UserLinkedAccountDto()
                 {
                     Id = linkedAccount.Id,
-                    Name = linkedAccount.Type.ToString(),
+                    Type = linkedAccount.Type,
                     IsAllowed = linkedAccount.Allowed,
                     DisallowedDate = linkedAccount.UpdateDate,
                     LinkedDate = linkedAccount.CreateDate

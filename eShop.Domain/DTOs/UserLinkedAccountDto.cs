@@ -3,7 +3,7 @@
 public class UserLinkedAccountDto
 {
     public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public LinkedAccountType Type { get; set; }
     public bool IsAllowed { get; set; }
     public DateTimeOffset? LinkedDate { get; set; }
     public DateTimeOffset? DisallowedDate { get; set; }
