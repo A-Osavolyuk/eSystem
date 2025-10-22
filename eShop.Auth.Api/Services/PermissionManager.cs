@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IPermissionManager), ServiceLifetime.Scoped)]
 public sealed class PermissionManager(AuthDbContext context) : IPermissionManager

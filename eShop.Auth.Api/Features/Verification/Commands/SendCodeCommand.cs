@@ -1,5 +1,7 @@
 ﻿using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Messages.Sms;
+using eShop.Domain.Common.Messaging;
+using eShop.Domain.Common.Results;
 using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Verification.Commands;
@@ -19,11 +21,6 @@ public class SendCodeCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-
-        if (request.Request.Sender is SenderType.AuthenticatorApp)
-        {
-            return Result.Success("Code successfully sent. Please, check your authenticator app.");
-        }
 
         var sender = request.Request.Sender;
         var action = request.Request.Action;

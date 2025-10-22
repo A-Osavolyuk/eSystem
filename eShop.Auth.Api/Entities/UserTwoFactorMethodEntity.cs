@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Entities;
+﻿using eShop.Domain.Security.Authentication.TwoFactor;
+
+namespace eShop.Auth.Api.Entities;
 
 public class UserTwoFactorMethodEntity : Entity
 {

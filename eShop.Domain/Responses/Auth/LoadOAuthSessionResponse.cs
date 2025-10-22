@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Responses.Auth;
+﻿using eShop.Domain.Security.Authorization.OAuth;
+
+namespace eShop.Domain.Responses.Auth;
 
 public class LoadOAuthSessionResponse
 {

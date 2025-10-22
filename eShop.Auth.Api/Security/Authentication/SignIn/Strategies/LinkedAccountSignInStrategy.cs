@@ -1,8 +1,9 @@
 ﻿using eShop.Application.Http;
+using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Authentication;
+using eShop.Domain.Security.Authorization.OAuth;
 
 namespace eShop.Auth.Api.Security.Authentication.SignIn.Strategies;
-
-using eShop.Domain.Common.API;
 
 public class LinkedAccountSignInStrategy(
     IUserManager userManager,
@@ -33,13 +34,13 @@ public class LinkedAccountSignInStrategy(
         var sessionId = credentials["SessionId"] as string;
         var token = credentials["Token"] as string;
 
-        if (string.IsNullOrWhiteSpace(email)) return Results.BadRequest("Email is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(returnUri)) return Results.BadRequest("Return URI is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(token)) return Results.BadRequest("Token name is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(sessionId)) return Results.BadRequest("Session ID is empty", fallbackUri);
+        if (string.IsNullOrWhiteSpace(email)) return Domain.Common.Results.Results.BadRequest("Email is empty", fallbackUri);
+        if (string.IsNullOrWhiteSpace(returnUri)) return Domain.Common.Results.Results.BadRequest("Return URI is empty", fallbackUri);
+        if (string.IsNullOrWhiteSpace(token)) return Domain.Common.Results.Results.BadRequest("Token name is empty", fallbackUri);
+        if (string.IsNullOrWhiteSpace(sessionId)) return Domain.Common.Results.Results.BadRequest("Session ID is empty", fallbackUri);
 
         var user = await userManager.FindByEmailAsync(email, cancellationToken);
-        if (user is null) return Results.BadRequest($"Cannot find user with email {email}.");
+        if (user is null) return Domain.Common.Results.Results.BadRequest($"Cannot find user with email {email}.");
 
         var userAgent = httpContext.GetUserAgent();
         var ipAddress = httpContext.GetIpV4();
@@ -67,7 +68,7 @@ public class LinkedAccountSignInStrategy(
             if (!result.Succeeded) return result;
         }
         
-        if (device.IsBlocked) return Results.BadRequest("Device is blocked", fallbackUri);
+        if (device.IsBlocked) return Domain.Common.Results.Results.BadRequest("Device is blocked", fallbackUri);
         if (!device.IsTrusted)
         {
             var deviceResult = await deviceManager.TrustAsync(device, cancellationToken);
@@ -95,7 +96,7 @@ public class LinkedAccountSignInStrategy(
         }
 
         var session = await sessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
-        if (session is null) return Results.BadRequest("Cannot find session with id {sessionId}.", fallbackUri);
+        if (session is null) return Domain.Common.Results.Results.BadRequest("Cannot find session with id {sessionId}.", fallbackUri);
 
         session.SignType = OAuthSignType.SignIn;
         session.LinkedAccountId = linkedAccount.Id;

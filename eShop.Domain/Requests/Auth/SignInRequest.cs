@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Requests.Auth;
+﻿using eShop.Domain.Security.Authentication.SignIn;
+
+namespace eShop.Domain.Requests.Auth;
 
 public class SignInRequest
 {

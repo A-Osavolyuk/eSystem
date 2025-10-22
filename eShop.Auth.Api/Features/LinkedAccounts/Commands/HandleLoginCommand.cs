@@ -4,6 +4,11 @@ using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Security.Authentication.Results;
 using eShop.Auth.Api.Security.Authentication.SignIn;
 using eShop.Auth.Api.Security.Authorization.OAuth;
+using eShop.Domain.Common.Messaging;
+using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Authentication;
+using eShop.Domain.Security.Authentication.SignIn;
+using eShop.Domain.Security.Authorization.OAuth;
 
 namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 

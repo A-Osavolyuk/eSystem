@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Features.Brands.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Product.Api.Features.Brands.Queries;
 
 public record GetBrandsQuery() : IRequest<Result>;
 

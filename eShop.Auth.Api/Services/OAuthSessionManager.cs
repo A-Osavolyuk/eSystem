@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IOAuthSessionManager), ServiceLifetime.Scoped)]
 public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager

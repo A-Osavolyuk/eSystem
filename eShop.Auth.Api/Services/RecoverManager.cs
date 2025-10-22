@@ -1,5 +1,6 @@
 ﻿using eShop.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eShop.Auth.Api.Security.Cryptography.Protection;
+using eShop.Domain.Common.Results;
 
 namespace eShop.Auth.Api.Services;
 

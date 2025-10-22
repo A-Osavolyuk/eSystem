@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Interfaces;
+﻿using eShop.Domain.Common.Messaging;
+
+namespace eShop.Auth.Api.Interfaces;
 
 public interface IMessageService
 {

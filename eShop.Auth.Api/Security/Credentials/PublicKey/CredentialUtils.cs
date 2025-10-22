@@ -1,5 +1,5 @@
 ﻿using System.Security.Cryptography;
-using eShop.Domain.Common.Security.Credentials;
+using eShop.Domain.Security.Credentials.PublicKey;
 using PeterO.Cbor;
 
 namespace eShop.Auth.Api.Security.Credentials.PublicKey;

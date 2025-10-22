@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IChangeManager), ServiceLifetime.Scoped)]
 public sealed class ChangeManager(AuthDbContext context) : IChangeManager

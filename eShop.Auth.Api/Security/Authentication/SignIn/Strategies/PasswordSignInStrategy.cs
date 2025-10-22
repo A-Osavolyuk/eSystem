@@ -1,6 +1,9 @@
 ﻿using eShop.Application.Http;
 using eShop.Auth.Api.Security.Identity.Options;
+using eShop.Domain.Common.Results;
 using eShop.Domain.Responses.Auth;
+using eShop.Domain.Security.Authentication;
+using eShop.Domain.Security.Lockout;
 
 namespace eShop.Auth.Api.Security.Authentication.SignIn.Strategies;
 
@@ -27,8 +30,8 @@ public sealed class PasswordSignInStrategy(
         var login = credentials["Login"].ToString();
         var password = credentials["Password"].ToString();
 
-        if (string.IsNullOrEmpty(login)) return Domain.Common.API.Results.BadRequest("Empty login");
-        if (string.IsNullOrEmpty(password)) return Domain.Common.API.Results.BadRequest("Empty password");
+        if (string.IsNullOrEmpty(login)) return Domain.Common.Results.Results.BadRequest("Empty login");
+        if (string.IsNullOrEmpty(password)) return Domain.Common.Results.Results.BadRequest("Empty password");
 
         UserEntity? user = null;
         SignInResponse? response;
@@ -43,8 +46,8 @@ public sealed class PasswordSignInStrategy(
             user = await userManager.FindByEmailAsync(login, cancellationToken);
         }
 
-        if (user is null) return Domain.Common.API.Results.NotFound($"Cannot find user with login {password}.");
-        if (!user.HasPassword()) return Domain.Common.API.Results.BadRequest("Cannot log in, you don't have a password.");
+        if (user is null) return Domain.Common.Results.Results.NotFound($"Cannot find user with login {password}.");
+        if (!user.HasPassword()) return Domain.Common.Results.Results.BadRequest("Cannot log in, you don't have a password.");
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
@@ -81,7 +84,7 @@ public sealed class PasswordSignInStrategy(
                 IsEmailConfirmed = false
             };
 
-            return Domain.Common.API.Results.BadRequest("User's primary email is not verified.", response);
+            return Domain.Common.Results.Results.BadRequest("User's primary email is not verified.", response);
         }
 
         if (user.LockoutState.Enabled)
@@ -93,10 +96,10 @@ public sealed class PasswordSignInStrategy(
                 Type = user.LockoutState.Type,
             };
 
-            return Domain.Common.API.Results.BadRequest("Account is locked out", response);
+            return Domain.Common.Results.Results.BadRequest("Account is locked out", response);
         }
 
-        if (!user.HasPassword()) return Domain.Common.API.Results.BadRequest("User doesn't have a password.");
+        if (!user.HasPassword()) return Domain.Common.Results.Results.BadRequest("User doesn't have a password.");
 
         var isValidPassword = userManager.CheckPassword(user, password);
         if (!isValidPassword)
@@ -115,7 +118,7 @@ public sealed class PasswordSignInStrategy(
                     MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 };
 
-                return Domain.Common.API.Results.BadRequest("The password is not valid.", response);
+                return Domain.Common.Results.Results.BadRequest("The password is not valid.", response);
             }
 
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
@@ -135,7 +138,7 @@ public sealed class PasswordSignInStrategy(
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 
-            return Domain.Common.API.Results.BadRequest("Account is locked out due to too many failed login attempts", response);
+            return Domain.Common.Results.Results.BadRequest("Account is locked out due to too many failed login attempts", response);
         }
 
         if (user.FailedLoginAttempts > 0)
@@ -158,12 +161,12 @@ public sealed class PasswordSignInStrategy(
 
             if (device.IsBlocked)
             {
-                return Domain.Common.API.Results.BadRequest("Cannot sign in, device is blocked.", response);
+                return Domain.Common.Results.Results.BadRequest("Cannot sign in, device is blocked.", response);
             }
 
             if (!device.IsTrusted)
             {
-                return Domain.Common.API.Results.BadRequest("You need to trust this device before sign in.", response);
+                return Domain.Common.Results.Results.BadRequest("You need to trust this device before sign in.", response);
             }
         }
 

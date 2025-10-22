@@ -1,7 +1,11 @@
 ﻿using eShop.Application.Http;
 using eShop.Auth.Api.Security.Identity.Options;
+using eShop.Domain.Common.Results;
 using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
+using eShop.Domain.Security.Authentication;
+using eShop.Domain.Security.Authentication.TwoFactor;
+using eShop.Domain.Security.Lockout;
 
 namespace eShop.Auth.Api.Features.TwoFactor.Commands;
 

@@ -1,4 +1,6 @@
-﻿using eShop.Domain.DTOs;
+﻿using eShop.Domain.Common.Results;
+using eShop.Domain.DTOs;
+using eShop.Domain.Security.Authorization.OAuth;
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 

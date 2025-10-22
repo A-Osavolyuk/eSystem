@@ -1,8 +1,10 @@
 ﻿using eShop.Application.Http;
 using eShop.Auth.Api.Security.Credentials.PublicKey;
-using eShop.Domain.Common.Security.Constants;
-using eShop.Domain.Common.Security.Credentials;
+using eShop.Domain.Common.Results;
 using eShop.Domain.Responses.Auth;
+using eShop.Domain.Security.Authentication;
+using eShop.Domain.Security.Credentials.Constants;
+using eShop.Domain.Security.Credentials.PublicKey;
 
 namespace eShop.Auth.Api.Security.Authentication.SignIn.Strategies;
 
@@ -25,17 +27,17 @@ public class PasskeySignInStrategy(
         SignInResponse response;   
         
         var credential = credentials["Credential"] as PublicKeyCredential;
-        if (credential is null) return Domain.Common.API.Results.BadRequest("Credential is empty");
+        if (credential is null) return Domain.Common.Results.Results.BadRequest("Credential is empty");
         
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
         var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
-        if (passkey is null) return Domain.Common.API.Results.BadRequest("Invalid credential");
+        if (passkey is null) return Domain.Common.Results.Results.BadRequest("Invalid credential");
 
         var user = await userManager.FindByIdAsync(passkey.Device.UserId, cancellationToken);
-        if (user is null) return Domain.Common.API.Results.NotFound($"Cannot find user with ID {passkey.Device.UserId}.");
+        if (user is null) return Domain.Common.Results.Results.NotFound($"Cannot find user with ID {passkey.Device.UserId}.");
 
         var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
-        if (string.IsNullOrEmpty(savedChallenge)) return Domain.Common.API.Results.BadRequest("Invalid challenge");
+        if (string.IsNullOrEmpty(savedChallenge)) return Domain.Common.Results.Results.BadRequest("Invalid challenge");
 
         var result = await passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!result.Succeeded) return result;
@@ -48,13 +50,13 @@ public class PasskeySignInStrategy(
                 IsLockedOut = user.LockoutState.Enabled,
             };
 
-            return Domain.Common.API.Results.BadRequest("Account is locked out", response);
+            return Domain.Common.Results.Results.BadRequest("Account is locked out", response);
         }
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
         var device = user.GetDevice(userAgent, ipAddress);
-        if (device is null) return Domain.Common.API.Results.NotFound($"Invalid device.");
+        if (device is null) return Domain.Common.Results.Results.NotFound($"Invalid device.");
 
         await loginManager.CreateAsync(device, LoginType.Passkey, cancellationToken);
         await authorizationManager.CreateAsync(device, cancellationToken);

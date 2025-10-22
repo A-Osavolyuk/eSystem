@@ -2,7 +2,8 @@
 using eShop.Auth.Api.Security.Cryptography.Keys;
 using eShop.Auth.Api.Security.Tokens;
 using eShop.Auth.Api.Security.Tokens.Jwt;
-using eShop.Domain.Common.Security.Constants;
+using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Claims;
 
 namespace eShop.Auth.Api.Services;
 

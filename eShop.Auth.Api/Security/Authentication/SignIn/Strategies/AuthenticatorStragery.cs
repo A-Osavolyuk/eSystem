@@ -2,7 +2,11 @@
 using eShop.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eShop.Auth.Api.Security.Cryptography.Protection;
 using eShop.Auth.Api.Security.Identity.Options;
+using eShop.Domain.Common.Results;
 using eShop.Domain.Responses.Auth;
+using eShop.Domain.Security.Authentication;
+using eShop.Domain.Security.Authentication.TwoFactor;
+using eShop.Domain.Security.Lockout;
 
 namespace eShop.Auth.Api.Security.Authentication.SignIn.Strategies;
 
@@ -35,11 +39,11 @@ public class AuthenticatorSignInStrategy(
         var userId = credentials["UserId"].ToString();
         var code = credentials["Code"].ToString();
 
-        if (string.IsNullOrEmpty(code)) return Domain.Common.API.Results.BadRequest("Code is empty");
-        if (string.IsNullOrEmpty(userId)) return Domain.Common.API.Results.BadRequest("User ID is empty");
+        if (string.IsNullOrEmpty(code)) return Domain.Common.Results.Results.BadRequest("Code is empty");
+        if (string.IsNullOrEmpty(userId)) return Domain.Common.Results.Results.BadRequest("User ID is empty");
 
         var user = await userManager.FindByIdAsync(Guid.Parse(userId), cancellationToken);
-        if (user is null) return Domain.Common.API.Results.NotFound($"Cannot find user with ID {userId}.");
+        if (user is null) return Domain.Common.Results.Results.NotFound($"Cannot find user with ID {userId}.");
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
@@ -68,7 +72,7 @@ public class AuthenticatorSignInStrategy(
         }
         
         var userSecret = await secretManager.FindAsync(user, cancellationToken);
-        if (userSecret is null) return Domain.Common.API.Results.NotFound("Not found user secret");
+        if (userSecret is null) return Domain.Common.Results.Results.NotFound("Not found user secret");
 
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
         var isCodeVerified = AuthenticatorUtils.VerifyCode(code, unprotectedSecret);
@@ -86,7 +90,7 @@ public class AuthenticatorSignInStrategy(
                     MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 };
 
-                return Domain.Common.API.Results.BadRequest($"Invalid two-factor code {code}.", response);
+                return Domain.Common.Results.Results.BadRequest($"Invalid two-factor code {code}.", response);
             }
 
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
@@ -106,7 +110,7 @@ public class AuthenticatorSignInStrategy(
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 
-            return Domain.Common.API.Results.BadRequest("Account is locked out due to too many failed login attempts", response);
+            return Domain.Common.Results.Results.BadRequest("Account is locked out due to too many failed login attempts", response);
         }
 
         if (user.FailedLoginAttempts > 0)

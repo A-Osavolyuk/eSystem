@@ -6,6 +6,7 @@ using eShop.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eShop.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eShop.Auth.Api.Security.Authorization.OAuth;
 using eShop.Auth.Api.Security.Tokens.Jwt;
+using eShop.Domain.Security.Authentication.SignIn;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eShop.Auth.Api.Security.Authentication;

@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Permissions.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Features.Permissions.Queries;
 
 public sealed record GetPermissionsQuery() : IRequest<Result>;
 

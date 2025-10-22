@@ -1,4 +1,6 @@
-﻿namespace eShop.Blazor.Server.Domain.Common;
+﻿using eShop.Domain.Security.Verification;
+
+namespace eShop.Blazor.Server.Domain.Common;
 
 public class ConfirmationContext
 {

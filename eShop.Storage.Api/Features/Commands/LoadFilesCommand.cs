@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Common.API;
+﻿using eShop.Domain.Common.Results;
 using eShop.Domain.Requests.Storage;
 using eShop.Domain.Responses.Storage;
 using eShop.Storage.Api.Interfaces;

@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Interfaces;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Product.Api.Interfaces;
 
 public interface IProductManager
 {

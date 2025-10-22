@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Users.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Features.Users.Queries;
 
 public record GetUserPersonalQuery(Guid UserId) : IRequest<Result>;
 

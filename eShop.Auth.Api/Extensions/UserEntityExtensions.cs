@@ -1,4 +1,8 @@
-﻿namespace eShop.Auth.Api.Extensions;
+﻿using eShop.Domain.Security.Authentication.TwoFactor;
+using eShop.Domain.Security.Authorization.OAuth;
+using eShop.Domain.Security.Verification;
+
+namespace eShop.Auth.Api.Extensions;
 
 public static class UserEntityExtensions
 {

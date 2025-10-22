@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Features.Suppliers.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Product.Api.Features.Suppliers.Queries;
 
 public record GetSuppliersQuery() : IRequest<Result>;
 

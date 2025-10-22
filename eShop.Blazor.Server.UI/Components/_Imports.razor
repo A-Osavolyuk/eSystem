@@ -7,13 +7,14 @@
 @using System.Text
 @using System.Web
 @using eShop.Blazor.Server.Application.Mapping
+@using eShop.Domain.Security.Credentials.PublicKey
+@using eShop.Domain.Security.Verification
 @using eShop.Blazor.Server.UI.Utilities
 @using eShop.Blazor.Server.Application.State
 @using eShop.Blazor.Server.Application.Validation
 @using eShop.Blazor.Server.Domain.Common
 @using eShop.Domain.Requests.Auth
 @using eShop.Domain.Responses.Auth
-@using eShop.Domain.Common.Security.Credentials
 @using eShop.Blazor.Server.Domain.Interfaces
 @using eShop.Blazor.Server.UI.Components.Common.Access
 @using eShop.Blazor.Server.Domain.Models
@@ -26,13 +27,12 @@
 @using eShop.Domain.Common
 @using eShop.Blazor.Server.UI.Extensions
 @using ZXing
-@using eShop.Domain.Common.Security
-@using eShop.Domain.Common.Security.Constants
+
 @using eShop.Domain.DTOs
-@using eShop.Domain.Enums
 @using eShop.Domain.Responses
 @using eShop.Blazor.Server.Domain.Constants
 @using FluentValidation
+@using eShop.Domain.Enums
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms

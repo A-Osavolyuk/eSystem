@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Interfaces;
+﻿using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Authentication.TwoFactor;
+
+namespace eShop.Auth.Api.Interfaces;
 
 public interface ITwoFactorManager
 {

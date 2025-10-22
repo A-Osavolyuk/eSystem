@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Features.Currency.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Product.Api.Features.Currency.Queries;
 
 public record GetCurrenciesQuery() : IRequest<Result>;
 

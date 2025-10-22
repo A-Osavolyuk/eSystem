@@ -1,7 +1,7 @@
 ﻿using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Domain.Interfaces;
-using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.DTOs;
+using eShop.Domain.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;

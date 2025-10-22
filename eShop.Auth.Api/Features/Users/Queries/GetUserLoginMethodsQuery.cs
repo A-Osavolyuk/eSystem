@@ -1,5 +1,7 @@
 ﻿using eShop.Application.Http;
+using eShop.Domain.Common.Results;
 using eShop.Domain.DTOs;
+using eShop.Domain.Security.Authentication.TwoFactor;
 
 namespace eShop.Auth.Api.Features.Users.Queries;
 

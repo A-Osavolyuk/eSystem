@@ -1,4 +1,5 @@
 ﻿using eShop.Domain.Abstraction.Data.Seeding;
+using eShop.Domain.Security.Verification;
 
 namespace eShop.Auth.Api.Data.Seeding;
 

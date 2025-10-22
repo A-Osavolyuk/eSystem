@@ -1,3 +1,4 @@
+using eShop.Domain.Common.Results;
 using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Permissions.Commands;

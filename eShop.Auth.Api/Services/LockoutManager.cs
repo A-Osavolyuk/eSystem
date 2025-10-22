@@ -1,4 +1,6 @@
 ﻿using eShop.Auth.Api.Common.Constants;
+using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Lockout;
 
 namespace eShop.Auth.Api.Services;
 

@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Features.ProductTypes.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Product.Api.Features.ProductTypes.Queries;
 
 public record GetProductTypesQuery() : IRequest<Result>;
 

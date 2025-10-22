@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IRoleManager), ServiceLifetime.Scoped)]
 public sealed class RoleManager(AuthDbContext context) : IRoleManager

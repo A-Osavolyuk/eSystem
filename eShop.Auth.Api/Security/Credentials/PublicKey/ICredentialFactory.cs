@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Common.Security.Credentials;
+﻿using eShop.Domain.Security.Credentials.PublicKey;
 
 namespace eShop.Auth.Api.Security.Credentials.PublicKey;
 

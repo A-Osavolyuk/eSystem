@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Enums;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Enums;
 using eShop.MessageBus.Configurations;
 
 namespace eShop.MessageBus.Interfaces;

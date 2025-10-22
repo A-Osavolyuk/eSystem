@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.DTOs;
+﻿using eShop.Domain.Security.Authentication.TwoFactor;
+
+namespace eShop.Domain.DTOs;
 
 public class UserTwoFactorMethod
 {

@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Roles.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Features.Roles.Queries;
 
 public sealed record GetRolesQuery() : IRequest<Result>;
 

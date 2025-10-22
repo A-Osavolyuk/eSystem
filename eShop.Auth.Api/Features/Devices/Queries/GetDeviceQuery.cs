@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Devices.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Features.Devices.Queries;
 
 public record GetDeviceQuery(Guid Id) : IRequest<Result>;
 

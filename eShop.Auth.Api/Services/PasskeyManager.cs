@@ -1,6 +1,7 @@
 ﻿using eShop.Auth.Api.Security.Credentials.PublicKey;
-using eShop.Domain.Common.Security.Constants;
-using eShop.Domain.Common.Security.Credentials;
+using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Credentials.Constants;
+using eShop.Domain.Security.Credentials.PublicKey;
 
 namespace eShop.Auth.Api.Services;
 

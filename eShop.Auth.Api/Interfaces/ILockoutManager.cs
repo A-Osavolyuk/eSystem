@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Interfaces;
+﻿using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Lockout;
+
+namespace eShop.Auth.Api.Interfaces;
 
 public interface ILockoutManager
 {

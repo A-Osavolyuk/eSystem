@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Entities;
+﻿using eShop.Domain.Security.Authorization.OAuth;
+
+namespace eShop.Auth.Api.Entities;
 
 public class OAuthSessionEntity : Entity
 {

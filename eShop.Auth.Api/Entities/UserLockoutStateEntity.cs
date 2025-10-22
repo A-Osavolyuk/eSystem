@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Entities;
+﻿using eShop.Domain.Security.Lockout;
+
+namespace eShop.Auth.Api.Entities;
 
 public class UserLockoutStateEntity : Entity
 {

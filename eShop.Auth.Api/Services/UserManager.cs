@@ -1,4 +1,7 @@
 ﻿using eShop.Auth.Api.Security.Cryptography.Hashing;
+using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Lockout;
+using eShop.Domain.Security.Verification;
 
 namespace eShop.Auth.Api.Services;
 

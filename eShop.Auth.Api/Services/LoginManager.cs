@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.Security.Authentication;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ILoginManager), ServiceLifetime.Scoped)]
 public class LoginManager(AuthDbContext context) : ILoginManager

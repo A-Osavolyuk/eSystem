@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using eShop.Domain.Common.Results;
 using eShop.Domain.Requests.Product;
 
 namespace eShop.Product.Api.Features.Products.Commands;

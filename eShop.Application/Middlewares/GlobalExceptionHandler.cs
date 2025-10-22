@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Http;
+﻿using eShop.Domain.Common.Exceptions;
+using eShop.Domain.Common.Http;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 

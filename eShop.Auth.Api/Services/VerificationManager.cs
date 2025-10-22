@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Verification;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(IVerificationManager), ServiceLifetime.Scoped)]
 public class VerificationManager(AuthDbContext context) : IVerificationManager

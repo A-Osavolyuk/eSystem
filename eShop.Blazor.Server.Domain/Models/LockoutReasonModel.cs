@@ -1,4 +1,6 @@
-﻿namespace eShop.Blazor.Server.Domain.Models;
+﻿using eShop.Domain.Security.Lockout;
+
+namespace eShop.Blazor.Server.Domain.Models;
 
 public class LockoutReasonModel
 {

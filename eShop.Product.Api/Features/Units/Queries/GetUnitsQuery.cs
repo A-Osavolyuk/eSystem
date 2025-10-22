@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Features.Units.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Product.Api.Features.Units.Queries;
 
 public record GetUnitsQuery : IRequest<Result>;
 

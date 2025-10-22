@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.Responses.Auth;
+﻿using eShop.Domain.Security.Lockout;
+
+namespace eShop.Domain.Responses.Auth;
 
 public sealed class SignInResponse
 {

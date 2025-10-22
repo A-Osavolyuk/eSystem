@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Interfaces;
+﻿using eShop.Domain.Security.Authentication;
+
+namespace eShop.Auth.Api.Interfaces;
 
 public interface ILoginManager
 {

@@ -1,4 +1,7 @@
-﻿namespace eShop.Domain.Requests.Auth;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Security.Verification;
+
+namespace eShop.Domain.Requests.Auth;
 
 public class SendCodeRequest
 {

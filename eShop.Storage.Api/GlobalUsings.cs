@@ -7,4 +7,4 @@ global using eShop.Storage.Api.Services;
 global using FluentValidation;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
-global using Results = eShop.Domain.Common.API.Results;
+global using Results = eShop.Domain.Common.Results.Results;

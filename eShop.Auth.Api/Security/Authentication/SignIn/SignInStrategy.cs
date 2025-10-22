@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Security.Authentication.SignIn;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Security.Authentication.SignIn;
 
 public abstract class SignInStrategy
 {

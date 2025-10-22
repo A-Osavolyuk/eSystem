@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Common.Security.Credentials;
+﻿using eShop.Domain.Security.Credentials.PublicKey;
 
 namespace eShop.Domain.Requests.Auth;
 

@@ -1,5 +1,8 @@
-﻿using eShop.Domain.Requests.Auth;
+﻿using eShop.Domain.Common.Results;
+using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
+using eShop.Domain.Security.Authentication;
+using eShop.Domain.Security.Verification;
 
 namespace eShop.Auth.Api.Features.Devices.Commands;
 

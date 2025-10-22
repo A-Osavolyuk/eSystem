@@ -1,4 +1,6 @@
-﻿namespace eShop.Domain.DTOs;
+﻿using eShop.Domain.Security.Authorization.OAuth;
+
+namespace eShop.Domain.DTOs;
 
 public class UserLinkedAccountDto
 {

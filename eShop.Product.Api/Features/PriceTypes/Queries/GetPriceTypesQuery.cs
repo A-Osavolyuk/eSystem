@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Features.PriceTypes.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Product.Api.Features.PriceTypes.Queries;
 
 public record GetPriceTypesQuery : IRequest<Result>;
 

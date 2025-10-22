@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Entities;
+﻿using eShop.Domain.Common.Messaging;
+using eShop.Domain.Security.Verification;
+
+namespace eShop.Auth.Api.Entities;
 
 public class CodeEntity : Entity, IExpirable
 {

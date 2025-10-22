@@ -1,4 +1,7 @@
-﻿namespace eShop.Auth.Api.Services;
+﻿using eShop.Domain.Common.Results;
+using eShop.Domain.Security.Authentication.TwoFactor;
+
+namespace eShop.Auth.Api.Services;
 
 [Injectable(typeof(ITwoFactorManager), ServiceLifetime.Scoped)]
 public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager

@@ -1,4 +1,6 @@
-﻿namespace eShop.Application.Behaviours;
+﻿using eShop.Domain.Common.Exceptions;
+
+namespace eShop.Application.Behaviours;
 
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>

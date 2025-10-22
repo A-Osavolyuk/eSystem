@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Features.Roles.Commands;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Auth.Api.Features.Roles.Commands;
 
 public sealed record DeleteRoleCommand(Guid Id) : IRequest<Result>;
 

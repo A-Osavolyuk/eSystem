@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Http;
+using eShop.Domain.Common.Results;
 using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 

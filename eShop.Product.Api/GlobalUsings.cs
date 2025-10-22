@@ -1,7 +1,6 @@
 ﻿global using eShop.Application.Attributes;
 global using eShop.Domain.Abstraction.Data;
 global using eShop.Domain.Abstraction.Data.Entities;
-global using eShop.Domain.Common.API;
 global using eShop.Domain.Enums;
 global using eShop.Product.Api.Behaviours;
 global using eShop.Product.Api.Data;
@@ -15,4 +14,4 @@ global using MassTransit;
 global using MediatR;
 global using Microsoft.EntityFrameworkCore;
 global using Response = eShop.Domain.Common.Http.HttpResponse;
-global using Results = eShop.Domain.Common.API.Results;
+global using Results = eShop.Domain.Common.Results.Results;

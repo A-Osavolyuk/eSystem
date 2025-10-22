@@ -1,4 +1,6 @@
-﻿namespace eShop.Product.Api.Features.Categories.Queries;
+﻿using eShop.Domain.Common.Results;
+
+namespace eShop.Product.Api.Features.Categories.Queries;
 
 public record GetCategoriesQuery : IRequest<Result>;
 
