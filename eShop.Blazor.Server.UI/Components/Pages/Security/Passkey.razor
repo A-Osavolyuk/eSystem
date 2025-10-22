@@ -51,15 +51,16 @@
     }
     else
     {
-        <MudStack Spacing="0">
+        <MudStack Spacing="1">
             <MudTextM3 Typo="TypoM3.Label" Size="Size.Medium">
                 Nickname:
             </MudTextM3>
-            <MudStack Row="true" Spacing="2">
+            <MudStack Row="true" Spacing="1">
                 <MudForm Model="Model" @ref="form">
                     <MudTextFieldExtended
                         Style="width: 400px;"
-                        Typo="Typo.body2"
+                        Class="my-0"
+                        Typo="Typo.body1"
                         @bind-Value="Model.DisplayName"
                         For="() => Model.DisplayName"
                         Variant="Variant.Outlined"
@@ -67,8 +68,9 @@
                         Immediate="true"
                         Clearable="true"/>
                 </MudForm>
-                <MudStack Justify="Justify.Center" Row="true" Class="py-1">
+                <MudStack Justify="Justify.Center" Row="true">
                     <MudButton
+                        Style="max-height: 39px"
                         Size="Size.Small"
                         Color="Color.Default"
                         Variant="Variant.Outlined"
@@ -77,8 +79,9 @@
                         Save
                     </MudButton>
                 </MudStack>
-                <MudStack Justify="Justify.Center" Row="true" Class="py-1">
+                <MudStack Justify="Justify.Center" Row="true">
                     <MudButton
+                        Style="max-height: 39px"
                         Variant="Variant.Text"
                         Color="Color.Default"
                         Size="Size.Small"
