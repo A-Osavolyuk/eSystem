@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using eShop.Application.Http;
 using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Security.Authentication.Results;
 using eShop.Auth.Api.Security.Authentication.SignIn;

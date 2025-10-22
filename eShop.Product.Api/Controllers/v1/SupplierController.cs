@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Http;
+﻿using eShop.Application.Common.Errors;
+using eShop.Domain.Common.Http;
 using eShop.Product.Api.Features.Suppliers.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

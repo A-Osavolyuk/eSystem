@@ -1,4 +1,5 @@
-﻿using eShop.Application.Extensions;
+﻿using eShop.Application.Common.Errors;
+using eShop.Application.Common.Logging;
 using eShop.MessageBus.Consumers;
 using eShop.ServiceDefaults;
 using MassTransit;

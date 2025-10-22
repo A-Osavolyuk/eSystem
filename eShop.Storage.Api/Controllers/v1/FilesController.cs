@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using eShop.Application.Utilities;
+using eShop.Application.Common.Errors;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.Storage;
 using eShop.Storage.Api.Features.Commands;

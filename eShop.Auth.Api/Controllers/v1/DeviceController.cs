@@ -1,4 +1,5 @@
-﻿using eShop.Auth.Api.Features.Devices.Commands;
+﻿using eShop.Application.Common.Errors;
+using eShop.Auth.Api.Features.Devices.Commands;
 using eShop.Auth.Api.Features.Devices.Queries;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.Auth;

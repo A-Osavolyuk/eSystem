@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Abstraction.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
 
-namespace eShop.Application.Extensions;
+namespace eShop.Application.Data;
 
 public static class DbContextExtensions
 {

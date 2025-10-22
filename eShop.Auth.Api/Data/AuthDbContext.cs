@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Data;
+﻿using eShop.Application.Data;
+
+namespace eShop.Auth.Api.Data;
 
 public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {

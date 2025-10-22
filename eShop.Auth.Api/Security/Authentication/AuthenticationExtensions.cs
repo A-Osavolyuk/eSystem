@@ -1,4 +1,5 @@
-﻿using eShop.Auth.Api.Security.Authentication.Schemes;
+﻿using eShop.Application.Common.Configuration;
+using eShop.Auth.Api.Security.Authentication.Schemes;
 using eShop.Auth.Api.Security.Authentication.SignIn;
 using eShop.Auth.Api.Security.Authentication.SignIn.Strategies;
 using eShop.Auth.Api.Security.Authentication.TwoFactor.Authenticator;

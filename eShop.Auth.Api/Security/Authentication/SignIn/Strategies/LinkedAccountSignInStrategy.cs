@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Security.Authentication.SignIn.Strategies;
+﻿using eShop.Application.Http;
+
+namespace eShop.Auth.Api.Security.Authentication.SignIn.Strategies;
 
 using eShop.Domain.Common.API;
 

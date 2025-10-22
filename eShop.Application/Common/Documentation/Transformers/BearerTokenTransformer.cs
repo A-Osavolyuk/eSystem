@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
 
-namespace eShop.Application.Documentation.Transformers;
+namespace eShop.Application.Common.Documentation.Transformers;
 
 public class BearerTokenTransformer : IOpenApiDocumentTransformer
 {

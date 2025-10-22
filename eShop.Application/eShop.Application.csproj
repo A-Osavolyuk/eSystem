@@ -12,10 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="Extensions\HostApplicationBuilderExtensions.cs"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Aspire.StackExchange.Redis" Version="9.4.2" />
         <PackageReference Include="FluentValidation" Version="12.0.0"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0"/>
@@ -29,6 +25,7 @@
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.9" />
         <PackageReference Include="Microsoft.OpenApi" Version="1.6.25" />
         <PackageReference Include="StackExchange.Redis" Version="2.9.17" />
+        <PackageReference Include="UAParser" Version="3.1.47" />
     </ItemGroup>
 
     <ItemGroup>

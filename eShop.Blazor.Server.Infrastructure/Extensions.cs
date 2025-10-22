@@ -4,6 +4,7 @@ using eShop.Blazor.Server.Infrastructure.Implementations;
 using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Blazor.Server.Infrastructure.Services;
 using eShop.Blazor.Server.Infrastructure.Storage;
+using eShop.Application.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

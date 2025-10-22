@@ -1,4 +1,11 @@
-﻿namespace eShop.Telegram.Bot.Extensions;
+﻿using eShop.Application.Common.Cache.Redis;
+using eShop.Application.Common.Documentation;
+using eShop.Application.Common.Errors;
+using eShop.Application.Common.Logging;
+using eShop.Application.Common.Versioning;
+using eShop.Application.Security.Authentication;
+
+namespace eShop.Telegram.Bot.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {

@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using eShop.Domain.Common.Messaging;
 
-namespace eShop.Application.Extensions;
+namespace eShop.Application.Http;
 
-public static class ServiceCollectionExtensions
+public static class HttpExtensions
 {
     public static void AddHttpClient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>
         (this IServiceCollection services, ServiceLifetime lifetime)

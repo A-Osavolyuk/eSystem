@@ -1,4 +1,5 @@
-﻿using eShop.Auth.Api.Features.LinkedAccounts.Commands;
+﻿using eShop.Application.Common.Errors;
+using eShop.Auth.Api.Features.LinkedAccounts.Commands;
 using eShop.Auth.Api.Security.Authentication.Schemes;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.Auth;

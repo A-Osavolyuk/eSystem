@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace eShop.Application.Extensions;
+namespace eShop.Application.Common.Configuration;
 
 public static class ConfigurationExtensions
 {

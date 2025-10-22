@@ -1,4 +1,11 @@
-﻿using eShop.Auth.Api.Security;
+﻿using eShop.Application.Common.Cache.Redis;
+using eShop.Application.Common.Documentation;
+using eShop.Application.Common.Errors;
+using eShop.Application.Common.Logging;
+using eShop.Application.Common.Versioning;
+using eShop.Application.Data;
+using eShop.Application.Validation;
+using eShop.Auth.Api.Security;
 using eShop.Auth.Api.Services;
 using MassTransit;
 

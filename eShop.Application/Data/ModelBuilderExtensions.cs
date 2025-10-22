@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace eShop.Application.Extensions;
+namespace eShop.Application.Data;
 
 public static class ModelBuilderExtensions
 {

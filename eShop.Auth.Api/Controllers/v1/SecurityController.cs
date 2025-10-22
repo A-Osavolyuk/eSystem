@@ -1,4 +1,5 @@
-﻿using eShop.Domain.Common.Http;
+﻿using eShop.Application.Common.Errors;
+using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Controllers.v1;

@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace eShop.Application.Extensions;
+namespace eShop.Application.Data;
 
-public static class WebApplicationExtensions
+public static class MigrationExtensions
 {
     public static async Task ConfigureDatabaseAsync<TDbContext>(this WebApplication app) where TDbContext : DbContext
     {

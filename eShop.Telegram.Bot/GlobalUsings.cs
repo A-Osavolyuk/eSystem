@@ -1,6 +1,5 @@
 ﻿// Global using directives
 
-global using eShop.Application.Extensions;
 global using eShop.ServiceDefaults;
 global using eShop.Telegram.Bot.Extensions;
 global using eShop.Telegram.Bot.Options;

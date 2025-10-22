@@ -1,4 +1,5 @@
-﻿using eShop.Auth.Api.Security.Credentials.PublicKey;
+﻿using eShop.Application.Http;
+using eShop.Auth.Api.Security.Credentials.PublicKey;
 using eShop.Domain.Common.Security.Constants;
 using eShop.Domain.Common.Security.Credentials;
 using eShop.Domain.Responses.Auth;

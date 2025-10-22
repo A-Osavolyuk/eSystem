@@ -4,7 +4,6 @@ global using System.Net;
 global using Amazon;
 global using Amazon.SimpleNotificationService;
 global using Amazon.SimpleNotificationService.Model;
-global using eShop.Application.Extensions;
 global using eShop.ServiceDefaults;
 global using eShop.SmsSender.Api.Extensions;
 global using eShop.SmsSender.Api.Services;

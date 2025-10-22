@@ -1,4 +1,5 @@
-﻿using eShop.Application.Extensions;
+﻿using eShop.Application.Common.Logging;
+using eShop.Application.Security.Authentication;
 using eShop.ServiceDefaults;
 using Yarp.ReverseProxy.Configuration;
 

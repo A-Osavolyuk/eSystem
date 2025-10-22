@@ -1,6 +1,7 @@
-﻿using UAParser;
+﻿using Microsoft.AspNetCore.Http;
+using UAParser;
 
-namespace eShop.Auth.Api.Extensions;
+namespace eShop.Application.Http;
 
 public static class HttpContextExtensions
 {

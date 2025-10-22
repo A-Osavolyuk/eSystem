@@ -1,4 +1,6 @@
-﻿namespace eShop.Auth.Api.Extensions;
+﻿using eShop.Application.Data;
+
+namespace eShop.Auth.Api.Extensions;
 
 public static class WebApplicationBuilderExtensions
 {

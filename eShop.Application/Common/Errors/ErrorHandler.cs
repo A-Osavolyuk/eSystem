@@ -1,7 +1,7 @@
 ﻿using eShop.Domain.Common.API;
 using eShop.Domain.Common.Http;
 
-namespace eShop.Application.Utilities;
+namespace eShop.Application.Common.Errors;
 
 public static class ErrorHandler
 {

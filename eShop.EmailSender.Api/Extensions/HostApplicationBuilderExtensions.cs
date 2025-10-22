@@ -1,4 +1,7 @@
-﻿using eShop.Application.Extensions;
+﻿using eShop.Application.Common.Cache.Redis;
+using eShop.Application.Common.Documentation;
+using eShop.Application.Common.Errors;
+using eShop.Application.Common.Logging;
 using eShop.EmailSender.Api.Consumers;
 using eShop.EmailSender.Api.Services;
 
