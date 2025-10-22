@@ -79,6 +79,7 @@
     private async Task RefreshAsync()
     {
         await LoadEmailsAsync();
+        await LoadLinkedAccountsAsync();
         await InvokeAsync(StateHasChanged);
     }
 

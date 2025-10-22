@@ -1,4 +1,9 @@
-﻿<MudPaper Outlined="true" Class="pa-5">
+﻿@inject IOAuthService OAuthService
+@inject ISnackbar Snackbar
+@inject ConfirmationManager ConfirmationManager
+@inject UserState UserState
+
+<MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="0">
         <MudStack Row="true" Spacing="1">
             <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
@@ -36,7 +41,7 @@
                         Color="Color.Default"
                         Variant="Variant.Outlined"
                         Size="Size.Small">
-                        Connected to @linkedAccount.Type.ToString()
+                        Connected to @linkedAccount.Type
                     </MudChip>
                 }
             }
@@ -75,6 +80,14 @@
                                 Change email
                             </MudTextM3>
                         </MudMenuItem>
+                        foreach (var linkedAccount in LinkedAccountData.LinkedAccounts)
+                        {
+                            <MudMenuItem OnClick="@(async () => await OnDisconnectAsync(linkedAccount.Type))">
+                                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                    Disconnect from @linkedAccount.Type
+                                </MudTextM3>
+                            </MudMenuItem>
+                        }
                         <MudDivider/>
                         <MudMenuItem Href=@(OnReset())>
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
@@ -119,4 +132,23 @@
         return $"{Links.EmailResetPage}?type={EmailTypes.Primary}&return_url={returnUrl}";
     }
 
+    private async Task OnDisconnectAsync(LinkedAccountType type)
+    {
+        var confirmationResult = await ConfirmationManager.InitiateAsync(
+            PurposeType.LinkedAccount, ActionType.Disconnect);
+
+        if (!confirmationResult.Canceled)
+        {
+            var request = new DisconnectLinkedAccountRequest()
+            {
+                UserId = UserState.UserId,
+                Type = type
+            };
+
+            var result = await OAuthService.DisconnectAsync(request);
+
+            if (result.Success) await OnRefresh.InvokeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
 }
