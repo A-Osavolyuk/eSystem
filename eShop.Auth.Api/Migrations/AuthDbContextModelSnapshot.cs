@@ -120,28 +120,6 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("LoginSessions");
                 });
 
-            modelBuilder.Entity("eShop.Auth.Api.Entities.OAuthProviderEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OAuthProviders");
-                });
-
             modelBuilder.Entity("eShop.Auth.Api.Entities.OAuthSessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -154,7 +132,7 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("ExpiredDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("ProviderId")
+                    b.Property<Guid?>("LinkedAccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SignType")
@@ -169,14 +147,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProviderId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("LinkedAccountId");
 
                     b.ToTable("OAuthSessions");
                 });
@@ -628,10 +601,8 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserLinkedAccountEntity", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProviderId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Allowed")
@@ -640,12 +611,19 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("UserId", "ProviderId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("ProviderId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserOAuthProviders");
                 });
@@ -949,17 +927,11 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.OAuthSessionEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.OAuthProviderEntity", "Provider")
+                    b.HasOne("eShop.Auth.Api.Entities.UserLinkedAccountEntity", "LinkedAccount")
                         .WithMany()
-                        .HasForeignKey("ProviderId");
+                        .HasForeignKey("LinkedAccountId");
 
-                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Provider");
-
-                    b.Navigation("User");
+                    b.Navigation("LinkedAccount");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.PasskeyEntity", b =>
@@ -1069,19 +1041,11 @@ namespace eShop.Auth.Api.Migrations
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserLinkedAccountEntity", b =>
                 {
-                    b.HasOne("eShop.Auth.Api.Entities.OAuthProviderEntity", "Provider")
-                        .WithMany()
-                        .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
                         .WithMany("LinkedAccounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Provider");
 
                     b.Navigation("User");
                 });

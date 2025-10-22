@@ -12,20 +12,6 @@ namespace eShop.Auth.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "OAuthProviders",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OAuthProviders", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PersonalData",
                 columns: table => new
                 {
@@ -173,34 +159,6 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OAuthSessions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Token = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    SignType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OAuthSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OAuthSessions_OAuthProviders_ProviderId",
-                        column: x => x.ProviderId,
-                        principalTable: "OAuthProviders",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_OAuthSessions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserChanges",
                 columns: table => new
                 {
@@ -283,21 +241,16 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserOAuthProviders",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Allowed = table.Column<bool>(type: "bit", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserOAuthProviders", x => new { x.UserId, x.ProviderId });
-                    table.ForeignKey(
-                        name: "FK_UserOAuthProviders_OAuthProviders_ProviderId",
-                        column: x => x.ProviderId,
-                        principalTable: "OAuthProviders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_UserOAuthProviders", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserOAuthProviders_Users_UserId",
                         column: x => x.UserId,
@@ -580,6 +533,28 @@ namespace eShop.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OAuthSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LinkedAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Token = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    SignType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OAuthSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OAuthSessions_UserOAuthProviders_LinkedAccountId",
+                        column: x => x.LinkedAccountId,
+                        principalTable: "UserOAuthProviders",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RolePermissions",
                 columns: table => new
                 {
@@ -654,14 +629,9 @@ namespace eShop.Auth.Api.Migrations
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OAuthSessions_ProviderId",
+                name: "IX_OAuthSessions_LinkedAccountId",
                 table: "OAuthSessions",
-                column: "ProviderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OAuthSessions_UserId",
-                table: "OAuthSessions",
-                column: "UserId");
+                column: "LinkedAccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Passkeys_DeviceId",
@@ -706,9 +676,9 @@ namespace eShop.Auth.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserOAuthProviders_ProviderId",
+                name: "IX_UserOAuthProviders_UserId",
                 table: "UserOAuthProviders",
-                column: "ProviderId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPermissions_PermissionId",
@@ -793,9 +763,6 @@ namespace eShop.Auth.Api.Migrations
                 name: "UserEmails");
 
             migrationBuilder.DropTable(
-                name: "UserOAuthProviders");
-
-            migrationBuilder.DropTable(
                 name: "UserPermissions");
 
             migrationBuilder.DropTable(
@@ -820,10 +787,10 @@ namespace eShop.Auth.Api.Migrations
                 name: "Verifications");
 
             migrationBuilder.DropTable(
-                name: "UserDevices");
+                name: "UserOAuthProviders");
 
             migrationBuilder.DropTable(
-                name: "OAuthProviders");
+                name: "UserDevices");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
