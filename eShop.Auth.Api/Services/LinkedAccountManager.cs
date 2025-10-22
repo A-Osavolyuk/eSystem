@@ -8,7 +8,7 @@ public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
     public async ValueTask<Result> CreateAsync(UserLinkedAccountEntity linkedAccount, 
         CancellationToken cancellationToken = default)
     {
-        await context.UserOAuthProviders.AddAsync(linkedAccount, cancellationToken);
+        await context.UserLinkedAccounts.AddAsync(linkedAccount, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
@@ -17,7 +17,7 @@ public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
     public async ValueTask<Result> RemoveAsync(UserLinkedAccountEntity linkedAccount, 
         CancellationToken cancellationToken = default)
     {
-        context.UserOAuthProviders.Remove(linkedAccount);
+        context.UserLinkedAccounts.Remove(linkedAccount);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();

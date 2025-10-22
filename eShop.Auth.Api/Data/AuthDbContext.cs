@@ -10,7 +10,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserSecretEntity> UserSecret { get; set; }
     public DbSet<UserTwoFactorMethodEntity> UserTwoFactorMethods { get; set; }
     public DbSet<UserChangesEntity> UserChanges { get; set; }
-    public DbSet<UserLinkedAccountEntity> UserOAuthProviders { get; set; }
+    public DbSet<UserLinkedAccountEntity> UserLinkedAccounts { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
     public DbSet<PasskeyEntity> Passkeys { get; set; }
     public DbSet<RoleEntity> Roles { get; set; }
