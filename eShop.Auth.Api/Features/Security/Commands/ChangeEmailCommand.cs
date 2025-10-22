@@ -32,7 +32,7 @@ public sealed class RequestChangeEmailCommandHandler(
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
-        if (user.HasLinkedAccount())
+        if (user.HasLinkedAccounts())
             return Results.BadRequest("Cannot change email, first disconnect linked accounts.");
 
         var currentEmailVerificationResult = await verificationManager.VerifyAsync(user,

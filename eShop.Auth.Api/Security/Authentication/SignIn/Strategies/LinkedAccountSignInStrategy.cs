@@ -83,7 +83,6 @@ public class LinkedAccountSignInStrategy(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Type = linkedAccountType,
-            Allowed = true,
             CreateDate = DateTimeOffset.UtcNow,
         };
         

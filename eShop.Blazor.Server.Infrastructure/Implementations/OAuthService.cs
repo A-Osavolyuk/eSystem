@@ -19,12 +19,4 @@ public class OAuthService(
     public async ValueTask<HttpResponse> DisconnectAsync(DisconnectLinkedAccountRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/disconnect", Method = HttpMethod.Post, Data = request },
         new HttpOptions { WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> AllowAsync(AllowLinkedAccountRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/allow", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = true, Type = DataType.Text });
-
-    public async ValueTask<HttpResponse> DisallowAsync(DisallowLinkedAccountRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/disallow", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = true, Type = DataType.Text });
 }

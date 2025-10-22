@@ -23,10 +23,8 @@ public class GetUserLinkedAccountDataQueryHandler(
             LinkedAccounts = user.LinkedAccounts.Select(x => new UserLinkedAccountDto()
             {
                 Id = x.Id,
-                IsAllowed = x.Allowed,
                 Type = x.Type,
                 LinkedDate = x.CreateDate,
-                DisallowedDate = x.UpdateDate
             }).ToList()
         };
 

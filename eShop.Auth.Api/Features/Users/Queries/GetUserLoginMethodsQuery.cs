@@ -34,13 +34,11 @@ public class GetUserLoginMethodsQueryHandler(
             },
             LinkedAccountsData = new LinkedAccountsData()
             {
-                HasLinkedAccounts = user.HasLinkedAccount(),
+                HasLinkedAccounts = user.HasLinkedAccounts(),
                 LinkedAccounts = user.LinkedAccounts.Select(linkedAccount => new UserLinkedAccountDto()
                 {
                     Id = linkedAccount.Id,
                     Type = linkedAccount.Type,
-                    IsAllowed = linkedAccount.Allowed,
-                    DisallowedDate = linkedAccount.UpdateDate,
                     LinkedDate = linkedAccount.CreateDate
                 }).ToList()
             },

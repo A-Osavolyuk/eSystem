@@ -144,7 +144,6 @@ public sealed class HandleOAuthLoginCommandHandler(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                Allowed = true,
                 Type = linkedAccountType,
                 CreateDate = DateTimeOffset.UtcNow
             };

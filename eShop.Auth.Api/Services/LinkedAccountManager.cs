@@ -22,28 +22,4 @@ public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
         
         return Result.Success();
     }
-
-    public async ValueTask<Result> AllowAsync(UserLinkedAccountEntity linkedAccount, 
-        CancellationToken cancellationToken = default)
-    {
-        linkedAccount.Allowed = true;
-        linkedAccount.UpdateDate = DateTimeOffset.UtcNow;
-        
-        context.UserOAuthProviders.Update(linkedAccount);
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> DisallowAsync(UserLinkedAccountEntity linkedAccount, 
-        CancellationToken cancellationToken = default)
-    {
-        linkedAccount.Allowed = false;
-        linkedAccount.UpdateDate = DateTimeOffset.UtcNow;
-        
-        context.UserOAuthProviders.Update(linkedAccount);
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success();
-    }
 }

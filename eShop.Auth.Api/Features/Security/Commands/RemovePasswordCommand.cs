@@ -17,7 +17,7 @@ public class RemovePasswordCommandHandler(
         if (!user.HasPassword())
             return Results.BadRequest("User doesn't have a password.");
 
-        if (!user.HasLinkedAccount() && !user.HasPasskeys())
+        if (!user.HasLinkedAccounts() && !user.HasPasskeys())
             return Results.BadRequest("You need to configure sign-in with passkey or linked external account.");
 
         var result = await userManager.RemovePasswordAsync(user, cancellationToken);

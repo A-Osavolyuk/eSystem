@@ -6,7 +6,6 @@ public class UserLinkedAccountEntity : Entity
     public Guid UserId { get; set; }
 
     public LinkedAccountType Type { get; set; }
-    public bool Allowed { get; set; }
 
     public UserEntity User { get; set; } = null!;
 }

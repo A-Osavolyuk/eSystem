@@ -71,28 +71,4 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-
-    [EndpointSummary("Allow related account")]
-    [EndpointDescription("Allow related account")]
-    [ProducesResponseType(200)]
-    [HttpPost("allow")]
-    public async ValueTask<IActionResult> AllowAsync([FromBody] AllowLinkedAccountRequest request)
-    {
-        var result = await sender.Send(new AllowLinkedAccountCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-    
-    [EndpointSummary("Disallow related account")]
-    [EndpointDescription("Disallow related account")]
-    [ProducesResponseType(200)]
-    [HttpPost("disallow")]
-    public async ValueTask<IActionResult> DisallowAsync([FromBody] DisallowLinkedAccountRequest request)
-    {
-        var result = await sender.Send(new DisallowLinkedAccountCommand(request));
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
 }
