@@ -1,6 +1,5 @@
 ﻿using eShop.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eShop.Auth.Api.Security.Cryptography.Protection;
-using eShop.Auth.Api.Security.Identity;
 using eShop.Auth.Api.Security.Identity.Options;
 using eShop.Domain.Responses.Auth;
 

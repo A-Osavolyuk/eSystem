@@ -1,5 +1,4 @@
-﻿using eShop.Auth.Api.Security.Authentication;
-using eShop.Auth.Api.Security.Authentication.Results;
+﻿using eShop.Auth.Api.Security.Authentication.Results;
 
 namespace eShop.Auth.Api.Interfaces;
 

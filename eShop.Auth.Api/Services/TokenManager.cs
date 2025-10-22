@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using eShop.Auth.Api.Security.Cryptography;
 using eShop.Auth.Api.Security.Cryptography.Keys;
 using eShop.Auth.Api.Security.Tokens;
 using eShop.Auth.Api.Security.Tokens.Jwt;

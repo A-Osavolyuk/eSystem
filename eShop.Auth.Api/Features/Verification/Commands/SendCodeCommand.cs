@@ -1,6 +1,5 @@
 ﻿using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Messages.Sms;
-using eShop.Domain.Common.Messaging;
 using eShop.Domain.Requests.Auth;
 
 namespace eShop.Auth.Api.Features.Verification.Commands;
