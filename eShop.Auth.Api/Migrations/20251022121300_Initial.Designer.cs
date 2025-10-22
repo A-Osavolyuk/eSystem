@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251022090730_Initial")]
+    [Migration("20251022121300_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -607,9 +607,6 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Allowed")
-                        .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
