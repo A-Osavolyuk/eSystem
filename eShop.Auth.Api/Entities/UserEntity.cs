@@ -58,6 +58,7 @@ public class UserEntity : Entity
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);
     public bool HasPhoneNumber(PhoneNumberType type) => PhoneNumbers.Any(x => x.Type == type);
     public bool HasLinkedAccount() => LinkedAccounts.Any(x => x.Allowed);
+    public bool HasLinkedAccount(LinkedAccountType type) => LinkedAccounts.Any(x => x.Type == type);
     public bool HasMethods() => Methods.Count > 0;
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasPasskeys() => Devices.Select(x => x.Passkey).Any(x => x is not null);

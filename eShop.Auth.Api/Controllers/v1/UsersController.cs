@@ -38,7 +38,7 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user's login methods")]
     [EndpointDescription("Get user's login methods")]
     [ProducesResponseType(200)]
@@ -51,11 +51,11 @@ public class UsersController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Get user's verification data")]
     [EndpointDescription("Gets user's verification data")]
     [ProducesResponseType(200)]
-    [HttpGet("verification-data")]
+    [HttpGet("verification/data")]
     public async ValueTask<IActionResult> GetUserVerificationMethods(Guid id)
     {
         var result = await sender.Send(new GetUserVerificationDataQuery(id));
@@ -113,6 +113,19 @@ public class UsersController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(Guid id)
     {
         var result = await sender.Send(new GetUserPhoneNumbersQuery(id));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            ErrorHandler.Handle);
+    }
+
+    [EndpointSummary("Get user linked accounts data")]
+    [EndpointDescription("Get user linked accounts data")]
+    [ProducesResponseType(200)]
+    [HttpGet("linked-accounts/data")]
+    public async ValueTask<IActionResult> GetUserLinkedAccountsData(Guid id)
+    {
+        var result = await sender.Send(new GetUserLinkedAccountDataQuery(id));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
