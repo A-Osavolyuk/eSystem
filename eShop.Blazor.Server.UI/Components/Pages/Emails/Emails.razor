@@ -5,6 +5,8 @@
 @attribute [Authorize]
 
 @inject IUserService UserService
+@inject ISecurityService SecurityService
+@inject ConfirmationManager ConfirmationManager
 
 <Title Text="Emails"></Title>
 
@@ -28,11 +30,16 @@
                 }
                 @foreach (var email in Model.Emails.OrderBy(email => email.Type))
                 {
-                    <Email OnRefresh="RefreshAsync" Model="email"/>
+                    switch (email.Type)
+                    {
+                        case EmailType.Primary: <PrimaryEmail OnRefresh="RefreshAsync" Model="email"/> break;
+                        case EmailType.Recovery: <RecoveryEmail OnRefresh="RefreshAsync" Model="email"/> break;
+                        case EmailType.Secondary: <SecondaryEmail OnRefresh="RefreshAsync" Model="email"/> break;
+                    }
                 }
                 <AddEmail OnRefresh="RefreshAsync"/>
-                <PrimaryEmail Model="Model"/>
-                <RecoveryEmail Model="Model"/>
+                <PreferredPrimaryEmail Model="Model"/>
+                <PreferredRecoveryEmail Model="Model"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -40,6 +47,7 @@
 
 @code {
     private UserEmailsModel? Model { get; set; }
+    private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -72,5 +80,4 @@
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
-
 }

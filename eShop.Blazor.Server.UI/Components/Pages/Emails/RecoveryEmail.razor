@@ -1,46 +1,144 @@
-﻿@inject NavigationManager NavigationManager
+﻿@inject ISecurityService SecurityService
+@inject ISnackbar Snackbar
+@inject UserState UserState
+@inject ConfirmationManager ConfirmationManager
 
 <MudPaper Outlined="true" Class="pa-5">
-    <MudGrid Justify="Justify.Center">
-        <MudItem xs="8">
-            <MudStack Spacing="1">
-                <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
-                    Recovery email address
-                </MudTextM3>
-                <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
-                    Select an email to be used for account recovery. 
-                    Will be user as primary after account recovery.
-                </MudTextM3>
-            </MudStack>
-        </MudItem>
-        <MudItem xs="4">
-            <MudSelectExtended
-                T="string"
-                Margin="Margin.Dense"
-                AnchorOrigin="Origin.BottomCenter"
-                Value="@Model.RecoveryEmail?.Email"
-                Disabled="@(Model.Emails.All(x => x.Type != EmailType.Secondary || !x.IsVerified))"
-                ValueChanged="OnChange"
-                Variant="Variant.Outlined"
-                Immediate="true">
-                @foreach (var email in Model.Emails.Where(x => x is { Type: EmailType.Secondary, IsVerified: true }))
-                {
-                    <MudSelectItemExtended T="string" Value="email.Email">
-                        @email.Email
-                    </MudSelectItemExtended>
-                }
-            </MudSelectExtended>
-        </MudItem>
-    </MudGrid>
+    <MudStack Spacing="0">
+        <MudStack Row="true" Spacing="1">
+            <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
+                @Model.Email
+            </MudTextM3>
+            <MudTooltip Text="Default email address for an account recovery">
+                <MudChip
+                    T="string"
+                    Class="mx-0"
+                    Color="Color.Info"
+                    Variant="Variant.Outlined"
+                    Size="Size.Small">
+                    Recovery
+                </MudChip>
+            </MudTooltip>
+            @if (Model.IsVerified && Model.VerifiedDate.HasValue)
+               {
+                   <MudTooltip
+                       Text="@($"Verified at: {Model.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                       <MudChip
+                           T="string"
+                           Class="mx-0"
+                           Color="Color.Success"
+                           Variant="Variant.Outlined"
+                           Size="Size.Small">
+                           Verified
+                       </MudChip>
+                   </MudTooltip>
+               }
+               else
+               {
+                   <MudTooltip Text="This email address is not verified">
+                       <MudChip
+                           T="string"
+                           Class="mx-0"
+                           Color="Color.Error"
+                           Variant="Variant.Outlined"
+                           Size="Size.Small">
+                           Unverified
+                       </MudChip>
+                   </MudTooltip>
+               }
+            @if (Model.UpdateDate.HasValue)
+               {
+                   <MudTooltip
+                       Text="@($"Last change: {Model.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                       <MudChip
+                           T="string"
+                           Class="mx-0"
+                           Color="Color.Warning"
+                           Variant="Variant.Outlined"
+                           Size="Size.Small">
+                           Changed
+                       </MudChip>
+                   </MudTooltip>
+               }
+            <MudSpacer/>
+            <MudMenu
+                Dense="true">
+                <ActivatorContent>
+                    <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                </ActivatorContent>
+                <ChildContent>
+                    @if (!Model.IsVerified)
+                       {
+                           <MudMenuItem Href=@(OnVerify())>
+                               <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                   Verify email
+                               </MudTextM3>
+                           </MudMenuItem>
+                       }
+                       else
+                       {
+                           <MudMenuItem Href=@(OnChange())>
+                               <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                   Change email
+                               </MudTextM3>
+                           </MudMenuItem>
+                           <MudDivider/>
+                           <MudMenuItem
+                               OnClick=@(async () => await OnRemove(UserState.Credentials?.RecoveryEmail!))>
+                               <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
+                                   Remove email
+                               </MudTextM3>
+                           </MudMenuItem>
+                       }
+                </ChildContent>
+            </MudMenu>
+        </MudStack>
+        <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
+            This email address is default for eAccount account access recover.
+        </MudTextM3>
+    </MudStack>
 </MudPaper>
 
 @code {
-    [Parameter] public UserEmailsModel Model { get; set; } = null!;
-    
-    private void OnChange(string email)
+    [Parameter] public UserEmailDto Model { get; set; } = new();
+
+    [Parameter] public EventCallback OnRefresh { get; set; }
+
+    private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
+
+    private string OnVerify()
     {
-        var returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
-        var url = $"{Links.EmailManagePage}?email={email}&type={EmailTypes.Recovery}&return_url={returnUrl}";
-        NavigationManager.NavigateTo(url);
+        return $"{Links.EmailVerifyPage}?type={EmailTypes.Recovery}&return_url={returnUrl}";
+    }
+
+
+    private string OnChange()
+    {
+        return $"{Links.EmailChangePage}?type={EmailTypes.Recovery}&return_url={returnUrl}";
+    }
+
+    private async Task OnRemove(string email)
+    {
+        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Email, ActionType.Remove);
+        if (!confirmationResult!.Canceled)
+        {
+            var request = new RemoveEmailRequest()
+            {
+                UserId = UserState.UserId,
+                Email = email
+            };
+
+            var result = await SecurityService.RemoveEmailAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Email was successfully removed", Severity.Success);
+                await OnRefresh.InvokeAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
     }
 }

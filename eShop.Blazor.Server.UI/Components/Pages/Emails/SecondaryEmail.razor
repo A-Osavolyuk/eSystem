@@ -1,19 +1,23 @@
-﻿<MudPaper Outlined="true" Class="pa-5">
+﻿@inject ISecurityService SecurityService
+@inject ISnackbar Snackbar
+@inject UserState UserState
+@inject ConfirmationManager ConfirmationManager
+
+
+<MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="0">
         <MudStack Row="true" Spacing="1">
             <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
                 @Model.Email
             </MudTextM3>
-            <MudTooltip Text="Default email address for eAccount">
-                <MudChip
-                    T="string"
-                    Class="mx-0"
-                    Color="Color.Info"
-                    Variant="Variant.Outlined"
-                    Size="Size.Small">
-                    Primary
-                </MudChip>
-            </MudTooltip>
+            <MudChip
+                T="string"
+                Class="mx-0"
+                Color="Color.Secondary"
+                Variant="Variant.Outlined"
+                Size="Size.Small">
+                Secondary
+            </MudChip>
             @if (Model.IsVerified && Model.VerifiedDate.HasValue)
             {
                 <MudTooltip
@@ -72,15 +76,9 @@
                     }
                     else
                     {
-                        <MudMenuItem Href=@(OnChange())>
-                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                                Change email
-                            </MudTextM3>
-                        </MudMenuItem>
-                        <MudDivider/>
-                        <MudMenuItem Href=@(OnReset())>
+                        <MudMenuItem OnClick=@(async () => await OnRemove(Model.Email))>
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
-                                Reset email
+                                Remove email
                             </MudTextM3>
                         </MudMenuItem>
                     }
@@ -88,32 +86,50 @@
             </MudMenu>
         </MudStack>
         <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
-            This email address is default for eAccount security purposes.
-            Also you will receive notifications and verification codes to this email address.
+            These email address are additional.
+            You can change their roles or just use in your personal purposes.
         </MudTextM3>
     </MudStack>
 </MudPaper>
 
-@code {
-    [Parameter] public UserEmailDto Model { get; set; } = new();
 
-    [Parameter] public EventCallback OnRefresh { get; set; }
+@code {
+    [Parameter] 
+    public UserEmailDto Model { get; set; } = new();
+
+    [Parameter] 
+    public EventCallback OnRefresh { get; set; }
 
     private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
 
     private string OnVerify()
     {
-        return $"{Links.EmailVerifyPage}?type={EmailTypes.Primary}&return_url={returnUrl}";
+        return $"{Links.EmailVerifyPage}?type={EmailTypes.Secondary}&email={Model.Email}&return_url={returnUrl}";
     }
 
-    private string OnChange()
+    private async Task OnRemove(string email)
     {
-        return $"{Links.EmailChangePage}?type={EmailTypes.Primary}&return_url={returnUrl}";
-    }
+        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Email, ActionType.Remove);
+        if (!confirmationResult!.Canceled)
+        {
+            var request = new RemoveEmailRequest()
+            {
+                UserId = UserState.UserId,
+                Email = email
+            };
 
-    private string OnReset()
-    {
-        return $"{Links.EmailResetPage}?type={EmailTypes.Primary}&return_url={returnUrl}";
+            var result = await SecurityService.RemoveEmailAsync(request);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Email was successfully removed", Severity.Success);
+                await OnRefresh.InvokeAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
     }
 
 }
