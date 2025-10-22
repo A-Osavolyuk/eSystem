@@ -33,27 +33,6 @@ public class UserEntity : Entity
     public PersonalDataEntity? PersonalData { get; set; } = null!;
     public UserSecretEntity? Secret { get; set; } = null!;
 
-    public UserDeviceEntity? GetDevice(string userAgent, string ipAddress)
-        => Devices.FirstOrDefault(x => x.UserAgent == userAgent && x.IpAddress == ipAddress);
-
-    public UserLinkedAccountEntity? GetLinkedAccount(LinkedAccountType type)
-        => LinkedAccounts.FirstOrDefault(x => x.Type == type);
-
-    public UserEmailEntity? GetEmail(EmailType type)
-        => Emails.FirstOrDefault(x => x.Type == type);
-
-    public UserEmailEntity? GetEmail(string email)
-        => Emails.FirstOrDefault(x => x.Email == email);
-
-    public UserPhoneNumberEntity? GetPhoneNumber(PhoneNumberType type)
-        => PhoneNumbers.FirstOrDefault(x => x.Type == type);
-
-    public UserTwoFactorMethodEntity? GetTwoFactorMethod(TwoFactorMethod method)
-        => Methods.FirstOrDefault(x => x.Method == method);
-
-    public UserVerificationMethodEntity? GetVerificationMethod(VerificationMethod method)
-        => VerificationMethods.FirstOrDefault(x => x.Method == method);
-
     public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);
     public bool HasPhoneNumber(PhoneNumberType type) => PhoneNumbers.Any(x => x.Type == type);
@@ -62,9 +41,7 @@ public class UserEntity : Entity
     public bool HasMethods() => Methods.Count > 0;
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasPasskeys() => Devices.Select(x => x.Passkey).Any(x => x is not null);
-    public int CountPasskeys() => Devices.Select(x => x.Passkey).Count();
     public bool HasTwoFactor(TwoFactorMethod type) => Methods.Any(x => x.Method == type);
-
     public bool HasVerification(VerificationMethod method)
         => VerificationMethods.Any(x => x.Method == method);
 }
