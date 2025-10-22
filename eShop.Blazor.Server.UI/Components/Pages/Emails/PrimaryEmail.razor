@@ -2,7 +2,7 @@
     <MudStack Spacing="0">
         <MudStack Row="true" Spacing="1">
             <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
-                @Model.Email
+                @Email.Email
             </MudTextM3>
             <MudTooltip Text="Default email address for eAccount">
                 <MudChip
@@ -14,10 +14,10 @@
                     Primary
                 </MudChip>
             </MudTooltip>
-            @if (Model.IsVerified && Model.VerifiedDate.HasValue)
+            @if (Email is { IsVerified: true, VerifiedDate: not null })
             {
                 <MudTooltip
-                    Text="@($"Verified at: {Model.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                    Text="@($"Verified at: {Email.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
                     <MudChip
                         T="string"
                         Class="mx-0"
@@ -27,6 +27,18 @@
                         Verified
                     </MudChip>
                 </MudTooltip>
+                
+                foreach (var linkedAccount in LinkedAccountData.LinkedAccounts)
+                {
+                    <MudChip
+                        T="string"
+                        Class="mx-0"
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Connected to @linkedAccount.Type.ToString()
+                    </MudChip>
+                }
             }
             else
             {
@@ -41,20 +53,6 @@
                     </MudChip>
                 </MudTooltip>
             }
-            @if (Model.UpdateDate.HasValue)
-            {
-                <MudTooltip
-                    Text="@($"Last change: {Model.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
-                    <MudChip
-                        T="string"
-                        Class="mx-0"
-                        Color="Color.Warning"
-                        Variant="Variant.Outlined"
-                        Size="Size.Small">
-                        Changed
-                    </MudChip>
-                </MudTooltip>
-            }
             <MudSpacer/>
             <MudMenu
                 Dense="true">
@@ -62,7 +60,7 @@
                     <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
                 </ActivatorContent>
                 <ChildContent>
-                    @if (!Model.IsVerified)
+                    @if (!Email.IsVerified)
                     {
                         <MudMenuItem Href=@(OnVerify())>
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
@@ -95,9 +93,14 @@
 </MudPaper>
 
 @code {
-    [Parameter] public UserEmailDto Model { get; set; } = new();
+    [Parameter] 
+    public UserEmailDto Email { get; set; } = new();
+    
+    [Parameter]
+    public UserLinkedAccountData LinkedAccountData { get; set; } = new();
 
-    [Parameter] public EventCallback OnRefresh { get; set; }
+    [Parameter] 
+    public EventCallback OnRefresh { get; set; }
 
     private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
 

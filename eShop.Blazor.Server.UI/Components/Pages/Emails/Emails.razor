@@ -5,8 +5,6 @@
 @attribute [Authorize]
 
 @inject IUserService UserService
-@inject ISecurityService SecurityService
-@inject ConfirmationManager ConfirmationManager
 
 <Title Text="Emails"></Title>
 
@@ -32,9 +30,28 @@
                 {
                     switch (email.Type)
                     {
-                        case EmailType.Primary: <PrimaryEmail OnRefresh="RefreshAsync" Model="email"/> break;
-                        case EmailType.Recovery: <RecoveryEmail OnRefresh="RefreshAsync" Model="email"/> break;
-                        case EmailType.Secondary: <SecondaryEmail OnRefresh="RefreshAsync" Model="email"/> break;
+                        case EmailType.Primary:
+                        {
+                            <PrimaryEmail 
+                                OnRefresh="RefreshAsync"
+                                Email="email"
+                                LinkedAccountData="LinkedAccountsData"/> 
+                            break;
+                        }
+                        case EmailType.Recovery:
+                        {
+                            <RecoveryEmail 
+                                OnRefresh="RefreshAsync" 
+                                Email="email"/> 
+                            break;
+                        }
+                        case EmailType.Secondary:
+                        {
+                            <SecondaryEmail
+                                OnRefresh="RefreshAsync" 
+                                Email="email"/> 
+                            break;
+                        }
                     }
                 }
                 <AddEmail OnRefresh="RefreshAsync"/>
@@ -47,24 +64,25 @@
 
 @code {
     private UserEmailsModel? Model { get; set; }
-    private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
+    private UserLinkedAccountData? LinkedAccountsData { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LoadAsync();
+            await LoadEmailsAsync();
+            await LoadLinkedAccountsAsync();
             StateHasChanged();
         }
     }
 
     private async Task RefreshAsync()
     {
-        await LoadAsync();
+        await LoadEmailsAsync();
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task LoadAsync()
+    private async Task LoadEmailsAsync()
     {
         var result = await UserService.GetUserEmailsAsync(UserState.UserId);
 
@@ -78,6 +96,14 @@
                 RecoveryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Recovery)
             };
         }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task LoadLinkedAccountsAsync()
+    {
+        var result = await UserService.GetUserLinkedAccountsDataAsync(UserState.UserId);
+
+        if (result.Success) LinkedAccountsData = result.Get<UserLinkedAccountData>()!;
         else Snackbar.Add(result.Message, Severity.Error);
     }
 }

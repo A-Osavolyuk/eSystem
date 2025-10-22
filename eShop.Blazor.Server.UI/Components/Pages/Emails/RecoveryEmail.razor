@@ -7,7 +7,7 @@
     <MudStack Spacing="0">
         <MudStack Row="true" Spacing="1">
             <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
-                @Model.Email
+                @Email.Email
             </MudTextM3>
             <MudTooltip Text="Default email address for an account recovery">
                 <MudChip
@@ -19,10 +19,10 @@
                     Recovery
                 </MudChip>
             </MudTooltip>
-            @if (Model.IsVerified && Model.VerifiedDate.HasValue)
+            @if (Email.IsVerified && Email.VerifiedDate.HasValue)
                {
                    <MudTooltip
-                       Text="@($"Verified at: {Model.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                       Text="@($"Verified at: {Email.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
                        <MudChip
                            T="string"
                            Class="mx-0"
@@ -46,10 +46,10 @@
                        </MudChip>
                    </MudTooltip>
                }
-            @if (Model.UpdateDate.HasValue)
+            @if (Email.UpdateDate.HasValue)
                {
                    <MudTooltip
-                       Text="@($"Last change: {Model.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                       Text="@($"Last change: {Email.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
                        <MudChip
                            T="string"
                            Class="mx-0"
@@ -67,7 +67,7 @@
                     <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
                 </ActivatorContent>
                 <ChildContent>
-                    @if (!Model.IsVerified)
+                    @if (!Email.IsVerified)
                        {
                            <MudMenuItem Href=@(OnVerify())>
                                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
@@ -100,7 +100,7 @@
 </MudPaper>
 
 @code {
-    [Parameter] public UserEmailDto Model { get; set; } = new();
+    [Parameter] public UserEmailDto Email { get; set; } = new();
 
     [Parameter] public EventCallback OnRefresh { get; set; }
 

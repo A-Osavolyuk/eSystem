@@ -8,7 +8,7 @@
     <MudStack Spacing="0">
         <MudStack Row="true" Spacing="1">
             <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
-                @Model.Email
+                @Email.Email
             </MudTextM3>
             <MudChip
                 T="string"
@@ -18,10 +18,10 @@
                 Size="Size.Small">
                 Secondary
             </MudChip>
-            @if (Model.IsVerified && Model.VerifiedDate.HasValue)
+            @if (Email.IsVerified && Email.VerifiedDate.HasValue)
             {
                 <MudTooltip
-                    Text="@($"Verified at: {Model.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                    Text="@($"Verified at: {Email.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
                     <MudChip
                         T="string"
                         Class="mx-0"
@@ -45,10 +45,10 @@
                     </MudChip>
                 </MudTooltip>
             }
-            @if (Model.UpdateDate.HasValue)
+            @if (Email.UpdateDate.HasValue)
             {
                 <MudTooltip
-                    Text="@($"Last change: {Model.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                    Text="@($"Last change: {Email.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
                     <MudChip
                         T="string"
                         Class="mx-0"
@@ -66,7 +66,7 @@
                     <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
                 </ActivatorContent>
                 <ChildContent>
-                    @if (!Model.IsVerified)
+                    @if (!Email.IsVerified)
                     {
                         <MudMenuItem Href=@(OnVerify())>
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
@@ -76,7 +76,7 @@
                     }
                     else
                     {
-                        <MudMenuItem OnClick=@(async () => await OnRemove(Model.Email))>
+                        <MudMenuItem OnClick=@(async () => await OnRemove(Email.Email))>
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
                                 Remove email
                             </MudTextM3>
@@ -95,7 +95,7 @@
 
 @code {
     [Parameter] 
-    public UserEmailDto Model { get; set; } = new();
+    public UserEmailDto Email { get; set; } = new();
 
     [Parameter] 
     public EventCallback OnRefresh { get; set; }
@@ -104,7 +104,7 @@
 
     private string OnVerify()
     {
-        return $"{Links.EmailVerifyPage}?type={EmailTypes.Secondary}&email={Model.Email}&return_url={returnUrl}";
+        return $"{Links.EmailVerifyPage}?type={EmailTypes.Secondary}&email={Email.Email}&return_url={returnUrl}";
     }
 
     private async Task OnRemove(string email)
