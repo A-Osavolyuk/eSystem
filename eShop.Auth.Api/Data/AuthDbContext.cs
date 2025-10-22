@@ -231,7 +231,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.LinkedAccount)
                 .WithMany()
                 .HasForeignKey(x => x.LinkedAccountId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
         });
         
         builder.Entity<UserDeviceEntity>(entity =>
