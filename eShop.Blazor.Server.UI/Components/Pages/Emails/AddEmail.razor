@@ -5,39 +5,35 @@
 
 <MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="1">
-        <MudGrid Spacing="0">
-            <MudItem xs="12">
-                <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
-                    Add email
-                </MudTextM3>
-            </MudItem>
-            <MudItem xs="5">
-                <MudForm Model="Model" @ref="form" Validation="Validator.ValidateValue" Spacing="0">
-                    <MudTextFieldExtended
-                        Margin="Margin.Dense"
-                        @bind-Value="Model.Email"
-                        For="() => Model.Email"
-                        Variant="Variant.Outlined"
-                        Immediate="true"
-                        Clearable="true"
-                        Error="@showError"
-                        ErrorText="@error"/>
-                </MudForm>
-            </MudItem>
-            <MudItem xs="1">
-                <MudStack Row="true" Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                    <MudButton
-                        Class="py-2"
-                        Style="margin-top: 3px"
-                        Variant="Variant.Filled"
-                        ButtonType="ButtonType.Button"
-                        Size="Size.Medium"
-                        OnClick="@(async () => await OnAddAsync())">
-                        Add
-                    </MudButton>
-                </MudStack>
-            </MudItem>
-        </MudGrid>
+        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
+            Add email
+        </MudTextM3>
+        <MudStack Row="true" Spacing="1">
+            <MudForm Model="Model" @ref="form" Validation="Validator.ValidateValue" Spacing="0">
+                <MudTextFieldExtended
+                    Style="width: 400px"
+                    Class="my-0"
+                    Margin="Margin.Dense"
+                    Typo="Typo.body1"
+                    @bind-Value="Model.Email"
+                    For="() => Model.Email"
+                    Variant="Variant.Outlined"
+                    Immediate="true"
+                    Clearable="true"
+                    Error="@showError"
+                    ErrorText="@error"/>
+            </MudForm>
+            <MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                <MudButton
+                    Style="height: 39px"
+                    Variant="Variant.Outlined"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium"
+                    OnClick="@(async () => await OnAddAsync())">
+                    Add
+                </MudButton>
+            </MudStack>
+        </MudStack>
         <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
             Enter an email address, that will be used as additional.
             Also you will be able to set this email as recovery or primary.
@@ -80,6 +76,7 @@
                 error = result.Message;
             }
         }
+        else if (!form.IsValid) showError = true;
     }
 
     private async Task AddEmailAsync()
