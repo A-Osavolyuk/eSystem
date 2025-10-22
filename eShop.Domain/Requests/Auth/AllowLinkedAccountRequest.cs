@@ -3,5 +3,5 @@
 public class AllowLinkedAccountRequest
 {
     public Guid UserId { get; set; }
-    public string Provider { get; set; } = string.Empty;
+    public LinkedAccountType Type { get; set; }
 }

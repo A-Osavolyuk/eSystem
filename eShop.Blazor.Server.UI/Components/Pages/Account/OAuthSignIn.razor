@@ -1,5 +1,5 @@
 ﻿@page "/account/oauth/sign-in/"
-@using OpenTelemetry.Trace
+
 @inherits PageBase
 
 @inject IOAuthService OAuthService
@@ -37,12 +37,12 @@
 
                 if (response.SignType == OAuthSignType.SignIn)
                 {
-                    Snackbar.Add($"Successfully signed in with {response.Provider}", Severity.Success);
+                    Snackbar.Add($"Successfully signed in with {response.LinkedAccount}", Severity.Success);
                     NavigationManager.NavigateTo(Links.ProductsPage);
                 }
                 else
                 {
-                    NavigationManager.NavigateTo($"{Links.OAuthSignedUpPage}?provider={response.Provider}");
+                    NavigationManager.NavigateTo($"{Links.OAuthSignedUpPage}?provider={response.LinkedAccount}");
                 }
             }
             else

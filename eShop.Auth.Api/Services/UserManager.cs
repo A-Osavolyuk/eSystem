@@ -22,7 +22,6 @@ public sealed class UserManager(
             .ThenInclude(x => x.Permission)
             .Include(x => x.Methods)
             .Include(x => x.LinkedAccounts)
-            .ThenInclude(x => x.Provider)
             .Include(x => x.VerificationMethods)
             .Include(x => x.Changes)
             .Include(x => x.RecoveryCodes)
@@ -46,7 +45,6 @@ public sealed class UserManager(
             .ThenInclude(x => x.Permission)
             .Include(x => x.Methods)
             .Include(x => x.LinkedAccounts)
-            .ThenInclude(x => x.Provider)
             .Include(x => x.VerificationMethods)
             .Include(x => x.Changes)
             .Include(x => x.RecoveryCodes)
@@ -72,7 +70,6 @@ public sealed class UserManager(
             .ThenInclude(x => x.Permission)
             .Include(x => x.Methods)
             .Include(x => x.LinkedAccounts)
-            .ThenInclude(x => x.Provider)
             .Include(x => x.VerificationMethods)
             .Include(x => x.Changes)
             .Include(x => x.RecoveryCodes)
@@ -100,7 +97,6 @@ public sealed class UserManager(
             .ThenInclude(x => x.Permission)
             .Include(x => x.Methods)
             .Include(x => x.LinkedAccounts)
-            .ThenInclude(x => x.Provider)
             .Include(x => x.VerificationMethods)
             .Include(x => x.Changes)
             .Include(x => x.RecoveryCodes)
@@ -109,12 +105,12 @@ public sealed class UserManager(
             .Include(x => x.Devices)
             .ThenInclude(x => x.Passkey)
             .Include(x => x.PhoneNumbers)
-                        .Include(x => x.Secret)
+            .Include(x => x.Secret)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
     }
-    
+
     public async ValueTask<Result> SetEmailAsync(UserEntity user, string email, EmailType type,
         CancellationToken cancellationToken = default)
     {
@@ -191,16 +187,16 @@ public sealed class UserManager(
             currentEmail.UpdateDate = DateTimeOffset.UtcNow;
             context.UserEmails.Update(currentEmail);
         }
-        
+
         var nextEmail = user.GetEmail(email);
         if (nextEmail is null) return Results.BadRequest($"User doesn't have email {email}.");
-        
+
         nextEmail.Type = type;
         nextEmail.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.UserEmails.Update(nextEmail);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 
@@ -329,10 +325,10 @@ public sealed class UserManager(
         user.PasswordHash = string.Empty;
         user.PasswordChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Success();
     }
 

@@ -7,9 +7,10 @@ public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager
     
     public async ValueTask<OAuthSessionEntity?> FindAsync(Guid id, string token, CancellationToken cancellationToken = default)
     {
-        var entity = await context.OAuthSessions.FirstOrDefaultAsync(
-            x => x.Id == id && x.Token == token, cancellationToken);
-        return entity;
+        return await context.OAuthSessions
+            .Where(x => x.Id == id && x.Token == token)
+            .Include(x => x.LinkedAccount)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(OAuthSessionEntity session, CancellationToken cancellationToken = default)

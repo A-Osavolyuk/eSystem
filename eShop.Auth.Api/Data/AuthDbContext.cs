@@ -23,7 +23,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserLockoutStateEntity> LockoutStates { get; set; }
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
     public DbSet<UserRecoveryCodeEntity> UserRecoveryCodes { get; set; }
-    public DbSet<OAuthProviderEntity> OAuthProviders { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<LoginSessionEntity> LoginSessions { get; set; }
     public DbSet<AuthorizationSessionEntity> AuthorizationSessions { get; set; }
@@ -212,23 +211,14 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(x => x.UserId);
         });
 
-        builder.Entity<OAuthProviderEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Name).HasMaxLength(64);
-        });
-
         builder.Entity<UserLinkedAccountEntity>(entity =>
         {
-            entity.HasKey(x => new { x.UserId, x.ProviderId });
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Type).HasEnumConversion();
             
             entity.HasOne(x => x.User)
                 .WithMany(x => x.LinkedAccounts)
                 .HasForeignKey(x => x.UserId);
-            
-            entity.HasOne(x => x.Provider)
-                .WithMany()
-                .HasForeignKey(x => x.ProviderId);
         });
 
         builder.Entity<OAuthSessionEntity>(entity =>
@@ -238,14 +228,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Token).HasMaxLength(32);
             entity.Property(x => x.SignType).HasEnumConversion();
             
-            entity.HasOne(x => x.User)
+            entity.HasOne(x => x.LinkedAccount)
                 .WithMany()
-                .HasForeignKey(x => x.UserId)
-                .IsRequired(false);
-            
-            entity.HasOne(x => x.Provider)
-                .WithMany()
-                .HasForeignKey(x => x.ProviderId)
+                .HasForeignKey(x => x.LinkedAccountId)
                 .IsRequired(false);
         });
         

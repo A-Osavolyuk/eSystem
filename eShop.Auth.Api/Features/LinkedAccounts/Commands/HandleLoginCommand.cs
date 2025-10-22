@@ -2,10 +2,11 @@
 using eShop.Auth.Api.Messages.Email;
 using eShop.Auth.Api.Security.Authentication.Results;
 using eShop.Auth.Api.Security.Authentication.SignIn;
+using eShop.Auth.Api.Security.Authorization.OAuth;
 
 namespace eShop.Auth.Api.Features.LinkedAccounts.Commands;
 
-public sealed record HandleOAuthLoginCommand(
+public sealed record HandleLoginCommand(
     AuthenticationResult AuthenticationResult,
     string? RemoteError,
     string? ReturnUri) : IRequest<Result>;
@@ -16,36 +17,42 @@ public sealed class HandleOAuthLoginCommandHandler(
     IMessageService messageService,
     IRoleManager roleManager,
     IOAuthSessionManager sessionManager,
-    IOAuthProviderManager providerManager,
+    ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
     ISignInResolver signInResolver,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<HandleOAuthLoginCommand, Result>
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<HandleLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly IRoleManager roleManager = roleManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
-    private readonly IOAuthProviderManager providerManager = providerManager;
+    private readonly ILinkedAccountManager providerManager = providerManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ISignInResolver signInResolver = signInResolver;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
-    public async Task<Result> Handle(HandleOAuthLoginCommand request,
+    public async Task<Result> Handle(HandleLoginCommand request,
         CancellationToken cancellationToken)
     {
         var authenticationResult = request.AuthenticationResult;
         var items = authenticationResult.Properties.Items;
-        var providerName = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
+        var linkedAccountName = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
         var fallbackUri = items["fallbackUri"]!;
         var sessionId = items["sessionId"]!;
         var token = items["token"]!;
 
+        var linkedAccountType = linkedAccountName switch
+        {
+            AuthenticationTypes.Google => LinkedAccountType.Google,
+            AuthenticationTypes.Facebook => LinkedAccountType.Facebook,
+            AuthenticationTypes.Microsoft => LinkedAccountType.Microsoft,
+            AuthenticationTypes.X or AuthenticationTypes.Twitter => LinkedAccountType.X,
+            _ => throw new NotSupportedException("Unknown linked account type")
+         };
+
         if (!string.IsNullOrEmpty(request.RemoteError)) 
             return Results.InternalServerError(request.RemoteError, fallbackUri);
-        
-        var provider = await providerManager.FindByNameAsync(providerName, cancellationToken);
-        if (provider is null) return Results.NotFound($"Cannot find provider {providerName}", fallbackUri);
 
         var email = request.AuthenticationResult.Principal.Claims
             .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
@@ -115,25 +122,34 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Credentials = new Dictionary<string, string>()
                 {
                     { "To", user.GetEmail(EmailType.Primary)?.Email! },
-                    { "Subject", $"Account registered with {provider.Name}" },
+                    { "Subject", $"Account registered with {linkedAccountName}" },
                 },
                 Payload = new()
                 {
                     { "UserName", user.Username },
-                    { "ProviderName", provider.Name }
+                    { "ProviderName", linkedAccountName }
                 }
             };
 
             await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
+            var userLinkedAccount = new UserLinkedAccountEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                Allowed = true,
+                Type = linkedAccountType,
+                CreateDate = DateTimeOffset.UtcNow
+            };
+                
+            var linkedAccountResult = await providerManager.CreateAsync(userLinkedAccount, cancellationToken);
+            if(!linkedAccountResult.Succeeded) return Result.Failure(linkedAccountResult.GetError(), fallbackUri);
+
             session.SignType = OAuthSignType.SignUp;
-            session.UserId = user.Id;
+            session.LinkedAccountId = userLinkedAccount.Id;
 
             var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
             if (!sessionResult.Succeeded) return Result.Failure(sessionResult.GetError(), fallbackUri);
-
-            var connectResult = await providerManager.ConnectAsync(user, provider, cancellationToken);
-            if(!connectResult.Succeeded) return Result.Failure(connectResult.GetError(), fallbackUri);
             
             var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id, token });
             return Result.Success(link);
@@ -144,7 +160,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             { "Email", email },
             { "FallbackUri", fallbackUri },
             { "ReturnUri", request.ReturnUri! },
-            { "ProviderName", providerName },
+            { "Type", linkedAccountType },
             { "SessionId", sessionId },
             { "Token", token },
         };

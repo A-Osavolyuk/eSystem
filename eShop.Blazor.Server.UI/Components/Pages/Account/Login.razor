@@ -1,5 +1,5 @@
 ﻿@page "/account/login"
-@using OpenTelemetry.Trace
+
 @inherits PageBase
 
 @inject ISecurityService SecurityService
@@ -68,7 +68,7 @@
                             ButtonType="ButtonType.Button"
                             StartIcon="@Icons.Custom.Brands.Google"
                             Variant="Variant.Filled"
-                            OnClick="@(() => OnOAuth("Google"))"
+                            OnClick="@(() => OnOAuth(ExternalAccounts.Google))"
                             Color="Color.Primary"
                             FullWidth="true">
                             Google
@@ -79,7 +79,7 @@
                             ButtonType="ButtonType.Button"
                             StartIcon="@Icons.Custom.Brands.Facebook"
                             Variant="Variant.Filled"
-                            OnClick="@(() => OnOAuth("Facebook"))"
+                            OnClick="@(() => OnOAuth(ExternalAccounts.Facebook))"
                             Color="Color.Primary"
                             FullWidth="true">
                             Facebook
@@ -90,7 +90,7 @@
                             ButtonType="ButtonType.Button"
                             StartIcon="@Icons.Custom.Brands.Microsoft"
                             Variant="Variant.Filled"
-                            OnClick="@(() => OnOAuth("Microsoft"))"
+                            OnClick="@(() => OnOAuth(ExternalAccounts.Microsoft))"
                             Color="Color.Primary"
                             FullWidth="true">
                             Microsoft
@@ -101,7 +101,7 @@
                             ButtonType="ButtonType.Button"
                             StartIcon="@Icons.Custom.Brands.X"
                             Variant="Variant.Filled"
-                            OnClick="@(() => OnOAuth("X"))"
+                            OnClick="@(() => OnOAuth(ExternalAccounts.X))"
                             Color="Color.Primary"
                             FullWidth="true">
                             X
@@ -252,14 +252,14 @@
         }
     }
 
-    private void OnOAuth(string providerName)
+    private void OnOAuth(string type)
     {
         var gatewayPath = Configuration["services:proxy:http:0"]!;
         var baseUri = $"{NavigationManager.BaseUri}account/oauth";
         var returnUri = HttpUtility.UrlEncode($"{baseUri}/sign-in");
         var fallbackUri = HttpUtility.UrlEncode($"{baseUri}/fallback");
 
-        var url = $"{gatewayPath}/api/v1/OAuth/login/{providerName}?returnUri={returnUri}&fallbackUri={fallbackUri}";
+        var url = $"{gatewayPath}/api/v1/OAuth/login/{type}?returnUri={returnUri}&fallbackUri={fallbackUri}";
         NavigationManager.NavigateTo(url);
     }
 

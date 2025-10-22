@@ -36,6 +36,9 @@ public class UserEntity : Entity
     public UserDeviceEntity? GetDevice(string userAgent, string ipAddress)
         => Devices.FirstOrDefault(x => x.UserAgent == userAgent && x.IpAddress == ipAddress);
 
+    public UserLinkedAccountEntity? GetLinkedAccount(LinkedAccountType type)
+        => LinkedAccounts.FirstOrDefault(x => x.Type == type);
+
     public UserEmailEntity? GetEmail(EmailType type)
         => Emails.FirstOrDefault(x => x.Type == type);
 

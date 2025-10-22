@@ -73,18 +73,6 @@ public static class Mapper
         };
     }
 
-    public static UserOAuthProviderDto Map(UserLinkedAccountEntity source)
-    {
-        return new UserOAuthProviderDto()
-        {
-            Id = source.Provider.Id,
-            Name = source.Provider.Name,
-            IsAllowed = source.Allowed,
-            LinkedDate = source.CreateDate,
-            DisallowedDate = source.UpdateDate,
-        };
-    }
-
     public static RoleEntity Map(CreateRoleRequest source)
     {
         return new RoleEntity()

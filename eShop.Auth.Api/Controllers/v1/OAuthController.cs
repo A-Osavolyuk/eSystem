@@ -18,18 +18,18 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointSummary("OAuth login")]
     [EndpointDescription("OAuth login")]
     [ProducesResponseType(200)]
-    [HttpGet("login/{provider}")]
-    public async ValueTask<IActionResult> OAuthLoginAsync(string provider, string returnUri, string fallbackUri)
+    [HttpGet("login/{type}")]
+    public async ValueTask<IActionResult> OAuthLoginAsync(string type, string returnUri, string fallbackUri)
     {
-        var result = await sender.Send(new OAuthLoginCommand(provider, returnUri, fallbackUri));
+        var result = await sender.Send(new LinkedAccountLoginCommand(type, returnUri, fallbackUri));
 
-        return result.Match(
+        return result.Match<IActionResult>(
             s =>
             {
                 var response = s.Value! as OAuthLoginResponse;
                 return Challenge(response!.AuthenticationProperties, response.Provider);
             },
-            ErrorHandler.Handle);
+            f => Redirect(f.Value!.ToString()!));
     }
 
     [EndpointSummary("Handle OAuth login")]
@@ -42,7 +42,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
         var authenticationResult = await signInManager.AuthenticateAsync(
             ExternalAuthenticationDefaults.AuthenticationScheme);
         
-        var result = await sender.Send(new HandleOAuthLoginCommand(authenticationResult, remoteError, returnUri));
+        var result = await sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
         return result.Match(
             s => Redirect(s.Message),
             f => Redirect(f.Value!.ToString()!));
@@ -54,7 +54,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [HttpPost("load")]
     public async ValueTask<IActionResult> LoadSessionAsync([FromBody] LoadOAuthSessionRequest request)
     {
-        var result = await sender.Send(new LoadOAuthSessionCommand(request));
+        var result = await sender.Send(new LoadSessionCommand(request));
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);

@@ -1,6 +1,6 @@
 ﻿namespace eShop.Domain.DTOs;
 
-public class UserOAuthProviderDto
+public class UserLinkedAccountDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

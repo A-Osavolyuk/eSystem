@@ -26,7 +26,7 @@ public class TwoFactorData
 public class LinkedAccountsData
 {
     public bool HasLinkedAccounts { get; set; }
-    public List<UserOAuthProviderDto> LinkedAccounts { get; set; } = [];
+    public List<UserLinkedAccountDto> LinkedAccounts { get; set; } = [];
 }
 
 public class PasskeysData
