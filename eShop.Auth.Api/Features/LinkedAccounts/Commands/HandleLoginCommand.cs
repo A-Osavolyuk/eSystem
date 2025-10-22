@@ -65,6 +65,9 @@ public sealed class HandleOAuthLoginCommandHandler(
         var user = await userManager.FindByEmailAsync(email, cancellationToken);
         if (user is null)
         {
+            var taken = await userManager.IsEmailTakenAsync(email, cancellationToken);
+            if (taken) return Results.BadRequest("Email is already taken", fallbackUri);
+            
             user = new UserEntity()
             {
                 Id = Guid.CreateVersion7(),
@@ -75,7 +78,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             if (!createResult.Succeeded) return Result.Failure(createResult.GetError(), fallbackUri);
 
             var setResult = await userManager.SetEmailAsync(user, email, EmailType.Primary, cancellationToken);
-            if (setResult.Succeeded) return setResult;
+            if (!setResult.Succeeded) return setResult;
 
             var role = await roleManager.FindByNameAsync("User", cancellationToken);
             if (role is null) return Results.NotFound("Cannot find role 'User'", fallbackUri);
