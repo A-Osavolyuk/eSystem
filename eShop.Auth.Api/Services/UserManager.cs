@@ -114,9 +114,6 @@ public sealed class UserManager(
     public async ValueTask<Result> SetEmailAsync(UserEntity user, string email, EmailType type,
         CancellationToken cancellationToken = default)
     {
-        if (user.Emails.Any(x => x.Email == email))
-            return Results.BadRequest("User already has this email");
-
         var userEmail = new UserEmailEntity()
         {
             Id = Guid.CreateVersion7(),
