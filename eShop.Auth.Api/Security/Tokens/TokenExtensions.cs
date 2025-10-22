@@ -6,7 +6,7 @@ public static class TokenExtensions
 {
     public static void AddTokens(this IHostApplicationBuilder builder)
     {
-        builder.AddTokens();
+        builder.Services.AddJwt();
     }
     
     private static void AddJwt(this IServiceCollection services)
