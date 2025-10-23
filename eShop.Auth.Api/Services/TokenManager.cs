@@ -19,47 +19,43 @@ public sealed class TokenManager(
     private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly JwtOptions options = options.Value;
 
-    public async Task<string> CreateAsync(UserDeviceEntity device,
-        CancellationToken cancellationToken = default)
+    public async Task<Result> SaveAsync(UserDeviceEntity device,
+        string refreshToken, CancellationToken cancellationToken = default)
     {
-        var existingEntity = await context.RefreshTokens.FirstOrDefaultAsync(
+        var expirationDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays);
+        var token = await context.RefreshTokens.FirstOrDefaultAsync(
             x => x.DeviceId == device.Id, cancellationToken);
 
-        if (existingEntity is null)
+        if (token is null)
         {
-            var refreshToken = keyFactory.Create(50);
-
-            var entity = new RefreshTokenEntity()
+            token = new RefreshTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 DeviceId = device.Id,
                 Token = refreshToken,
-                ExpireDate = DateTime.UtcNow.AddDays(options.RefreshTokenExpirationDays),
-                CreateDate = DateTime.UtcNow,
-                UpdateDate = null
+                ExpireDate = expirationDate,
+                CreateDate = DateTimeOffset.UtcNow
             };
 
-            await context.RefreshTokens.AddAsync(entity, cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
+            await context.RefreshTokens.AddAsync(token, cancellationToken);
+        }
+        else
+        {
+            token.Token = refreshToken;
+            token.ExpireDate = expirationDate;
+            token.RefreshDate = DateTimeOffset.UtcNow;
+            token.UpdateDate = DateTimeOffset.UtcNow;
+
+            context.RefreshTokens.Update(token);
         }
 
-        var claims = new List<Claim>()
-        {
-            new(AppClaimTypes.Subject, device.UserId.ToString()),
-            new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString())
-        };
-
-        var token = tokenFactory.Create(claims);
-        return token;
+        await context.SaveChangesAsync(cancellationToken);
+        return Result.Success();
     }
 
-    public async Task<RefreshTokenEntity?> FindAsync(
-        UserDeviceEntity device, CancellationToken cancellationToken = default)
+    public async Task<RefreshTokenEntity?> FindAsync(string token, CancellationToken cancellationToken = default)
     {
-        var token = await context.RefreshTokens.FirstOrDefaultAsync(
-            x => x.DeviceId == device.Id, cancellationToken);
-
-        return token;
+        return await context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
     }
 
     public async Task<Result> RemoveAsync(RefreshTokenEntity token, CancellationToken cancellationToken = default)
@@ -69,4 +65,17 @@ public sealed class TokenManager(
 
         return Result.Success();
     }
+
+    public string GenerateAccessToken(UserEntity user)
+    {
+        var claims = new List<Claim>()
+        {
+            new (AppClaimTypes.Jti, Guid.NewGuid().ToString()),
+            new (AppClaimTypes.Subject,  user.Id.ToString()),
+        };
+
+        return tokenFactory.Create(claims);
+    }
+
+    public string GenerateRefreshToken(int length = 50) => keyFactory.Create((uint)length);
 }

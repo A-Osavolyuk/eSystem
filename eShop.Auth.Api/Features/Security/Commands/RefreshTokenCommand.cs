@@ -28,13 +28,13 @@ public class RefreshTokenCommandHandler(
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound("Invalid device.");
         
-        var refreshToken = await tokenManager.FindAsync(device, cancellationToken);
-        if (refreshToken is null) return Results.BadRequest("Invalid token.");
-        
+        var refreshToken = await tokenManager.FindAsync(request.Request.RefreshToken, cancellationToken);
+        if (refreshToken is null || !refreshToken.IsValid) return Results.BadRequest("Invalid token.");
+
         var session = await authorizationManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
-        var accessToken = await tokenManager.CreateAsync(device, cancellationToken);
+        var accessToken = tokenManager.GenerateAccessToken(user);
         var response = new RefreshTokenResponse()
         {
             UserId = user.Id,

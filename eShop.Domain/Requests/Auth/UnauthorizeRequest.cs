@@ -2,5 +2,6 @@
 
 public class UnauthorizeRequest
 {
-    public Guid UserId { get; set; }
+    public required Guid UserId { get; set; }
+    public required string RefreshToken { get; set; }
 }
