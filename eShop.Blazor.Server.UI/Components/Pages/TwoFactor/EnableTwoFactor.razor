@@ -362,12 +362,12 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var parameters = new DialogParameters<SetupKeyDialog>()
+        var parameters = new DialogParameters<AuthenticatorSecretDialog>()
         {
             { dialog => dialog.Secret, QrCode.Secret }
         };
 
-        await DialogService.ShowAsync<SetupKeyDialog>("Your two-factor secret", parameters, options);
+        await DialogService.ShowAsync<AuthenticatorSecretDialog>("Your two-factor secret", parameters, options);
     }
 
     private async Task OnDownloadAsync()
