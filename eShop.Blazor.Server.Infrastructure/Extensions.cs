@@ -5,6 +5,7 @@ using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Blazor.Server.Infrastructure.Services;
 using eShop.Blazor.Server.Infrastructure.Storage;
 using eShop.Application.Http;
+using eShop.Domain.Security.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -62,7 +63,7 @@ public static class Extensions
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = "eAccount.Authentication.State";
+                options.Cookie.Name = DefaultCookies.State;
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 

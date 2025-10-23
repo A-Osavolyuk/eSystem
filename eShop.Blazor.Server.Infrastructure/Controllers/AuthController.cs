@@ -5,6 +5,7 @@ using eShop.Blazor.Server.Infrastructure.Security;
 using eShop.Domain.Common.Http;
 using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
+using eShop.Domain.Security.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -39,7 +40,7 @@ public class AuthController(
             SameSite = SameSiteMode.Lax,
         };
 
-        Response.Cookies.Append("eAccount.Authentication.RefreshToken", response.RefreshToken, cookieOptions);
+        Response.Cookies.Append(DefaultCookies.RefreshToken, response.RefreshToken, cookieOptions);
 
         var authenticateResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
         if (!authenticateResult.Succeeded)
@@ -79,7 +80,7 @@ public class AuthController(
     {
         tokenProvider.AccessToken = signOutRequest.AccessToken;
 
-        var refreshToken = Request.Cookies["eAccount.Authentication.RefreshToken"]!;
+        var refreshToken = Request.Cookies[DefaultCookies.RefreshToken]!;
         var request = new UnauthorizeRequest()
         {
             UserId = signOutRequest.UserId,
@@ -90,7 +91,7 @@ public class AuthController(
         if (!result.Success) return StatusCode(500, result);
 
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        Response.Cookies.Delete("eAccount.Authentication.RefreshToken");
+        Response.Cookies.Delete(DefaultCookies.RefreshToken);
         
         return Ok(new ResponseBuilder().Succeeded().Build());
     }
@@ -98,7 +99,7 @@ public class AuthController(
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
     {
-        var refreshToken = Request.Cookies["eAccount.Authentication.RefreshToken"];
+        var refreshToken = Request.Cookies[DefaultCookies.RefreshToken];
 
         if (string.IsNullOrEmpty(refreshToken))
         {

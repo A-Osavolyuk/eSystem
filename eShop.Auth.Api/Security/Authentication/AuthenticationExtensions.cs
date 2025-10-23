@@ -6,6 +6,7 @@ using eShop.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eShop.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eShop.Auth.Api.Security.Authorization.OAuth;
 using eShop.Auth.Api.Security.Tokens.Jwt;
+using eShop.Domain.Security.Authentication.Cookies;
 using eShop.Domain.Security.Authentication.SignIn;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -30,7 +31,7 @@ public static class AuthenticationExtensions
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = "eAccount.Authentication.External";
+                options.Cookie.Name = DefaultCookies.External;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                 options.Cookie.SameSite = SameSiteMode.Lax;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
