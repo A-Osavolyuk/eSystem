@@ -30,7 +30,6 @@ public class AuthenticationManager(
         {
             Method = HttpMethod.Post,
             Url = $"{navigationManager.BaseUri}api/auth/sign-in",
-            Credentials = Credentials.Include,
             Body = request
         };
 
@@ -60,7 +59,6 @@ public class AuthenticationManager(
         {
             Method = HttpMethod.Post,
             Url = $"{navigationManager.BaseUri}api/auth/sign-out",
-            Credentials = Credentials.Include,
             Body = request
         };
 

@@ -1,5 +1,6 @@
 ﻿using eShop.Blazor.Server.Domain.Interfaces;
 using eShop.Blazor.Server.Domain.Options;
+using eShop.Domain.Common.Http;
 using Microsoft.JSInterop;
 
 namespace eShop.Blazor.Server.Infrastructure.Implementations;
@@ -10,7 +11,7 @@ public class FetchClient(IJSRuntime jSRuntime) : IFetchClient
 
     public async ValueTask<HttpResponse> FetchAsync(FetchOptions options)
     {
-        var body = JsonSerializer.Serialize(options.Body);
+        var body = options.Body is null ? string.Empty : JsonSerializer.Serialize(options.Body);
         var headers = new Dictionary<string, string>()
         {
             { "Accept", "application/json" },
@@ -22,7 +23,7 @@ public class FetchClient(IJSRuntime jSRuntime) : IFetchClient
             url = options.Url,
             headers,
             method = options.Method.Method,
-            credentials = options.Credentials,
+            credentials = Credentials.Include,
             body
         });
         return result;
