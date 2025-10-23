@@ -1,0 +1,29 @@
+﻿@using eAccount.Blazor.Server.UI.Components.Pages.Security.Methods
+
+<MudPaper Outlined="true" Class="py-5">
+    <MudStack Spacing="3">
+        <MudStack Class="px-5">
+            <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
+                Two-factor methods
+            </MudTextM3>
+        </MudStack>
+        <MudDivider/>
+        <AuthenticatorMethod Model="Model"/>
+        <MudDivider/>
+        <SmsMethod Model="Model"/>
+        <MudDivider/>
+        <PasskeyMethod Model="Model"/>
+        <MudDivider/>
+        <MudStack Class="px-5">
+            <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
+                Recovery options
+            </MudTextM3>
+        </MudStack>
+        <MudDivider/>
+        <RecoveryCodesMethod Model="Model"/>
+    </MudStack>
+</MudPaper>
+
+@code{
+    [Parameter] public TwoFactorData Model { get; set; } = new();
+}

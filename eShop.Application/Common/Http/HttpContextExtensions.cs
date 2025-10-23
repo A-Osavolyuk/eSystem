@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using UAParser;
 
-namespace eShop.Application.Http;
+namespace eShop.Application.Common.Http;
 
 public static class HttpContextExtensions
 {

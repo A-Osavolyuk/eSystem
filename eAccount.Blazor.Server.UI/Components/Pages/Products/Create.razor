@@ -1,0 +1,92 @@
+﻿@page "/products/create"
+@using eAccount.Blazor.Server.UI.Components.Pages.Products.Components.Create
+
+@inherits PageBase
+@implements IDisposable
+
+@attribute [Authorize]
+
+@inject ProductState State
+@inject ProductValidator Validator
+
+<Title Text="Create product"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="8">
+        <CascadingValue Value="Model">
+            <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
+                <MudGrid Spacing="1" Justify="Justify.Center">
+                    <MudItem xs="3">
+                        <Images Model="Model"/>
+                    </MudItem>
+                    <MudItem xs="9">
+                        <MudGrid Spacing="1" Justify="Justify.Center">
+                            <MudItem xs="12">
+                                <GeneralProperties Model="Model"/>
+                            </MudItem>
+                            @if (!string.IsNullOrEmpty(Model.Type.Name))
+                            {
+                                <MudItem xs="12">
+                                    <ProductProperties Model="Model"/>
+                                </MudItem>
+                            }
+                            <MudItem xs="12">
+                                <MudPaper Class="pa-3" Outlined="true">
+                                    <MudGrid Justify="Justify.Center">
+                                        <MudItem xs="12">
+                                            <MudButton
+                                                ButtonType="ButtonType.Button"
+                                                Variant="Variant.Filled"
+                                                Color="Color.Primary"
+                                                OnClick="@(async () => await OnSubmitAsync())">
+                                                Submit
+                                            </MudButton>
+                                            <MudButton
+                                                ButtonType="ButtonType.Button"
+                                                Variant="Variant.Outlined"
+                                                Color="Color.Error"
+                                                OnClick="@(() => OnClear())">
+                                                Clear
+                                            </MudButton>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        </CascadingValue>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private ProductModel Model { get; set; } = new();
+
+    private MudForm form = new();
+
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+        }
+    }
+
+    private void OnClear()
+    {
+        Model = new();
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+
+}

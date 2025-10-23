@@ -3,10 +3,10 @@
   <Folder Name="/src/Clients/" />
   <Folder Name="/src/Clients/Blazor/" />
   <Folder Name="/src/Clients/Blazor/Server/">
-    <Project Path="eShop.Blazor.Server.Application\eShop.Blazor.Server.Application.csproj" />
-    <Project Path="eShop.Blazor.Server.Domain\eShop.Blazor.Server.Domain.csproj" />
-    <Project Path="eShop.Blazor.Server.Infrastructure\eShop.Blazor.Server.Infrastructure.csproj" />
-    <Project Path="eShop.Blazor.Server.UI\eShop.Blazor.Server.UI.csproj" />
+    <Project Path="eAccount.Blazor.Server.Application\eAccount.Blazor.Server.Application.csproj" />
+    <Project Path="eAccount.Blazor.Server.Domain\eAccount.Blazor.Server.Domain.csproj" />
+    <Project Path="eAccount.Blazor.Server.Infrastructure\eAccount.Blazor.Server.Infrastructure.csproj" />
+    <Project Path="eAccount.Blazor.Server.UI\eAccount.Blazor.Server.UI.csproj" />
   </Folder>
   <Folder Name="/src/Clients/Blazor/WASM/" />
   <Folder Name="/src/Common/">

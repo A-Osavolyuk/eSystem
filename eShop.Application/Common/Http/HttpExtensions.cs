@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace eShop.Application.Http;
+namespace eShop.Application.Common.Http;
 
 public static class HttpExtensions
 {

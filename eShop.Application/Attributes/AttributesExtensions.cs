@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using eShop.Application.Http;
+using eShop.Application.Common.Http;
 using Microsoft.Extensions.Hosting;
 
 namespace eShop.Application.Attributes;

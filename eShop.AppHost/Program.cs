@@ -99,7 +99,7 @@ var proxy = builder.AddProject<Projects.eShop_Proxy>("proxy")
     .WithReference(storageApi).WaitFor(storageApi)
     .WithReference(commentApi).WaitFor(commentApi);
 
-builder.AddProject<Projects.eShop_Blazor_Server_UI>("blazor-server-ui")
+builder.AddProject<Projects.eAccount_Blazor_Server_UI>("e-account")
     .WithJwtConfig()
     .WithReference(proxy).WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy");
 

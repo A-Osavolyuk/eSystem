@@ -1,4 +1,4 @@
-﻿using eShop.Application.Http;
+﻿using eShop.Application.Common.Http;
 using eShop.Domain.Common.Results;
 using eShop.Domain.DTOs;
 using eShop.Domain.Security.Authentication.TwoFactor;

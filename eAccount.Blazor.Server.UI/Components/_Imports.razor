@@ -1,0 +1,51 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Security.Claims
+@using System.Text
+@using System.Web
+@using eAccount.Blazor.Server.Application.Mapping
+@using eShop.Domain.Security.Credentials.PublicKey
+@using eShop.Domain.Security.Verification
+@using eAccount.Blazor.Server.UI.Utilities
+@using eAccount.Blazor.Server.Application.State
+@using eAccount.Blazor.Server.Application.Validation
+@using eAccount.Blazor.Server.Domain.Common
+@using eShop.Domain.Requests.Auth
+@using eShop.Domain.Responses.Auth
+@using eAccount.Blazor.Server.Domain.Interfaces
+@using eAccount.Blazor.Server.UI.Components.Common.Access
+@using eAccount.Blazor.Server.Domain.Models
+@using eAccount.Blazor.Server.Infrastructure.Security
+@using eAccount.Blazor.Server.UI.Components
+@using eAccount.Blazor.Server.UI.Components.Common
+@using eAccount.Blazor.Server.UI.Components.Layout
+@using eAccount.Blazor.Server.UI.Components.Pages.Account
+@using eAccount.Blazor.Server.UI.Components.Pages.Products.Components
+@using eShop.Domain.Common
+@using eAccount.Blazor.Server.UI.Extensions
+@using ZXing
+
+@using eShop.Domain.DTOs
+@using eShop.Domain.Responses
+@using eAccount.Blazor.Server.Domain.Constants
+@using FluentValidation
+@using eShop.Domain.Enums
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
+@using Microsoft.JSInterop
+@using MudBlazor
+@using MudExtensions
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Severity = MudBlazor.Severity
+@using Size = MudBlazor.Size
+@using eAccount.Blazor.Server.Infrastructure.Services
