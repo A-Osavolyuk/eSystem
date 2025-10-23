@@ -20,12 +20,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\eAccount.Blazor.Server.Application\eAccount.Blazor.Server.Application.csproj" />
-		<ProjectReference Include="..\eShop.Application\eShop.Application.csproj" />
+		<ProjectReference Include="..\eSystem.Application\eSystem.Application.csproj" />
 		<ProjectReference Include="..\eShop.Blazor.Server.Application\eShop.Blazor.Server.Application.csproj" />
 		<ProjectReference Include="..\eAccount.Blazor.Server.Domain\eAccount.Blazor.Server.Domain.csproj" />
 		<ProjectReference Include="..\eAccount.Blazor.Server.Infrastructure\eAccount.Blazor.Server.Infrastructure.csproj" />
-		<ProjectReference Include="..\eShop.Domain\eShop.Domain.csproj" />
-		<ProjectReference Include="..\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\eSystem.Domain\eSystem.Domain.csproj" />
+		<ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

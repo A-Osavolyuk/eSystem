@@ -1,6 +1,6 @@
-﻿using eShop.Domain.Common.Messaging;
-using eShop.Domain.Requests.Auth;
-using eShop.Domain.Security.Verification;
+﻿using eSystem.Domain.Common.Messaging;
+using eSystem.Domain.Requests.Auth;
+using eSystem.Domain.Security.Verification;
 
 namespace eAccount.Blazor.Server.Domain.Common;
 

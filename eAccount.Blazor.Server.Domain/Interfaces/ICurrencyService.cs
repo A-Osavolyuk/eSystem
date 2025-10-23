@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Common.Http;
+﻿using eSystem.Domain.Common.Http;
 
 namespace eAccount.Blazor.Server.Domain.Interfaces;
 

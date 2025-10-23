@@ -1,10 +1,10 @@
 ﻿using System.Net;
-using eAccount.Blazor.Server.Domain.Interfaces;
 using eAccount.Blazor.Server.Infrastructure.Security;
-using eShop.Domain.Common.Http;
-using eShop.Domain.Responses.Auth;
+using eSystem.Domain.Responses.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
+using HttpRequest = eSystem.Domain.Common.Http.HttpRequest;
+using HttpResponse = eSystem.Domain.Common.Http.HttpResponse;
 
 namespace eAccount.Blazor.Server.Infrastructure.Implementations;
 

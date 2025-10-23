@@ -1,9 +1,7 @@
 ﻿using eAccount.Blazor.Server.Application.State;
-using eAccount.Blazor.Server.Domain.Interfaces;
 using eAccount.Blazor.Server.Domain.Options;
 using eAccount.Blazor.Server.Domain.Requests;
 using eAccount.Blazor.Server.Domain.Responses;
-using eShop.Domain.Requests.Auth;
 using Microsoft.AspNetCore.Components;
 using SignInRequest = eAccount.Blazor.Server.Domain.Requests.SignInRequest;
 

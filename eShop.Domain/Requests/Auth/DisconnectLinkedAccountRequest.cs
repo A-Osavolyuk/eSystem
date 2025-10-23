@@ -1,9 +1,0 @@
-﻿using eShop.Domain.Security.Authorization.OAuth;
-
-namespace eShop.Domain.Requests.Auth;
-
-public class DisconnectLinkedAccountRequest
-{
-    public Guid UserId { get; set; }
-    public LinkedAccountType Type { get; set; }
-}

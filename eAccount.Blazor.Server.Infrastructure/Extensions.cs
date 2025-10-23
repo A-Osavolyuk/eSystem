@@ -1,9 +1,8 @@
-﻿using eAccount.Blazor.Server.Domain.Interfaces;
-using eAccount.Blazor.Server.Infrastructure.Implementations;
+﻿using eAccount.Blazor.Server.Infrastructure.Implementations;
 using eAccount.Blazor.Server.Infrastructure.Services;
 using eAccount.Blazor.Server.Infrastructure.Storage;
 using eAccount.Blazor.Server.Infrastructure.Security;
-using eShop.Application.Common.Http;
+using eSystem.Application.Common.Http;
 using Microsoft.AspNetCore.Builder;
 
 namespace eAccount.Blazor.Server.Infrastructure;

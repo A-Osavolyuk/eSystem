@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Security.Authentication.TwoFactor;
+﻿using eSystem.Domain.Security.Authentication.TwoFactor;
 
 namespace eAccount.Blazor.Server.Domain.Models;
 

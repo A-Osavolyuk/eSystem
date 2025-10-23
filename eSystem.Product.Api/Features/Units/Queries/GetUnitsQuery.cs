@@ -1,0 +1,19 @@
+﻿using eSystem.Domain.Common.Results;
+using eSystem.Product.Api.Interfaces;
+using eSystem.Product.Api.Mapping;
+
+namespace eSystem.Product.Api.Features.Units.Queries;
+
+public record GetUnitsQuery : IRequest<Result>;
+
+public class GetUnitsQueryHandler(IUnitManager unitManager) : IRequestHandler<GetUnitsQuery, Result>
+{
+    private readonly IUnitManager unitManager = unitManager;
+
+    public async Task<Result> Handle(GetUnitsQuery request, CancellationToken cancellationToken)
+    {
+        var entities = await unitManager.GetAllAsync(cancellationToken);
+        var result = entities.Select(Mapper.Map).ToList();
+        return Result.Success(result);
+    }
+}

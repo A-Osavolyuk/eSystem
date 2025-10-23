@@ -1,11 +1,8 @@
 ﻿using eAccount.Blazor.Server.Domain.DTOs;
-using eAccount.Blazor.Server.Domain.Interfaces;
 using eAccount.Blazor.Server.Domain.Requests;
 using eAccount.Blazor.Server.Infrastructure.Security;
-using eShop.Domain.Common.Http;
-using eShop.Domain.Requests.Auth;
-using eShop.Domain.Responses.Auth;
-using eShop.Domain.Security.Authentication.Cookies;
+using eSystem.Domain.Responses.Auth;
+using eSystem.Domain.Security.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;

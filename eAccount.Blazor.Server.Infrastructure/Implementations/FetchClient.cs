@@ -1,6 +1,4 @@
-﻿using eAccount.Blazor.Server.Domain.Interfaces;
-using eAccount.Blazor.Server.Domain.Options;
-using eShop.Domain.Common.Http;
+﻿using eAccount.Blazor.Server.Domain.Options;
 using Microsoft.JSInterop;
 
 namespace eAccount.Blazor.Server.Infrastructure.Implementations;

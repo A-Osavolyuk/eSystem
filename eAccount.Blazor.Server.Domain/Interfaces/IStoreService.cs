@@ -1,5 +1,5 @@
-﻿using eShop.Domain.Common.Http;
-using eShop.Domain.Requests.Storage;
+﻿using eSystem.Domain.Common.Http;
+using eSystem.Domain.Requests.Storage;
 
 namespace eAccount.Blazor.Server.Domain.Interfaces;
 

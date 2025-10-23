@@ -1,7 +1,0 @@
-﻿global using eShop.Comments.Api.Data;
-global using eShop.Comments.Api.Extensions;
-global using eShop.ServiceDefaults;
-global using FluentValidation;
-global using MassTransit;
-global using MediatR;
-global using Microsoft.EntityFrameworkCore;

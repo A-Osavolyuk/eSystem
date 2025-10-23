@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Security.Lockout;
+﻿using eSystem.Domain.Security.Lockout;
 
 namespace eAccount.Blazor.Server.Domain.Models;
 

@@ -1,4 +1,4 @@
-﻿using eShop.Domain.Security.Authentication.Cookies;
+﻿using eSystem.Domain.Security.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 

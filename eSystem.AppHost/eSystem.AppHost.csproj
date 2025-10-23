@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0"/>
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>25917b55-256a-4dcc-95c1-ae526ad964ba</UserSecretsId>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting" Version="9.4.2" />
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.2" />
+        <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="9.4.2" />
+        <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.4.2" />
+        <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.4.2" />
+        <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.4.2" />
+        <PackageReference Include="Aspire.Hosting.Redis" Version="9.4.2" />
+        <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.4.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\eSystem.Auth.Api\eSystem.Auth.Api.csproj" />
+        <ProjectReference Include="..\eAccount.Blazor.Server.UI\eAccount.Blazor.Server.UI.csproj" />
+        <ProjectReference Include="..\eSystem.Cart.Api\eSystem.Cart.Api.csproj" />
+        <ProjectReference Include="..\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
+        <ProjectReference Include="..\eSystem.Storage.Api\eSystem.Storage.Api.csproj" />
+        <ProjectReference Include="..\eSystem.MessageBus\eSystem.MessageBus.csproj" />
+        <ProjectReference Include="..\eSystem.Proxy\eSystem.Proxy.csproj" />
+        <ProjectReference Include="..\eSystem.Product.Api\eSystem.Product.Api.csproj" />
+        <ProjectReference Include="..\eSystem.Comments.Api\eSystem.Comments.Api.csproj" />
+        <ProjectReference Include="..\eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />
+        <ProjectReference Include="..\eSystem.Telegram.Bot\eSystem.Telegram.Bot.csproj" />
+    </ItemGroup>
+
+</Project>

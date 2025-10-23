@@ -1,6 +1,4 @@
-﻿using eAccount.Blazor.Server.Domain.Interfaces;
-
-namespace eAccount.Blazor.Server.Infrastructure.Storage;
+﻿namespace eAccount.Blazor.Server.Infrastructure.Storage;
 
 public class LocalStorage(ILocalStorageService localStorage) : IStorage
 {

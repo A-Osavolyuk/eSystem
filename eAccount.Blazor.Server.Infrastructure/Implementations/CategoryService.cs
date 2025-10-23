@@ -1,7 +1,4 @@
 ﻿using eAccount.Blazor.Server.Domain.Abstraction.Services;
-using eAccount.Blazor.Server.Domain.Interfaces;
-using eShop.Domain.Common.Http;
-using eShop.Domain.Enums;
 
 namespace eAccount.Blazor.Server.Infrastructure.Implementations;
 

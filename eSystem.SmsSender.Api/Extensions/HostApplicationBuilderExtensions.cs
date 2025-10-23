@@ -1,0 +1,69 @@
+﻿using eSystem.Application.Common.Cache.Redis;
+using eSystem.Application.Common.Documentation;
+using eSystem.Application.Common.Errors;
+using eSystem.Application.Common.Logging;
+using eSystem.Application.Common.Versioning;
+using eSystem.Application.Security.Authentication;
+using eSystem.SmsSender.Api.Consumers;
+using eSystem.SmsSender.Api.Interfaces;
+using eSystem.SmsSender.Api.Services;
+using FluentValidation;
+
+namespace eSystem.SmsSender.Api.Extensions;
+
+public static class HostApplicationBuilderExtensions
+{
+    public static IHostApplicationBuilder AddApiServices(this IHostApplicationBuilder builder)
+    {
+        builder.AddLogging();
+        builder.AddServiceDefaults();
+        builder.AddJwtAuthentication();
+        builder.AddVersioning();
+        builder.AddValidation();
+        builder.AddDependencyInjection();
+        builder.AddMessageBus();
+        builder.AddMediatR();
+        builder.AddRedisCache();
+        builder.AddExceptionHandler();
+        builder.AddDocumentation();
+        builder.Services.AddControllers();
+
+        return builder;
+    }
+    
+    private static void AddValidation(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+    }
+
+    private static void AddMediatR(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddMediatR(x =>
+        {
+            x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
+        });
+    }
+    
+    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<ISmsService, SmsService>();
+        builder.Services.AddSingleton<IAmazonSimpleNotificationService>(sp =>
+            new AmazonSimpleNotificationServiceClient(RegionEndpoint.EUNorth1));
+    }
+
+    private static void AddMessageBus(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
+                cfg.Host(connectionString);
+                
+                cfg.ReceiveEndpoint("sms-message", (e) => e.ConfigureConsumer<SmsConsumer>(context));
+            });
+
+            x.AddConsumer<SmsConsumer>();
+        });
+    }
+}

@@ -1,4 +1,4 @@
 ﻿// Global using directives
 
-global using eShop.Domain.DTOs;
-global using eShop.Domain.Enums;
+global using eSystem.Domain.DTOs;
+global using eSystem.Domain.Enums;
