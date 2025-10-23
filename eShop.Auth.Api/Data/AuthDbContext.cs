@@ -30,6 +30,15 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<AuthorizationSessionEntity> AuthorizationSessions { get; set; }
     public DbSet<VerificationEntity> Verifications { get; set; }
     public DbSet<UserVerificationMethodEntity> UserVerificationMethods { get; set; }
+    public DbSet<ClientEntity> Clients { get; set; }
+    public DbSet<ClientAllowedScopeEntity> ClientAllowedScopes { get; set; }
+    public DbSet<ClientRedirectUriEntity> ClientRedirectUris { get; set; }
+    public DbSet<ClientGrantTypeEntity> ClientGrantTypes { get; set; }
+    public DbSet<ScopeEntity> Scopes { get; set; }
+    public DbSet<GrantedScopeEntity> GrantedScopes { get; set; }
+    public DbSet<SessionEntity> Sessions { get; set; }
+    public DbSet<AuthorizationCodeEntity> AuthorizationCodes { get; set; }
+    public DbSet<ConsentEntity> Consents{ get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -318,6 +327,108 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.User)
                 .WithMany(x => x.VerificationMethods)
                 .HasForeignKey(x => x.UserId);
+        });
+
+        builder.Entity<ScopeEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(100);
+            entity.Property(x => x.Description).HasMaxLength(1000);
+        });
+        
+        builder.Entity<ClientAllowedScopeEntity>(entity =>
+        {
+            entity.HasKey(x => new { x.ClientId, x.ScopeId });
+            
+            entity.HasOne(x => x.Client)
+                .WithMany(x => x.AllowedScopes)
+                .HasForeignKey(x => x.ClientId);
+            
+            entity.HasOne(x => x.Scope)
+                .WithMany()
+                .HasForeignKey(x => x.ScopeId);
+        });
+
+        builder.Entity<ClientRedirectUriEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.RedirectUri).HasMaxLength(200);
+            
+            entity.HasOne(x => x.Client)
+                .WithMany(x => x.RedirectUris)
+                .HasForeignKey(x => x.ClientId);
+        });
+        
+        builder.Entity<ClientGrantTypeEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Type).HasMaxLength(50);
+            
+            entity.HasOne(x => x.Client)
+                .WithMany(x => x.GrantTypes)
+                .HasForeignKey(x => x.ClientId);
+        });
+
+        builder.Entity<ClientEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.ClientId).HasMaxLength(200);
+            entity.Property(x => x.ClientSecret).HasMaxLength(200);
+            entity.Property(x => x.Name).HasMaxLength(100);
+            entity.Property(x => x.LogoUri).HasMaxLength(100);
+            entity.Property(x => x.ClientUri).HasMaxLength(100);
+            entity.Property(x => x.Type).HasEnumConversion();
+        });
+
+        builder.Entity<AuthorizationCodeEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.RedirectUri).HasMaxLength(200);
+            entity.Property(x => x.CodeChallenge).HasMaxLength(200);
+            entity.Property(x => x.CodeChallengeMethod).HasMaxLength(16);
+            
+            entity.HasOne(x => x.Device)
+                .WithMany()
+                .HasForeignKey(x => x.DeviceId);
+            
+            entity.HasOne(x => x.Client)
+                .WithMany()
+                .HasForeignKey(x => x.ClientId);
+        });
+
+        builder.Entity<SessionEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.Device)
+                .WithMany(x => x.Sessions)
+                .HasForeignKey(x => x.DeviceId);
+        });
+        
+        builder.Entity<ConsentEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.User)
+                .WithOne(x => x.Consent)
+                .HasForeignKey<ConsentEntity>(x => x.UserId);
+
+            entity.HasOne(x => x.Client)
+                .WithMany()
+                .HasForeignKey(x => x.ClientId);
+        });
+
+        builder.Entity<GrantedScopeEntity>(entity =>
+        {
+            entity.HasKey(x => new { x.ScopeId, x.ConsentId });
+            
+            entity.HasOne(x => x.Consent)
+                .WithMany(x => x.GrantedScopes)
+                .HasForeignKey(x => x.ConsentId);
+
+            entity.HasOne(x => x.Scope)
+                .WithMany()
+                .HasForeignKey(x => x.ScopeId);
         });
     }
 }

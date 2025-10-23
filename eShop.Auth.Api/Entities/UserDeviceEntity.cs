@@ -8,11 +8,11 @@ public class UserDeviceEntity : Entity
     public bool IsTrusted { get; set; }
     public bool IsBlocked { get; set; }
     
-    public string? UserAgent { get; set; } =  string.Empty;
-    public string? IpAddress { get; set; } = string.Empty;
-    public string? Browser { get; set; }
-    public string? Device { get; set; }
-    public string? OS { get; set; }
+    public required string UserAgent { get; set; }
+    public required string IpAddress { get; set; }
+    public required string Browser { get; set; }
+    public required string Device { get; set; }
+    public required string OS { get; set; }
     public string? Location { get; set; }
 
     public DateTimeOffset FirstSeen { get; set; }
@@ -21,4 +21,5 @@ public class UserDeviceEntity : Entity
 
     public UserEntity User { get; set; } = null!;
     public PasskeyEntity? Passkey { get; set; }
+    public ICollection<SessionEntity> Sessions { get; set; } = null!;
 }

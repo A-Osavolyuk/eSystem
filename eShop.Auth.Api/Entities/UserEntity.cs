@@ -36,6 +36,7 @@ public class UserEntity : Entity
     public UserLockoutStateEntity LockoutState { get; set; } = null!;
     public PersonalDataEntity? PersonalData { get; set; } = null!;
     public UserSecretEntity? Secret { get; set; } = null!;
+    public ConsentEntity Consent { get; set; } = null!;
 
     public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);
