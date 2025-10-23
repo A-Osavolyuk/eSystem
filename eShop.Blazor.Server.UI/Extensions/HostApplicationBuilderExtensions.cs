@@ -1,4 +1,5 @@
 ﻿using eShop.Blazor.Server.Application;
+using eShop.Blazor.Server.Application.State;
 using eShop.Blazor.Server.Infrastructure;
 using eShop.Blazor.Server.UI.Utilities;
 using MudBlazor.Services;
@@ -13,6 +14,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddServiceDefaults();
         builder.AddInfrastructureLayer();
         builder.AddValidation();
+        builder.AddState();
         
         builder.Logging.AddConfiguration(builder.Configuration.GetSection("Configuration:Logging"));
         
