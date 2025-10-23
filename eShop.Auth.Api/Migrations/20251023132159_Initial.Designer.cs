@@ -12,7 +12,7 @@ using eShop.Auth.Api.Data;
 namespace eShop.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251022121300_Initial")]
+    [Migration("20251023132159_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,6 +24,54 @@ namespace eShop.Auth.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.AuthorizationCodeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CodeChallenge")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CodeChallengeMethod")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ExpireDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("RedirectUri")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("AuthorizationCodes");
+                });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.AuthorizationSessionEntity", b =>
                 {
@@ -46,6 +94,134 @@ namespace eShop.Auth.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("AuthorizationSessions");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ClientAllowedScopeEntity", b =>
+                {
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ScopeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("ClientId", "ScopeId");
+
+                    b.HasIndex("ScopeId");
+
+                    b.ToTable("ClientAllowedScopes");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ClientEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AllowOfflineAccess")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ClientSecret")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ClientUri")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LogoUri")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("RequireClientSecret")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RequirePkce")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ClientGrantTypeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientGrantTypes");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ClientRedirectUriEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("RedirectUri")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientRedirectUris");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.CodeEntity", b =>
@@ -88,6 +264,55 @@ namespace eShop.Auth.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Codes");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ConsentEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Consents");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.GrantedScopeEntity", b =>
+                {
+                    b.Property<Guid>("ScopeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConsentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("ScopeId", "ConsentId");
+
+                    b.HasIndex("ConsentId");
+
+                    b.ToTable("GrantedScopes");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.LoginSessionEntity", b =>
@@ -293,6 +518,9 @@ namespace eShop.Auth.Api.Migrations
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset?>("RefreshDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -406,6 +634,61 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("RolePermissions");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ScopeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Scopes");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.SessionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ExpireDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("Sessions");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserChangesEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -449,6 +732,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Browser")
+                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
@@ -456,6 +740,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Device")
+                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
@@ -463,6 +748,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("IpAddress")
+                        .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
@@ -480,6 +766,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("OS")
+                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
@@ -487,6 +774,7 @@ namespace eShop.Auth.Api.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("UserAgent")
+                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
@@ -625,7 +913,7 @@ namespace eShop.Auth.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserOAuthProviders");
+                    b.ToTable("UserLinkedAccounts");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserLockoutStateEntity", b =>
@@ -892,6 +1180,25 @@ namespace eShop.Auth.Api.Migrations
                     b.ToTable("Verifications");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.AuthorizationCodeEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Device");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.AuthorizationSessionEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
@@ -903,6 +1210,47 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Device");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ClientAllowedScopeEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.ClientEntity", "Client")
+                        .WithMany("AllowedScopes")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Auth.Api.Entities.ScopeEntity", "Scope")
+                        .WithMany()
+                        .HasForeignKey("ScopeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Scope");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ClientGrantTypeEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.ClientEntity", "Client")
+                        .WithMany("GrantTypes")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ClientRedirectUriEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.ClientEntity", "Client")
+                        .WithMany("RedirectUris")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.CodeEntity", b =>
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
@@ -912,6 +1260,44 @@ namespace eShop.Auth.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ConsentEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Auth.Api.Entities.UserEntity", "User")
+                        .WithOne("Consent")
+                        .HasForeignKey("eShop.Auth.Api.Entities.ConsentEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.GrantedScopeEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.ConsentEntity", "Consent")
+                        .WithMany("GrantedScopes")
+                        .HasForeignKey("ConsentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Auth.Api.Entities.ScopeEntity", "Scope")
+                        .WithMany()
+                        .HasForeignKey("ScopeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Consent");
+
+                    b.Navigation("Scope");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.LoginSessionEntity", b =>
@@ -929,7 +1315,8 @@ namespace eShop.Auth.Api.Migrations
                 {
                     b.HasOne("eShop.Auth.Api.Entities.UserLinkedAccountEntity", "LinkedAccount")
                         .WithMany()
-                        .HasForeignKey("LinkedAccountId");
+                        .HasForeignKey("LinkedAccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("LinkedAccount");
                 });
@@ -995,6 +1382,17 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.SessionEntity", b =>
+                {
+                    b.HasOne("eShop.Auth.Api.Entities.UserDeviceEntity", "Device")
+                        .WithMany("Sessions")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserChangesEntity", b =>
@@ -1165,6 +1563,20 @@ namespace eShop.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ClientEntity", b =>
+                {
+                    b.Navigation("AllowedScopes");
+
+                    b.Navigation("GrantTypes");
+
+                    b.Navigation("RedirectUris");
+                });
+
+            modelBuilder.Entity("eShop.Auth.Api.Entities.ConsentEntity", b =>
+                {
+                    b.Navigation("GrantedScopes");
+                });
+
             modelBuilder.Entity("eShop.Auth.Api.Entities.PersonalDataEntity", b =>
                 {
                     b.Navigation("User")
@@ -1181,11 +1593,16 @@ namespace eShop.Auth.Api.Migrations
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserDeviceEntity", b =>
                 {
                     b.Navigation("Passkey");
+
+                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("eShop.Auth.Api.Entities.UserEntity", b =>
                 {
                     b.Navigation("Changes");
+
+                    b.Navigation("Consent")
+                        .IsRequired();
 
                     b.Navigation("Devices");
 
