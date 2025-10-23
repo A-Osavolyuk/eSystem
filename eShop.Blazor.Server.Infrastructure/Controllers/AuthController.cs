@@ -7,6 +7,7 @@ using eShop.Domain.Requests.Auth;
 using eShop.Domain.Responses.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SignInRequest = eShop.Blazor.Server.Domain.Requests.SignInRequest;
 using SignInResponse = eShop.Blazor.Server.Domain.Responses.SignInResponse;
@@ -31,6 +32,14 @@ public class AuthController(
 
         var response = result.Get<AuthorizeResponse>()!;
         tokenProvider.AccessToken = response.AccessToken;
+
+        var cookieOptions = new CookieOptions()
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+        };
+
+        Response.Cookies.Append("eAccount.Authentication.RefreshToken", response.RefreshToken, cookieOptions);
 
         var authenticateResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
         if (!authenticateResult.Succeeded)
@@ -69,11 +78,38 @@ public class AuthController(
     public async Task<IActionResult> SignOutAsync([FromBody] SignOutRequest signOutRequest)
     {
         tokenProvider.AccessToken = signOutRequest.AccessToken;
-        var request = new UnauthorizeRequest(){ UserId = signOutRequest.UserId };
+
+        var refreshToken = Request.Cookies["eAccount.Authentication.RefreshToken"]!;
+        var request = new UnauthorizeRequest()
+        {
+            UserId = signOutRequest.UserId,
+            RefreshToken = refreshToken
+        };
+        
         var result = await securityService.UnauthorizeAsync(request);
         if (!result.Success) return StatusCode(500, result);
-        
+
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        Response.Cookies.Delete("eAccount.Authentication.RefreshToken");
+        
         return Ok(new ResponseBuilder().Succeeded().Build());
+    }
+
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
+    {
+        var refreshToken = Request.Cookies["eAccount.Authentication.RefreshToken"];
+
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return Unauthorized(new ResponseBuilder()
+                .Failed()
+                .Build());
+        }
+        
+        request.RefreshToken = refreshToken;
+        var result = await securityService.RefreshTokenAsync(request);
+
+        return Ok(result);
     }
 }

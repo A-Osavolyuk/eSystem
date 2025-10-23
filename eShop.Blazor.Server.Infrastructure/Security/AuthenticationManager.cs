@@ -4,7 +4,9 @@ using eShop.Blazor.Server.Domain.Options;
 using eShop.Blazor.Server.Domain.Requests;
 using eShop.Blazor.Server.Domain.Responses;
 using eShop.Domain.Common.Http;
+using eShop.Domain.Requests.Auth;
 using Microsoft.AspNetCore.Components;
+using SignInRequest = eShop.Blazor.Server.Domain.Requests.SignInRequest;
 
 namespace eShop.Blazor.Server.Infrastructure.Security;
 
@@ -72,5 +74,18 @@ public class AuthenticationManager(
 
             navigationManager.NavigateTo("/account/login");
         }
+    }
+
+    public async Task<HttpResponse> RefreshTokenAsync()
+    {
+        var request = new RefreshTokenRequest() { UserId = userState.UserId };
+        var options = new FetchOptions()
+        {
+            Method = HttpMethod.Post,
+            Url = $"{navigationManager.BaseUri}api/auth/refresh-token",
+            Body = request
+        };
+
+        return await fetchClient.FetchAsync(options);
     }
 }
