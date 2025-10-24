@@ -6,7 +6,7 @@ public class SsoService(
     IConfiguration configuration, 
     IApiClient apiClient) : ApiService(configuration, apiClient), ISsoService
 {
-    private const string BasePath = "api/v1/SSO";
+    private const string BasePath = "api/v1/Sso";
     
     public async ValueTask<HttpResponse> RefreshTokenAsync(RefreshTokenRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/token", Method = HttpMethod.Post, Data = request },
