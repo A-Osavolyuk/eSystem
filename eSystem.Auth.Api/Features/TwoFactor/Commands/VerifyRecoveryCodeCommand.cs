@@ -18,7 +18,6 @@ public class VerifyRecoveryCodeCommandHandler(
     IRecoverManager recoveryManager,
     IHttpContextAccessor httpContextAccessor,
     IDeviceManager deviceManager,
-    ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     ILockoutManager lockoutManager,
     IOptions<SignInOptions> options) : IRequestHandler<VerifyRecoveryCodeCommand, Result>
@@ -26,7 +25,6 @@ public class VerifyRecoveryCodeCommandHandler(
     private readonly IUserManager userManager = userManager;
     private readonly IRecoverManager recoveryManager = recoveryManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
@@ -111,9 +109,7 @@ public class VerifyRecoveryCodeCommandHandler(
         }
 
         response = new VerifyRecoveryCodeResponse() { UserId = user.Id, };
-
-        const string method = nameof(TwoFactorMethod.AuthenticatorApp);
-        await loginManager.CreateAsync(device, LoginType.TwoFactor, method, cancellationToken);
+        
         await authorizationManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);

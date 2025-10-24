@@ -15,7 +15,6 @@ public class LinkedAccountSignInStrategy(
     IHttpContextAccessor httpContextAccessor,
     ILinkedAccountManager providerManager,
     IOAuthSessionManager sessionManager,
-    ILoginManager loginManager,
     IAuthorizationManager authorizationManager) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
@@ -23,7 +22,6 @@ public class LinkedAccountSignInStrategy(
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly ILinkedAccountManager providerManager = providerManager;
     private readonly IOAuthSessionManager sessionManager = sessionManager;
-    private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -106,8 +104,7 @@ public class LinkedAccountSignInStrategy(
 
         var updateResult = await sessionManager.UpdateAsync(session, cancellationToken);
         if (!updateResult.Succeeded) return Result.Failure(updateResult.GetError(), fallbackUri);
-
-        await loginManager.CreateAsync(device, LoginType.OAuth, linkedAccountType.ToString(), cancellationToken);
+        
         await authorizationManager.CreateAsync(device, cancellationToken);
 
         var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id, token });

@@ -16,7 +16,6 @@ public class AuthenticatorSignInStrategy(
     IUserManager userManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
-    ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     ISecretManager secretManager,
     IHttpContextAccessor accessor,
@@ -26,7 +25,6 @@ public class AuthenticatorSignInStrategy(
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
@@ -124,9 +122,7 @@ public class AuthenticatorSignInStrategy(
         }
 
         response = new SignInResponse() { UserId = user.Id, };
-
-        const string method = nameof(TwoFactorMethod.AuthenticatorApp);
-        await loginManager.CreateAsync(device, LoginType.TwoFactor, method, cancellationToken);
+        
         await authorizationManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);

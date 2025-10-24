@@ -12,13 +12,11 @@ namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 public class PasskeySignInStrategy(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
-    ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     IHttpContextAccessor accessor) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
-    private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
 
@@ -58,8 +56,7 @@ public class PasskeySignInStrategy(
         var ipAddress = httpContext.GetIpV4()!;
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return eSystem.Domain.Common.Results.Results.NotFound($"Invalid device.");
-
-        await loginManager.CreateAsync(device, LoginType.Passkey, cancellationToken);
+        
         await authorizationManager.CreateAsync(device, cancellationToken);
 
         response = new SignInResponse() { UserId = user.Id, };

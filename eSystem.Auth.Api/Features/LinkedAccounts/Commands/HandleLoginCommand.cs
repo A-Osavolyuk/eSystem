@@ -30,7 +30,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     IDeviceManager deviceManager,
     ISignInResolver signInResolver,
     IHttpContextAccessor httpContextAccessor,
-    ILoginManager loginManager,
     IAuthorizationManager authorizationManager) : IRequestHandler<HandleLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
@@ -41,7 +40,6 @@ public sealed class HandleOAuthLoginCommandHandler(
     private readonly ILinkedAccountManager providerManager = providerManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ISignInResolver signInResolver = signInResolver;
-    private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -166,7 +164,6 @@ public sealed class HandleOAuthLoginCommandHandler(
             var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
             if (!sessionResult.Succeeded) return Result.Failure(sessionResult.GetError(), fallbackUri);
             
-            await loginManager.CreateAsync(newDevice, LoginType.OAuth, linkedAccountType.ToString(), cancellationToken);
             await authorizationManager.CreateAsync(newDevice, cancellationToken);
             
             var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id, token });

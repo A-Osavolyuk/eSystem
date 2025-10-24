@@ -13,7 +13,6 @@ public sealed class PasswordSignInStrategy(
     IUserManager userManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
-    ILoginManager loginManager,
     IAuthorizationManager authorizationManager,
     IHttpContextAccessor accessor,
     IOptions<SignInOptions> options) : SignInStrategy
@@ -21,7 +20,6 @@ public sealed class PasswordSignInStrategy(
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ILoginManager loginManager = loginManager;
     private readonly IAuthorizationManager authorizationManager = authorizationManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly SignInOptions options = options.Value;
@@ -184,8 +182,7 @@ public sealed class PasswordSignInStrategy(
         }
 
         response = new SignInResponse() { UserId = user.Id, };
-
-        await loginManager.CreateAsync(device, LoginType.Password, cancellationToken);
+        
         await authorizationManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);
