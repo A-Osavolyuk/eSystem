@@ -14,8 +14,13 @@ public class ClientEntity : Entity
     public bool AllowOfflineAccess { get; set; }
     public string? LogoUri { get; set; }
     public string? ClientUri { get; set; }
-    
+
     public ICollection<ClientRedirectUriEntity> RedirectUris { get; set; } = null!;
     public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
     public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
+
+    public bool HasUri(string uri) => RedirectUris.Any(r => r.RedirectUri == uri);
+
+    public bool HasScopes(List<string> scopes)
+        => scopes.All(scope => AllowedScopes.Any(x => x.Scope.Name == scope));
 }
