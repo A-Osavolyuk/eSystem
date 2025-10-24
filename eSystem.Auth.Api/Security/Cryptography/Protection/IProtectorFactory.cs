@@ -1,6 +1,8 @@
-﻿namespace eSystem.Auth.Api.Security.Cryptography.Protection;
+﻿using eSystem.Application.Security.Cryptography.Protection;
+
+namespace eSystem.Auth.Api.Security.Cryptography.Protection;
 
 public interface IProtectorFactory
 {
-    public Protector Create(ProtectorType type);
+    public IProtector Create(ProtectorType type);
 }

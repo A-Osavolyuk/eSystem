@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Cryptography.Keys;
+﻿using eSystem.Application.Security.Cryptography.Protection;
+using eSystem.Auth.Api.Security.Cryptography.Keys;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
 
 namespace eSystem.Auth.Api.Services;
@@ -11,7 +12,7 @@ public sealed class SecretManager(
 {
     private readonly AuthDbContext context = context;
     private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
+    private readonly IProtector protector = protectorFactory.Create(ProtectorType.Secret);
 
     public async ValueTask<UserSecretEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
     {

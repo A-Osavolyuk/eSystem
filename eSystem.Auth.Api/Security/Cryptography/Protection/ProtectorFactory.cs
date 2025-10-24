@@ -1,8 +1,10 @@
-﻿namespace eSystem.Auth.Api.Security.Cryptography.Protection;
+﻿using eSystem.Application.Security.Cryptography.Protection;
+
+namespace eSystem.Auth.Api.Security.Cryptography.Protection;
 
 public class ProtectorFactory(IServiceProvider serviceProvider) : IProtectorFactory
 {
     private readonly IServiceProvider serviceProvider = serviceProvider;
 
-    public Protector Create(ProtectorType type) => serviceProvider.GetRequiredKeyedService<Protector>(type);
+    public IProtector Create(ProtectorType type) => serviceProvider.GetRequiredKeyedService<IProtector>(type);
 }

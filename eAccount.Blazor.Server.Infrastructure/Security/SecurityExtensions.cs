@@ -1,4 +1,5 @@
-﻿using eSystem.Domain.Security.Authentication.Cookies;
+﻿using eAccount.Blazor.Server.Infrastructure.Security.Cryptography.Protection;
+using eSystem.Domain.Security.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 
@@ -9,6 +10,7 @@ public static class SecurityExtensions
     public static void AddAuthentication(this IHostApplicationBuilder builder)
     {
         builder.Services.AddAuthorization();
+        builder.Services.AddProtection();
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;

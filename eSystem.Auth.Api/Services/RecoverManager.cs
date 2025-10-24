@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
+﻿using eSystem.Application.Security.Cryptography.Protection;
+using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
 
 namespace eSystem.Auth.Api.Services;
@@ -11,7 +12,7 @@ public sealed class RecoverManager(
 {
     private readonly AuthDbContext context = context;
     private readonly IRecoveryCodeFactory recoveryCodeFactory = recoveryCodeFactory;
-    private readonly Protector protector = protectorFactory.Create(ProtectorType.Code);
+    private readonly IProtector protector = protectorFactory.Create(ProtectorType.Code);
 
     public List<string> Unprotect(UserEntity user)
     {

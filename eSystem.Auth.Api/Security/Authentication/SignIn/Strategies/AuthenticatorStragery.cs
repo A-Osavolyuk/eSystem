@@ -1,4 +1,5 @@
 ﻿using eSystem.Application.Common.Http;
+using eSystem.Application.Security.Cryptography.Protection;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
 using eSystem.Auth.Api.Security.Identity.Options;
@@ -24,7 +25,7 @@ public class AuthenticatorSignInStrategy(
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
-    private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
+    private readonly IProtector protector = protectorFactory.Create(ProtectorType.Secret);
     private readonly SignInOptions options = options.Value;
 
     public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 

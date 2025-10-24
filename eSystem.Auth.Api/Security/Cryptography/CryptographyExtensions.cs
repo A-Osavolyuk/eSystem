@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Cryptography.Codes;
+﻿using eSystem.Application.Security.Cryptography.Protection;
+using eSystem.Auth.Api.Security.Cryptography.Codes;
 using eSystem.Auth.Api.Security.Cryptography.Hashing;
 using eSystem.Auth.Api.Security.Cryptography.Hashing.Hashers;
 using eSystem.Auth.Api.Security.Cryptography.Keys;
@@ -20,8 +21,8 @@ public static class CryptographyExtensions
     {
         services.AddDataProtection();
         services.AddScoped<IProtectorFactory, ProtectorFactory>();
-        services.AddKeyedScoped<Protector, CodeProtector>(ProtectorType.Code);
-        services.AddKeyedScoped<Protector, SecretProtector>(ProtectorType.Secret);
+        services.AddKeyedScoped<IProtector, CodeProtector>(ProtectorType.Code);
+        services.AddKeyedScoped<IProtector, SecretProtector>(ProtectorType.Secret);
     }
 
     private static void AddHashing(this IServiceCollection services)
