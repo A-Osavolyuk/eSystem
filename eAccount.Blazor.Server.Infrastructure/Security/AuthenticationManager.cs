@@ -1,9 +1,8 @@
 ﻿using eAccount.Blazor.Server.Application.State;
 using eAccount.Blazor.Server.Domain.Options;
 using eAccount.Blazor.Server.Domain.Requests;
-using eAccount.Blazor.Server.Domain.Responses;
+using eSystem.Application.Security.Authentication.SSO;
 using Microsoft.AspNetCore.Components;
-using SignInRequest = eAccount.Blazor.Server.Domain.Requests.SignInRequest;
 
 namespace eAccount.Blazor.Server.Infrastructure.Security;
 
@@ -24,26 +23,28 @@ public class AuthenticationManager(
 
     public async Task SignInAsync()
     {
-        var request = new SignInRequest() { UserId = userState.UserId };
+        var authorizeRequest = new AuthorizeRequest()
+        {
+            UserId = userState.UserId,
+            ClientId = "2f213a036e325a55dc19320f03c2fad7c13f0169788b5968686cb4931341c393a651d7e6",
+            RedirectUri = "none",
+            Scopes = [Scopes.OpenId, Scopes.Profile, Scopes.Email, Scopes.PhoneNumber, Scopes.Address],
+            State = "State",
+            Nonce = "Nonce"
+        };
+        var authorizeResponse = await AuthorizeAsync(authorizeRequest);
+    }
+
+    private async Task<HttpResponse> AuthorizeAsync(AuthorizeRequest request)
+    {
         var fetchOptions = new FetchOptions()
         {
+            Url = $"{navigationManager.BaseUri}api/auth/authorize",
             Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/auth/sign-in",
             Body = request
         };
 
-        var result = await fetchClient.FetchAsync(fetchOptions);
-        if (result.Success)
-        {
-            var response = result.Get<SignInResponse>()!;
-            tokenProvider.AccessToken = response.AccessToken;
-
-            var identity = response.Identity;
-            var claims = identity.Claims.Select(x => new Claim(x.Type, x.Value)).ToList();
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, identity.Scheme));
-
-            await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignInAsync(principal);
-        }
+        return await fetchClient.FetchAsync(fetchOptions);
     }
 
     public async Task SignOutAsync()

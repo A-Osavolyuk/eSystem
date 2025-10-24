@@ -1,6 +1,8 @@
 ﻿using eAccount.Blazor.Server.Domain.DTOs;
 using eAccount.Blazor.Server.Domain.Requests;
 using eAccount.Blazor.Server.Infrastructure.Security;
+using eAccount.Blazor.Server.Infrastructure.Security.Authentication.SSO;
+using eSystem.Application.Security.Cryptography.Protection;
 using eSystem.Domain.Responses.Auth;
 using eSystem.Domain.Security.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
@@ -16,28 +18,57 @@ namespace eAccount.Blazor.Server.Infrastructure.Controllers;
 [Route("api/[controller]")]
 public class AuthController(
     TokenProvider tokenProvider,
-    ISecurityService securityService) : ControllerBase
+    ISsoService ssoService,
+    IProtector protector) : ControllerBase
 {
     private readonly TokenProvider tokenProvider = tokenProvider;
-    private readonly ISecurityService securityService = securityService;
+    private readonly ISsoService ssoService = ssoService;
+    private readonly IProtector protector = protector;
 
-    [HttpPost("sign-in")]
-    public async Task<IActionResult> SignInAsync([FromBody] SignInRequest signInRequest)
+    [HttpPost("authorize")]
+    public async Task<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
     {
-        var request = new AuthorizeRequest() { UserId = signInRequest.UserId };
-        var result = await securityService.AuthorizeAsync(request);
+        var result = await ssoService.AuthorizeAsync(request);
         if (!result.Success) return StatusCode(500, result);
-
+        
         var response = result.Get<AuthorizeResponse>()!;
-        tokenProvider.AccessToken = response.AccessToken;
-
+        var sessionCookie = new SessionCookie()
+        {
+            SessionId = response.SessionId,
+            UserId = request.UserId,
+            DeviceId = response.DeviceId,
+            Nonce = response.Nonce,
+            IssuedAt = DateTimeOffset.UtcNow,
+            ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
+        };
+        
+        var sessionCookieJson = JsonSerializer.Serialize(sessionCookie);
+        var protectedSessionCookie = protector.Protect(sessionCookieJson);
+        var cookieOptions = new CookieOptions()
+        {
+            Domain = "localhost",
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = sessionCookie.ExpiresAt.UtcDateTime,
+            MaxAge = TimeSpan.FromDays(30)
+        };
+        
+        Response.Cookies.Append(DefaultCookies.Session, protectedSessionCookie, cookieOptions);
+    
+        return Ok(new ResponseBuilder().Succeeded().Build());
+    }
+    
+    [HttpPost("sign-in")]
+    public async Task<IActionResult> SignInAsync([FromBody] SignInRequest request)
+    {
         var cookieOptions = new CookieOptions()
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
         };
 
-        Response.Cookies.Append(DefaultCookies.RefreshToken, response.RefreshToken, cookieOptions);
+        Response.Cookies.Append(DefaultCookies.RefreshToken, request.RefreshToken, cookieOptions);
+        tokenProvider.AccessToken = request.AccessToken;
 
         var authenticateResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
         if (!authenticateResult.Succeeded)
@@ -63,13 +94,13 @@ public class AuthController(
             Scheme = CookieAuthenticationDefaults.AuthenticationScheme
         };
 
-        var signInResponse = new SignInResponse()
+        var response = new SignInResponse()
         {
             Identity = claimsIdentity,
             AccessToken = tokenProvider.AccessToken
         };
 
-        return Ok(new ResponseBuilder().Succeeded().WithResult(signInResponse).Build());
+        return Ok(new ResponseBuilder().Succeeded().WithResult(response).Build());
     }
 
     [HttpPost("sign-out")]
@@ -84,7 +115,7 @@ public class AuthController(
             RefreshToken = refreshToken
         };
         
-        var result = await securityService.UnauthorizeAsync(request);
+        var result = await ssoService.UnauthorizeAsync(request);
         if (!result.Success) return StatusCode(500, result);
 
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -106,7 +137,7 @@ public class AuthController(
         }
         
         request.RefreshToken = refreshToken;
-        var result = await securityService.RefreshTokenAsync(request);
+        var result = await ssoService.RefreshTokenAsync(request);
 
         return Ok(result);
     }
