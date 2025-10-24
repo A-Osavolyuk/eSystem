@@ -3,7 +3,6 @@ using eSystem.Auth.Api.Entities;
 using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Cryptography.Keys;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
-using eSystem.Domain.Common.Results;
 
 namespace eSystem.Auth.Api.Services;
 

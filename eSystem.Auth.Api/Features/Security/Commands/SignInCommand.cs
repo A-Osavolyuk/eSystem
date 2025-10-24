@@ -1,5 +1,4 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SignIn;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Security.Authentication.SignIn;
 

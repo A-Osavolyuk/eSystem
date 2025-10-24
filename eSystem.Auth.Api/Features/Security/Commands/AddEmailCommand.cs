@@ -1,6 +1,5 @@
 ﻿using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Identity.Options;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;

@@ -2,7 +2,6 @@
 using eSystem.Auth.Api.Messages.Email;
 using eSystem.Auth.Api.Messages.Sms;
 using eSystem.Domain.Common.Messaging;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.Verification.Commands;

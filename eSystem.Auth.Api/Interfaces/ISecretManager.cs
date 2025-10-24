@@ -1,5 +1,4 @@
 ﻿using eSystem.Auth.Api.Entities;
-using eSystem.Domain.Common.Results;
 
 namespace eSystem.Auth.Api.Interfaces;
 

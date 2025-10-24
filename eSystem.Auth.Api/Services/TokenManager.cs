@@ -5,7 +5,6 @@ using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Cryptography.Keys;
 using eSystem.Auth.Api.Security.Tokens;
 using eSystem.Auth.Api.Security.Tokens.Jwt;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.Security.Claims;
 
 namespace eSystem.Auth.Api.Services;

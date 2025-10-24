@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using eSystem.Auth.Api.Entities;
-using eSystem.Domain.Common.Results;
 
 namespace eSystem.Auth.Api.Interfaces;
 

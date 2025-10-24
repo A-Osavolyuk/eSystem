@@ -1,7 +1,6 @@
 ﻿using eSystem.Auth.Api.Entities;
 using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.TwoFactor.Commands;

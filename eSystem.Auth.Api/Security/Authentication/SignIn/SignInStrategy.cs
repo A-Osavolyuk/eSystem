@@ -1,6 +1,4 @@
-﻿using eSystem.Domain.Common.Results;
-
-namespace eSystem.Auth.Api.Security.Authentication.SignIn;
+﻿namespace eSystem.Auth.Api.Security.Authentication.SignIn;
 
 public abstract class SignInStrategy
 {

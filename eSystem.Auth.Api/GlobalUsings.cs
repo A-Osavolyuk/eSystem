@@ -11,6 +11,7 @@ global using eSystem.Auth.Api.Utilities;
 global using eSystem.Domain.Abstraction.Data.Entities;
 global using eSystem.Domain.Abstraction.Messaging;
 global using eSystem.Domain.Abstraction.Validation;
+global using eSystem.Domain.Common.Results;
 global using eSystem.Domain.Enums;
 global using eSystem.ServiceDefaults;
 global using FluentValidation;

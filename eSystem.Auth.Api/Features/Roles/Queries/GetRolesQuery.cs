@@ -1,6 +1,5 @@
 ﻿using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Mapping;
-using eSystem.Domain.Common.Results;
 
 namespace eSystem.Auth.Api.Features.Roles.Queries;
 

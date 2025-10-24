@@ -1,6 +1,5 @@
 ﻿using eSystem.Application.Common.Http;
 using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.DTOs;
 using eSystem.Domain.Security.Authentication.TwoFactor;
 

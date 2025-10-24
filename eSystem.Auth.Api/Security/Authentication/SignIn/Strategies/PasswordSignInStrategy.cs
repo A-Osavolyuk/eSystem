@@ -2,7 +2,6 @@
 using eSystem.Auth.Api.Entities;
 using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Identity.Options;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.Responses.Auth;
 using eSystem.Domain.Security.Authentication;
 using eSystem.Domain.Security.Lockout;

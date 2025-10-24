@@ -3,7 +3,6 @@ using eSystem.Auth.Api.Messages.Email;
 using eSystem.Auth.Api.Messages.Sms;
 using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Domain.Common.Messaging;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Responses.Auth;
 

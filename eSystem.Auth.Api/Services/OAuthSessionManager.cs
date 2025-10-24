@@ -1,7 +1,6 @@
 ﻿using eSystem.Auth.Api.Data;
 using eSystem.Auth.Api.Entities;
 using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.Common.Results;
 
 namespace eSystem.Auth.Api.Services;
 

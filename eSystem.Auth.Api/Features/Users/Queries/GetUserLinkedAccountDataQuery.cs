@@ -1,5 +1,4 @@
 ﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.Common.Results;
 using eSystem.Domain.DTOs;
 using eSystem.Domain.Security.Authorization.OAuth;
 
