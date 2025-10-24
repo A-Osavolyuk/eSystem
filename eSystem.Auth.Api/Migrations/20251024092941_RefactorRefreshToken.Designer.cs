@@ -12,8 +12,8 @@ using eSystem.Auth.Api.Data;
 namespace eSystem.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251024085412_Initial")]
-    partial class Initial
+    [Migration("20251024092941_RefactorRefreshToken")]
+    partial class RefactorRefreshToken
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,29 +71,6 @@ namespace eSystem.Auth.Api.Migrations
                     b.HasIndex("DeviceId");
 
                     b.ToTable("AuthorizationCodes");
-                });
-
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.AuthorizationSessionEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId")
-                        .IsUnique();
-
-                    b.ToTable("AuthorizationSessions");
                 });
 
             modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientAllowedScopeEntity", b =>
@@ -476,17 +453,20 @@ namespace eSystem.Auth.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset?>("RefreshDate")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -498,8 +478,9 @@ namespace eSystem.Auth.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId")
-                        .IsUnique();
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("SessionId");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -1166,17 +1147,6 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.AuthorizationSessionEntity", b =>
-                {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserDeviceEntity", "Device")
-                        .WithOne()
-                        .HasForeignKey("eSystem.Auth.Api.Entities.AuthorizationSessionEntity", "DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Device");
-                });
-
             modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientAllowedScopeEntity", b =>
                 {
                     b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "Client")
@@ -1301,13 +1271,21 @@ namespace eSystem.Auth.Api.Migrations
 
             modelBuilder.Entity("eSystem.Auth.Api.Entities.RefreshTokenEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserDeviceEntity", "Device")
-                        .WithOne()
-                        .HasForeignKey("eSystem.Auth.Api.Entities.RefreshTokenEntity", "DeviceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Device");
+                    b.HasOne("eSystem.Auth.Api.Entities.SessionEntity", "Session")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Session");
                 });
 
             modelBuilder.Entity("eSystem.Auth.Api.Entities.ResourceEntity", b =>
@@ -1544,6 +1522,11 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Permissions");
 
                     b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("eSystem.Auth.Api.Entities.SessionEntity", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("eSystem.Auth.Api.Entities.UserDeviceEntity", b =>
