@@ -1,6 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-
-namespace eSystem.Auth.Api.Services;
+﻿namespace eSystem.Auth.Api.Services;
 
 public class SessionStorage(IHttpContextAccessor httpContextAccessor) : ISessionStorage
 {

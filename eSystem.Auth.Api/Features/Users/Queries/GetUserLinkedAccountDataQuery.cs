@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.DTOs;
+﻿using eSystem.Domain.DTOs;
 using eSystem.Domain.Security.Authorization.OAuth;
 
 namespace eSystem.Auth.Api.Features.Users.Queries;

@@ -1,7 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Mapping;
-
-namespace eSystem.Auth.Api.Features.Users.Queries;
+﻿namespace eSystem.Auth.Api.Features.Users.Queries;
 
 public sealed record GetUserQuery(Guid UserId) : IRequest<Result>;
 

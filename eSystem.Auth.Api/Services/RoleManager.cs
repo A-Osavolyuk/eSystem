@@ -1,8 +1,4 @@
-﻿using eSystem.Auth.Api.Data;
-using eSystem.Auth.Api.Entities;
-using eSystem.Auth.Api.Interfaces;
-
-namespace eSystem.Auth.Api.Services;
+﻿namespace eSystem.Auth.Api.Services;
 
 [Injectable(typeof(IRoleManager), ServiceLifetime.Scoped)]
 public sealed class RoleManager(AuthDbContext context) : IRoleManager

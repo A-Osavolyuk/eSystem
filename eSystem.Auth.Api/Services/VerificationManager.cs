@@ -1,7 +1,4 @@
-﻿using eSystem.Auth.Api.Data;
-using eSystem.Auth.Api.Entities;
-using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.Security.Verification;
+﻿using eSystem.Domain.Security.Verification;
 
 namespace eSystem.Auth.Api.Services;
 

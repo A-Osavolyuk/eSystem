@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Security.Authentication.Results;
+﻿using eSystem.Auth.Api.Security.Authentication.Results;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eSystem.Auth.Api.Services;

@@ -1,6 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-
-namespace eSystem.Auth.Api.Features.Permissions.Queries;
+﻿namespace eSystem.Auth.Api.Features.Permissions.Queries;
 
 public sealed record GetPermissionsQuery() : IRequest<Result>;
 

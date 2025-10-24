@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Security.Identity.Options;
+﻿using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Security.Authentication.TwoFactor;
 using eSystem.Domain.Security.Verification;

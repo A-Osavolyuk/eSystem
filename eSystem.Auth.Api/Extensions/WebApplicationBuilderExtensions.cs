@@ -1,5 +1,4 @@
 ﻿using eSystem.Application.Data;
-using eSystem.Auth.Api.Data;
 
 namespace eSystem.Auth.Api.Extensions;
 

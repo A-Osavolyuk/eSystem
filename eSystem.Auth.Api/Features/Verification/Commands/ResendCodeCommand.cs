@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Messages.Email;
+﻿using eSystem.Auth.Api.Messages.Email;
 using eSystem.Auth.Api.Messages.Sms;
 using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Domain.Common.Messaging;

@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.DTOs;
+﻿using eSystem.Domain.DTOs;
 
 namespace eSystem.Auth.Api.Features.Passkeys.Queries;
 

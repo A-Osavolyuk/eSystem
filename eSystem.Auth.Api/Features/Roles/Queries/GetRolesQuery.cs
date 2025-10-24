@@ -1,7 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Mapping;
-
-namespace eSystem.Auth.Api.Features.Roles.Queries;
+﻿namespace eSystem.Auth.Api.Features.Roles.Queries;
 
 public sealed record GetRolesQuery() : IRequest<Result>;
 

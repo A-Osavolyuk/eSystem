@@ -1,9 +1,7 @@
 ﻿using eSystem.Application.Common.Http;
-using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
 using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Responses.Auth;
-using eSystem.Domain.Security.Authentication;
 using eSystem.Domain.Security.Credentials.Constants;
 using eSystem.Domain.Security.Credentials.PublicKey;
 

@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.Requests.Auth;
+﻿using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Security.Verification;
 
 namespace eSystem.Auth.Api.Features.LinkedAccounts.Commands;

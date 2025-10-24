@@ -1,8 +1,6 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Security.Session;
+﻿using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Responses.Auth;
-using eSystem.Domain.Security.Authentication;
 using eSystem.Domain.Security.Verification;
 
 namespace eSystem.Auth.Api.Features.Devices.Commands;

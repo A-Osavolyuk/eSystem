@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.Common.Messaging;
+﻿using eSystem.Domain.Common.Messaging;
 using MassTransit;
 
 namespace eSystem.Auth.Api.Services;

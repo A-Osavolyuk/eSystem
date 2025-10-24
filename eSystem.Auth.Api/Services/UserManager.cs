@@ -1,7 +1,4 @@
-﻿using eSystem.Auth.Api.Data;
-using eSystem.Auth.Api.Entities;
-using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Security.Cryptography.Hashing;
+﻿using eSystem.Auth.Api.Security.Cryptography.Hashing;
 using eSystem.Domain.Security.Lockout;
 using eSystem.Domain.Security.Verification;
 

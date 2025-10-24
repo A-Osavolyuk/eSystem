@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Entities;
-using eSystem.Domain.Abstraction.Data.Seeding;
+﻿using eSystem.Domain.Abstraction.Data.Seeding;
 using eSystem.Domain.Security.Verification;
 
 namespace eSystem.Auth.Api.Data.Seeding;

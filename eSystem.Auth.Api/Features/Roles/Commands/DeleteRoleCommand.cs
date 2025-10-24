@@ -1,6 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-
-namespace eSystem.Auth.Api.Features.Roles.Commands;
+﻿namespace eSystem.Auth.Api.Features.Roles.Commands;
 
 public sealed record DeleteRoleCommand(Guid Id) : IRequest<Result>;
 

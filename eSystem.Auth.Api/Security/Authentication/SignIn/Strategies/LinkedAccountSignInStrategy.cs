@@ -1,9 +1,5 @@
 ﻿using eSystem.Application.Common.Http;
-using eSystem.Auth.Api.Entities;
-using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Session;
-using eSystem.Auth.Api.Utilities;
-using eSystem.Domain.Security.Authentication;
 using eSystem.Domain.Security.Authorization.OAuth;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;

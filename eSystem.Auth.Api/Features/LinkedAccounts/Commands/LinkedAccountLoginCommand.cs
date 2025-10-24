@@ -1,7 +1,4 @@
-﻿using eSystem.Auth.Api.Entities;
-using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Security.Identity.Options;
-using eSystem.Auth.Api.Utilities;
+﻿using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Domain.Responses.Auth;
 using Microsoft.AspNetCore.Authentication;
 using OtpNet;

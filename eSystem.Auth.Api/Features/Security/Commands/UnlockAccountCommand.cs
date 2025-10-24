@@ -1,5 +1,4 @@
 ﻿using eSystem.Application.Common.Http;
-using eSystem.Auth.Api.Interfaces;
 using eSystem.Domain.Common.Messaging;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Security.Verification;

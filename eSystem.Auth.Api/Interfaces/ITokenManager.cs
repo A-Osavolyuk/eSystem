@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using eSystem.Auth.Api.Entities;
-
-namespace eSystem.Auth.Api.Interfaces;
+﻿namespace eSystem.Auth.Api.Interfaces;
 
 public interface ITokenManager
 {

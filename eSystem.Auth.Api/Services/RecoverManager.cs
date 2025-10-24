@@ -1,7 +1,4 @@
-﻿using eSystem.Auth.Api.Data;
-using eSystem.Auth.Api.Entities;
-using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
+﻿using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
 
 namespace eSystem.Auth.Api.Services;

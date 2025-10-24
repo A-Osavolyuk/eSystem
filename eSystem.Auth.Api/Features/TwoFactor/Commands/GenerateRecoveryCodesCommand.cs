@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Domain.Requests.Auth;
+﻿using eSystem.Domain.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.TwoFactor.Commands;
 

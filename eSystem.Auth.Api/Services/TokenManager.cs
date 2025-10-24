@@ -1,7 +1,4 @@
 ﻿using System.Security.Claims;
-using eSystem.Auth.Api.Data;
-using eSystem.Auth.Api.Entities;
-using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Cryptography.Keys;
 using eSystem.Auth.Api.Security.Tokens;
 using eSystem.Auth.Api.Security.Tokens.Jwt;

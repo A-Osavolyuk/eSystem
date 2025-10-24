@@ -1,7 +1,4 @@
-﻿using eSystem.Auth.Api.Interfaces;
-using eSystem.Auth.Api.Mapping;
-
-namespace eSystem.Auth.Api.Features.Devices.Queries;
+﻿namespace eSystem.Auth.Api.Features.Devices.Queries;
 
 public record GetDeviceQuery(Guid Id) : IRequest<Result>;
 

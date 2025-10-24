@@ -6,8 +6,6 @@ using eSystem.Application.Common.Versioning;
 using eSystem.Application.Data;
 using eSystem.Application.Validation;
 using eSystem.Auth.Api.Security;
-using eSystem.Auth.Api.Data;
-using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Services;
 using MassTransit;
 

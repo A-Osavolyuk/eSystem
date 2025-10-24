@@ -1,5 +1,4 @@
 ﻿using eSystem.Application.Common.Errors;
-using eSystem.Auth.Api.Features.Security.Commands;
 using eSystem.Auth.Api.Features.TwoFactor.Commands;
 using eSystem.Domain.Common.Http;
 using eSystem.Domain.Requests.Auth;

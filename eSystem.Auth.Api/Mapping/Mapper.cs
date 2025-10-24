@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Entities;
-using eSystem.Domain.DTOs;
+﻿using eSystem.Domain.DTOs;
 using eSystem.Domain.Requests.Auth;
 
 namespace eSystem.Auth.Api.Mapping;
