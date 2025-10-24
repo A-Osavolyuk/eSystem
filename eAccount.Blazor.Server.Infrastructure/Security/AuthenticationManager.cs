@@ -26,7 +26,7 @@ public class AuthenticationManager(
         var authorizeRequest = new AuthorizeRequest()
         {
             UserId = userState.UserId,
-            ClientId = "2f213a036e325a55dc19320f03c2fad7c13f0169788b5968686cb4931341c393a651d7e6",
+            ClientId = "client-sso",
             RedirectUri = "none",
             Scopes = [Scopes.OpenId, Scopes.Profile, Scopes.Email, Scopes.PhoneNumber, Scopes.Address],
             State = "State",

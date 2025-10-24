@@ -7,13 +7,13 @@ namespace eAccount.Blazor.Server.Infrastructure.Security;
 
 public class JwtAuthenticationStateProvider(
     IHttpContextAccessor httpContextAccessor,
-    IUserService userService,
+    //IUserService userService,
     UserState userState) : AuthenticationStateProvider
 {
     private readonly AuthenticationState anonymous = new(new ClaimsPrincipal());
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
     private readonly UserState userState = userState;
-    private readonly IUserService userService = userService;
+    //private readonly IUserService userService = userService;
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
@@ -30,27 +30,25 @@ public class JwtAuthenticationStateProvider(
 
     }
 
-    public async Task SignInAsync(ClaimsPrincipal principal)
-    {
-        var state  = new AuthenticationState(principal);
-        await LoadStateAsync();
-        NotifyAuthenticationStateChanged(Task.FromResult(state));
-    }
-    
+    // public async Task SignInAsync(ClaimsPrincipal principal)
+    // {
+    //     var state  = new AuthenticationState(principal);
+    //     await LoadStateAsync();
+    //     NotifyAuthenticationStateChanged(Task.FromResult(state));
+    // }
     public Task SignOutAsync()
     {
         NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
         return Task.CompletedTask;
     }
-    
-    private async Task LoadStateAsync()
-    {
-        var result = await userService.GetUserStateAsync(userState.UserId);
-        
-        if (result.Success)
-        {
-            var state = result.Get<UserStateDto>()!;
-            userState.Map(state);
-        }
-    }
+    // private async Task LoadStateAsync()
+    // {
+    //     var result = await userService.GetUserStateAsync(userState.UserId);
+    //     
+    //     if (result.Success)
+    //     {
+    //         var state = result.Get<UserStateDto>()!;
+    //         userState.Map(state);
+    //     }
+    // }
 }
