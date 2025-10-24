@@ -1,6 +1,7 @@
 ﻿using eSystem.Application.Common.Http;
 using eSystem.Auth.Api.Entities;
 using eSystem.Auth.Api.Interfaces;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Auth.Api.Utilities;
 using eSystem.Domain.Security.Authentication;
 using eSystem.Domain.Security.Authorization.OAuth;
@@ -13,15 +14,15 @@ public class LinkedAccountSignInStrategy(
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
     ILinkedAccountManager providerManager,
-    IOAuthSessionManager sessionManager,
-    IAuthorizationManager authorizationManager) : SignInStrategy
+    IOAuthSessionManager oauthSessionManager,
+    ISessionManager sessionManager) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly ILinkedAccountManager providerManager = providerManager;
-    private readonly IOAuthSessionManager sessionManager = sessionManager;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly IOAuthSessionManager oauthSessionManager = oauthSessionManager;
+    private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials,
@@ -95,16 +96,16 @@ public class LinkedAccountSignInStrategy(
             if (!connectResult.Succeeded) return Result.Failure(connectResult.GetError(), fallbackUri);
         }
 
-        var session = await sessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
+        var session = await oauthSessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
         if (session is null) return eSystem.Domain.Common.Results.Results.BadRequest("Cannot find session with id {sessionId}.", fallbackUri);
 
         session.SignType = OAuthSignType.SignIn;
         session.LinkedAccountId = linkedAccount.Id;
 
-        var updateResult = await sessionManager.UpdateAsync(session, cancellationToken);
+        var updateResult = await oauthSessionManager.UpdateAsync(session, cancellationToken);
         if (!updateResult.Succeeded) return Result.Failure(updateResult.GetError(), fallbackUri);
         
-        await authorizationManager.CreateAsync(device, cancellationToken);
+        await sessionManager.CreateAsync(device, cancellationToken);
 
         var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id, token });
         return Result.Success(link);

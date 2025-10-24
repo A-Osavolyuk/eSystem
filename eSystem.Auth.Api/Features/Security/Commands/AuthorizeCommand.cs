@@ -1,5 +1,5 @@
 ﻿using eSystem.Application.Common.Http;
-using eSystem.Auth.Api.Interfaces;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Responses.Auth;
 
@@ -11,12 +11,12 @@ public class AuthorizeCommandHandler(
     IUserManager userManager,
     ITokenManager tokenManager,
     IHttpContextAccessor httpContextAccessor,
-    IAuthorizationManager authorizationManager) : IRequestHandler<AuthorizeCommand, Result>
+    ISessionManager sessionManager) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly ISessionManager sessionManager = sessionManager;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
@@ -28,7 +28,7 @@ public class AuthorizeCommandHandler(
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound("Invalid device.");
 
-        var session = await authorizationManager.FindAsync(device, cancellationToken);
+        var session = await sessionManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
         
         var accessToken = tokenManager.GenerateAccessToken(user);

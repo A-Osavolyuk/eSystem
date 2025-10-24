@@ -2,6 +2,7 @@
 using eSystem.Auth.Api.Entities;
 using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Identity.Options;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Responses.Auth;
 using eSystem.Domain.Security.Authentication;
 using eSystem.Domain.Security.Lockout;
@@ -12,14 +13,14 @@ public sealed class PasswordSignInStrategy(
     IUserManager userManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
-    IAuthorizationManager authorizationManager,
+    ISessionManager sessionManager,
     IHttpContextAccessor accessor,
     IOptions<SignInOptions> options) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly SignInOptions options = options.Value;
 
@@ -182,7 +183,7 @@ public sealed class PasswordSignInStrategy(
 
         response = new SignInResponse() { UserId = user.Id, };
         
-        await authorizationManager.CreateAsync(device, cancellationToken);
+        await sessionManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);
     }

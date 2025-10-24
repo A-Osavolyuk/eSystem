@@ -27,7 +27,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
     public DbSet<UserRecoveryCodeEntity> UserRecoveryCodes { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
-    public DbSet<AuthorizationSessionEntity> AuthorizationSessions { get; set; }
     public DbSet<VerificationEntity> Verifications { get; set; }
     public DbSet<UserVerificationMethodEntity> UserVerificationMethods { get; set; }
     public DbSet<ClientEntity> Clients { get; set; }
@@ -271,15 +270,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithOne()
                 .HasForeignKey<RefreshTokenEntity>(t => t.DeviceId)
                 .OnDelete(DeleteBehavior.Restrict);
-        });
-        
-        builder.Entity<AuthorizationSessionEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-
-            entity.HasOne(x => x.Device)
-                .WithOne()
-                .HasForeignKey<AuthorizationSessionEntity>(x => x.DeviceId);
         });
 
         builder.Entity<PasskeyEntity>(entity =>

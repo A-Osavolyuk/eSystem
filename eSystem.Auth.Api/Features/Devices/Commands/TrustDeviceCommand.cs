@@ -1,4 +1,5 @@
 ﻿using eSystem.Auth.Api.Interfaces;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Responses.Auth;
 using eSystem.Domain.Security.Authentication;
@@ -11,12 +12,12 @@ public record TrustDeviceCommand(TrustDeviceRequest Request) : IRequest<Result>;
 public class TrustDeviceCommandHandler(
     IUserManager userManager,
     IDeviceManager deviceManager,
-    IAuthorizationManager authorizationManager,
+    ISessionManager sessionManager,
     IVerificationManager verificationManager) : IRequestHandler<TrustDeviceCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly ISessionManager sessionManager = sessionManager;
     private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(TrustDeviceCommand request, CancellationToken cancellationToken)
@@ -44,7 +45,7 @@ public class TrustDeviceCommandHandler(
             });
         }
         
-        await authorizationManager.CreateAsync(device, cancellationToken);
+        await sessionManager.CreateAsync(device, cancellationToken);
         
         var response = new TrustDeviceResponse()
         {

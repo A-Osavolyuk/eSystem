@@ -1,5 +1,5 @@
 ﻿using eSystem.Application.Common.Http;
-using eSystem.Auth.Api.Interfaces;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Responses.Auth;
 
@@ -11,12 +11,12 @@ public class RefreshTokenCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
     IHttpContextAccessor httpContextAccessor,
-    IAuthorizationManager authorizationManager) : IRequestHandler<RefreshTokenCommand, Result>
+    ISessionManager sessionManager) : IRequestHandler<RefreshTokenCommand, Result>
 {
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly ISessionManager sessionManager = sessionManager;
 
     public async Task<Result> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
@@ -31,7 +31,7 @@ public class RefreshTokenCommandHandler(
         var refreshToken = await tokenManager.FindAsync(request.Request.RefreshToken, cancellationToken);
         if (refreshToken is null || !refreshToken.IsValid) return Results.BadRequest("Invalid token.");
 
-        var session = await authorizationManager.FindAsync(device, cancellationToken);
+        var session = await sessionManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
         var accessToken = tokenManager.GenerateAccessToken(user);

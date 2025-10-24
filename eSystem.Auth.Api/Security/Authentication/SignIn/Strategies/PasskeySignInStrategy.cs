@@ -1,6 +1,7 @@
 ﻿using eSystem.Application.Common.Http;
 using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Responses.Auth;
 using eSystem.Domain.Security.Authentication;
 using eSystem.Domain.Security.Credentials.Constants;
@@ -11,12 +12,12 @@ namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 public class PasskeySignInStrategy(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
-    IAuthorizationManager authorizationManager,
+    ISessionManager sessionManager,
     IHttpContextAccessor accessor) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
 
     public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 
@@ -56,7 +57,7 @@ public class PasskeySignInStrategy(
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return eSystem.Domain.Common.Results.Results.NotFound($"Invalid device.");
         
-        await authorizationManager.CreateAsync(device, cancellationToken);
+        await sessionManager.CreateAsync(device, cancellationToken);
 
         response = new SignInResponse() { UserId = user.Id, };
         return Result.Success(response);

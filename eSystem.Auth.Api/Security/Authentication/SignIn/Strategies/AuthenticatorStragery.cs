@@ -4,6 +4,7 @@ using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
 using eSystem.Auth.Api.Security.Identity.Options;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Responses.Auth;
 using eSystem.Domain.Security.Authentication;
 using eSystem.Domain.Security.Authentication.TwoFactor;
@@ -15,7 +16,7 @@ public class AuthenticatorSignInStrategy(
     IUserManager userManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
-    IAuthorizationManager authorizationManager,
+    ISessionManager sessionManager,
     ISecretManager secretManager,
     IHttpContextAccessor accessor,
     IProtectorFactory protectorFactory,
@@ -24,7 +25,7 @@ public class AuthenticatorSignInStrategy(
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly ISessionManager sessionManager = sessionManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly Protector protector = protectorFactory.Create(ProtectorType.Secret);
@@ -122,7 +123,7 @@ public class AuthenticatorSignInStrategy(
 
         response = new SignInResponse() { UserId = user.Id, };
         
-        await authorizationManager.CreateAsync(device, cancellationToken);
+        await sessionManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);
     }

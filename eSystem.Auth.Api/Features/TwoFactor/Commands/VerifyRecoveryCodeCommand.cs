@@ -2,6 +2,7 @@
 using eSystem.Auth.Api.Entities;
 using eSystem.Auth.Api.Interfaces;
 using eSystem.Auth.Api.Security.Identity.Options;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Responses.Auth;
 using eSystem.Domain.Security.Authentication;
@@ -17,14 +18,14 @@ public class VerifyRecoveryCodeCommandHandler(
     IRecoverManager recoveryManager,
     IHttpContextAccessor httpContextAccessor,
     IDeviceManager deviceManager,
-    IAuthorizationManager authorizationManager,
+    ISessionManager sessionManager,
     ILockoutManager lockoutManager,
     IOptions<SignInOptions> options) : IRequestHandler<VerifyRecoveryCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IRecoverManager recoveryManager = recoveryManager;
     private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly ISessionManager sessionManager = sessionManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
     private readonly SignInOptions options = options.Value;
@@ -109,7 +110,7 @@ public class VerifyRecoveryCodeCommandHandler(
 
         response = new VerifyRecoveryCodeResponse() { UserId = user.Id, };
         
-        await authorizationManager.CreateAsync(device, cancellationToken);
+        await sessionManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);
     }

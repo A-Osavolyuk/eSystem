@@ -6,6 +6,7 @@ using eSystem.Auth.Api.Messages.Email;
 using eSystem.Auth.Api.Security.Authentication.Results;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
+using eSystem.Auth.Api.Security.Session;
 using eSystem.Auth.Api.Utilities;
 using eSystem.Domain.Common.Messaging;
 using eSystem.Domain.Security.Authentication;
@@ -24,22 +25,22 @@ public sealed class HandleOAuthLoginCommandHandler(
     IUserManager userManager,
     IMessageService messageService,
     IRoleManager roleManager,
-    IOAuthSessionManager sessionManager,
+    IOAuthSessionManager oauthSessionManager,
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
     ISignInResolver signInResolver,
     IHttpContextAccessor httpContextAccessor,
-    IAuthorizationManager authorizationManager) : IRequestHandler<HandleLoginCommand, Result>
+    ISessionManager sessionManager) : IRequestHandler<HandleLoginCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
     private readonly IMessageService messageService = messageService;
     private readonly IRoleManager roleManager = roleManager;
-    private readonly IOAuthSessionManager sessionManager = sessionManager;
+    private readonly IOAuthSessionManager oauthSessionManager = oauthSessionManager;
     private readonly ILinkedAccountManager providerManager = providerManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ISignInResolver signInResolver = signInResolver;
-    private readonly IAuthorizationManager authorizationManager = authorizationManager;
+    private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(HandleLoginCommand request,
@@ -69,7 +70,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         if (email is null) return Results.BadRequest("Email is not provider in credentials", fallbackUri);
         
-        var session = await sessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
+        var session = await oauthSessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
         if (session is null) return Results.NotFound("Session was not found", fallbackUri);
 
         var user = await userManager.FindByEmailAsync(email, cancellationToken);
@@ -160,10 +161,10 @@ public sealed class HandleOAuthLoginCommandHandler(
             session.SignType = OAuthSignType.SignUp;
             session.LinkedAccountId = userLinkedAccount.Id;
 
-            var sessionResult = await sessionManager.UpdateAsync(session, cancellationToken);
+            var sessionResult = await oauthSessionManager.UpdateAsync(session, cancellationToken);
             if (!sessionResult.Succeeded) return Result.Failure(sessionResult.GetError(), fallbackUri);
             
-            await authorizationManager.CreateAsync(newDevice, cancellationToken);
+            await sessionManager.CreateAsync(newDevice, cancellationToken);
             
             var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id, token });
             return Result.Success(link);
