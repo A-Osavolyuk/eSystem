@@ -1,9 +1,11 @@
-﻿using eSystem.Application.Common.Http;
+﻿using System.Security.Claims;
+using eSystem.Application.Common.Http;
 using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Responses.Auth;
+using eSystem.Domain.Security.Claims;
 
-namespace eSystem.Auth.Api.Features.Security.Commands;
+namespace eSystem.Auth.Api.Features.SSO.Commands;
 
 public record RefreshTokenCommand(RefreshTokenRequest Request) : IRequest<Result>;
 
@@ -34,7 +36,13 @@ public class RefreshTokenCommandHandler(
         var session = await sessionManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
-        var accessToken = tokenManager.GenerateAccessToken(user);
+        var claims = new List<Claim>()
+        {
+            new (AppClaimTypes.Jti, Guid.NewGuid().ToString()),
+            new (AppClaimTypes.Subject,  user.Id.ToString()),
+        };
+        
+        var accessToken = tokenManager.GenerateAccessToken(claims);
         var response = new RefreshTokenResponse()
         {
             UserId = user.Id,

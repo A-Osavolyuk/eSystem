@@ -4,19 +4,17 @@ using eSystem.Auth.Api.Security.Session;
 using eSystem.Domain.Requests.Auth;
 using eSystem.Domain.Responses.Auth;
 
-namespace eSystem.Auth.Api.Features.Security.Commands;
+namespace eSystem.Auth.Api.Features.SSO.Commands;
 
 public record AuthorizeCommand(AuthorizeRequest Request) : IRequest<Result>;
 
 public class AuthorizeCommandHandler(
     IUserManager userManager,
-    ITokenManager tokenManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionManager sessionManager,
     IClientManager clientManager) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
-    private readonly ITokenManager tokenManager = tokenManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly IClientManager clientManager = clientManager;
@@ -37,18 +35,18 @@ public class AuthorizeCommandHandler(
         
         var client = await clientManager.FindByClientIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client not found.");
+        if (!client.HasUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
+        if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
         
-        var accessToken = tokenManager.GenerateAccessToken(user);
-        var refreshToken = tokenManager.GenerateRefreshToken();
-        
-        var result = await tokenManager.SaveAsync(session, client, refreshToken, cancellationToken);
-        if (!result.Succeeded) return result;
-
         var response = new AuthorizeResponse()
         {
             UserId = user.Id,
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
+            SessionId = session.Id,
+            DeviceId = device.Id,
+            ClientId = client.ClientId,
+            State = request.Request.State,
+            Nonce = request.Request.Nonce,
+            RedirectUri = request.Request.RedirectUri
         };
         
         return Result.Success(response);

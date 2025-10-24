@@ -1,0 +1,54 @@
+﻿using eSystem.Application.Common.Errors;
+using eSystem.Auth.Api.Features.SSO.Commands;
+using eSystem.Domain.Common.Http;
+using eSystem.Domain.Requests.Auth;
+
+namespace eSystem.Auth.Api.Controllers.v1;
+
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiController]
+[ApiVersion("1.0")]
+[AllowAnonymous]
+public class SsoController(ISender sender) : ControllerBase
+{
+    private readonly ISender sender = sender;
+    
+    [EndpointSummary("Authorize")]
+    [EndpointDescription("Authorize")]
+    [ProducesResponseType(200)]
+    [HttpPost("authorize")]
+    public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
+    {
+        var result = await sender.Send(new AuthorizeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+    
+    [EndpointSummary("Refresh token")]
+    [EndpointDescription("Refresh token")]
+    [ProducesResponseType(200)]
+    [HttpPost("refresh")]
+    public async ValueTask<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
+    {
+        var result = await sender.Send(new RefreshTokenCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+
+    [EndpointSummary("Unauthorize")]
+    [EndpointDescription("Unauthorize")]
+    [ProducesResponseType(200)]
+    [HttpPost("unauthorize")]
+    public async ValueTask<IActionResult> UnauthorizeAsync([FromBody] UnauthorizeRequest request)
+    {
+        var result = await sender.Send(new UnauthorizeCommand(request));
+
+        return result.Match(
+            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            ErrorHandler.Handle);
+    }
+}
