@@ -265,10 +265,15 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(k => k.Id);
             entity.Property(x => x.Token).HasMaxLength(50);
             
-            entity.HasOne(t => t.Device)
-                .WithOne()
-                .HasForeignKey<RefreshTokenEntity>(t => t.DeviceId)
-                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(rt => rt.Session)
+                .WithMany(s => s.RefreshTokens)
+                .HasForeignKey(rt => rt.SessionId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(rt => rt.Client)
+                .WithMany()
+                .HasForeignKey(rt => rt.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<PasskeyEntity>(entity =>

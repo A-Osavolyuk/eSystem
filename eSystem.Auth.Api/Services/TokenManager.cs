@@ -18,19 +18,21 @@ public sealed class TokenManager(
     private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly JwtOptions options = options.Value;
 
-    public async Task<Result> SaveAsync(UserDeviceEntity device,
+    public async Task<Result> SaveAsync(SessionEntity session, ClientEntity client,
         string refreshToken, CancellationToken cancellationToken = default)
     {
         var expirationDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays);
         var token = await context.RefreshTokens.FirstOrDefaultAsync(
-            x => x.DeviceId == device.Id, cancellationToken);
+            token => token.SessionId == session.Id
+            && token.ClientId == client.Id, cancellationToken);
 
         if (token is null)
         {
             token = new RefreshTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
-                DeviceId = device.Id,
+                SessionId = session.Id,
+                ClientId = client.Id,
                 Token = refreshToken,
                 ExpireDate = expirationDate,
                 CreateDate = DateTimeOffset.UtcNow

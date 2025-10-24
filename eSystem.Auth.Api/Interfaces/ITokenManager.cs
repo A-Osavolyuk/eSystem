@@ -2,7 +2,7 @@
 
 public interface ITokenManager
 {
-    public Task<Result> SaveAsync(UserDeviceEntity device, 
+    public Task<Result> SaveAsync(SessionEntity session, ClientEntity client,
         string refreshToken, CancellationToken cancellationToken = default);
     public Task<RefreshTokenEntity?> FindAsync(string token, CancellationToken cancellationToken = default);
     public Task<Result> RemoveAsync(RefreshTokenEntity token, CancellationToken cancellationToken = default);
