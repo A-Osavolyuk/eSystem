@@ -6,6 +6,7 @@ using eSystem.Auth.Api.Security.Cryptography;
 using eSystem.Auth.Api.Security.Identity;
 using eSystem.Auth.Api.Security.Tokens;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Auth.Api.Security.Session;
 
 namespace eSystem.Auth.Api.Security;
 
@@ -26,6 +27,11 @@ public static class SecurityExtensions
             cfg.Domain = options.Domain;
             cfg.Server = options.Server;
             cfg.Timeout = options.Timeout;
+        });
+        
+        builder.AddSession(cfg =>
+        {
+            cfg.Timestamp = TimeSpan.FromDays(30);
         });
         
         builder.AddIdentity(cfg =>
