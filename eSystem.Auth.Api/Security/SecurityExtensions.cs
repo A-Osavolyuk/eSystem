@@ -1,5 +1,6 @@
 ﻿using eSystem.Application.Common.Configuration;
 using eSystem.Auth.Api.Security.Authentication;
+using eSystem.Auth.Api.Security.Authentication.SSO;
 using eSystem.Auth.Api.Security.Authorization;
 using eSystem.Auth.Api.Security.Credentials;
 using eSystem.Auth.Api.Security.Cryptography;
@@ -20,6 +21,7 @@ public static class SecurityExtensions
         builder.AddAuthorization();
         builder.AddCryptography();
         builder.AddTokens();
+        builder.AddSSO();
         builder.AddCredentials(cfg =>
         {
             var options = configuration.Get<CredentialOptions>("Configuration:Security:Credentials");
