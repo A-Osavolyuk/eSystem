@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using eAccount.Blazor.Server.Infrastructure.Http;
 using eAccount.Blazor.Server.Infrastructure.Security;
 using eSystem.Domain.Responses.Auth;
 using Microsoft.AspNetCore.Components;
@@ -16,10 +17,10 @@ public class ApiClient(
     AuthenticationManager authenticationManager) : IApiClient
 {
     private readonly IHttpClientFactory clientFactory = clientFactory;
-    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly NavigationManager navigationManager = navigationManager;
     private readonly AuthenticationManager authenticationManager = authenticationManager;
+    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
     private const string Key = "services:proxy:http:0";
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
@@ -48,8 +49,8 @@ public class ApiClient(
                 message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
             }
             
-            var userAgent = httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString();
-            message.Headers.Add("User-Agent", userAgent);
+            message.IncludeUserAgent(httpContext);
+            message.IncludeCookies(httpContext);
 
             message.RequestUri = new Uri(httpRequest.Url);
             message.Method = httpRequest.Method;
