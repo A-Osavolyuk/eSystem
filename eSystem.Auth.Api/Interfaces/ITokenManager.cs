@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Interfaces;
+﻿using System.Security.Claims;
+
+namespace eSystem.Auth.Api.Interfaces;
 
 public interface ITokenManager
 {
@@ -7,6 +9,6 @@ public interface ITokenManager
     public Task<RefreshTokenEntity?> FindAsync(string token, CancellationToken cancellationToken = default);
     public Task<Result> RemoveAsync(RefreshTokenEntity token, CancellationToken cancellationToken = default);
     
-    public string GenerateAccessToken(UserEntity user);
+    public string GenerateAccessToken(IEnumerable<Claim> claims);
     public string GenerateRefreshToken(int length = 50);
 }

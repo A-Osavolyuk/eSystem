@@ -1,4 +1,5 @@
 ﻿using eSystem.Application.Common.Errors;
+using eSystem.Auth.Api.Features.SSO.Commands;
 using eSystem.Domain.Common.Http;
 using eSystem.Domain.Requests.Auth;
 
@@ -36,48 +37,6 @@ public class SecurityController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RegisterAsync([FromBody] RegistrationRequest request)
     {
         var result = await sender.Send(new RegisterCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Refresh token")]
-    [EndpointDescription("Refresh token")]
-    [ProducesResponseType(200)]
-    [HttpPost("refresh-token")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
-    {
-        var result = await sender.Send(new RefreshTokenCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Authorize")]
-    [EndpointDescription("Authorize")]
-    [ProducesResponseType(200)]
-    [HttpPost("authorize")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
-    {
-        var result = await sender.Send(new AuthorizeCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Unauthorize")]
-    [EndpointDescription("Unauthorize")]
-    [ProducesResponseType(200)]
-    [HttpPost("unauthorize")]
-    [Authorize]
-    public async ValueTask<IActionResult> UnauthorizeAsync([FromBody] UnauthorizeRequest request)
-    {
-        var result = await sender.Send(new UnauthorizeCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),

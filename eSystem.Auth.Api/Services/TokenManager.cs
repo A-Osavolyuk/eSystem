@@ -67,16 +67,7 @@ public sealed class TokenManager(
         return Result.Success();
     }
 
-    public string GenerateAccessToken(UserEntity user)
-    {
-        var claims = new List<Claim>()
-        {
-            new (AppClaimTypes.Jti, Guid.NewGuid().ToString()),
-            new (AppClaimTypes.Subject,  user.Id.ToString()),
-        };
-
-        return tokenFactory.Create(claims);
-    }
+    public string GenerateAccessToken(IEnumerable<Claim> claims) => tokenFactory.Create(claims);
 
     public string GenerateRefreshToken(int length = 50) => keyFactory.Create((uint)length);
 }
