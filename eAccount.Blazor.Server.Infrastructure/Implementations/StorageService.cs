@@ -22,10 +22,10 @@ class StorageService(
                     Type = request.Type
                 }
             },
-            new HttpOptions { WithBearer = true, Type = DataType.File });
+            new HttpOptions { Type = DataType.File });
     
     public async ValueTask<HttpResponse> LoadFilesAsync(LoadFilesRequest request) =>
         await ApiClient.SendAsync(
             new HttpRequest() { Data = request, Method = HttpMethod.Post, Url = $"{Gateway}/{BasePath}/load" },
-            new HttpOptions { WithBearer = true, Type = DataType.Text });
+            new HttpOptions { Type = DataType.Text });
 }

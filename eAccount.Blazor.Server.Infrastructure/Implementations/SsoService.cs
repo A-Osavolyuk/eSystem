@@ -10,18 +10,18 @@ public class SsoService(
     
     public async ValueTask<HttpResponse> RefreshTokenAsync(RefreshTokenRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/token", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GenerateTokenAsync(GenerateTokenRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/refresh", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> AuthorizeAsync(AuthorizeRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/authorize", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = false, Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text });
 
 
     public async ValueTask<HttpResponse> UnauthorizeAsync(UnauthorizeRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/unauthorize", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { WithBearer = true, Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text });
 }

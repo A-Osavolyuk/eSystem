@@ -23,84 +23,18 @@ public class ApiClient(
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
     private const string Key = "services:proxy:http:0";
 
-    public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options)
+    public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions)
     {
         try
         {
             var message = new HttpRequestMessage();
-
-            if (options.WithBearer)
-            {
-                if (string.IsNullOrEmpty(tokenProvider.AccessToken))
-                {
-                    var result = await authenticationManager.RefreshTokenAsync();
-                    if (!result.Success)
-                    {
-                        return new ResponseBuilder()
-                            .Failed()
-                            .WithMessage("Unauthorized")
-                            .Build();
-                    }
-
-                    var response = result.Get<RefreshTokenResponse>()!;
-                    tokenProvider.AccessToken = response.AccessToken;
-                }
-
-                message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
-            }
             
-            message.IncludeUserAgent(httpContext);
-            message.IncludeCookies(httpContext);
-
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
             message.RequestUri = new Uri(httpRequest.Url);
             message.Method = httpRequest.Method;
-
-            switch (options.Type)
-            {
-                case DataType.Text:
-                {
-                    if (httpRequest.Data is not null)
-                    {
-                        message.Content = new StringContent(JsonSerializer.Serialize(httpRequest.Data),
-                            Encoding.UTF8, "application/json");
-                    }
-
-                    break;
-                }
-                case DataType.File:
-                {
-                    message.Headers.Add("Accept", "multipart/form-data");
-
-                    var content = new MultipartFormDataContent();
-
-                    if (httpRequest.Data is not null)
-                    {
-                        if (httpRequest.Data is IReadOnlyList<IBrowserFile> files)
-                        {
-                            foreach (var file in files)
-                            {
-                                var fileContent = new StreamContent(file.OpenReadStream());
-                                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                                content.Add(fileContent, "files", file.Name);
-                            }
-                        }
-
-                        var metadata = JsonSerializer.Serialize(httpRequest.Metadata);
-                        content.Add(new StringContent(metadata), "metadata");
-
-                        message.Content = content;
-                    }
-
-                    break;
-                }
-                default: throw new NotSupportedException("Unsupported request type");
-            }
-            
-            var serializationOptions = new JsonSerializerOptions()
-            {
-                WriteIndented = true, 
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
+            message.IncludeUserAgent(httpContext);
+            message.IncludeCookies(httpContext);
+            message.AddContent(httpRequest, httpOptions);
 
             var httpClient = clientFactory.CreateClient("eShop.Client");
             var httpResponseMessage = await httpClient.SendAsync(message);
@@ -123,6 +57,12 @@ public class ApiClient(
                     httpResponseMessage = await httpClient.SendAsync(message);
                 }
             }
+            
+            var serializationOptions = new JsonSerializerOptions()
+            {
+                WriteIndented = true, 
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
             
             var responseJson = await httpResponseMessage.Content.ReadAsStringAsync();
             var httpResponse = JsonSerializer.Deserialize<HttpResponse>(responseJson, serializationOptions)!;

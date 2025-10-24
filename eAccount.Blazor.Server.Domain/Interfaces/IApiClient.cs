@@ -4,5 +4,5 @@ namespace eAccount.Blazor.Server.Domain.Interfaces;
 
 public interface IApiClient
 {
-    public ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions options);
+    public ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions);
 }

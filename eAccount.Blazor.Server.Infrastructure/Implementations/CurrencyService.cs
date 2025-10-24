@@ -10,5 +10,5 @@ public class CurrencyService(
     public async ValueTask<HttpResponse> GetAllAsync() =>
         await ApiClient.SendAsync(
             new HttpRequest { Url = $"{Gateway}/{BasePath}", Method = HttpMethod.Get }, 
-            new HttpOptions { WithBearer = false, Type = DataType.Text });
+            new HttpOptions { Type = DataType.Text });
 }
