@@ -6,11 +6,21 @@ public class ClientManager(AuthDbContext context) : IClientManager
 
     public async ValueTask<ClientEntity?> FindByClientIdAsync(string clientId, CancellationToken cancellationToken = default)
     {
-        return await context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId, cancellationToken);
+        return await context.Clients
+            .Where(c => c.ClientId == clientId)
+            .Include(x => x.RedirectUris)
+            .Include(x => x.AllowedScopes)
+            .Include(x => x.GrantTypes)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async ValueTask<ClientEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await context.Clients.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return await context.Clients
+            .Where(c => c.Id == id)
+            .Include(x => x.RedirectUris)
+            .Include(x => x.AllowedScopes)
+            .Include(x => x.GrantTypes)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }
