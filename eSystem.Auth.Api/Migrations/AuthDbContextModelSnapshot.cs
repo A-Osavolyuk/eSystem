@@ -312,39 +312,6 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("GrantedScopes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.LoginSessionEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Provider")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTimeOffset>("Timestamp")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId");
-
-                    b.ToTable("LoginSessions");
-                });
-
             modelBuilder.Entity("eSystem.Auth.Api.Entities.OAuthSessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1295,17 +1262,6 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Consent");
 
                     b.Navigation("Scope");
-                });
-
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.LoginSessionEntity", b =>
-                {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserDeviceEntity", "Device")
-                        .WithMany()
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Device");
                 });
 
             modelBuilder.Entity("eSystem.Auth.Api.Entities.OAuthSessionEntity", b =>

@@ -649,29 +649,6 @@ namespace eSystem.Auth.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LoginSessions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Provider = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LoginSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LoginSessions_UserDevices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "UserDevices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Passkeys",
                 columns: table => new
                 {
@@ -878,11 +855,6 @@ namespace eSystem.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LoginSessions_DeviceId",
-                table: "LoginSessions",
-                column: "DeviceId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OAuthSessions_LinkedAccountId",
                 table: "OAuthSessions",
                 column: "LinkedAccountId");
@@ -1014,9 +986,6 @@ namespace eSystem.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "LockoutStates");
-
-            migrationBuilder.DropTable(
-                name: "LoginSessions");
 
             migrationBuilder.DropTable(
                 name: "OAuthSessions");
