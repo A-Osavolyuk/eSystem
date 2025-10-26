@@ -1,5 +1,4 @@
-﻿using eSystem.Comments.Api.Data;
-using eSystem.Core.Data;
+﻿using eSystem.Core.Data;
 using Scalar.AspNetCore;
 
 namespace eSystem.Comments.Api.Extensions;
