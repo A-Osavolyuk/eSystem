@@ -15,12 +15,14 @@ public class AuthorizeCommandHandler(
     IUserManager userManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionManager sessionManager,
+    ISessionStorage sessionStorage,
     IAuthorizationCodeManager authorizationCodeManager,
     IClientManager clientManager) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly ISessionManager sessionManager = sessionManager;
+    private readonly ISessionStorage sessionStorage = sessionStorage;
     private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
     private readonly IClientManager clientManager = clientManager;
 
@@ -43,6 +45,9 @@ public class AuthorizeCommandHandler(
         if (!client.HasUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
         if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
 
+        if (string.IsNullOrWhiteSpace(request.Request.Nonce)) return Results.BadRequest("Invalid nonce.");
+        sessionStorage.Set(SessionKeys.Nonce, request.Request.Nonce);
+        
         var code = authorizationCodeManager.Generate();
         
         var authorizationCode = new AuthorizationCodeEntity()
