@@ -9,8 +9,9 @@ public class AuthorizationCodeEntity : Entity
     public Guid DeviceId { get; set; }
     
     public required string RedirectUri { get; set; }
-    public required string CodeChallenge { get; set; }
-    public required string CodeChallengeMethod { get; set; }
+    public string? CodeChallenge { get; set; }
+    public string? CodeChallengeMethod { get; set; }
+    
     public bool Used { get; set; }
     public DateTimeOffset ExpireDate { get; set; }
 
