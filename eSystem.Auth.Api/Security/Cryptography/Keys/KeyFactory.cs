@@ -4,10 +4,10 @@ namespace eSystem.Auth.Api.Security.Cryptography.Keys;
 
 public class KeyFactory : IKeyFactory
 {
-    public string Create(uint length)
+    public string Create(int length)
     {
-        var keyBytes = KeyGeneration.GenerateRandomKey((int)length);
+        var keyBytes = KeyGeneration.GenerateRandomKey(length);
         var keyString = Base32Encoding.ToString(keyBytes);
-        return keyString[..(int)length]!;
+        return keyString[..length]!;
     }
 }

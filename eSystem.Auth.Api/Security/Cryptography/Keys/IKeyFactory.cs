@@ -2,5 +2,5 @@
 
 public interface IKeyFactory
 {
-    public string Create(uint length);
+    public string Create(int length);
 }

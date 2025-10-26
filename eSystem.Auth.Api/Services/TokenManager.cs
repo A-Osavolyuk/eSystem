@@ -70,5 +70,5 @@ public sealed class TokenManager(
 
     public string GenerateAccessToken(IEnumerable<Claim> claims) => tokenFactory.Create(claims);
 
-    public string GenerateRefreshToken(int length = 50) => keyFactory.Create((uint)length);
+    public string GenerateRefreshToken(int length = 20) => keyFactory.Create(length);
 }
