@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Authentication.SSO.Client;
+﻿using eSystem.Auth.Api.Security.Authentication.SSO;
+using eSystem.Auth.Api.Security.Authentication.SSO.Client;
 using eSystem.Auth.Api.Security.Authentication.SSO.Code;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Core.Common.Http.Context;
@@ -29,19 +30,31 @@ public class AuthorizeCommandHandler(
 
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
-        
+
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound("Invalid device.");
 
         var session = await sessionManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
-        
+
         var client = await clientManager.FindByClientIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client not found.");
         if (!client.HasUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
         if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
         if (string.IsNullOrWhiteSpace(request.Request.Nonce)) return Results.BadRequest("Invalid nonce.");
-        
+
+        if (client is { Type: ClientType.Public, RequirePkce: true })
+        {
+            if (string.IsNullOrEmpty(request.Request.CodeChallenge))
+                return Results.BadRequest("Code challenge is required.");
+
+            if (string.IsNullOrEmpty(request.Request.CodeChallengeMethod))
+                return Results.BadRequest("Code challenge method is required.");
+        }
+
+        if (request.Request.ResponseType != ResponseTypes.Code) 
+            return Results.BadRequest("Invalid response type.");
+
         var code = authorizationCodeManager.Generate();
         var authorizationCode = new AuthorizationCodeEntity()
         {
@@ -50,14 +63,16 @@ public class AuthorizeCommandHandler(
             DeviceId = device.Id,
             Code = code,
             Nonce = request.Request.Nonce,
+            CodeChallenge = request.Request.CodeChallenge,
+            CodeChallengeMethod = request.Request.CodeChallengeMethod,
             RedirectUri = request.Request.RedirectUri,
             ExpireDate = DateTimeOffset.UtcNow.AddMinutes(10),
             CreateDate = DateTimeOffset.UtcNow,
         };
-        
+
         var codeResult = await authorizationCodeManager.CreateAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return Results.BadRequest(codeResult);
-        
+
         var response = new AuthorizeResponse()
         {
             UserId = user.Id,
@@ -66,7 +81,7 @@ public class AuthorizeCommandHandler(
             State = request.Request.State,
             Code = code
         };
-        
+
         return Result.Success(response);
     }
 }
