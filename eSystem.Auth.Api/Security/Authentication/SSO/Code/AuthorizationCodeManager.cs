@@ -13,6 +13,8 @@ public class AuthorizationCodeManager(
         CancellationToken cancellationToken = default)
     {
         return await context.AuthorizationCodes
+            .Include(x => x.Client)
+            .Include(x => x.Device)
             .FirstOrDefaultAsync(c => c.Code == code, cancellationToken);
     }
 
@@ -20,6 +22,18 @@ public class AuthorizationCodeManager(
         CancellationToken cancellationToken = default)
     {
         await context.AuthorizationCodes.AddAsync(code, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        
+        return Result.Success();
+    }
+
+    public async ValueTask<Result> VerifyAsync(AuthorizationCodeEntity code, 
+        CancellationToken cancellationToken = default)
+    {
+        code.Used = true;
+        code.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.AuthorizationCodes.Update(code);
         await context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();

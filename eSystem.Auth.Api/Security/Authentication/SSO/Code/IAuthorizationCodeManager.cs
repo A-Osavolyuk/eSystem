@@ -7,6 +7,9 @@ public interface IAuthorizationCodeManager
     
     public ValueTask<Result> CreateAsync(AuthorizationCodeEntity code, 
         CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> VerifyAsync(AuthorizationCodeEntity code, 
+        CancellationToken cancellationToken = default);
 
     public string Generate();
 }
