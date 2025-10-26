@@ -1,4 +1,4 @@
-﻿namespace eSystem.Auth.Api.Security.Authentication.SSO;
+﻿namespace eSystem.Auth.Api.Security.Authentication.SSO.Client;
 
 public class ClientManager(AuthDbContext context) : IClientManager
 {

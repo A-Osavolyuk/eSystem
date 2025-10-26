@@ -1,4 +1,4 @@
-﻿using eSystem.Auth.Api.Security.Session;
+﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Verification;

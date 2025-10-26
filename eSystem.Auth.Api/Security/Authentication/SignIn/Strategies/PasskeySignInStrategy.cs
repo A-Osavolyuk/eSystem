@@ -1,5 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Credentials.PublicKey;
-using eSystem.Auth.Api.Security.Session;
+﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
+using eSystem.Auth.Api.Security.Credentials.PublicKey;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Responses.Auth;

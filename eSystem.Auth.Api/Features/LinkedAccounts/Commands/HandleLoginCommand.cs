@@ -2,8 +2,8 @@
 using eSystem.Auth.Api.Messages.Email;
 using eSystem.Auth.Api.Security.Authentication.Results;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
+using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
-using eSystem.Auth.Api.Security.Session;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;

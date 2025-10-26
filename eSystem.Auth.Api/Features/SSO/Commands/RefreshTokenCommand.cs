@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using eSystem.Auth.Api.Security.Session;
+using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;

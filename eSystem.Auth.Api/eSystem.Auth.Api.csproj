@@ -42,4 +42,8 @@
         <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
         <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Security\Authentication\SSO\Code\" />
+    </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SSO;
+using eSystem.Auth.Api.Security.Authentication.SSO.Client;
 using eSystem.Core.Data.Entities;
 
 namespace eSystem.Auth.Api.Entities;

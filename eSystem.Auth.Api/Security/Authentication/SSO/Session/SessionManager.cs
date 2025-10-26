@@ -1,4 +1,4 @@
-﻿namespace eSystem.Auth.Api.Security.Session;
+﻿namespace eSystem.Auth.Api.Security.Authentication.SSO.Session;
 
 public class SessionManager(
     AuthDbContext context,
