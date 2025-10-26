@@ -1,8 +1,7 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/Clients/" />
-  <Folder Name="/src/Clients/Blazor/" />
-  <Folder Name="/src/Clients/Blazor/eAccount/">
+  <Folder Name="/src/Clients/eAccount/">
     <Project Path="eAccount.Blazor.Server.Application\eAccount.Blazor.Server.Application.csproj" />
     <Project Path="eAccount.Blazor.Server.Domain\eAccount.Blazor.Server.Domain.csproj" />
     <Project Path="eAccount.Blazor.Server.Infrastructure\eAccount.Blazor.Server.Infrastructure.csproj" />
