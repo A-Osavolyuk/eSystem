@@ -27,7 +27,7 @@ public class AuthorizationCodeManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> VerifyAsync(AuthorizationCodeEntity code, 
+    public async ValueTask<Result> UseAsync(AuthorizationCodeEntity code, 
         CancellationToken cancellationToken = default)
     {
         code.Used = true;
