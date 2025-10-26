@@ -102,7 +102,7 @@ var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
     .WithReference(storageApi).WaitFor(storageApi)
     .WithReference(commentApi).WaitFor(commentApi);
 
-builder.AddProject<Projects.eAccount_Blazor_Server_UI>("e-account")
+builder.AddProject<Projects.eAccount_UI>("e-account")
     .WithJwtConfig()
     .WithReference(proxy).WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy");
 

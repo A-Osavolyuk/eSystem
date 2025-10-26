@@ -1,0 +1,50 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Security.Claims
+@using System.Text
+@using System.Web
+@using eAccount.Application.Mapping
+@using eSystem.Core.Security.Credentials.PublicKey
+@using eSystem.Core.Security.Verification
+@using eAccount.UI.Utilities
+@using eAccount.Application.State
+@using eAccount.Application.Validation
+@using eAccount.Domain.Common
+@using eSystem.Core.Responses.Auth
+@using eAccount.Domain.Interfaces
+@using eAccount.UI.Components.Common.Access
+@using eAccount.Domain.Models
+@using eAccount.Infrastructure.Security
+@using eAccount.UI.Components
+@using eAccount.UI.Components.Common
+@using eAccount.UI.Components.Layout
+@using eAccount.UI.Components.Pages.Account
+@using eAccount.UI.Components.Pages.Products.Components
+@using eSystem.Core.Common
+@using eAccount.UI.Extensions
+@using ZXing
+
+@using eSystem.Core.DTOs
+@using eSystem.Core.Responses
+@using eAccount.Domain.Constants
+@using FluentValidation
+@using eSystem.Core.Enums
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
+@using Microsoft.JSInterop
+@using MudBlazor
+@using MudExtensions
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Severity = MudBlazor.Severity
+@using Size = MudBlazor.Size
+@using eAccount.Infrastructure.Services
