@@ -8,7 +8,9 @@ public class AuthorizationCodeEntity : Entity
     public Guid ClientId { get; set; }
     public Guid DeviceId { get; set; }
     
+    public required string Code { get; set; }
     public required string RedirectUri { get; set; }
+    
     public string? CodeChallenge { get; set; }
     public string? CodeChallengeMethod { get; set; }
     

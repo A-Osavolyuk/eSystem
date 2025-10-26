@@ -356,6 +356,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.RedirectUri).HasMaxLength(200);
             entity.Property(x => x.CodeChallenge).HasMaxLength(200);
             entity.Property(x => x.CodeChallengeMethod).HasMaxLength(16);
+            entity.Property(x => x.Code).HasMaxLength(20);
             
             entity.HasOne(x => x.Device)
                 .WithMany()
