@@ -2,9 +2,10 @@
 using eAccount.Blazor.Server.Domain.Requests;
 using eAccount.Blazor.Server.Infrastructure.Security;
 using eAccount.Blazor.Server.Infrastructure.Security.Authentication.SSO;
-using eSystem.Application.Security.Cryptography.Protection;
-using eSystem.Domain.Responses.Auth;
-using eSystem.Domain.Security.Authentication.Cookies;
+using eSystem.Core.Requests.Auth;
+using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Authentication.Cookies;
+using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;

@@ -1,5 +1,5 @@
-﻿using eSystem.Domain.Common.Messaging;
-using eSystem.Domain.Enums;
+﻿using eSystem.Core.Common.Messaging;
+using eSystem.Core.Enums;
 
 namespace eSystem.MessageBus.Configurations;
 

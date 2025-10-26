@@ -1,6 +1,6 @@
-﻿using eSystem.Application.Common.Errors;
-using eSystem.Domain.Common.Http;
-using eSystem.Domain.Requests.Product;
+﻿using eSystem.Core.Common.Errors;
+using eSystem.Core.Common.Http;
+using eSystem.Core.Requests.Product;
 using eSystem.Product.Api.Features.Products.Commands;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

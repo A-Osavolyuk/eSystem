@@ -1,6 +1,7 @@
 ﻿using eSystem.Auth.Api.Security.Credentials.PublicKey;
-using eSystem.Domain.Security.Credentials.Constants;
-using eSystem.Domain.Security.Credentials.PublicKey;
+using eSystem.Core.Attributes;
+using eSystem.Core.Security.Credentials.Constants;
+using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSystem.Auth.Api.Services;
 

@@ -1,5 +1,5 @@
 ﻿using eAccount.Blazor.Server.Domain.Models;
-using eSystem.Domain.Requests.Auth;
+using eSystem.Core.Requests.Auth;
 
 namespace eAccount.Blazor.Server.Application.Mapping;
 

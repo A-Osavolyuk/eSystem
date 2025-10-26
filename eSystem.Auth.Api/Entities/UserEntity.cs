@@ -1,6 +1,7 @@
-﻿using eSystem.Domain.Security.Authentication.TwoFactor;
-using eSystem.Domain.Security.Authorization.OAuth;
-using eSystem.Domain.Security.Verification;
+﻿using eSystem.Core.Data.Entities;
+using eSystem.Core.Security.Authentication.TwoFactor;
+using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Security.Verification;
 
 namespace eSystem.Auth.Api.Entities;
 

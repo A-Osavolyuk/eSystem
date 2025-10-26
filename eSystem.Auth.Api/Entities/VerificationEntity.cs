@@ -1,4 +1,5 @@
-﻿using eSystem.Domain.Security.Verification;
+﻿using eSystem.Core.Data.Entities;
+using eSystem.Core.Security.Verification;
 
 namespace eSystem.Auth.Api.Entities;
 

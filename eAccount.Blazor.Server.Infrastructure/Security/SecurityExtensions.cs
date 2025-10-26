@@ -1,5 +1,5 @@
 ﻿using eAccount.Blazor.Server.Infrastructure.Security.Cryptography.Protection;
-using eSystem.Domain.Security.Authentication.Cookies;
+using eSystem.Core.Security.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 

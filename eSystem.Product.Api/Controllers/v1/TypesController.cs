@@ -1,5 +1,5 @@
-﻿using eSystem.Application.Common.Errors;
-using eSystem.Domain.Common.Http;
+﻿using eSystem.Core.Common.Errors;
+using eSystem.Core.Common.Http;
 using eSystem.Product.Api.Features.ProductTypes.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

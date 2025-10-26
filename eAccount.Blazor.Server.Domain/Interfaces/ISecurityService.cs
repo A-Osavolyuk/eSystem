@@ -1,5 +1,5 @@
-﻿using eSystem.Domain.Common.Http;
-using eSystem.Domain.Requests.Auth;
+﻿using eSystem.Core.Common.Http;
+using eSystem.Core.Requests.Auth;
 
 namespace eAccount.Blazor.Server.Domain.Interfaces;
 

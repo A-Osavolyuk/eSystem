@@ -1,5 +1,5 @@
 ﻿using eAccount.Blazor.Server.Domain.Common;
-using eSystem.Domain.Security.Credentials.PublicKey;
+using eSystem.Core.Security.Credentials.PublicKey;
 using Microsoft.JSInterop;
 
 namespace eAccount.Blazor.Server.Infrastructure.Security;

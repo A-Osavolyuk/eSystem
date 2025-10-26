@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Common.Results;
+﻿using eSystem.Core.Common.Results;
 
 namespace eSystem.SmsSender.Api.Interfaces;
 

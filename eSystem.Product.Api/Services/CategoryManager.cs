@@ -1,4 +1,5 @@
-﻿using eSystem.Product.Api.Data;
+﻿using eSystem.Core.Attributes;
+using eSystem.Product.Api.Data;
 using eSystem.Product.Api.Entities;
 using eSystem.Product.Api.Interfaces;
 

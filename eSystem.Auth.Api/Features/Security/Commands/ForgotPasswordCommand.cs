@@ -1,5 +1,5 @@
-﻿using eSystem.Domain.Requests.Auth;
-using eSystem.Domain.Responses.Auth;
+﻿using eSystem.Core.Requests.Auth;
+using eSystem.Core.Responses.Auth;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
 

@@ -1,4 +1,4 @@
-﻿using eSystem.Application.Security.Cryptography.Protection;
+﻿using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSystem.Auth.Api.Security.Cryptography.Protection.Protectors;

@@ -1,13 +1,13 @@
-﻿using eSystem.Application.Common.Configuration;
-using eSystem.Auth.Api.Security.Authentication.Schemes;
+﻿using eSystem.Auth.Api.Security.Authentication.Schemes;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Auth.Api.Security.Tokens.Jwt;
-using eSystem.Domain.Security.Authentication.Cookies;
-using eSystem.Domain.Security.Authentication.SignIn;
+using eSystem.Core.Common.Configuration;
+using eSystem.Core.Security.Authentication.Cookies;
+using eSystem.Core.Security.Authentication.SignIn;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eSystem.Auth.Api.Security.Authentication;

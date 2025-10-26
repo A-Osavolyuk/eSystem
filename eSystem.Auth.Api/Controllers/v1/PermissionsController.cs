@@ -1,8 +1,8 @@
-﻿using eSystem.Application.Common.Errors;
-using eSystem.Auth.Api.Features.Permissions.Commands;
+﻿using eSystem.Auth.Api.Features.Permissions.Commands;
 using eSystem.Auth.Api.Features.Permissions.Queries;
-using eSystem.Domain.Common.Http;
-using eSystem.Domain.Requests.Auth;
+using eSystem.Core.Common.Errors;
+using eSystem.Core.Common.Http;
+using eSystem.Core.Requests.Auth;
 
 namespace eSystem.Auth.Api.Controllers.v1;
 

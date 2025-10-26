@@ -1,11 +1,12 @@
-﻿using eSystem.Application.Common.Http;
-using eSystem.Application.Security.Cryptography.Protection;
-using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
+﻿using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
 using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Auth.Api.Security.Session;
-using eSystem.Domain.Responses.Auth;
-using eSystem.Domain.Security.Lockout;
+using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Cryptography.Protection;
+using eSystem.Core.Security.Lockout;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 
@@ -36,11 +37,11 @@ public class AuthenticatorSignInStrategy(
         var userId = credentials["UserId"].ToString();
         var code = credentials["Code"].ToString();
 
-        if (string.IsNullOrEmpty(code)) return eSystem.Domain.Common.Results.Results.BadRequest("Code is empty");
-        if (string.IsNullOrEmpty(userId)) return eSystem.Domain.Common.Results.Results.BadRequest("User ID is empty");
+        if (string.IsNullOrEmpty(code)) return eSystem.Core.Common.Results.Results.BadRequest("Code is empty");
+        if (string.IsNullOrEmpty(userId)) return eSystem.Core.Common.Results.Results.BadRequest("User ID is empty");
 
         var user = await userManager.FindByIdAsync(Guid.Parse(userId), cancellationToken);
-        if (user is null) return eSystem.Domain.Common.Results.Results.NotFound($"Cannot find user with ID {userId}.");
+        if (user is null) return eSystem.Core.Common.Results.Results.NotFound($"Cannot find user with ID {userId}.");
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
@@ -69,7 +70,7 @@ public class AuthenticatorSignInStrategy(
         }
         
         var userSecret = await secretManager.FindAsync(user, cancellationToken);
-        if (userSecret is null) return eSystem.Domain.Common.Results.Results.NotFound("Not found user secret");
+        if (userSecret is null) return eSystem.Core.Common.Results.Results.NotFound("Not found user secret");
 
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
         var isCodeVerified = AuthenticatorUtils.VerifyCode(code, unprotectedSecret);
@@ -87,7 +88,7 @@ public class AuthenticatorSignInStrategy(
                     MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 };
 
-                return eSystem.Domain.Common.Results.Results.BadRequest($"Invalid two-factor code {code}.", response);
+                return eSystem.Core.Common.Results.Results.BadRequest($"Invalid two-factor code {code}.", response);
             }
 
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
@@ -107,7 +108,7 @@ public class AuthenticatorSignInStrategy(
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 
-            return eSystem.Domain.Common.Results.Results.BadRequest("Account is locked out due to too many failed login attempts", response);
+            return eSystem.Core.Common.Results.Results.BadRequest("Account is locked out due to too many failed login attempts", response);
         }
 
         if (user.FailedLoginAttempts > 0)

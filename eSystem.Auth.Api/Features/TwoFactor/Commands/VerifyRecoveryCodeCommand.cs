@@ -1,9 +1,10 @@
-﻿using eSystem.Application.Common.Http;
-using eSystem.Auth.Api.Security.Identity.Options;
+﻿using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Auth.Api.Security.Session;
-using eSystem.Domain.Requests.Auth;
-using eSystem.Domain.Responses.Auth;
-using eSystem.Domain.Security.Lockout;
+using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Requests.Auth;
+using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Lockout;
 
 namespace eSystem.Auth.Api.Features.TwoFactor.Commands;
 

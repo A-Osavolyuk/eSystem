@@ -1,7 +1,8 @@
 ﻿using eSystem.Auth.Api.Security.Cryptography.Codes;
 using eSystem.Auth.Api.Security.Cryptography.Hashing;
-using eSystem.Domain.Common.Messaging;
-using eSystem.Domain.Security.Verification;
+using eSystem.Core.Attributes;
+using eSystem.Core.Common.Messaging;
+using eSystem.Core.Security.Verification;
 
 namespace eSystem.Auth.Api.Services;
 

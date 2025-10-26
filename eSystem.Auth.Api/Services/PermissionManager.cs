@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Services;
+﻿using eSystem.Core.Attributes;
+
+namespace eSystem.Auth.Api.Services;
 
 [Injectable(typeof(IPermissionManager), ServiceLifetime.Scoped)]
 public sealed class PermissionManager(AuthDbContext context) : IPermissionManager

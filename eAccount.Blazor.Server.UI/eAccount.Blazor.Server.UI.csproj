@@ -20,10 +20,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\eAccount.Blazor.Server.Application\eAccount.Blazor.Server.Application.csproj" />
-		<ProjectReference Include="..\eSystem.Application\eSystem.Application.csproj" />
 		<ProjectReference Include="..\eAccount.Blazor.Server.Domain\eAccount.Blazor.Server.Domain.csproj" />
 		<ProjectReference Include="..\eAccount.Blazor.Server.Infrastructure\eAccount.Blazor.Server.Infrastructure.csproj" />
-		<ProjectReference Include="..\eSystem.Domain\eSystem.Domain.csproj" />
+		<ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
 		<ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
 	</ItemGroup>
 

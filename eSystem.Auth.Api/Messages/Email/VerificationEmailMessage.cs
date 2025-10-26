@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Messages.Email;
+﻿using eSystem.Core.Common.Messaging;
+
+namespace eSystem.Auth.Api.Messages.Email;
 
 public class VerificationEmailMessage : Message
 {

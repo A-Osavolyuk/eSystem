@@ -1,4 +1,4 @@
-﻿using eSystem.Application.Security.Authorization.Requirements;
+﻿using eSystem.Core.Security.Authorization.Requirements;
 
 namespace eSystem.Auth.Api.Security.Authorization;
 

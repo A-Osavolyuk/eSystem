@@ -1,5 +1,5 @@
-﻿using eSystem.Domain.DTOs;
-using eSystem.Domain.Security.Authorization.OAuth;
+﻿using eSystem.Core.DTOs;
+using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSystem.Auth.Api.Features.Users.Queries;
 

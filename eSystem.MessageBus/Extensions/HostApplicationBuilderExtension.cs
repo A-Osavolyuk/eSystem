@@ -1,5 +1,5 @@
-﻿using eSystem.Application.Common.Errors;
-using eSystem.Application.Common.Logging;
+﻿using eSystem.Core.Common.Errors;
+using eSystem.Core.Common.Logging;
 using eSystem.MessageBus.Consumers;
 using eSystem.ServiceDefaults;
 using MassTransit;

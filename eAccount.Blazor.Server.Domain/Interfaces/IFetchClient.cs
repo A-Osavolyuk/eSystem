@@ -1,5 +1,5 @@
 ﻿using eAccount.Blazor.Server.Domain.Options;
-using eSystem.Domain.Common.Http;
+using eSystem.Core.Common.Http;
 
 namespace eAccount.Blazor.Server.Domain.Interfaces;
 

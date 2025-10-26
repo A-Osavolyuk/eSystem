@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using HttpRequest = eSystem.Domain.Common.Http.HttpRequest;
+using HttpRequest = eSystem.Core.Common.Http.HttpRequest;
 
 namespace eAccount.Blazor.Server.Infrastructure.Http;
 

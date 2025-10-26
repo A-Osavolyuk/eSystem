@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Abstraction.Data.Seeding;
+﻿using eSystem.Core.Data.Seeding;
 
 namespace eSystem.Auth.Api.Data.Seeding;
 

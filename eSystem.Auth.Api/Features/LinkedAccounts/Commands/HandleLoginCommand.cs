@@ -1,13 +1,14 @@
 ﻿using System.Security.Claims;
-using eSystem.Application.Common.Http;
 using eSystem.Auth.Api.Messages.Email;
 using eSystem.Auth.Api.Security.Authentication.Results;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Auth.Api.Security.Session;
-using eSystem.Domain.Common.Messaging;
-using eSystem.Domain.Security.Authentication.SignIn;
-using eSystem.Domain.Security.Authorization.OAuth;
+using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Common.Messaging;
+using eSystem.Core.Security.Authentication.SignIn;
+using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSystem.Auth.Api.Features.LinkedAccounts.Commands;
 

@@ -1,6 +1,7 @@
 ﻿using eSystem.Auth.Api.Security.Cryptography.Hashing;
-using eSystem.Domain.Security.Lockout;
-using eSystem.Domain.Security.Verification;
+using eSystem.Core.Attributes;
+using eSystem.Core.Security.Lockout;
+using eSystem.Core.Security.Verification;
 
 namespace eSystem.Auth.Api.Services;
 

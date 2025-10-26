@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Common.Http;
+﻿using eSystem.Core.Common.Http;
 
 namespace eSystem.Storage.Api.Interfaces;
 

@@ -1,7 +1,8 @@
 ﻿using eAccount.Blazor.Server.Application.State;
 using eAccount.Blazor.Server.Domain.Options;
 using eAccount.Blazor.Server.Domain.Requests;
-using eSystem.Application.Security.Authentication.SSO;
+using eSystem.Core.Requests.Auth;
+using eSystem.Core.Security.Authentication.SSO;
 using Microsoft.AspNetCore.Components;
 
 namespace eAccount.Blazor.Server.Infrastructure.Security;

@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Common.Messaging;
+﻿using eSystem.Core.Common.Messaging;
 using eSystem.EmailSender.Api.Interfaces;
 using eSystem.EmailSender.Api.Options;
 

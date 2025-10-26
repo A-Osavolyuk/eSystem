@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Security.Authentication.TwoFactor;
+﻿using eSystem.Core.Security.Authentication.TwoFactor;
 
 namespace eSystem.Auth.Api.Interfaces;
 

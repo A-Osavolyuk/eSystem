@@ -1,6 +1,6 @@
-﻿using eSystem.Domain.Common.Results;
-using eSystem.Domain.Requests.Storage;
-using eSystem.Domain.Responses.Storage;
+﻿using eSystem.Core.Common.Results;
+using eSystem.Core.Requests.Storage;
+using eSystem.Core.Responses.Storage;
 using eSystem.Storage.Api.Interfaces;
 
 namespace eSystem.Storage.Api.Features.Commands;

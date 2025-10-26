@@ -1,4 +1,5 @@
-﻿using eSystem.Domain.Security.Lockout;
+﻿using eSystem.Core.Data.Entities;
+using eSystem.Core.Security.Lockout;
 
 namespace eSystem.Auth.Api.Entities;
 

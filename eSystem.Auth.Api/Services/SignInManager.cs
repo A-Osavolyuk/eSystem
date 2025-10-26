@@ -1,4 +1,5 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.Results;
+using eSystem.Core.Attributes;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eSystem.Auth.Api.Services;

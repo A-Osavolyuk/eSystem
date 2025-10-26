@@ -1,5 +1,5 @@
 ﻿using eAccount.Blazor.Server.Domain.Abstraction.Services;
-using eSystem.Domain.Requests.Storage;
+using eSystem.Core.Requests.Storage;
 
 namespace eAccount.Blazor.Server.Infrastructure.Implementations;
 

@@ -1,12 +1,13 @@
-﻿using eSystem.Application.Common.Cache.Redis;
-using eSystem.Application.Common.Documentation;
-using eSystem.Application.Common.Errors;
-using eSystem.Application.Common.Logging;
-using eSystem.Application.Common.Versioning;
-using eSystem.Application.Data;
-using eSystem.Application.Validation;
-using eSystem.Auth.Api.Security;
+﻿using eSystem.Auth.Api.Security;
 using eSystem.Auth.Api.Services;
+using eSystem.Core.Attributes;
+using eSystem.Core.Common.Cache.Redis;
+using eSystem.Core.Common.Documentation;
+using eSystem.Core.Common.Errors;
+using eSystem.Core.Common.Logging;
+using eSystem.Core.Common.Versioning;
+using eSystem.Core.Data;
+using eSystem.Core.Validation;
 using MassTransit;
 
 namespace eSystem.Auth.Api.Extensions;

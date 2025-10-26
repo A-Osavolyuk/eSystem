@@ -1,4 +1,5 @@
-﻿using eSystem.Domain.Common.Results;
+﻿using eSystem.Core.Attributes;
+using eSystem.Core.Common.Results;
 using eSystem.Product.Api.Data;
 using eSystem.Product.Api.Entities;
 using eSystem.Product.Api.Interfaces;

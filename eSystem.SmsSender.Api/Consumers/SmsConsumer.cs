@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Common.Messaging;
+﻿using eSystem.Core.Common.Messaging;
 using eSystem.SmsSender.Api.Interfaces;
 
 namespace eSystem.SmsSender.Api.Consumers;

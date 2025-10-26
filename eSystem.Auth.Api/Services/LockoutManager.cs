@@ -1,5 +1,6 @@
 ﻿using eSystem.Auth.Api.Common.Constants;
-using eSystem.Domain.Security.Lockout;
+using eSystem.Core.Attributes;
+using eSystem.Core.Security.Lockout;
 
 namespace eSystem.Auth.Api.Services;
 

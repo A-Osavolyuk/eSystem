@@ -1,5 +1,4 @@
-﻿using eSystem.Application.Common.Configuration;
-using eSystem.Auth.Api.Security.Authentication;
+﻿using eSystem.Auth.Api.Security.Authentication;
 using eSystem.Auth.Api.Security.Authentication.SSO;
 using eSystem.Auth.Api.Security.Authorization;
 using eSystem.Auth.Api.Security.Credentials;
@@ -8,6 +7,7 @@ using eSystem.Auth.Api.Security.Identity;
 using eSystem.Auth.Api.Security.Tokens;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
 using eSystem.Auth.Api.Security.Session;
+using eSystem.Core.Common.Configuration;
 
 namespace eSystem.Auth.Api.Security;
 

@@ -1,0 +1,12 @@
+﻿using eSystem.Core.Security.Credentials.PublicKey;
+using eSystem.Core.Security.Verification;
+
+namespace eSystem.Core.Requests.Auth;
+
+public class VerifyPasskeyRequest
+{
+    public required Guid UserId { get; set; }
+    public required PurposeType Purpose { get; set; }
+    public required ActionType Action { get; set; }
+    public required PublicKeyCredential Credential { get; set; }
+}

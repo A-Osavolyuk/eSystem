@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
-using eSystem.Domain.Common.Results;
-using eSystem.Domain.Requests.Product;
+using eSystem.Core.Common.Results;
+using eSystem.Core.Requests.Product;
 using eSystem.Product.Api.Entities;
 using eSystem.Product.Api.Interfaces;
 

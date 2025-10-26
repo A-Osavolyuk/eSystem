@@ -1,6 +1,6 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SignIn;
-using eSystem.Domain.Requests.Auth;
-using eSystem.Domain.Security.Authentication.SignIn;
+using eSystem.Core.Requests.Auth;
+using eSystem.Core.Security.Authentication.SignIn;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
 

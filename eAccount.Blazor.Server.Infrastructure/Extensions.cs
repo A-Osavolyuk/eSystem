@@ -2,7 +2,6 @@
 using eAccount.Blazor.Server.Infrastructure.Services;
 using eAccount.Blazor.Server.Infrastructure.Storage;
 using eAccount.Blazor.Server.Infrastructure.Security;
-using eSystem.Application.Common.Http;
 using Microsoft.AspNetCore.Builder;
 
 namespace eAccount.Blazor.Server.Infrastructure;

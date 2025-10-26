@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Entities;
+﻿using eSystem.Core.Data.Entities;
+
+namespace eSystem.Auth.Api.Entities;
 
 public class ResourceOwnerEntity : Entity
 {

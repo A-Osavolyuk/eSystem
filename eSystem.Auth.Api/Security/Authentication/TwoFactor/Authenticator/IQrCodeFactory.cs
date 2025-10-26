@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.DTOs;
+﻿using eSystem.Core.DTOs;
 
 namespace eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 

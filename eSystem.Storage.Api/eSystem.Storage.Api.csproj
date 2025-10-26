@@ -19,8 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\eSystem.Application\eSystem.Application.csproj" />
-        <ProjectReference Include="..\eSystem.Domain\eSystem.Domain.csproj" />
+        <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
         <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
     </ItemGroup>
 

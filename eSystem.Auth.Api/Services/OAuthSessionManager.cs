@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Services;
+﻿using eSystem.Core.Attributes;
+
+namespace eSystem.Auth.Api.Services;
 
 [Injectable(typeof(IOAuthSessionManager), ServiceLifetime.Scoped)]
 public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager

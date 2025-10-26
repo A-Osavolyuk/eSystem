@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Services;
+﻿using eSystem.Core.Attributes;
+
+namespace eSystem.Auth.Api.Services;
 
 [Injectable(typeof(IRoleManager), ServiceLifetime.Scoped)]
 public sealed class RoleManager(AuthDbContext context) : IRoleManager

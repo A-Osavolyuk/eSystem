@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Security.Authentication.SignIn;
+﻿using eSystem.Core.Security.Authentication.SignIn;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn;
 

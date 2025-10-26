@@ -8,9 +8,8 @@
     <Project Path="eAccount.Blazor.Server.Infrastructure\eAccount.Blazor.Server.Infrastructure.csproj" />
     <Project Path="eAccount.Blazor.Server.UI\eAccount.Blazor.Server.UI.csproj" />
   </Folder>
-  <Folder Name="/src/Common/">
-    <Project Path="eSystem.Application\eSystem.Application.csproj" />
-    <Project Path="eSystem.Domain\eSystem.Domain.csproj" />
+  <Folder Name="/src/Core/">
+    <Project Path="eSystem.Core\eSystem.Core.csproj" />
   </Folder>
   <Folder Name="/src/Hosting/">
     <Project Path="eSystem.AppHost\eSystem.AppHost.csproj" />

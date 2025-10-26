@@ -1,9 +1,10 @@
-﻿using eSystem.Application.Common.Http;
-using eSystem.Auth.Api.Security.Credentials.PublicKey;
+﻿using eSystem.Auth.Api.Security.Credentials.PublicKey;
 using eSystem.Auth.Api.Security.Session;
-using eSystem.Domain.Responses.Auth;
-using eSystem.Domain.Security.Credentials.Constants;
-using eSystem.Domain.Security.Credentials.PublicKey;
+using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Credentials.Constants;
+using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 
@@ -24,17 +25,17 @@ public class PasskeySignInStrategy(
         SignInResponse response;   
         
         var credential = credentials["Credential"] as PublicKeyCredential;
-        if (credential is null) return eSystem.Domain.Common.Results.Results.BadRequest("Credential is empty");
+        if (credential is null) return eSystem.Core.Common.Results.Results.BadRequest("Credential is empty");
         
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
         var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
-        if (passkey is null) return eSystem.Domain.Common.Results.Results.BadRequest("Invalid credential");
+        if (passkey is null) return eSystem.Core.Common.Results.Results.BadRequest("Invalid credential");
 
         var user = await userManager.FindByIdAsync(passkey.Device.UserId, cancellationToken);
-        if (user is null) return eSystem.Domain.Common.Results.Results.NotFound($"Cannot find user with ID {passkey.Device.UserId}.");
+        if (user is null) return eSystem.Core.Common.Results.Results.NotFound($"Cannot find user with ID {passkey.Device.UserId}.");
 
         var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
-        if (string.IsNullOrEmpty(savedChallenge)) return eSystem.Domain.Common.Results.Results.BadRequest("Invalid challenge");
+        if (string.IsNullOrEmpty(savedChallenge)) return eSystem.Core.Common.Results.Results.BadRequest("Invalid challenge");
 
         var result = await passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!result.Succeeded) return result;
@@ -47,13 +48,13 @@ public class PasskeySignInStrategy(
                 IsLockedOut = user.LockoutState.Enabled,
             };
 
-            return eSystem.Domain.Common.Results.Results.BadRequest("Account is locked out", response);
+            return eSystem.Core.Common.Results.Results.BadRequest("Account is locked out", response);
         }
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
         var device = user.GetDevice(userAgent, ipAddress);
-        if (device is null) return eSystem.Domain.Common.Results.Results.NotFound($"Invalid device.");
+        if (device is null) return eSystem.Core.Common.Results.Results.NotFound($"Invalid device.");
         
         await sessionManager.CreateAsync(device, cancellationToken);
 

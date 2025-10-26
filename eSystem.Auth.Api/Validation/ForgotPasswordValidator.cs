@@ -1,4 +1,5 @@
-﻿using eSystem.Domain.Requests.Auth;
+﻿using eSystem.Core.Requests.Auth;
+using eSystem.Core.Validation;
 
 namespace eSystem.Auth.Api.Validation;
 

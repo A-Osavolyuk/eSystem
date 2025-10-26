@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Security.Verification;
+﻿using eSystem.Core.Security.Verification;
 
 namespace eAccount.Blazor.Server.Domain.Common;
 

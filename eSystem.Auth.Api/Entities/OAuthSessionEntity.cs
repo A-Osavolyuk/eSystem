@@ -1,4 +1,5 @@
-﻿using eSystem.Domain.Security.Authorization.OAuth;
+﻿using eSystem.Core.Data.Entities;
+using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSystem.Auth.Api.Entities;
 

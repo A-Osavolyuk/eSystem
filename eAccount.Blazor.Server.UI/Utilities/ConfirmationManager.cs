@@ -1,5 +1,5 @@
 ﻿using eAccount.Blazor.Server.UI.Components.Common.Access;
-using eSystem.Domain.Security.Verification;
+using eSystem.Core.Security.Verification;
 
 namespace eAccount.Blazor.Server.UI.Utilities;
 

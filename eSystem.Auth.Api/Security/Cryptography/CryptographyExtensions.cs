@@ -1,10 +1,10 @@
-﻿using eSystem.Application.Security.Cryptography.Protection;
-using eSystem.Auth.Api.Security.Cryptography.Codes;
+﻿using eSystem.Auth.Api.Security.Cryptography.Codes;
 using eSystem.Auth.Api.Security.Cryptography.Hashing;
 using eSystem.Auth.Api.Security.Cryptography.Hashing.Hashers;
 using eSystem.Auth.Api.Security.Cryptography.Keys;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
 using eSystem.Auth.Api.Security.Cryptography.Protection.Protectors;
+using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSystem.Auth.Api.Security.Cryptography;
 

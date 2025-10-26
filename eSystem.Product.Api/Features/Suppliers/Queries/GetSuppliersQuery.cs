@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Common.Results;
+﻿using eSystem.Core.Common.Results;
 using eSystem.Product.Api.Interfaces;
 using eSystem.Product.Api.Mapping;
 

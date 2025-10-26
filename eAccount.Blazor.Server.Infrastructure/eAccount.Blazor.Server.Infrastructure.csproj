@@ -20,7 +20,6 @@
       <ProjectReference Include="..\eAccount.Blazor.Server.Application\eAccount.Blazor.Server.Application.csproj" />
       <ProjectReference Include="..\eShop.Blazor.Server.Application\eShop.Blazor.Server.Application.csproj" />
       <ProjectReference Include="..\eAccount.Blazor.Server.Domain\eAccount.Blazor.Server.Domain.csproj" />
-      <ProjectReference Include="..\eSystem.Application\eSystem.Application.csproj" />
-      <ProjectReference Include="..\eSystem.Domain\eSystem.Domain.csproj" />
+      <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
     </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Common.Messaging;
+﻿using eSystem.Core.Common.Messaging;
 
 namespace eSystem.Auth.Api.Interfaces;
 

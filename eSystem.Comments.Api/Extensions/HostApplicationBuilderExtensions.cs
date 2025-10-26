@@ -1,11 +1,11 @@
-﻿using eSystem.Application.Common.Cache.Redis;
-using eSystem.Application.Common.Documentation;
-using eSystem.Application.Common.Errors;
-using eSystem.Application.Common.Logging;
-using eSystem.Application.Common.Versioning;
-using eSystem.Application.Security.Authentication;
-using eSystem.Application.Validation;
-using eSystem.Comments.Api.Data;
+﻿using eSystem.Comments.Api.Data;
+using eSystem.Core.Common.Cache.Redis;
+using eSystem.Core.Common.Documentation;
+using eSystem.Core.Common.Errors;
+using eSystem.Core.Common.Logging;
+using eSystem.Core.Common.Versioning;
+using eSystem.Core.Security.Authentication;
+using eSystem.Core.Validation;
 
 namespace eSystem.Comments.Api.Extensions;
 

@@ -1,4 +1,4 @@
-﻿using eSystem.Application.Security.Cryptography.Protection;
+﻿using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eAccount.Blazor.Server.Infrastructure.Security.Cryptography.Protection;
 

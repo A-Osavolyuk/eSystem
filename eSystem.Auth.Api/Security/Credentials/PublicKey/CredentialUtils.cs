@@ -1,5 +1,5 @@
 ﻿using System.Security.Cryptography;
-using eSystem.Domain.Security.Credentials.PublicKey;
+using eSystem.Core.Security.Credentials.PublicKey;
 using PeterO.Cbor;
 
 namespace eSystem.Auth.Api.Security.Credentials.PublicKey;

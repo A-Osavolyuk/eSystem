@@ -1,6 +1,6 @@
 ﻿using eSystem.Auth.Api.Security.Credentials.PublicKey;
-using eSystem.Domain.Requests.Auth;
-using eSystem.Domain.Security.Credentials.Constants;
+using eSystem.Core.Requests.Auth;
+using eSystem.Core.Security.Credentials.Constants;
 
 namespace eSystem.Auth.Api.Features.Verification.Commands;
 

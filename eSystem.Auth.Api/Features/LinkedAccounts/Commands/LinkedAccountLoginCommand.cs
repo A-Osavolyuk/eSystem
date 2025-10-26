@@ -1,5 +1,5 @@
 ﻿using eSystem.Auth.Api.Security.Identity.Options;
-using eSystem.Domain.Responses.Auth;
+using eSystem.Core.Responses.Auth;
 using Microsoft.AspNetCore.Authentication;
 using OtpNet;
 

@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Services;
+﻿using eSystem.Core.Attributes;
+
+namespace eSystem.Auth.Api.Services;
 
 [Injectable(typeof(IDeviceManager), ServiceLifetime.Scoped)]
 public class DeviceManager(AuthDbContext context) : IDeviceManager

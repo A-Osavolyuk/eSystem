@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using eSystem.Application.Common.Errors;
-using eSystem.Domain.Common.Http;
-using eSystem.Domain.Requests.Storage;
+using eSystem.Core.Common.Errors;
+using eSystem.Core.Common.Http;
+using eSystem.Core.Requests.Storage;
 using eSystem.Storage.Api.Features.Commands;
 
 namespace eSystem.Storage.Api.Controllers.v1;

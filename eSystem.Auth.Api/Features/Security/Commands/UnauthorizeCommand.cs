@@ -1,6 +1,7 @@
-﻿using eSystem.Application.Common.Http;
-using eSystem.Auth.Api.Security.Session;
-using eSystem.Domain.Requests.Auth;
+﻿using eSystem.Auth.Api.Security.Session;
+using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
 

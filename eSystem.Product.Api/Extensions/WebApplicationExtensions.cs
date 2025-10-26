@@ -1,4 +1,4 @@
-﻿using eSystem.Application.Data;
+﻿using eSystem.Core.Data;
 using eSystem.Product.Api.Data;
 using Scalar.AspNetCore;
 

@@ -1,5 +1,6 @@
-﻿using eSystem.Application.Validation;
-using eSystem.Domain.Requests.Auth;
+﻿using eSystem.Core.Requests.Auth;
+using eSystem.Core.Validation;
+using eSystem.Core.Validation.Validators;
 
 namespace eSystem.Auth.Api.Validation;
 

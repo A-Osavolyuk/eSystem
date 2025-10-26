@@ -1,6 +1,7 @@
-﻿using eSystem.Application.Common.Http;
-using eSystem.Domain.DTOs;
-using eSystem.Domain.Security.Verification;
+﻿using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Context;
+using eSystem.Core.DTOs;
+using eSystem.Core.Security.Verification;
 
 namespace eSystem.Auth.Api.Features.Users.Queries;
 

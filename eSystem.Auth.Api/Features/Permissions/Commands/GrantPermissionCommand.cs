@@ -1,4 +1,4 @@
-﻿using eSystem.Domain.Requests.Auth;
+﻿using eSystem.Core.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.Permissions.Commands;
 

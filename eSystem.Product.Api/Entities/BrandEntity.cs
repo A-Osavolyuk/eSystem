@@ -1,4 +1,6 @@
-﻿namespace eSystem.Product.Api.Entities;
+﻿using eSystem.Core.Data.Entities;
+
+namespace eSystem.Product.Api.Entities;
 
 public class BrandEntity : Entity
 {

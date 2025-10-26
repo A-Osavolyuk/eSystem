@@ -1,6 +1,6 @@
 ﻿using eAccount.Blazor.Server.Application.State;
-using eSystem.Domain.DTOs;
-using eSystem.Domain.Security.Claims;
+using eSystem.Core.DTOs;
+using eSystem.Core.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace eAccount.Blazor.Server.Infrastructure.Security;
