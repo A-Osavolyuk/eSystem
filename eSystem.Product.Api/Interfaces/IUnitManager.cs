@@ -1,6 +1,4 @@
-﻿using eSystem.Product.Api.Entities;
-
-namespace eSystem.Product.Api.Interfaces;
+﻿namespace eSystem.Product.Api.Interfaces;
 
 public interface IUnitManager
 {

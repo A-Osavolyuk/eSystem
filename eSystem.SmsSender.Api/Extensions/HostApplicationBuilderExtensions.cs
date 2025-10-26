@@ -6,7 +6,6 @@ using eSystem.Core.Common.Versioning;
 using eSystem.Core.Security.Authentication;
 using eSystem.SmsSender.Api.Consumers;
 using eSystem.SmsSender.Api.Interfaces;
-using eSystem.SmsSender.Api.Services;
 using FluentValidation;
 
 namespace eSystem.SmsSender.Api.Extensions;

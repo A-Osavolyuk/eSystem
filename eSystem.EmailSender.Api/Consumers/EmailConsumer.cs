@@ -1,6 +1,4 @@
 ﻿using eSystem.Core.Common.Messaging;
-using eSystem.EmailSender.Api.Interfaces;
-using eSystem.EmailSender.Api.Options;
 
 namespace eSystem.EmailSender.Api.Consumers;
 

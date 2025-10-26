@@ -3,7 +3,6 @@ using eSystem.Auth.Api.Security.Authentication.Tokens;
 using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
 using eSystem.Auth.Api.Security.Cryptography.Keys;
 using eSystem.Core.Attributes;
-using eSystem.Core.Security.Claims;
 
 namespace eSystem.Auth.Api.Services;
 

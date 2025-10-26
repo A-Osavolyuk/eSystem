@@ -1,7 +1,4 @@
-﻿using eSystem.EmailSender.Api.Interfaces;
-using eSystem.EmailSender.Api.Options;
-
-namespace eSystem.EmailSender.Api.Services;
+﻿namespace eSystem.EmailSender.Api.Services;
 
 public class EmailService(IOptions<EmailOptions> options) : IEmailService
 {

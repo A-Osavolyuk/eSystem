@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Common.Http;
-using eSystem.Core.Common.Http.Context;
+﻿using eSystem.Core.Common.Http.Context;
 using eSystem.Core.DTOs;
 using eSystem.Core.Security.Authentication.TwoFactor;
 

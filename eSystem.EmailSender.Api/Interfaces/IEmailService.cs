@@ -1,6 +1,4 @@
-﻿using eSystem.EmailSender.Api.Options;
-
-namespace eSystem.EmailSender.Api.Interfaces;
+﻿namespace eSystem.EmailSender.Api.Interfaces;
 
 public interface IEmailService
 {

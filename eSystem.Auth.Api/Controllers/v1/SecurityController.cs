@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Features.SSO.Commands;
-using eSystem.Core.Common.Errors;
+﻿using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Filters;
 using eSystem.Core.Requests.Auth;

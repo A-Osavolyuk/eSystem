@@ -1,8 +1,6 @@
 ﻿using System.Text.Json;
 using eSystem.Core.Common.Results;
 using eSystem.Core.Requests.Product;
-using eSystem.Product.Api.Entities;
-using eSystem.Product.Api.Interfaces;
 
 namespace eSystem.Product.Api.Features.Products.Commands;
 

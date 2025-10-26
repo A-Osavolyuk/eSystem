@@ -1,8 +1,5 @@
 ﻿using eSystem.Core.Attributes;
 using eSystem.Core.Common.Results;
-using eSystem.Product.Api.Data;
-using eSystem.Product.Api.Entities;
-using eSystem.Product.Api.Interfaces;
 
 namespace eSystem.Product.Api.Services;
 

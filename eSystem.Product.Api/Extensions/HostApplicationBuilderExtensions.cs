@@ -8,8 +8,6 @@ using eSystem.Core.Data;
 using eSystem.Core.Security.Authentication;
 using eSystem.Core.Security.Authorization.Requirements;
 using eSystem.Core.Validation;
-using eSystem.Product.Api.Behaviours;
-using eSystem.Product.Api.Data;
 
 namespace eSystem.Product.Api.Extensions;
 

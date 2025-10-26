@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.Common.Results;
-using eSystem.Product.Api.Entities;
 
 namespace eSystem.Product.Api.Interfaces;
 

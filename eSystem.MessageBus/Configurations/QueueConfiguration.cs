@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.Common.Messaging;
-using eSystem.Core.Enums;
 
 namespace eSystem.MessageBus.Configurations;
 

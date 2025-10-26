@@ -1,6 +1,5 @@
 ﻿using eSystem.Auth.Api.Security.Authentication;
 using eSystem.Auth.Api.Security.Authentication.SSO;
-using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Auth.Api.Security.Authentication.Tokens;
 using eSystem.Auth.Api.Security.Authorization;
 using eSystem.Auth.Api.Security.Credentials;

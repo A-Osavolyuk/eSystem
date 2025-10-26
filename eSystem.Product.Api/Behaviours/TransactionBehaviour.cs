@@ -1,6 +1,4 @@
-﻿using eSystem.Product.Api.Data;
-
-namespace eSystem.Product.Api.Behaviours;
+﻿namespace eSystem.Product.Api.Behaviours;
 
 public class TransactionBehaviour<TRequest, TResponse>(
     AppDbContext context,

@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.DTOs;
-using eSystem.Product.Api.Entities;
 
 namespace eSystem.Product.Api.Mapping;
 

@@ -1,6 +1,4 @@
-﻿using Aspire.Hosting;
-using Aspire.Hosting.ApplicationModel;
-using eSystem.AppHost.Options;
+﻿using eSystem.AppHost.Options;
 using Microsoft.Extensions.Configuration;
 
 namespace eSystem.AppHost.Extensions;

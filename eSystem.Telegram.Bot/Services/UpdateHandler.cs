@@ -1,5 +1,4 @@
-﻿using Interfaces_IUpdateHandler = eSystem.Telegram.Bot.Interfaces.IUpdateHandler;
-using IUpdateHandler = eSystem.Telegram.Bot.Interfaces.IUpdateHandler;
+﻿using IUpdateHandler = eSystem.Telegram.Bot.Interfaces.IUpdateHandler;
 
 namespace eSystem.Telegram.Bot.Services;
 

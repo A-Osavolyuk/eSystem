@@ -4,8 +4,6 @@ using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Logging;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Security.Authentication;
-using eSystem.Telegram.Bot.Options;
-using eSystem.Telegram.Bot.Services;
 
 namespace eSystem.Telegram.Bot.Extensions;
 

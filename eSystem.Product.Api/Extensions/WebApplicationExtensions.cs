@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.Data;
-using eSystem.Product.Api.Data;
 using Scalar.AspNetCore;
 
 namespace eSystem.Product.Api.Extensions;

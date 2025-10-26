@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Enums;
-
-namespace eSystem.Core.DTOs;
+﻿namespace eSystem.Core.DTOs;
 
 public class UserEmailDto
 {

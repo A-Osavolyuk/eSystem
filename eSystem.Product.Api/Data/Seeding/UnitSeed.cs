@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.Data.Seeding;
-using eSystem.Product.Api.Entities;
 
 namespace eSystem.Product.Api.Data.Seeding;
 

@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Common.Http;
-using eSystem.Core.Common.Http.Context;
+﻿using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Verification;

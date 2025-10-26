@@ -1,5 +1,4 @@
 ﻿using eAccount.Application.State;
-using eSystem.Core.DTOs;
 using eSystem.Core.Security.Claims;
 using Microsoft.AspNetCore.Http;
 

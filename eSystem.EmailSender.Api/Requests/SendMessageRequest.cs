@@ -1,6 +1,4 @@
-﻿using eSystem.EmailSender.Api.Options;
-
-namespace eSystem.EmailSender.Api.Requests;
+﻿namespace eSystem.EmailSender.Api.Requests;
 
 public class SendMessageRequest
 {

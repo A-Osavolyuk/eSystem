@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.Common.Http;
-using eSystem.EmailSender.Api.Interfaces;
 using eSystem.EmailSender.Api.Requests;
 using HttpResponse = eSystem.Core.Common.Http.HttpResponse;
 

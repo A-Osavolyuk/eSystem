@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
-using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.TwoFactor;

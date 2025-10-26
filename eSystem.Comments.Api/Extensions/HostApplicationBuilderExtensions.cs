@@ -1,5 +1,4 @@
-﻿using eSystem.Comments.Api.Data;
-using eSystem.Core.Common.Cache.Redis;
+﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Logging;

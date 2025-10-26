@@ -1,6 +1,4 @@
-﻿using eSystem.Product.Api.Entities;
-
-namespace eSystem.Product.Api.Data;
+﻿namespace eSystem.Product.Api.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
