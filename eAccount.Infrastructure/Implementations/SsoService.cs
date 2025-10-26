@@ -10,11 +10,11 @@ public class SsoService(
     private const string BasePath = "api/v1/Sso";
     
     public async ValueTask<HttpResponse> RefreshTokenAsync(RefreshTokenRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/token", Method = HttpMethod.Post, Data = request },
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/refresh", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GenerateTokenAsync(GenerateTokenRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/refresh", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> GenerateTokenAsync(TokenRequest request) => await ApiClient.SendAsync(
+        new HttpRequest { Url = $"{Gateway}/{BasePath}/token", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> AuthorizeAsync(AuthorizeRequest request) => await ApiClient.SendAsync(
