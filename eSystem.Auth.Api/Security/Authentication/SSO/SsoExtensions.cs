@@ -1,4 +1,5 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SSO.Client;
+using eSystem.Auth.Api.Security.Authentication.SSO.Code;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 
 namespace eSystem.Auth.Api.Security.Authentication.SSO;
@@ -13,5 +14,6 @@ public static class SsoExtensions
         });
         
         builder.Services.AddScoped<IClientManager, ClientManager>();
+        builder.Services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
     }
 }
