@@ -11,7 +11,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
     public DbSet<UserTwoFactorMethodEntity> UserTwoFactorMethods { get; set; }
-    public DbSet<UserChangesEntity> UserChanges { get; set; }
     public DbSet<UserLinkedAccountEntity> UserLinkedAccounts { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
     public DbSet<PasskeyEntity> Passkeys { get; set; }
@@ -76,17 +75,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             
             entity.HasOne(u => u.User)
                 .WithMany(x => x.PhoneNumbers)
-                .HasForeignKey(x => x.UserId);
-        });
-        
-        builder.Entity<UserChangesEntity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Value).HasMaxLength(500);
-            entity.Property(x => x.Field).HasEnumConversion();
-
-            entity.HasOne(x => x.User)
-                .WithMany(x => x.Changes)
                 .HasForeignKey(x => x.UserId);
         });
         

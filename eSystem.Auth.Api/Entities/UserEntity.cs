@@ -31,7 +31,6 @@ public class UserEntity : Entity
     public ICollection<UserRecoveryCodeEntity> RecoveryCodes { get; init; } = null!;
     public ICollection<UserTwoFactorMethodEntity> Methods { get; init; } = null!;
     public ICollection<UserLinkedAccountEntity> LinkedAccounts { get; init; } = null!;
-    public ICollection<UserChangesEntity> Changes { get; init; } = null!;
     public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
     public ICollection<UserVerificationMethodEntity> VerificationMethods { get; init; } = null!;
     public UserLockoutStateEntity LockoutState { get; set; } = null!;
