@@ -38,7 +38,6 @@ public class AuthController(
             SessionId = response.SessionId,
             UserId = request.UserId,
             DeviceId = response.DeviceId,
-            Nonce = response.Nonce,
             IssuedAt = DateTimeOffset.UtcNow,
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
         };

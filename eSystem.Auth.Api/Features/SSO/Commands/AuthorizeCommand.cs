@@ -1,5 +1,6 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SSO;
 using eSystem.Auth.Api.Security.Authentication.SSO.Client;
+using eSystem.Auth.Api.Security.Authentication.SSO.Code;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Http.Context;
@@ -14,11 +15,13 @@ public class AuthorizeCommandHandler(
     IUserManager userManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionManager sessionManager,
+    IAuthorizationCodeManager authorizationCodeManager,
     IClientManager clientManager) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly ISessionManager sessionManager = sessionManager;
+    private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
     private readonly IClientManager clientManager = clientManager;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
@@ -39,16 +42,30 @@ public class AuthorizeCommandHandler(
         if (client is null) return Results.NotFound("Client not found.");
         if (!client.HasUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
         if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
+
+        var code = authorizationCodeManager.Generate();
+        
+        var authorizationCode = new AuthorizationCodeEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            ClientId = client.Id,
+            DeviceId = device.Id,
+            Code = code,
+            RedirectUri = request.Request.RedirectUri,
+            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(10),
+            CreateDate = DateTimeOffset.UtcNow,
+        };
+        
+        var codeResult = await authorizationCodeManager.CreateAsync(authorizationCode, cancellationToken);
+        if (!codeResult.Succeeded) return Results.BadRequest(codeResult);
         
         var response = new AuthorizeResponse()
         {
             UserId = user.Id,
             SessionId = session.Id,
             DeviceId = device.Id,
-            ClientId = client.ClientId,
             State = request.Request.State,
-            Nonce = request.Request.Nonce,
-            RedirectUri = request.Request.RedirectUri
+            Code = code
         };
         
         return Result.Success(response);
