@@ -15,14 +15,12 @@ public class AuthorizeCommandHandler(
     IUserManager userManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionManager sessionManager,
-    ISessionStorage sessionStorage,
     IAuthorizationCodeManager authorizationCodeManager,
     IClientManager clientManager) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly ISessionManager sessionManager = sessionManager;
-    private readonly ISessionStorage sessionStorage = sessionStorage;
     private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
     private readonly IClientManager clientManager = clientManager;
 
@@ -44,18 +42,16 @@ public class AuthorizeCommandHandler(
         if (client is null) return Results.NotFound("Client not found.");
         if (!client.HasUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
         if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
-
         if (string.IsNullOrWhiteSpace(request.Request.Nonce)) return Results.BadRequest("Invalid nonce.");
-        sessionStorage.Set(SessionKeys.Nonce, request.Request.Nonce);
         
         var code = authorizationCodeManager.Generate();
-        
         var authorizationCode = new AuthorizationCodeEntity()
         {
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
             DeviceId = device.Id,
             Code = code,
+            Nonce = request.Request.Nonce,
             RedirectUri = request.Request.RedirectUri,
             ExpireDate = DateTimeOffset.UtcNow.AddMinutes(10),
             CreateDate = DateTimeOffset.UtcNow,
