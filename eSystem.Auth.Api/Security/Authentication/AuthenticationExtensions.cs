@@ -1,10 +1,10 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.Schemes;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
+using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
-using eSystem.Auth.Api.Security.Tokens.Jwt;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Cookies;
 using eSystem.Core.Security.Authentication.SignIn;

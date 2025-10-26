@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace eSystem.Auth.Api.Security.Tokens;
+namespace eSystem.Auth.Api.Security.Authentication.Tokens;
 
 public interface ITokenFactory
 {

@@ -1,4 +1,4 @@
-﻿namespace eSystem.Auth.Api.Security.Tokens.Jwt;
+﻿namespace eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
 
 public class JwtOptions
 {

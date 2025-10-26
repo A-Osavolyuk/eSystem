@@ -1,6 +1,6 @@
-﻿using eSystem.Auth.Api.Security.Tokens.Jwt;
+﻿using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
 
-namespace eSystem.Auth.Api.Security.Tokens;
+namespace eSystem.Auth.Api.Security.Authentication.Tokens;
 
 public static class TokenExtensions
 {
