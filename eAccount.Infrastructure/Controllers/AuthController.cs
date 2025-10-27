@@ -1,6 +1,5 @@
 ﻿using eAccount.Domain.DTOs;
 using eAccount.Domain.Requests;
-using eAccount.Infrastructure.Security;
 using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Authentication.SSO;
 using eSystem.Core.Requests.Auth;
@@ -59,6 +58,15 @@ public class AuthController(
         return Ok(new ResponseBuilder().Succeeded().Build());
     }
     
+    [HttpPost("token")]
+    public async Task<IActionResult> TokenAsync([FromBody] TokenRequest request)
+    {
+        var result = await ssoService.GenerateTokenAsync(request);
+        return !result.Success
+            ? StatusCode(500, result) 
+            : Ok(new ResponseBuilder().Succeeded().Build());
+    }
+    
     [HttpPost("sign-in")]
     public async Task<IActionResult> SignInAsync([FromBody] SignInRequest request)
     {
@@ -83,21 +91,15 @@ public class AuthController(
         var properties = new AuthenticationProperties() { IsPersistent = true, };
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
 
-        var claims = principal.Claims.Select(c => new ClaimDto
+        var identity = new Identity
         {
-            Type = c.Type,
-            Value = c.Value
-        }).ToList();
-
-        var claimsIdentity = new ClaimsIdentityDto
-        {
-            Claims = claims,
+            Claims = principal.Claims.ToDictionary(x => x.Type, y => y.Value),
             Scheme = CookieAuthenticationDefaults.AuthenticationScheme
         };
 
         var response = new SignInResponse()
         {
-            Identity = claimsIdentity,
+            Identity = identity,
             AccessToken = tokenProvider.AccessToken
         };
 

@@ -1,7 +1,7 @@
 ﻿namespace eAccount.Domain.DTOs;
 
-public class ClaimsIdentityDto
+public class Identity
 {
-    public List<ClaimDto> Claims { get; set; } = [];
-    public string Scheme { get; set; } = string.Empty;
+    public required Dictionary<string, string> Claims { get; set; }
+    public required string Scheme { get; set; }
 }
