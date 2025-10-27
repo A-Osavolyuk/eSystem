@@ -52,7 +52,8 @@ public class AuthenticationManager(
             RedirectUri = redirectUri,
             Scopes = scopes,
             State = state,
-            Nonce = nonce
+            Nonce = nonce,
+            ResponseType = ResponseTypes.Code
         };
         
         var authorizeResult = await AuthorizeAsync(authorizeRequest);
