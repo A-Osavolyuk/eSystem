@@ -6,6 +6,17 @@ public static class AuthorizationExtensions
 {
     public static void AddAuthorization(this IHostApplicationBuilder builder)
     {
+        builder.AddPermissionHandler();
+        builder.AddPolicies();
+    }
+    
+    private static void AddPermissionHandler(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+    }
+
+    private static void AddPolicies(this IHostApplicationBuilder builder)
+    {
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy("DeleteAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("DELETE_ACCOUNT")))
             .AddPolicy("CreateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("CREATE_ACCOUNT")))

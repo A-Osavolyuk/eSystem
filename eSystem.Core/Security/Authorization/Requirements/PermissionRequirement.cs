@@ -1,16 +1,10 @@
-﻿using eSystem.Core.Attributes;
-using eSystem.Core.Security.Claims;
+﻿using eSystem.Core.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace eSystem.Core.Security.Authorization.Requirements;
 
-public class PermissionRequirement(string permissionName) : IAuthorizationRequirement
-{
-    public string PermissionName { get; } = permissionName;
-}
+public record PermissionRequirement(string PermissionName) : IAuthorizationRequirement;
 
-[Injectable(typeof(IAuthorizationHandler), ServiceLifetime.Singleton)]
 public sealed class PermissionHandler : AuthorizationHandler<PermissionRequirement>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
