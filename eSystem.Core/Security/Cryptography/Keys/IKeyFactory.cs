@@ -1,4 +1,4 @@
-﻿namespace eSystem.Auth.Api.Security.Cryptography.Keys;
+﻿namespace eSystem.Core.Security.Cryptography.Keys;
 
 public interface IKeyFactory
 {
