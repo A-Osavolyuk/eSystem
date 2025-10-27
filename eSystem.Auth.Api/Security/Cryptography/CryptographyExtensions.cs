@@ -24,6 +24,7 @@ public static class CryptographyExtensions
         services.AddScoped<IProtectorFactory, ProtectorFactory>();
         services.AddKeyedScoped<IProtector, CodeProtector>(ProtectionPurposes.RecoveryCode);
         services.AddKeyedScoped<IProtector, SecretProtector>(ProtectionPurposes.Session);
+        services.AddKeyedScoped<IProtector, TokenProtector>(ProtectionPurposes.RefreshToken);
     }
 
     private static void AddHashing(this IServiceCollection services)

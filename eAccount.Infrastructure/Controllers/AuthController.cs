@@ -79,11 +79,7 @@ public class AuthController(
         };
         
         tokenProvider.AccessToken = request.AccessToken;
-
-        var refreshToken = request.RefreshToken;
-        var protector = factory.Create(ProtectionPurposes.RefreshToken);
-        var protectedRefreshToken = protector.Protect(refreshToken);
-        Response.Cookies.Append(DefaultCookies.RefreshToken, protectedRefreshToken, cookieOptions);
+        Response.Cookies.Append(DefaultCookies.RefreshToken, request.RefreshToken, cookieOptions);
 
         var authenticateResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
         if (!authenticateResult.Succeeded)

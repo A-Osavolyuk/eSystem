@@ -7,6 +7,7 @@ using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Claims;
+using eSystem.Core.Security.Cryptography.Protection;
 using eSystem.Core.Security.Cryptography.Tokens;
 
 namespace eSystem.Auth.Api.Features.SSO.Commands;
@@ -19,6 +20,7 @@ public class TokenCommandHandler(
     IAuthorizationCodeManager authorizationCodeManager,
     ITokenManager tokenManager,
     IPkceHandler pkceHandler,
+    IProtectorFactory protectorFactory,
     IOptions<JwtOptions> options) : IRequestHandler<TokenCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
@@ -26,6 +28,7 @@ public class TokenCommandHandler(
     private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IPkceHandler pkceHandler = pkceHandler;
+    private readonly IProtectorFactory protectorFactory = protectorFactory;
     private readonly JwtOptions options = options.Value;
 
     public async Task<Result> Handle(TokenCommand request, CancellationToken cancellationToken)
@@ -94,15 +97,17 @@ public class TokenCommandHandler(
             new(AppClaimTypes.Nonce, authorizationCode.Nonce),
         };
 
+        var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
         var accessToken = tokenManager.GenerateAccessToken(claims, client.Name);
         var refreshToken = tokenManager.GenerateRefreshToken();
+        var protectedRefreshToken = protector.Protect(refreshToken);
 
         var response = new TokenResponse()
         {
             AccessToken = accessToken,
             ExpiresIn = options.AccessTokenExpirationMinutes * 60,
             TokenType = TokenTypes.Bearer,
-            RefreshToken = refreshToken
+            RefreshToken = protectedRefreshToken,
         };
 
         return Result.Success(response);
