@@ -1,4 +1,4 @@
-namespace eSystem.Auth.Api.Security.Authentication.SSO.PKCE;
+namespace eSystem.Core.Security.Authentication.SSO.Constants;
 
 public static class ChallengeMethods
 {

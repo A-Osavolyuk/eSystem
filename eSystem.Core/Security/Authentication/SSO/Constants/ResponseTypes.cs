@@ -1,6 +1,6 @@
-﻿namespace eSystem.Auth.Api.Security.Authentication.SSO;
+﻿namespace eSystem.Core.Security.Authentication.SSO.Constants;
 
-public class ResponseTypes
+public static class ResponseTypes
 {
     public const string Token = "token";
     public const string IdToken = "id_token";

@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.SSO;
+﻿namespace eSystem.Core.Security.Authentication.SSO.Constants;
 
 public static class Scopes
 {

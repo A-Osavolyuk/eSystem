@@ -1,5 +1,7 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SSO;
 using eSystem.Core.Data.Seeding;
+using eSystem.Core.Security.Authentication.SSO;
+using eSystem.Core.Security.Authentication.SSO.Constants;
 
 namespace eSystem.Auth.Api.Data.Seeding;
 
