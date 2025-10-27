@@ -1,5 +1,5 @@
-using eSystem.Auth.Api.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Cryptography.Tokens;
 
 namespace eSystem.Auth.Api.Security.Authentication.JWT;
 

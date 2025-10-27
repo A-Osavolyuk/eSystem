@@ -1,4 +1,4 @@
-﻿namespace eSystem.Auth.Api.Security.Cryptography.Tokens;
+﻿namespace eSystem.Core.Security.Cryptography.Tokens;
 
 public class TokenTypes
 {
