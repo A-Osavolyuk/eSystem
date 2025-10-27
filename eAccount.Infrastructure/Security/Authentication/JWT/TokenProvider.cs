@@ -1,4 +1,4 @@
-﻿namespace eAccount.Infrastructure.Security;
+﻿namespace eAccount.Infrastructure.Security.Authentication.JWT;
 
 public class TokenProvider()
 {

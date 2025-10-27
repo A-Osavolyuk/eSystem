@@ -2,7 +2,7 @@
 using eSystem.Core.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace eAccount.Infrastructure.Security;
+namespace eAccount.Infrastructure.Security.Authentication.JWT;
 
 public class JwtAuthenticationStateProvider(
     IHttpContextAccessor httpContextAccessor,

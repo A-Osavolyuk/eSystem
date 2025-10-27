@@ -1,6 +1,7 @@
 ﻿using eAccount.Domain.DTOs;
 using eAccount.Domain.Requests;
 using eAccount.Infrastructure.Security;
+using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Authentication.SSO;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;

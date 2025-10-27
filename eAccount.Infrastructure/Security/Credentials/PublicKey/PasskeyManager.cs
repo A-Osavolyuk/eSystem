@@ -2,7 +2,7 @@
 using eSystem.Core.Security.Credentials.PublicKey;
 using Microsoft.JSInterop;
 
-namespace eAccount.Infrastructure.Security;
+namespace eAccount.Infrastructure.Security.Credentials.PublicKey;
 
 public class PasskeyManager(IJSRuntime jsRuntime)
 {

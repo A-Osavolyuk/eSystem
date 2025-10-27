@@ -1,4 +1,6 @@
-﻿using eAccount.Infrastructure.Security.Cryptography.Protection;
+﻿using eAccount.Infrastructure.Security.Authentication.JWT;
+using eAccount.Infrastructure.Security.Credentials.PublicKey;
+using eAccount.Infrastructure.Security.Cryptography.Protection;
 using eSystem.Core.Security.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;

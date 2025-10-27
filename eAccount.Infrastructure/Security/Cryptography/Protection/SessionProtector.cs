@@ -5,7 +5,7 @@ namespace eAccount.Infrastructure.Security.Cryptography.Protection;
 
 public class SessionProtector(IDataProtectionProvider protectionProvider) : IProtector
 {
-    private readonly IDataProtector protector = protectionProvider.CreateProtector("SessionProtection");
+    private readonly IDataProtector protector = protectionProvider.CreateProtector(ProtectionPurposes.Session);
 
     public string Protect(string unprotectedText) => protector.Protect(unprotectedText);
     public string Unprotect(string protectedText) => protector.Unprotect(protectedText);

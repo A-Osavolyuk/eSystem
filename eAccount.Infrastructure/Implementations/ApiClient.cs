@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using eAccount.Infrastructure.Http;
 using eAccount.Infrastructure.Security;
+using eAccount.Infrastructure.Security.Authentication.JWT;
 using eSystem.Core.Responses.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;

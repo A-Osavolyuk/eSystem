@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace eAccount.Infrastructure.Security;
+namespace eAccount.Infrastructure.Security.Authentication.JWT;
 
 public class JwtAuthenticationOptions : AuthenticationSchemeOptions {}
 
