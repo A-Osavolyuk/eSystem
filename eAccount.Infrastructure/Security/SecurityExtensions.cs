@@ -2,6 +2,7 @@
 using eAccount.Infrastructure.Security.Credentials.PublicKey;
 using eAccount.Infrastructure.Security.Cryptography.Protection;
 using eSystem.Core.Security.Authentication.Cookies;
+using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 
@@ -41,5 +42,12 @@ public static class SecurityExtensions
         builder.Services.AddScoped<AuthenticationManager>();
         builder.Services.AddScoped<PasskeyManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+    }
+    
+    private static void AddProtection(this IServiceCollection services)
+    {
+        services.AddDataProtection();
+        services.AddScoped<IProtectorFactory, ProtectorFactory>();
+        services.AddKeyedScoped<IProtector, SessionProtector>(ProtectionPurposes.Session);
     }
 }
