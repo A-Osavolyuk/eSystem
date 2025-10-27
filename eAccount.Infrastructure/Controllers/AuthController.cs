@@ -8,6 +8,7 @@ using eSystem.Core.Security.Authentication.Cookies;
 using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SignInRequest = eAccount.Domain.Requests.SignInRequest;
@@ -20,11 +21,11 @@ namespace eAccount.Infrastructure.Controllers;
 public class AuthController(
     TokenProvider tokenProvider,
     ISsoService ssoService,
-    IProtector protector) : ControllerBase
+    IProtectorFactory factory) : ControllerBase
 {
     private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly ISsoService ssoService = ssoService;
-    private readonly IProtector protector = protector;
+    private readonly IProtectorFactory factory = factory;
 
     [HttpPost("authorize")]
     public async Task<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
@@ -33,7 +34,7 @@ public class AuthController(
         if (!result.Success) return StatusCode(500, result);
         
         var response = result.Get<AuthorizeResponse>()!;
-        var sessionCookie = new SessionCookie()
+        var cookie = new SessionCookie()
         {
             SessionId = response.SessionId,
             UserId = request.UserId,
@@ -42,20 +43,21 @@ public class AuthController(
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
         };
         
-        var sessionCookieJson = JsonSerializer.Serialize(sessionCookie);
-        var protectedSessionCookie = protector.Protect(sessionCookieJson);
+        var cookieJson = JsonSerializer.Serialize(cookie);
+        var protector = factory.Create(ProtectionPurposes.Session);
+        var protectedCookie = protector.Protect(cookieJson);
         var cookieOptions = new CookieOptions()
         {
             Domain = "localhost",
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
-            Expires = sessionCookie.ExpiresAt.UtcDateTime,
+            Expires = cookie.ExpiresAt.UtcDateTime,
             MaxAge = TimeSpan.FromDays(30)
         };
         
-        Response.Cookies.Append(DefaultCookies.Session, protectedSessionCookie, cookieOptions);
+        Response.Cookies.Append(DefaultCookies.Session, protectedCookie, cookieOptions);
     
-        return Ok(new ResponseBuilder().Succeeded().Build());
+        return Ok(result);
     }
     
     [HttpPost("token")]
@@ -64,7 +66,7 @@ public class AuthController(
         var result = await ssoService.GenerateTokenAsync(request);
         return !result.Success
             ? StatusCode(500, result) 
-            : Ok(new ResponseBuilder().Succeeded().Build());
+            : Ok(result);
     }
     
     [HttpPost("sign-in")]
@@ -75,9 +77,13 @@ public class AuthController(
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
         };
-
-        Response.Cookies.Append(DefaultCookies.RefreshToken, request.RefreshToken, cookieOptions);
+        
         tokenProvider.AccessToken = request.AccessToken;
+
+        var refreshToken = request.RefreshToken;
+        var protector = factory.Create(ProtectionPurposes.RefreshToken);
+        var protectedRefreshToken = protector.Protect(refreshToken);
+        Response.Cookies.Append(DefaultCookies.RefreshToken, protectedRefreshToken, cookieOptions);
 
         var authenticateResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
         if (!authenticateResult.Succeeded)
