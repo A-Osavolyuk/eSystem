@@ -1,5 +1,5 @@
 ﻿using System.Buffers.Binary;
-using eSystem.Auth.Api.Security.Cryptography.Encoding;
+using eSystem.Core.Security.Cryptography.Encoding;
 using PeterO.Cbor;
 
 namespace eSystem.Auth.Api.Security.Credentials.PublicKey;

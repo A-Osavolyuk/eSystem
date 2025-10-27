@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using eSystem.Auth.Api.Security.Cryptography.Encoding;
+using eSystem.Core.Security.Cryptography.Encoding;
 
 namespace eSystem.Auth.Api.Security.Credentials.PublicKey;
 

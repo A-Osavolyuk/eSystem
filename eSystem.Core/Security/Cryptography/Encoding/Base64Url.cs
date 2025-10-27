@@ -1,4 +1,4 @@
-namespace eSystem.Auth.Api.Security.Cryptography.Encoding;
+namespace eSystem.Core.Security.Cryptography.Encoding;
 
 public static class Base64Url
 {
