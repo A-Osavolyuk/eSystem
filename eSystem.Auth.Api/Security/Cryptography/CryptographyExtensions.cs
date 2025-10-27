@@ -4,6 +4,7 @@ using eSystem.Auth.Api.Security.Cryptography.Hashing.Hashers;
 using eSystem.Auth.Api.Security.Cryptography.Keys;
 using eSystem.Auth.Api.Security.Cryptography.Protection;
 using eSystem.Auth.Api.Security.Cryptography.Protection.Protectors;
+using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSystem.Auth.Api.Security.Cryptography;
@@ -14,7 +15,7 @@ public static class CryptographyExtensions
     {
         builder.Services.AddHashing();
         builder.Services.AddProtection();
-        builder.Services.AddScoped<IKeyFactory, KeyFactory>();
+        builder.Services.AddScoped<IKeyFactory, RandomKeyFactory>();
         builder.Services.AddScoped<ICodeFactory, CodeFactory>();
     }
     private static void AddProtection(this IServiceCollection services)

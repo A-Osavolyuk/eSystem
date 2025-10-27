@@ -1,8 +1,9 @@
-﻿using OtpNet;
+﻿using eSystem.Core.Security.Cryptography.Keys;
+using OtpNet;
 
 namespace eSystem.Auth.Api.Security.Cryptography.Keys;
 
-public class KeyFactory : IKeyFactory
+public class RandomKeyFactory : IKeyFactory
 {
     public string Create(int length)
     {
