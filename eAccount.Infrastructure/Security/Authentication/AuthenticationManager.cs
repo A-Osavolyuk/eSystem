@@ -1,4 +1,5 @@
 ﻿using eAccount.Application.State;
+using eAccount.Domain.Constants;
 using eAccount.Domain.Options;
 using eAccount.Domain.Requests;
 using eAccount.Infrastructure.Security.Authentication.JWT;
@@ -57,11 +58,6 @@ public class AuthenticationManager(
 
         var authorizeResponse = authorizeResult.Get<AuthorizeResponse>()!;
 
-        if (!state.Equals(authorizeResponse.State))
-        {
-            //TODO: Handle invalid state
-        }
-
         var tokenRequest = new TokenRequest()
         {
             GrantType = GrantTypes.AuthorizationCode,
@@ -112,7 +108,7 @@ public class AuthenticationManager(
     {
         var fetchOptions = new FetchOptions()
         {
-            Url = $"{navigationManager.BaseUri}api/auth/sign-in",
+            Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
             Method = HttpMethod.Post,
             Body = request
         };
@@ -124,7 +120,7 @@ public class AuthenticationManager(
     {
         var fetchOptions = new FetchOptions()
         {
-            Url = $"{navigationManager.BaseUri}api/auth/authorize",
+            Url = $"{navigationManager.BaseUri}api/sso/authorize",
             Method = HttpMethod.Post,
             Body = request
         };
@@ -136,7 +132,7 @@ public class AuthenticationManager(
     {
         var fetchOptions = new FetchOptions()
         {
-            Url = $"{navigationManager.BaseUri}api/auth/token",
+            Url = $"{navigationManager.BaseUri}api/sso/token",
             Method = HttpMethod.Post,
             Body = request
         };
@@ -146,17 +142,10 @@ public class AuthenticationManager(
 
     public async Task SignOutAsync()
     {
-        var request = new SignOutRequest()
-        {
-            UserId = userState.UserId,
-            AccessToken = tokenProvider.AccessToken!
-        };
-
         var fetchOptions = new FetchOptions()
         {
             Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/auth/sign-out",
-            Body = request
+            Url = $"{navigationManager.BaseUri}api/authentication/sign-out",
         };
 
         var authResult = await fetchClient.FetchAsync(fetchOptions);
@@ -167,20 +156,20 @@ public class AuthenticationManager(
             await storage.ClearAsync();
             tokenProvider.Clear();
 
-            navigationManager.NavigateTo("/account/login");
+            navigationManager.NavigateTo(Links.LoginPage);
         }
     }
 
     public async Task<HttpResponse> RefreshTokenAsync()
     {
         var request = new RefreshTokenRequest() { UserId = userState.UserId };
-        var options = new FetchOptions()
+        var fetchOptions = new FetchOptions()
         {
             Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/auth/refresh-token",
+            Url = $"{navigationManager.BaseUri}api/sso/refresh-token",
             Body = request
         };
 
-        return await fetchClient.FetchAsync(options);
+        return await fetchClient.FetchAsync(fetchOptions);
     }
 }

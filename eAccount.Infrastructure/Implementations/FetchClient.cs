@@ -9,7 +9,7 @@ public class FetchClient(IJSRuntime jSRuntime) : IFetchClient
 
     public async ValueTask<HttpResponse> FetchAsync(FetchOptions options)
     {
-        var body = JsonSerializer.Serialize(options.Body);
+        var body = options.Body is null ? string.Empty : JsonSerializer.Serialize(options.Body);
         var headers = new Dictionary<string, string>()
         {
             { "Accept", "application/json" },
