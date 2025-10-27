@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using eSystem.Auth.Api.Security.Cryptography.Encoding;
 
 namespace eSystem.Auth.Api.Security.Credentials.PublicKey;
 
@@ -19,7 +20,7 @@ public class ClientData
 
     public static ClientData? Parse(string clientDataJson)
     {
-        var bytes = CredentialUtils.Base64UrlDecode(clientDataJson);
+        var bytes = Base64Url.Decode(clientDataJson);
         var json = Encoding.UTF8.GetString(bytes);
         var clientData = JsonSerializer.Deserialize<ClientData>(json);
         

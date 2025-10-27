@@ -1,4 +1,5 @@
 ﻿using System.Buffers.Binary;
+using eSystem.Auth.Api.Security.Cryptography.Encoding;
 using PeterO.Cbor;
 
 namespace eSystem.Auth.Api.Security.Credentials.PublicKey;
@@ -18,7 +19,7 @@ public sealed class AuthenticationData
 
     public static AuthenticationData Parse(string attestationObject)
     {
-        var attestationBytes = CredentialUtils.Base64UrlDecode(attestationObject);
+        var attestationBytes = Base64Url.Decode(attestationObject);
         var attestationCbor = CBORObject.DecodeFromBytes(attestationBytes);
         var authDataBytes = attestationCbor["authData"].GetByteString();
         var authenticationData = new AuthenticationData();

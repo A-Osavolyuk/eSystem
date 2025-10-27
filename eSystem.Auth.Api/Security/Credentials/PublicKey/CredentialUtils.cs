@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using eSystem.Auth.Api.Security.Cryptography.Encoding;
 using eSystem.Core.Security.Credentials.PublicKey;
 using PeterO.Cbor;
 
@@ -6,24 +7,11 @@ namespace eSystem.Auth.Api.Security.Credentials.PublicKey;
 
 public static class CredentialUtils
 {
-    public static byte[] Base64UrlDecode(string base64Url)
-    {
-        var padded = base64Url
-            .Replace('-', '+')
-            .Replace('_', '/');
 
-        switch (padded.Length % 4)
-        {
-            case 2: padded += "=="; break;
-            case 3: padded += "="; break;
-        }
-
-        return Convert.FromBase64String(padded);
-    }
 
     public static string ToBase64String(string value)
     {
-        var bytes = Base64UrlDecode(value);
+        var bytes = Base64Url.Decode(value);
         var base64 = Convert.ToBase64String(bytes);
         
         return base64;
@@ -31,7 +19,7 @@ public static class CredentialUtils
 
     public static uint ParseSignCount(string authenticatorData)
     {
-        var authenticatorDataBytes = Base64UrlDecode(authenticatorData);
+        var authenticatorDataBytes = Base64Url.Decode(authenticatorData);
         var signCountBytes = authenticatorDataBytes.Skip(33).Take(4).ToArray();
         if (BitConverter.IsLittleEndian) Array.Reverse(signCountBytes);
         var signCount = BitConverter.ToUInt32(signCountBytes, 0);
@@ -40,9 +28,9 @@ public static class CredentialUtils
 
     public static bool VerifySignature(AuthenticatorAssertionResponse response, byte[] publicKey)
     {
-        var authenticatorDataBytes = Base64UrlDecode(response.AuthenticatorData);
-        var signature = Base64UrlDecode(response.Signature);
-        var clientDataJson = Base64UrlDecode(response.ClientDataJson);
+        var authenticatorDataBytes = Base64Url.Decode(response.AuthenticatorData);
+        var signature = Base64Url.Decode(response.Signature);
+        var clientDataJson = Base64Url.Decode(response.ClientDataJson);
         var clientDataHash = SHA256.HashData(clientDataJson);
 
         var signedData = authenticatorDataBytes.Concat(clientDataHash).ToArray();
