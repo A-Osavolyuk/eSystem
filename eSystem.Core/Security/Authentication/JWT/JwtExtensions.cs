@@ -20,12 +20,8 @@ public static class JwtExtensions
             })
             .AddJwtBearer(options =>
             {
-                const string audiencesPath = "JWT:Audiences";
-                const string issuerPath = "JWT:Issuer";
-                const string keyPath = "JWT:Secret";
-                
-                var audiences = configuration.Get<List<string>>(audiencesPath);
-                var keyBytes = Encoding.UTF8.GetBytes(configuration[keyPath]!);
+                var jwtOption = configuration.GetSection("JWT").Get<JwtOptions>()!;
+                var keyBytes = Encoding.UTF8.GetBytes(jwtOption.Secret);
                 var securityKey = new SymmetricSecurityKey(keyBytes);
             
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -35,8 +31,8 @@ public static class JwtExtensions
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     RequireExpirationTime = true,
-                    ValidAudiences = audiences,
-                    ValidIssuer = configuration[issuerPath],
+                    ValidAudiences = jwtOption.Audience,
+                    ValidIssuer = jwtOption.Issuer,
                     IssuerSigningKey = securityKey
                 };
             });
