@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using eSystem.Core.Common.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,9 +18,13 @@ public static class AuthenticationExtensions
             })
             .AddJwtBearer(options =>
             {
-                const string audiencePath = "JWT:Audience";
+                const string audiencesPath = "JWT:Audiences";
                 const string issuerPath = "JWT:Issuer";
                 const string keyPath = "JWT:Secret";
+                
+                var audiences = builder.Configuration.Get<List<string>>(audiencesPath);
+                var keyBytes = Encoding.UTF8.GetBytes(builder.Configuration[keyPath]!);
+                var securityKey = new SymmetricSecurityKey(keyBytes);
             
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
@@ -28,10 +33,9 @@ public static class AuthenticationExtensions
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     RequireExpirationTime = true,
-                    ValidAudience = builder.Configuration[audiencePath],
+                    ValidAudiences = audiences,
                     ValidIssuer = builder.Configuration[issuerPath],
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(builder.Configuration[keyPath]!))
+                    IssuerSigningKey = securityKey
                 };
             });
     }
