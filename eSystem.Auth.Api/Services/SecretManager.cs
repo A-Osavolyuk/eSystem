@@ -13,7 +13,7 @@ public sealed class SecretManager(
 {
     private readonly AuthDbContext context = context;
     private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly IProtector protector = protectorFactory.Create(ProtectorType.Secret);
+    private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.Secret);
 
     public async ValueTask<UserSecretEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
     {

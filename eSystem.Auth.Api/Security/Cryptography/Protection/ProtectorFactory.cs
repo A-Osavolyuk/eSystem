@@ -6,5 +6,5 @@ public class ProtectorFactory(IServiceProvider serviceProvider) : IProtectorFact
 {
     private readonly IServiceProvider serviceProvider = serviceProvider;
 
-    public IProtector Create(ProtectorType type) => serviceProvider.GetRequiredKeyedService<IProtector>(type);
+    public IProtector Create(string purpose) => serviceProvider.GetRequiredKeyedService<IProtector>(purpose);
 }

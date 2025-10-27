@@ -13,7 +13,7 @@ public sealed class RecoverManager(
 {
     private readonly AuthDbContext context = context;
     private readonly IRecoveryCodeFactory recoveryCodeFactory = recoveryCodeFactory;
-    private readonly IProtector protector = protectorFactory.Create(ProtectorType.Code);
+    private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.RecoveryCode);
 
     public List<string> Unprotect(UserEntity user)
     {

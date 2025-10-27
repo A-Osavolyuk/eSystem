@@ -25,8 +25,8 @@ public class AuthenticatorSignInStrategy(
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
-    private readonly IProtector protector = protectorFactory.Create(ProtectorType.Secret);
     private readonly SignInOptions options = options.Value;
+    private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.Secret);
 
     public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 
         CancellationToken cancellationToken = default)
