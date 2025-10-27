@@ -13,7 +13,7 @@ public static class HostApplicationBuilderExtensions
     {
         builder.AddLogging();
         builder.AddServiceDefaults();
-        builder.AddJwtAuthentication();
+        builder.AddAuthentication();
         builder.AddVersioning();
         builder.AddMessageBus();
         builder.AddMediatR();

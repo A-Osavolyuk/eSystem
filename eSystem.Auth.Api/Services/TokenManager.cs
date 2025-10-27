@@ -1,8 +1,7 @@
 ﻿using System.Security.Claims;
-using eSystem.Auth.Api.Security.Authentication.Tokens;
-using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
-using eSystem.Auth.Api.Security.Cryptography.Keys;
+using eSystem.Auth.Api.Security.Cryptography.Tokens;
 using eSystem.Core.Attributes;
+using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Keys;
 
 namespace eSystem.Auth.Api.Services;

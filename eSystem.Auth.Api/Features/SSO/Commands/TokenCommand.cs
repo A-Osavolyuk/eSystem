@@ -3,10 +3,10 @@ using eSystem.Auth.Api.Security.Authentication.SSO.Client;
 using eSystem.Auth.Api.Security.Authentication.SSO.Code;
 using eSystem.Auth.Api.Security.Authentication.SSO.PKCE;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
-using eSystem.Auth.Api.Security.Authentication.Tokens;
-using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
+using eSystem.Auth.Api.Security.Cryptography.Tokens;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Claims;
 
 namespace eSystem.Auth.Api.Features.SSO.Commands;

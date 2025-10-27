@@ -13,7 +13,7 @@ public static class HostApplicationBuilderExtensions
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddLogging();
-        builder.AddJwtAuthentication();
+        builder.AddAuthentication();
         builder.AddVersioning();
         builder.AddMongoDb();
         builder.AddMessageBus();

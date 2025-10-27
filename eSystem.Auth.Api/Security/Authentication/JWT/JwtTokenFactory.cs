@@ -1,7 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using eSystem.Auth.Api.Security.Cryptography.Tokens;
+using eSystem.Core.Security.Authentication.JWT;
 
-namespace eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
+namespace eSystem.Auth.Api.Security.Authentication.JWT;
 
 public class JwtTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
 {

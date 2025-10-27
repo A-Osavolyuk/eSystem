@@ -10,7 +10,7 @@ public static class HostApplicationBuilderExtensions
     public static void AppApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddServiceDefaults();
-        builder.AddJwtAuthentication();
+        builder.AddAuthentication();
         builder.AddLogging();
         builder.AddReverseProxy();
         builder.AddCors();

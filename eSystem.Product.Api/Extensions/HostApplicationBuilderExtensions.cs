@@ -17,7 +17,7 @@ public static class HostApplicationBuilderExtensions
     {
         builder.AddLogging();
         builder.AddServiceDefaults();
-        builder.AddJwtAuthentication();
+        builder.AddAuthentication();
         builder.AddAuthorization();
         builder.AddVersioning();
         builder.AddMessageBus();

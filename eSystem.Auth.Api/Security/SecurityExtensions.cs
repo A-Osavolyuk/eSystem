@@ -1,11 +1,11 @@
 ﻿using eSystem.Auth.Api.Security.Authentication;
 using eSystem.Auth.Api.Security.Authentication.SSO;
-using eSystem.Auth.Api.Security.Authentication.Tokens;
 using eSystem.Auth.Api.Security.Authorization;
 using eSystem.Auth.Api.Security.Credentials;
 using eSystem.Auth.Api.Security.Cryptography;
 using eSystem.Auth.Api.Security.Identity;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Auth.Api.Security.Cryptography.Tokens;
 using eSystem.Core.Common.Configuration;
 
 namespace eSystem.Auth.Api.Security;
@@ -19,7 +19,6 @@ public static class SecurityExtensions
         builder.AddAuthentication();
         builder.AddAuthorization();
         builder.AddCryptography();
-        builder.AddTokens();
         builder.AddSSO();
         builder.AddCredentials(cfg =>
         {

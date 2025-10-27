@@ -1,14 +1,15 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.Schemes;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
-using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Cookies;
+using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Authentication.SignIn;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using JwtExtensions = eSystem.Auth.Api.Security.Authentication.JWT.JwtExtensions;
 
 namespace eSystem.Auth.Api.Security.Authentication;
 
@@ -20,6 +21,7 @@ public static class AuthenticationExtensions
         
         builder.Services.AddSignInStrategies();
         builder.Services.Add2FA();
+        JwtExtensions.AddJwt(builder.Services);
 
         builder.Services.AddAuthentication(options =>
             {
