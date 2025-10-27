@@ -1,7 +1,9 @@
 ﻿using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Credentials.PublicKey;
+using eAccount.Infrastructure.Security.Cryptography.Keys;
 using eAccount.Infrastructure.Security.Cryptography.Protection;
 using eSystem.Core.Security.Authentication.Cookies;
+using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +16,7 @@ public static class SecurityExtensions
     {
         builder.Services.AddAuthorization();
         builder.Services.AddProtection();
+        builder.Services.AddScoped<IKeyFactory, RandomKeyFactory>();
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
