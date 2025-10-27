@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using eSystem.Auth.Api.Security.Authentication.SSO.Client;
 using eSystem.Auth.Api.Security.Authentication.SSO.Code;
+using eSystem.Auth.Api.Security.Authentication.SSO.PKCE;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Auth.Api.Security.Authentication.Tokens;
 using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
@@ -17,12 +18,14 @@ public class TokenCommandHandler(
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
     ITokenManager tokenManager,
+    IPkceHandler pkceHandler,
     IOptions<JwtOptions> options) : IRequestHandler<TokenCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenManager tokenManager = tokenManager;
+    private readonly IPkceHandler pkceHandler = pkceHandler;
     private readonly JwtOptions options = options.Value;
 
     public async Task<Result> Handle(TokenCommand request, CancellationToken cancellationToken)
@@ -53,10 +56,22 @@ public class TokenCommandHandler(
 
         if (client is { Type: ClientType.Public, RequirePkce: true })
         {
-            if (string.IsNullOrEmpty(request.Request.CodeVerifier))
-                return Results.BadRequest("Code verifier is required.");
-            
-            //TODO: Implement PKCE verification
+            if (string.IsNullOrWhiteSpace(authorizationCode.CodeChallenge))
+                return Results.BadRequest("Missing code challenge in authorization code.");
+
+            if (string.IsNullOrWhiteSpace(authorizationCode.CodeChallengeMethod))
+                return Results.BadRequest("Missing code challenge method in authorization code.");
+
+            if (string.IsNullOrWhiteSpace(request.Request.CodeVerifier))
+                return Results.BadRequest("Missing code verifier in token request.");
+
+            var isValidPkce = pkceHandler.Verify(
+                authorizationCode.CodeChallenge,
+                authorizationCode.CodeChallengeMethod,
+                request.Request.CodeVerifier
+            );
+
+            if (!isValidPkce) return Results.BadRequest("Invalid PKCE verification (code verifier mismatch).");
         }
 
         var device = authorizationCode.Device;
