@@ -9,7 +9,7 @@ public class JwtTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
 {
     private readonly JwtOptions options = options.Value;
     
-    public string Create(IEnumerable<Claim> claims)
+    public string Create(IEnumerable<Claim> claims, string audience)
     {
         const string algorithm = SecurityAlgorithms.HmacSha256Signature;
 
@@ -18,7 +18,7 @@ public class JwtTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
 
         var securityToken = new JwtSecurityToken(
-            audience: options.Audience,
+            audience: audience,
             issuer: options.Issuer,
             claims: claims,
             expires: expirationDate,

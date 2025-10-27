@@ -67,7 +67,8 @@ public sealed class TokenManager(
         return Result.Success();
     }
 
-    public string GenerateAccessToken(IEnumerable<Claim> claims) => tokenFactory.Create(claims);
+    public string GenerateAccessToken(IEnumerable<Claim> claims, string audience) 
+        => tokenFactory.Create(claims, audience);
 
     public string GenerateRefreshToken(int length = 20) => keyFactory.Create(length);
 }

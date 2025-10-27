@@ -94,7 +94,7 @@ public class TokenCommandHandler(
             new(AppClaimTypes.Nonce, authorizationCode.Nonce),
         };
 
-        var accessToken = tokenManager.GenerateAccessToken(claims);
+        var accessToken = tokenManager.GenerateAccessToken(claims, client.Name);
         var refreshToken = tokenManager.GenerateRefreshToken();
 
         var response = new TokenResponse()
