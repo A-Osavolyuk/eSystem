@@ -1,5 +1,6 @@
 @page "/sso/authorize"
 
+@using eAccount.Infrastructure.Utilities
 @inherits PageBase
 
 @inject ISsoService SsoService
@@ -10,11 +11,9 @@
 @if (!UserState.IsAuthenticated)
 {
 }
-else
-{
-}
 
 @code {
+
     [SupplyParameterFromQuery(Name = "response_type")]
     public string ResponseType { get; set; } = string.Empty;
 
@@ -32,12 +31,15 @@ else
 
     [SupplyParameterFromQuery(Name = "scope")]
     public string Scope { get; set; } = string.Empty;
-    
+
     [SupplyParameterFromQuery(Name = "code_challenge")]
     public string? CodeChallenge { get; set; }
 
     [SupplyParameterFromQuery(Name = "code_challenge_method")]
     public string? CodeChallengeMethod { get; set; }
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -82,8 +84,14 @@ else
 
                     await FetchClient.FetchAsync(fetchOptions);
 
-                    var callbackUri = $"{request.RedirectUri}?code={response.Code}&state={response.State}";
-                    NavigationManager.NavigateTo(callbackUri);
+                    var builder = QueryBuilder.Create()
+                        .WithUri(request.RedirectUri)
+                        .WithQueryParam("code", response.Code)
+                        .WithQueryParam("state", response.State);
+
+                    if (!string.IsNullOrEmpty(ReturnUrl)) builder.WithQueryParam("return_url", ReturnUrl);
+
+                    NavigationManager.NavigateTo(builder.Build());
                 }
             }
         }
