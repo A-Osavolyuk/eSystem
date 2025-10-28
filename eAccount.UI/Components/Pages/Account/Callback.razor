@@ -6,11 +6,15 @@
 @inject IOptions<ClientOptions> Options
 
 @code {
+
     [SupplyParameterFromQuery(Name = "code")]
-    public string? Code { get; set; }
+    public string Code { get; set; } = string.Empty;
     
     [SupplyParameterFromQuery(Name = "state")]
-    public string? State { get; set; }
+    public string State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
     
     private ClientOptions ClientOptions => Options.Value;
 
@@ -31,7 +35,8 @@
         {
             var response = result.Get<TokenResponse>()!;
             await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken);
-            NavigationManager.NavigateTo(Links.Profile);
+            var url = string.IsNullOrEmpty(ReturnUrl) ? Links.Profile : ReturnUrl!;
+            NavigationManager.NavigateTo(url);
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

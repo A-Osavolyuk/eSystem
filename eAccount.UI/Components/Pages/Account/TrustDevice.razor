@@ -162,9 +162,7 @@
             else
             {
                 UserState.UserId = response.UserId;
-                await AuthenticationManager.SignInAsync();
-                NavigationManager.NavigateTo(Links.ProductsPage);
-                Snackbar.Add(result.Message, Severity.Success);
+                AuthenticationManager.Authorize();
             }
         }
         else

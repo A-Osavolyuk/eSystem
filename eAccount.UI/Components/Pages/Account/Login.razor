@@ -140,9 +140,7 @@
                 }
 
                 UserState.UserId = response.UserId;
-                await AuthenticationManager.SignInAsync();
-                NavigationManager.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? Links.ProductsPage : ReturnUrl);
-                Snackbar.Add(result.Message, Severity.Success);
+                AuthenticationManager.Authorize();
             }
             else
             {

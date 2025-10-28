@@ -115,9 +115,7 @@
             {
                 var response = result.Get<SignInResponse>()!;
                 UserState.UserId = response.UserId;
-                await AuthenticationManager.SignInAsync();
-                Snackbar.Add("Successfully signed in.", Severity.Success);
-                NavigationManager.NavigateTo(Links.ProductsPage);
+                AuthenticationManager.Authorize();
             }
             else
             {

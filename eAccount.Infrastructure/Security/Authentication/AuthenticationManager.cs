@@ -3,8 +3,8 @@ using eAccount.Domain.Constants;
 using eAccount.Domain.Options;
 using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Authentication.SSO.Clients;
+using eAccount.Infrastructure.Utilities;
 using eSystem.Core.Requests.Auth;
-using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.SSO.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using Microsoft.AspNetCore.Components;
@@ -19,8 +19,8 @@ public class AuthenticationManager(
     UserState userState,
     TokenProvider tokenProvider,
     NavigationManager navigationManager,
-    IKeyFactory keyFactory,
     IFetchClient fetchClient,
+    IKeyFactory keyFactory,
     IStorage storage,
     IOptions<ClientOptions> options)
 {
@@ -28,19 +28,21 @@ public class AuthenticationManager(
     private readonly UserState userState = userState;
     private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly NavigationManager navigationManager = navigationManager;
-    private readonly IKeyFactory keyFactory = keyFactory;
     private readonly IFetchClient fetchClient = fetchClient;
+    private readonly IKeyFactory keyFactory = keyFactory;
     private readonly IStorage storage = storage;
-    private readonly ClientOptions options = options.Value;
+    private readonly IOptions<ClientOptions> options = options;
 
     public async Task SignInAsync(string accessToken, string refreshToken)
     {
+        tokenProvider.AccessToken = accessToken;
+
         var request = new SignInRequest()
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
         };
-        
+
         var fetchOptions = new FetchOptions()
         {
             Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
@@ -61,111 +63,59 @@ public class AuthenticationManager(
 
         (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
     }
-    
-    public async Task SignInAsync()
+
+    public void Authorize()
     {
-        var nonce = keyFactory.Create(16);
-        var state = keyFactory.Create(16);
-
-        var authorizeRequest = new AuthorizeRequest()
+        var queryParams = QueryHelper.GetQueryParameters(navigationManager.Uri);
+        if (!queryParams.ContainsKey("client_id") && !queryParams.ContainsKey("redirect_uri"))
         {
-            UserId = userState.UserId,
-            ClientId = options.ClientId,
-            RedirectUri = options.RedirectUri,
-            Scopes = options.Scopes,
-            State = state,
-            Nonce = nonce,
-            ResponseType = ResponseTypes.Code
-        };
+            var clientOptions = options.Value;
+            var state = keyFactory.Create(16);
+            var nonce = keyFactory.Create(16);
 
-        var authorizeResult = await AuthorizeAsync(authorizeRequest);
-        if (!authorizeResult.Success)
-        {
-            
+            var builder = QueryBuilder.Create();
+            builder
+                .WithUri(Links.Authorize)
+                .WithQueryParam("response_type", ResponseTypes.Code)
+                .WithQueryParam("client_id", clientOptions.ClientId)
+                .WithQueryParam("redirect_uri", clientOptions.RedirectUri)
+                .WithQueryParam("scope", string.Join(' ', clientOptions.Scopes))
+                .WithQueryParam("state", state)
+                .WithQueryParam("nonce", nonce);
+
+            if (queryParams.TryGetValue("return_url", out var returnUrl))
+                builder.WithQueryParam("return_url", returnUrl);
+
+            navigationManager.NavigateTo(builder.Build());
         }
-
-        var authorizeResponse = authorizeResult.Get<AuthorizeResponse>()!;
-
-        var tokenRequest = new TokenRequest()
+        else
         {
-            GrantType = GrantTypes.AuthorizationCode,
-            Code = authorizeResponse.Code,
-            ClientId = options.ClientId,
-            ClientSecret = options.ClientSecret,
-            RedirectUri = options.RedirectUri
-        };
+            var responseType = queryParams["response_type"];
+            var clientId = queryParams["client_id"];
+            var redirectUri = queryParams["redirect_uri"];
+            var scope = queryParams["scope"];
+            var state = queryParams["state"];
+            var nonce = queryParams["nonce"];
 
-        var tokenResult = await TokenAsync(tokenRequest);
+            var builder = QueryBuilder.Create();
+            builder
+                .WithUri(Links.Authorize)
+                .WithQueryParam("response_type", responseType)
+                .WithQueryParam("client_id", clientId)
+                .WithQueryParam("redirect_uri", redirectUri)
+                .WithQueryParam("scope", scope)
+                .WithQueryParam("state", state)
+                .WithQueryParam("nonce", nonce);
 
-        if (!tokenResult.Success)
-        {
-            
+            if (queryParams.TryGetValue("code_challenge", out var codeChallenge)
+                && queryParams.TryGetValue("code_challenge_method", out var codeChallengeMethod))
+            {
+                builder.WithQueryParam("code_challenge", codeChallenge)
+                    .WithQueryParam("code_challenge_method", codeChallengeMethod);
+            }
+
+            navigationManager.NavigateTo(builder.Build());
         }
-        
-        var tokenResponse = tokenResult.Get<TokenResponse>()!;
-
-        tokenProvider.AccessToken = tokenResponse.AccessToken;
-
-        var signInRequest = new SignInRequest()
-        {
-            AccessToken = tokenResponse.AccessToken,
-            RefreshToken = tokenResponse.RefreshToken
-        };
-
-        var signInResult = await SignInAsync(signInRequest);
-
-        if (!signInResult.Success)
-        {
-
-        }
-        
-        var signInResponse = signInResult.Get<SignInResponse>()!;
-
-        var identity = signInResponse.Identity;
-        var claims = identity.Claims
-            .Select(x => new Claim(x.Key, x.Value))
-            .ToList();
-
-        var claimsIdentity = new ClaimsIdentity(claims, identity.Scheme);
-        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-        (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
-    }
-
-    private async Task<HttpResponse> SignInAsync(SignInRequest request)
-    {
-        var fetchOptions = new FetchOptions()
-        {
-            Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
-            Method = HttpMethod.Post,
-            Body = request
-        };
-
-        return await fetchClient.FetchAsync(fetchOptions);
-    }
-
-    private async Task<HttpResponse> AuthorizeAsync(AuthorizeRequest request)
-    {
-        var fetchOptions = new FetchOptions()
-        {
-            Url = $"{navigationManager.BaseUri}api/sso/authorize",
-            Method = HttpMethod.Post,
-            Body = request
-        };
-
-        return await fetchClient.FetchAsync(fetchOptions);
-    }
-
-    private async Task<HttpResponse> TokenAsync(TokenRequest request)
-    {
-        var fetchOptions = new FetchOptions()
-        {
-            Url = $"{navigationManager.BaseUri}api/sso/token",
-            Method = HttpMethod.Post,
-            Body = request
-        };
-
-        return await fetchClient.FetchAsync(fetchOptions);
     }
 
     public async Task SignOutAsync()

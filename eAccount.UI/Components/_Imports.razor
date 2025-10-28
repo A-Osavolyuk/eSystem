@@ -7,31 +7,36 @@
 @using System.Text
 @using System.Web
 @using eAccount.Application.Mapping
-@using eSystem.Core.Security.Credentials.PublicKey
-@using eSystem.Core.Security.Verification
-@using eAccount.UI.Utilities
 @using eAccount.Application.State
 @using eAccount.Application.Validation
 @using eAccount.Domain.Common
-@using eSystem.Core.Responses.Auth
+@using eAccount.Domain.Constants
 @using eAccount.Domain.Interfaces
-@using eAccount.UI.Components.Common.Access
 @using eAccount.Domain.Models
 @using eAccount.Infrastructure.Security
+@using eAccount.Infrastructure.Security.Authentication.SSO.Clients
+@using eAccount.Infrastructure.Services
 @using eAccount.UI.Components
 @using eAccount.UI.Components.Common
+@using eAccount.Infrastructure.Security.Authentication.SSO
+@using eSystem.Core.Security.Cryptography.Keys
+@using eAccount.UI.Components.Common.Access
 @using eAccount.UI.Components.Layout
 @using eAccount.UI.Components.Pages.Account
 @using eAccount.UI.Components.Pages.Products.Components
-@using eSystem.Core.Common
 @using eAccount.UI.Extensions
-@using ZXing
-
+@using eAccount.UI.Utilities
+@using eSystem.Core.Common
 @using eSystem.Core.DTOs
-@using eSystem.Core.Responses
-@using eAccount.Domain.Constants
-@using FluentValidation
 @using eSystem.Core.Enums
+@using eSystem.Core.Requests.Auth
+@using eSystem.Core.Responses
+@using eSystem.Core.Responses.Auth
+@using eSystem.Core.Security.Authentication.SSO.Constants
+@using eSystem.Core.Security.Credentials.PublicKey
+@using eAccount.Domain.Options
+@using eSystem.Core.Security.Verification
+@using FluentValidation
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
@@ -41,10 +46,11 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
+@using Microsoft.Extensions.Options
 @using Microsoft.JSInterop
 @using MudBlazor
 @using MudExtensions
+@using ZXing
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Severity = MudBlazor.Severity
 @using Size = MudBlazor.Size
-@using eAccount.Infrastructure.Services

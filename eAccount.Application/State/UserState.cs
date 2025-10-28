@@ -8,7 +8,7 @@ public class UserState : AsyncState
     public UserCredentials? Credentials { get; set; }
     public UserIdentity? Identity { get; set; }
 
-    public bool IsAuthenticated => UserId != Guid.Empty && Credentials is not null && Identity is not null;
+    public bool IsAuthenticated => UserId != Guid.Empty;
 
     public void Clear()
     {

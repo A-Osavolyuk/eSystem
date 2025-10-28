@@ -117,10 +117,7 @@
             var response = result.Get<SignInResponse>()!;
 
             UserState.UserId = response.UserId;
-            await AuthenticationManager.SignInAsync();
-
-            var url = string.IsNullOrEmpty(ReturnUrl) ? Links.ProductsPage : ReturnUrl;
-            NavigationManager.NavigateTo(url);
+            AuthenticationManager.Authorize();
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
