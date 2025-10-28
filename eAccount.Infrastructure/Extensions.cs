@@ -23,19 +23,19 @@ public static class Extensions
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddHttpClient();
         
-        builder.Services.AddHttpClient<ISecurityService, SecurityService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IStoreService, StorageService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<ITwoFactorService, TwoFactorService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IUserService, UserService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<ITypeService, TypeService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IUnitService, UnitService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<ICategoryService, CategoryService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IPriceService, PriceService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<ICurrencyService, CurrencyService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IOAuthService, OAuthService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IDeviceService, DeviceService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IPasskeyService, PasskeyService>(ServiceLifetime.Scoped);
-        builder.Services.AddHttpClient<IVerificationService, VerificationService>(ServiceLifetime.Scoped);
+        builder.Services.AddScoped<ISecurityService, SecurityService>();
+        builder.Services.AddScoped<IStoreService, StorageService>();
+        builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<ITypeService, TypeService>();
+        builder.Services.AddScoped<IUnitService, UnitService>();
+        builder.Services.AddScoped<ICategoryService, CategoryService>();
+        builder.Services.AddScoped<IPriceService, PriceService>();
+        builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+        builder.Services.AddScoped<IOAuthService, OAuthService>();
+        builder.Services.AddScoped<IDeviceService, DeviceService>();
+        builder.Services.AddScoped<IPasskeyService, PasskeyService>();
+        builder.Services.AddScoped<IVerificationService, VerificationService>();
         builder.Services.AddScoped<ISsoService, SsoService>();
 
         builder.Services.AddScoped<IApiClient, ApiClient>();

@@ -19,13 +19,7 @@ public static class AttributesExtensions
 
             var serviceType = attribute.Type;
             var lifetime = attribute.Lifetime;
-            var withHttpClient = attribute.WithHttpClient;
             var key = attribute.Key;
-
-            if (withHttpClient)
-            {
-                builder.Services.AddHttpClient(serviceType, implementation);
-            }
             
             if (string.IsNullOrEmpty(key))
             {

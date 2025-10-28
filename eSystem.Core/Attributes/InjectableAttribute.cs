@@ -8,5 +8,4 @@ public class InjectableAttribute(Type type, ServiceLifetime lifetime) : Attribut
     public Type Type { get; } = type;
     public ServiceLifetime Lifetime { get; } = lifetime;
     public string? Key { get; set; }
-    public bool WithHttpClient { get; set; }
 }
