@@ -116,21 +116,31 @@
     [Parameter] 
     public EventCallback OnRefresh { get; set; }
 
-    private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
-
     private string OnVerify()
     {
-        return $"{Links.EmailVerifyPage}?type={EmailTypes.Primary}&return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailVerifyPage)
+            .WithQueryParam("type", EmailTypes.Primary)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
     }
 
     private string OnChange()
     {
-        return $"{Links.EmailChangePage}?type={EmailTypes.Primary}&return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailChangePage)
+            .WithQueryParam("type", EmailTypes.Primary)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
     }
 
     private string OnReset()
     {
-        return $"{Links.EmailResetPage}?type={EmailTypes.Primary}&return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailResetPage)
+            .WithQueryParam("type", EmailTypes.Primary)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
     }
 
     private async Task OnDisconnectAsync(LinkedAccountType type)

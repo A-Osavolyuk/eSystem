@@ -44,7 +44,11 @@
                 }
                 else
                 {
-                    NavigationManager.NavigateTo($"{Links.OAuthSignedUpPage}?provider={response.LinkedAccount}");
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.OAuthSignedUpPage)
+                        .WithQueryParam("provider", response.LinkedAccount);
+                    
+                    NavigationManager.NavigateTo(builder.Build());
                 }
             }
             else

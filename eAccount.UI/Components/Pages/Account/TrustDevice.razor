@@ -155,8 +155,12 @@
             if (response!.IsTwoFactorEnabled)
             {
                 Snackbar.Add("Device successfully trusted", Severity.Success);
-                var url = $"{Links.TwoFactorLoginPage}?id={response.UserId}";
-                NavigationManager.NavigateTo(url);
+                
+                var builder = QueryBuilder.Create()
+                    .WithUri(Links.TwoFactorLoginPage)
+                    .WithQueryParam("id", response.UserId.ToString());
+                
+                NavigationManager.NavigateTo(builder.Build());
             }
             else
             {

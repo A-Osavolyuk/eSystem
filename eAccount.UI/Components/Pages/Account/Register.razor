@@ -99,10 +99,12 @@
 
                 Snackbar.Add(result.Message, Severity.Success);
 
-                var returnUrl = HttpUtility.UrlEncode(Links.LoginPage);
-                var url = $"{Links.CompleteRegistrationPage}?id={response.UserId}&return_url={returnUrl}";
+                var builder = QueryBuilder.Create()
+                    .WithUri(Links.CompleteRegistrationPage)
+                    .WithQueryParam("id", response.UserId.ToString())
+                    .WithQueryParam("return_url", Links.LoginPage);
                 
-                NavigationManager.NavigateTo(url);
+                NavigationManager.NavigateTo(builder.Build());
             }
             else
             {

@@ -123,18 +123,14 @@
                 {
                     Snackbar.Add(result.Message, Severity.Success);
 
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.TwoFactorLoginPage)
+                        .WithQueryParam("id", response.UserId.ToString());
+                    
                     if (!string.IsNullOrEmpty(ReturnUrl))
-                    {
-                        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-                        var url = $"{Links.TwoFactorLoginPage}?id={response.UserId}&return_url={returnUrl}";
-                        NavigationManager.NavigateTo(url);
-                    }
-                    else
-                    {
-                        var url = $"{Links.TwoFactorLoginPage}?id={response.UserId}";
-                        NavigationManager.NavigateTo(url);
-                    }
-
+                        builder.WithQueryParam("return_url", ReturnUrl);
+                    
+                    NavigationManager.NavigateTo(builder.Build());
                     return;
                 }
 
@@ -155,18 +151,16 @@
                 if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
                 {
                     var device = response.DeviceId;
+                    
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.DeviceTrustPage)
+                        .WithQueryParam("device", device.ToString()!)
+                        .WithQueryParam("user", userId.ToString()!);
 
-                    if (string.IsNullOrEmpty(ReturnUrl))
-                    {
-                        var url = $"{Links.DeviceTrustPage}?device={device}&user={userId}";
-                        NavigationManager.NavigateTo(url);
-                    }
-                    else
-                    {
-                        var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-                        var url = $"{Links.DeviceTrustPage}?device={device}&user={userId}&return_url={returnUrl}";
-                        NavigationManager.NavigateTo(url);
-                    }
+                    if (!string.IsNullOrEmpty(ReturnUrl)) 
+                        builder.WithQueryParam("return_url", ReturnUrl);
+
+                    NavigationManager.NavigateTo(builder.Build());
 
                     Snackbar.Add(result.Message, Severity.Info);
                     return;
@@ -174,10 +168,12 @@
 
                 if (!response.IsEmailConfirmed)
                 {
-                    var url = $"{Links.CompleteRegistrationPage}?id={userId}";
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.CompleteRegistrationPage)
+                        .WithQueryParam("id", userId.ToString()!);
 
                     Snackbar.Add(result.Message, Severity.Info);
-                    NavigationManager.NavigateTo(url);
+                    NavigationManager.NavigateTo(builder.Build());
                     return;
                 }
 
@@ -195,8 +191,11 @@
                 }
                 else
                 {
-                    var url = $"{Links.LockedOutPage}?id={userId}";
-                    NavigationManager.NavigateTo(url);
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.LockedOutPage)
+                        .WithQueryParam("id", userId.ToString()!);
+                    
+                    NavigationManager.NavigateTo(builder.Build());
                 }
             }
         }
@@ -204,13 +203,18 @@
 
     private string OnForgotPassword()
     {
-        var returnUrl = HttpUtility.UrlEncode(Links.LoginPage);
-        return $"{Links.ForgotPasswordPage}?return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.ForgotPasswordPage)
+            .WithQueryParam("return_url", Links.LoginPage)
+            .Build();
     }
 
     private string OnRecoverAccount()
     {
-        var returnUrl = HttpUtility.UrlEncode(Links.LoginPage);
-        return $"{Links.RecoverPage}?return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.RecoverPage)
+            .WithQueryParam("return_url", Links.LoginPage)
+            .Build();
     }
+
 }

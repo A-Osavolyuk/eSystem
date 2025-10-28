@@ -114,8 +114,10 @@
 
     private string OnAdd()
     {
-        var returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
-        return $"{Links.PasskeyAddPage}?return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.PasskeyAddPage)
+            .WithQueryParam("return_url", Links.SecurityPage)
+            .Build();
     }
 
     private async Task OnChange(UserPasskeyDto passkey)

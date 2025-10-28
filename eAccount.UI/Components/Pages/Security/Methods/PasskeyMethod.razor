@@ -71,7 +71,9 @@
 
 @code {
     [Parameter] public TwoFactorData Model { get; set; } = new();
-
-    private readonly string returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
-    private string OnAddPasskey() => $"{Links.PasskeyAddPage}?return_url={returnUrl}";
+    
+    private string OnAddPasskey() => QueryBuilder.Create()
+        .WithUri(Links.PasskeyAddPage)
+        .WithQueryParam("return_url", Links.SecurityPage)
+        .Build();
 }

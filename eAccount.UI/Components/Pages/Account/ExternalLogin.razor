@@ -55,10 +55,15 @@
     {
         var gatewayPath = Configuration["services:proxy:http:0"]!;
         var baseUri = $"{NavigationManager.BaseUri}account/oauth";
-        var returnUri = HttpUtility.UrlEncode($"{baseUri}/sign-in");
-        var fallbackUri = HttpUtility.UrlEncode($"{baseUri}/fallback");
-
-        var url = $"{gatewayPath}/api/v1/OAuth/login/{type}?returnUri={returnUri}&fallbackUri={fallbackUri}";
-        NavigationManager.NavigateTo(url);
+        var uri = $"{gatewayPath}/api/v1/OAuth/login/{type}";
+        var returnUri = $"{baseUri}/sign-in";
+        var fallbackUri = $"{baseUri}/fallback";
+        
+        var builder = QueryBuilder.Create()
+            .WithUri(uri)
+            .WithQueryParam("returnUri", returnUri)
+            .WithQueryParam("fallbackUri", fallbackUri);
+        
+        NavigationManager.NavigateTo(builder.Build());
     }
 }

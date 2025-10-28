@@ -100,11 +100,14 @@
     [Parameter] 
     public EventCallback OnRefresh { get; set; }
 
-    private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
-
     private string OnVerify()
     {
-        return $"{Links.EmailVerifyPage}?type={EmailTypes.Secondary}&email={Email.Email}&return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailVerifyPage)
+            .WithQueryParam("email", Email.Email)
+            .WithQueryParam("type", EmailTypes.Secondary)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
     }
 
     private async Task OnRemove(string email)

@@ -103,18 +103,25 @@
     [Parameter] public UserEmailDto Email { get; set; } = new();
 
     [Parameter] public EventCallback OnRefresh { get; set; }
-
-    private readonly string returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
+    
 
     private string OnVerify()
     {
-        return $"{Links.EmailVerifyPage}?type={EmailTypes.Recovery}&return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailVerifyPage)
+            .WithQueryParam("type", EmailTypes.Recovery)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
     }
 
 
     private string OnChange()
     {
-        return $"{Links.EmailChangePage}?type={EmailTypes.Recovery}&return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailChangePage)
+            .WithQueryParam("type", EmailTypes.Recovery)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
     }
 
     private async Task OnRemove(string email)

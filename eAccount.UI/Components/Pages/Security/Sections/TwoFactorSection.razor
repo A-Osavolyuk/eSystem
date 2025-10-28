@@ -70,7 +70,10 @@ else
 
     private string OnEnable()
     {
-        return $"{Links.EnableTwoFactorPage}?return_url={returnUrl}";
+        return QueryBuilder.Create()
+            .WithUri(Links.EnableTwoFactorPage)
+            .WithQueryParam("return_url", Links.SecurityPage)
+            .Build();
     }
 
     private async Task OnDisableAsync()

@@ -39,8 +39,12 @@
     
     private void OnChange(string email)
     {
-        var returnUrl = HttpUtility.UrlEncode(Links.EmailsPage);
-        var url = $"{Links.EmailManagePage}?email={email}&type={EmailTypes.Recovery}&return_url={returnUrl}";
-        NavigationManager.NavigateTo(url);
+        var builder = QueryBuilder.Create()
+            .WithUri(Links.EmailManagePage)
+            .WithQueryParam("email", email)
+            .WithQueryParam("type", EmailTypes.Recovery)
+            .WithQueryParam("return_url", Links.EmailsPage);
+        
+        NavigationManager.NavigateTo(builder.Build());
     }
 }

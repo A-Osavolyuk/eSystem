@@ -73,8 +73,7 @@ public class AuthenticationManager(
             var state = keyFactory.Create(16);
             var nonce = keyFactory.Create(16);
 
-            var builder = QueryBuilder.Create();
-            builder
+            var builder = QueryBuilder.Create()
                 .WithUri(Links.Authorize)
                 .WithQueryParam("response_type", ResponseTypes.Code)
                 .WithQueryParam("client_id", clientOptions.ClientId)
@@ -97,8 +96,7 @@ public class AuthenticationManager(
             var state = queryParams["state"];
             var nonce = queryParams["nonce"];
 
-            var builder = QueryBuilder.Create();
-            builder
+            var builder = QueryBuilder.Create()
                 .WithUri(Links.Authorize)
                 .WithQueryParam("response_type", responseType)
                 .WithQueryParam("client_id", clientId)

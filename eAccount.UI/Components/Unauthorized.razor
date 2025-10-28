@@ -23,19 +23,18 @@
 </MudStack>
 
 @code {
+
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
 
     private void ToLoginPage()
     {
-        if (string.IsNullOrEmpty(ReturnUrl))
-        {
-            NavigationManager.NavigateTo(Links.LoginPage);
-        }
-        else
-        {
-            var returnUrl = HttpUtility.UrlEncode(ReturnUrl);
-            NavigationManager.NavigateTo($"{Links.LoginPage}?return_url={returnUrl}");
-        }
+        var builder = QueryBuilder.Create().WithUri(Links.LoginPage);
+
+        if (!string.IsNullOrEmpty(ReturnUrl))
+            builder.WithQueryParam("return_url", ReturnUrl);
+
+        NavigationManager.NavigateTo(builder.Build());
     }
+
 }

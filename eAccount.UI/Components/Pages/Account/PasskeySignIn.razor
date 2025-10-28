@@ -128,8 +128,11 @@
 
                 if (response.IsLockedOut)
                 {
-                    var url = $"{Links.LockedOutPage}?id={response.UserId}";
-                    NavigationManager.NavigateTo(url);
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.LockedOutPage)
+                        .WithQueryParam("id", response.UserId.ToString());
+                    
+                    NavigationManager.NavigateTo(builder.Build());
                 }
                 else
                 {

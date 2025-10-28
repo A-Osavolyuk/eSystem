@@ -33,7 +33,9 @@
 
 @code {
     [Parameter] public TwoFactorData Model { get; set; } = new();
-
-    private readonly string returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
-    private string OnViewRecoveryCodes() => $"{Links.RecoveryCodesViewPage}?return_url={returnUrl}";
+    
+    private string OnViewRecoveryCodes() => QueryBuilder.Create()
+        .WithUri(Links.RecoveryCodesViewPage)
+        .WithQueryParam("return_url", Links.SecurityPage)
+        .Build();
 }
