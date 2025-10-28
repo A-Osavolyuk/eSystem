@@ -85,7 +85,7 @@
                            </MudMenuItem>
                            <MudDivider/>
                            <MudMenuItem
-                               OnClick=@(async () => await OnRemove(UserState.Credentials?.RecoveryEmail!))>
+                               OnClick=@(async () => await OnRemove(Email.Email))>
                                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
                                    Remove email
                                </MudTextM3>
@@ -110,6 +110,7 @@
     {
         return QueryBuilder.Create()
             .WithUri(Links.EmailVerifyPage)
+            .WithQueryParam("email", Email.Email)
             .WithQueryParam("type", EmailTypes.Recovery)
             .WithQueryParam("return_url", Links.EmailsPage)
             .Build();
@@ -120,6 +121,7 @@
     {
         return QueryBuilder.Create()
             .WithUri(Links.EmailChangePage)
+            .WithQueryParam("email", Email.Email)
             .WithQueryParam("type", EmailTypes.Recovery)
             .WithQueryParam("return_url", Links.EmailsPage)
             .Build();

@@ -24,10 +24,8 @@ public class UserState : AsyncState
         Credentials = new UserCredentials
         {
             Username = state.Username, 
-            PrimaryEmail = state.PrimaryEmail, 
-            RecoveryEmail = state.RecoveryEmail,
-            PrimaryPhoneNumber = state.PrimaryPhoneNumber,
-            RecoveryPhoneNumber = state.RecoveryPhoneNumber,
+            Email = state.PrimaryEmail, 
+            PhoneNumber = state.PrimaryPhoneNumber,
         };
     }
 
@@ -39,23 +37,12 @@ public class UserState : AsyncState
 
 public class UserCredentials
 {
-    public string? Username { get; set; }
-    
-    public string? PrimaryEmail { get; set; }
-    public string? RecoveryEmail { get; set; }
-    
-    public string? PrimaryPhoneNumber { get; set; }
-    public string? RecoveryPhoneNumber { get; set; }
+    public string? Username { get; init; }
+    public string? Email { get; init; }
+    public string? PhoneNumber { get; init; }
 }
 
 public record UserIdentity(
     IReadOnlyList<RoleDto> Roles,
     IReadOnlyList<PermissionDto> Permissions
-)
-{
-    private bool HasRole(string role) => Roles.Any(r => r.Name == role);
-    public bool HasAnyRole(params string[] roles) => roles.Any(HasRole);
-
-    private bool HasPermission(string permission) => Permissions.Any(p => p.Name == permission);
-    public bool HasAnyPermission(params string[] permissions) => permissions.Any(HasPermission);
-}
+);

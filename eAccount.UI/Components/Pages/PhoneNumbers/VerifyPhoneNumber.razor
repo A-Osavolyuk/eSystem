@@ -52,7 +52,7 @@
                         {
                             <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                 We have sent a SMS with code to:
-                                <strong>@UserState.Credentials?.PrimaryPhoneNumber</strong>
+                                <strong>@UserState.Credentials?.PhoneNumber</strong>
                             </MudTextM3>
                             break;
                         }
@@ -60,7 +60,7 @@
                         {
                             <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                 We have sent a SMS with code to:
-                                <strong>@UserState.Credentials?.RecoveryPhoneNumber</strong>
+                                <strong>@PhoneNumber</strong>
                             </MudTextM3>
                             break;
                         }
@@ -134,8 +134,8 @@
         {
             var to = Type switch
             {
-                PhoneNumberTypes.Primary => UserState.Credentials?.PrimaryPhoneNumber!,
-                PhoneNumberTypes.Recovery => UserState.Credentials?.RecoveryPhoneNumber!,
+                PhoneNumberTypes.Primary => UserState.Credentials?.PhoneNumber!,
+                PhoneNumberTypes.Recovery => PhoneNumber,
                 PhoneNumberTypes.Secondary => PhoneNumber,
                 _ => throw new NotSupportedException("Unsupported phone number type")
             };
@@ -174,8 +174,8 @@
     {
         var phoneNumber = Type switch
         {
-            PhoneNumberTypes.Primary => UserState.Credentials?.PrimaryPhoneNumber!,
-            PhoneNumberTypes.Recovery => UserState.Credentials?.RecoveryPhoneNumber!,
+            PhoneNumberTypes.Primary => UserState.Credentials?.PhoneNumber!,
+            PhoneNumberTypes.Recovery => PhoneNumber,
             PhoneNumberTypes.Secondary => PhoneNumber,
             _ => throw new NotSupportedException("Unsupported phone number type")
         };

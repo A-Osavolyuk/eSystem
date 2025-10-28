@@ -1,5 +1,5 @@
 ﻿@page "/account/email/verify"
-@using eSystem.Core.Common.Messaging
+
 @inherits PageBase
 
 @inject ISecurityService SecurityService
@@ -52,7 +52,7 @@
                         {
                             <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                 We have sent an email with 6-digit code to email:
-                                <strong>@UserState.Credentials?.PrimaryEmail!</strong>
+                                <strong>@UserState.Credentials?.Email!</strong>
                             </MudTextM3>
                             break;
                         }
@@ -60,7 +60,7 @@
                         {
                             <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                 We have sent an email with 6-digit code to email:
-                                <strong>@UserState.Credentials?.RecoveryEmail!</strong>
+                                <strong>@Email</strong>
                             </MudTextM3>
                             break;
                         }
@@ -134,8 +134,8 @@
         {
             var to = Type switch
             {
-                EmailTypes.Primary => UserState.Credentials?.PrimaryEmail!,
-                EmailTypes.Recovery => UserState.Credentials?.RecoveryEmail!,
+                EmailTypes.Primary => UserState.Credentials?.Email!,
+                EmailTypes.Recovery => Email,
                 EmailTypes.Secondary => Email,
                 _ => throw new NotSupportedException("Unsupported email type")
             };
@@ -181,8 +181,8 @@
     {
         var email = Type switch
         {
-            EmailTypes.Primary => UserState.Credentials?.PrimaryEmail!,
-            EmailTypes.Recovery => UserState.Credentials?.RecoveryEmail!,
+            EmailTypes.Primary => UserState.Credentials?.Email!,
+            EmailTypes.Recovery => Email,
             EmailTypes.Secondary => Email,
             _ => throw new NotSupportedException("Unsupported email type")
         };

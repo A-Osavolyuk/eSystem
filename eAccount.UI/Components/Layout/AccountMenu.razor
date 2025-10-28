@@ -125,12 +125,6 @@
 
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
 
-    private void NavigateAsync(string uri)
-    {
-        NavigationManager.NavigateTo(uri);
-        DrawerToggle();
-    }
-
     public void Dispose()
     {
         UserState.OnChange -= ReloadAsync;

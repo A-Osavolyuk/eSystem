@@ -74,7 +74,7 @@
             Action = ActionType.Unlock,
             Payload = new()
             {
-                { "To", UserState.Credentials?.PrimaryEmail! }
+                { "To", UserState.Credentials?.Email! }
             }
         };
     }

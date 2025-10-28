@@ -22,7 +22,7 @@
                 <MudStack Spacing="3" Justify="Justify.Center">
                     <MudText Align="Align.Center">
                         We have sent an email with 6-digit code to:
-                        <strong>@UserState.Credentials?.PrimaryEmail!</strong>
+                        <strong>@UserState.Credentials?.Email!</strong>
                     </MudText>
                     <MudForm
                         @ref="form"
@@ -80,7 +80,7 @@
                 Sender = SenderType.Email,
                 Payload = new()
                 {
-                    { "To", UserState.Credentials?.PrimaryEmail! }
+                    { "To", UserState.Credentials?.Email! }
                 }
             };
 
