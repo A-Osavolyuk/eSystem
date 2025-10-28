@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 
-namespace eSystem.Auth.Api.Security.Authentication.Results;
+namespace eSystem.Auth.Api.Security.Authentication;
 
 public class AuthenticationResult
 {

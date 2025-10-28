@@ -1,4 +1,4 @@
-﻿using eSystem.Auth.Api.Security.Authentication.Results;
+﻿using eSystem.Auth.Api.Security.Authentication;
 
 namespace eSystem.Auth.Api.Interfaces;
 

@@ -262,6 +262,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithMany()
                 .HasForeignKey(rt => rt.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(rt => rt.NewToken)
+                .WithOne()
+                .HasForeignKey<RefreshTokenEntity>(rt => rt.NewTokenId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<PasskeyEntity>(entity =>

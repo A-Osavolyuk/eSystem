@@ -27,7 +27,7 @@ public class SignOutCommandHandler(
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound("Invalid device.");
         
-        var refreshToken = await tokenManager.FindAsync(request.Request.RefreshToken, cancellationToken);
+        var refreshToken = await tokenManager.FindByTokenAsync(request.Request.RefreshToken, cancellationToken);
         if (refreshToken is null) return Results.BadRequest("Invalid token.");
 
         var session = await sessionManager.FindAsync(device, cancellationToken);

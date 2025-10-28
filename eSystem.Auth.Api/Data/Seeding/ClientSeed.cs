@@ -1,5 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Authentication.SSO.Client;
-using eSystem.Core.Data.Seeding;
+﻿using eSystem.Core.Data.Seeding;
+using eSystem.Core.Security.Authentication.SSO.Client;
 
 namespace eSystem.Auth.Api.Data.Seeding;
 

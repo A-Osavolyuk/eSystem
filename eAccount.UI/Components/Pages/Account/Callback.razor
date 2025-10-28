@@ -1,6 +1,7 @@
 @page "/sso/callback"
 
 @using eAccount.Infrastructure.Security.Authentication.JWT
+@using eSystem.Core.Security.Authentication.SSO.Token
 @using SignInRequest = eAccount.Domain.Requests.SignInRequest
 @using SignInResponse = eAccount.Domain.Responses.SignInResponse
 
@@ -33,7 +34,7 @@
             ClientSecret = ClientOptions.ClientSecret,
             RedirectUri = ClientOptions.RedirectUri,
             GrantType = GrantTypes.AuthorizationCode,
-            Code = Code!,
+            Code = Code,
         };
         
         var result = await SsoService.GenerateTokenAsync(request);

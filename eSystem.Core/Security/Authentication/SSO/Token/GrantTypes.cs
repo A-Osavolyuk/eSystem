@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.SSO.Constants;
+﻿namespace eSystem.Core.Security.Authentication.SSO.Token;
 
 public static class GrantTypes
 {

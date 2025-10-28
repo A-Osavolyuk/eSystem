@@ -18,45 +18,39 @@ public sealed class TokenManager(
     private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly JwtOptions options = options.Value;
 
-    public async Task<Result> SaveAsync(SessionEntity session, ClientEntity client,
-        string refreshToken, CancellationToken cancellationToken = default)
+    public async Task<Result> CreateAsync(RefreshTokenEntity token, 
+        CancellationToken cancellationToken = default)
     {
-        var expirationDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays);
-        var token = await context.RefreshTokens.FirstOrDefaultAsync(
-            token => token.SessionId == session.Id
-            && token.ClientId == client.Id, cancellationToken);
-
-        if (token is null)
-        {
-            token = new RefreshTokenEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                SessionId = session.Id,
-                ClientId = client.Id,
-                Token = refreshToken,
-                ExpireDate = expirationDate,
-                CreateDate = DateTimeOffset.UtcNow
-            };
-
-            await context.RefreshTokens.AddAsync(token, cancellationToken);
-        }
-        else
-        {
-            token.Token = refreshToken;
-            token.ExpireDate = expirationDate;
-            token.RefreshDate = DateTimeOffset.UtcNow;
-            token.UpdateDate = DateTimeOffset.UtcNow;
-
-            context.RefreshTokens.Update(token);
-        }
-
+        await context.RefreshTokens.AddAsync(token, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 
-    public async Task<RefreshTokenEntity?> FindAsync(string token, CancellationToken cancellationToken = default)
+    public async Task<RefreshTokenEntity?> FindByTokenAsync(string token, 
+        CancellationToken cancellationToken = default)
     {
-        return await context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
+        return await context.RefreshTokens
+            .Include(x => x.Session)
+            .ThenInclude(x => x.Device)
+            .Include(x => x.Client)
+            .ThenInclude(x => x.AllowedScopes)
+            .ThenInclude(x => x.Scope)
+            .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
+    }
+
+    public async Task<Result> RotateAsync(RefreshTokenEntity revokedToken, 
+        RefreshTokenEntity newToken, CancellationToken cancellationToken = default)
+    {
+        revokedToken.Revoked = true;
+        revokedToken.RevokeDate = DateTimeOffset.UtcNow;
+        revokedToken.NewTokenId = revokedToken.Id;
+        revokedToken.UpdateDate = DateTimeOffset.UtcNow;
+        
+        context.RefreshTokens.Update(revokedToken);
+        await context.RefreshTokens.AddAsync(newToken, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
 
     public async Task<Result> RemoveAsync(RefreshTokenEntity token, CancellationToken cancellationToken = default)
