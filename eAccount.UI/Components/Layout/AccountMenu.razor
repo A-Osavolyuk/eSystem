@@ -76,8 +76,8 @@
         </MudNavLink>
         <MudDivider Class="my-2"/>
         <MudNavLink
+            Href="@Links.SignOut"
             Match="NavLinkMatch.All"
-            OnClick="@(() => OnSignOut())"
             Icon="@Icons.Material.Filled.Logout">
             Logout
         </MudNavLink>
@@ -105,11 +105,6 @@
     {
         await LoadStateAsync();
         await InvokeAsync(StateHasChanged);
-    }
-
-    private void OnSignOut()
-    {
-        NavigationManager.NavigateTo(Links.SignOut);
     }
 
     private async Task LoadStateAsync()

@@ -31,5 +31,5 @@ public static class Links
     public const string PhoneNumbersPage = "/account/phone-numbers";
     public const string Authorize = "/sso/authorize";
     public const string Callback = "/sso/callback";
-    public const string SignOut = "/sso/signout";
+    public const string SignOut = "/sso/sign-out";
 }
