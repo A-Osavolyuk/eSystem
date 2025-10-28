@@ -38,19 +38,6 @@ public class SsoController(ISender sender) : ControllerBase
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
             ErrorHandler.Handle);
     }
-    
-    [EndpointSummary("Refresh token")]
-    [EndpointDescription("Refresh token")]
-    [ProducesResponseType(200)]
-    [HttpPost("refresh")]
-    public async ValueTask<IActionResult> RefreshAsync([FromBody] RefreshTokenRequest request)
-    {
-        var result = await sender.Send(new RefreshTokenCommand(request));
-
-        return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
-            ErrorHandler.Handle);
-    }
 
     [EndpointSummary("Sign-out")]
     [EndpointDescription("Sign-out")]
