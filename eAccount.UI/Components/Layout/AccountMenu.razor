@@ -1,11 +1,7 @@
-﻿@inject AuthorizationManager AuthorizationManager
-@inject NavigationManager NavigationManager
+﻿@inject NavigationManager NavigationManager
 @inject UserState UserState
-@inject ISnackbar Snackbar
 @inject IUserService UserService
 
-@using eAccount.Infrastructure.Security.Authorization
-@using eAccount.Infrastructure.Security.Authentication
 @implements IDisposable
 
 <MudAvatar @onclick="DrawerToggle">
@@ -46,18 +42,6 @@
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.AccountBox">
             Profile
-        </MudNavLink>
-        <MudNavLink
-            Href="@Links.OrdersPage"
-            Match="NavLinkMatch.All"
-            Icon="@Icons.Material.Filled.ShoppingCart">
-            Orders
-        </MudNavLink>
-        <MudNavLink
-            Href="@Links.OrdersHistoryPage"
-            Match="NavLinkMatch.All"
-            Icon="@Icons.Material.Filled.History">
-            Order History
         </MudNavLink>
         <MudNavLink
             Href="@Links.SettingsPage"

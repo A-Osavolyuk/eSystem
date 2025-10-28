@@ -10,17 +10,12 @@
 
 <MudLayout>
     <MudAppBar Class="align-content-center" Elevation="1">
-        <MudIconButton
-            Icon="@Icons.Material.Filled.Menu"
-            Color="Color.Inherit"
-            Edge="Edge.Start"
-            OnClick="@((e) => DrawerToggle())"/>
         <MudText
             Align="Align.Center"
             Typo="Typo.h5"
             Class="ml-3 cursor-pointer"
-            @onclick="@(() => NavigationManager.NavigateTo(Links.ProductsPage))">
-            eShop
+            @onclick="@(() => NavigationManager.NavigateTo(Links.Profile))">
+            eAccount
         </MudText>
         <MudSpacer/>
         <AuthorizeView>
@@ -44,15 +39,6 @@
             </Authorized>
         </AuthorizeView>
     </MudAppBar>
-    <MudDrawer
-        @bind-Open="isDrawerOpen"
-        ClipMode="DrawerClipMode.Always"
-        Variant="DrawerVariant.Temporary"
-        Anchor="Anchor.Start"
-        Overlay="true"
-        Elevation="2">
-        <NavigationMenu/>
-    </MudDrawer>
     <MudMainContent>
         <MudContainer
             MaxWidth="MaxWidth.ExtraLarge"
@@ -61,12 +47,3 @@
         </MudContainer>
     </MudMainContent>
 </MudLayout>
-
-@code {
-    private bool isDrawerOpen = false;
-
-    void DrawerToggle()
-    {
-        isDrawerOpen = !isDrawerOpen;
-    }
-}

@@ -47,6 +47,15 @@
 	  <_ContentIncludedByDefault Remove="Components\Pages\Profile\Devices\DevicesSection.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Pages\Recovery\Components\RecoverySection.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Pages\Recovery\Recovery.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Components\Create\GeneralProperties.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Components\Create\Images.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Components\Create\ImagesDialog.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Components\Create\ProductProperties.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Components\Create\Properties\BerryProperties.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Components\Create\Properties\FruitProperties.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Components\Create\Properties\VegetableProperties.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Create.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Pages\Products\Products.razor" />
 	</ItemGroup>
 
 	<ItemGroup>

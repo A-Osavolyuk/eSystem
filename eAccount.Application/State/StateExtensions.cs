@@ -8,6 +8,5 @@ public static class StateExtensions
     public static void AddState(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<UserState>();
-        builder.Services.AddScoped<ProductState>();
     }
 }

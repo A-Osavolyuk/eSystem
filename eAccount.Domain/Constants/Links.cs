@@ -27,11 +27,8 @@ public static class Links
     public const string SecurityPage = "/account/security";
     public const string Profile = "/account/profile";
     public const string SettingsPage = "/account/settings";
-    public const string OrdersPage = "/account/orders";
-    public const string OrdersHistoryPage = "/account/orders-history";
     public const string DevicesPage = "/account/devices";
     public const string PhoneNumbersPage = "/account/phone-numbers";
-    public const string ProductsPage = "/products";
     public const string Authorize = "/sso/authorize";
     public const string Callback = "/sso/callback";
     public const string SignOut = "/sso/signout";

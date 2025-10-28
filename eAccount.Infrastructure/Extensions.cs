@@ -27,11 +27,6 @@ public static class Extensions
         builder.Services.AddScoped<IStoreService, StorageService>();
         builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<ITypeService, TypeService>();
-        builder.Services.AddScoped<IUnitService, UnitService>();
-        builder.Services.AddScoped<ICategoryService, CategoryService>();
-        builder.Services.AddScoped<IPriceService, PriceService>();
-        builder.Services.AddScoped<ICurrencyService, CurrencyService>();
         builder.Services.AddScoped<IOAuthService, OAuthService>();
         builder.Services.AddScoped<IDeviceService, DeviceService>();
         builder.Services.AddScoped<IPasskeyService, PasskeyService>();

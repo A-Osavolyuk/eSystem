@@ -41,7 +41,7 @@
                 if (response.SignType == OAuthSignType.SignIn)
                 {
                     Snackbar.Add($"Successfully signed in with {response.LinkedAccount}", Severity.Success);
-                    NavigationManager.NavigateTo(Links.ProductsPage);
+                    NavigationManager.NavigateTo(Links.Profile);
                 }
                 else
                 {
