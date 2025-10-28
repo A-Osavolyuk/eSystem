@@ -1,6 +1,6 @@
 ﻿namespace eSystem.Core.Requests.Auth;
 
-public class UnauthorizeRequest
+public class SignOutRequest
 {
     public required Guid UserId { get; set; }
     public required string RefreshToken { get; set; }

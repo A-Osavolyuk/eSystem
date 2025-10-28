@@ -22,7 +22,7 @@ public class SsoService(
         new HttpOptions { Type = DataType.Text });
 
 
-    public async ValueTask<HttpResponse> UnauthorizeAsync(UnauthorizeRequest request) => await ApiClient.SendAsync(
+    public async ValueTask<HttpResponse> UnauthorizeAsync(SignOutRequest request) => await ApiClient.SendAsync(
         new HttpRequest { Url = $"{Gateway}/{BasePath}/unauthorize", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 }

@@ -2,22 +2,22 @@
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;
 
-namespace eSystem.Auth.Api.Features.Security.Commands;
+namespace eSystem.Auth.Api.Features.SSO.Commands;
 
-public record UnauthorizeCommand(UnauthorizeRequest Request) : IRequest<Result>;
+public record SignOutCommand(SignOutRequest Request) : IRequest<Result>;
 
-public class UnauthorizeCommandHandler(
+public class SignOutCommandHandler(
     IUserManager userManager,
     ITokenManager tokenManager,
     ISessionManager sessionManager,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<UnauthorizeCommand, Result>
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<SignOutCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
-    public async Task<Result> Handle(UnauthorizeCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SignOutCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");

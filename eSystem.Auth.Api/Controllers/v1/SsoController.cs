@@ -52,13 +52,13 @@ public class SsoController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Unauthorize")]
-    [EndpointDescription("Unauthorize")]
+    [EndpointSummary("Sign-out")]
+    [EndpointDescription("Sign-out")]
     [ProducesResponseType(200)]
-    [HttpPost("unauthorize")]
-    public async ValueTask<IActionResult> UnauthorizeAsync([FromBody] UnauthorizeRequest request)
+    [HttpPost("sign-out")]
+    public async ValueTask<IActionResult> SignOutAsync([FromBody] SignOutRequest request)
     {
-        var result = await sender.Send(new UnauthorizeCommand(request));
+        var result = await sender.Send(new SignOutCommand(request));
 
         return result.Match(
             s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
