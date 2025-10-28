@@ -1,9 +1,10 @@
 ﻿@using eAccount.Infrastructure.Security.Authentication
+@using eAccount.Infrastructure.Security.Authorization
 @using eSystem.Core.Security.Authentication.SignIn
 @using eSystem.Core.Security.Authentication.TwoFactor
 
 @inject CodeModelValidator Validator
-@inject AuthenticationManager AuthenticationManager
+@inject AuthorizationManager AuthorizationManager
 @inject UserState UserState
 @inject NavigationManager NavigationManager
 @inject ISecurityService SecurityService
@@ -123,7 +124,7 @@
                 var response = result.Get<SignInResponse>()!;
 
                 UserState.UserId = response.UserId;
-                AuthenticationManager.Authorize();
+                AuthorizationManager.Authorize();
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }

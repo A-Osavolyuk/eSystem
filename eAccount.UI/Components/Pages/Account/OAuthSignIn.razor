@@ -34,7 +34,7 @@
                 var response = result.Get<LoadOAuthSessionResponse>()!;
                 
                 UserState.UserId = response.UserId;
-                AuthenticationManager.Authorize();
+                AuthorizationManager.Authorize();
                 
                 //TODO: Handle different OAuth sign types
 

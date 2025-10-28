@@ -1,7 +1,30 @@
 @page "/sso/signout"
 
+@using eAccount.Infrastructure.Security.Authentication.JWT
+
 @inherits PageBase
 
+@inject IFetchClient FetchClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject TokenProvider TokenProvider
+
 @code {
-    
+    public async Task SignOutAsync()
+    {
+        var fetchOptions = new FetchOptions()
+        {
+            Method = HttpMethod.Post,
+            Url = $"{NavigationManager.BaseUri}api/authentication/sign-out",
+        };
+
+        var result = await FetchClient.FetchAsync(fetchOptions);
+        if (result.Success)
+        {
+            await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.SignOutAsync();
+            await LocalStorage.ClearAsync();
+            TokenProvider.Clear();
+
+            NavigationManager.NavigateTo(Links.LoginPage);
+        }
+    }
 }

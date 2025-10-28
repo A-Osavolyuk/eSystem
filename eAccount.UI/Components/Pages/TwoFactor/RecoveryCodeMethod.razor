@@ -1,6 +1,7 @@
 ﻿@using eAccount.Infrastructure.Security.Authentication
+@using eAccount.Infrastructure.Security.Authorization
 @using eSystem.Core.Security.Authentication.TwoFactor
-@inject AuthenticationManager AuthenticationManager
+@inject AuthorizationManager AuthorizationManager
 @inject UserState UserState
 @inject NavigationManager NavigationManager
 @inject ITwoFactorService TwoFactorService
@@ -120,7 +121,7 @@
                 var response = result.Get<VerifyRecoveryCodeResponse>()!;
 
                 UserState.UserId = response.UserId;
-                AuthenticationManager.Authorize();
+                AuthorizationManager.Authorize();
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }

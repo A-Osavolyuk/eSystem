@@ -1,9 +1,10 @@
-﻿@using eAccount.Infrastructure.Security.Authentication
+﻿@using eAccount.Infrastructure.Security.Authorization
+@using eAccount.Infrastructure.Security.Authentication
 @inherits ComponentBase
 
 @code {
     [Inject] public NavigationManager NavigationManager { get; private set; } = null!;
-    [Inject] public AuthenticationManager AuthenticationManager { get; private set; } = null!;
+    [Inject] public AuthorizationManager AuthorizationManager { get; private set; } = null!;
     [Inject] public UserState UserState { get; private set; } = null!;
     [Inject] public ISnackbar Snackbar { get; private set; } = null!;
     [Inject] public IJSRuntime Js { get; private set; } = null!;

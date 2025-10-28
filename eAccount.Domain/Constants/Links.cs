@@ -34,4 +34,5 @@ public static class Links
     public const string ProductsPage = "/products";
     public const string Authorize = "/sso/authorize";
     public const string Callback = "/sso/callback";
+    public const string SignOut = "/sso/signout";
 }

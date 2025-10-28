@@ -14,4 +14,4 @@ global using Microsoft.AspNetCore.Components.Forms;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
-global using AuthenticationManager = eAccount.Infrastructure.Security.Authentication.AuthenticationManager;
+global using AuthenticationManager = eAccount.Infrastructure.Security.Authorization.AuthorizationManager;

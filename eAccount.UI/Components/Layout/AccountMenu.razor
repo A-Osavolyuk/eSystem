@@ -1,9 +1,10 @@
-﻿@inject AuthenticationManager AuthenticationManager
+﻿@inject AuthorizationManager AuthorizationManager
 @inject NavigationManager NavigationManager
 @inject UserState UserState
 @inject ISnackbar Snackbar
 @inject IUserService UserService
 
+@using eAccount.Infrastructure.Security.Authorization
 @using eAccount.Infrastructure.Security.Authentication
 @implements IDisposable
 
@@ -92,7 +93,7 @@
         <MudDivider Class="my-2"/>
         <MudNavLink
             Match="NavLinkMatch.All"
-            OnClick="@(async () => await LogoutClick())"
+            OnClick="@(() => OnSignOut())"
             Icon="@Icons.Material.Filled.Logout">
             Logout
         </MudNavLink>
@@ -122,10 +123,9 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task LogoutClick()
+    private void OnSignOut()
     {
-        await AuthenticationManager.SignOutAsync();
-        Snackbar.Add("Successfully logged out.", Severity.Success);
+        NavigationManager.NavigateTo(Links.SignOut);
     }
 
     private async Task LoadStateAsync()

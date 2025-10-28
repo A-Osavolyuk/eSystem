@@ -115,7 +115,7 @@
             {
                 var response = result.Get<SignInResponse>()!;
                 UserState.UserId = response.UserId;
-                AuthenticationManager.Authorize();
+                AuthorizationManager.Authorize();
             }
             else
             {
