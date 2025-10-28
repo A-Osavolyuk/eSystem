@@ -62,13 +62,4 @@ public class SsoController(
 
         return Ok(result);
     }
-
-    [HttpPost("token")]
-    public async Task<IActionResult> TokenAsync([FromBody] TokenRequest request)
-    {
-        var result = await ssoService.GenerateTokenAsync(request);
-        return !result.Success
-            ? StatusCode(500, result)
-            : Ok(result);
-    }
 }

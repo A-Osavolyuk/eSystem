@@ -1,7 +1,6 @@
 ﻿using eAccount.Application.State;
 using eAccount.Domain.Constants;
 using eAccount.Domain.Options;
-using eAccount.Domain.Requests;
 using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Authentication.SSO.Clients;
 using eSystem.Core.Requests.Auth;
@@ -34,6 +33,35 @@ public class AuthenticationManager(
     private readonly IStorage storage = storage;
     private readonly ClientOptions options = options.Value;
 
+    public async Task SignInAsync(string accessToken, string refreshToken)
+    {
+        var request = new SignInRequest()
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
+        };
+        
+        var fetchOptions = new FetchOptions()
+        {
+            Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
+            Method = HttpMethod.Post,
+            Body = request
+        };
+
+        var result = await fetchClient.FetchAsync(fetchOptions);
+        var response = result.Get<SignInResponse>()!;
+
+        var identity = response.Identity;
+        var claims = identity.Claims
+            .Select(x => new Claim(x.Key, x.Value))
+            .ToList();
+
+        var claimsIdentity = new ClaimsIdentity(claims, identity.Scheme);
+        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+        (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
+    }
+    
     public async Task SignInAsync()
     {
         var nonce = keyFactory.Create(16);

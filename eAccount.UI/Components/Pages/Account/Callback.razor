@@ -2,6 +2,38 @@
 
 @inherits PageBase
 
+@inject ISsoService SsoService
+@inject IOptions<ClientOptions> Options
+
 @code {
+    [SupplyParameterFromQuery(Name = "code")]
+    public string? Code { get; set; }
     
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
+    
+    private ClientOptions ClientOptions => Options.Value;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new TokenRequest()
+        {
+            ClientId = ClientOptions.ClientId,
+            ClientSecret = ClientOptions.ClientSecret,
+            RedirectUri = ClientOptions.RedirectUri,
+            GrantType = GrantTypes.AuthorizationCode,
+            Code = Code!,
+        };
+        
+        var result = await SsoService.GenerateTokenAsync(request);
+
+        if (result.Success)
+        {
+            var response = result.Get<TokenResponse>()!;
+            await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken);
+            NavigationManager.NavigateTo(Links.Profile);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
 }

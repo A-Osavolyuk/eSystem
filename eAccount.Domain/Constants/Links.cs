@@ -25,7 +25,7 @@ public static class Links
     public const string EmailResetPage = "/account/email/reset";
     public const string EmailManagePage = "/account/email/manage";
     public const string SecurityPage = "/account/security";
-    public const string ProfilePage = "/account/profile";
+    public const string Profile = "/account/profile";
     public const string SettingsPage = "/account/settings";
     public const string OrdersPage = "/account/orders";
     public const string OrdersHistoryPage = "/account/orders-history";
