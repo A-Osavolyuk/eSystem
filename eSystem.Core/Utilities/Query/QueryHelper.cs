@@ -1,4 +1,4 @@
-namespace eAccount.Infrastructure.Utilities;
+namespace eSystem.Core.Utilities.Query;
 
 public static class QueryHelper
 {

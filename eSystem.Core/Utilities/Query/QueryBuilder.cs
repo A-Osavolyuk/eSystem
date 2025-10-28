@@ -1,6 +1,7 @@
+using System.Text;
 using System.Web;
 
-namespace eAccount.Infrastructure.Utilities;
+namespace eSystem.Core.Utilities.Query;
 
 public class QueryBuilder
 {
