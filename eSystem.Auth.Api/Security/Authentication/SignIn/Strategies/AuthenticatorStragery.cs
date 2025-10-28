@@ -1,6 +1,5 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
-using eSystem.Auth.Api.Security.Cryptography.Protection;
 using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Responses.Auth;

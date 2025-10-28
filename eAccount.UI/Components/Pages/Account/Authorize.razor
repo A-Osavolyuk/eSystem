@@ -41,47 +41,50 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && UserState.IsAuthenticated)
+        if (firstRender)
         {
-            var scopes = Scope.Split(' ').ToList();
-            var request = new AuthorizeRequest()
+            if (UserState.IsAuthenticated)
             {
-                UserId = UserState.UserId,
-                ResponseType = ResponseType,
-                ClientId = ClientId,
-                RedirectUri = RedirectUri,
-                Scopes = scopes,
-                Nonce = Nonce,
-                State = State,
-                CodeChallenge = CodeChallenge,
-                CodeChallengeMethod = CodeChallengeMethod
-            };
-
-            var result = await SsoService.AuthorizeAsync(request);
-
-            if (result.Success)
-            {
-                var response = result.Get<AuthorizeResponse>()!;
-                var cookie = new SessionCookie()
+                var scopes = Scope.Split(' ').ToList();
+                var request = new AuthorizeRequest()
                 {
-                    SessionId = response.SessionId,
-                    UserId = request.UserId,
-                    DeviceId = response.DeviceId,
-                    IssuedAt = DateTimeOffset.UtcNow,
-                    ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
+                    UserId = UserState.UserId,
+                    ResponseType = ResponseType,
+                    ClientId = ClientId,
+                    RedirectUri = RedirectUri,
+                    Scopes = scopes,
+                    Nonce = Nonce,
+                    State = State,
+                    CodeChallenge = CodeChallenge,
+                    CodeChallengeMethod = CodeChallengeMethod
                 };
 
-                var fetchOptions = new FetchOptions()
+                var result = await SsoService.AuthorizeAsync(request);
+
+                if (result.Success)
                 {
-                    Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
-                    Method = HttpMethod.Post,
-                    Body = cookie
-                };
+                    var response = result.Get<AuthorizeResponse>()!;
+                    var cookie = new SessionCookie()
+                    {
+                        SessionId = response.SessionId,
+                        UserId = request.UserId,
+                        DeviceId = response.DeviceId,
+                        IssuedAt = DateTimeOffset.UtcNow,
+                        ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
+                    };
 
-                await FetchClient.FetchAsync(fetchOptions);
+                    var fetchOptions = new FetchOptions()
+                    {
+                        Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
+                        Method = HttpMethod.Post,
+                        Body = cookie
+                    };
 
-                var callbackUri = $"{request.RedirectUri}?code={response.Code}&state={response.State}";
-                NavigationManager.NavigateTo(callbackUri);
+                    await FetchClient.FetchAsync(fetchOptions);
+
+                    var callbackUri = $"{request.RedirectUri}?code={response.Code}&state={response.State}";
+                    NavigationManager.NavigateTo(callbackUri);
+                }
             }
         }
     }
