@@ -24,8 +24,8 @@ public class UserState : AsyncState
         Credentials = new UserCredentials
         {
             Username = state.Username, 
-            Email = state.PrimaryEmail, 
-            PhoneNumber = state.PrimaryPhoneNumber,
+            Email = state.Email, 
+            PhoneNumber = state.PhoneNumber,
         };
     }
 
