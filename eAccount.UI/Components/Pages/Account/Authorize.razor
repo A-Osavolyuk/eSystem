@@ -73,7 +73,7 @@ else
 
                 var fetchOptions = new FetchOptions()
                 {
-                    Url = $"{NavigationManager.BaseUri}api/sso/authorize",
+                    Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
                     Method = HttpMethod.Post,
                     Body = cookie
                 };

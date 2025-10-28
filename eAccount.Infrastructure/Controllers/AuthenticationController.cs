@@ -1,6 +1,8 @@
 ﻿using eAccount.Domain.DTOs;
 using eAccount.Infrastructure.Security.Authentication.JWT;
+using eAccount.Infrastructure.Security.Authentication.SSO;
 using eSystem.Core.Security.Authentication.Cookies;
+using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -14,10 +16,29 @@ namespace eAccount.Infrastructure.Controllers;
 [Route("api/[controller]")]
 public class AuthenticationController(
     TokenProvider tokenProvider,
-    ISsoService ssoService) : ControllerBase
+    IProtectorFactory protectorFactory) : ControllerBase
 {
     private readonly TokenProvider tokenProvider = tokenProvider;
-    private readonly ISsoService ssoService = ssoService;
+    private readonly IProtectorFactory protectorFactory = protectorFactory;
+    
+    [HttpPost("authorize")]
+    public IActionResult Authorize([FromBody] SessionCookie cookie)
+    {
+        var cookieJson = JsonSerializer.Serialize(cookie);
+        var protector = protectorFactory.Create(ProtectionPurposes.Session);
+        var protectedCookie = protector.Protect(cookieJson);
+        var cookieOptions = new CookieOptions()
+        {
+            Domain = "localhost",
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = cookie.ExpiresAt.UtcDateTime,
+            MaxAge = TimeSpan.FromDays(30)
+        };
+
+        Response.Cookies.Append(DefaultCookies.Session, protectedCookie, cookieOptions);
+        return Ok(new ResponseBuilder().Succeeded().Build());
+    }
 
     [HttpPost("sign-in")]
     public async Task<IActionResult> SignInAsync([FromBody] SignInRequest request)
