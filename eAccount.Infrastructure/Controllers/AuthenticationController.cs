@@ -1,6 +1,7 @@
 ﻿using eAccount.Domain.DTOs;
 using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Authentication.SSO;
+using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.Cookies;
 using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.Authentication;
@@ -37,6 +38,19 @@ public class AuthenticationController(
         };
 
         Response.Cookies.Append(DefaultCookies.Session, protectedCookie, cookieOptions);
+        return Ok(new ResponseBuilder().Succeeded().Build());
+    }
+    
+    [HttpPost("refresh")]
+    public IActionResult Refresh([FromBody] RefreshRequest request)
+    {
+        var cookieOptions = new CookieOptions()
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+        };
+
+        Response.Cookies.Append(DefaultCookies.Session, request.RefreshToken, cookieOptions);
         return Ok(new ResponseBuilder().Succeeded().Build());
     }
 

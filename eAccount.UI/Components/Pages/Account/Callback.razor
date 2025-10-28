@@ -37,7 +37,7 @@
             Code = Code,
         };
         
-        var result = await SsoService.GenerateTokenAsync(request);
+        var result = await SsoService.TokenAsync(request);
 
         if (result.Success)
         {

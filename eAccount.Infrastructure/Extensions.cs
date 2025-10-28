@@ -3,7 +3,6 @@ using eAccount.Infrastructure.Implementations;
 using eAccount.Infrastructure.Services;
 using eAccount.Infrastructure.Storage;
 using Microsoft.AspNetCore.Builder;
-
 namespace eAccount.Infrastructure;
 
 public static class Extensions
@@ -36,6 +35,7 @@ public static class Extensions
         builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddScoped<IFetchClient, FetchClient>();
         builder.Services.AddScoped<IStorage, LocalStorage>();
+        builder.Services.AddScoped<ICookieAccessor, CookieAccessor>();
         builder.Services.AddScoped<DownloadManager>();
         builder.Services.AddScoped<ClipboardManager>();
         builder.Services.AddScoped<PrintManager>();

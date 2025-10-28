@@ -4,10 +4,14 @@ using eAccount.Domain.Constants;
 using eAccount.Domain.Options;
 using eAccount.Infrastructure.Http;
 using eAccount.Infrastructure.Security.Authentication.JWT;
+using eAccount.Infrastructure.Security.Authentication.SSO.Clients;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Authentication.Cookies;
+using eSystem.Core.Security.Authentication.SSO.Token;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using HttpRequest = eSystem.Core.Common.Http.HttpRequest;
 using HttpResponse = eSystem.Core.Common.Http.HttpResponse;
 
@@ -17,19 +21,22 @@ public class ApiClient(
     IHttpClientFactory clientFactory,
     IHttpContextAccessor httpContextAccessor,
     IFetchClient fetchClient,
+    ICookieAccessor cookieAccessor,
+    IOptions<ClientOptions> options,
+    IConfiguration configuration,
     UserState userState,
     TokenProvider tokenProvider,
-    NavigationManager navigationManager,
-    AuthenticationManager authorizationManager) : IApiClient
+    NavigationManager navigationManager) : IApiClient
 {
     private readonly IHttpClientFactory clientFactory = clientFactory;
     private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly IFetchClient fetchClient = fetchClient;
+    private readonly ICookieAccessor cookieAccessor = cookieAccessor;
+    private readonly IOptions<ClientOptions> options = options;
+    private readonly IConfiguration configuration = configuration;
     private readonly UserState userState = userState;
     private readonly NavigationManager navigationManager = navigationManager;
-    private readonly AuthenticationManager authorizationManager = authorizationManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
-    private const string Key = "services:proxy:http:0";
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions)
     {
@@ -58,10 +65,7 @@ public class ApiClient(
                 }
                 else
                 {
-                    var response = result.Get<RefreshTokenResponse>()!;
-                    tokenProvider.AccessToken = response.AccessToken;
                     message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
-                    
                     httpResponseMessage = await httpClient.SendAsync(message);
                 }
             }
@@ -90,14 +94,42 @@ public class ApiClient(
     
     private async Task<HttpResponse> RefreshAsync()
     {
-        var request = new RefreshTokenRequest() { UserId = userState.UserId };
+        var clientOptions = options.Value;
+        var refreshToken = cookieAccessor.Get(DefaultCookies.RefreshToken)!;
+        var tokenRequest = new TokenRequest()
+        {
+            ClientId = clientOptions.ClientId,
+            ClientSecret = clientOptions.ClientSecret,
+            RefreshToken = refreshToken,
+            GrantType = GrantTypes.RefreshToken
+        };
+        
+        const string gatewayKey = "services:proxy:http:0";
+        var gateway = configuration[gatewayKey]!;
+        var httpRequest = new HttpRequest()
+        {
+            Method = HttpMethod.Post,
+            Url = $"{gateway}/api/v1/Sso/token",
+            Data = tokenRequest
+        };
+        
+        var httpOptions = new HttpOptions() { Type = DataType.Text };
+        var tokenResult = await SendAsync(httpRequest, httpOptions);
+
+        if (!tokenResult.Success) return tokenResult;
+        
+        var tokenResponse = tokenResult.Get<TokenResponse>()!;
+        tokenProvider.AccessToken = tokenResponse.AccessToken;
+            
+        var refreshRequest = new RefreshRequest() { RefreshToken = tokenResponse.RefreshToken };
         var fetchOptions = new FetchOptions()
         {
             Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/sso/refresh-token",
-            Body = request
+            Url = $"{navigationManager.BaseUri}api/sso/refresh",
+            Body = refreshRequest
         };
 
         return await fetchClient.FetchAsync(fetchOptions);
+
     }
 }
