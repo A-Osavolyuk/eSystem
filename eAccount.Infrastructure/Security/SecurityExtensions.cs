@@ -20,7 +20,7 @@ public static class SecurityExtensions
         {
             cfg.ClientId = "eAccount";
             cfg.ClientSecret = "2f213a036e325a55dc19320f03c2fad7c13f0169788b5968686cb4931341c393a651d7e6";
-            cfg.RedirectUri = "none";
+            cfg.RedirectUri = "http://localhost:5501/sso/callback";
             cfg.Scopes =
             [
                 Scopes.Address,
