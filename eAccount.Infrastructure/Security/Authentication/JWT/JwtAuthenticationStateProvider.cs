@@ -18,7 +18,7 @@ public class JwtAuthenticationStateProvider(
         var principal = httpContext.User;
         var authenticationState = new AuthenticationState(principal);
 
-        var subjectClaim = principal.Claims.Single(x => x.Type == AppClaimTypes.Subject);
+        var subjectClaim = principal.Claims.Single(x => x.Type == AppClaimTypes.Sub);
         var userId = Guid.Parse(subjectClaim.Value);
         userState.UserId = userId;
 

@@ -14,6 +14,8 @@ public class AuthorizationCodeManager(
     {
         return await context.AuthorizationCodes
             .Include(x => x.Client)
+            .ThenInclude(x => x.AllowedScopes)
+            .ThenInclude(x => x.Scope)
             .Include(x => x.Device)
             .FirstOrDefaultAsync(c => c.Code == code, cancellationToken);
     }

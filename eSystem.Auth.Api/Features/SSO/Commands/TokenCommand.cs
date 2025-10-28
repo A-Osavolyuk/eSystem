@@ -90,11 +90,13 @@ public class TokenCommandHandler(
         var codeResult = await authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
+        var scopes = string.Join(' ', client.AllowedScopes.Select(x => x.Scope.Name));
         var claims = new List<Claim>()
         {
             new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString()),
-            new(AppClaimTypes.Subject, user.Id.ToString()),
+            new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Nonce, authorizationCode.Nonce),
+            new(AppClaimTypes.Scope, scopes)
         };
 
         var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
