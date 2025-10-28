@@ -40,12 +40,12 @@ public class AuthorizationCodeStrategy(
             return Results.BadRequest("Authorization code has expired.");
 
         var redirectUri = request.RedirectUri;
-        if (!authorizationCode.RedirectUri.Equals(redirectUri))
+        if (string.IsNullOrEmpty(redirectUri) || !authorizationCode.RedirectUri.Equals(redirectUri))
             return Results.BadRequest("Invalid redirect URI.");
 
         var client = authorizationCode.Client;
         if (!client.ClientId.Equals(request.ClientId)) return Results.BadRequest("Invalid client ID.");
-        if (!client.HasUri(request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
+        if (!client.HasUri(redirectUri)) return Results.BadRequest("Invalid redirect URI.");
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {
