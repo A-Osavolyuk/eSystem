@@ -66,7 +66,7 @@ public class AuthenticationManager(
 
     public void Authorize()
     {
-        var queryParams = QueryHelper.GetQueryParameters(navigationManager.Uri);
+        var queryParams = QueryParser.GetQueryParameters(navigationManager.Uri);
         if (!queryParams.ContainsKey("client_id") && !queryParams.ContainsKey("redirect_uri"))
         {
             var clientOptions = options.Value;

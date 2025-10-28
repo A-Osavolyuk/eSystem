@@ -1,6 +1,6 @@
 namespace eSystem.Core.Utilities.Query;
 
-public static class QueryHelper
+public static class QueryParser
 {
     public static Dictionary<string, string> GetQueryParameters(string uri)
     {
