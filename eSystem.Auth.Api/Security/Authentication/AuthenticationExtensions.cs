@@ -28,10 +28,10 @@ public static class AuthenticationExtensions
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = AuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme, options =>
+            .AddCookie(AuthenticationDefaults.AuthenticationScheme, options =>
             {
                 options.Cookie.Name = DefaultCookies.External;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);

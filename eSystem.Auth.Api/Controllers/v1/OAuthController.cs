@@ -41,7 +41,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
         string? returnUri = null)
     {
         var authenticationResult = await signInManager.AuthenticateAsync(
-            ExternalAuthenticationDefaults.AuthenticationScheme);
+            AuthenticationDefaults.AuthenticationScheme);
         
         var result = await sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
         return result.Match(

@@ -1,6 +1,6 @@
 ﻿namespace eSystem.Auth.Api.Security.Authentication.Schemes;
 
-public class ExternalAuthenticationDefaults
+public static class AuthenticationDefaults
 {
     public const string AuthenticationScheme = "External";
 }
