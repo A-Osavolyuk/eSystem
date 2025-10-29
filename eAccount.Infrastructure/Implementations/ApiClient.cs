@@ -2,6 +2,7 @@
 using eAccount.Domain.Constants;
 using eAccount.Domain.Options;
 using eAccount.Infrastructure.Http;
+using eAccount.Infrastructure.Http.Extensions;
 using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Authentication.SSO.Clients;
 using eSystem.Core.Common.Network.Gateway;
@@ -42,7 +43,7 @@ public class ApiClient(
         {
             var message = new HttpRequestMessage();
             
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
+            message.Headers.AddBearerAuthorization(tokenProvider.AccessToken);
             message.RequestUri = new Uri($"{gatewayOptions.Url}/{httpRequest.Url}");
             message.Method = httpRequest.Method;
             message.IncludeUserAgent(httpContext);
@@ -63,7 +64,7 @@ public class ApiClient(
                 }
                 else
                 {
-                    message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
+                    message.Headers.AddBearerAuthorization(tokenProvider.AccessToken);
                     httpResponseMessage = await httpClient.SendAsync(message);
                 }
             }
@@ -74,10 +75,7 @@ public class ApiClient(
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             
-            var responseJson = await httpResponseMessage.Content.ReadAsStringAsync();
-            var httpResponse = JsonSerializer.Deserialize<HttpResponse>(responseJson, serializationOptions)!;
-
-            return httpResponse;
+            return await httpResponseMessage.Content.ReadAsAsync<HttpResponse>(serializationOptions);
         }
         catch (Exception ex)
         {
