@@ -2,6 +2,7 @@
 using eAccount.Infrastructure.Implementations;
 using eAccount.Infrastructure.Services;
 using eAccount.Infrastructure.Storage;
+using eSystem.Core.Common.Network.Gateway;
 using Microsoft.AspNetCore.Builder;
 namespace eAccount.Infrastructure;
 
@@ -15,6 +16,7 @@ public static class Extensions
         builder.Services.AddBlazoredLocalStorage();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddControllers();
+        builder.Services.AddGateway();
     }
 
     private static void AddDependencyInjection(this WebApplicationBuilder builder)
