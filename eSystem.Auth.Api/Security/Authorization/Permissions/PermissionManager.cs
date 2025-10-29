@@ -1,9 +1,7 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 
 namespace eSystem.Auth.Api.Security.Authorization.Permissions;
 
-[Injectable(typeof(IPermissionManager), ServiceLifetime.Scoped)]
 public sealed class PermissionManager(AuthDbContext context) : IPermissionManager
 {
     private readonly AuthDbContext context = context;

@@ -1,12 +1,10 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Security.Credentials.PublicKey.Credentials;
-using eSystem.Core.Attributes;
 using eSystem.Core.Security.Credentials.Constants;
 using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSystem.Auth.Api.Security.Credentials.PublicKey;
 
-[Injectable(typeof(IPasskeyManager), ServiceLifetime.Scoped)]
 public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 {
     private readonly AuthDbContext context = context;

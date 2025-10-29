@@ -1,9 +1,7 @@
-﻿using eSystem.Core.Attributes;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn;
 
-[Injectable(typeof(ISignInManager), ServiceLifetime.Scoped)]
 public sealed class SignInManager(IHttpContextAccessor httpContextAccessor) : ISignInManager
 {
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;

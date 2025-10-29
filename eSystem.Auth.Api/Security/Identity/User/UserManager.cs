@@ -1,6 +1,5 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Security.Cryptography.Hashing;
-using eSystem.Core.Attributes;
 using eSystem.Core.Security.Authentication.Lockout;
 using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Identity.Email;
@@ -8,7 +7,6 @@ using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSystem.Auth.Api.Security.Identity.User;
 
-[Injectable(typeof(IUserManager), ServiceLifetime.Scoped)]
 public sealed class UserManager(
     AuthDbContext context,
     IHasherFactory hasherFactory) : IUserManager

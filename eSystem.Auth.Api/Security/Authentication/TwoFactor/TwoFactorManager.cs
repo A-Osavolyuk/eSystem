@@ -1,10 +1,8 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 using eSystem.Core.Security.Authentication.TwoFactor;
 
 namespace eSystem.Auth.Api.Security.Authentication.TwoFactor;
 
-[Injectable(typeof(ITwoFactorManager), ServiceLifetime.Scoped)]
 public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext context = context;

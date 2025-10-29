@@ -1,4 +1,6 @@
 ﻿using eSystem.Auth.Api.Security.Identity.Options;
+using eSystem.Auth.Api.Security.Identity.Privacy;
+using eSystem.Auth.Api.Security.Identity.User;
 
 namespace eSystem.Auth.Api.Security.Identity;
 
@@ -8,6 +10,9 @@ public static class IdentityExtensions
     {
         var identityBuilder = new IdentityBuilder(builder.Services);
         configurator(identityBuilder);
+        
+        builder.Services.AddScoped<IUserManager, UserManager>();
+        builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
     }
 }
 

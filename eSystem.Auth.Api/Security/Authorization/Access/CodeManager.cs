@@ -1,13 +1,11 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Security.Cryptography.Codes;
 using eSystem.Auth.Api.Security.Cryptography.Hashing;
-using eSystem.Core.Attributes;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Security.Authorization.Access;
 
-[Injectable(typeof(ICodeManager), ServiceLifetime.Scoped)]
 public sealed class CodeManager(
     AuthDbContext context,
     IHasherFactory hasherFactory,

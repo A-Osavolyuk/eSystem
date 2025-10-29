@@ -1,15 +1,17 @@
-﻿using eSystem.Auth.Api.Security.Authentication.Schemes;
+﻿using eSystem.Auth.Api.Security.Authentication.Lockout;
+using eSystem.Auth.Api.Security.Authentication.Schemes;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
+using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
+using eSystem.Auth.Api.Security.Authentication.TwoFactor.Secret;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Cookies;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Authentication.SignIn;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using JwtExtensions = eSystem.Auth.Api.Security.Authentication.JWT.JwtExtensions;
 
 namespace eSystem.Auth.Api.Security.Authentication;
 
@@ -21,7 +23,8 @@ public static class AuthenticationExtensions
         
         builder.Services.AddSignInStrategies();
         builder.Services.Add2FA();
-        JwtExtensions.AddJwt(builder.Services);
+        builder.Services.AddJwt();
+        builder.Services.AddLockout();
 
         builder.Services.AddAuthentication(options =>
             {
@@ -86,19 +89,28 @@ public static class AuthenticationExtensions
                 };
             });
     }
-
+    
     private static void Add2FA(this IServiceCollection services)
     {
         services.AddScoped<IQrCodeFactory, QrCodeFactory>();
         services.AddScoped<IRecoveryCodeFactory, RecoveryCodeFactory>();
+        services.AddScoped<IRecoverManager, RecoverManager>();
+        services.AddScoped<ISecretManager, SecretManager>();
+        services.AddScoped<ITokenManager, TokenManager>();
     }
 
     private static void AddSignInStrategies(this IServiceCollection services)
     {
         services.AddScoped<ISignInResolver, SignInResolver>();
+        services.AddScoped<ISignInManager, SignInManager>();
         services.AddKeyedScoped<SignInStrategy, PasswordSignInStrategy>(SignInType.Password);
         services.AddKeyedScoped<SignInStrategy, PasskeySignInStrategy>(SignInType.Passkey);
         services.AddKeyedScoped<SignInStrategy, AuthenticatorSignInStrategy>(SignInType.AuthenticatorApp);
         services.AddKeyedScoped<SignInStrategy, LinkedAccountSignInStrategy>(SignInType.LinkedAccount);
+    }
+
+    private static void AddLockout(this IServiceCollection services)
+    {
+        services.AddScoped<ILockoutManager, LockoutManager>();
     }
 }

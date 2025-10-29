@@ -1,9 +1,7 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 
 namespace eSystem.Auth.Api.Security.Identity.Privacy;
 
-[Injectable(typeof(IPersonalDataManager), ServiceLifetime.Scoped)]
 public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataManager
 {
     private readonly AuthDbContext context = context;

@@ -1,9 +1,6 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
-
 namespace eSystem.Auth.Api.Security.Authorization.Devices;
 
-[Injectable(typeof(IDeviceManager), ServiceLifetime.Scoped)]
 public class DeviceManager(AuthDbContext context) : IDeviceManager
 {
     private readonly AuthDbContext context = context;

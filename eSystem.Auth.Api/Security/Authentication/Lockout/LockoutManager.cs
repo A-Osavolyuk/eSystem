@@ -1,11 +1,9 @@
 ﻿using eSystem.Auth.Api.Common.Constants;
 using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 using eSystem.Core.Security.Authentication.Lockout;
 
 namespace eSystem.Auth.Api.Security.Authentication.Lockout;
 
-[Injectable(typeof(ILockoutManager), ServiceLifetime.Scoped)]
 public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
 {
     private readonly AuthDbContext context = context;

@@ -1,11 +1,9 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSystem.Auth.Api.Security.Authentication.TwoFactor.Secret;
 
-[Injectable(typeof(ISecretManager), ServiceLifetime.Scoped)]
 public sealed class SecretManager(
     AuthDbContext context,
     IProtectorFactory protectorFactory,

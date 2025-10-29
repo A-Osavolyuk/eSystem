@@ -1,10 +1,8 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Security.Authorization.Access;
 
-[Injectable(typeof(IVerificationManager), ServiceLifetime.Scoped)]
 public class VerificationManager(AuthDbContext context) : IVerificationManager
 {
     public async ValueTask<Result> CreateAsync(UserEntity user,

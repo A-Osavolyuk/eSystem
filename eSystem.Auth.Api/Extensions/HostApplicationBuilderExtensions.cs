@@ -1,7 +1,6 @@
 ﻿using eSystem.Auth.Api.Messaging;
 using eSystem.Auth.Api.Security;
-using eSystem.Auth.Api.Storage.Session;
-using eSystem.Core.Attributes;
+using eSystem.Auth.Api.Storage;
 using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Errors;
@@ -21,31 +20,19 @@ public static class HostApplicationBuilderExtensions
         builder.AddValidation<IAssemblyMarker>();
         builder.AddServiceDefaults();
         builder.AddSecurity();
-        builder.AddServices<IAssemblyMarker>();
         builder.AddRedisCache();
         builder.AddMediatR();
         builder.AddMsSqlDb();
         builder.AddLogging();
         builder.AddExceptionHandler();
         builder.AddDocumentation();
-        builder.AddSession();
+        builder.AddStorage();
         
         builder.Services.AddControllers()
             .AddJsonOptions(cfg => cfg.JsonSerializerOptions.WriteIndented = true);
         
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddDistributedMemoryCache();
-    }
-
-    private static void AddSession(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddScoped<ISessionStorage, SessionStorage>();
-        builder.Services.AddSession(options =>
-        {
-            options.IdleTimeout = TimeSpan.FromMinutes(5);
-            options.Cookie.HttpOnly = true;
-            options.Cookie.IsEssential = true;
-        });
     }
 
     private static void AddMediatR(this IHostApplicationBuilder builder)

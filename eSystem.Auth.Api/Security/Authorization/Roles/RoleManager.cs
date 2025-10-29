@@ -1,9 +1,7 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 
 namespace eSystem.Auth.Api.Security.Authorization.Roles;
 
-[Injectable(typeof(IRoleManager), ServiceLifetime.Scoped)]
 public sealed class RoleManager(AuthDbContext context) : IRoleManager
 {
     private readonly AuthDbContext context = context;

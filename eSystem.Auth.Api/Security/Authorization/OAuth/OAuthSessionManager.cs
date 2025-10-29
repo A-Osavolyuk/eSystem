@@ -1,9 +1,7 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 
 namespace eSystem.Auth.Api.Security.Authorization.OAuth;
 
-[Injectable(typeof(IOAuthSessionManager), ServiceLifetime.Scoped)]
 public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager
 {
     private readonly AuthDbContext context = context;

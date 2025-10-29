@@ -1,4 +1,9 @@
-﻿using eSystem.Core.Security.Authorization.Requirements;
+﻿using eSystem.Auth.Api.Security.Authorization.Access;
+using eSystem.Auth.Api.Security.Authorization.Devices;
+using eSystem.Auth.Api.Security.Authorization.OAuth;
+using eSystem.Auth.Api.Security.Authorization.Permissions;
+using eSystem.Auth.Api.Security.Authorization.Roles;
+using eSystem.Core.Security.Authorization.Requirements;
 
 namespace eSystem.Auth.Api.Security.Authorization;
 
@@ -6,18 +11,21 @@ public static class AuthorizationExtensions
 {
     public static void AddAuthorization(this IHostApplicationBuilder builder)
     {
-        builder.AddPermissionHandler();
-        builder.AddPolicies();
-    }
-    
-    private static void AddPermissionHandler(this IHostApplicationBuilder builder)
-    {
+        builder.Services.AddPolicies();
+        
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+        builder.Services.AddScoped<IPermissionManager, PermissionManager>();
+        builder.Services.AddScoped<IRoleManager, RoleManager>();
+        builder.Services.AddScoped<IOAuthSessionManager, OAuthSessionManager>();
+        builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
+        builder.Services.AddScoped<IDeviceManager, DeviceManager>();
+        builder.Services.AddScoped<ICodeManager, CodeManager>();
+        builder.Services.AddScoped<IVerificationManager, VerificationManager>();
     }
 
-    private static void AddPolicies(this IHostApplicationBuilder builder)
+    private static void AddPolicies(this IServiceCollection services)
     {
-        builder.Services.AddAuthorizationBuilder()
+        services.AddAuthorizationBuilder()
             .AddPolicy("DeleteAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("DELETE_ACCOUNT")))
             .AddPolicy("CreateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("CREATE_ACCOUNT")))
             .AddPolicy("UpdateAccountPolicy", policy => policy.Requirements.Add(new PermissionRequirement("UPDATE_ACCOUNT")))

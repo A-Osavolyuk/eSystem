@@ -1,10 +1,8 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
-using eSystem.Core.Attributes;
 using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 
-[Injectable(typeof(IRecoverManager), ServiceLifetime.Scoped)]
 public sealed class RecoverManager(
     AuthDbContext context,
     IProtectorFactory protectorFactory,
