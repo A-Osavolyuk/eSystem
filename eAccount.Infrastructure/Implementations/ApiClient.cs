@@ -1,10 +1,10 @@
 ﻿using System.Net;
-using eAccount.Application.State;
 using eAccount.Domain.Constants;
 using eAccount.Domain.Options;
 using eAccount.Infrastructure.Http;
 using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Authentication.SSO.Clients;
+using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.Cookies;
@@ -23,8 +23,7 @@ public class ApiClient(
     IFetchClient fetchClient,
     ICookieAccessor cookieAccessor,
     IOptions<ClientOptions> options,
-    IConfiguration configuration,
-    UserState userState,
+    GatewayOptions gatewayOptions,
     TokenProvider tokenProvider,
     NavigationManager navigationManager) : IApiClient
 {
@@ -33,8 +32,7 @@ public class ApiClient(
     private readonly IFetchClient fetchClient = fetchClient;
     private readonly ICookieAccessor cookieAccessor = cookieAccessor;
     private readonly IOptions<ClientOptions> options = options;
-    private readonly IConfiguration configuration = configuration;
-    private readonly UserState userState = userState;
+    private readonly GatewayOptions gatewayOptions = gatewayOptions;
     private readonly NavigationManager navigationManager = navigationManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
@@ -104,12 +102,10 @@ public class ApiClient(
             GrantType = GrantTypes.RefreshToken
         };
         
-        const string gatewayKey = "services:proxy:http:0";
-        var gateway = configuration[gatewayKey]!;
         var httpRequest = new HttpRequest()
         {
             Method = HttpMethod.Post,
-            Url = $"{gateway}/api/v1/Sso/token",
+            Url = $"{gatewayOptions.Url}/api/v1/Sso/token",
             Data = tokenRequest
         };
         

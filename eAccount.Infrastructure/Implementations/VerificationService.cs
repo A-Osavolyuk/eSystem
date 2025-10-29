@@ -1,31 +1,33 @@
-﻿using eAccount.Domain.Abstraction.Services;
+﻿using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Requests.Auth;
 
 namespace eAccount.Infrastructure.Implementations;
 
 public class VerificationService(
-    IConfiguration configuration, 
-    IApiClient apiClient) : ApiService(configuration, apiClient), IVerificationService
+    GatewayOptions gatewayOptions,
+    IApiClient apiClient) : IVerificationService
 {
+    private readonly GatewayOptions gatewayOptions = gatewayOptions;
+    private readonly IApiClient apiClient = apiClient;
     private const string BasePath = "api/v1/Verification";
     
-    public async ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/code/send", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request) => await apiClient.SendAsync(
+        new HttpRequest { Url = $"{gatewayOptions.Url}/{BasePath}/code/send", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/code/resend", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request) => await apiClient.SendAsync(
+        new HttpRequest { Url = $"{gatewayOptions.Url}/{BasePath}/code/resend", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/code/verify", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request) => await apiClient.SendAsync(
+        new HttpRequest { Url = $"{gatewayOptions.Url}/{BasePath}/code/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/authenticator/verify", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request) => await apiClient.SendAsync(
+        new HttpRequest { Url = $"{gatewayOptions.Url}/{BasePath}/authenticator/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request) => await ApiClient.SendAsync(
-        new HttpRequest { Url = $"{Gateway}/{BasePath}/passkey/verify", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request) => await apiClient.SendAsync(
+        new HttpRequest { Url = $"{gatewayOptions.Url}/{BasePath}/passkey/verify", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 }
