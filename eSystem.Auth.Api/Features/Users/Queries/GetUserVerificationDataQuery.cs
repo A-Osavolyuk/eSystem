@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Common.Http.Context;
+﻿using eSystem.Auth.Api.Security.Identity.User;
+using eSystem.Core.Common.Http.Context;
 using eSystem.Core.DTOs;
 using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Identity.Email;

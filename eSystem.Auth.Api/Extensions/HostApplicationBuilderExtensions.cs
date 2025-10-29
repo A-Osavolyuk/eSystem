@@ -1,6 +1,6 @@
 ﻿using eSystem.Auth.Api.Messaging;
 using eSystem.Auth.Api.Security;
-using eSystem.Auth.Api.Services;
+using eSystem.Auth.Api.Storage.Session;
 using eSystem.Core.Attributes;
 using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;

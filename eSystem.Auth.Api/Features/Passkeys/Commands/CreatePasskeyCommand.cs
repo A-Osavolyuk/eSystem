@@ -1,6 +1,11 @@
 ﻿using System.Security.Cryptography;
 using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.TwoFactor;
+using eSystem.Auth.Api.Security.Authorization.Access;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Auth.Api.Security.Credentials.PublicKey.Credentials;
+using eSystem.Auth.Api.Security.Identity.User;
+using eSystem.Auth.Api.Storage.Session;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.TwoFactor;

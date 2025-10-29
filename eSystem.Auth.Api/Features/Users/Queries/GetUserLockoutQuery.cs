@@ -1,4 +1,7 @@
-﻿namespace eSystem.Auth.Api.Features.Users.Queries;
+﻿using eSystem.Auth.Api.Security.Authentication.Lockout;
+using eSystem.Auth.Api.Security.Identity.User;
+
+namespace eSystem.Auth.Api.Features.Users.Queries;
 
 public record GetUserLockoutQuery(Guid Id) : IRequest<Result>;
 

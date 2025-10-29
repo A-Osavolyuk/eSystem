@@ -1,4 +1,6 @@
 ﻿using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Auth.Api.Security.Credentials.PublicKey.Challenge;
+using eSystem.Auth.Api.Security.Credentials.PublicKey.Credentials;
 
 namespace eSystem.Auth.Api.Security.Credentials;
 

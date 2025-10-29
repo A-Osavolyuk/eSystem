@@ -1,4 +1,8 @@
-﻿using eSystem.Core.Common.Http.Context;
+﻿using eSystem.Auth.Api.Security.Authentication.Lockout;
+using eSystem.Auth.Api.Security.Authorization.Access;
+using eSystem.Auth.Api.Security.Authorization.Devices;
+using eSystem.Auth.Api.Security.Identity.User;
+using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authorization.Access;

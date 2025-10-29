@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Features.Devices.Queries;
+﻿using eSystem.Auth.Api.Security.Authorization.Devices;
+
+namespace eSystem.Auth.Api.Features.Devices.Queries;
 
 public record GetDeviceQuery(Guid Id) : IRequest<Result>;
 

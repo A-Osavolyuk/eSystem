@@ -1,4 +1,5 @@
-﻿using eSystem.Core.DTOs;
+﻿using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Core.DTOs;
 
 namespace eSystem.Auth.Api.Features.Passkeys.Queries;
 

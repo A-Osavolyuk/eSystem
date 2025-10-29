@@ -1,5 +1,6 @@
 ﻿using eSystem.Auth.Api.Features.LinkedAccounts.Commands;
 using eSystem.Auth.Api.Security.Authentication.Schemes;
+using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Requests.Auth;

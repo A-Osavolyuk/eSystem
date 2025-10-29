@@ -1,4 +1,7 @@
-﻿using eSystem.Core.Requests.Auth;
+﻿using eSystem.Auth.Api.Security.Authentication.TwoFactor;
+using eSystem.Auth.Api.Security.Authorization.Access;
+using eSystem.Auth.Api.Security.Identity.User;
+using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Features.TwoFactor.Commands;

@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Features.Users.Queries;
+﻿using eSystem.Auth.Api.Security.Identity.User;
+
+namespace eSystem.Auth.Api.Features.Users.Queries;
 
 public sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
 

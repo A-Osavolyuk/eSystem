@@ -1,4 +1,5 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Utilities.Query;

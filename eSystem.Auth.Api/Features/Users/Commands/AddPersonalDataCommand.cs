@@ -1,4 +1,6 @@
-﻿using eSystem.Core.Requests.Auth;
+﻿using eSystem.Auth.Api.Security.Identity.Privacy;
+using eSystem.Auth.Api.Security.Identity.User;
+using eSystem.Core.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.Users.Commands;
 

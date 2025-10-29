@@ -1,4 +1,6 @@
-﻿using eSystem.Core.Requests.Auth;
+﻿using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Auth.Api.Security.Identity.User;
+using eSystem.Core.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.Passkeys.Commands;
 

@@ -1,4 +1,7 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
+using eSystem.Auth.Api.Security.Authorization.Access;
+using eSystem.Auth.Api.Security.Authorization.Devices;
+using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authorization.Access;

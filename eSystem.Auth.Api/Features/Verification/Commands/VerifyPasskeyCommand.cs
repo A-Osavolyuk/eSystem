@@ -1,4 +1,7 @@
-﻿using eSystem.Auth.Api.Security.Credentials.PublicKey;
+﻿using eSystem.Auth.Api.Security.Authorization.Access;
+using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Auth.Api.Security.Credentials.PublicKey.Credentials;
+using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Credentials.Constants;
 

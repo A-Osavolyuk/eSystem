@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Features.Users.Queries;
+﻿using eSystem.Auth.Api.Security.Identity.User;
+
+namespace eSystem.Auth.Api.Features.Users.Queries;
 
 public record GetUserPersonalQuery(Guid UserId) : IRequest<Result>;
 

@@ -1,7 +1,11 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.Lockout;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
+using eSystem.Auth.Api.Security.Authentication.TwoFactor.Secret;
+using eSystem.Auth.Api.Security.Authorization.Devices;
 using eSystem.Auth.Api.Security.Identity.Options;
+using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.Lockout;

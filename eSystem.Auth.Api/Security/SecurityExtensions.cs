@@ -5,6 +5,7 @@ using eSystem.Auth.Api.Security.Credentials;
 using eSystem.Auth.Api.Security.Cryptography;
 using eSystem.Auth.Api.Security.Identity;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
+using eSystem.Auth.Api.Security.Credentials.PublicKey.Credentials;
 using eSystem.Core.Common.Configuration;
 
 namespace eSystem.Auth.Api.Security;

@@ -1,6 +1,8 @@
 ﻿using eSystem.Auth.Api.Messaging;
 using eSystem.Auth.Api.Messaging.Messages.Email;
 using eSystem.Auth.Api.Messaging.Messages.Sms;
+using eSystem.Auth.Api.Security.Authorization.Access;
+using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Requests.Auth;
 

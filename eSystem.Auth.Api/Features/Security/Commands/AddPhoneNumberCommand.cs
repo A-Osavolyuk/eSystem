@@ -1,4 +1,5 @@
 ﻿using eSystem.Auth.Api.Security.Identity.Options;
+using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Identity.PhoneNumber;
 
