@@ -30,7 +30,7 @@ public static class JwtExtensions
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     RequireExpirationTime = true,
-                    ValidAudiences = jwtOption.Audience,
+                    ValidAudiences = jwtOption.Audiences,
                     ValidIssuer = jwtOption.Issuer,
                     IssuerSigningKey = securityKey
                 };
