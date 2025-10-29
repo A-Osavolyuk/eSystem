@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Data;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Core.Data;
 
 namespace eSystem.Auth.Api.Data;
 

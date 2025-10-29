@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Attributes;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Core.Attributes;
 using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Services;

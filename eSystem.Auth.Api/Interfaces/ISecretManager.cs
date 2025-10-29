@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Interfaces;
+﻿using eSystem.Auth.Api.Data.Entities;
+
+namespace eSystem.Auth.Api.Interfaces;
 
 public interface ISecretManager
 {

@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Authentication.SSO.Client;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.SSO.Client;
 using eSystem.Auth.Api.Security.Authentication.SSO.Code;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Core.Common.Http.Context;

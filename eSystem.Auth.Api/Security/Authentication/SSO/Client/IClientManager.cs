@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Security.Authentication.SSO.Client;
+﻿using eSystem.Auth.Api.Data.Entities;
+
+namespace eSystem.Auth.Api.Security.Authentication.SSO.Client;
 
 public interface IClientManager
 {

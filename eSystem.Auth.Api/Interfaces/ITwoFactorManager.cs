@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Security.Authentication.TwoFactor;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Core.Security.Authentication.TwoFactor;
 
 namespace eSystem.Auth.Api.Interfaces;
 

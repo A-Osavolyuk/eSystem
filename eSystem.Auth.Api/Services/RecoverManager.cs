@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.TwoFactor.Recovery;
 using eSystem.Core.Attributes;
 using eSystem.Core.Security.Cryptography.Protection;
 

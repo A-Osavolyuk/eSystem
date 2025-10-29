@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Security.Cryptography.Keys;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Core.Security.Cryptography.Keys;
 
 namespace eSystem.Auth.Api.Security.Authentication.SSO.Code;
 

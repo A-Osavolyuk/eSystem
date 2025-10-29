@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Security.Authentication.SSO.Session;
+﻿using eSystem.Auth.Api.Data.Entities;
+
+namespace eSystem.Auth.Api.Security.Authentication.SSO.Session;
 
 public interface ISessionManager
 {

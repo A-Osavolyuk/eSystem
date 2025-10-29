@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;

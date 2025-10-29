@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Identity.Email;
 

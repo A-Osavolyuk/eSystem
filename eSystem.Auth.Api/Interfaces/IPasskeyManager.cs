@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Security.Credentials.PublicKey;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSystem.Auth.Api.Interfaces;
 

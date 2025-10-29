@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Data.Seeding;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Core.Data.Seeding;
 
 namespace eSystem.Auth.Api.Data.Seeding;
 

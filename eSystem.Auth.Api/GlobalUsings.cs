@@ -1,11 +1,9 @@
 ﻿global using System.Text;
 global using eSystem.Auth.Api.Data;
-global using eSystem.Auth.Api.Entities;
 global using eSystem.Auth.Api.Extensions;
 global using eSystem.Auth.Api.Features.Security.Commands;
 global using eSystem.Auth.Api.Interfaces;
 global using eSystem.Auth.Api.Mapping;
-global using eSystem.Auth.Api.Utilities;
 global using eSystem.Core.Common.Results;
 global using eSystem.Core.Enums;
 global using eSystem.ServiceDefaults;

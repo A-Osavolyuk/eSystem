@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Security.Authorization.Access;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Interfaces;
 

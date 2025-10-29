@@ -1,4 +1,6 @@
-﻿namespace eSystem.Auth.Api.Security.Authentication.SSO.Code;
+﻿using eSystem.Auth.Api.Data.Entities;
+
+namespace eSystem.Auth.Api.Security.Authentication.SSO.Code;
 
 public interface IAuthorizationCodeManager
 {

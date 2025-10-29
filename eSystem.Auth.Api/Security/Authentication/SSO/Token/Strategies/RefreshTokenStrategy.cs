@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using eSystem.Auth.Api.Data.Entities;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;

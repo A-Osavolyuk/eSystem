@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Security.Authentication.SSO.Code;
 using eSystem.Auth.Api.Security.Authentication.SSO.PKCE;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;

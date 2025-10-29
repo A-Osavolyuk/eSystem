@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Responses.Auth;
@@ -28,8 +29,8 @@ public sealed class PasswordSignInStrategy(
         var login = credentials["Login"].ToString();
         var password = credentials["Password"].ToString();
 
-        if (string.IsNullOrEmpty(login)) return eSystem.Core.Common.Results.Results.BadRequest("Empty login");
-        if (string.IsNullOrEmpty(password)) return eSystem.Core.Common.Results.Results.BadRequest("Empty password");
+        if (string.IsNullOrEmpty(login)) return Results.BadRequest("Empty login");
+        if (string.IsNullOrEmpty(password)) return Results.BadRequest("Empty password");
 
         UserEntity? user = null;
         SignInResponse? response;
@@ -44,8 +45,8 @@ public sealed class PasswordSignInStrategy(
             user = await userManager.FindByEmailAsync(login, cancellationToken);
         }
 
-        if (user is null) return eSystem.Core.Common.Results.Results.NotFound($"Cannot find user with login {password}.");
-        if (!user.HasPassword()) return eSystem.Core.Common.Results.Results.BadRequest("Cannot log in, you don't have a password.");
+        if (user is null) return Results.NotFound($"Cannot find user with login {password}.");
+        if (!user.HasPassword()) return Results.BadRequest("Cannot log in, you don't have a password.");
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
@@ -82,7 +83,7 @@ public sealed class PasswordSignInStrategy(
                 IsEmailConfirmed = false
             };
 
-            return eSystem.Core.Common.Results.Results.BadRequest("User's primary email is not verified.", response);
+            return Results.BadRequest("User's primary email is not verified.", response);
         }
 
         if (user.LockoutState.Enabled)
@@ -94,10 +95,10 @@ public sealed class PasswordSignInStrategy(
                 Type = user.LockoutState.Type,
             };
 
-            return eSystem.Core.Common.Results.Results.BadRequest("Account is locked out", response);
+            return Results.BadRequest("Account is locked out", response);
         }
 
-        if (!user.HasPassword()) return eSystem.Core.Common.Results.Results.BadRequest("User doesn't have a password.");
+        if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
         var isValidPassword = userManager.CheckPassword(user, password);
         if (!isValidPassword)
@@ -116,7 +117,7 @@ public sealed class PasswordSignInStrategy(
                     MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 };
 
-                return eSystem.Core.Common.Results.Results.BadRequest("The password is not valid.", response);
+                return Results.BadRequest("The password is not valid.", response);
             }
 
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
@@ -136,7 +137,7 @@ public sealed class PasswordSignInStrategy(
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 
-            return eSystem.Core.Common.Results.Results.BadRequest("Account is locked out due to too many failed login attempts", response);
+            return Results.BadRequest("Account is locked out due to too many failed login attempts", response);
         }
 
         if (user.FailedLoginAttempts > 0)
@@ -159,12 +160,12 @@ public sealed class PasswordSignInStrategy(
 
             if (device.IsBlocked)
             {
-                return eSystem.Core.Common.Results.Results.BadRequest("Cannot sign in, device is blocked.", response);
+                return Results.BadRequest("Cannot sign in, device is blocked.", response);
             }
 
             if (!device.IsTrusted)
             {
-                return eSystem.Core.Common.Results.Results.BadRequest("You need to trust this device before sign in.", response);
+                return Results.BadRequest("You need to trust this device before sign in.", response);
             }
         }
 

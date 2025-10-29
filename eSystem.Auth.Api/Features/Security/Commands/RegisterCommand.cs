@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Identity.Options;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;

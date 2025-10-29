@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Cryptography.Codes;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Cryptography.Codes;
 using eSystem.Auth.Api.Security.Cryptography.Hashing;
 using eSystem.Core.Attributes;
 using eSystem.Core.Common.Messaging;

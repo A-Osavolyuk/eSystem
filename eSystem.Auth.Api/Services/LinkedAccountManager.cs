@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Attributes;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Core.Attributes;
 
 namespace eSystem.Auth.Api.Services;
 

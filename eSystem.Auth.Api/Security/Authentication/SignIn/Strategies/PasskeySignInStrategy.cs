@@ -24,17 +24,17 @@ public class PasskeySignInStrategy(
         SignInResponse response;   
         
         var credential = credentials["Credential"] as PublicKeyCredential;
-        if (credential is null) return eSystem.Core.Common.Results.Results.BadRequest("Credential is empty");
+        if (credential is null) return Results.BadRequest("Credential is empty");
         
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
         var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
-        if (passkey is null) return eSystem.Core.Common.Results.Results.BadRequest("Invalid credential");
+        if (passkey is null) return Results.BadRequest("Invalid credential");
 
         var user = await userManager.FindByIdAsync(passkey.Device.UserId, cancellationToken);
-        if (user is null) return eSystem.Core.Common.Results.Results.NotFound($"Cannot find user with ID {passkey.Device.UserId}.");
+        if (user is null) return Results.NotFound($"Cannot find user with ID {passkey.Device.UserId}.");
 
         var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
-        if (string.IsNullOrEmpty(savedChallenge)) return eSystem.Core.Common.Results.Results.BadRequest("Invalid challenge");
+        if (string.IsNullOrEmpty(savedChallenge)) return Results.BadRequest("Invalid challenge");
 
         var result = await passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!result.Succeeded) return result;
@@ -47,13 +47,13 @@ public class PasskeySignInStrategy(
                 IsLockedOut = user.LockoutState.Enabled,
             };
 
-            return eSystem.Core.Common.Results.Results.BadRequest("Account is locked out", response);
+            return Results.BadRequest("Account is locked out", response);
         }
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
         var device = user.GetDevice(userAgent, ipAddress);
-        if (device is null) return eSystem.Core.Common.Results.Results.NotFound($"Invalid device.");
+        if (device is null) return Results.NotFound($"Invalid device.");
         
         await sessionManager.CreateAsync(device, cancellationToken);
 
