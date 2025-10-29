@@ -12,7 +12,7 @@ namespace eSystem.Auth.Api.Controllers.v1;
 public class SsoController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
-    
+
     [EndpointSummary("Authorize")]
     [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]
@@ -29,7 +29,7 @@ public class SsoController(ISender sender) : ControllerBase
                 .Build()),
             ErrorHandler.Handle);
     }
-    
+
     [EndpointSummary("Token")]
     [EndpointDescription("Token")]
     [ProducesResponseType(200)]
@@ -60,7 +60,7 @@ public class SsoController(ISender sender) : ControllerBase
                 .Succeeded()
                 .WithMessage(s.Message)
                 .WithResult(s.Value)
-.Build()),
+                .Build()),
             ErrorHandler.Handle);
     }
 }

@@ -248,27 +248,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .WithMany(x => x.Devices)
                 .HasForeignKey(x => x.UserId);
         });
-        
-        builder.Entity<RefreshTokenEntity>(entity =>
-        {
-            entity.HasKey(k => k.Id);
-            entity.Property(x => x.Token).HasMaxLength(20);
-            
-            entity.HasOne(rt => rt.Session)
-                .WithMany(s => s.RefreshTokens)
-                .HasForeignKey(rt => rt.SessionId)
-                .OnDelete(DeleteBehavior.Cascade);
-            
-            entity.HasOne(rt => rt.Client)
-                .WithMany()
-                .HasForeignKey(rt => rt.ClientId)
-                .OnDelete(DeleteBehavior.Cascade);
-            
-            entity.HasOne(rt => rt.NewToken)
-                .WithOne()
-                .HasForeignKey<RefreshTokenEntity>(rt => rt.NewTokenId)
-                .OnDelete(DeleteBehavior.Restrict);
-        });
 
         builder.Entity<PasskeyEntity>(entity =>
         {
@@ -407,6 +386,27 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.Scope)
                 .WithMany()
                 .HasForeignKey(x => x.ScopeId);
+        });
+        
+        builder.Entity<RefreshTokenEntity>(entity =>
+        {
+            entity.HasKey(k => k.Id);
+            entity.Property(x => x.Token).HasMaxLength(20);
+            
+            entity.HasOne(rt => rt.Session)
+                .WithMany(s => s.RefreshTokens)
+                .HasForeignKey(rt => rt.SessionId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(rt => rt.Client)
+                .WithMany()
+                .HasForeignKey(rt => rt.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(rt => rt.NewToken)
+                .WithOne()
+                .HasForeignKey<RefreshTokenEntity>(rt => rt.NewTokenId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
