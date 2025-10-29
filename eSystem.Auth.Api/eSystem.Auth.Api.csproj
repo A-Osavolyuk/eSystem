@@ -44,6 +44,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Messaging\Messages\" />
       <Folder Include="Security\Authentication\Tokens\Jwt\" />
     </ItemGroup>
 </Project>

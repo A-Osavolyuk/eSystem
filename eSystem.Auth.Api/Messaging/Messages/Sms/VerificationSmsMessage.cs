@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Common.Messaging;
 
-namespace eSystem.Auth.Api.Messages.Sms;
+namespace eSystem.Auth.Api.Messaging.Messages.Sms;
 
 public class VerificationSmsMessage : Message
 {

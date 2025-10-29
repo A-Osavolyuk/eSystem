@@ -2,9 +2,8 @@
 using eSystem.Core.Common.Messaging;
 using MassTransit;
 
-namespace eSystem.Auth.Api.Services;
+namespace eSystem.Auth.Api.Messaging;
 
-[Injectable(typeof(IMessageService), ServiceLifetime.Scoped)]
 public sealed class MessageService(IBus bus) : IMessageService
 {
     private readonly IBus bus = bus;

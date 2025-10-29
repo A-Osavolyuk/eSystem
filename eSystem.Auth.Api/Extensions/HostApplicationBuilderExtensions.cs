@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security;
+﻿using eSystem.Auth.Api.Messaging;
+using eSystem.Auth.Api.Security;
 using eSystem.Auth.Api.Services;
 using eSystem.Core.Attributes;
 using eSystem.Core.Common.Cache.Redis;
@@ -8,7 +9,6 @@ using eSystem.Core.Common.Logging;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Data;
 using eSystem.Core.Validation;
-using MassTransit;
 
 namespace eSystem.Auth.Api.Extensions;
 
@@ -17,7 +17,7 @@ public static class HostApplicationBuilderExtensions
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddVersioning();
-        builder.AddMessageBus();
+        builder.AddMessaging();
         builder.AddValidation<IAssemblyMarker>();
         builder.AddServiceDefaults();
         builder.AddSecurity();
@@ -63,17 +63,5 @@ public static class HostApplicationBuilderExtensions
                     await ctx.SeedAsync<IAssemblyMarker>(ct);
                 });
             });
-    }
-
-    private static void AddMessageBus(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddMassTransit(x =>
-        {
-            x.UsingRabbitMq((context, cfg) =>
-            {
-                var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
-                cfg.Host(connectionString);
-            });
-        });
     }
 }

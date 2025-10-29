@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Common.Messaging;
 
-namespace eSystem.Auth.Api.Interfaces;
+namespace eSystem.Auth.Api.Messaging;
 
 public interface IMessageService
 {

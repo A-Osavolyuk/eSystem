@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using eSystem.Auth.Api.Data.Entities;
-using eSystem.Auth.Api.Messages.Email;
+using eSystem.Auth.Api.Messaging;
+using eSystem.Auth.Api.Messaging.Messages.Email;
 using eSystem.Auth.Api.Security.Authentication;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
