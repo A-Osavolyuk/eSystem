@@ -22,7 +22,7 @@ namespace eSystem.Auth.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.AuthorizationCodeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.AuthorizationCodeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,7 +78,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("AuthorizationCodes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientAllowedScopeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ClientAllowedScopeEntity", b =>
                 {
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
@@ -99,7 +99,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("ClientAllowedScopes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ClientEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -152,7 +152,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientGrantTypeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ClientGrantTypeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -179,7 +179,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("ClientGrantTypes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientRedirectUriEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ClientRedirectUriEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -206,7 +206,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("ClientRedirectUris");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.CodeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.CodeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,7 +248,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Codes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ConsentEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ConsentEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -276,7 +276,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Consents");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.GrantedScopeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.GrantedScopeEntity", b =>
                 {
                     b.Property<Guid>("ScopeId")
                         .HasColumnType("uniqueidentifier");
@@ -297,7 +297,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("GrantedScopes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.OAuthSessionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.OAuthSessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -331,7 +331,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("OAuthSessions");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.PasskeyEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PasskeyEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -387,7 +387,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Passkeys");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.PermissionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PermissionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -414,7 +414,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.PersonalDataEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PersonalDataEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -452,7 +452,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("PersonalData");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.RefreshTokenEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.RefreshTokenEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -500,7 +500,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ResourceEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ResourceEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -527,7 +527,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ResourceOwnerEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ResourceOwnerEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -549,7 +549,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("ResourceOwners");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.RoleEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.RoleEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -576,7 +576,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.RolePermissionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.RolePermissionEntity", b =>
                 {
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
@@ -597,7 +597,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ScopeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ScopeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -624,7 +624,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Scopes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.SessionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.SessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -652,7 +652,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserDeviceEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserDeviceEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -718,7 +718,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserDevices");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserEmailEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserEmailEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -760,7 +760,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserEmails");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -820,7 +820,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserLinkedAccountEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserLinkedAccountEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -846,7 +846,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserLinkedAccounts");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserLockoutStateEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserLockoutStateEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -885,7 +885,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("LockoutStates");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserPermissionsEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserPermissionsEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -906,7 +906,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserPermissions");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserPhoneNumberEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserPhoneNumberEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -943,7 +943,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserPhoneNumbers");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserRecoveryCodeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserRecoveryCodeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -970,7 +970,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserRecoveryCodes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserRoleEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserRoleEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -991,7 +991,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserSecretEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserSecretEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1019,7 +1019,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserSecret");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserTwoFactorMethodEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserTwoFactorMethodEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1048,7 +1048,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserTwoFactorMethods");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserVerificationMethodEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserVerificationMethodEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1077,7 +1077,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("UserVerificationMethods");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.VerificationEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.VerificationEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1110,15 +1110,15 @@ namespace eSystem.Auth.Api.Migrations
                     b.ToTable("Verifications");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.AuthorizationCodeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.AuthorizationCodeEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "Client")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ClientEntity", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSystem.Auth.Api.Entities.UserDeviceEntity", "Device")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserDeviceEntity", "Device")
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1129,15 +1129,15 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientAllowedScopeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ClientAllowedScopeEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "Client")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ClientEntity", "Client")
                         .WithMany("AllowedScopes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSystem.Auth.Api.Entities.ScopeEntity", "Scope")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ScopeEntity", "Scope")
                         .WithMany()
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1148,9 +1148,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Scope");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientGrantTypeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ClientGrantTypeEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "Client")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ClientEntity", "Client")
                         .WithMany("GrantTypes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1159,9 +1159,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientRedirectUriEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ClientRedirectUriEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "Client")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ClientEntity", "Client")
                         .WithMany("RedirectUris")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1170,9 +1170,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.CodeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.CodeEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1181,17 +1181,17 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ConsentEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ConsentEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "Client")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ClientEntity", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithOne("Consent")
-                        .HasForeignKey("eSystem.Auth.Api.Entities.ConsentEntity", "UserId")
+                        .HasForeignKey("eSystem.Auth.Api.Data.Entities.ConsentEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1200,15 +1200,15 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.GrantedScopeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.GrantedScopeEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ConsentEntity", "Consent")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ConsentEntity", "Consent")
                         .WithMany("GrantedScopes")
                         .HasForeignKey("ConsentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSystem.Auth.Api.Entities.ScopeEntity", "Scope")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ScopeEntity", "Scope")
                         .WithMany()
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1219,9 +1219,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Scope");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.OAuthSessionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.OAuthSessionEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserLinkedAccountEntity", "LinkedAccount")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserLinkedAccountEntity", "LinkedAccount")
                         .WithMany()
                         .HasForeignKey("LinkedAccountId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -1229,20 +1229,20 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("LinkedAccount");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.PasskeyEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PasskeyEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserDeviceEntity", "Device")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserDeviceEntity", "Device")
                         .WithOne("Passkey")
-                        .HasForeignKey("eSystem.Auth.Api.Entities.PasskeyEntity", "DeviceId")
+                        .HasForeignKey("eSystem.Auth.Api.Data.Entities.PasskeyEntity", "DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.PermissionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PermissionEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ResourceEntity", "Resource")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ResourceEntity", "Resource")
                         .WithMany()
                         .HasForeignKey("ResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1251,20 +1251,20 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Resource");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.RefreshTokenEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.RefreshTokenEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "Client")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ClientEntity", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSystem.Auth.Api.Entities.ClientEntity", "NewToken")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ClientEntity", "NewToken")
                         .WithOne()
-                        .HasForeignKey("eSystem.Auth.Api.Entities.RefreshTokenEntity", "NewTokenId")
+                        .HasForeignKey("eSystem.Auth.Api.Data.Entities.RefreshTokenEntity", "NewTokenId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("eSystem.Auth.Api.Entities.SessionEntity", "Session")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.SessionEntity", "Session")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1277,9 +1277,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Session");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ResourceEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ResourceEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.ResourceOwnerEntity", "Owner")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.ResourceOwnerEntity", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1288,15 +1288,15 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.RolePermissionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.RolePermissionEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.PermissionEntity", "Permission")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.PermissionEntity", "Permission")
                         .WithMany()
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSystem.Auth.Api.Entities.RoleEntity", "Role")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.RoleEntity", "Role")
                         .WithMany("Permissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1307,9 +1307,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.SessionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.SessionEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserDeviceEntity", "Device")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserDeviceEntity", "Device")
                         .WithMany("Sessions")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1318,9 +1318,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserDeviceEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserDeviceEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("Devices")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1329,9 +1329,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserEmailEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserEmailEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("Emails")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1340,18 +1340,18 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.PersonalDataEntity", "PersonalData")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.PersonalDataEntity", "PersonalData")
                         .WithOne("User")
-                        .HasForeignKey("eSystem.Auth.Api.Entities.UserEntity", "PersonalDataId");
+                        .HasForeignKey("eSystem.Auth.Api.Data.Entities.UserEntity", "PersonalDataId");
 
                     b.Navigation("PersonalData");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserLinkedAccountEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserLinkedAccountEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("LinkedAccounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1360,26 +1360,26 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserLockoutStateEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserLockoutStateEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithOne("LockoutState")
-                        .HasForeignKey("eSystem.Auth.Api.Entities.UserLockoutStateEntity", "UserId")
+                        .HasForeignKey("eSystem.Auth.Api.Data.Entities.UserLockoutStateEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserPermissionsEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserPermissionsEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.PermissionEntity", "Permission")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.PermissionEntity", "Permission")
                         .WithMany()
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("Permissions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1390,9 +1390,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserPhoneNumberEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserPhoneNumberEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("PhoneNumbers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1401,9 +1401,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserRecoveryCodeEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserRecoveryCodeEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("RecoveryCodes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1412,15 +1412,15 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserRoleEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserRoleEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.RoleEntity", "Role")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.RoleEntity", "Role")
                         .WithMany("Roles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("Roles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1431,20 +1431,20 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserSecretEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserSecretEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithOne("Secret")
-                        .HasForeignKey("eSystem.Auth.Api.Entities.UserSecretEntity", "UserId")
+                        .HasForeignKey("eSystem.Auth.Api.Data.Entities.UserSecretEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserTwoFactorMethodEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserTwoFactorMethodEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("Methods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1453,9 +1453,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserVerificationMethodEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserVerificationMethodEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany("VerificationMethods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1464,9 +1464,9 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.VerificationEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.VerificationEntity", b =>
                 {
-                    b.HasOne("eSystem.Auth.Api.Entities.UserEntity", "User")
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1475,7 +1475,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ClientEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ClientEntity", b =>
                 {
                     b.Navigation("AllowedScopes");
 
@@ -1484,37 +1484,37 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("RedirectUris");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.ConsentEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.ConsentEntity", b =>
                 {
                     b.Navigation("GrantedScopes");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.PersonalDataEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PersonalDataEntity", b =>
                 {
                     b.Navigation("User")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.RoleEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.RoleEntity", b =>
                 {
                     b.Navigation("Permissions");
 
                     b.Navigation("Roles");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.SessionEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.SessionEntity", b =>
                 {
                     b.Navigation("RefreshTokens");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserDeviceEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserDeviceEntity", b =>
                 {
                     b.Navigation("Passkey");
 
                     b.Navigation("Sessions");
                 });
 
-            modelBuilder.Entity("eSystem.Auth.Api.Entities.UserEntity", b =>
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserEntity", b =>
                 {
                     b.Navigation("Consent")
                         .IsRequired();

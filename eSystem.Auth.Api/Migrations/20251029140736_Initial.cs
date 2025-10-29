@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace eSystem.Auth.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class RefactorRefreshToken : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -284,29 +284,6 @@ namespace eSystem.Auth.Api.Migrations
                     table.PrimaryKey("PK_LockoutStates", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LockoutStates_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserChanges",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Version = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Field = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserChanges", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserChanges_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -603,9 +580,11 @@ namespace eSystem.Auth.Api.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Nonce = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     RedirectUri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    CodeChallenge = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    CodeChallengeMethod = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
+                    CodeChallenge = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    CodeChallengeMethod = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: true),
                     Used = table.Column<bool>(type: "bit", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -760,9 +739,11 @@ namespace eSystem.Auth.Api.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SessionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    NewTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Token = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Revoked = table.Column<bool>(type: "bit", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    RefreshDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    RevokeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -775,6 +756,12 @@ namespace eSystem.Auth.Api.Migrations
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_Clients_NewTokenId",
+                        column: x => x.NewTokenId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_RefreshTokens_Sessions_SessionId",
                         column: x => x.SessionId,
@@ -857,6 +844,13 @@ namespace eSystem.Auth.Api.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_NewTokenId",
+                table: "RefreshTokens",
+                column: "NewTokenId",
+                unique: true,
+                filter: "[NewTokenId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_SessionId",
                 table: "RefreshTokens",
                 column: "SessionId");
@@ -875,11 +869,6 @@ namespace eSystem.Auth.Api.Migrations
                 name: "IX_Sessions_DeviceId",
                 table: "Sessions",
                 column: "DeviceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserChanges_UserId",
-                table: "UserChanges",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserDevices_UserId",
@@ -980,9 +969,6 @@ namespace eSystem.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
-
-            migrationBuilder.DropTable(
-                name: "UserChanges");
 
             migrationBuilder.DropTable(
                 name: "UserEmails");
