@@ -18,7 +18,7 @@ public class SsoService(
         new HttpRequest { Url = $"{BasePath}/authorize", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
     
-    public async ValueTask<HttpResponse> UnauthorizeAsync(SignOutRequest request) => await apiClient.SendAsync(
-        new HttpRequest { Url = $"{BasePath}/unauthorize", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> SignOutAsync(SignOutRequest request) => await apiClient.SendAsync(
+        new HttpRequest { Url = $"{BasePath}/sign-out", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 }
