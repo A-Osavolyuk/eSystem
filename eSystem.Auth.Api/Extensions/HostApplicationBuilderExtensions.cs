@@ -6,7 +6,6 @@ using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Logging;
 using eSystem.Core.Common.Versioning;
-using eSystem.Core.Data;
 using eSystem.Core.Validation;
 
 namespace eSystem.Auth.Api.Extensions;
@@ -38,17 +37,5 @@ public static class HostApplicationBuilderExtensions
     private static void AddMediatR(this IHostApplicationBuilder builder)
     {
         builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>(); });
-    }
-
-    private static void AddMsSqlDb(this IHostApplicationBuilder builder)
-    {
-        builder.AddSqlServerDbContext<AuthDbContext>("auth-db",
-            configureDbContextOptions: cfg =>
-            {
-                cfg.UseAsyncSeeding(async (ctx, _, ct) =>
-                {
-                    await ctx.SeedAsync<IAssemblyMarker>(ct);
-                });
-            });
     }
 }
