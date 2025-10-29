@@ -7,6 +7,6 @@ public static class AuthenticationExtensions
 {
     public static void AddAuthentication(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddJwt();
+        builder.Services.AddJwtAuthentication();
     }
 }

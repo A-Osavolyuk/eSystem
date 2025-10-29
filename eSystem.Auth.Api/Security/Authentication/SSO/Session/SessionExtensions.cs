@@ -2,9 +2,9 @@
 
 public static class SessionExtensions
 {
-    public static void AddSession(this IHostApplicationBuilder builder, Action<SessionOptions> configure)
+    public static void AddSession(this IServiceCollection services, Action<SessionOptions> configure)
     {
-        builder.Services.AddScoped<ISessionManager, SessionManager>();
-        builder.Services.Configure(configure);
+        services.AddScoped<ISessionManager, SessionManager>();
+        services.Configure(configure);
     }
 }

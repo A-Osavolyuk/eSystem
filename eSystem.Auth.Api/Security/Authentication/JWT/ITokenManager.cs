@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using eSystem.Auth.Api.Data.Entities;
 
-namespace eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
+namespace eSystem.Auth.Api.Security.Authentication.JWT;
 
 public interface ITokenManager
 {

@@ -10,18 +10,18 @@ namespace eSystem.Auth.Api.Security.Authentication.SSO;
 
 public static class SsoExtensions
 {
-    public static void AddSSO(this IHostApplicationBuilder builder)
+    public static void AddSSO(this IServiceCollection services)
     {
-        builder.AddSession(cfg =>
+        services.AddSession(cfg =>
         {
             cfg.Timestamp = TimeSpan.FromDays(30);
         });
         
-        builder.Services.AddScoped<IClientManager, ClientManager>();
-        builder.Services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
-        builder.Services.AddScoped<IPkceHandler, PkceHandler>();
-        builder.Services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
-        builder.Services.AddKeyedScoped<TokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
-        builder.Services.AddKeyedScoped<TokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
+        services.AddScoped<IClientManager, ClientManager>();
+        services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
+        services.AddScoped<IPkceHandler, PkceHandler>();
+        services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
+        services.AddKeyedScoped<TokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
+        services.AddKeyedScoped<TokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
     }
 }

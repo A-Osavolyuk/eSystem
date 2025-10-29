@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.JWT;
 using eSystem.Auth.Api.Security.Authentication.SSO.Code;
 using eSystem.Auth.Api.Security.Authentication.SSO.PKCE;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
-using eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
 using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;

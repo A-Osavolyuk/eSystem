@@ -19,7 +19,6 @@ public static class SecurityExtensions
         builder.AddAuthentication();
         builder.AddAuthorization();
         builder.AddCryptography();
-        builder.AddSSO();
         builder.AddCredentials(cfg =>
         {
             var options = configuration.Get<CredentialOptions>("Configuration:Security:Credentials");

@@ -8,7 +8,7 @@ namespace eSystem.Core.Security.Authentication.JWT;
 
 public static class JwtExtensions
 {
-    public static void AddJwt(this IServiceCollection services)
+    public static void AddJwtAuthentication(this IServiceCollection services)
     {
         var configuration = services.BuildServiceProvider().GetService<IConfiguration>()!;
         
