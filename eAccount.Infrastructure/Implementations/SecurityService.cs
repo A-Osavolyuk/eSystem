@@ -27,7 +27,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<HttpResponse> ResetEmailAsync(ResetEmailRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/email/reset", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> VerifyEmailAsync(VerifyEmailRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/email/verify", Method = HttpMethod.Post, Data = request },
@@ -35,23 +35,23 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/email/add", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> AddPasswordAsync(AddPasswordRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/password/add", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> ChangeEmailAsync(ChangeEmailRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/email/change", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> ManageEmailAsync(ManageEmailRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/email/manage", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/password/change", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
     public async ValueTask<HttpResponse> UnlockAccountAsync(UnlockAccountRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/account/unlock", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
@@ -78,7 +78,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<HttpResponse> ChangePhoneNumberAsync(ChangePhoneNumberRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/phone-number/change", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
     
     public async ValueTask<HttpResponse> VerifyPhoneNumberAsync(VerifyPhoneNumberRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/phone-number/verify", Method = HttpMethod.Post, Data = request },
@@ -86,22 +86,22 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<HttpResponse> RemoveEmailAsync(RemoveEmailRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/email/remove", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> RemovePasswordAsync(RemovePasswordRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/password/remove", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> AddPhoneNumberAsync(AddPhoneNumberRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/phone-number/add", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
     
     public async ValueTask<HttpResponse> ResetPhoneNumberAsync(ResetPhoneNumberRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/phone-number/reset", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> RemovePhoneNumberAsync(RemovePhoneNumberRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/phone-number/remove", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
     
 }

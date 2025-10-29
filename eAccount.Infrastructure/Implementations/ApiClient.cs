@@ -43,7 +43,22 @@ public class ApiClient(
         {
             var message = new HttpRequestMessage();
             
-            message.Headers.AddBearerAuthorization(tokenProvider.AccessToken);
+            if (httpOptions.WithBearer)
+            {
+                if (string.IsNullOrEmpty(tokenProvider.AccessToken))
+                {
+                    var result = await RefreshAsync();
+                
+                    if (!result.Success)
+                    {
+                        tokenProvider.Clear();
+                        navigationManager.NavigateTo(Links.LoginPage);
+                    }
+                }
+                
+                message.Headers.AddBearerAuthorization(tokenProvider.AccessToken);
+            }
+            
             message.RequestUri = new Uri($"{gatewayOptions.Url}/{httpRequest.Url}");
             message.Method = httpRequest.Method;
             message.IncludeUserAgent(httpContext);
@@ -75,7 +90,8 @@ public class ApiClient(
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             
-            return await httpResponseMessage.Content.ReadAsAsync<HttpResponse>(serializationOptions);
+            var response = await httpResponseMessage.Content.ReadAsAsync<HttpResponse>(serializationOptions);
+            return response;
         }
         catch (Exception ex)
         {

@@ -20,5 +20,5 @@ public class SsoService(
     
     public async ValueTask<HttpResponse> SignOutAsync(SignOutRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/sign-out", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 }

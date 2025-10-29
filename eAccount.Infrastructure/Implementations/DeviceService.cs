@@ -19,13 +19,13 @@ public class DeviceService(
 
     public async ValueTask<HttpResponse> BlockAsync(BlockDeviceRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/block", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> UnblockAsync(UnblockDeviceRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/unblock", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> VerifyAsync(VerifyDeviceRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/verify", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 }

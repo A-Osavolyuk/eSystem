@@ -16,5 +16,5 @@ public class OAuthService(
 
     public async ValueTask<HttpResponse> DisconnectAsync(DisconnectLinkedAccountRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/disconnect", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true });
 }
