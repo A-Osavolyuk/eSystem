@@ -71,9 +71,6 @@ public static class AuthenticationExtensions
             })
             .AddJwtBearer(options =>
             {
-                Console.WriteLine(configuration.Get<JwtOptions>("Jwt").Issuer);
-                Console.WriteLine("---------------------------------------------------------------------");
-                Console.WriteLine(configuration.Get<JwtOptions>("JWT").Issuer);
                 var settings = configuration.Get<JwtOptions>("Jwt");
                 var encodedKey = Encoding.UTF8.GetBytes(settings.Secret);
                 var symmetricSecurityKey = new SymmetricSecurityKey(encodedKey);
@@ -84,8 +81,8 @@ public static class AuthenticationExtensions
                     ValidateIssuer = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidAudience = "eAccount",
-                    ValidIssuer = "eSecurity",
+                    ValidAudiences = settings.Audiences,
+                    ValidIssuer = settings.Issuer,
                     IssuerSigningKey = symmetricSecurityKey
                 };
             });

@@ -11,7 +11,7 @@ public class JwtTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
     
     public string Create(IEnumerable<Claim> claims, string audience)
     {
-        const string algorithm = SecurityAlgorithms.HmacSha256Signature;
+        const string algorithm = SecurityAlgorithms.HmacSha256;
 
         var expirationDate = DateTime.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes);
         var key = Encoding.UTF8.GetBytes(options.Secret);
