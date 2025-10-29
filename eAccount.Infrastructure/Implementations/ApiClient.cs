@@ -43,13 +43,13 @@ public class ApiClient(
             var message = new HttpRequestMessage();
             
             message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenProvider.AccessToken);
-            message.RequestUri = new Uri(httpRequest.Url);
+            message.RequestUri = new Uri($"{gatewayOptions.Url}/{httpRequest.Url}");
             message.Method = httpRequest.Method;
             message.IncludeUserAgent(httpContext);
             message.IncludeCookies(httpContext);
             message.AddContent(httpRequest, httpOptions);
 
-            var httpClient = clientFactory.CreateClient("eShop.Client");
+            var httpClient = clientFactory.CreateClient("eAccount.Client");
             var httpResponseMessage = await httpClient.SendAsync(message);
 
             if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
