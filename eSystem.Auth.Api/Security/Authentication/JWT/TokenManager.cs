@@ -4,7 +4,7 @@ using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Tokens;
 
-namespace eSystem.Auth.Api.Security.Authentication.Tokens.Jwt;
+namespace eSystem.Auth.Api.Security.Authentication.JWT;
 
 public sealed class TokenManager(
     AuthDbContext context,
@@ -34,6 +34,8 @@ public sealed class TokenManager(
             .Include(x => x.Client)
             .ThenInclude(x => x.AllowedScopes)
             .ThenInclude(x => x.Scope)
+            .Include(x => x.Client)
+            .ThenInclude(x => x.RedirectUris)
             .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
     }
 
