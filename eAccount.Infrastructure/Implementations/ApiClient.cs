@@ -119,7 +119,7 @@ public class ApiClient(
         var httpRequest = new HttpRequest()
         {
             Method = HttpMethod.Post,
-            Url = $"{gatewayOptions.Url}/api/v1/Sso/token",
+            Url = "api/v1/Sso/token",
             Data = tokenRequest
         };
         
