@@ -44,7 +44,6 @@ public sealed class TokenManager(
     {
         revokedToken.Revoked = true;
         revokedToken.RevokeDate = DateTimeOffset.UtcNow;
-        revokedToken.NewTokenId = newToken.Id;
         revokedToken.UpdateDate = DateTimeOffset.UtcNow;
         
         await context.RefreshTokens.AddAsync(newToken, cancellationToken);
