@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Lockout;
+﻿namespace eSystem.Core.Security.Authentication.Lockout;
 
 /// <summary>
 /// Specifies the reason why a user account has been locked out.

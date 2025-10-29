@@ -1,4 +1,6 @@
-﻿namespace eSystem.Core.DTOs;
+﻿using eSystem.Core.Security.Identity.Email;
+
+namespace eSystem.Core.DTOs;
 
 public class UserEmailDto
 {

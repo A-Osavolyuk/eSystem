@@ -2,6 +2,7 @@
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Identity.Email;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
 

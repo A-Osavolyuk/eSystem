@@ -1,5 +1,5 @@
 ﻿using eSystem.Core.Attributes;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Services;
 

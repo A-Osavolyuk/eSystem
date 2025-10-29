@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Claims;
+﻿using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authorization;
 
 namespace eSystem.Core.Security.Authorization.Requirements;

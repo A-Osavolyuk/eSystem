@@ -1,4 +1,6 @@
-﻿namespace eSystem.Core.Requests.Auth;
+﻿using eSystem.Core.Security.Identity.Email;
+
+namespace eSystem.Core.Requests.Auth;
 
 public record ChangeEmailRequest
 {

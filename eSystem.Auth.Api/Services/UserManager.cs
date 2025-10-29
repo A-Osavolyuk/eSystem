@@ -1,7 +1,9 @@
 ﻿using eSystem.Auth.Api.Security.Cryptography.Hashing;
 using eSystem.Core.Attributes;
-using eSystem.Core.Security.Lockout;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Authentication.Lockout;
+using eSystem.Core.Security.Authorization.Access;
+using eSystem.Core.Security.Identity.Email;
+using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSystem.Auth.Api.Services;
 

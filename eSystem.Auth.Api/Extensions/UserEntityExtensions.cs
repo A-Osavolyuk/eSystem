@@ -1,6 +1,8 @@
 ﻿using eSystem.Core.Security.Authentication.TwoFactor;
+using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Identity.Email;
+using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSystem.Auth.Api.Extensions;
 

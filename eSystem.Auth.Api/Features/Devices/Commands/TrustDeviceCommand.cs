@@ -1,7 +1,7 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Features.Devices.Commands;
 

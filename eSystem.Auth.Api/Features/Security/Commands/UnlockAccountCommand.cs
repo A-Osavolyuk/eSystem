@@ -1,7 +1,7 @@
 ﻿using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Requests.Auth;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
 

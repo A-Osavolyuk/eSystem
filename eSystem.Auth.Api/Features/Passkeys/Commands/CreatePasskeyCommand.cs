@@ -3,8 +3,8 @@ using eSystem.Auth.Api.Security.Credentials.PublicKey;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.TwoFactor;
+using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Credentials.Constants;
-using eSystem.Core.Security.Verification;
 
 namespace eSystem.Auth.Api.Features.Passkeys.Commands;
 

@@ -1,4 +1,7 @@
-﻿namespace eSystem.Auth.Api.Interfaces;
+﻿using eSystem.Core.Security.Identity.Email;
+using eSystem.Core.Security.Identity.PhoneNumber;
+
+namespace eSystem.Auth.Api.Interfaces;
 
 public interface IUserManager
 {

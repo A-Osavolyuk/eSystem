@@ -1,4 +1,6 @@
 ﻿using eSystem.Core.DTOs;
+using eSystem.Core.Security.Identity.Email;
+using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSystem.Auth.Api.Features.Users.Queries;
 

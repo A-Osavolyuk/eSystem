@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Security.Credentials.PublicKey;
-using eSystem.Core.Security.Verification;
+﻿using eSystem.Core.Security.Authorization.Access;
+using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSystem.Core.Requests.Auth;
 

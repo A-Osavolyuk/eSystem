@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Middlewares;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace eSystem.Core.Common.Errors;

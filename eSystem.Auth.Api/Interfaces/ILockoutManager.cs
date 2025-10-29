@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Lockout;
+﻿using eSystem.Core.Security.Authentication.Lockout;
 
 namespace eSystem.Auth.Api.Interfaces;
 

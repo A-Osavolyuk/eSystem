@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Common.Messaging;
 using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Authorization.Access;
 
 namespace eSystem.Auth.Api.Entities;
 

@@ -1,6 +1,7 @@
 ﻿using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.TwoFactor;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Authorization.Access;
+using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
 

@@ -1,5 +1,5 @@
 ﻿using eAccount.UI.Components.Common.Access;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Authorization.Access;
 
 namespace eAccount.UI.Utilities;
 

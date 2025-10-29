@@ -3,8 +3,8 @@ using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Authentication.Lockout;
 using eSystem.Core.Security.Cryptography.Protection;
-using eSystem.Core.Security.Lockout;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 

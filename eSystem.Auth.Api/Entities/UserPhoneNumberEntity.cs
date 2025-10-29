@@ -1,4 +1,5 @@
 ﻿using eSystem.Core.Data.Entities;
+using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSystem.Auth.Api.Entities;
 

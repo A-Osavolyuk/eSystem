@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace eSystem.Core.Middlewares;
+namespace eSystem.Core.Common.Errors;
 
-public class  GlobalExceptionHandler(
+public class GlobalExceptionHandler(
     ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> logger = logger;

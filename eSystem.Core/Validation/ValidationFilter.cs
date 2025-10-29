@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace eSystem.Core.Filters;
+namespace eSystem.Core.Validation;
 
 [AttributeUsage(AttributeTargets.Method)]
 public class ValidationFilter() : Attribute, IAsyncActionFilter

@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Verification;
+﻿using eSystem.Core.Security.Authorization.Access;
 
 namespace eAccount.Domain.Common;
 

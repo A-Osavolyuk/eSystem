@@ -1,5 +1,5 @@
 ﻿using eAccount.Application.State;
-using eSystem.Core.Security.Claims;
+using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace eAccount.Infrastructure.Security.Authentication.JWT;

@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Lockout;
+﻿namespace eSystem.Core.Security.Authentication.Lockout;
 
 public enum LockoutPeriod
 {

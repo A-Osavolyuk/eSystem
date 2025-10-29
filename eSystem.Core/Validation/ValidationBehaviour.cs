@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 
-namespace eSystem.Core.Behaviors;
+namespace eSystem.Core.Validation;
 
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
@@ -29,6 +29,6 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
                 throw new FailedValidationException(failures);
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

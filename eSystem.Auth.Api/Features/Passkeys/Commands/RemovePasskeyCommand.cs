@@ -1,7 +1,8 @@
 ﻿using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.TwoFactor;
-using eSystem.Core.Security.Verification;
+using eSystem.Core.Security.Authorization.Access;
+using eSystem.Core.Security.Identity.Email;
 
 namespace eSystem.Auth.Api.Features.Passkeys.Commands;
 

@@ -2,8 +2,8 @@
 using eSystem.Auth.Api.Features.Users.Queries;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
-using eSystem.Core.Filters;
 using eSystem.Core.Requests.Auth;
+using eSystem.Core.Validation;
 
 namespace eSystem.Auth.Api.Controllers.v1;
 

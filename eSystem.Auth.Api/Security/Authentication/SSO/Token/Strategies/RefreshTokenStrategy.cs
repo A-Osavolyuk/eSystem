@@ -2,10 +2,10 @@ using System.Security.Claims;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
-using eSystem.Core.Security.Claims;
 using eSystem.Core.Security.Cryptography.Protection;
 using eSystem.Core.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Authentication.SSO.Client;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSystem.Auth.Api.Security.Authentication.SSO.Token.Strategies;
 

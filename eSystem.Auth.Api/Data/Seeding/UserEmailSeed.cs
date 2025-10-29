@@ -1,4 +1,5 @@
 ﻿using eSystem.Core.Data.Seeding;
+using eSystem.Core.Security.Identity.Email;
 
 namespace eSystem.Auth.Api.Data.Seeding;
 

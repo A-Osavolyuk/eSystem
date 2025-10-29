@@ -8,6 +8,7 @@ using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Security.Identity.Email;
 
 namespace eSystem.Auth.Api.Features.LinkedAccounts.Commands;
 
