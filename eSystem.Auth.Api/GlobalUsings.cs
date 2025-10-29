@@ -1,6 +1,5 @@
 ﻿global using System.Text;
 global using eSystem.Auth.Api.Data;
-global using eSystem.Auth.Api.Extensions;
 global using eSystem.Auth.Api.Features.Security.Commands;
 global using eSystem.Auth.Api.Mapping;
 global using eSystem.Core.Common.Results;
