@@ -24,7 +24,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -37,7 +40,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserStateQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -50,7 +56,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserLoginMethodsQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -63,7 +72,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserVerificationDataQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -76,7 +88,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserEmailsQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -90,7 +105,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserPrimaryEmailQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -104,7 +122,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserPrimaryPhoneNumberQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -117,7 +138,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserPhoneNumbersQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -130,7 +154,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserLinkedAccountDataQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -143,7 +170,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserPersonalQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -156,7 +186,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserDevicesQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -169,7 +202,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserRolesQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -183,7 +219,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserLockoutQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -197,7 +236,7 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetUserTwoFactorMethodsQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder()
+            s => Ok(HttpResponseBuilder.Create()
                 .Succeeded()
                 .WithResult(s.Value!)
                 .Build()),
@@ -213,7 +252,10 @@ public class UsersController(ISender sender) : ControllerBase
     {
         var result = await sender.Send(new ChangeUsernameCommand(request));
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -227,7 +269,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new AddPersonalDataCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -241,7 +286,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new ChangePersonalDataCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -255,7 +303,10 @@ public class UsersController(ISender sender) : ControllerBase
         var result = await sender.Send(new RemovePersonalDataCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .Build()),
             ErrorHandler.Handle);
     }
 }

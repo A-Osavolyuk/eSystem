@@ -25,7 +25,11 @@ public class DeviceController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetDeviceQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -40,7 +44,11 @@ public class DeviceController(ISender sender) : ControllerBase
         var result = await sender.Send(new TrustDeviceCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -54,7 +62,11 @@ public class DeviceController(ISender sender) : ControllerBase
         var result = await sender.Send(new BlockDeviceCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -68,7 +80,11 @@ public class DeviceController(ISender sender) : ControllerBase
         var result = await sender.Send(new UnblockDeviceCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -82,7 +98,11 @@ public class DeviceController(ISender sender) : ControllerBase
         var result = await sender.Send(new VerifyDeviceCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 }

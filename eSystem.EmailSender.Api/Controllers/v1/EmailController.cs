@@ -17,6 +17,6 @@ public class EmailController(IEmailService emailService) : ControllerBase
     {
         await emailService.SendMessageAsync(request.HtmlBody, request.Options);
 
-        return Ok(new ResponseBuilder().Succeeded().WithMessage("Message sent successfully").Build());
+        return Ok(HttpResponseBuilder.Create().Succeeded().WithMessage("Message sent successfully").Build());
     }
 }

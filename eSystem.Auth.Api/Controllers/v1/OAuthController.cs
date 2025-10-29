@@ -57,7 +57,11 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     {
         var result = await sender.Send(new LoadSessionCommand(request));
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -69,7 +73,11 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     {
         var result = await sender.Send(new DisconnectLinkedAccountCommand(request));
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 }

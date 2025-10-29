@@ -14,7 +14,7 @@ public static class ErrorHandler
         return error.Code switch
         {
             ErrorCode.Found => new RedirectResult(value?.ToString() ?? throw new ArgumentException("Redirect URL was not provided")),
-            _ => new ObjectResult(new ResponseBuilder()
+            _ => new ObjectResult(HttpResponseBuilder.Create()
                     .Failed()
                     .WithResult(value)
                     .WithMessage(error.Details!)

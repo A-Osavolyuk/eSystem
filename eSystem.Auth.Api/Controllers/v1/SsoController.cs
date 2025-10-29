@@ -22,7 +22,11 @@ public class SsoController(ISender sender) : ControllerBase
         var result = await sender.Send(new AuthorizeCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -35,7 +39,11 @@ public class SsoController(ISender sender) : ControllerBase
         var result = await sender.Send(new TokenCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -48,7 +56,11 @@ public class SsoController(ISender sender) : ControllerBase
         var result = await sender.Send(new SignOutCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+.Build()),
             ErrorHandler.Handle);
     }
 }

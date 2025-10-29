@@ -55,6 +55,6 @@ public class TelegramController(
     {
         await bot.SendMessage(chatId: new ChatId(request.ChatId), text: request.Message);
 
-        return Ok(new ResponseBuilder().WithMessage("Message was successfully sent!").Build());
+        return Ok(HttpResponseBuilder.Create().WithMessage("Message was successfully sent!").Build());
     }
 }

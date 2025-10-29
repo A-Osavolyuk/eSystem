@@ -24,7 +24,11 @@ public class PasskeyController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetPasskeyQuery(id));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -38,7 +42,11 @@ public class PasskeyController(ISender sender) : ControllerBase
         var result = await sender.Send(new GenerateCreationOptionsCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -52,7 +60,11 @@ public class PasskeyController(ISender sender) : ControllerBase
         var result = await sender.Send(new GenerateRequestOptionsCommand(requestOptionsRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -66,7 +78,11 @@ public class PasskeyController(ISender sender) : ControllerBase
         var result = await sender.Send(new CreatePasskeyCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -80,7 +96,11 @@ public class PasskeyController(ISender sender) : ControllerBase
         var result = await sender.Send(new RemovePasskeyCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 
@@ -94,7 +114,11 @@ public class PasskeyController(ISender sender) : ControllerBase
         var result = await sender.Send(new ChangePasskeyNameCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
 }

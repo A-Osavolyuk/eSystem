@@ -38,7 +38,7 @@ public class AuthenticationController(
         };
 
         Response.Cookies.Append(DefaultCookies.Session, protectedCookie, cookieOptions);
-        return Ok(new ResponseBuilder().Succeeded().Build());
+        return Ok(HttpResponseBuilder.Create().Succeeded().Build());
     }
     
     [HttpPost("refresh")]
@@ -51,7 +51,7 @@ public class AuthenticationController(
         };
 
         Response.Cookies.Append(DefaultCookies.Session, request.RefreshToken, cookieOptions);
-        return Ok(new ResponseBuilder().Succeeded().Build());
+        return Ok(HttpResponseBuilder.Create().Succeeded().Build());
     }
 
     [HttpPost("sign-in")]
@@ -69,7 +69,7 @@ public class AuthenticationController(
         var authenticateResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
         if (!authenticateResult.Succeeded)
         {
-            return Unauthorized(new ResponseBuilder()
+            return Unauthorized(HttpResponseBuilder.Create()
                 .Failed()
                 .Build());
         }
@@ -90,7 +90,7 @@ public class AuthenticationController(
             AccessToken = tokenProvider.AccessToken
         };
 
-        return Ok(new ResponseBuilder().Succeeded().WithResult(response).Build());
+        return Ok(HttpResponseBuilder.Create().Succeeded().WithResult(response).Build());
     }
 
     [HttpPost("sign-out")]
@@ -101,6 +101,6 @@ public class AuthenticationController(
         Response.Cookies.Delete(DefaultCookies.RefreshToken);
         Response.Cookies.Delete(DefaultCookies.Session);
 
-        return Ok(new ResponseBuilder().Succeeded().Build());
+        return Ok(HttpResponseBuilder.Create().Succeeded().Build());
     }
 }

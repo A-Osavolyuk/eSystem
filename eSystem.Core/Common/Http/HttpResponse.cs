@@ -8,11 +8,11 @@ public class HttpResponse
     public object? Result { get; set; }
     public bool Success { get; set; }
 
-    public static HttpResponse Create(string message, object? result = null, bool isSucceeded = false)
+    public static HttpResponse Create(string? message, object? result = null, bool isSucceeded = false)
     {
         return new HttpResponse
         {
-            Message = message,
+            Message = message ?? string.Empty,
             Result = result,
             Success = isSucceeded
         };

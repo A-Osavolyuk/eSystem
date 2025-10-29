@@ -23,7 +23,7 @@ public class ProductsController(ISender sender) : ControllerBase
     {
         var result = await sender.Send(new CreateProductCommand(request));
         
-        return result.Match(s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message!).Build()),
+        return result.Match(s => Ok(HttpResponseBuilder.Create().Succeeded().WithMessage(s.Message!).Build()),
             ErrorHandler.Handle);
     }
 }

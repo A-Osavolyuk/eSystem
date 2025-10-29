@@ -22,7 +22,7 @@ public class BrandController(ISender sender) : ControllerBase
     {
         var result = await sender.Send(new GetBrandsQuery());
         
-        return result.Match(s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message!).WithResult(s.Value!).Build()),
+        return result.Match(s => Ok(HttpResponseBuilder.Create().Succeeded().WithMessage(s.Message!).WithResult(s.Value!).Build()),
             ErrorHandler.Handle);
     }
 }

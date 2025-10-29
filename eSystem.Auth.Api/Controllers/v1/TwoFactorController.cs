@@ -24,7 +24,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new GenerateRecoveryCodesCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -38,7 +42,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new LoadRecoveryCodesCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -52,7 +60,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new RevokeRecoveryCodesCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -67,7 +79,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new VerifyRecoveryCodeCommand(codeRequest));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithMessage(s.Message).WithResult(s.Value).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithMessage(s.Message)
+                .WithResult(s.Value)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -82,7 +98,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new GenerateQrCodeCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .WithMessage(s.Message)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -97,7 +117,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new RegenerateQrCodeCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .WithMessage(s.Message)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -111,7 +135,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new EnableCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .WithMessage(s.Message)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -125,7 +153,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new DisableCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .WithMessage(s.Message)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -139,7 +171,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new PreferMethodCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .WithMessage(s.Message)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -154,7 +190,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new ReconfigureAuthenticatorCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .WithMessage(s.Message)
+                .Build()),
             ErrorHandler.Handle);
     }
     
@@ -169,7 +209,11 @@ public class TwoFactorController(ISender sender) : ControllerBase
         var result = await sender.Send(new VerifyAuthenticatorCommand(request));
 
         return result.Match(
-            s => Ok(new ResponseBuilder().Succeeded().WithResult(s.Value!).WithMessage(s.Message).Build()),
+            s => Ok(HttpResponseBuilder.Create()
+                .Succeeded()
+                .WithResult(s.Value!)
+                .WithMessage(s.Message)
+                .Build()),
             ErrorHandler.Handle);
     }
 }

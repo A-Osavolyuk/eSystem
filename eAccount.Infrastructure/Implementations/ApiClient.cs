@@ -79,7 +79,7 @@ public class ApiClient(
         }
         catch (Exception ex)
         {
-            var response = new ResponseBuilder()
+            var response = HttpResponseBuilder.Create()
                 .Failed()
                 .WithMessage(ex.Message)
                 .Build();
