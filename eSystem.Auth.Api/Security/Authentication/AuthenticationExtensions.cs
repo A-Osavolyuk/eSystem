@@ -81,7 +81,7 @@ public static class AuthenticationExtensions
                     ValidateIssuer = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidAudiences = settings.Audiences,
+                    ValidAudience = settings.Audience,
                     ValidIssuer = settings.Issuer,
                     IssuerSigningKey = symmetricSecurityKey
                 };
