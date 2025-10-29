@@ -1,6 +1,8 @@
-﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Utilities.Query;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 
@@ -31,13 +33,13 @@ public class LinkedAccountSignInStrategy(
         var sessionId = credentials["SessionId"] as string;
         var token = credentials["Token"] as string;
 
-        if (string.IsNullOrWhiteSpace(email)) return eSystem.Core.Common.Results.Results.BadRequest("Email is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(returnUri)) return eSystem.Core.Common.Results.Results.BadRequest("Return URI is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(token)) return eSystem.Core.Common.Results.Results.BadRequest("Token name is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(sessionId)) return eSystem.Core.Common.Results.Results.BadRequest("Session ID is empty", fallbackUri);
+        if (string.IsNullOrWhiteSpace(email)) return Results.BadRequest("Email is empty", fallbackUri);
+        if (string.IsNullOrWhiteSpace(returnUri)) return Results.BadRequest("Return URI is empty", fallbackUri);
+        if (string.IsNullOrWhiteSpace(token)) return Results.BadRequest("Token name is empty", fallbackUri);
+        if (string.IsNullOrWhiteSpace(sessionId)) return Results.BadRequest("Session ID is empty", fallbackUri);
 
         var user = await userManager.FindByEmailAsync(email, cancellationToken);
-        if (user is null) return eSystem.Core.Common.Results.Results.BadRequest($"Cannot find user with email {email}.");
+        if (user is null) return Results.BadRequest($"Cannot find user with email {email}.");
 
         var userAgent = httpContext.GetUserAgent();
         var ipAddress = httpContext.GetIpV4();
@@ -65,7 +67,7 @@ public class LinkedAccountSignInStrategy(
             if (!result.Succeeded) return result;
         }
         
-        if (device.IsBlocked) return eSystem.Core.Common.Results.Results.BadRequest("Device is blocked", fallbackUri);
+        if (device.IsBlocked) return Results.BadRequest("Device is blocked", fallbackUri);
         if (!device.IsTrusted)
         {
             var deviceResult = await deviceManager.TrustAsync(device, cancellationToken);
@@ -93,7 +95,7 @@ public class LinkedAccountSignInStrategy(
         }
 
         var session = await oauthSessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
-        if (session is null) return eSystem.Core.Common.Results.Results.BadRequest("Cannot find session with id {sessionId}.", fallbackUri);
+        if (session is null) return Results.BadRequest("Cannot find session with id {sessionId}.", fallbackUri);
 
         session.SignType = OAuthSignType.SignIn;
         session.LinkedAccountId = linkedAccount.Id;
@@ -103,7 +105,10 @@ public class LinkedAccountSignInStrategy(
         
         await sessionManager.CreateAsync(device, cancellationToken);
 
-        var link = UrlGenerator.Url(returnUri, new { sessionId = session.Id, token });
-        return Result.Success(link);
+        var builder = QueryBuilder.Create().WithUri(returnUri)
+            .WithQueryParam("sessionId", session.Id.ToString())
+            .WithQueryParam("token", token);
+        
+        return Result.Success(builder.Build());
     }
 }

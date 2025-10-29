@@ -1,5 +1,7 @@
-﻿using eSystem.Auth.Api.Security.Identity.Options;
+﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Identity.Options;
 using eSystem.Core.Responses.Auth;
+using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
 using OtpNet;
 
@@ -34,10 +36,13 @@ public sealed class OAuthLoginCommandHandler(
             ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10),
         };
         
-        var redirectUri = UrlGenerator.Action("handle", "OAuth", new { request.ReturnUri });
+        var builder = QueryBuilder.Create()
+            .WithUri("/api/v1/oauth/handle")
+            .WithQueryParam("returnUri", request.ReturnUri);
+        
         var properties = new AuthenticationProperties
         {
-            RedirectUri = redirectUri,
+            RedirectUri = builder.Build(),
             Items = 
             {
                 { "fallbackUri", fallbackUri },

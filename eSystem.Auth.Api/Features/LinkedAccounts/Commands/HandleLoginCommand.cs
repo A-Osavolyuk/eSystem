@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Messages.Email;
 using eSystem.Auth.Api.Security.Authentication;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
@@ -9,6 +10,7 @@ using eSystem.Core.Common.Messaging;
 using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Identity.Email;
+using eSystem.Core.Utilities.Query;
 
 namespace eSystem.Auth.Api.Features.LinkedAccounts.Commands;
 
@@ -162,9 +164,13 @@ public sealed class HandleOAuthLoginCommandHandler(
             if (!sessionResult.Succeeded) return Result.Failure(sessionResult.GetError(), fallbackUri);
             
             await sessionManager.CreateAsync(newDevice, cancellationToken);
+
+
+            var builder = QueryBuilder.Create().WithUri(request.ReturnUri!)
+                .WithQueryParam("sessionId", session.Id.ToString())
+                .WithQueryParam("token", token);
             
-            var link = UrlGenerator.Url(request.ReturnUri!, new { sessionId = session.Id, token });
-            return Result.Success(link);
+            return Result.Success(builder.Build());
         }
 
         var credentials = new Dictionary<string, object>()
