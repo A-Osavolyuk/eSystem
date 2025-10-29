@@ -3,7 +3,6 @@
 public enum ErrorCode
 {
     None = 0,
-    Found = 302,
     SeeOther = 303,
     BadRequest = 400,
     Unauthorized = 401,

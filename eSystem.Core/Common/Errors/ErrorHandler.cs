@@ -10,15 +10,12 @@ public static class ErrorHandler
     {
         var error = result.GetError();
         var value = result.Value;
-
-        return error.Code switch
-        {
-            ErrorCode.Found => new RedirectResult(value?.ToString() ?? throw new ArgumentException("Redirect URL was not provided")),
-            _ => new ObjectResult(HttpResponseBuilder.Create()
-                    .Failed()
-                    .WithResult(value)
-                    .WithMessage(error.Details!)
-                    .Build()) { StatusCode = Convert.ToInt32(error.Code) }
-        };
+        var response = HttpResponseBuilder.Create()
+            .Failed()
+            .WithResult(value)
+            .WithMessage(error.Details!)
+            .Build();
+        
+        return new ObjectResult(response){ StatusCode = Convert.ToInt32(error.Code) };
     }
 }

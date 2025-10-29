@@ -1,12 +1,12 @@
 ﻿namespace eSystem.Core.Common.Http;
 
-public class HttpResponseBuilder
+public sealed class HttpResponseBuilder
 {
     private string? message;
     private object? result;
     private bool isSucceeded;
-    
-    protected HttpResponseBuilder(){}
+
+    private HttpResponseBuilder(){}
 
     public static HttpResponseBuilder Create() => new HttpResponseBuilder();
 
