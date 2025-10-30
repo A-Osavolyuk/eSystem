@@ -118,10 +118,11 @@ public class AuthorizationCodeStrategy(
             new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString()),
             new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Nonce, authorizationCode.Nonce),
-            new(AppClaimTypes.Scope, scopes)
+            new(AppClaimTypes.Scope, scopes),
+            new(AppClaimTypes.Aud, client.Name)
         };
         
-        var accessToken = tokenFactory.Create(claims, client.Name);
+        var accessToken = tokenFactory.Create(claims);
         var response = new TokenResponse()
         {
             AccessToken = accessToken,
