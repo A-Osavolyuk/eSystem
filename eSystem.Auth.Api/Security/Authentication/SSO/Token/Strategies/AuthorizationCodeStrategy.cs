@@ -112,17 +112,17 @@ public class AuthorizationCodeStrategy(
         
         var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
         var protectedRefreshToken = protector.Protect(refreshToken.Token);
-        var scopes = string.Join(' ', client.AllowedScopes.Select(x => x.Scope.Name));
-        var claims = new List<Claim>()
-        {
-            new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString()),
-            new(AppClaimTypes.Sub, user.Id.ToString()),
-            new(AppClaimTypes.Nonce, authorizationCode.Nonce),
-            new(AppClaimTypes.Scope, scopes),
-            new(AppClaimTypes.Aud, client.Name)
-        };
+
+        var claimBuilder = ClaimBuilder.Create()
+            .WithTokenId(Guid.CreateVersion7().ToString())
+            .WithSubject(user.Id.ToString())
+            .WithAudience(client.Name)
+            .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
+            .WithNonce(authorizationCode.Nonce)
+            .WithIssuedTime(DateTimeOffset.UtcNow)
+            .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes));
         
-        var accessToken = tokenFactory.Create(claims);
+        var accessToken = tokenFactory.Create(claimBuilder.Build());
         var response = new TokenResponse()
         {
             AccessToken = accessToken,

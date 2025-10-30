@@ -74,16 +74,16 @@ public class RefreshTokenStrategy(
         if (!rotateResult.Succeeded) return rotateResult;
 
         var protectedRefreshToken = protector.Protect(newRefreshToken.Token);
-        var scopes = string.Join(' ', client.AllowedScopes.Select(x => x.Scope.Name));
-        var claims = new List<Claim>()
-        {
-            new(AppClaimTypes.Jti, Guid.CreateVersion7().ToString()),
-            new(AppClaimTypes.Sub, user.Id.ToString()),
-            new(AppClaimTypes.Scope, scopes),
-            new(AppClaimTypes.Aud, client.Name)
-        };
 
-        var accessToken = tokenFactory.Create(claims);
+        var claimBuilder = ClaimBuilder.Create()
+            .WithTokenId(Guid.CreateVersion7().ToString())
+            .WithSubject(user.Id.ToString())
+            .WithAudience(client.Name)
+            .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
+            .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
+            .WithIssuedTime(DateTimeOffset.UtcNow);
+
+        var accessToken = tokenFactory.Create(claimBuilder.Build());
         var response = new TokenResponse()
         {
             AccessToken = accessToken,
