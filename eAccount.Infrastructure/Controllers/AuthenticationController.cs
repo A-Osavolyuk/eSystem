@@ -49,8 +49,8 @@ public class AuthenticationController(
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
         };
-
-        Response.Cookies.Append(DefaultCookies.Session, request.RefreshToken, cookieOptions);
+        
+        Response.Cookies.Append(DefaultCookies.RefreshToken, request.RefreshToken, cookieOptions);
         return Ok(HttpResponseBuilder.Create().Succeeded().Build());
     }
 
