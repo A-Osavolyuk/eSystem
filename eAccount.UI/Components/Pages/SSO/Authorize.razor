@@ -1,5 +1,5 @@
 @page "/sso/authorize"
-@using eSystem.Core.Utilities.Query
+
 @inherits PageBase
 
 @inject ISsoService SsoService
@@ -9,6 +9,7 @@
 
 @if (!UserState.IsAuthenticated)
 {
+    
 }
 
 @code {
