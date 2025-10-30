@@ -6,8 +6,8 @@ using eSystem.Auth.Api.Security.Authentication.SSO;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Core.Common.Configuration;
-using eSystem.Core.Security.Authentication.Cookies;
 using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eSystem.Auth.Api.Security.Authentication;

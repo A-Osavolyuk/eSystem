@@ -4,7 +4,7 @@ using eAccount.Security.Authentication.JWT;
 using eAccount.Security.Authentication.SSO;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Requests.Auth;
-using eSystem.Core.Security.Authentication.Cookies;
+using eSystem.Core.Security.Cookies;
 using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

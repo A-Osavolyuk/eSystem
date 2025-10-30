@@ -10,8 +10,8 @@ using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
-using eSystem.Core.Security.Authentication.Cookies;
 using eSystem.Core.Security.Authentication.SSO.Token;
+using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 
