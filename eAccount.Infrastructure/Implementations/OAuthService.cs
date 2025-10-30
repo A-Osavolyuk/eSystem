@@ -1,6 +1,4 @@
-﻿using eAccount.Domain.Abstraction.Services;
-using eSystem.Core.Common.Network.Gateway;
-using eSystem.Core.Requests.Auth;
+﻿using eSystem.Core.Requests.Auth;
 
 namespace eAccount.Infrastructure.Implementations;
 
