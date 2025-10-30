@@ -1,7 +1,8 @@
 ﻿@page "/account/passkeys/sign-in"
+
 @using eAccount.Infrastructure.Security.Credentials.PublicKey
-@using eSystem.Core.Utilities.Query
 @using eSystem.Core.Security.Authentication.SignIn
+
 @inherits PageBase
 
 @inject IPasskeyService PasskeyService
@@ -45,16 +46,16 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Have an account with password? Go to
-                    <MudLink Href="@Links.LoginPage">
-                        Login
+                    <MudLink Href="@Links.SignIn">
+                        Sign in
                     </MudLink>
                 </MudText>
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink Href="@Links.RegisterPage">
-                        Register
+                    <MudLink Href="@Links.SignUp">
+                        Sign up
                     </MudLink>
                 </MudText>
             </MudPaper>

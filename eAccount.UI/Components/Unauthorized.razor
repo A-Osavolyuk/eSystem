@@ -30,7 +30,7 @@
 
     private void ToLoginPage()
     {
-        var builder = QueryBuilder.Create().WithUri(Links.LoginPage);
+        var builder = QueryBuilder.Create().WithUri(Links.SignIn);
 
         if (!string.IsNullOrEmpty(ReturnUrl))
             builder.WithQueryParam("return_url", ReturnUrl);

@@ -4,7 +4,7 @@ using eSystem.Core.Validation.Validators;
 
 namespace eAccount.Application.Validation;
 
-public class RegistrationValidator : Validator<RegisterModel>
+public class RegistrationValidator : Validator<SignUpModel>
 {
     public RegistrationValidator()
     {

@@ -2,12 +2,12 @@
 
 public static class Links
 {
-    public const string LoginPage = "/account/login";
+    public const string SignIn = "/account/sign-in";
     public const string AccountUnlockPage = "/account/unlock";
     public const string LockedOutPage = "/account/locked-out";
     public const string RecoverPage = "/account/recover";
     public const string DeviceTrustPage = "/account/device/trust";
-    public const string RegisterPage = "/account/register";
+    public const string SignUp = "/account/sign-up";
     public const string CompleteRegistrationPage = "/account/register/complete";
     public const string ForgotPasswordPage = "/account/password/forgot";
     public const string ResetPasswordPage = "/account/password/reset";

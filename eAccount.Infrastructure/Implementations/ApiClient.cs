@@ -52,7 +52,7 @@ public class ApiClient(
                     if (!result.Success)
                     {
                         tokenProvider.Clear();
-                        navigationManager.NavigateTo(Links.LoginPage);
+                        navigationManager.NavigateTo(Links.SignIn);
                     }
                 }
                 
@@ -75,7 +75,7 @@ public class ApiClient(
                 if (!result.Success)
                 {
                     tokenProvider.Clear();
-                    navigationManager.NavigateTo(Links.LoginPage);
+                    navigationManager.NavigateTo(Links.SignIn);
                 }
                 else
                 {

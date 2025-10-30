@@ -1,18 +1,18 @@
-﻿@page "/account/register"
+﻿@page "/account/sign-up"
 @using eSystem.Core.Utilities.Query
 @inherits PageBase
 
 @inject ISecurityService SecurityService
 @inject RegistrationValidator Validator
 
-<Title Text="Register"/>
+<Title Text="Sign up for eAccount"/>
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="4" Style="margin-top: 150px">
         <MudStack Spacing="1" Justify="Justify.Center">
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center" Typo="Typo.h4">
-                    Register
+                    Sign up for eAccount
                 </MudText>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
@@ -58,15 +58,15 @@
                         Color="Color.Primary"
                         Class="mt-3"
                         FullWidth
-                        OnClick="@(async () => await OnRegisterAsync())">
-                        Register
+                        OnClick="@(async () => await OnSignUpAsync())">
+                        Sign up
                     </MudLoadingButton>
                 </MudForm>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">Already have an account?
-                    <MudLink Href="@Links.LoginPage">
-                        Log In
+                    <MudLink Href="@Links.SignIn">
+                        Sign in
                     </MudLink>
                 </MudText>
             </MudPaper>
@@ -75,11 +75,11 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromForm] private RegisterModel Model { get; set; } = new();
+    [SupplyParameterFromForm] private SignUpModel Model { get; set; } = new();
 
     private MudForm form = new();
 
-    private async Task OnRegisterAsync()
+    private async Task OnSignUpAsync()
     {
         await form.Validate();
 
@@ -103,7 +103,7 @@
                 var builder = QueryBuilder.Create()
                     .WithUri(Links.CompleteRegistrationPage)
                     .WithQueryParam("id", response.UserId.ToString())
-                    .WithQueryParam("return_url", Links.LoginPage);
+                    .WithQueryParam("return_url", Links.SignIn);
                 
                 NavigationManager.NavigateTo(builder.Build());
             }
