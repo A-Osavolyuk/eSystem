@@ -135,7 +135,7 @@ public class ApiClient(
         var fetchOptions = new FetchOptions()
         {
             Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/sso/refresh",
+            Url = $"{navigationManager.BaseUri}api/authentication/refresh",
             Body = refreshRequest
         };
 
