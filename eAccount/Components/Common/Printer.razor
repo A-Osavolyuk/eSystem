@@ -1,0 +1,18 @@
+﻿@using eAccount.Common.JS.Print
+
+@inject PrintManager PrintManager
+
+<script>
+    window.addEventListener("afterprint", () => window.close());
+</script>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await PrintManager.PrintAsync();
+        }
+    }
+
+}

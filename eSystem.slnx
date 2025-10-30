@@ -1,11 +1,7 @@
 <Solution>
   <Folder Name="/src/" />
-  <Folder Name="/src/Clients/" />
-  <Folder Name="/src/Clients/eAccount/">
-    <Project Path="eAccount.Application\eAccount.Application.csproj" />
-    <Project Path="eAccount.Domain\eAccount.Domain.csproj" />
-    <Project Path="eAccount.Infrastructure\eAccount.Infrastructure.csproj" />
-    <Project Path="eAccount.UI\eAccount.UI.csproj" />
+  <Folder Name="/src/Clients/">
+    <Project Path="eAccount\eAccount.csproj" />
   </Folder>
   <Folder Name="/src/Core/">
     <Project Path="eSystem.Core\eSystem.Core.csproj" />

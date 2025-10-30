@@ -1,0 +1,103 @@
+﻿@using eAccount.Common.State.States
+@inject UserState UserState
+@inject IUserService UserService
+@inject ISnackbar Snackbar
+
+@if (Model.Methods.Count > 0)
+{
+    <MudDialog Style="width: 600px">
+    <TitleContent>
+        Access confirmation
+    </TitleContent>
+    <DialogContent>
+        <MudStack Justify="Justify.Center">
+            <MudPaper Outlined="true" Class="px-5 py-4">
+                <MudGrid>
+                    <MudItem xs="1">
+                        <MudAvatar Size="Size.Medium">
+                            <MudImage
+                                Src="/images/avatar.jpg"
+                                Alt="Avatar"
+                                FallbackSrc="/images/avatar.jpg"/>
+                        </MudAvatar>
+                    </MudItem>
+                    <MudItem xs="10">
+                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                            <MudTextM3 Class="pt-2">
+                                Signed-in as <strong>@UserState.Credentials?.Username</strong>
+                            </MudTextM3>
+                        </MudStack>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+            @switch (Model.PreferredMethod)
+            {
+                case VerificationMethod.Email:
+                {
+                    <EmailConfirmation
+                        Model="Model"
+                        Context="Context"
+                        OnMethodChanged="ChangeMethodAsync"
+                        OnAccessConfirmed="ConfirmAccessAsync"/>
+                    break;
+                }
+                case VerificationMethod.Passkey:
+                {
+                    <PasskeyConfirmation
+                        Model="Model"
+                        Context="Context"
+                        OnMethodChanged="ChangeMethodAsync"
+                        OnAccessConfirmed="ConfirmAccessAsync"/>
+                    break;
+                }
+                case VerificationMethod.AuthenticatorApp:
+                {
+                    <AuthenticatorConfirmation
+                        Model="Model"
+                        Context="Context"
+                        OnMethodChanged="ChangeMethodAsync"
+                        OnAccessConfirmed="ConfirmAccessAsync"/>
+                    break;
+                }
+            }
+        </MudStack>
+    </DialogContent>
+</MudDialog>
+}
+
+@code {
+    [CascadingParameter] public IMudDialogInstance Dialog { get; set; } = null!;
+
+    [Parameter] public ConfirmationContext Context { get; set; } = null!;
+
+    private UserVerificationData Model { get; set; } = new();
+    private bool Confirmed { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task ChangeMethodAsync(VerificationMethod method)
+    {
+        await InvokeAsync(StateHasChanged);
+        Model.PreferredMethod = method;
+    }
+
+    private async Task ConfirmAccessAsync()
+    {
+        Confirmed = true;
+        Dialog.Close(DialogResult.Ok(true));
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserVerificationDataAsync(UserState.UserId);
+
+        if (result.Success) Model = result.Get<UserVerificationData>()!;
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+}

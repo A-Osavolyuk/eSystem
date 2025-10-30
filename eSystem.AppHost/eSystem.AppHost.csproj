@@ -33,7 +33,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\eSystem.Auth.Api\eSystem.Auth.Api.csproj" />
-        <ProjectReference Include="..\eAccount.UI\eAccount.UI.csproj" />
+        <ProjectReference Include="..\eAccount\eAccount.csproj" />
         <ProjectReference Include="..\eSystem.Cart.Api\eSystem.Cart.Api.csproj" />
         <ProjectReference Include="..\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
         <ProjectReference Include="..\eSystem.Storage.Api\eSystem.Storage.Api.csproj" />

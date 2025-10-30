@@ -1,0 +1,103 @@
+@page "/sso/authorize"
+
+@using eAccount.Common.JS.Fetch
+@using eAccount.Security.Authentication.SSO
+@inherits PageBase
+
+@inject ISsoService SsoService
+@inject IFetchClient FetchClient
+
+<Title Text="Authorization"></Title>
+
+@if (!UserState.IsAuthenticated)
+{
+    
+}
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "response_type")]
+    public string ResponseType { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "client_id")]
+    public string ClientId { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "redirect_uri")]
+    public string RedirectUri { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string State { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "nonce")]
+    public string Nonce { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "scope")]
+    public string Scope { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "code_challenge")]
+    public string? CodeChallenge { get; set; }
+
+    [SupplyParameterFromQuery(Name = "code_challenge_method")]
+    public string? CodeChallengeMethod { get; set; }
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (UserState.IsAuthenticated)
+            {
+                var scopes = Scope.Split(' ').ToList();
+                var request = new AuthorizeRequest()
+                {
+                    UserId = UserState.UserId,
+                    ResponseType = ResponseType,
+                    ClientId = ClientId,
+                    RedirectUri = RedirectUri,
+                    Scopes = scopes,
+                    Nonce = Nonce,
+                    State = State,
+                    CodeChallenge = CodeChallenge,
+                    CodeChallengeMethod = CodeChallengeMethod
+                };
+
+                var result = await SsoService.AuthorizeAsync(request);
+
+                if (result.Success)
+                {
+                    var response = result.Get<AuthorizeResponse>()!;
+                    var cookie = new SessionCookie()
+                    {
+                        SessionId = response.SessionId,
+                        UserId = request.UserId,
+                        DeviceId = response.DeviceId,
+                        IssuedAt = DateTimeOffset.UtcNow,
+                        ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
+                    };
+
+                    var fetchOptions = new FetchOptions()
+                    {
+                        Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
+                        Method = HttpMethod.Post,
+                        Body = cookie
+                    };
+
+                    await FetchClient.FetchAsync(fetchOptions);
+
+                    var builder = QueryBuilder.Create()
+                        .WithUri(request.RedirectUri)
+                        .WithQueryParam("code", response.Code)
+                        .WithQueryParam("state", response.State);
+
+                    if (!string.IsNullOrEmpty(ReturnUrl)) builder.WithQueryParam("return_url", ReturnUrl);
+
+                    NavigationManager.NavigateTo(builder.Build());
+                }
+            }
+        }
+    }
+
+}
+    

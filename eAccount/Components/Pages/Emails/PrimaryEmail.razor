@@ -1,0 +1,168 @@
+﻿@using eAccount.Common.State.States
+@using eAccount.Security.Authorization.OAuth
+@using eSystem.Core.Security.Authorization.OAuth
+
+@inject IOAuthService OAuthService
+@inject ISnackbar Snackbar
+@inject ConfirmationManager ConfirmationManager
+@inject UserState UserState
+
+<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="0">
+        <MudStack Row="true" Spacing="1">
+            <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
+                @Email.Email
+            </MudTextM3>
+            <MudTooltip Text="Default email address for eAccount">
+                <MudChip
+                    T="string"
+                    Class="mx-0"
+                    Color="Color.Info"
+                    Variant="Variant.Outlined"
+                    Size="Size.Small">
+                    Primary
+                </MudChip>
+            </MudTooltip>
+            @if (Email is { IsVerified: true, VerifiedDate: not null })
+            {
+                <MudTooltip
+                    Text="@($"Verified at: {Email.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                    <MudChip
+                        T="string"
+                        Class="mx-0"
+                        Color="Color.Success"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Verified
+                    </MudChip>
+                </MudTooltip>
+                
+                foreach (var linkedAccount in LinkedAccountData.LinkedAccounts)
+                {
+                    <MudChip
+                        T="string"
+                        Class="mx-0"
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Connected to @linkedAccount.Type
+                    </MudChip>
+                }
+            }
+            else
+            {
+                <MudTooltip Text="This email address is not verified">
+                    <MudChip
+                        T="string"
+                        Class="mx-0"
+                        Color="Color.Error"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Unverified
+                    </MudChip>
+                </MudTooltip>
+            }
+            <MudSpacer/>
+            <MudMenu
+                Dense="true">
+                <ActivatorContent>
+                    <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                </ActivatorContent>
+                <ChildContent>
+                    @if (!Email.IsVerified)
+                    {
+                        <MudMenuItem Href=@(OnVerify())>
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                Verify email
+                            </MudTextM3>
+                        </MudMenuItem>
+                    }
+                    else
+                    {
+                        <MudMenuItem Href=@(OnChange())>
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                Change email
+                            </MudTextM3>
+                        </MudMenuItem>
+                        foreach (var linkedAccount in LinkedAccountData.LinkedAccounts)
+                        {
+                            <MudMenuItem OnClick="@(async () => await OnDisconnectAsync(linkedAccount.Type))">
+                                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                    Disconnect from @linkedAccount.Type
+                                </MudTextM3>
+                            </MudMenuItem>
+                        }
+                        <MudDivider/>
+                        <MudMenuItem Href=@(OnReset())>
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
+                                Reset email
+                            </MudTextM3>
+                        </MudMenuItem>
+                    }
+                </ChildContent>
+            </MudMenu>
+        </MudStack>
+        <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
+            This email address is default for eAccount security purposes.
+            Also you will receive notifications and verification codes to this email address.
+        </MudTextM3>
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter] 
+    public UserEmailDto Email { get; set; } = new();
+    
+    [Parameter]
+    public UserLinkedAccountData LinkedAccountData { get; set; } = new();
+
+    [Parameter] 
+    public EventCallback OnRefresh { get; set; }
+
+    private string OnVerify()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailVerifyPage)
+            .WithQueryParam("type", EmailTypes.Primary)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
+    }
+
+    private string OnChange()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailChangePage)
+            .WithQueryParam("type", EmailTypes.Primary)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
+    }
+
+    private string OnReset()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.EmailResetPage)
+            .WithQueryParam("type", EmailTypes.Primary)
+            .WithQueryParam("return_url", Links.EmailsPage)
+            .Build();
+    }
+
+    private async Task OnDisconnectAsync(LinkedAccountType type)
+    {
+        var confirmationResult = await ConfirmationManager.InitiateAsync(
+            PurposeType.LinkedAccount, ActionType.Disconnect);
+
+        if (!confirmationResult.Canceled)
+        {
+            var request = new DisconnectLinkedAccountRequest()
+            {
+                UserId = UserState.UserId,
+                Type = type
+            };
+
+            var result = await OAuthService.DisconnectAsync(request);
+
+            if (result.Success) await OnRefresh.InvokeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+}

@@ -1,0 +1,24 @@
+﻿@page "/not-found"
+@inherits PageBase
+
+<Title Text="Not found"></Title>
+
+<MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+    <MudText Align="Align.Center" Typo="Typo.h4">
+        Page not found
+    </MudText>
+    <MudText Align="Align.Center" Typo="Typo.h5">
+        Sorry, the page you are looking for does not exist.
+    </MudText>
+    <MudLink
+        Style="text-align:center"
+        Class="d-block"
+        Typo="Typo.h5"
+        Href="@Links.Profile">
+        To main page
+    </MudLink>
+</MudStack>
+
+@code {
+    
+}

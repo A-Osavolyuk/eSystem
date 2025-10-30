@@ -1,0 +1,277 @@
+﻿@page "/account/2fa/recovery-codes/view"
+
+@using eAccount.Common.JS.Clipboard
+@using eAccount.Common.JS.Download
+@using eAccount.Security.Authentication.TwoFactor
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject ITwoFactorService TwoFactorService
+@inject DownloadManager DownloadManager
+@inject ClipboardManager ClipboardManager
+
+<Title Text="Recovery codes"></Title>
+
+<AccessConfirmation Context="confirmationContext">
+    <AccessConfirmed>
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="4">
+                <MudStack Spacing="3">
+                    @if (recoveryCodesRegenerated)
+                    {
+                        <MudAlert Variant="Variant.Outlined" Severity="Severity.Success" >
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                New two-factor recovery codes successfully generated. 
+                                Save them in a safe, durable location and discard your previous codes.
+                            </MudTextM3>
+                        </MudAlert>
+                    }
+                    <MudStack Spacing="2">
+                        <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                            Two-factor recovery codes
+                        </MudTextM3>
+                        <MudDivider/>
+                    </MudStack>
+                    <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold">
+                        Recovery codes can be used to access your account in the event you lose access
+                        to your device and cannot receive two-factor authentication codes.
+                    </MudTextM3>
+                    <MudPaper Outlined="true">
+                        <MudStack Spacing="3">
+                            <MudStack Spacing="3" Class="px-5 pt-5">
+                                <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">
+                                    Recovery codes
+                                </MudTextM3>
+                                <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                                    Keep your recovery codes as safe as your password. We recommend saving them with
+                                    a password manager such as                                                            
+                                    <MudLink
+                                        Typo="Typo.caption"
+                                        Class="text-decoration-underline"
+                                        Color="Color.Default"
+                                        Href="@ExternalLinks.OnePassword">
+                                        1Password
+                                    </MudLink>,
+                                    <MudLink
+                                        Typo="Typo.caption"
+                                        Class="text-decoration-underline"
+                                        Color="Color.Default"
+                                        Href="@ExternalLinks.Authy">
+                                        Authy
+                                    </MudLink> or
+                                    <MudLink
+                                        Typo="Typo.caption"
+                                        Class="text-decoration-underline"
+                                        Color="Color.Default"
+                                        Href="@ExternalLinks.Keeper">
+                                        Keeper
+                                    </MudLink>,.
+                                </MudTextM3>
+                            </MudStack>
+                            @if (recoveryCodesRegenerated)
+                            {
+                                <MudAlert
+                                    Class="px-5"
+                                    Square="true"
+                                    Severity="Severity.Error"
+                                    NoIcon="true"
+                                    Variant="Variant.Outlined"
+                                    Style="border-left:none; border-right: none">
+                                    <MudStack Row="true">
+                                        <MudIcon
+                                            Class="mt-1"
+                                            Size="Size.Medium"
+                                            Color="Color.Error"
+                                            Icon="@Icons.Material.Outlined.WarningAmber"/>
+                                        <MudStack Spacing="1">
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="fw-bold">
+                                                These new codes have replaced your old codes. Save them in a safe spot.
+                                            </MudTextM3>
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                These codes are the last resort for accessing your account
+                                                in case you lose your password and second factors.
+                                                If you cannot find these codes, you will lose access to your account.
+                                            </MudTextM3>
+                                        </MudStack>
+                                    </MudStack>
+                                </MudAlert>
+                            }
+                            else
+                            {
+                                <MudAlert
+                                    Class="px-5"
+                                    Square="true"
+                                    Severity="Severity.Info"
+                                    NoIcon="true"
+                                    Variant="Variant.Outlined"
+                                    Style="border-left:none; border-right: none">
+                                    <MudStack Row="true">
+                                        <MudIcon
+                                            Class="mt-1"
+                                            Size="Size.Medium"
+                                            Color="Color.Info"
+                                            Icon="@Icons.Material.Outlined.WarningAmber"/>
+                                        <MudStack Spacing="1">
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="fw-bold">
+                                                Keep your recovery codes in a safe spot.
+                                            </MudTextM3>
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                These codes are the last resort for accessing your account in case you
+                                                lose your password and second factors.
+                                                If you cannot find these codes, you will lose access to your account.
+                                            </MudTextM3>
+                                        </MudStack>
+                                    </MudStack>
+                                </MudAlert>
+                            }
+                            <MudStack>
+                                <MudStack Spacing="5" Justify="Justify.Center" AlignItems="AlignItems.Center" Class="pb-5 px-5">
+                                    @if (Codes.Count > 0)
+                                    {
+                                        <MudStack Row="true" Class="px-5">
+                                            <MudGrid Justify="Justify.Center" Spacing="1">
+                                                @foreach (var recoveryCode in Codes)
+                                                {
+                                                    <MudItem xs="6">
+                                                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Title" Size="Size.Large">
+                                                            @("• " + recoveryCode)
+                                                        </MudTextM3>
+                                                    </MudItem>
+                                                }
+                                            </MudGrid>
+                                        </MudStack>
+                                    }
+                                    else
+                                    {
+                                        <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                            <MudProgressCircular Size="Size.Medium" Indeterminate="true"/>
+                                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                Loading...
+                                            </MudTextM3>
+                                        </MudStack>
+                                    }
+                                    <MudStack Row="true" Spacing="3">
+                                        <MudButton
+                                            Variant="Variant.Outlined"
+                                            Color="Color.Default"
+                                            ButtonType="ButtonType.Button"
+                                            Size="Size.Small"
+                                            StartIcon="@Icons.Material.Outlined.Download"
+                                            OnClick="@(async () => await OnDownloadAsync())">
+                                            Download
+                                        </MudButton>
+                                        <MudButton
+                                            Variant="Variant.Outlined"
+                                            Color="Color.Default"
+                                            ButtonType="ButtonType.Button"
+                                            Size="Size.Small"
+                                            StartIcon="@Icons.Material.Outlined.Print"
+                                            Href="@Links.RecoveryCodesPrintPage"
+                                            Target="@LinkTargets.Blank">
+                                            Print
+                                        </MudButton>
+                                        <MudButton
+                                            Variant="Variant.Outlined"
+                                            Color="Color.Default"
+                                            ButtonType="ButtonType.Button"
+                                            Size="Size.Small"
+                                            StartIcon="@Icons.Material.Outlined.ContentCopy"
+                                            OnClick="@(async () => await OnCopyAsync())">
+                                            Copy
+                                        </MudButton>
+                                    </MudStack>
+                                </MudStack>
+                            </MudStack>
+                        </MudStack>
+                    </MudPaper>
+                    <MudStack Spacing="3">
+                        <MudStack Spacing="0">
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="fw-bold">
+                                Generate new recovery codes
+                            </MudTextM3>
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                                When you generate new recovery codes, you must download or print the new codes.
+                                Your old codes won't work anymore.
+                            </MudTextM3>
+                        </MudStack>
+                        <MudStack Row="true">
+                            <MudButton
+                                Variant="Variant.Outlined"
+                                Color="Color.Default"
+                                ButtonType="ButtonType.Button"
+                                Size="Size.Small"
+                                OnClick="@(async () => await OnGenerateAsync())">
+                                Generate new recovery codes
+                            </MudButton>
+                        </MudStack>
+                        <MudDivider/>
+                        <MudLink Typo="Typo.body2" Href="@ReturnUrl">Back to setting</MudLink>
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </AccessConfirmed>
+</AccessConfirmation>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
+
+    private List<string> Codes { get; set; } = [];
+    private ConfirmationContext? confirmationContext;
+    private bool recoveryCodesRegenerated;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var request = new LoadRecoveryCodesRequest() { UserId = UserState.UserId };
+            var result = await TwoFactorService.LoadRecoveryCodesAsync(request);
+
+            if (result.Success)
+            {
+                Codes = result.Get<List<string>>()!;
+                StateHasChanged();
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        confirmationContext = new()
+        {
+            Action = ActionType.Show,
+            Purpose = PurposeType.RecoveryCodes
+        };
+    }
+
+    private async Task OnGenerateAsync()
+    {
+        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
+        var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
+
+        if (result.Success)
+        {
+            Codes = result.Get<List<string>>()!;
+            recoveryCodesRegenerated = true;
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+    
+    private async Task OnDownloadAsync()
+    {
+        await DownloadManager.DownloadAsync("eaccount-recovery-codes.txt", Codes);
+        Snackbar.Add("Downloaded", Severity.Success);
+    }
+
+    private async Task OnCopyAsync()
+    {
+        var codes = string.Join(' ', Codes);
+        await ClipboardManager.CopyAsync(codes);
+        Snackbar.Add("Copied", Severity.Success);
+    }
+}

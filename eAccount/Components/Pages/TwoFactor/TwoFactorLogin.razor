@@ -1,0 +1,79 @@
+﻿@page "/account/2fa/sign-in"
+@using eSystem.Core.Security.Authentication.TwoFactor
+@inherits PageBase
+
+@inject IUserService UserService
+
+<Title Text="Two-factor login"/>
+
+@if (Methods.Any())
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="3">
+            <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.LockPerson"/>
+                @if (PreferredMethod != TwoFactorMethod.RecoveryCode)
+                {
+                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                        Two-factor authentication
+                    </MudTextM3>
+                }
+                else
+                {
+                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                        Two-factor recovery
+                    </MudTextM3>
+                }
+                @switch (PreferredMethod)
+                {
+                    case TwoFactorMethod.AuthenticatorApp:
+                    {
+                        <AuthenticatorMethod
+                            Methods="Methods"
+                            OnChangeMethod="ChangeMethod"/>
+                        break;
+                    }
+                    case TwoFactorMethod.Passkey:
+                    {
+                        <PasskeyMethod
+                            Methods="Methods"
+                            OnChangeMethod="ChangeMethod"/>
+                        break;
+                    }
+                    case TwoFactorMethod.RecoveryCode:
+                    {
+                        <RecoveryCodeMethod
+                            Methods="Methods"
+                            OnChangeMethod="ChangeMethod"/>
+                        break;
+                    }
+                }
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    [SupplyParameterFromQuery(Name = "id")]
+    public Guid UserId { get; set; }
+
+    private List<UserTwoFactorMethod> Methods { get; set; } = [];
+    private TwoFactorMethod PreferredMethod { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UserService.GetTwoFactorMethodsAsync(UserId);
+
+        if (result.Success)
+        {
+            Methods = result.Get<List<UserTwoFactorMethod>>()!;
+            PreferredMethod = Methods.Single(x => x.Preferred).Method;
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private void ChangeMethod(TwoFactorMethod method)
+    {
+        PreferredMethod = method;
+    }
+}

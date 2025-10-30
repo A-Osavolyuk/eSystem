@@ -1,0 +1,56 @@
+@page "/sso/sign-out"
+
+@using eAccount.Security.Authentication.SSO
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject ISsoService SsoService
+@inject AuthenticationManager AuthenticationManager
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="3" Style="margin-top: 50px;">
+        <MudStack Spacing="2">
+            <MudPaper Outlined="true" Class="px-5 py-4">
+                <MudGrid>
+                    <MudItem xs="1">
+                        <MudAvatar Size="Size.Medium">
+                            <MudImage
+                                Src="/images/avatar.jpg"
+                                Alt="Avatar"
+                                FallbackSrc="/images/avatar.jpg"/>
+                        </MudAvatar>
+                    </MudItem>
+                    <MudItem xs="10">
+                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                            <MudTextM3 Class="pt-2">
+                                Signed-in as <strong>@UserState.Credentials?.Username</strong>
+                            </MudTextM3>
+                        </MudStack>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+            <MudButton
+                Size="Size.Large"
+                Color="Color.Error"
+                Variant="Variant.Outlined"
+                ButtonType="ButtonType.Button"
+                OnClick="@(async () => await OnSignOutAsync())">
+                Sign out
+            </MudButton>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    private async Task OnSignOutAsync()
+    {
+        var request = new SignOutRequest() { UserId = UserState.UserId };
+        var result = await SsoService.SignOutAsync(request);
+
+        if (result.Success) await AuthenticationManager.SignOutAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+}

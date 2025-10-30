@@ -1,0 +1,50 @@
+@page "/sso/callback"
+@using eAccount.Security.Authentication
+@using eAccount.Security.Authentication.SSO
+@using eAccount.Security.Authentication.SSO.Clients
+@using eSystem.Core.Security.Authentication.SSO.Token
+
+@inherits PageBase
+
+@inject ISsoService SsoService
+@inject IOptions<ClientOptions> Options
+@inject AuthenticationManager AuthenticationManager
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "code")]
+    public string Code { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "state")]
+    public string State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
+    
+    private ClientOptions ClientOptions => Options.Value;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new TokenRequest()
+        {
+            ClientId = ClientOptions.ClientId,
+            ClientSecret = ClientOptions.ClientSecret,
+            RedirectUri = ClientOptions.RedirectUri,
+            GrantType = GrantTypes.AuthorizationCode,
+            Code = Code,
+        };
+        
+        var result = await SsoService.TokenAsync(request);
+
+        if (result.Success)
+        {
+            var response = result.Get<TokenResponse>()!;
+            
+            await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken);
+            
+            var url = string.IsNullOrEmpty(ReturnUrl) ? Links.Profile : HttpUtility.UrlDecode(ReturnUrl!);
+            NavigationManager.NavigateTo(url);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+}
