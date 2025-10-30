@@ -4,7 +4,7 @@ using eSystem.Core.Validation.Validators;
 
 namespace eSystem.Auth.Api.Validation;
 
-public class RegistrationValidator : Validator<RegistrationRequest>
+public class RegistrationValidator : Validator<SignUpRequest>
 {
     public RegistrationValidator()
     {

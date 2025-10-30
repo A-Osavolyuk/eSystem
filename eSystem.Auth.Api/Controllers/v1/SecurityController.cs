@@ -13,8 +13,8 @@ public class SecurityController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
 
-    [EndpointSummary("Sign-in")]
-    [EndpointDescription("Sign-in")]
+    [EndpointSummary("Sign in")]
+    [EndpointDescription("Sign in")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
     [HttpPost("sign-in")]
@@ -32,15 +32,15 @@ public class SecurityController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Register")]
-    [EndpointDescription("Register")]
+    [EndpointSummary("Sign up")]
+    [EndpointDescription("Sign up")]
     [ProducesResponseType(200)]
     [AllowAnonymous]
-    [HttpPost("register")]
+    [HttpPost("sign-up")]
     [ValidationFilter]
-    public async ValueTask<IActionResult> RegisterAsync([FromBody] RegistrationRequest request)
+    public async ValueTask<IActionResult> RegisterAsync([FromBody] SignUpRequest request)
     {
-        var result = await sender.Send(new RegisterCommand(request));
+        var result = await sender.Send(new SignUpCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

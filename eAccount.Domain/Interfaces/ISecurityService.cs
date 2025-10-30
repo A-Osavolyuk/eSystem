@@ -6,7 +6,7 @@ namespace eAccount.Domain.Interfaces;
 public interface ISecurityService
 {
     public ValueTask<HttpResponse> SignInAsync(SignInRequest request);
-    public ValueTask<HttpResponse> RegisterAsync(RegistrationRequest request);
+    public ValueTask<HttpResponse> SignUpAsync(SignUpRequest request);
     public ValueTask<HttpResponse> ForgotPasswordAsync(ForgotPasswordRequest request);
     public ValueTask<HttpResponse> ResetPasswordAsync(ResetPasswordRequest request);
     public ValueTask<HttpResponse> ResetEmailAsync(ResetEmailRequest request);

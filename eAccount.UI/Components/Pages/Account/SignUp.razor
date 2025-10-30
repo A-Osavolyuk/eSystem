@@ -85,18 +85,18 @@
 
         if (form.IsValid)
         {
-            var request = new RegistrationRequest()
+            var request = new SignUpRequest()
             {
                 Email = Model.Email,
                 Password = Model.Password,
                 Username = Model.Username
             };
             
-            var result = await SecurityService.RegisterAsync(request);
+            var result = await SecurityService.SignUpAsync(request);
 
             if (result.Success)
             {
-                var response = result.Get<RegistrationResponse>()!;
+                var response = result.Get<SignUpResponse>()!;
 
                 Snackbar.Add(result.Message, Severity.Success);
 

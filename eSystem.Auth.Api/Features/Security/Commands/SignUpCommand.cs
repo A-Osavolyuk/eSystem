@@ -11,15 +11,15 @@ using eSystem.Core.Security.Identity.Email;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
 
-public sealed record RegisterCommand(RegistrationRequest Request) : IRequest<Result>;
+public sealed record SignUpCommand(SignUpRequest Request) : IRequest<Result>;
 
-public sealed class RegisterCommandHandler(
+public sealed class SignUpCommandHandler(
     IPermissionManager permissionManager,
     IUserManager userManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
-    IOptions<AccountOptions> options) : IRequestHandler<RegisterCommand, Result>
+    IOptions<AccountOptions> options) : IRequestHandler<SignUpCommand, Result>
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
@@ -28,7 +28,7 @@ public sealed class RegisterCommandHandler(
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly AccountOptions options = options.Value;
 
-    public async Task<Result> Handle(RegisterCommand request,
+    public async Task<Result> Handle(SignUpCommand request,
         CancellationToken cancellationToken)
     {
         if (options.RequireUniqueEmail)
@@ -97,7 +97,7 @@ public sealed class RegisterCommandHandler(
         var deviceResult = await deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
-        var response = new RegistrationResponse()
+        var response = new SignUpResponse()
         {
             UserId = user.Id,
         };

@@ -13,8 +13,8 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
         new HttpRequest { Url = $"{BasePath}/sign-in", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> RegisterAsync(RegistrationRequest request) => await apiClient.SendAsync(
-        new HttpRequest { Url = $"{BasePath}/register", Method = HttpMethod.Post, Data = request },
+    public async ValueTask<HttpResponse> SignUpAsync(SignUpRequest request) => await apiClient.SendAsync(
+        new HttpRequest { Url = $"{BasePath}/sign-up", Method = HttpMethod.Post, Data = request },
         new HttpOptions { Type = DataType.Text });
     
     public async ValueTask<HttpResponse> ForgotPasswordAsync(ForgotPasswordRequest request) => await apiClient.SendAsync(
