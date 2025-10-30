@@ -1,7 +1,5 @@
 ﻿using System.Net;
 using eAccount.Domain.Constants;
-using eAccount.Domain.Options;
-using eAccount.Infrastructure.Http;
 using eAccount.Infrastructure.Http.Extensions;
 using eAccount.Infrastructure.Security.Authentication.JWT;
 using eAccount.Infrastructure.Security.Authentication.SSO.Clients;
@@ -13,28 +11,26 @@ using eSystem.Core.Security.Authentication.SSO.Token;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using HttpRequest = eSystem.Core.Common.Http.HttpRequest;
-using HttpResponse = eSystem.Core.Common.Http.HttpResponse;
 
 namespace eAccount.Infrastructure.Implementations;
 
 public class ApiClient(
     IHttpClientFactory clientFactory,
     IHttpContextAccessor httpContextAccessor,
-    IFetchClient fetchClient,
     ICookieAccessor cookieAccessor,
     IOptions<ClientOptions> options,
     GatewayOptions gatewayOptions,
     TokenProvider tokenProvider,
-    NavigationManager navigationManager) : IApiClient
+    NavigationManager navigationManager,
+    AuthenticationManager authenticationManager) : IApiClient
 {
     private readonly IHttpClientFactory clientFactory = clientFactory;
     private readonly TokenProvider tokenProvider = tokenProvider;
-    private readonly IFetchClient fetchClient = fetchClient;
     private readonly ICookieAccessor cookieAccessor = cookieAccessor;
     private readonly IOptions<ClientOptions> options = options;
     private readonly GatewayOptions gatewayOptions = gatewayOptions;
     private readonly NavigationManager navigationManager = navigationManager;
+    private readonly AuthenticationManager authenticationManager = authenticationManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions)
@@ -108,7 +104,7 @@ public class ApiClient(
     {
         var clientOptions = options.Value;
         var refreshToken = cookieAccessor.Get(DefaultCookies.RefreshToken)!;
-        var tokenRequest = new TokenRequest()
+        var request = new TokenRequest()
         {
             ClientId = clientOptions.ClientId,
             ClientSecret = clientOptions.ClientSecret,
@@ -120,26 +116,18 @@ public class ApiClient(
         {
             Method = HttpMethod.Post,
             Url = "api/v1/Sso/token",
-            Data = tokenRequest
+            Data = request
         };
         
         var httpOptions = new HttpOptions() { Type = DataType.Text };
-        var tokenResult = await SendAsync(httpRequest, httpOptions);
+        var result = await SendAsync(httpRequest, httpOptions);
 
-        if (!tokenResult.Success) return tokenResult;
+        if (!result.Success) return result;
         
-        var tokenResponse = tokenResult.Get<TokenResponse>()!;
-        tokenProvider.AccessToken = tokenResponse.AccessToken;
-            
-        var refreshRequest = new RefreshRequest() { RefreshToken = tokenResponse.RefreshToken };
-        var fetchOptions = new FetchOptions()
-        {
-            Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/authentication/refresh",
-            Body = refreshRequest
-        };
+        var response = result.Get<TokenResponse>()!;
+        tokenProvider.AccessToken = response.AccessToken;
 
-        return await fetchClient.FetchAsync(fetchOptions);
+        return await authenticationManager.RefreshAsync(response.RefreshToken);
 
     }
 }

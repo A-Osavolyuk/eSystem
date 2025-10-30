@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using HttpRequest = eSystem.Core.Common.Http.HttpRequest;
 
 namespace eAccount.Infrastructure.Http.Extensions;
 

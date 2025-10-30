@@ -1,17 +1,13 @@
 @page "/sso/callback"
 
-@using eAccount.Infrastructure.Security.Authentication.JWT
+@using eAccount.Infrastructure.Security.Authentication
 @using eSystem.Core.Security.Authentication.SSO.Token
-@using SignInRequest = eAccount.Domain.Requests.SignInRequest
-@using SignInResponse = eAccount.Domain.Responses.SignInResponse
 
 @inherits PageBase
 
 @inject ISsoService SsoService
 @inject IOptions<ClientOptions> Options
-@inject IFetchClient FetchClient
-@inject TokenProvider TokenProvider
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthenticationManager AuthenticationManager
 
 @code {
 
@@ -42,42 +38,12 @@
         if (result.Success)
         {
             var response = result.Get<TokenResponse>()!;
-            await SignInAsync(response.AccessToken, response.RefreshToken);
+            
+            await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken);
+            
             var url = string.IsNullOrEmpty(ReturnUrl) ? Links.Profile : HttpUtility.UrlDecode(ReturnUrl!);
             NavigationManager.NavigateTo(url);
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
-    
-    private async Task SignInAsync(string accessToken, string refreshToken)
-    {
-        TokenProvider.AccessToken = accessToken;
-
-        var request = new SignInRequest()
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        };
-
-        var fetchOptions = new FetchOptions()
-        {
-            Url = $"{NavigationManager.BaseUri}api/authentication/sign-in",
-            Method = HttpMethod.Post,
-            Body = request
-        };
-
-        var result = await FetchClient.FetchAsync(fetchOptions);
-        var response = result.Get<SignInResponse>()!;
-
-        var identity = response.Identity;
-        var claims = identity.Claims
-            .Select(x => new Claim(x.Key, x.Value))
-            .ToList();
-
-        var claimsIdentity = new ClaimsIdentity(claims, identity.Scheme);
-        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-        (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
-    }
-
 }

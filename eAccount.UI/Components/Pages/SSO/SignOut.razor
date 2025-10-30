@@ -1,15 +1,14 @@
 @page "/sso/sign-out"
 
+@using eAccount.Infrastructure.Security.Authentication
 @using eAccount.Infrastructure.Security.Authentication.JWT
 
 @inherits PageBase
 
 @attribute [Authorize]
 
-@inject IFetchClient FetchClient
 @inject ISsoService SsoService
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject TokenProvider TokenProvider
+@inject AuthenticationManager AuthenticationManager
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="3" Style="margin-top: 50px;">
@@ -52,26 +51,7 @@
         var request = new SignOutRequest() { UserId = UserState.UserId };
         var result = await SsoService.SignOutAsync(request);
 
-        if (result.Success) await SignOutAsync();
+        if (result.Success) await AuthenticationManager.SignOutAsync();
         else Snackbar.Add(result.Message, Severity.Error);
-    }
-
-    private async Task SignOutAsync()
-    {
-        var fetchOptions = new FetchOptions()
-        {
-            Method = HttpMethod.Post,
-            Url = $"{NavigationManager.BaseUri}api/authentication/sign-out",
-        };
-
-        var result = await FetchClient.FetchAsync(fetchOptions);
-        if (result.Success)
-        {
-            await (AuthenticationStateProvider as JwtAuthenticationStateProvider)!.SignOutAsync();
-            await LocalStorage.ClearAsync();
-            TokenProvider.Clear();
-
-            NavigationManager.NavigateTo(Links.SignIn);
-        }
     }
 }
