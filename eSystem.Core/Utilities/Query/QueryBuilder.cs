@@ -7,48 +7,41 @@ public class QueryBuilder
 {
     private QueryBuilder()
     {
-        QueryParams = [];
-        Uri = string.Empty;
+        QueryParams = new Dictionary<string, string>();
+        BaseUri = string.Empty;
     }
 
-    private Dictionary<string, string> QueryParams { get; set; }
-    private string Uri { get; set; }
+    private Dictionary<string, string> QueryParams { get; }
+    private string BaseUri { get; set; }
 
-    public static QueryBuilder Create() => new QueryBuilder();
+    public static QueryBuilder Create() => new();
 
     public QueryBuilder WithUri(string uri)
     {
-        Uri = uri;
+        BaseUri = uri;
         return this;
     }
 
     public QueryBuilder WithQueryParam(string key, string value)
     {
-        var escapedValue = HttpUtility.UrlEncode(value);
-        QueryParams.Add(key, escapedValue);
+        QueryParams[key] = HttpUtility.UrlEncode(value);
         return this;
     }
 
     public string Build()
     {
-        if (QueryParams.Count == 0) return Uri;
+        if (QueryParams.Count == 0)
+            return BaseUri;
 
-        var builder = new StringBuilder(Uri);
-        
-        var isFirst = true;
-        foreach (var queryParam in QueryParams)
+        var builder = new StringBuilder(BaseUri);
+        var separator = BaseUri.Contains('?') ? '&' : '?';
+
+        foreach (var (key, value) in QueryParams)
         {
-            if (isFirst)
-            {
-                isFirst = false;
-                builder.Append($"?{queryParam.Key}={queryParam.Value}");
-            }
-            else
-            {
-                builder.Append($"&{queryParam.Key}={queryParam.Value}");
-            }
+            builder.Append($"{separator}{key}={value}");
+            separator = '&';
         }
-        
+
         return builder.ToString();
     }
 }
