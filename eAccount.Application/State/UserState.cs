@@ -1,8 +1,6 @@
-﻿using eAccount.Domain.Abstraction.State;
+﻿namespace eAccount.Application.State;
 
-namespace eAccount.Application.State;
-
-public class UserState : AsyncState
+public class UserState : States.State
 {
     public Guid UserId { get; set; }
     public UserCredentials? Credentials { get; set; }

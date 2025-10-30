@@ -1,4 +1,6 @@
-﻿namespace eAccount.Infrastructure.Storage;
+﻿using eAccount.Domain.Storage;
+
+namespace eAccount.Infrastructure.Storage;
 
 public class LocalStorage(ILocalStorageService localStorage) : IStorage
 {

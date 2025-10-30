@@ -1,6 +1,6 @@
-﻿namespace eAccount.Domain.Abstraction.State;
+﻿namespace eAccount.Application.State.States;
 
-public abstract class AsyncState
+public abstract class State
 {
     public event Func<Task>? OnChange;
 
