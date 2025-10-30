@@ -8,6 +8,7 @@ using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Protection;
 using eSystem.Core.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Authentication.SSO.Client;
+using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSystem.Auth.Api.Security.Authentication.SSO.Token.Strategies;
@@ -16,11 +17,15 @@ public class RefreshTokenStrategy(
     IProtectorFactory protectorFactory,
     ITokenManager tokenManager,
     IUserManager userManager,
+    IKeyFactory keyFactory,
+    ITokenFactory tokenFactory,
     IOptions<JwtOptions> options) : TokenStrategy
 {
     private readonly IProtectorFactory protectorFactory = protectorFactory;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
+    private readonly IKeyFactory keyFactory = keyFactory;
+    private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly JwtOptions options = options.Value;
 
     public override async ValueTask<Result> HandleAsync(TokenRequest request,
@@ -60,7 +65,7 @@ public class RefreshTokenStrategy(
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
             SessionId = session.Id,
-            Token = tokenManager.GenerateRefreshToken(),
+            Token = keyFactory.Create(20),
             ExpireDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays),
             CreateDate = DateTimeOffset.UtcNow
         };
@@ -77,7 +82,7 @@ public class RefreshTokenStrategy(
             new(AppClaimTypes.Scope, scopes)
         };
 
-        var accessToken = tokenManager.GenerateAccessToken(claims, client.Name);
+        var accessToken = tokenFactory.Create(claims, client.Name);
         var response = new TokenResponse()
         {
             AccessToken = accessToken,

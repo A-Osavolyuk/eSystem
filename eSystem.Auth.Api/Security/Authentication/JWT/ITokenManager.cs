@@ -13,7 +13,4 @@ public interface ITokenManager
         RefreshTokenEntity newToken, CancellationToken cancellationToken = default);
     public Task<Result> RemoveAsync(RefreshTokenEntity token, 
         CancellationToken cancellationToken = default);
-    
-    public string GenerateAccessToken(IEnumerable<Claim> claims, string audience);
-    public string GenerateRefreshToken(int length = 20);
 }

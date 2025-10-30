@@ -9,6 +9,7 @@ using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Authentication.SSO.Client;
+using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 using eSystem.Core.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;
@@ -21,6 +22,8 @@ public class AuthorizationCodeStrategy(
     IAuthorizationCodeManager authorizationCodeManager,
     ITokenManager tokenManager,
     IPkceHandler pkceHandler,
+    ITokenFactory tokenFactory,
+    IKeyFactory keyFactory,
     IProtectorFactory protectorFactory,
     IOptions<JwtOptions> options) : TokenStrategy
 {
@@ -29,6 +32,8 @@ public class AuthorizationCodeStrategy(
     private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IPkceHandler pkceHandler = pkceHandler;
+    private readonly ITokenFactory tokenFactory = tokenFactory;
+    private readonly IKeyFactory keyFactory = keyFactory;
     private readonly IProtectorFactory protectorFactory = protectorFactory;
     private readonly JwtOptions options = options.Value;
 
@@ -97,7 +102,7 @@ public class AuthorizationCodeStrategy(
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
             SessionId = session.Id,
-            Token = tokenManager.GenerateRefreshToken(),
+            Token = keyFactory.Create(20),
             ExpireDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays),
             CreateDate = DateTimeOffset.UtcNow
         };
@@ -116,7 +121,7 @@ public class AuthorizationCodeStrategy(
             new(AppClaimTypes.Scope, scopes)
         };
         
-        var accessToken = tokenManager.GenerateAccessToken(claims, client.Name);
+        var accessToken = tokenFactory.Create(claims, client.Name);
         var response = new TokenResponse()
         {
             AccessToken = accessToken,
