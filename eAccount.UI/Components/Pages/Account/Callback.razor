@@ -43,7 +43,7 @@
         {
             var response = result.Get<TokenResponse>()!;
             await SignInAsync(response.AccessToken, response.RefreshToken);
-            var url = string.IsNullOrEmpty(ReturnUrl) ? Links.Profile : ReturnUrl!;
+            var url = string.IsNullOrEmpty(ReturnUrl) ? Links.Profile : HttpUtility.UrlDecode(ReturnUrl!);
             NavigationManager.NavigateTo(url);
         }
         else Snackbar.Add(result.Message, Severity.Error);
