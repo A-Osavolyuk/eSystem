@@ -110,7 +110,6 @@
             Payload = new PasskeySignInPayload()
             {
                 Credential = credential,
-                Type = SignInType.Passkey
             }
         };
         var result = await SecurityService.SignInAsync(request);

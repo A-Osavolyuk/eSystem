@@ -107,7 +107,6 @@
             {
                 Payload = new PasskeySignInPayload()
                 {
-                    Type = SignInType.Passkey,
                     Credential = credential
                 }
             };
@@ -135,7 +134,7 @@
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.LockedOutPage)
                         .WithQueryParam("id", response.UserId.ToString());
-                    
+
                     NavigationManager.NavigateTo(builder.Build());
                 }
                 else

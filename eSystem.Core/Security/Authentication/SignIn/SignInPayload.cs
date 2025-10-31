@@ -3,11 +3,8 @@ using eSystem.Core.Security.Authentication.SignIn.Payloads;
 
 namespace eSystem.Core.Security.Authentication.SignIn;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
-[JsonDerivedType(typeof(PasswordSignInPayload), 0)]
-[JsonDerivedType(typeof(AuthenticatorSignInPayload), 1)]
-[JsonDerivedType(typeof(PasskeySignInPayload), 2)]
-public abstract class SignInPayload
-{
-    public required SignInType Type { get; set; }
-}
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+[JsonDerivedType(typeof(PasswordSignInPayload), "password")]
+[JsonDerivedType(typeof(AuthenticatorSignInPayload), "authenticator")]
+[JsonDerivedType(typeof(PasskeySignInPayload), "passkey")]
+public abstract class SignInPayload { }

@@ -110,7 +110,6 @@
             {
                 Payload = new PasswordSignInPayload()
                 {
-                    Type = SignInType.Password,
                     Password = Model.Password,
                     Login = Model.Login
                 }
@@ -128,10 +127,10 @@
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.TwoFactorLoginPage)
                         .WithQueryParam("id", response.UserId.ToString());
-                    
+
                     if (!string.IsNullOrEmpty(ReturnUrl))
                         builder.WithQueryParam("return_url", ReturnUrl);
-                    
+
                     NavigationManager.NavigateTo(builder.Build());
                     return;
                 }
@@ -153,13 +152,13 @@
                 if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
                 {
                     var device = response.DeviceId;
-                    
+
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.DeviceTrustPage)
                         .WithQueryParam("device", device.ToString()!)
                         .WithQueryParam("user", userId.ToString()!);
 
-                    if (!string.IsNullOrEmpty(ReturnUrl)) 
+                    if (!string.IsNullOrEmpty(ReturnUrl))
                         builder.WithQueryParam("return_url", ReturnUrl);
 
                     NavigationManager.NavigateTo(builder.Build());
@@ -196,7 +195,7 @@
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.LockedOutPage)
                         .WithQueryParam("id", userId.ToString()!);
-                    
+
                     NavigationManager.NavigateTo(builder.Build());
                 }
             }

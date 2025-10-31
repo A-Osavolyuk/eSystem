@@ -74,7 +74,6 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         var signInPayload = new OAuthSignInPayload()
         {
-            Type = SignInType.OAuth,
             LinkedAccount = linkedAccountType,
             Email = email,
             ReturnUri = request.ReturnUri!,

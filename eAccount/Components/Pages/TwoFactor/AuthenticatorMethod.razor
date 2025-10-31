@@ -83,21 +83,19 @@
 </MudStack>
 
 @code {
+
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
-    
+
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
-    
-    [Parameter] 
-    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
-    
-    [Parameter] 
-    public List<UserTwoFactorMethod> Methods { get; set; } = [];
-    
-    [SupplyParameterFromForm] 
-    public CodeModel Model { get; set; } = new();
-    
+
+    [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+
+    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+
+    [SupplyParameterFromForm] public CodeModel Model { get; set; } = new();
+
     private MudForm form = new();
     private readonly PatternMask mask = new("000000");
     private bool expanded;
@@ -112,12 +110,11 @@
             {
                 Payload = new AuthenticatorSignInPayload()
                 {
-                    Type = SignInType.AuthenticatorApp,
                     Code = Model.Code,
                     UserId = UserId
                 }
             };
-            
+
             var result = await SecurityService.SignInAsync(request);
 
             if (result.Success)
@@ -130,7 +127,7 @@
             else Snackbar.Add(result.Message, Severity.Error);
         }
     }
-    
+
     private void Expand() => expanded = !expanded;
     private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
 }
