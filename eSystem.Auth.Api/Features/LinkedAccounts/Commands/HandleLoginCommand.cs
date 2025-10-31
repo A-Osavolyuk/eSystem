@@ -1,21 +1,12 @@
 ﻿using System.Security.Claims;
-using eSystem.Auth.Api.Data.Entities;
-using eSystem.Auth.Api.Messaging;
-using eSystem.Auth.Api.Messaging.Messages.Email;
 using eSystem.Auth.Api.Security.Authentication;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
-using eSystem.Auth.Api.Security.Authentication.SSO.Session;
-using eSystem.Auth.Api.Security.Authorization.Devices;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
-using eSystem.Auth.Api.Security.Authorization.Permissions;
-using eSystem.Auth.Api.Security.Authorization.Roles;
+using eSystem.Auth.Api.Security.Identity.SignUp;
+using eSystem.Auth.Api.Security.Identity.SignUp.Strategies;
 using eSystem.Auth.Api.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Common.Messaging;
 using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Identity.Email;
-using eSystem.Core.Utilities.Query;
 
 namespace eSystem.Auth.Api.Features.LinkedAccounts.Commands;
 
@@ -25,27 +16,13 @@ public sealed record HandleLoginCommand(
     string? ReturnUri) : IRequest<Result>;
 
 public sealed class HandleOAuthLoginCommandHandler(
-    IPermissionManager permissionManager,
     IUserManager userManager,
-    IMessageService messageService,
-    IRoleManager roleManager,
-    IOAuthSessionManager oauthSessionManager,
-    ILinkedAccountManager providerManager,
-    IDeviceManager deviceManager,
-    ISignInResolver signInResolver,
-    IHttpContextAccessor httpContextAccessor,
-    ISessionManager sessionManager) : IRequestHandler<HandleLoginCommand, Result>
+    ISignUpResolver signUpResolver,
+    ISignInResolver signInResolver) : IRequestHandler<HandleLoginCommand, Result>
 {
-    private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
-    private readonly IMessageService messageService = messageService;
-    private readonly IRoleManager roleManager = roleManager;
-    private readonly IOAuthSessionManager oauthSessionManager = oauthSessionManager;
-    private readonly ILinkedAccountManager providerManager = providerManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
+    private readonly ISignUpResolver signUpResolver = signUpResolver;
     private readonly ISignInResolver signInResolver = signInResolver;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(HandleLoginCommand request,
         CancellationToken cancellationToken)
@@ -73,109 +50,25 @@ public sealed class HandleOAuthLoginCommandHandler(
             .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
         if (email is null) return Results.BadRequest("Email is not provider in credentials", fallbackUri);
-        
-        var session = await oauthSessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
-        if (session is null) return Results.NotFound("Session was not found", fallbackUri);
 
         var user = await userManager.FindByEmailAsync(email, cancellationToken);
         if (user is null)
         {
-            var taken = await userManager.IsEmailTakenAsync(email, cancellationToken);
-            if (taken) return Results.BadRequest("Email is already taken", fallbackUri);
-            
-            user = new UserEntity()
+            var signUpStrategy = signUpResolver.Resolve(SignUpType.OAuth);
+            var signUpPayload = new OAuthSignUpPayload()
             {
-                Id = Guid.CreateVersion7(),
-                Username = email,
-            };
-
-            var createResult = await userManager.CreateAsync(user, cancellationToken: cancellationToken);
-            if (!createResult.Succeeded) return Result.Failure(createResult.GetError(), fallbackUri);
-
-            var setResult = await userManager.SetEmailAsync(user, email, EmailType.Primary, cancellationToken);
-            if (!setResult.Succeeded) return setResult;
-
-            var role = await roleManager.FindByNameAsync("User", cancellationToken);
-            if (role is null) return Results.NotFound("Cannot find role 'User'", fallbackUri);
-
-            var assignResult = await roleManager.AssignAsync(user, role, cancellationToken);
-            if (!assignResult.Succeeded) return Result.Failure(assignResult.GetError(), fallbackUri);
-
-            if (role.Permissions.Count > 0)
-            {
-                var permissions = role.Permissions.Select(x => x.Permission).ToList();
-                foreach (var permission in permissions)
-                {
-                    var result = await permissionManager.GrantAsync(user, permission, cancellationToken);
-
-                    if (result.Succeeded) continue;
-                    return Result.Failure(result.GetError(), fallbackUri);
-                }
-            }
-
-            var userAgent = httpContext.GetUserAgent();
-            var ipAddress = httpContext.GetIpV4();
-            var clientInfo = httpContext.GetClientInfo();
-
-            var newDevice = new UserDeviceEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                UserId = user.Id,
-                UserAgent = userAgent,
-                IpAddress = ipAddress,
-                Browser = clientInfo.UA.ToString(),
-                OS = clientInfo.OS.ToString(),
-                Device = clientInfo.Device.ToString(),
-                IsTrusted = true,
-                IsBlocked = false,
-                FirstSeen = DateTimeOffset.UtcNow,
-                CreateDate = DateTimeOffset.UtcNow
-            };
-
-            var deviceResult = await deviceManager.CreateAsync(newDevice, cancellationToken);
-            if (!deviceResult.Succeeded) return Result.Failure(deviceResult.GetError(), fallbackUri);
-
-            var message = new OAuthSignUpMessage()
-            {
-                Credentials = new Dictionary<string, string>()
-                {
-                    { "To", user.GetEmail(EmailType.Primary)?.Email! },
-                    { "Subject", $"Account registered with {linkedAccountName}" },
-                },
-                Payload = new()
-                {
-                    { "UserName", user.Username },
-                    { "ProviderName", linkedAccountName }
-                }
-            };
-
-            await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-
-            var userLinkedAccount = new UserLinkedAccountEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                UserId = user.Id,
                 Type = linkedAccountType,
-                CreateDate = DateTimeOffset.UtcNow
+                Email = email,
+                ReturnUri = request.ReturnUri!,
+                Token = token,
+                SessionId = Guid.Parse(sessionId),
             };
-                
-            var linkedAccountResult = await providerManager.CreateAsync(userLinkedAccount, cancellationToken);
-            if(!linkedAccountResult.Succeeded) return Result.Failure(linkedAccountResult.GetError(), fallbackUri);
-
-            session.SignType = OAuthSignType.SignUp;
-            session.LinkedAccountId = userLinkedAccount.Id;
-
-            var sessionResult = await oauthSessionManager.UpdateAsync(session, cancellationToken);
-            if (!sessionResult.Succeeded) return Result.Failure(sessionResult.GetError(), fallbackUri);
             
-            await sessionManager.CreateAsync(newDevice, cancellationToken);
-
-
-            var builder = QueryBuilder.Create().WithUri(request.ReturnUri!)
-                .WithQueryParam("sessionId", session.Id.ToString())
-                .WithQueryParam("token", token);
+            var signUpResult = await signUpStrategy.SignUpAsync(signUpPayload, cancellationToken);
             
-            return Result.Success(builder.Build());
+            return !signUpResult.Succeeded 
+                ? Result.Failure(signUpResult.GetError(), fallbackUri) 
+                : signUpResult;
         }
 
         var credentials = new Dictionary<string, object>()
