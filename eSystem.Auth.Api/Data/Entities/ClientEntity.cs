@@ -24,4 +24,6 @@ public class ClientEntity : Entity
 
     public bool HasScopes(List<string> scopes)
         => scopes.All(scope => AllowedScopes.Any(x => x.Scope.Name == scope));
+
+    public bool HasScope(string scope) => AllowedScopes.Any(x => x.Scope.Name == scope);
 }
