@@ -12,7 +12,7 @@ public sealed class UserManager(
     IHasherFactory hasherFactory) : IUserManager
 {
     private readonly AuthDbContext context = context;
-    private readonly Hasher hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
+    private readonly IHasherFactory hasherFactory = hasherFactory;
 
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
@@ -236,6 +236,7 @@ public sealed class UserManager(
     public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
+        var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
         var passwordHash = hasher.Hash(newPassword);
 
         user.Password!.Hash = passwordHash;
@@ -420,6 +421,7 @@ public sealed class UserManager(
     public async ValueTask<Result> AddPasswordAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {
+        var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
         var passwordHash = hasher.Hash(password);
 
         user.Password!.Hash = passwordHash;
@@ -445,6 +447,7 @@ public sealed class UserManager(
 
         if (!string.IsNullOrEmpty(password))
         {
+            var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
             var passwordEntity = new PasswordEntity()
             {
                 UserId = user.Id,
@@ -511,12 +514,14 @@ public sealed class UserManager(
 
     public bool CheckPassword(UserEntity user, string password)
     {
+        var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
         return user.Password is not null && hasher.VerifyHash(password, user.Password.Hash);
     }
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user,
         string newPassword, CancellationToken cancellationToken = default)
     {
+        var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
         var newPasswordHash = hasher.Hash(newPassword);
 
         user.Password!.Hash = newPasswordHash;
