@@ -90,9 +90,46 @@ public sealed class ClaimBuilder
         return this;
     }
     
+    public ClaimBuilder WithAddress(string address)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Address, address));
+        return this;
+    }
+    
     public ClaimBuilder WithName(string name)
     {
         Claims.Add(new Claim(AppClaimTypes.Name, name));
+        return this;
+    }
+    
+    public ClaimBuilder WithGivenName(string givenName)
+    {
+        Claims.Add(new Claim(AppClaimTypes.GivenName, givenName));
+        return this;
+    }
+    
+    public ClaimBuilder WithFamilyName(string familyName)
+    {
+        Claims.Add(new Claim(AppClaimTypes.FamilyName, familyName));
+        return this;
+    }
+    
+    public ClaimBuilder WithPicture(string picture)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Picture, picture));
+        return this;
+    }
+    
+    public ClaimBuilder WithLocale(string locale)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Locale, locale));
+        return this;
+    }
+    
+    public ClaimBuilder WithUpdatedTime(DateTimeOffset updatedTime)
+    {
+        var unixSeconds = updatedTime.ToUnixTimeSeconds();
+        Claims.Add(new Claim(AppClaimTypes.UpdatedAt, unixSeconds.ToString()));
         return this;
     }
     
@@ -108,9 +145,61 @@ public sealed class ClaimBuilder
         return this;
     }
     
+    public ClaimBuilder WithEmailVerified(bool verified)
+    {
+        Claims.Add(new Claim(AppClaimTypes.EmailVerified, verified.ToString()));
+        return this;
+    }
+    
     public ClaimBuilder WithPhoneNumber(string phoneNumber)
     {
         Claims.Add(new Claim(AppClaimTypes.PhoneNumber, phoneNumber));
+        return this;
+    }
+    
+    public ClaimBuilder WithPhoneNumberVerified(bool verified)
+    {
+        Claims.Add(new Claim(AppClaimTypes.PhoneNumberVerified, verified.ToString()));
+        return this;
+    }
+    
+    public ClaimBuilder WithSessionId(string sessionId)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Sid, sessionId));
+        return this;
+    }
+    
+    public ClaimBuilder WithAuthorizedParty(string authorizedParty)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Azp, authorizedParty));
+        return this;
+    }
+    
+    public ClaimBuilder WithAuthenticationMethods(IEnumerable<string> methods)
+    {
+        foreach (var method in methods)
+        {
+            Claims.Add(new Claim(AppClaimTypes.Amr, method));
+        }
+        
+        return this;
+    }
+    
+    public ClaimBuilder WithAuthenticationContext(string context)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Acr, context));
+        return this;
+    }
+    
+    public ClaimBuilder WithAccessTokenHash(string hash)
+    {
+        Claims.Add(new Claim(AppClaimTypes.AccessTokenHash, hash));
+        return this;
+    }
+    
+    public ClaimBuilder WithAuthorizationCodeHash(string hash)
+    {
+        Claims.Add(new Claim(AppClaimTypes.AuthorizationCodeHash, hash));
         return this;
     }
     
