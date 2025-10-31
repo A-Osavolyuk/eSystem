@@ -238,8 +238,8 @@ public sealed class UserManager(
     {
         var passwordHash = hasher.Hash(newPassword);
 
-        user.PasswordHash = passwordHash;
-        user.PasswordChangeDate = DateTimeOffset.UtcNow;
+        user.Password!.Hash = passwordHash;
+        user.Password!.UpdateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
@@ -319,8 +319,8 @@ public sealed class UserManager(
 
     public async ValueTask<Result> RemovePasswordAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        user.PasswordHash = string.Empty;
-        user.PasswordChangeDate = DateTimeOffset.UtcNow;
+        user.Password!.Hash = string.Empty;
+        user.Password.UpdateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
@@ -423,8 +423,8 @@ public sealed class UserManager(
     {
         var passwordHash = hasher.Hash(password);
 
-        user.PasswordHash = passwordHash;
-        user.PasswordChangeDate = DateTimeOffset.UtcNow;
+        user.Password!.Hash = passwordHash;
+        user.Password!.UpdateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
@@ -446,8 +446,14 @@ public sealed class UserManager(
 
         if (!string.IsNullOrEmpty(password))
         {
-            var passwordHash = hasher.Hash(password);
-            user.PasswordHash = passwordHash;
+            var passwordEntity = new PasswordEntity()
+            {
+                UserId = user.Id,
+                Hash = hasher.Hash(password),
+                CreateDate = DateTimeOffset.UtcNow
+            };
+            
+            await context.Passwords.AddAsync(passwordEntity, cancellationToken);
         }
 
         var verificationMethod = new UserVerificationMethodEntity()
@@ -506,7 +512,7 @@ public sealed class UserManager(
 
     public bool CheckPassword(UserEntity user, string password)
     {
-        return hasher.VerifyHash(password, user.PasswordHash);
+        return hasher.VerifyHash(password, user.Password?.Hash ?? string.Empty);
     }
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user,
@@ -514,8 +520,8 @@ public sealed class UserManager(
     {
         var newPasswordHash = hasher.Hash(newPassword);
 
-        user.PasswordHash = newPasswordHash;
-        user.PasswordChangeDate = DateTimeOffset.UtcNow;
+        user.Password!.Hash = newPasswordHash;
+        user.Password.UpdateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);

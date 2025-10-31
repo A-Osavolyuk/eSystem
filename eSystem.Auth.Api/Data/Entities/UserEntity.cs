@@ -15,17 +15,18 @@ public class UserEntity : Entity
     public string Username { get; set; } = string.Empty;
     public string NormalizedUsername { get; set; } = string.Empty;
     public DateTimeOffset? UsernameChangeDate { get; set; }
-
-    public string PasswordHash { get; set; } = string.Empty;
-    public DateTimeOffset? PasswordChangeDate { get; set; }
-
     public bool AccountConfirmed { get; set; }
     public bool TwoFactorEnabled { get; set; }
     public int FailedLoginAttempts { get; set; }
 
     public int CodeResendAttempts { get; set; }
     public DateTimeOffset? CodeResendAvailableDate { get; set; }
-
+    
+    public PasswordEntity? Password { get; set; }
+    public PersonalDataEntity? PersonalData { get; set; }
+    public UserSecretEntity? Secret { get; set; }
+    public UserLockoutStateEntity LockoutState { get; set; } = null!;
+    public ConsentEntity Consent { get; set; } = null!;
     public ICollection<UserEmailEntity> Emails { get; set; } = null!;
     public ICollection<UserPhoneNumberEntity> PhoneNumbers { get; set; } = null!;
     public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;
@@ -35,12 +36,8 @@ public class UserEntity : Entity
     public ICollection<UserLinkedAccountEntity> LinkedAccounts { get; init; } = null!;
     public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
     public ICollection<UserVerificationMethodEntity> VerificationMethods { get; init; } = null!;
-    public UserLockoutStateEntity LockoutState { get; set; } = null!;
-    public PersonalDataEntity? PersonalData { get; set; } = null!;
-    public UserSecretEntity? Secret { get; set; } = null!;
-    public ConsentEntity Consent { get; set; } = null!;
 
-    public bool HasPassword() => !string.IsNullOrEmpty(PasswordHash);
+    public bool HasPassword() => Password is not null;
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);
     public bool HasPhoneNumber(PhoneNumberType type) => PhoneNumbers.Any(x => x.Type == type);
     public bool HasLinkedAccounts() => LinkedAccounts.Count > 0;

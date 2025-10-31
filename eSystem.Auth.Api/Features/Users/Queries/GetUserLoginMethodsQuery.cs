@@ -25,7 +25,7 @@ public class GetUserLoginMethodsQueryHandler(
             PasswordData = new PasswordData()
             {
                 HasPassword = user.HasPassword(),
-                LastChange = user.PasswordChangeDate
+                LastChange = user.Password?.UpdateDate
             },
             TwoFactorData = new TwoFactorData()
             {

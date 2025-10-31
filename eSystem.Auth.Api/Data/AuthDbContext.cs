@@ -6,6 +6,7 @@ namespace eSystem.Auth.Api.Data;
 public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {
     public DbSet<UserEntity> Users { get; set; }
+    public DbSet<PasswordEntity> Passwords { get; set; }
     public DbSet<UserEmailEntity> UserEmails { get; set; }
     public DbSet<UserPhoneNumberEntity> UserPhoneNumbers { get; set; }
     public DbSet<UserRoleEntity> UserRoles { get; set; }
@@ -47,11 +48,20 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Username).HasMaxLength(64);
             entity.Property(x => x.NormalizedUsername).HasMaxLength(64);
-            entity.Property(x => x.PasswordHash).HasMaxLength(1000);
             
             entity.HasOne(p => p.PersonalData)
                 .WithOne(u => u.User)
                 .HasForeignKey<UserEntity>(p => p.PersonalDataId);
+        });
+
+        builder.Entity<PasswordEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Hash).HasMaxLength(1000);
+
+            entity.HasOne(x => x.User)
+                .WithOne(x => x.Password)
+                .HasForeignKey<PasswordEntity>(x => x.UserId);
         });
 
         builder.Entity<UserEmailEntity>(entity =>
