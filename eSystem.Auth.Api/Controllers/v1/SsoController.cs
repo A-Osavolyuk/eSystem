@@ -8,7 +8,6 @@ namespace eSystem.Auth.Api.Controllers.v1;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
-[AllowAnonymous]
 public class SsoController(ISender sender) : ControllerBase
 {
     private readonly ISender sender = sender;
@@ -17,6 +16,7 @@ public class SsoController(ISender sender) : ControllerBase
     [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]
     [HttpPost("authorize")]
+    [AllowAnonymous]
     public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
     {
         var result = await sender.Send(new AuthorizeCommand(request));
@@ -34,6 +34,7 @@ public class SsoController(ISender sender) : ControllerBase
     [EndpointDescription("Token")]
     [ProducesResponseType(200)]
     [HttpPost("token")]
+    [AllowAnonymous]
     public async ValueTask<IActionResult> TokenAsync([FromBody] TokenRequest request)
     {
         var result = await sender.Send(new TokenCommand(request));
@@ -51,6 +52,7 @@ public class SsoController(ISender sender) : ControllerBase
     [EndpointDescription("Sign-out")]
     [ProducesResponseType(200)]
     [HttpPost("sign-out")]
+    [Authorize]
     public async ValueTask<IActionResult> SignOutAsync([FromBody] SignOutRequest request)
     {
         var result = await sender.Send(new SignOutCommand(request));
