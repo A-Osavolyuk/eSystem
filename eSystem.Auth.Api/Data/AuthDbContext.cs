@@ -156,7 +156,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.Method).HasEnumConversion();
             
             entity.HasOne(x => x.User)
-                .WithMany(x => x.Methods)
+                .WithMany(x => x.TwoFactorMethods)
                 .HasForeignKey(x => x.UserId);
         });
         

@@ -10,9 +10,9 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     public async ValueTask<Result> SubscribeAsync(UserEntity user, TwoFactorMethod method,
         bool preferred = false, CancellationToken cancellationToken = default)
     {
-        if (preferred && user.Methods.Any(x => x.Preferred))
+        if (preferred && user.TwoFactorMethods.Any(x => x.Preferred))
         {
-            var preferredMethod = user.Methods.First(x => x.Preferred);
+            var preferredMethod = user.TwoFactorMethods.First(x => x.Preferred);
             preferredMethod.Preferred = false;
             preferredMethod.UpdateDate = DateTimeOffset.UtcNow;
 
@@ -47,7 +47,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         context.Users.Update(user);
-        context.UserTwoFactorMethods.RemoveRange(user.Methods);
+        context.UserTwoFactorMethods.RemoveRange(user.TwoFactorMethods);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -65,9 +65,9 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     public async ValueTask<Result> PreferAsync(UserEntity user,
         TwoFactorMethod method, CancellationToken cancellationToken = default)
     {
-        if (user.Methods.Count == 1) return Results.BadRequest("Cannot change the only preferred method");
+        if (user.TwoFactorMethods.Count == 1) return Results.BadRequest("Cannot change the only preferred method");
 
-        var currentPreferredMethod = user.Methods.Single(x => x.Preferred);
+        var currentPreferredMethod = user.TwoFactorMethods.Single(x => x.Preferred);
         currentPreferredMethod.Preferred = false;
         currentPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
         

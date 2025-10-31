@@ -31,7 +31,7 @@ public class UserEntity : Entity
     public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;
     public ICollection<UserRoleEntity> Roles { get; init; } = null!;
     public ICollection<UserRecoveryCodeEntity> RecoveryCodes { get; init; } = null!;
-    public ICollection<UserTwoFactorMethodEntity> Methods { get; init; } = null!;
+    public ICollection<UserTwoFactorMethodEntity> TwoFactorMethods { get; init; } = null!;
     public ICollection<UserLinkedAccountEntity> LinkedAccounts { get; init; } = null!;
     public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
     public ICollection<UserVerificationMethodEntity> VerificationMethods { get; init; } = null!;
@@ -45,10 +45,10 @@ public class UserEntity : Entity
     public bool HasPhoneNumber(PhoneNumberType type) => PhoneNumbers.Any(x => x.Type == type);
     public bool HasLinkedAccounts() => LinkedAccounts.Count > 0;
     public bool HasLinkedAccount(LinkedAccountType type) => LinkedAccounts.Any(x => x.Type == type);
-    public bool HasMethods() => Methods.Count > 0;
+    public bool HasMethods() => TwoFactorMethods.Count > 0;
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasPasskeys() => Devices.Select(x => x.Passkey).Any(x => x is not null);
-    public bool HasTwoFactor(TwoFactorMethod type) => Methods.Any(x => x.Method == type);
+    public bool HasTwoFactor(TwoFactorMethod type) => TwoFactorMethods.Any(x => x.Method == type);
     public bool HasVerification(VerificationMethod method)
         => VerificationMethods.Any(x => x.Method == method);
 }

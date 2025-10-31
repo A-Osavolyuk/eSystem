@@ -25,7 +25,7 @@ public static class UserEntityExtensions
         => user.PhoneNumbers.FirstOrDefault(x => x.Type == type);
 
     public static UserTwoFactorMethodEntity? GetTwoFactorMethod(this UserEntity user, TwoFactorMethod method)
-        => user.Methods.FirstOrDefault(x => x.Method == method);
+        => user.TwoFactorMethods.FirstOrDefault(x => x.Method == method);
 
     public static UserVerificationMethodEntity? GetVerificationMethod(this UserEntity user, VerificationMethod method)
         => user.VerificationMethods.FirstOrDefault(x => x.Method == method);
