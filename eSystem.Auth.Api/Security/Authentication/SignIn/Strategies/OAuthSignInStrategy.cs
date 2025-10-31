@@ -5,12 +5,22 @@ using eSystem.Auth.Api.Security.Authorization.Devices;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Utilities.Query;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 
-public class LinkedAccountSignInStrategy(
+public sealed class OAuthSignInPayload : SignInPayload
+{
+    public required Guid SessionId { get; set; }
+    public required string Email { get; set; }
+    public required string ReturnUri { get; set; }
+    public required string Token { get; set; }
+    public required LinkedAccountType LinkedAccount { get; set; }
+}
+
+public sealed class OAuthSignInStrategy(
     IUserManager userManager,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
@@ -27,23 +37,14 @@ public class LinkedAccountSignInStrategy(
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
-    public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials,
+    public override async ValueTask<Result> SignInAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
-        var email = credentials["Email"] as string;
-        var fallbackUri = (credentials["FallbackUri"] as string)!;
-        var returnUri = credentials["ReturnUri"] as string;
-        var linkedAccountType = (LinkedAccountType)credentials["Type"];
-        var sessionId = credentials["SessionId"] as string;
-        var token = credentials["Token"] as string;
+        if(payload is not OAuthSignInPayload oauthPayload)
+            return Results.BadRequest("Invalid payload type");
 
-        if (string.IsNullOrWhiteSpace(email)) return Results.BadRequest("Email is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(returnUri)) return Results.BadRequest("Return URI is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(token)) return Results.BadRequest("Token name is empty", fallbackUri);
-        if (string.IsNullOrWhiteSpace(sessionId)) return Results.BadRequest("Session ID is empty", fallbackUri);
-
-        var user = await userManager.FindByEmailAsync(email, cancellationToken);
-        if (user is null) return Results.BadRequest($"Cannot find user with email {email}.");
+        var user = await userManager.FindByEmailAsync(oauthPayload.Email, cancellationToken);
+        if (user is null) return Results.BadRequest($"Cannot find user with email {oauthPayload.Email}.");
 
         var userAgent = httpContext.GetUserAgent();
         var ipAddress = httpContext.GetIpV4();
@@ -71,47 +72,47 @@ public class LinkedAccountSignInStrategy(
             if (!result.Succeeded) return result;
         }
         
-        if (device.IsBlocked) return Results.BadRequest("Device is blocked", fallbackUri);
+        if (device.IsBlocked) return Results.BadRequest("Device is blocked");
         if (!device.IsTrusted)
         {
             var deviceResult = await deviceManager.TrustAsync(device, cancellationToken);
-            if (!deviceResult.Succeeded) return Result.Failure(deviceResult.GetError(), fallbackUri);
+            if (!deviceResult.Succeeded) return Result.Failure(deviceResult.GetError());
         }
 
         if (user.LockoutState.Enabled)
         {
             var lockoutResult = await lockoutManager.UnblockAsync(user, cancellationToken);
-            if (!lockoutResult.Succeeded) return Result.Failure(lockoutResult.GetError(), fallbackUri);
+            if (!lockoutResult.Succeeded) return Result.Failure(lockoutResult.GetError());
         }
 
         var linkedAccount = new UserLinkedAccountEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Type = linkedAccountType,
+            Type = oauthPayload.LinkedAccount,
             CreateDate = DateTimeOffset.UtcNow,
         };
 
-        if (!user.HasLinkedAccount(linkedAccountType))
+        if (!user.HasLinkedAccount(oauthPayload.LinkedAccount))
         {
             var connectResult = await providerManager.CreateAsync(linkedAccount, cancellationToken);
-            if (!connectResult.Succeeded) return Result.Failure(connectResult.GetError(), fallbackUri);
+            if (!connectResult.Succeeded) return Result.Failure(connectResult.GetError());
         }
 
-        var session = await oauthSessionManager.FindAsync(Guid.Parse(sessionId), token, cancellationToken);
-        if (session is null) return Results.BadRequest("Cannot find session with id {sessionId}.", fallbackUri);
+        var session = await oauthSessionManager.FindAsync(oauthPayload.SessionId, oauthPayload.Token, cancellationToken);
+        if (session is null) return Results.BadRequest($"Cannot find session with id {oauthPayload.SessionId}.");
 
         session.SignType = OAuthSignType.SignIn;
         session.LinkedAccountId = linkedAccount.Id;
 
         var updateResult = await oauthSessionManager.UpdateAsync(session, cancellationToken);
-        if (!updateResult.Succeeded) return Result.Failure(updateResult.GetError(), fallbackUri);
+        if (!updateResult.Succeeded) return Result.Failure(updateResult.GetError());
         
         await sessionManager.CreateAsync(device, cancellationToken);
 
-        var builder = QueryBuilder.Create().WithUri(returnUri)
+        var builder = QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("sessionId", session.Id.ToString())
-            .WithQueryParam("token", token);
+            .WithQueryParam("token", oauthPayload.Token);
         
         return Result.Success(builder.Build());
     }

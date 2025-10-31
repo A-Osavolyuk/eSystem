@@ -5,5 +5,5 @@ public enum SignInType
     Password,
     AuthenticatorApp,
     Passkey,
-    LinkedAccount
+    OAuth
 }

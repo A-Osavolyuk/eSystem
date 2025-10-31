@@ -8,6 +8,8 @@ using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.Lockout;
+using eSystem.Core.Security.Authentication.SignIn;
+using eSystem.Core.Security.Authentication.SignIn.Payloads;
 using eSystem.Core.Security.Identity.Email;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
@@ -29,29 +31,26 @@ public sealed class PasswordSignInStrategy(
     private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly SignInOptions options = options.Value;
 
-    public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials,
+    public override async ValueTask<Result> SignInAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
-        var login = credentials["Login"].ToString();
-        var password = credentials["Password"].ToString();
-
-        if (string.IsNullOrEmpty(login)) return Results.BadRequest("Empty login");
-        if (string.IsNullOrEmpty(password)) return Results.BadRequest("Empty password");
-
         UserEntity? user = null;
         SignInResponse? response;
+        
+        if(payload is not PasswordSignInPayload passwordPayload)
+            return Results.BadRequest("Invalid payload type");
 
         if (options.AllowUserNameLogin)
         {
-            user = await userManager.FindByUsernameAsync(login, cancellationToken);
+            user = await userManager.FindByUsernameAsync(passwordPayload.Login, cancellationToken);
         }
 
         if (user is null && options.AllowEmailLogin)
         {
-            user = await userManager.FindByEmailAsync(login, cancellationToken);
+            user = await userManager.FindByEmailAsync(passwordPayload.Login, cancellationToken);
         }
 
-        if (user is null) return Results.NotFound($"Cannot find user with login {password}.");
+        if (user is null) return Results.NotFound($"Cannot find user with login {passwordPayload.Login}.");
         if (!user.HasPassword()) return Results.BadRequest("Cannot log in, you don't have a password.");
 
         var userAgent = httpContext.GetUserAgent()!;
@@ -106,7 +105,7 @@ public sealed class PasswordSignInStrategy(
 
         if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
-        var isValidPassword = passwordManager.Check(user, password);
+        var isValidPassword = passwordManager.Check(user, passwordPayload.Password);
         if (!isValidPassword)
         {
             user.FailedLoginAttempts += 1;

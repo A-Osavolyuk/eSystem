@@ -9,6 +9,7 @@ using eSystem.Core.Common.Logging;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Data;
 using eSystem.Core.Validation;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +27,15 @@ builder.AddStorage();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddControllers().AddJsonOptions(cfg => cfg.JsonSerializerOptions.WriteIndented = true);
-builder.Services.AddMediatR(
-    cfg => cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>());
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(cfg =>
+    {
+        cfg.JsonSerializerOptions.WriteIndented = true;
+        cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>());
 
 var app = builder.Build();
 

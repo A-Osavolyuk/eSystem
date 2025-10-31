@@ -2,6 +2,7 @@
 
 @using eAccount.Common.Models
 @using eAccount.Security.Credentials.PublicKey
+@using eSystem.Core.Security.Authentication.SignIn.Payloads
 @using eSystem.Core.Security.Authentication.SignIn
 
 @inherits PageBase
@@ -104,10 +105,10 @@
             var credential = authenticateResult.Get<PublicKeyCredential>();
             var request = new SignInRequest()
             {
-                Type = SignInType.Passkey,
-                Credentials = new()
+                Payload = new PasskeySignInPayload()
                 {
-                    { "Credential", credential }
+                    Type = SignInType.Passkey,
+                    Credential = credential
                 }
             };
 

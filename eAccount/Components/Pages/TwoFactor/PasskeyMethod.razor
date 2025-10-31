@@ -1,6 +1,7 @@
 ﻿@using eAccount.Common.State.States
 @using eAccount.Security.Credentials.PublicKey
 @using eSystem.Core.Security.Authentication.SignIn
+@using eSystem.Core.Security.Authentication.SignIn.Payloads
 @using eSystem.Core.Security.Authentication.TwoFactor
 
 @inject UserState UserState
@@ -106,8 +107,11 @@
     {
         var request = new SignInRequest()
         {
-            Type = SignInType.Passkey,
-            Credentials = new() { { "Credential", credential } }
+            Payload = new PasskeySignInPayload()
+            {
+                Credential = credential,
+                Type = SignInType.Passkey
+            }
         };
         var result = await SecurityService.SignInAsync(request);
 

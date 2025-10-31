@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using eSystem.Auth.Api.Security.Authentication;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
+using eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Auth.Api.Security.Identity.SignUp;
 using eSystem.Auth.Api.Security.Identity.SignUp.Strategies;
@@ -71,17 +72,17 @@ public sealed class HandleOAuthLoginCommandHandler(
                 : signUpResult;
         }
 
-        var credentials = new Dictionary<string, object>()
+        var signInPayload = new OAuthSignInPayload()
         {
-            { "Email", email },
-            { "FallbackUri", fallbackUri },
-            { "ReturnUri", request.ReturnUri! },
-            { "Type", linkedAccountType },
-            { "SessionId", sessionId },
-            { "Token", token },
+            Type = SignInType.OAuth,
+            LinkedAccount = linkedAccountType,
+            Email = email,
+            ReturnUri = request.ReturnUri!,
+            Token = token,
+            SessionId = Guid.Parse(sessionId),
         };
         
-        var strategy = signInResolver.Resolve(SignInType.LinkedAccount);
-        return await strategy.SignInAsync(credentials, cancellationToken);
+        var strategy = signInResolver.Resolve(SignInType.OAuth);
+        return await strategy.SignInAsync(signInPayload, cancellationToken);
     }
 }

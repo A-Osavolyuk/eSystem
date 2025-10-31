@@ -1,6 +1,8 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.SignIn;
+using eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.SignIn;
+using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
 
@@ -12,11 +14,10 @@ public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHand
 
     public async Task<Result> Handle(SignInCommand request, CancellationToken cancellationToken)
     {
-        var type = request.Request.Type;
-        if (type == SignInType.LinkedAccount) return Results.BadRequest("Unsupported for manual call");
+        var type = request.Request.Payload.Type;
+        if (type == SignInType.OAuth) return Results.BadRequest("Unsupported for manual call");
         
-        var credentials = request.Request.Credentials;
         var strategy = signInResolver.Resolve(type);
-        return await strategy.SignInAsync(credentials, cancellationToken);
+        return await strategy.SignInAsync(request.Request.Payload, cancellationToken);
     }
 }

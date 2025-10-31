@@ -9,11 +9,13 @@ using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.Lockout;
+using eSystem.Core.Security.Authentication.SignIn;
+using eSystem.Core.Security.Authentication.SignIn.Payloads;
 using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 
-public class AuthenticatorSignInStrategy(
+public sealed class AuthenticatorSignInStrategy(
     IUserManager userManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
@@ -32,19 +34,16 @@ public class AuthenticatorSignInStrategy(
     private readonly SignInOptions options = options.Value;
     private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.Secret);
 
-    public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 
+    public override async ValueTask<Result> SignInAsync(SignInPayload payload, 
         CancellationToken cancellationToken = default)
     {
         SignInResponse? response;
-        
-        var userId = credentials["UserId"].ToString();
-        var code = credentials["Code"].ToString();
 
-        if (string.IsNullOrEmpty(code)) return Results.BadRequest("Code is empty");
-        if (string.IsNullOrEmpty(userId)) return Results.BadRequest("User ID is empty");
+        if (payload is not AuthenticatorSignInPayload authenticatorPayload)
+            return Results.BadRequest("Invalid payload type");
 
-        var user = await userManager.FindByIdAsync(Guid.Parse(userId), cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {userId}.");
+        var user = await userManager.FindByIdAsync(authenticatorPayload.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {authenticatorPayload.UserId}.");
 
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
@@ -76,7 +75,7 @@ public class AuthenticatorSignInStrategy(
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
-        var isCodeVerified = AuthenticatorUtils.VerifyCode(code, unprotectedSecret);
+        var isCodeVerified = AuthenticatorUtils.VerifyCode(authenticatorPayload.Code, unprotectedSecret);
 
         if (!isCodeVerified)
         {
@@ -91,7 +90,7 @@ public class AuthenticatorSignInStrategy(
                     MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
                 };
 
-                return Results.BadRequest($"Invalid two-factor code {code}.", response);
+                return Results.BadRequest($"Invalid two-factor code {authenticatorPayload.Code}.", response);
             }
 
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);

@@ -1,5 +1,6 @@
 ﻿@page "/account/sign-in"
 @using eAccount.Common.Models
+@using eSystem.Core.Security.Authentication.SignIn.Payloads
 @using eSystem.Core.Security.Authentication.SignIn
 
 @inherits PageBase
@@ -107,11 +108,11 @@
         {
             var request = new SignInRequest()
             {
-                Type = SignInType.Password,
-                Credentials = new()
+                Payload = new PasswordSignInPayload()
                 {
-                    { "Password", Model.Password },
-                    { "Login", Model.Login },
+                    Type = SignInType.Password,
+                    Password = Model.Password,
+                    Login = Model.Login
                 }
             };
             var result = await SecurityService.SignInAsync(request);

@@ -1,6 +1,7 @@
 ﻿@using eAccount.Common.Models
 @using eAccount.Common.State.States
 @using eSystem.Core.Security.Authentication.SignIn
+@using eSystem.Core.Security.Authentication.SignIn.Payloads
 @using eSystem.Core.Security.Authentication.TwoFactor
 
 @inject CodeModelValidator Validator
@@ -109,11 +110,11 @@
         {
             var request = new SignInRequest()
             {
-                Type = SignInType.AuthenticatorApp,
-                Credentials = new()
+                Payload = new AuthenticatorSignInPayload()
                 {
-                    { "UserId", UserId },
-                    { "Code", Model.Code },
+                    Type = SignInType.AuthenticatorApp,
+                    Code = Model.Code,
+                    UserId = UserId
                 }
             };
             

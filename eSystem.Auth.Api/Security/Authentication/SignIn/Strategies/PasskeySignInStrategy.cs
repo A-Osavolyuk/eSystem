@@ -4,12 +4,13 @@ using eSystem.Auth.Api.Security.Credentials.PublicKey.Credentials;
 using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Authentication.SignIn;
+using eSystem.Core.Security.Authentication.SignIn.Payloads;
 using eSystem.Core.Security.Credentials.Constants;
-using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 
-public class PasskeySignInStrategy(
+public sealed class PasskeySignInStrategy(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
     ISessionManager sessionManager,
@@ -20,14 +21,15 @@ public class PasskeySignInStrategy(
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
 
-    public override async ValueTask<Result> SignInAsync(Dictionary<string, object> credentials, 
+    public override async ValueTask<Result> SignInAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
-        SignInResponse response;   
-        
-        var credential = credentials["Credential"] as PublicKeyCredential;
-        if (credential is null) return Results.BadRequest("Credential is empty");
-        
+        SignInResponse response;
+
+        if (payload is not PasskeySignInPayload passkeyPayload)
+            return Results.BadRequest("Invalid payload type");
+
+        var credential = passkeyPayload.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
         var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null) return Results.BadRequest("Invalid credential");
@@ -56,7 +58,7 @@ public class PasskeySignInStrategy(
         var ipAddress = httpContext.GetIpV4()!;
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound($"Invalid device.");
-        
+
         await sessionManager.CreateAsync(device, cancellationToken);
 
         response = new SignInResponse() { UserId = user.Id, };

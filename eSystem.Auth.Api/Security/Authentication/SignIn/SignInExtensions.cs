@@ -12,6 +12,6 @@ public static class SignInExtensions
         services.AddKeyedScoped<SignInStrategy, PasswordSignInStrategy>(SignInType.Password);
         services.AddKeyedScoped<SignInStrategy, PasskeySignInStrategy>(SignInType.Passkey);
         services.AddKeyedScoped<SignInStrategy, AuthenticatorSignInStrategy>(SignInType.AuthenticatorApp);
-        services.AddKeyedScoped<SignInStrategy, LinkedAccountSignInStrategy>(SignInType.LinkedAccount);
+        services.AddKeyedScoped<SignInStrategy, OAuthSignInStrategy>(SignInType.OAuth);
     }
 }

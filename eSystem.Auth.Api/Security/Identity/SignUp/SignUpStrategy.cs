@@ -5,7 +5,4 @@ public abstract class SignUpStrategy
     public abstract ValueTask<Result> SignUpAsync(SignUpPayload payload, CancellationToken cancellationToken = default);
 }
 
-public abstract class SignUpPayload()
-{
-    
-}
+public abstract class SignUpPayload() {}
