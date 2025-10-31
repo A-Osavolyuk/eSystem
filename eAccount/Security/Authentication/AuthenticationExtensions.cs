@@ -32,7 +32,7 @@ public static class AuthenticationExtensions
                 Scopes.Address,
                 Scopes.Email,
                 Scopes.OpenId,
-                Scopes.PhoneNumber,
+                Scopes.Phone,
                 Scopes.Profile,
             ];
         });
