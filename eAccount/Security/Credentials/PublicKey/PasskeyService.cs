@@ -15,7 +15,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
 
     public async ValueTask<HttpResponse> GenerateCreationOptionsAsync(GenerateCreationOptionsRequest request) => await apiClient.SendAsync(
         new HttpRequest { Url = $"{BasePath}/options/attestation", Method = HttpMethod.Post, Data = request },
-        new HttpOptions { Type = DataType.Text });
+        new HttpOptions { Type = DataType.Text, WithBearer = true});
     
     public async ValueTask<HttpResponse> GenerateRequestOptionsAsync(
         GenerateRequestOptionsRequest request) => await apiClient.SendAsync(
