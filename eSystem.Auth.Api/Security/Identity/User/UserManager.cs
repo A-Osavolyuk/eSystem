@@ -319,10 +319,9 @@ public sealed class UserManager(
 
     public async ValueTask<Result> RemovePasswordAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        user.Password!.Hash = string.Empty;
-        user.Password.UpdateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
-
+        
+        context.Passwords.Remove(user.Password!);
         context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
