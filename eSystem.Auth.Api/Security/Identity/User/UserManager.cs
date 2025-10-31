@@ -31,6 +31,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .ThenInclude(x => x.Passkey)
             .Include(x => x.PhoneNumbers)
             .Include(x => x.Secret)
+            .Include(x => x.Password)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -54,6 +55,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .Include(x => x.Emails)
             .Include(x => x.PhoneNumbers)
             .Include(x => x.Secret)
+            .Include(x => x.Password)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -78,6 +80,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .Include(x => x.Emails)
             .Include(x => x.PhoneNumbers)
             .Include(x => x.Secret)
+            .Include(x => x.Password)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -103,6 +106,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .ThenInclude(x => x.Passkey)
             .Include(x => x.PhoneNumbers)
             .Include(x => x.Secret)
+            .Include(x => x.Password)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
