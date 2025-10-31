@@ -146,8 +146,6 @@ namespace eSystem.Auth.Api.Migrations
                     Username = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     NormalizedUsername = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     UsernameChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    PasswordHash = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    PasswordChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     AccountConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
@@ -284,6 +282,27 @@ namespace eSystem.Auth.Api.Migrations
                     table.PrimaryKey("PK_LockoutStates", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LockoutStates_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Passwords",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Hash = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Passwords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Passwords_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -834,6 +853,12 @@ namespace eSystem.Auth.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Passwords_UserId",
+                table: "Passwords",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_ResourceId",
                 table: "Permissions",
                 column: "ResourceId");
@@ -963,6 +988,9 @@ namespace eSystem.Auth.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Passkeys");
+
+            migrationBuilder.DropTable(
+                name: "Passwords");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");

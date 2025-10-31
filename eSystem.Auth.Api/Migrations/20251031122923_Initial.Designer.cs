@@ -12,7 +12,7 @@ using eSystem.Auth.Api.Data;
 namespace eSystem.Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251029140736_Initial")]
+    [Migration("20251031122923_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -388,6 +388,34 @@ namespace eSystem.Auth.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Passkeys");
+                });
+
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PasswordEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Passwords");
                 });
 
             modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PermissionEntity", b =>
@@ -788,14 +816,6 @@ namespace eSystem.Auth.Api.Migrations
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTimeOffset?>("PasswordChangeDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<Guid?>("PersonalDataId")
                         .HasColumnType("uniqueidentifier");
@@ -1243,6 +1263,17 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Device");
                 });
 
+            modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PasswordEntity", b =>
+                {
+                    b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
+                        .WithOne("Password")
+                        .HasForeignKey("eSystem.Auth.Api.Data.Entities.PasswordEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.PermissionEntity", b =>
                 {
                     b.HasOne("eSystem.Auth.Api.Data.Entities.ResourceEntity", "Resource")
@@ -1448,7 +1479,7 @@ namespace eSystem.Auth.Api.Migrations
             modelBuilder.Entity("eSystem.Auth.Api.Data.Entities.UserTwoFactorMethodEntity", b =>
                 {
                     b.HasOne("eSystem.Auth.Api.Data.Entities.UserEntity", "User")
-                        .WithMany("Methods")
+                        .WithMany("TwoFactorMethods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1531,7 +1562,7 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("LockoutState")
                         .IsRequired();
 
-                    b.Navigation("Methods");
+                    b.Navigation("Password");
 
                     b.Navigation("Permissions");
 
@@ -1542,6 +1573,8 @@ namespace eSystem.Auth.Api.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("Secret");
+
+                    b.Navigation("TwoFactorMethods");
 
                     b.Navigation("VerificationMethods");
                 });
