@@ -73,7 +73,7 @@ public class ApiClient(
                 
                 if (!result.Success)
                 {
-                    tokenProvider.Clear();
+                    await authenticationManager.SignOutAsync();
                     navigationManager.NavigateTo(Links.SignIn);
                 }
                 else
