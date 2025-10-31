@@ -511,7 +511,7 @@ public sealed class UserManager(
 
     public bool CheckPassword(UserEntity user, string password)
     {
-        return hasher.VerifyHash(password, user.Password?.Hash ?? string.Empty);
+        return user.Password is not null && hasher.VerifyHash(password, user.Password.Hash);
     }
 
     public async ValueTask<Result> ChangePasswordAsync(UserEntity user,
