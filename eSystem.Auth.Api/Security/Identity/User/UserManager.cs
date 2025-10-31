@@ -7,12 +7,9 @@ using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSystem.Auth.Api.Security.Identity.User;
 
-public sealed class UserManager(
-    AuthDbContext context,
-    IHasherFactory hasherFactory) : IUserManager
+public sealed class UserManager(AuthDbContext context) : IUserManager
 {
     private readonly AuthDbContext context = context;
-    private readonly IHasherFactory hasherFactory = hasherFactory;
 
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
@@ -233,22 +230,6 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> ResetPasswordAsync(UserEntity user, string newPassword,
-        CancellationToken cancellationToken = default)
-    {
-        var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
-        var passwordHash = hasher.Hash(newPassword);
-
-        user.Password!.Hash = passwordHash;
-        user.Password!.UpdateDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
     public async ValueTask<Result> ResetEmailAsync(UserEntity user, string currentEmail,
         string newEmail, CancellationToken cancellationToken = default)
     {
@@ -313,17 +294,6 @@ public sealed class UserManager(
 
         context.Users.Update(user);
         context.UserEmails.Remove(userEmail);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> RemovePasswordAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        user.UpdateDate = DateTimeOffset.UtcNow;
-        
-        context.Passwords.Remove(user.Password!);
-        context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -418,24 +388,7 @@ public sealed class UserManager(
         return Result.Success();
     }
 
-    public async ValueTask<Result> AddPasswordAsync(UserEntity user, string password,
-        CancellationToken cancellationToken = default)
-    {
-        var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
-        var passwordHash = hasher.Hash(password);
-
-        user.Password!.Hash = passwordHash;
-        user.Password!.UpdateDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async ValueTask<Result> CreateAsync(UserEntity user, string? password,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var lockoutState = new UserLockoutStateEntity()
         {
@@ -444,19 +397,6 @@ public sealed class UserManager(
             Type = LockoutType.None,
             CreateDate = DateTimeOffset.UtcNow,
         };
-
-        if (!string.IsNullOrEmpty(password))
-        {
-            var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
-            var passwordEntity = new PasswordEntity()
-            {
-                UserId = user.Id,
-                Hash = hasher.Hash(password),
-                CreateDate = DateTimeOffset.UtcNow
-            };
-            
-            await context.Passwords.AddAsync(passwordEntity, cancellationToken);
-        }
 
         var verificationMethod = new UserVerificationMethodEntity()
         {
@@ -507,28 +447,6 @@ public sealed class UserManager(
         CancellationToken cancellationToken = default)
     {
         context.Users.Remove(user);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-
-    public bool CheckPassword(UserEntity user, string password)
-    {
-        var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
-        return user.Password is not null && hasher.VerifyHash(password, user.Password.Hash);
-    }
-
-    public async ValueTask<Result> ChangePasswordAsync(UserEntity user,
-        string newPassword, CancellationToken cancellationToken = default)
-    {
-        var hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
-        var newPasswordHash = hasher.Hash(newPassword);
-
-        user.Password!.Hash = newPasswordHash;
-        user.Password.UpdateDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        context.Users.Update(user);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

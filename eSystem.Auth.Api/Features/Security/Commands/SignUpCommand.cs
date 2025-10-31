@@ -1,4 +1,5 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
+using eSystem.Auth.Api.Security.Authentication.Password;
 using eSystem.Auth.Api.Security.Authorization.Devices;
 using eSystem.Auth.Api.Security.Authorization.Permissions;
 using eSystem.Auth.Api.Security.Authorization.Roles;
@@ -14,8 +15,9 @@ namespace eSystem.Auth.Api.Features.Security.Commands;
 public sealed record SignUpCommand(SignUpRequest Request) : IRequest<Result>;
 
 public sealed class SignUpCommandHandler(
-    IPermissionManager permissionManager,
     IUserManager userManager,
+    IPasswordManager passwordManager,
+    IPermissionManager permissionManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
@@ -23,6 +25,7 @@ public sealed class SignUpCommandHandler(
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
+    private readonly IPasswordManager passwordManager = passwordManager;
     private readonly IRoleManager roleManager = roleManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
@@ -50,8 +53,11 @@ public sealed class SignUpCommandHandler(
             NormalizedUsername = request.Request.Username.ToUpperInvariant(),
         };
 
-        var registrationResult = await userManager.CreateAsync(user, request.Request.Password, cancellationToken);
-        if (!registrationResult.Succeeded) return registrationResult;
+        var createResult = await userManager.CreateAsync(user, cancellationToken);
+        if (!createResult.Succeeded) return createResult;
+        
+        var passwordResult = await passwordManager.AddAsync(user, request.Request.Password, cancellationToken);
+        if (!passwordResult.Succeeded) return passwordResult;
 
         var setResult = await userManager.SetEmailAsync(user, request.Request.Email,
             EmailType.Primary, cancellationToken);

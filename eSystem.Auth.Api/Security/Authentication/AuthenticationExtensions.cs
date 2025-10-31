@@ -1,5 +1,6 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.JWT;
 using eSystem.Auth.Api.Security.Authentication.Lockout;
+using eSystem.Auth.Api.Security.Authentication.Password;
 using eSystem.Auth.Api.Security.Authentication.Schemes;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
 using eSystem.Auth.Api.Security.Authentication.SSO;
@@ -18,6 +19,7 @@ public static class AuthenticationExtensions
     {
         var configuration = builder.Configuration;
         
+        builder.Services.AddPasswordManagement();
         builder.Services.AddSignInStrategies();
         builder.Services.Add2FA();
         builder.Services.AddJwt();

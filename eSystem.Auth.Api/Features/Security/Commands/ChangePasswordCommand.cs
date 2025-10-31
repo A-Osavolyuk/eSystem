@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Identity.User;
+﻿using eSystem.Auth.Api.Security.Authentication.Password;
+using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.Security.Commands;
@@ -6,9 +7,11 @@ namespace eSystem.Auth.Api.Features.Security.Commands;
 public sealed record ChangePasswordCommand(ChangePasswordRequest Request) : IRequest<Result>;
 
 public sealed class ChangePasswordCommandHandler(
-    IUserManager userManager) : IRequestHandler<ChangePasswordCommand, Result>
+    IUserManager userManager,
+    IPasswordManager passwordManager) : IRequestHandler<ChangePasswordCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IPasswordManager passwordManager = passwordManager;
 
     async Task<Result> IRequestHandler<ChangePasswordCommand, Result>.Handle(ChangePasswordCommand request,
             CancellationToken cancellationToken)
@@ -18,10 +21,10 @@ public sealed class ChangePasswordCommandHandler(
         
         if (!user.HasPassword()) return Results.BadRequest("User does not have a password.");
 
-        var isCorrectPassword = userManager.CheckPassword(user, request.Request.CurrentPassword);
+        var isCorrectPassword = passwordManager.Check(user, request.Request.CurrentPassword);
         if (!isCorrectPassword) return Results.BadRequest($"Wrong password.");
         
-        var result = await userManager.ChangePasswordAsync(user, request.Request.NewPassword, cancellationToken);
+        var result = await passwordManager.ChangeAsync(user, request.Request.NewPassword, cancellationToken);
 
         return result;
     }

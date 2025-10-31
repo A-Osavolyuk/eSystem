@@ -1,5 +1,6 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Security.Authentication.Lockout;
+using eSystem.Auth.Api.Security.Authentication.Password;
 using eSystem.Auth.Api.Security.Authentication.SSO.Session;
 using eSystem.Auth.Api.Security.Authorization.Devices;
 using eSystem.Auth.Api.Security.Identity.Options;
@@ -13,6 +14,7 @@ namespace eSystem.Auth.Api.Security.Authentication.SignIn.Strategies;
 
 public sealed class PasswordSignInStrategy(
     IUserManager userManager,
+    IPasswordManager passwordManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
@@ -20,6 +22,7 @@ public sealed class PasswordSignInStrategy(
     IOptions<SignInOptions> options) : SignInStrategy
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IPasswordManager passwordManager = passwordManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ISessionManager sessionManager = sessionManager;
@@ -103,7 +106,7 @@ public sealed class PasswordSignInStrategy(
 
         if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
-        var isValidPassword = userManager.CheckPassword(user, password);
+        var isValidPassword = passwordManager.Check(user, password);
         if (!isValidPassword)
         {
             user.FailedLoginAttempts += 1;

@@ -1,4 +1,5 @@
-﻿using eSystem.Auth.Api.Security.Authorization.Access;
+﻿using eSystem.Auth.Api.Security.Authentication.Password;
+using eSystem.Auth.Api.Security.Authorization.Access;
 using eSystem.Auth.Api.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authorization.Access;
@@ -9,9 +10,11 @@ public sealed record ResetPasswordCommand(ResetPasswordRequest Request) : IReque
 
 public sealed class ResetPasswordCommandHandler(
     IUserManager userManager,
+    IPasswordManager passwordManager,
     IVerificationManager verificationManager) : IRequestHandler<ResetPasswordCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IPasswordManager passwordManager = passwordManager;
     private readonly IVerificationManager verificationManager = verificationManager;
 
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
@@ -26,7 +29,7 @@ public sealed class ResetPasswordCommandHandler(
         
         if(!verificationResult.Succeeded)  return verificationResult;
         
-        var result = await userManager.ResetPasswordAsync(user, request.Request.NewPassword, cancellationToken);
+        var result = await passwordManager.ResetAsync(user, request.Request.NewPassword, cancellationToken);
         return result;
     }
 }
