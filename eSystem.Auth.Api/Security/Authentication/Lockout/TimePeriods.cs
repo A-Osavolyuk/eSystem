@@ -1,4 +1,4 @@
-﻿namespace eSystem.Auth.Api.Common.Constants;
+﻿namespace eSystem.Auth.Api.Security.Authentication.Lockout;
 
 public static class TimePeriods
 {

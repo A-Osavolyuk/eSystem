@@ -1,5 +1,4 @@
-﻿using eSystem.Auth.Api.Common.Constants;
-using eSystem.Auth.Api.Data.Entities;
+﻿using eSystem.Auth.Api.Data.Entities;
 using eSystem.Core.Security.Authentication.Lockout;
 
 namespace eSystem.Auth.Api.Security.Authentication.Lockout;
