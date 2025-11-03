@@ -29,7 +29,8 @@ public static class Links
     public const string SettingsPage = "/account/settings";
     public const string DevicesPage = "/account/devices";
     public const string PhoneNumbersPage = "/account/phone-numbers";
-    public const string Authorize = "/sso/authorize";
-    public const string Callback = "/sso/callback";
-    public const string SignOut = "/sso/sign-out";
+    public const string Authorize = "/connect/authorize";
+    public const string AuthorizeCallback = "/connect/callback";
+    public const string Logout = "/connect/logout";
+    public const string LogoutCallback = "/connect/logout/callback";
 }
