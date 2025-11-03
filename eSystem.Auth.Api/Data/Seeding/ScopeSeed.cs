@@ -1,6 +1,6 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
 using eSystem.Core.Data.Seeding;
-using eSystem.Core.Security.Authentication.SSO.Constants;
+using eSystem.Core.Security.Authentication.ODIC.Constants;
 
 namespace eSystem.Auth.Api.Data.Seeding;
 

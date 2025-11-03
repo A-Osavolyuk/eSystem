@@ -1,6 +1,6 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
 using eSystem.Core.Data.Seeding;
-using eSystem.Core.Security.Authentication.SSO.Client;
+using eSystem.Core.Security.Authentication.ODIC.Client;
 
 namespace eSystem.Auth.Api.Data.Seeding;
 

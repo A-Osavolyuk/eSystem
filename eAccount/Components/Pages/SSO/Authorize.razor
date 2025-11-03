@@ -1,10 +1,10 @@
 @page "/connect/authorize"
 
 @using eAccount.Common.JS.Fetch
-@using eAccount.Security.Authentication.SSO
+@using eAccount.Security.Authentication.ODIC
 @inherits PageBase
 
-@inject ISsoService SsoService
+@inject IConnectService ConnectService
 @inject IFetchClient FetchClient
 
 <Title Text="Authorization"></Title>
@@ -63,7 +63,7 @@
                     CodeChallengeMethod = CodeChallengeMethod
                 };
 
-                var result = await SsoService.AuthorizeAsync(request);
+                var result = await ConnectService.AuthorizeAsync(request);
 
                 if (result.Success)
                 {

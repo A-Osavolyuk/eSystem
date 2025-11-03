@@ -1,12 +1,11 @@
 @page "/connect/logout"
 
-@using eAccount.Security.Authentication.SSO
-
+@using eAccount.Security.Authentication.ODIC
 @inherits PageBase
 
 @attribute [Authorize]
 
-@inject ISsoService SsoService
+@inject IConnectService ConnectService
 @inject AuthenticationManager AuthenticationManager
 
 <MudGrid Justify="Justify.Center">
@@ -48,7 +47,7 @@
     private async Task OnSignOutAsync()
     {
         var request = new LogoutRequest() { UserId = UserState.UserId };
-        var result = await SsoService.LogoutAsync(request);
+        var result = await ConnectService.LogoutAsync(request);
 
         if (result.Success) await AuthenticationManager.SignOutAsync();
         else Snackbar.Add(result.Message, Severity.Error);

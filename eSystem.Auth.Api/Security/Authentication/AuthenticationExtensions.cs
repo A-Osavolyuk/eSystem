@@ -1,9 +1,9 @@
 ﻿using eSystem.Auth.Api.Security.Authentication.JWT;
 using eSystem.Auth.Api.Security.Authentication.Lockout;
+using eSystem.Auth.Api.Security.Authentication.ODIC;
 using eSystem.Auth.Api.Security.Authentication.Password;
 using eSystem.Auth.Api.Security.Authentication.Schemes;
 using eSystem.Auth.Api.Security.Authentication.SignIn;
-using eSystem.Auth.Api.Security.Authentication.SSO;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Core.Common.Configuration;
@@ -24,7 +24,7 @@ public static class AuthenticationExtensions
         builder.Services.Add2FA();
         builder.Services.AddJwt();
         builder.Services.AddLockout();
-        builder.Services.AddSSO();
+        builder.Services.AddOdic();
 
         builder.Services.AddAuthentication(options =>
             {

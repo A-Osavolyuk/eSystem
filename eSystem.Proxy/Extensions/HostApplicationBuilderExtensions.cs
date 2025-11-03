@@ -91,8 +91,8 @@ public static class HostApplicationBuilderExtensions
             },
             new RouteConfig
             {
-                RouteId = "sso-route", ClusterId = "security-cluster",
-                Match = new RouteMatch { Path = "/api/v1/Sso/{**catch-all}" }
+                RouteId = "connect-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Connect/{**catch-all}" }
             },
             new RouteConfig
             {

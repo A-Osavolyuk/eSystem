@@ -1,4 +1,4 @@
-﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
+﻿using eSystem.Auth.Api.Security.Authentication.ODIC.Session;
 using eSystem.Auth.Api.Security.Credentials.PublicKey;
 using eSystem.Auth.Api.Security.Credentials.PublicKey.Credentials;
 using eSystem.Auth.Api.Security.Identity.User;

@@ -1,5 +1,5 @@
 ﻿using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Authentication.SSO.Client;
+using eSystem.Core.Security.Authentication.ODIC.Client;
 
 namespace eSystem.Auth.Api.Data.Entities;
 

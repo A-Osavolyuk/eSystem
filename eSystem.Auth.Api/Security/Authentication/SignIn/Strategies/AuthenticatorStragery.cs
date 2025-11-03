@@ -1,6 +1,6 @@
 ﻿using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Security.Authentication.Lockout;
-using eSystem.Auth.Api.Security.Authentication.SSO.Session;
+using eSystem.Auth.Api.Security.Authentication.ODIC.Session;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Authenticator;
 using eSystem.Auth.Api.Security.Authentication.TwoFactor.Secret;
 using eSystem.Auth.Api.Security.Authorization.Devices;

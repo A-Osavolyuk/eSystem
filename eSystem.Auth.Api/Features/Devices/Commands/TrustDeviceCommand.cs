@@ -1,4 +1,4 @@
-﻿using eSystem.Auth.Api.Security.Authentication.SSO.Session;
+﻿using eSystem.Auth.Api.Security.Authentication.ODIC.Session;
 using eSystem.Auth.Api.Security.Authorization.Access;
 using eSystem.Auth.Api.Security.Authorization.Devices;
 using eSystem.Auth.Api.Security.Identity.User;

@@ -1,5 +1,4 @@
 ﻿using eSystem.Auth.Api.Security.Authentication;
-using eSystem.Auth.Api.Security.Authentication.SSO;
 using eSystem.Auth.Api.Security.Authorization;
 using eSystem.Auth.Api.Security.Credentials;
 using eSystem.Auth.Api.Security.Cryptography;

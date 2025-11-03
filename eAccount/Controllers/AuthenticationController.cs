@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using eAccount.Common.Responses;
 using eAccount.Security.Authentication.JWT;
-using eAccount.Security.Authentication.SSO;
+using eAccount.Security.Authentication.ODIC;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Cookies;

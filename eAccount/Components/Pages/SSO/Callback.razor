@@ -1,12 +1,12 @@
 @page "/connect/callback"
 @using eAccount.Security.Authentication
-@using eAccount.Security.Authentication.SSO
-@using eAccount.Security.Authentication.SSO.Clients
-@using eSystem.Core.Security.Authentication.SSO.Token
+@using eAccount.Security.Authentication.ODIC
+@using eAccount.Security.Authentication.ODIC.Clients
+@using eSystem.Core.Security.Authentication.ODIC.Token
 
 @inherits PageBase
 
-@inject ISsoService SsoService
+@inject IConnectService ConnectService
 @inject IOptions<ClientOptions> Options
 @inject AuthenticationManager AuthenticationManager
 
@@ -34,7 +34,7 @@
             Code = Code,
         };
         
-        var result = await SsoService.TokenAsync(request);
+        var result = await ConnectService.TokenAsync(request);
 
         if (result.Success)
         {

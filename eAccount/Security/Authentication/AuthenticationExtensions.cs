@@ -1,8 +1,8 @@
 using eAccount.Security.Authentication.JWT;
-using eAccount.Security.Authentication.SSO;
-using eAccount.Security.Authentication.SSO.Clients;
+using eAccount.Security.Authentication.ODIC;
+using eAccount.Security.Authentication.ODIC.Clients;
 using eAccount.Security.Authentication.TwoFactor;
-using eSystem.Core.Security.Authentication.SSO.Constants;
+using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,13 +20,13 @@ public static class AuthenticationExtensions
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
         
         builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
-        builder.Services.AddScoped<ISsoService, SsoService>();
+        builder.Services.AddScoped<IConnectService, ConnectService>();
         
         builder.Services.ConfigureClient(cfg =>
         {
             cfg.ClientId = "eAccount";
             cfg.ClientSecret = "2f213a036e325a55dc19320f03c2fad7c13f0169788b5968686cb4931341c393a651d7e6";
-            cfg.RedirectUri = "http://localhost:5501/sso/callback";
+            cfg.RedirectUri = "http://localhost:5501/connect/callback";
             cfg.Scopes =
             [
                 Scopes.Address,

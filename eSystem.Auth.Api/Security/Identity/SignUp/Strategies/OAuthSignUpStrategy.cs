@@ -1,7 +1,7 @@
 using eSystem.Auth.Api.Data.Entities;
 using eSystem.Auth.Api.Messaging;
 using eSystem.Auth.Api.Messaging.Messages.Email;
-using eSystem.Auth.Api.Security.Authentication.SSO.Session;
+using eSystem.Auth.Api.Security.Authentication.ODIC.Session;
 using eSystem.Auth.Api.Security.Authorization.Devices;
 using eSystem.Auth.Api.Security.Authorization.OAuth;
 using eSystem.Auth.Api.Security.Authorization.Permissions;
