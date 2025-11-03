@@ -15,6 +15,13 @@ public sealed class ClaimBuilder
         Claims.Add(new Claim(type, value));
         return this;
     }
+    
+    public ClaimBuilder WithClaim(string type, DateTimeOffset time)
+    {
+        var unixSeconds = time.ToUnixTimeSeconds();
+        Claims.Add(new Claim(type, unixSeconds.ToString()));
+        return this;
+    }
 
     public ClaimBuilder WithAudience(string audience)
     {
@@ -102,6 +109,18 @@ public sealed class ClaimBuilder
         return this;
     }
     
+    public ClaimBuilder WithGender(string gender)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Gender, gender));
+        return this;
+    }
+    
+    public ClaimBuilder WithNickname(string nickname)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Nickname, nickname));
+        return this;
+    }
+    
     public ClaimBuilder WithGivenName(string givenName)
     {
         Claims.Add(new Claim(AppClaimTypes.GivenName, givenName));
@@ -114,9 +133,21 @@ public sealed class ClaimBuilder
         return this;
     }
     
+    public ClaimBuilder WithMiddleName(string middleName)
+    {
+        Claims.Add(new Claim(AppClaimTypes.MiddleName, middleName));
+        return this;
+    }
+    
     public ClaimBuilder WithPicture(string picture)
     {
         Claims.Add(new Claim(AppClaimTypes.Picture, picture));
+        return this;
+    }
+    
+    public ClaimBuilder WithProfile(string profile)
+    {
+        Claims.Add(new Claim(AppClaimTypes.Profile, profile));
         return this;
     }
     
@@ -126,10 +157,23 @@ public sealed class ClaimBuilder
         return this;
     }
     
+    public ClaimBuilder WithZoneInfo(string zoneInfo)
+    {
+        Claims.Add(new Claim(AppClaimTypes.ZoneInfo, zoneInfo));
+        return this;
+    }
+    
     public ClaimBuilder WithUpdatedTime(DateTimeOffset updatedTime)
     {
         var unixSeconds = updatedTime.ToUnixTimeSeconds();
         Claims.Add(new Claim(AppClaimTypes.UpdatedAt, unixSeconds.ToString()));
+        return this;
+    }
+    
+    public ClaimBuilder WithBirthDate(DateTimeOffset updatedTime)
+    {
+        var unixSeconds = updatedTime.ToUnixTimeSeconds();
+        Claims.Add(new Claim(AppClaimTypes.BirthDate, unixSeconds.ToString()));
         return this;
     }
     
