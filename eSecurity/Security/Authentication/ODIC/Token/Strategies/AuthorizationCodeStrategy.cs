@@ -15,7 +15,6 @@ using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 using eSystem.Core.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Cryptography.Tokens.Constants;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
 

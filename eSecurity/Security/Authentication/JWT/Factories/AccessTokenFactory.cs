@@ -1,7 +1,7 @@
 ﻿using eSecurity.Security.Authentication.JWT.Payloads;
 using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Cryptography.Tokens;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Security.Authentication.JWT.Factories;
 

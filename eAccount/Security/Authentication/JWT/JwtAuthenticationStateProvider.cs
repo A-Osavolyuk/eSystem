@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using eAccount.Common.State.States;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Security.Authentication.JWT.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace eAccount.Security.Authentication.JWT;

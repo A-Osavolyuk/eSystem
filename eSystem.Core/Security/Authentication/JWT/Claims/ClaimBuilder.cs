@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace eSystem.Core.Security.Identity.Claims;
+namespace eSystem.Core.Security.Authentication.JWT.Claims;
 
 public sealed class ClaimBuilder
 {
@@ -16,10 +16,16 @@ public sealed class ClaimBuilder
         return this;
     }
     
-    public ClaimBuilder WithClaim(string type, DateTimeOffset time)
+    public ClaimBuilder WithClaim(string type, DateTimeOffset value)
     {
-        var unixSeconds = time.ToUnixTimeSeconds();
+        var unixSeconds = value.ToUnixTimeSeconds();
         Claims.Add(new Claim(type, unixSeconds.ToString()));
+        return this;
+    }
+    
+    public ClaimBuilder WithClaim(string type, bool value)
+    {
+        Claims.Add(new Claim(type, value.ToString()));
         return this;
     }
 

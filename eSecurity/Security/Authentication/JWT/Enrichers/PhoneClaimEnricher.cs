@@ -1,6 +1,6 @@
 using eSecurity.Security.Authentication.JWT.Payloads;
+using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Constants;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Security.Authentication.JWT.Enrichers;
 
