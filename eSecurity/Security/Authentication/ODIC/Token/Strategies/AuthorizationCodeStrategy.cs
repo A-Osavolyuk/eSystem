@@ -1,5 +1,7 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
+using eSecurity.Security.Authentication.JWT.Management;
+using eSecurity.Security.Authentication.JWT.Payloads;
 using eSecurity.Security.Authentication.ODIC.Code;
 using eSecurity.Security.Authentication.ODIC.PKCE;
 using eSecurity.Security.Authentication.ODIC.Session;
@@ -8,9 +10,11 @@ using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Authentication.ODIC.Client;
+using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 using eSystem.Core.Security.Cryptography.Tokens;
+using eSystem.Core.Security.Cryptography.Tokens.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
@@ -19,9 +23,9 @@ public class AuthorizationCodeStrategy(
     IUserManager userManager,
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
+    ITokenFactoryResolver tokenFactoryResolver,
     ITokenManager tokenManager,
     IPkceHandler pkceHandler,
-    ITokenFactory tokenFactory,
     IKeyFactory keyFactory,
     IProtectorFactory protectorFactory,
     IOptions<JwtOptions> options) : TokenStrategy
@@ -29,9 +33,9 @@ public class AuthorizationCodeStrategy(
     private readonly IUserManager userManager = userManager;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
+    private readonly ITokenFactoryResolver tokenFactoryResolver = tokenFactoryResolver;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IPkceHandler pkceHandler = pkceHandler;
-    private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly IKeyFactory keyFactory = keyFactory;
     private readonly IProtectorFactory protectorFactory = protectorFactory;
     private readonly JwtOptions options = options.Value;
@@ -108,20 +112,21 @@ public class AuthorizationCodeStrategy(
         
         var tokenResult = await tokenManager.CreateAsync(refreshToken, cancellationToken);
         if (!tokenResult.Succeeded) return tokenResult;
+
+        var accessTokenFactory = tokenFactoryResolver.Create(JwtTokenType.AccessToken);
+        var accessTokenPayload = new AccessTokenPayload()
+        {
+            Subject = user.Id.ToString(),
+            Audience = client.ClientId,
+            Nonce = authorizationCode.Nonce,
+            Scopes = client.AllowedScopes.Select(x => x.Scope.Name).ToList(),
+            ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes),
+            IssuedAt = DateTimeOffset.UtcNow,
+        };
         
+        var accessToken = accessTokenFactory.Create(accessTokenPayload);
         var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
         var protectedRefreshToken = protector.Protect(refreshToken.Token);
-
-        var claimBuilder = ClaimBuilder.Create()
-            .WithTokenId(Guid.CreateVersion7().ToString())
-            .WithSubject(user.Id.ToString())
-            .WithAudience(client.Name)
-            .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
-            .WithNonce(authorizationCode.Nonce)
-            .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes));
-        
-        var accessToken = tokenFactory.Create(claimBuilder.Build());
         var response = new TokenResponse()
         {
             AccessToken = accessToken,

@@ -1,11 +1,9 @@
-﻿using System.Security.Claims;
-using eSecurity.Data;
-using eSecurity.Data.Entities;
+﻿using eSecurity.Data.Entities;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Tokens;
 
-namespace eSecurity.Security.Authentication.JWT;
+namespace eSecurity.Security.Authentication.JWT.Management;
 
 public sealed class TokenManager(
     AuthDbContext context,

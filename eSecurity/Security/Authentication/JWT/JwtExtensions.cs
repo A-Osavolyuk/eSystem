@@ -1,3 +1,6 @@
+using eSecurity.Security.Authentication.JWT.Enrichers;
+using eSecurity.Security.Authentication.JWT.Factories;
+using eSecurity.Security.Authentication.JWT.Management;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Tokens;
 
@@ -8,12 +11,16 @@ public static class JwtExtensions
     public static void AddJwt(this IServiceCollection services)
     {
         var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
-
-        services.AddScoped<ITokenFactory, JwtTokenFactory>();
-        services.AddScoped<IClaimEnricher, EmailClaimEnricher>();
-        services.AddScoped<IClaimEnricher, PhoneClaimEnricher>();
-        services.AddScoped<IClaimEnricher, ProfileClaimEnricher>();
-        services.AddScoped<IClaimEnricher, AddressClaimEnricher>();
+        
+        services.AddTransient<IClaimEnricher, EmailClaimEnricher>();
+        services.AddTransient<IClaimEnricher, PhoneClaimEnricher>();
+        services.AddTransient<IClaimEnricher, ProfileClaimEnricher>();
+        services.AddTransient<IClaimEnricher, AddressClaimEnricher>();
+        
+        services.AddKeyedScoped<ITokenFactory, AccessTokenFactory>(JwtTokenType.AccessToken);
+        services.AddKeyedScoped<ITokenFactory, IdTokenFactory>(JwtTokenType.IdToken);
+        services.AddScoped<ITokenFactoryResolver, TokenFactoryResolver>();
+        
         services.AddScoped<ITokenManager, TokenManager>();
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
     }

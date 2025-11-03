@@ -1,5 +1,7 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
+using eSecurity.Security.Authentication.JWT.Management;
+using eSecurity.Security.Authentication.JWT.Payloads;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
@@ -7,8 +9,7 @@ using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Authentication.ODIC.Client;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
-using eSystem.Core.Security.Cryptography.Tokens;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Security.Cryptography.Tokens.Constants;
 
 namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
 
@@ -17,14 +18,14 @@ public class RefreshTokenStrategy(
     ITokenManager tokenManager,
     IUserManager userManager,
     IKeyFactory keyFactory,
-    ITokenFactory tokenFactory,
+    ITokenFactoryResolver tokenFactoryResolver,
     IOptions<JwtOptions> options) : TokenStrategy
 {
     private readonly IProtectorFactory protectorFactory = protectorFactory;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly ITokenFactory tokenFactory = tokenFactory;
+    private readonly ITokenFactoryResolver tokenFactoryResolver = tokenFactoryResolver;
     private readonly JwtOptions options = options.Value;
 
     public override async ValueTask<Result> HandleAsync(TokenRequest request,
@@ -72,17 +73,18 @@ public class RefreshTokenStrategy(
         var rotateResult = await tokenManager.RotateAsync(refreshToken, newRefreshToken, cancellationToken);
         if (!rotateResult.Succeeded) return rotateResult;
 
+        var accessTokenFactory = tokenFactoryResolver.Create(JwtTokenType.AccessToken);
+        var accessTokenPayload = new AccessTokenPayload()
+        {
+            Subject = user.Id.ToString(),
+            Audience = client.ClientId,
+            Scopes = client.AllowedScopes.Select(x => x.Scope.Name).ToList(),
+            ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes),
+            IssuedAt = DateTimeOffset.UtcNow,
+        };
+
+        var accessToken = accessTokenFactory.Create(accessTokenPayload);
         var protectedRefreshToken = protector.Protect(newRefreshToken.Token);
-
-        var claimBuilder = ClaimBuilder.Create()
-            .WithTokenId(Guid.CreateVersion7().ToString())
-            .WithSubject(user.Id.ToString())
-            .WithAudience(client.Name)
-            .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
-            .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
-            .WithIssuedTime(DateTimeOffset.UtcNow);
-
-        var accessToken = tokenFactory.Create(claimBuilder.Build());
         var response = new TokenResponse()
         {
             AccessToken = accessToken,

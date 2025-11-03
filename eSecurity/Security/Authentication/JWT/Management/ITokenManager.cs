@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using eSecurity.Data.Entities;
+﻿using eSecurity.Data.Entities;
 
-namespace eSecurity.Security.Authentication.JWT;
+namespace eSecurity.Security.Authentication.JWT.Management;
 
 public interface ITokenManager
 {
