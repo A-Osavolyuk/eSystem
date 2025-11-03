@@ -1,6 +1,5 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
-using eSecurity.Security.Authentication.JWT.Management;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
@@ -9,23 +8,24 @@ using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
+using eSystem.Core.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Cryptography.Tokens.Constants;
 
 namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
 
 public class RefreshTokenStrategy(
     IProtectorFactory protectorFactory,
+    ITokenFactory tokenFactory,
     ITokenManager tokenManager,
     IUserManager userManager,
     IKeyFactory keyFactory,
-    ITokenFactoryResolver tokenFactoryResolver,
     IOptions<JwtOptions> options) : TokenStrategy
 {
     private readonly IProtectorFactory protectorFactory = protectorFactory;
+    private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly ITokenFactoryResolver tokenFactoryResolver = tokenFactoryResolver;
     private readonly JwtOptions options = options.Value;
 
     public override async ValueTask<Result> HandleAsync(TokenRequest request,
@@ -82,9 +82,8 @@ public class RefreshTokenStrategy(
             .WithExpirationTime(DateTimeOffset.UtcNow.AddDays(options.AccessTokenExpirationMinutes))
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
-
-        var accessTokenFactory = tokenFactoryResolver.Create(JwtTokenType.AccessToken);
-        var accessToken = accessTokenFactory.Create(accessTokenClaims);
+        
+        var accessToken = tokenFactory.Create(accessTokenClaims);
         var protectedRefreshToken = protector.Protect(newRefreshToken.Token);
         var response = new TokenResponse()
         {

@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 
-namespace eSecurity.Security.Authentication.JWT.Management;
+namespace eSecurity.Security.Authentication.JWT;
 
 public interface ITokenManager
 {

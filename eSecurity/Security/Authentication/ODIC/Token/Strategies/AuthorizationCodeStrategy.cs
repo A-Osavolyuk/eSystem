@@ -1,6 +1,5 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
-using eSecurity.Security.Authentication.JWT.Management;
 using eSecurity.Security.Authentication.ODIC.Code;
 using eSecurity.Security.Authentication.ODIC.PKCE;
 using eSecurity.Security.Authentication.ODIC.Session;
@@ -12,6 +11,7 @@ using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
+using eSystem.Core.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Cryptography.Tokens.Constants;
 
 namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
@@ -20,7 +20,7 @@ public class AuthorizationCodeStrategy(
     IUserManager userManager,
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
-    ITokenFactoryResolver tokenFactoryResolver,
+    ITokenFactory tokenFactory,
     ITokenManager tokenManager,
     IPkceHandler pkceHandler,
     IKeyFactory keyFactory,
@@ -30,7 +30,7 @@ public class AuthorizationCodeStrategy(
     private readonly IUserManager userManager = userManager;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
-    private readonly ITokenFactoryResolver tokenFactoryResolver = tokenFactoryResolver;
+    private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IPkceHandler pkceHandler = pkceHandler;
     private readonly IKeyFactory keyFactory = keyFactory;
@@ -121,8 +121,7 @@ public class AuthorizationCodeStrategy(
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
         
-        var accessTokenFactory = tokenFactoryResolver.Create(JwtTokenType.AccessToken);
-        var accessToken = accessTokenFactory.Create(accessTokenClaims);
+        var accessToken = tokenFactory.Create(accessTokenClaims);
         var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
         var protectedRefreshToken = protector.Protect(refreshToken.Token);
         var response = new TokenResponse()

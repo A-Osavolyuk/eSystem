@@ -1,14 +1,18 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Cryptography.Tokens;
 
-namespace eSecurity.Security.Authentication.JWT.Signing;
+namespace eSecurity.Security.Authentication.JWT;
 
-public class JwtSigner : IJwtSigner
+public class JwtTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
 {
-    public string Sign(IEnumerable<Claim> claims, string secret, string algorithm)
+    private readonly JwtOptions options = options.Value;
+
+    public string Create(IEnumerable<Claim> claims)
     {
-        var key = Encoding.UTF8.GetBytes(secret);
+        const string algorithm = SecurityAlgorithms.HmacSha256;
+        var key = Encoding.UTF8.GetBytes(options.Secret);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
         var securityToken = new JwtSecurityToken(claims: claims, signingCredentials: signingCredentials);
         var handler = new JwtSecurityTokenHandler();

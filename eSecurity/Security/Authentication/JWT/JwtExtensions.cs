@@ -1,6 +1,3 @@
-using eSecurity.Security.Authentication.JWT.Factories;
-using eSecurity.Security.Authentication.JWT.Management;
-using eSecurity.Security.Authentication.JWT.Signing;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Tokens;
 
@@ -12,11 +9,7 @@ public static class JwtExtensions
     {
         var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
         
-        services.AddTransient<IJwtSigner, JwtSigner>();
-        
-        services.AddKeyedScoped<ITokenFactory, AccessTokenFactory>(JwtTokenType.AccessToken);
-        services.AddKeyedScoped<ITokenFactory, IdTokenFactory>(JwtTokenType.IdToken);
-        services.AddScoped<ITokenFactoryResolver, TokenFactoryResolver>();
+        services.AddScoped<ITokenFactory, JwtTokenFactory>();
         services.AddScoped<ITokenManager, TokenManager>();
         
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
