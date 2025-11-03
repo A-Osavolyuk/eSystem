@@ -1,7 +1,6 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
 using eSecurity.Security.Authentication.JWT.Management;
-using eSecurity.Security.Authentication.JWT.Payloads;
 using eSecurity.Security.Authentication.ODIC.Code;
 using eSecurity.Security.Authentication.ODIC.PKCE;
 using eSecurity.Security.Authentication.ODIC.Session;
@@ -9,11 +8,10 @@ using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
-using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
-using eSystem.Core.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Cryptography.Tokens.Constants;
 
 namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
@@ -112,18 +110,19 @@ public class AuthorizationCodeStrategy(
         var tokenResult = await tokenManager.CreateAsync(refreshToken, cancellationToken);
         if (!tokenResult.Succeeded) return tokenResult;
 
-        var accessTokenFactory = tokenFactoryResolver.Create(JwtTokenType.AccessToken);
-        var accessTokenPayload = new AccessTokenPayload()
-        {
-            Subject = user.Id.ToString(),
-            Audience = client.ClientId,
-            Nonce = authorizationCode.Nonce,
-            Scopes = client.AllowedScopes.Select(x => x.Scope.Name).ToList(),
-            ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes),
-            IssuedAt = DateTimeOffset.UtcNow,
-        };
+        var accessTokenClaims = ClaimBuilder.Create()
+            .WithIssuer(options.Issuer)
+            .WithAudience(client.Name)
+            .WithSubject(user.Id.ToString())
+            .WithTokenId(Guid.CreateVersion7().ToString())
+            .WithIssuedTime(DateTimeOffset.UtcNow)
+            .WithExpirationTime(DateTimeOffset.UtcNow.AddDays(options.AccessTokenExpirationMinutes))
+            .WithNonce(authorizationCode.Nonce)
+            .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
+            .Build();
         
-        var accessToken = accessTokenFactory.Create(accessTokenPayload);
+        var accessTokenFactory = tokenFactoryResolver.Create(JwtTokenType.AccessToken);
+        var accessToken = accessTokenFactory.Create(accessTokenClaims);
         var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
         var protectedRefreshToken = protector.Protect(refreshToken.Token);
         var response = new TokenResponse()

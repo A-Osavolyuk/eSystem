@@ -1,5 +1,4 @@
-﻿using eSecurity.Features.Security.Commands;
-using eSystem.Core.Common.Errors;
+﻿using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Validation;

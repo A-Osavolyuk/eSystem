@@ -1,5 +1,4 @@
-﻿using eSecurity.Data;
-using eSecurity.Data.Entities;
+﻿using eSecurity.Data.Entities;
 using eSystem.Core.Security.Authentication.Lockout;
 
 namespace eSecurity.Security.Authentication.Lockout;

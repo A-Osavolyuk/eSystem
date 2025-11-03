@@ -1,5 +1,4 @@
-﻿using eSecurity.Data;
-using eSecurity.Data.Entities;
+﻿using eSecurity.Data.Entities;
 using eSecurity.Security.Cryptography.Codes;
 using eSecurity.Security.Cryptography.Hashing;
 using eSystem.Core.Common.Messaging;

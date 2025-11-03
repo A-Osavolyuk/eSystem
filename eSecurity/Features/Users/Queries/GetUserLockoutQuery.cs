@@ -1,5 +1,4 @@
-﻿using eSecurity.Mapping;
-using eSecurity.Security.Authentication.Lockout;
+﻿using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Identity.User;
 
 namespace eSecurity.Features.Users.Queries;

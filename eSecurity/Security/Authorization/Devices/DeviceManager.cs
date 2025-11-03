@@ -1,5 +1,4 @@
-﻿using eSecurity.Data;
-using eSecurity.Data.Entities;
+﻿using eSecurity.Data.Entities;
 
 namespace eSecurity.Security.Authorization.Devices;
 

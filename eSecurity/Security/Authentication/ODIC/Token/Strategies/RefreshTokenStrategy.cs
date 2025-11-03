@@ -1,11 +1,11 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
 using eSecurity.Security.Authentication.JWT.Management;
-using eSecurity.Security.Authentication.JWT.Payloads;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
@@ -73,17 +73,18 @@ public class RefreshTokenStrategy(
         var rotateResult = await tokenManager.RotateAsync(refreshToken, newRefreshToken, cancellationToken);
         if (!rotateResult.Succeeded) return rotateResult;
 
-        var accessTokenFactory = tokenFactoryResolver.Create(JwtTokenType.AccessToken);
-        var accessTokenPayload = new AccessTokenPayload()
-        {
-            Subject = user.Id.ToString(),
-            Audience = client.ClientId,
-            Scopes = client.AllowedScopes.Select(x => x.Scope.Name).ToList(),
-            ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes),
-            IssuedAt = DateTimeOffset.UtcNow,
-        };
+        var accessTokenClaims = ClaimBuilder.Create()
+            .WithIssuer(options.Issuer)
+            .WithAudience(client.Name)
+            .WithSubject(user.Id.ToString())
+            .WithTokenId(Guid.CreateVersion7().ToString())
+            .WithIssuedTime(DateTimeOffset.UtcNow)
+            .WithExpirationTime(DateTimeOffset.UtcNow.AddDays(options.AccessTokenExpirationMinutes))
+            .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
+            .Build();
 
-        var accessToken = accessTokenFactory.Create(accessTokenPayload);
+        var accessTokenFactory = tokenFactoryResolver.Create(JwtTokenType.AccessToken);
+        var accessToken = accessTokenFactory.Create(accessTokenClaims);
         var protectedRefreshToken = protector.Protect(newRefreshToken.Token);
         var response = new TokenResponse()
         {

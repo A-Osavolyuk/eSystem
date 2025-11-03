@@ -6,7 +6,6 @@ using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Identity.SignUp;
 using eSecurity.Security.Identity.SignUp.Strategies;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Features.LinkedAccounts.Commands;

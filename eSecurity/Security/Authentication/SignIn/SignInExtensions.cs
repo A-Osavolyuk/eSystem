@@ -1,5 +1,4 @@
 using eSecurity.Security.Authentication.SignIn.Strategies;
-using eSystem.Core.Security.Authentication.SignIn;
 
 namespace eSecurity.Security.Authentication.SignIn;
 

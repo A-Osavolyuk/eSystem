@@ -1,6 +1,8 @@
-﻿namespace eSystem.Core.Security.Cryptography.Tokens;
+﻿using System.Security.Claims;
+
+namespace eSystem.Core.Security.Cryptography.Tokens;
 
 public interface ITokenFactory
 {
-    public string Create(TokenPayload payload);
+    public string Create(IEnumerable<Claim> claims);
 }

@@ -1,5 +1,4 @@
-﻿using eSecurity.Mapping;
-using eSecurity.Security.Authorization.Devices;
+﻿using eSecurity.Security.Authorization.Devices;
 
 namespace eSecurity.Features.Devices.Queries;
 

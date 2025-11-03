@@ -1,6 +1,5 @@
-﻿using eSecurity.Security.Authentication.JWT.Payloads;
+﻿using System.Security.Claims;
 using eSystem.Core.Security.Authentication.JWT;
-using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Cryptography.Tokens;
 
 namespace eSecurity.Security.Authentication.JWT.Factories;
@@ -12,23 +11,6 @@ public class AccessTokenFactory(
     private readonly IJwtSigner jwtSigner = jwtSigner;
     private readonly JwtOptions options = options.Value;
 
-    public string Create(TokenPayload payload)
-    {
-        if (payload is not AccessTokenPayload accessPayload)
-            throw new NotImplementedException("Payload type must be 'AccessTokenPayload'");
-
-        var claimBuilder = ClaimBuilder.Create()
-            .WithTokenId(Guid.CreateVersion7().ToString())
-            .WithSubject(accessPayload.Subject)
-            .WithIssuer(options.Issuer)
-            .WithAudience(accessPayload.Audience)
-            .WithIssuedTime(accessPayload.IssuedAt)
-            .WithExpirationTime(accessPayload.ExpiresAt)
-            .WithScope(accessPayload.Scopes);
-
-        if (!string.IsNullOrEmpty(accessPayload.Nonce))
-            claimBuilder.WithNonce(accessPayload.Nonce);
-        
-        return jwtSigner.Sign(claimBuilder.Build(), options.Secret, SecurityAlgorithms.HmacSha256);
-    }
+    public string Create(IEnumerable<Claim> claims) 
+        => jwtSigner.Sign(claims, options.Secret, SecurityAlgorithms.HmacSha256);
 }

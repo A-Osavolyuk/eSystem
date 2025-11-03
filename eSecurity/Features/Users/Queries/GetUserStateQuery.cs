@@ -1,5 +1,4 @@
-﻿using eSecurity.Mapping;
-using eSecurity.Security.Identity.User;
+﻿using eSecurity.Security.Identity.User;
 using eSystem.Core.DTOs;
 using eSystem.Core.Security.Identity.Email;
 using eSystem.Core.Security.Identity.PhoneNumber;

@@ -1,5 +1,4 @@
-﻿using eSecurity.Mapping;
-using eSecurity.Security.Identity.Privacy;
+﻿using eSecurity.Security.Identity.Privacy;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 

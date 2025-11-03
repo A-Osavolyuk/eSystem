@@ -1,4 +1,3 @@
-using eSecurity.Data;
 using eSecurity.Data.Entities;
 using eSecurity.Security.Cryptography.Hashing;
 

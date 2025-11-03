@@ -1,5 +1,4 @@
-﻿using eSecurity.Data;
-using eSecurity.Data.Entities;
+﻿using eSecurity.Data.Entities;
 using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSecurity.Security.Authentication.TwoFactor.Recovery;

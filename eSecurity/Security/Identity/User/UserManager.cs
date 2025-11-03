@@ -1,6 +1,4 @@
-﻿using eSecurity.Data;
-using eSecurity.Data.Entities;
-using eSecurity.Security.Cryptography.Hashing;
+﻿using eSecurity.Data.Entities;
 using eSystem.Core.Security.Authentication.Lockout;
 using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Identity.Email;

@@ -4,7 +4,6 @@ using eSecurity.Security.Authorization;
 using eSecurity.Security.Credentials;
 using eSecurity.Security.Cryptography;
 using eSecurity.Security.Identity;
-using eSecurity.Security.Credentials.PublicKey;
 using eSystem.Core.Common.Configuration;
 
 namespace eSecurity.Security;

@@ -4,7 +4,6 @@ using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Authorization.Permissions;
 using eSecurity.Security.Authorization.Policies;
 using eSecurity.Security.Authorization.Roles;
-using eSystem.Core.Security.Authorization.Requirements;
 
 namespace eSecurity.Security.Authorization;
 

@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Attributes;
-using eSystem.Core.Common.Messaging;
+﻿using eSystem.Core.Common.Messaging;
 using MassTransit;
 
 namespace eSecurity.Messaging;
