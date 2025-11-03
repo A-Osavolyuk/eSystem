@@ -52,7 +52,7 @@ var messageBus = builder.AddProject<Projects.eSystem_MessageBus>("message-bus")
     .WaitFor(smsService)
     .WaitFor(telegramService);
 
-var authApi = builder.AddProject<Projects.eSystem_Auth_Api>("auth-api")
+var authApi = builder.AddProject<Projects.eSecurity>("e-security")
     .WithJwtConfig()
     .WithReference(authDb).WaitFor(authDb)
     .WithReference(redisCache).WaitFor(redisCache)

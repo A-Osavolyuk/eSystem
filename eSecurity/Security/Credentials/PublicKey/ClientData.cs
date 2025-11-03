@@ -1,0 +1,29 @@
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using eSystem.Core.Security.Cryptography.Encoding;
+
+namespace eSecurity.Security.Credentials.PublicKey;
+
+public class ClientData
+{
+    [JsonPropertyName("type")] 
+    public string Type { get; set; } = string.Empty;
+    
+    [JsonPropertyName("challenge")]
+    public string Challenge { get; set; } = string.Empty;
+    
+    [JsonPropertyName("origin")]
+    public string Origin { get; set; } = string.Empty;
+    
+    [JsonPropertyName("crossOrigin")]
+    public bool CrossOrigin { get; set; }
+
+    public static ClientData? Parse(string clientDataJson)
+    {
+        var bytes = Base64Url.Decode(clientDataJson);
+        var json = Encoding.UTF8.GetString(bytes);
+        var clientData = JsonSerializer.Deserialize<ClientData>(json);
+        
+        return clientData;
+    }
+}

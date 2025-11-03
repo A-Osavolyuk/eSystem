@@ -11,7 +11,7 @@
     <Project Path="eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/src/Microservices/">
-    <Project Path="eSystem.Auth.Api\eSystem.Auth.Api.csproj" />
+    <Project Path="eSecurity\eSecurity.csproj" />
     <Project Path="eSystem.Cart.Api\eSystem.Cart.Api.csproj" />
     <Project Path="eSystem.Comments.Api\eSystem.Comments.Api.csproj" />
     <Project Path="eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
