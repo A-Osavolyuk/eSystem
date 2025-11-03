@@ -42,7 +42,7 @@ public class AuthorizeCommandHandler(
 
         var client = await clientManager.FindByClientIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client not found.");
-        if (!client.HasUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
+        if (!client.HasRedirectUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
         if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
         if (string.IsNullOrWhiteSpace(request.Request.Nonce)) return Results.BadRequest("Invalid nonce.");
 

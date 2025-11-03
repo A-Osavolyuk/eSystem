@@ -53,7 +53,7 @@ public class AuthorizationCodeStrategy(
 
         var client = authorizationCode.Client;
         if (!client.ClientId.Equals(request.ClientId)) return Results.BadRequest("Invalid client ID.");
-        if (!client.HasUri(redirectUri)) return Results.BadRequest("Invalid redirect URI.");
+        if (!client.HasRedirectUri(redirectUri)) return Results.BadRequest("Invalid redirect URI.");
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {

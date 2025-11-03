@@ -1,8 +1,8 @@
-﻿using eSystem.Core.Data.Entities;
+using eSystem.Core.Data.Entities;
 
 namespace eSystem.Auth.Api.Data.Entities;
 
-public class ClientRedirectUriEntity : Entity
+public class ClientPostLogoutRedirectUriEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid ClientId { get; set; }

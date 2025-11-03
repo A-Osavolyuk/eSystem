@@ -32,6 +32,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<ClientEntity> Clients { get; set; }
     public DbSet<ClientAllowedScopeEntity> ClientAllowedScopes { get; set; }
     public DbSet<ClientRedirectUriEntity> ClientRedirectUris { get; set; }
+    public DbSet<ClientPostLogoutRedirectUriEntity> ClientPostLogoutUris { get; set; }
     public DbSet<ClientGrantTypeEntity> ClientGrantTypes { get; set; }
     public DbSet<ScopeEntity> Scopes { get; set; }
     public DbSet<GrantedScopeEntity> GrantedScopes { get; set; }
@@ -317,10 +318,20 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<ClientRedirectUriEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.RedirectUri).HasMaxLength(200);
+            entity.Property(x => x.Uri).HasMaxLength(200);
             
             entity.HasOne(x => x.Client)
                 .WithMany(x => x.RedirectUris)
+                .HasForeignKey(x => x.ClientId);
+        });
+        
+        builder.Entity<ClientPostLogoutRedirectUriEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Uri).HasMaxLength(200);
+            
+            entity.HasOne(x => x.Client)
+                .WithMany(x => x.PostLogoutRedirectUris)
                 .HasForeignKey(x => x.ClientId);
         });
         

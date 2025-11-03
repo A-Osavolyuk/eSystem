@@ -17,13 +17,16 @@ public class ClientEntity : Entity
     public string? ClientUri { get; set; }
 
     public ICollection<ClientRedirectUriEntity> RedirectUris { get; set; } = null!;
+    public ICollection<ClientPostLogoutRedirectUriEntity> PostLogoutRedirectUris { get; set; } = null!;
     public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
     public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
 
-    public bool HasUri(string uri) => RedirectUris.Any(r => r.RedirectUri == uri);
-
+    public bool HasRedirectUri(string uri) 
+        => RedirectUris.Any(r => r.Uri == uri);
+    public bool HasPostLogoutRedirectUri(string uri) 
+        => PostLogoutRedirectUris.Any(r => r.Uri == uri);
     public bool HasScopes(List<string> scopes)
         => scopes.All(scope => AllowedScopes.Any(x => x.Scope.Name == scope));
-
-    public bool HasScope(string scope) => AllowedScopes.Any(x => x.Scope.Name == scope);
+    public bool HasScope(string scope) 
+        => AllowedScopes.Any(x => x.Scope.Name == scope);
 }
