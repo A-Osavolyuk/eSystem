@@ -9,9 +9,11 @@ namespace eSecurity.Security.Authentication.JWT.Factories;
 
 public class IdTokenFactory(
     IOptions<JwtOptions> options,
-    IEnumerable<IClaimEnricher> enrichers) : ITokenFactory
+    IEnumerable<IClaimEnricher> enrichers,
+    IJwtSigner jwtSigner) : ITokenFactory
 {
     private readonly IEnumerable<IClaimEnricher> enrichers = enrichers;
+    private readonly IJwtSigner jwtSigner = jwtSigner;
     private readonly JwtOptions options = options.Value;
 
     public string Create(TokenPayload payload)
@@ -23,6 +25,7 @@ public class IdTokenFactory(
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithSubject(idPayload.Subject)
             .WithAudience(idPayload.Audience)
+            .WithIssuer(options.Issuer)
             .WithIssuedTime(idPayload.IssuedAt)
             .WithExpirationTime(idPayload.ExpiresAt);
 
@@ -32,17 +35,6 @@ public class IdTokenFactory(
         foreach (var enricher in enrichers)
             enricher.Enrich(claimBuilder, idPayload);
 
-        const string algorithm = SecurityAlgorithms.HmacSha256;
-
-        var key = Encoding.UTF8.GetBytes(options.Secret);
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
-
-        var securityToken = new JwtSecurityToken(
-            issuer: options.Issuer,
-            claims: claimBuilder.Build(),
-            signingCredentials: signingCredentials);
-
-        var handler = new JwtSecurityTokenHandler();
-        return handler.WriteToken(securityToken);
+        return jwtSigner.Sign(claimBuilder.Build(), options.Secret, SecurityAlgorithms.HmacSha256);
     }
 }

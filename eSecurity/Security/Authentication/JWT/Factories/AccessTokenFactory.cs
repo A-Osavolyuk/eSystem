@@ -1,13 +1,15 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using eSecurity.Security.Authentication.JWT.Payloads;
+﻿using eSecurity.Security.Authentication.JWT.Payloads;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Security.Authentication.JWT.Factories;
 
-public class AccessTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
+public class AccessTokenFactory(
+    IOptions<JwtOptions> options,
+    IJwtSigner jwtSigner) : ITokenFactory
 {
+    private readonly IJwtSigner jwtSigner = jwtSigner;
     private readonly JwtOptions options = options.Value;
 
     public string Create(TokenPayload payload)
@@ -18,6 +20,7 @@ public class AccessTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
         var claimBuilder = ClaimBuilder.Create()
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithSubject(accessPayload.Subject)
+            .WithIssuer(options.Issuer)
             .WithAudience(accessPayload.Audience)
             .WithIssuedTime(accessPayload.IssuedAt)
             .WithExpirationTime(accessPayload.ExpiresAt)
@@ -25,18 +28,7 @@ public class AccessTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
 
         if (!string.IsNullOrEmpty(accessPayload.Nonce))
             claimBuilder.WithNonce(accessPayload.Nonce);
-
-        const string algorithm = SecurityAlgorithms.HmacSha256;
-
-        var key = Encoding.UTF8.GetBytes(options.Secret);
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
-
-        var securityToken = new JwtSecurityToken(
-            issuer: options.Issuer,
-            claims: claimBuilder.Build(),
-            signingCredentials: signingCredentials);
-
-        var handler = new JwtSecurityTokenHandler();
-        return handler.WriteToken(securityToken);
+        
+        return jwtSigner.Sign(claimBuilder.Build(), options.Secret, SecurityAlgorithms.HmacSha256);
     }
 }
