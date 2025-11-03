@@ -5,18 +5,18 @@ using eSystem.Core.Requests.Auth;
 
 namespace eSystem.Auth.Api.Features.SSO.Commands;
 
-public record SignOutCommand(SignOutRequest Request) : IRequest<Result>;
+public record LogoutCommand(LogoutRequest Request) : IRequest<Result>;
 
-public class SignOutCommandHandler(
+public class LogoutCommandHandler(
     IUserManager userManager,
     ISessionManager sessionManager,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<SignOutCommand, Result>
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<LogoutCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
 
-    public async Task<Result> Handle(SignOutCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");

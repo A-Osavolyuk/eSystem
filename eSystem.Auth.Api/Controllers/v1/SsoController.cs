@@ -48,14 +48,14 @@ public class SsoController(ISender sender) : ControllerBase
             ErrorHandler.Handle);
     }
 
-    [EndpointSummary("Sign-out")]
-    [EndpointDescription("Sign-out")]
+    [EndpointSummary("Logout")]
+    [EndpointDescription("Logout")]
     [ProducesResponseType(200)]
-    [HttpPost("sign-out")]
+    [HttpPost("logout")]
     [Authorize]
-    public async ValueTask<IActionResult> SignOutAsync([FromBody] SignOutRequest request)
+    public async ValueTask<IActionResult> LogoutAsync([FromBody] LogoutRequest request)
     {
-        var result = await sender.Send(new SignOutCommand(request));
+        var result = await sender.Send(new LogoutCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

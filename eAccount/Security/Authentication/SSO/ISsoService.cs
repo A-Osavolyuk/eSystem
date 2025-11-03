@@ -6,5 +6,5 @@ public interface ISsoService
 {
     public ValueTask<HttpResponse> TokenAsync(TokenRequest request);
     public ValueTask<HttpResponse> AuthorizeAsync(AuthorizeRequest request);
-    public ValueTask<HttpResponse> SignOutAsync(SignOutRequest request);
+    public ValueTask<HttpResponse> LogoutAsync(LogoutRequest request);
 }
