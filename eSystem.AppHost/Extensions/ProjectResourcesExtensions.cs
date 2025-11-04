@@ -9,12 +9,11 @@ public static class ProjectResourceBuilderExtensions
     {
         var configuration = builder.ApplicationBuilder.Configuration;
         var options = configuration.GetSectionValue<JwtOptions>("Configuration:Jwt");
-        
+
         return builder
             .WithEnvironment("Jwt__Secret", options.Secret)
             .WithEnvironment("Jwt__Issuer", options.Issuer)
             .WithEnvironment("Jwt__Audience", options.Audience)
-            .WithEnvironment("Jwt__AccessTokenExpirationMinutes", options.AccessTokenExpirationMinutes.ToString())
-            .WithEnvironment("Jwt__RefreshTokenExpirationDays", options.RefreshTokenExpirationDays.ToString());
+            .WithEnvironment("Jwt__AccessTokenExpirationMinutes", options.AccessTokenExpirationMinutes.ToString());
     }
 }
