@@ -103,7 +103,7 @@ public class AuthorizationCodeStrategy(
             .WithSubject(user.Id.ToString())
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.AddDays(options.AccessTokenExpirationMinutes))
+            .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
             .WithNonce(authorizationCode.Nonce)
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
