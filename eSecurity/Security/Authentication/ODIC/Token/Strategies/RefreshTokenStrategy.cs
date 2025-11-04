@@ -94,9 +94,12 @@ public class RefreshTokenStrategy(
                 ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };
+            
+            var createResult = await tokenManager.CreateAsync(newRefreshToken, cancellationToken);
+            if (!createResult.Succeeded) return createResult;
 
-            var rotateResult = await tokenManager.RotateAsync(refreshToken, newRefreshToken, cancellationToken);
-            if (!rotateResult.Succeeded) return rotateResult;
+            var revokeResult = await tokenManager.RevokeAsync(refreshToken, cancellationToken);
+            if (!revokeResult.Succeeded) return revokeResult;
             
             var protectedToken = protector.Protect(newRefreshToken.Token);
             response.RefreshToken = protectedToken;

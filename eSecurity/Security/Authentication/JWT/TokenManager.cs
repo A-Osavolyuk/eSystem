@@ -37,15 +37,14 @@ public sealed class TokenManager(
             .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
     }
 
-    public async Task<Result> RotateAsync(RefreshTokenEntity revokedToken, 
-        RefreshTokenEntity newToken, CancellationToken cancellationToken = default)
+    public async Task<Result> RevokeAsync(RefreshTokenEntity token, 
+        CancellationToken cancellationToken = default)
     {
-        revokedToken.Revoked = true;
-        revokedToken.RevokeDate = DateTimeOffset.UtcNow;
-        revokedToken.UpdateDate = DateTimeOffset.UtcNow;
+        token.Revoked = true;
+        token.RevokeDate = DateTimeOffset.UtcNow;
+        token.UpdateDate = DateTimeOffset.UtcNow;
         
-        await context.RefreshTokens.AddAsync(newToken, cancellationToken);
-        context.RefreshTokens.Update(revokedToken);
+        context.RefreshTokens.Update(token);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

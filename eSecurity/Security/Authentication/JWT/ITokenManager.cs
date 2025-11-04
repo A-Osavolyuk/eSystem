@@ -8,8 +8,8 @@ public interface ITokenManager
         CancellationToken cancellationToken = default);
     public Task<Result> CreateAsync(RefreshTokenEntity token, 
         CancellationToken cancellationToken = default);
-    public Task<Result> RotateAsync(RefreshTokenEntity revokedToken, 
-        RefreshTokenEntity newToken, CancellationToken cancellationToken = default);
+    public Task<Result> RevokeAsync(RefreshTokenEntity revokedToken,
+        CancellationToken cancellationToken = default);
     public Task<Result> RemoveAsync(RefreshTokenEntity token, 
         CancellationToken cancellationToken = default);
 }
