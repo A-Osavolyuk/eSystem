@@ -124,7 +124,7 @@ public class AuthorizationCodeStrategy(
                 ClientId = client.Id,
                 SessionId = session.Id,
                 Token = keyFactory.Create(20),
-                ExpireDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays),
+                ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };
         
