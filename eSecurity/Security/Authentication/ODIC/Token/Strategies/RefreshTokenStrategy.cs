@@ -1,5 +1,6 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
+using eSecurity.Security.Authentication.JWT.Constants;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
@@ -8,8 +9,6 @@ using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
-using eSystem.Core.Security.Cryptography.Tokens;
-using eSystem.Core.Security.Cryptography.Tokens.Constants;
 
 namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
 

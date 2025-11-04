@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Cryptography.Tokens.Constants;
+﻿namespace eSecurity.Security.Authentication.JWT.Constants;
 
 public static class TokenTypes
 {
