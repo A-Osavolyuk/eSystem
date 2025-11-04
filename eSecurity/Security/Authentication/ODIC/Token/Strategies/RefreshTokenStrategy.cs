@@ -63,39 +63,49 @@ public class RefreshTokenStrategy(
         var user = await userManager.FindByIdAsync(device.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        var session = refreshToken.Session;
-        var newRefreshToken = new RefreshTokenEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            ClientId = client.Id,
-            SessionId = session.Id,
-            Token = keyFactory.Create(20),
-            ExpireDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays),
-            CreateDate = DateTimeOffset.UtcNow
-        };
-
-        var rotateResult = await tokenManager.RotateAsync(refreshToken, newRefreshToken, cancellationToken);
-        if (!rotateResult.Succeeded) return rotateResult;
-
         var accessTokenClaims = ClaimBuilder.Create()
             .WithIssuer(options.Issuer)
             .WithAudience(client.Name)
             .WithSubject(user.Id.ToString())
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.AddDays(options.AccessTokenExpirationMinutes))
+            .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
 
         var accessToken = tokenFactory.Create(accessTokenClaims);
-        var protectedRefreshToken = protector.Protect(newRefreshToken.Token);
+
         var response = new TokenResponse()
         {
             AccessToken = accessToken,
             ExpiresIn = options.AccessTokenExpirationMinutes * 60,
             TokenType = TokenTypes.Bearer,
-            RefreshToken = protectedRefreshToken,
         };
+
+        if (client.RefreshTokenRotationEnabled)
+        {
+            var session = refreshToken.Session;
+            var newRefreshToken = new RefreshTokenEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = client.Id,
+                SessionId = session.Id,
+                Token = keyFactory.Create(20),
+                ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                CreateDate = DateTimeOffset.UtcNow
+            };
+
+            var rotateResult = await tokenManager.RotateAsync(refreshToken, newRefreshToken, cancellationToken);
+            if (!rotateResult.Succeeded) return rotateResult;
+            
+            var protectedToken = protector.Protect(newRefreshToken.Token);
+            response.RefreshToken = protectedToken;
+        }
+        else
+        {
+            var protectedToken = protector.Protect(refreshToken.Token);
+            response.RefreshToken = protectedToken;
+        }
 
         return Result.Success(response);
     }
