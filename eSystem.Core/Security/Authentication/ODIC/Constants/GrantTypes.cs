@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.ODIC.Token;
+﻿namespace eSystem.Core.Security.Authentication.ODIC.Constants;
 
 public static class GrantTypes
 {

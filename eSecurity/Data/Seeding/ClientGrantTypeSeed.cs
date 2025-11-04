@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 using eSystem.Core.Data.Seeding;
-using eSystem.Core.Security.Authentication.ODIC.Token;
+using eSystem.Core.Security.Authentication.ODIC.Constants;
 
 namespace eSecurity.Data.Seeding;
 

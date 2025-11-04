@@ -4,7 +4,7 @@ using eSecurity.Security.Authentication.ODIC.PKCE;
 using eSecurity.Security.Authentication.ODIC.Token;
 using eSecurity.Security.Authentication.ODIC.Token.Strategies;
 using eSecurity.Security.Authentication.ODIC.Session;
-using eSystem.Core.Security.Authentication.ODIC.Token;
+using eSystem.Core.Security.Authentication.ODIC.Constants;
 
 namespace eSecurity.Security.Authentication.ODIC;
 
