@@ -34,6 +34,7 @@ public static class AuthenticationExtensions
                 Scopes.OpenId,
                 Scopes.Phone,
                 Scopes.Profile,
+                Scopes.OfflineAccess
             ];
         });
         builder.Services.AddAuthentication(options =>

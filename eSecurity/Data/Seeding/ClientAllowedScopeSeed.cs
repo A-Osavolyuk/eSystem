@@ -38,6 +38,12 @@ public class ClientAllowedScopeSeed : Seed<ClientAllowedScopeEntity>
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
                 ScopeId = Guid.Parse("8d2269e7-ae28-4911-b5ef-6f47418fb65e"),
                 CreateDate = DateTimeOffset.UtcNow,
+            },
+            new ClientAllowedScopeEntity()
+            {
+                ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
+                ScopeId = Guid.Parse("865d1609-76c6-4928-a2f0-d1ca77f1498b"),
+                CreateDate = DateTimeOffset.UtcNow,
             }
         ];
     }

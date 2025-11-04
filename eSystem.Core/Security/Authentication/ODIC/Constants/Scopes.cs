@@ -7,4 +7,5 @@ public static class Scopes
     public const string Email = "email";
     public const string Phone = "phone";
     public const string Address = "address";
+    public const string OfflineAccess = "offline_access";
 }

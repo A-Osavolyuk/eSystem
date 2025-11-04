@@ -45,6 +45,13 @@ public class ScopeSeed : Seed<ScopeEntity>
                 Description = Scopes.Phone,
                 CreateDate = DateTimeOffset.UtcNow
             },
+            new ScopeEntity()
+            {
+                Id = Guid.Parse("865d1609-76c6-4928-a2f0-d1ca77f1498b"),
+                Name = Scopes.OfflineAccess,
+                Description = Scopes.OfflineAccess,
+                CreateDate = DateTimeOffset.UtcNow
+            },
         ];
     }
 }
