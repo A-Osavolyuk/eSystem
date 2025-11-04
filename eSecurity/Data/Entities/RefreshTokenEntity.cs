@@ -10,7 +10,7 @@ public class RefreshTokenEntity : Entity, IExpirable
     public Guid? NewTokenId { get; set; }
     public string Token { get; set; } = string.Empty;
     public bool Revoked { get; set; }
-    public bool IsValid => ExpireDate > DateTimeOffset.UtcNow && !Revoked;
+    public bool IsValid => ExpireDate > DateTimeOffset.UtcNow;
     
     public DateTimeOffset ExpireDate { get; set; }
     public DateTimeOffset RevokeDate { get; set; }

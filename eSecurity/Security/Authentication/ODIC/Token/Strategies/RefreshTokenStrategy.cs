@@ -7,6 +7,7 @@ using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
+using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 
@@ -37,8 +38,17 @@ public class RefreshTokenStrategy(
         if (refreshToken is null) return Results.NotFound("Refresh token not found.");
         if (!refreshToken.IsValid) return Results.BadRequest("Refresh token is invalid.");
 
+        if (refreshToken.Revoked)
+        {
+            //TODO: Implement revoked token reuse detection
+        }
+
         var client = refreshToken.Client;
-        if (!client.ClientId.Equals(request.ClientId)) return Results.BadRequest("Invalid client ID.");
+        if (!client.ClientId.Equals(request.ClientId)) 
+            return Results.BadRequest("Invalid client ID.");
+
+        if (!client.AllowOfflineAccess || !client.HasScope(Scopes.OfflineAccess))
+            return Results.BadRequest("Offline access is not allowed for client.");
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {
@@ -49,11 +59,6 @@ public class RefreshTokenStrategy(
                 return Results.BadRequest("Invalid client secret.");
         }
 
-        if (refreshToken.Revoked)
-        {
-            //TODO: Implement revoked token reuse detection
-        }
-        
         var device = refreshToken.Session.Device;
         var user = await userManager.FindByIdAsync(device.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
@@ -81,7 +86,7 @@ public class RefreshTokenStrategy(
             .WithExpirationTime(DateTimeOffset.UtcNow.AddDays(options.AccessTokenExpirationMinutes))
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
-        
+
         var accessToken = tokenFactory.Create(accessTokenClaims);
         var protectedRefreshToken = protector.Protect(newRefreshToken.Token);
         var response = new TokenResponse()

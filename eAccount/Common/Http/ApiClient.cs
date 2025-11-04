@@ -130,7 +130,7 @@ public class ApiClient(
         var response = result.Get<TokenResponse>()!;
         tokenProvider.AccessToken = response.AccessToken;
 
-        return await authenticationManager.RefreshAsync(response.RefreshToken);
+        return await authenticationManager.RefreshAsync(response.RefreshToken!);
 
     }
 }

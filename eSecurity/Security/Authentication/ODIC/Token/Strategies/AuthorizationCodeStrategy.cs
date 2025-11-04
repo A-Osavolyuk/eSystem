@@ -10,6 +10,7 @@ using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
+using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 
@@ -95,19 +96,6 @@ public class AuthorizationCodeStrategy(
 
         var codeResult = await authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
-        
-        var refreshToken = new RefreshTokenEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            ClientId = client.Id,
-            SessionId = session.Id,
-            Token = keyFactory.Create(20),
-            ExpireDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays),
-            CreateDate = DateTimeOffset.UtcNow
-        };
-        
-        var tokenResult = await tokenManager.CreateAsync(refreshToken, cancellationToken);
-        if (!tokenResult.Succeeded) return tokenResult;
 
         var accessTokenClaims = ClaimBuilder.Create()
             .WithIssuer(options.Issuer)
@@ -121,15 +109,32 @@ public class AuthorizationCodeStrategy(
             .Build();
         
         var accessToken = tokenFactory.Create(accessTokenClaims);
-        var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
-        var protectedRefreshToken = protector.Protect(refreshToken.Token);
         var response = new TokenResponse()
         {
             AccessToken = accessToken,
             ExpiresIn = options.AccessTokenExpirationMinutes * 60,
             TokenType = TokenTypes.Bearer,
-            RefreshToken = protectedRefreshToken,
         };
+        
+        if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
+        {
+            var refreshToken = new RefreshTokenEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = client.Id,
+                SessionId = session.Id,
+                Token = keyFactory.Create(20),
+                ExpireDate = DateTimeOffset.UtcNow.AddDays(options.RefreshTokenExpirationDays),
+                CreateDate = DateTimeOffset.UtcNow
+            };
+        
+            var tokenResult = await tokenManager.CreateAsync(refreshToken, cancellationToken);
+            if (!tokenResult.Succeeded) return tokenResult;
+            
+            var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
+            var protectedRefreshToken = protector.Protect(refreshToken.Token);
+            response.RefreshToken = protectedRefreshToken;
+        }
 
         return Result.Success(response);
     }

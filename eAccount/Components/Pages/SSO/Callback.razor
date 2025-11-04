@@ -40,7 +40,7 @@
         {
             var response = result.Get<TokenResponse>()!;
             
-            await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken);
+            await AuthenticationManager.SignInAsync(response.AccessToken, response.RefreshToken!);
             
             var url = string.IsNullOrEmpty(ReturnUrl) ? Links.Profile : HttpUtility.UrlDecode(ReturnUrl!);
             NavigationManager.NavigateTo(url);
