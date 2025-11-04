@@ -19,6 +19,8 @@ public class ClientSeed : Seed<ClientEntity>
                 RequireClientSecret = true,
                 RequirePkce = false,
                 AllowOfflineAccess = true,
+                RefreshTokenRotationEnabled = false,
+                RefreshTokenLifetime = TimeSpan.FromDays(30),
                 Type = ClientType.Confidential,
                 CreateDate = DateTimeOffset.UtcNow
             }

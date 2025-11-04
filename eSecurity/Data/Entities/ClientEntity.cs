@@ -13,6 +13,8 @@ public class ClientEntity : Entity
     public bool RequirePkce { get; set; }
     public bool RequireClientSecret { get; set; }
     public bool AllowOfflineAccess { get; set; }
+    public bool RefreshTokenRotationEnabled { get; set; } = true;
+    public TimeSpan RefreshTokenLifetime { get; set; }
     public string? LogoUri { get; set; }
     public string? ClientUri { get; set; }
 
