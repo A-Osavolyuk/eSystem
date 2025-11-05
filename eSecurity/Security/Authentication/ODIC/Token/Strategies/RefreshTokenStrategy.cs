@@ -2,6 +2,7 @@ using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
 using eSecurity.Security.Authentication.JWT.Claims;
 using eSecurity.Security.Authentication.JWT.Constants;
+using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;

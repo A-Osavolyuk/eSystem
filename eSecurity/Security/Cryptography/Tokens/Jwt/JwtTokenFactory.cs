@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using eSystem.Core.Security.Authentication.JWT;
 
-namespace eSecurity.Security.Authentication.JWT;
+namespace eSecurity.Security.Cryptography.Tokens.Jwt;
 
 public class JwtTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
 {

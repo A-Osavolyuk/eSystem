@@ -1,4 +1,5 @@
 ﻿using eSecurity.Data.Entities;
+using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Keys;
 

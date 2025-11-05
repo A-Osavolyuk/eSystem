@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace eSecurity.Security.Authentication.JWT;
+namespace eSecurity.Security.Cryptography.Tokens.Jwt;
 
 public interface ITokenFactory
 {
