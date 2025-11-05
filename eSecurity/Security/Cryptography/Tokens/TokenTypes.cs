@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Security.Authentication.Jwt.Constants;
+﻿namespace eSecurity.Security.Cryptography.Tokens;
 
 public static class TokenTypes
 {
