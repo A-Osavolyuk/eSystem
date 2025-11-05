@@ -1,31 +1,77 @@
+using eSecurity.Data.Entities;
+using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Security.Identity.Email;
+using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Security.Authentication.JWT.Claims;
 
 public sealed class IdClaimBuilder : JwtClaimBuilderBase<IdClaimBuilder>
 {
-    private IdClaimBuilder() {}
+    private IdClaimBuilder() { }
     public static IdClaimBuilder Create() => new();
-    
-    public IdClaimBuilder WithName(string name) => Add(AppClaimTypes.Name, name);
-    public IdClaimBuilder WithNickname(string nickname) => Add(AppClaimTypes.Nickname, nickname);
-    public IdClaimBuilder WithGivenName(string givenName) => Add(AppClaimTypes.GivenName, givenName);
-    public IdClaimBuilder WithFamilyName(string familyName) => Add(AppClaimTypes.FamilyName, familyName);
-    public IdClaimBuilder WithMiddleName(string middleName) => Add(AppClaimTypes.MiddleName, middleName);
-    public IdClaimBuilder WithPreferredUsername(string username) => Add(AppClaimTypes.PreferredUsername, username);
-    public IdClaimBuilder WithEmail(string email) => Add(AppClaimTypes.Email, email);
-    public IdClaimBuilder WithEmailVerified(bool verified) => Add(AppClaimTypes.EmailVerified, verified);
-    public IdClaimBuilder WithPhoneNumber(string number) => Add(AppClaimTypes.PhoneNumber, number);
-    public IdClaimBuilder WithPhoneNumberVerified(bool verified) => Add(AppClaimTypes.PhoneNumberVerified, verified);
-    public IdClaimBuilder WithLocale(string locale) => Add(AppClaimTypes.Locale, locale);
-    public IdClaimBuilder WithZoneInfo(string zone) => Add(AppClaimTypes.ZoneInfo, zone);
-    public IdClaimBuilder WithAddress(string address) => Add(AppClaimTypes.Address, address);
-    public IdClaimBuilder WithGender(string gender) => Add(AppClaimTypes.Gender, gender);
-    public IdClaimBuilder WithPicture(string picture) => Add(AppClaimTypes.Picture, picture);
-    public IdClaimBuilder WithProfile(string profile) => Add(AppClaimTypes.Profile, profile);
-    public IdClaimBuilder WithBirthDate(DateTimeOffset date) => Add(AppClaimTypes.BirthDate, date);
-    public IdClaimBuilder WithUpdatedTime(DateTimeOffset date) => Add(AppClaimTypes.UpdatedAt, date);
     public IdClaimBuilder WithAuthenticationTime(DateTimeOffset date) => Add(AppClaimTypes.AuthenticationTime, date);
     public IdClaimBuilder WithAccessTokenHash(string hash) => Add(AppClaimTypes.AccessTokenHash, hash);
     public IdClaimBuilder WithAuthorizationCodeHash(string hash) => Add(AppClaimTypes.AuthorizationCodeHash, hash);
+
+    public IdClaimBuilder WithOpenId(UserEntity user, ClientEntity client)
+    {
+        if (client.HasScope(Scopes.Email)) WithEmail(user);
+        if (client.HasScope(Scopes.Phone)) WithPhone(user);
+        if (client.HasScope(Scopes.Profile)) WithProfile(user);
+        if (client.HasScope(Scopes.Address)) WithAddress(user);
+
+        return this;
+    }
+
+    private void WithEmail(UserEntity user)
+    {
+        var email = user.GetEmail(EmailType.Primary);
+
+        if (email is not null)
+        {
+            Add(AppClaimTypes.Email, email.Email);
+            Add(AppClaimTypes.EmailVerified, email.IsVerified);
+        }
+    }
+
+    private void WithPhone(UserEntity user)
+    {
+        var phoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary);
+
+        if (phoneNumber is not null)
+        {
+            Add(AppClaimTypes.PhoneNumber, phoneNumber.PhoneNumber);
+            Add(AppClaimTypes.PhoneNumberVerified, phoneNumber.IsVerified);
+        }
+    }
+
+    private void WithProfile(UserEntity user)
+    {
+        Add(AppClaimTypes.PreferredUsername, user.Username);
+
+        if (user.UpdateDate.HasValue) 
+            Add(AppClaimTypes.UpdatedAt, user.UpdateDate.Value);
+        
+        if (user.PersonalData is not null)
+        {
+            var personalData = user.PersonalData;
+            Add(AppClaimTypes.GivenName, personalData.FirstName);
+            Add(AppClaimTypes.FamilyName, personalData.LastName);
+            Add(AppClaimTypes.MiddleName, personalData.MiddleName);
+            Add(AppClaimTypes.Gender, personalData.Gender.ToString());
+            Add(AppClaimTypes.BirthDate, personalData.BirthDate);
+            
+            var fullName = string.Join(" ", new[] { personalData.FirstName, personalData.MiddleName, personalData.LastName }
+                .Where(x => !string.IsNullOrWhiteSpace(x)));
+            Add(AppClaimTypes.Name, fullName);
+            
+            //TODO: Implement user's local, zoneinfo and picture claims
+        }
+    }
+
+    private void WithAddress(UserEntity user)
+    {
+        //TODO: Implement user address claim
+    }
 }
