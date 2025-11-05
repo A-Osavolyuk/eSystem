@@ -1,4 +1,4 @@
-namespace eSecurity.Security.Authentication.JWT.Claims;
+namespace eSecurity.Security.Authentication.Jwt.Claims;
 
 public interface IClaimBuilderFactory
 {

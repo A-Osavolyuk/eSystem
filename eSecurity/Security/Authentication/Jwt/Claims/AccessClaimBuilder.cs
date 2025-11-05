@@ -1,6 +1,6 @@
 using eSystem.Core.Security.Identity.Claims;
 
-namespace eSecurity.Security.Authentication.JWT.Claims;
+namespace eSecurity.Security.Authentication.Jwt.Claims;
 
 public sealed class AccessClaimBuilder : JwtClaimBuilderBase<AccessClaimBuilder>
 {

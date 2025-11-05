@@ -1,8 +1,8 @@
-using eSecurity.Security.Authentication.JWT.Claims;
+using eSecurity.Security.Authentication.Jwt.Claims;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSystem.Core.Security.Authentication.JWT;
 
-namespace eSecurity.Security.Authentication.JWT;
+namespace eSecurity.Security.Authentication.Jwt;
 
 public static class JwtExtensions
 {

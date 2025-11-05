@@ -1,6 +1,6 @@
 ﻿using eSecurity.Security.Authentication.Schemes;
 using eSecurity.Security.Authorization.OAuth;
-using eSecurity.Security.Authentication.JWT;
+using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Authentication.ODIC;
 using eSecurity.Security.Authentication.Password;

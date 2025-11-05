@@ -1,7 +1,7 @@
 using eSecurity.Data.Entities;
-using eSecurity.Security.Authentication.JWT;
-using eSecurity.Security.Authentication.JWT.Claims;
-using eSecurity.Security.Authentication.JWT.Constants;
+using eSecurity.Security.Authentication.Jwt;
+using eSecurity.Security.Authentication.Jwt.Claims;
+using eSecurity.Security.Authentication.Jwt.Constants;
 using eSecurity.Security.Authentication.ODIC.Code;
 using eSecurity.Security.Authentication.ODIC.PKCE;
 using eSecurity.Security.Authentication.ODIC.Session;

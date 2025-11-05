@@ -3,7 +3,7 @@ using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSystem.Core.Security.Authentication.JWT;
 using eSystem.Core.Security.Cryptography.Keys;
 
-namespace eSecurity.Security.Authentication.JWT;
+namespace eSecurity.Security.Authentication.Jwt;
 
 public sealed class TokenManager(
     AuthDbContext context,
