@@ -13,6 +13,7 @@ using eSystem.Core.Security.Authentication.ODIC.Client;
 using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
+using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
 
@@ -94,12 +95,10 @@ public class AuthorizationCodeStrategy(
         var user = await userManager.FindByIdAsync(device.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        //TODO: Implement ID token generation
-
         var codeResult = await authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var accessTokenClaims = claimBuilderFactory.CreateAccessBuilder()
+        var accessClaims = claimBuilderFactory.CreateAccessBuilder()
             .WithIssuer(options.Issuer)
             .WithAudience(client.Name)
             .WithSubject(user.Id.ToString())
@@ -110,10 +109,9 @@ public class AuthorizationCodeStrategy(
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
         
-        var accessToken = tokenFactory.Create(accessTokenClaims);
         var response = new TokenResponse()
         {
-            AccessToken = accessToken,
+            AccessToken = tokenFactory.Create(accessClaims),
             ExpiresIn = options.AccessTokenExpirationMinutes * 60,
             TokenType = TokenTypes.Bearer,
         };
@@ -136,6 +134,23 @@ public class AuthorizationCodeStrategy(
             var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
             var protectedRefreshToken = protector.Protect(refreshToken.Token);
             response.RefreshToken = protectedRefreshToken;
+        }
+
+        if (client.HasScope(Scopes.OpenId))
+        {
+            var idClaims = claimBuilderFactory.CreateIdBuilder()
+                .WithOpenId(user, client)
+                .WithIssuer(options.Issuer)
+                .WithAudience(client.Name)
+                .WithSubject(user.Id.ToString())
+                .WithTokenId(Guid.CreateVersion7().ToString())
+                .WithNonce(authorizationCode.Nonce)
+                .WithIssuedTime(DateTimeOffset.UtcNow)
+                .WithAuthenticationTime(DateTimeOffset.UtcNow)
+                .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
+                .Build();
+            
+            response.IdToken = tokenFactory.Create(idClaims);
         }
 
         return Result.Success(response);

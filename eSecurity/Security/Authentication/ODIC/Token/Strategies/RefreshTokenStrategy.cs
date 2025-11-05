@@ -111,6 +111,22 @@ public class RefreshTokenStrategy(
             var protectedToken = protector.Protect(refreshToken.Token);
             response.RefreshToken = protectedToken;
         }
+        
+        if (client.HasScope(Scopes.OpenId))
+        {
+            var idClaims = claimBuilderFactory.CreateIdBuilder()
+                .WithOpenId(user, client)
+                .WithIssuer(options.Issuer)
+                .WithAudience(client.Name)
+                .WithSubject(user.Id.ToString())
+                .WithTokenId(Guid.CreateVersion7().ToString())
+                .WithIssuedTime(DateTimeOffset.UtcNow)
+                .WithAuthenticationTime(DateTimeOffset.UtcNow)
+                .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
+                .Build();
+            
+            response.IdToken = tokenFactory.Create(idClaims);
+        }
 
         return Result.Success(response);
     }
