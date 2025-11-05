@@ -1,6 +1,6 @@
 using eSecurity.Security.Authentication.Jwt.Claims;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
-using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Authentication.Jwt;
 
 namespace eSecurity.Security.Authentication.Jwt;
 

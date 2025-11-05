@@ -7,7 +7,7 @@ using eSecurity.Security.Authentication.Password;
 using eSecurity.Security.Authentication.SignIn;
 using eSecurity.Security.Authentication.TwoFactor;
 using eSystem.Core.Common.Configuration;
-using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Authentication.Jwt;
 using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 

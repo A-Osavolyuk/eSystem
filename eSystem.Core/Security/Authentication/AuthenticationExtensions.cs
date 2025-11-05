@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authentication.JWT;
+﻿using eSystem.Core.Security.Authentication.Jwt;
 using Microsoft.Extensions.Hosting;
 
 namespace eSystem.Core.Security.Authentication;

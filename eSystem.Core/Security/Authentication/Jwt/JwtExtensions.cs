@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace eSystem.Core.Security.Authentication.JWT;
+namespace eSystem.Core.Security.Authentication.Jwt;
 
 public static class JwtExtensions
 {

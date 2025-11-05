@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using eSystem.Core.Security.Authentication.JWT;
+using eSystem.Core.Security.Authentication.Jwt;
 
 namespace eSecurity.Security.Cryptography.Tokens.Jwt;
 

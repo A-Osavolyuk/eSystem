@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.JWT;
+﻿namespace eSystem.Core.Security.Authentication.Jwt;
 
 public class JwtOptions
 {
