@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.JWT.Claims;
+﻿namespace eSystem.Core.Security.Identity.Claims;
 
 public static class AppClaimTypes
 {
