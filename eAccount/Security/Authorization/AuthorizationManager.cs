@@ -1,6 +1,6 @@
 ﻿using eAccount.Common.Routing;
 using eAccount.Security.Authentication.ODIC.Clients;
-using eSystem.Core.Security.Authentication.ODIC.Constants;
+using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Components;

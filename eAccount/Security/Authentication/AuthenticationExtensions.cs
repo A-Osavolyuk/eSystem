@@ -2,7 +2,7 @@ using eAccount.Security.Authentication.JWT;
 using eAccount.Security.Authentication.ODIC;
 using eAccount.Security.Authentication.ODIC.Clients;
 using eAccount.Security.Authentication.TwoFactor;
-using eSystem.Core.Security.Authentication.ODIC.Constants;
+using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -7,8 +7,8 @@ using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
-using eSystem.Core.Security.Authentication.ODIC.Client;
-using eSystem.Core.Security.Authentication.ODIC.Constants;
+using eSystem.Core.Security.Authentication.Odic.Client;
+using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 

@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.ODIC.Constants;
+﻿namespace eSystem.Core.Security.Authentication.Odic.Constants;
 
 public static class Scopes
 {

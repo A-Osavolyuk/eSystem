@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 using eSystem.Core.Data.Seeding;
-using eSystem.Core.Security.Authentication.ODIC.Client;
+using eSystem.Core.Security.Authentication.Odic.Client;
 
 namespace eSecurity.Data.Seeding;
 

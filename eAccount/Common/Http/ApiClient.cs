@@ -10,7 +10,7 @@ using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
-using eSystem.Core.Security.Authentication.ODIC.Constants;
+using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
