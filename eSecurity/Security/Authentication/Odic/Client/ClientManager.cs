@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 
-namespace eSecurity.Security.Authentication.ODIC.Client;
+namespace eSecurity.Security.Authentication.Odic.Client;
 
 public class ClientManager(AuthDbContext context) : IClientManager
 {

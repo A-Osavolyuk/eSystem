@@ -2,9 +2,9 @@ using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Jwt.Claims;
 using eSecurity.Security.Authentication.Jwt.Constants;
-using eSecurity.Security.Authentication.ODIC.Code;
-using eSecurity.Security.Authentication.ODIC.PKCE;
-using eSecurity.Security.Authentication.ODIC.Session;
+using eSecurity.Security.Authentication.Odic.Code;
+using eSecurity.Security.Authentication.Odic.PKCE;
+using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
@@ -16,7 +16,7 @@ using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 using eSystem.Core.Security.Identity.Email;
 
-namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
+namespace eSecurity.Security.Authentication.Odic.Token.Strategies;
 
 public class AuthorizationCodeStrategy(
     IUserManager userManager,

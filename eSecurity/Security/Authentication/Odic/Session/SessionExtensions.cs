@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Security.Authentication.ODIC.Session;
+﻿namespace eSecurity.Security.Authentication.Odic.Session;
 
 public static class SessionExtensions
 {

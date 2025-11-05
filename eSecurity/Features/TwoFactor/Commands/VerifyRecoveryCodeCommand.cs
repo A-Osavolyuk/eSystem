@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.Lockout;
-using eSecurity.Security.Authentication.ODIC.Session;
+using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.TwoFactor.Recovery;
 using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Identity.Options;

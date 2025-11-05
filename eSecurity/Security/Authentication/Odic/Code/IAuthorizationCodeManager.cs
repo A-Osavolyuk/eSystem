@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 
-namespace eSecurity.Security.Authentication.ODIC.Code;
+namespace eSecurity.Security.Authentication.Odic.Code;
 
 public interface IAuthorizationCodeManager
 {

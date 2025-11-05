@@ -1,4 +1,4 @@
-namespace eSecurity.Security.Authentication.ODIC.Token;
+namespace eSecurity.Security.Authentication.Odic.Token;
 
 public interface ITokenStrategyResolver
 {

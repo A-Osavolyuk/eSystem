@@ -12,7 +12,7 @@ using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
 
-namespace eSecurity.Security.Authentication.ODIC.Token.Strategies;
+namespace eSecurity.Security.Authentication.Odic.Token.Strategies;
 
 public class RefreshTokenStrategy(
     IProtectorFactory protectorFactory,

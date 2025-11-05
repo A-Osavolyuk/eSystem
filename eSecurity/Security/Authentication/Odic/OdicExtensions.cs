@@ -1,12 +1,12 @@
-﻿using eSecurity.Security.Authentication.ODIC.Client;
-using eSecurity.Security.Authentication.ODIC.Code;
-using eSecurity.Security.Authentication.ODIC.PKCE;
-using eSecurity.Security.Authentication.ODIC.Token;
-using eSecurity.Security.Authentication.ODIC.Token.Strategies;
-using eSecurity.Security.Authentication.ODIC.Session;
+﻿using eSecurity.Security.Authentication.Odic.Client;
+using eSecurity.Security.Authentication.Odic.Code;
+using eSecurity.Security.Authentication.Odic.PKCE;
+using eSecurity.Security.Authentication.Odic.Session;
+using eSecurity.Security.Authentication.Odic.Token;
+using eSecurity.Security.Authentication.Odic.Token.Strategies;
 using eSystem.Core.Security.Authentication.ODIC.Constants;
 
-namespace eSecurity.Security.Authentication.ODIC;
+namespace eSecurity.Security.Authentication.Odic;
 
 public static class OdicExtensions
 {

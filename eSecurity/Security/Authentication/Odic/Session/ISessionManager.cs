@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 
-namespace eSecurity.Security.Authentication.ODIC.Session;
+namespace eSecurity.Security.Authentication.Odic.Session;
 
 public interface ISessionManager
 {

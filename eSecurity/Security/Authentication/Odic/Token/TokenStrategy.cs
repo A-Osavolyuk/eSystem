@@ -1,6 +1,6 @@
 using eSystem.Core.Requests.Auth;
 
-namespace eSecurity.Security.Authentication.ODIC.Token;
+namespace eSecurity.Security.Authentication.Odic.Token;
 
 public abstract class TokenStrategy
 {

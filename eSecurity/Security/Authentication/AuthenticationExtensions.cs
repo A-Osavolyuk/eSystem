@@ -2,7 +2,7 @@
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Lockout;
-using eSecurity.Security.Authentication.ODIC;
+using eSecurity.Security.Authentication.Odic;
 using eSecurity.Security.Authentication.Password;
 using eSecurity.Security.Authentication.SignIn;
 using eSecurity.Security.Authentication.TwoFactor;

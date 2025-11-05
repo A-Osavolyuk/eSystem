@@ -1,7 +1,7 @@
 ﻿using eSecurity.Data.Entities;
 using eSystem.Core.Security.Cryptography.Keys;
 
-namespace eSecurity.Security.Authentication.ODIC.Code;
+namespace eSecurity.Security.Authentication.Odic.Code;
 
 public class AuthorizationCodeManager(
     AuthDbContext context,

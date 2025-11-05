@@ -1,4 +1,4 @@
-﻿using eSecurity.Security.Authentication.ODIC.Session;
+﻿using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Identity.User;

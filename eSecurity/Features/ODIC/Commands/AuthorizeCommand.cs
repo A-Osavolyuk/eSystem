@@ -1,7 +1,7 @@
 ﻿using eSecurity.Data.Entities;
-using eSecurity.Security.Authentication.ODIC.Client;
-using eSecurity.Security.Authentication.ODIC.Code;
-using eSecurity.Security.Authentication.ODIC.Session;
+using eSecurity.Security.Authentication.Odic.Client;
+using eSecurity.Security.Authentication.Odic.Code;
+using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Requests.Auth;
