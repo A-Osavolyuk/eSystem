@@ -99,10 +99,6 @@ var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
     .WithReference(storageApi).WaitFor(storageApi)
     .WithReference(commentApi).WaitFor(commentApi);
 
-builder.AddProject<Projects.eAccount>("e-account")
-    .WithJwtConfig()
-    .WithReference(proxy).WaitFor(proxy).WithRelationship(proxy.Resource, "Proxy");
-
 var app = builder.Build();
 
 app.Run();

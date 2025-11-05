@@ -1,0 +1,145 @@
+﻿@page "/account/passkeys/sign-in"
+@using eSecurity.Features.Passkeys.Commands
+@using eSecurity.Security.Credentials.PublicKey
+@using eSystem.Core.Security.Authentication.SignIn.Payloads
+
+@inherits PageBase
+
+@inject PasskeySignInValidator Validator
+@inject WebAuthNManager WebAuthNManager
+
+<Title Text="Sign in with Passkey"></Title>
+
+<MudGrid Justify="Justify.Center" Style="margin-top: 150px">
+    <MudItem xs="4">
+        <MudStack Spacing="1">
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4">
+                    Sign in with Passkey
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
+                    <MudStack Spacing="3">
+                        <MudTextField
+                            @bind-Value="Model.Username"
+                            For="@(() => Model.Username)"
+                            Label="Username"
+                            Immediate
+                            Variant="Variant.Outlined"/>
+
+                        <MudLoadingButton
+                            LoadingAdornment="Adornment.End"
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await OnSubmitAsync())"
+                            StartIcon="@Icons.Material.Filled.Login"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            FullWidth="true">
+                            Sign in
+                        </MudLoadingButton>
+                    </MudStack>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center">
+                    Have an account with password? Go to
+                    <MudLink Href="@Links.SignIn">
+                        Sign in
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center">
+                    Do not have an account yet?
+                    <MudLink Href="@Links.SignUp">
+                        Sign up
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center">
+                    Or you can sign up with
+                    <MudLink Href="@Links.PasskeySignInPage">
+                        Passkey
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] public PasskeySignInModel Model { get; set; } = new();
+
+    private MudForm form = new();
+
+    private async Task OnSubmitAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new GenerateRequestOptionsRequest()
+            {
+                Username = Model.Username
+            };
+
+            var result = await Sender.Send(new GenerateRequestOptionsCommand(request));
+            var options = result.Get<PublicKeyCredentialRequestOptions>()!;
+
+            if (result.Succeeded) await VerifyAsync(options);
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task VerifyAsync(PublicKeyCredentialRequestOptions options)
+    {
+        var authenticateResult = await WebAuthNManager.AuthenticateAsync(options);
+        if (authenticateResult.Success)
+        {
+            var credential = authenticateResult.Get<PublicKeyCredential>();
+            var request = new SignInRequest()
+            {
+                Payload = new PasskeySignInPayload()
+                {
+                    Credential = credential
+                }
+            };
+
+            var result = await Sender.Send(new SignInCommand(request));
+
+            if (result.Succeeded)
+            {
+                var response = result.Get<SignInResponse>()!;
+                UserState.UserId = response.UserId;
+                
+                //TODO: Implement sign-in
+            }
+            else
+            {
+                if (result.Value is null)
+                {
+                    Snackbar.Add(result.Message, Severity.Error);
+                    return;
+                }
+
+                var response = result.Get<SignInResponse>()!;
+
+                if (response.IsLockedOut)
+                {
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.LockedOutPage)
+                        .WithQueryParam("id", response.UserId.ToString());
+
+                    NavigationManager.NavigateTo(builder.Build());
+                }
+                else
+                {
+                    Snackbar.Add(result.Message, Severity.Error);
+                }
+            }
+        }
+    }
+
+}

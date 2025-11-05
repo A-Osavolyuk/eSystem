@@ -1,0 +1,92 @@
+﻿@using eSecurity.Features.TwoFactor.Commands
+@inject ISender Sender
+@inject ISnackbar Snackbar
+@inject UserState UserState
+@inject ConfirmationManager ConfirmationManager
+
+@if (!Model.Enabled)
+{
+    <MudStack Spacing="3">
+        <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">
+            Two-factor authentication
+        </MudTextM3>
+        <MudDivider/>
+        <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Outlined.Lock"/>
+                <MudText Typo="Typo.h6">Two-factor authentication is not enabled yet.</MudText>
+                <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium" Class="opacity-50">
+                    Two-factor authentication adds an additional layer of security
+                    to your account by requiring more than just a password to sign in.
+                </MudTextM3>
+            </MudStack>
+            <MudButton
+                Color="Color.Success"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                Href="@(OnEnable())">
+                Enable two-factor
+            </MudButton>
+        </MudStack>
+    </MudStack>
+}
+else
+{
+    <MudStack Spacing="3">
+        <MudStack Row="true" Class="pr-2">
+            <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">
+                Two-factor authentication
+            </MudTextM3>
+            <MudSpacer/>
+            <MudMenu Dense="true">
+                <ActivatorContent>
+                    <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                </ActivatorContent>
+                <ChildContent>
+                    <MudMenuItem OnClick="@(async () => await OnDisableAsync())">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
+                            Disable two-factor
+                        </MudTextM3>
+                    </MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+        </MudStack>
+        <MudDivider/>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+            Two-factor authentication adds an additional layer of security
+            to your account by requiring more than just a password to sign in.
+        </MudTextM3>
+        <TwoFactorPreferredMethod Model="Model" OnRefresh="OnRefresh"/>
+        <TwoFactorMethods Model="Model"/>
+    </MudStack>
+}
+
+@code {
+    [Parameter] public TwoFactorData Model { get; set; } = new();
+
+    [Parameter] public EventCallback OnRefresh { get; set; }
+
+    private readonly string returnUrl = HttpUtility.UrlEncode(Links.SecurityPage);
+
+    private string OnEnable()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.EnableTwoFactorPage)
+            .WithQueryParam("return_url", Links.SecurityPage)
+            .Build();
+    }
+
+    private async Task OnDisableAsync()
+    {
+        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.TwoFactor, ActionType.Disable);
+        if (!confirmationResult!.Canceled)
+        {
+            var request = new DisableTwoFactorRequest() { UserId = UserState.UserId };
+            var result = await Sender.Send(new DisableCommand(request));
+
+            if (result.Succeeded) await OnRefresh.InvokeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+}

@@ -1,0 +1,237 @@
+﻿@page "/account/email/reset"
+@using eSecurity.Features.Verification.Commands
+@using eSecurity.Extensions
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject ResetEmailValidator ResetEmailValidator
+@inject CodeModelValidator Validator
+
+<Title Text="Reset email"></Title>
+
+<AccessConfirmation Context="confirmationContext">
+    <AccessConfirmed>
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="6" Style="margin-top: 100px">
+                <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                                    HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
+                                    ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
+                    <ChildContent>
+                        <MudStepExtended Order="0" Icon="@Icons.Material.Filled.Start" Title="Request">
+                            <ChildContent>
+                                <MudGrid Justify="Justify.Center">
+                                    <MudItem xs="8">
+                                        <MudStack Spacing="1" Justify="Justify.Center">
+                                            <MudPaper Outlined Class="pa-3">
+                                                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                                                    Email reset
+                                                </MudTextM3>
+                                            </MudPaper>
+                                            <MudPaper Outlined="true" Class="py-4 px-5">
+                                                <MudStack Spacing="2">
+                                                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                        To reset your current email address, please enter new
+                                                        email address.
+                                                        We will send you 6-digit reset code to new email
+                                                        address.
+                                                    </MudTextM3>
+                                                    <MudForm
+                                                        @ref="resetForm"
+                                                        Model="ResetModel"
+                                                        Validation="ResetEmailValidator.ValidateValue">
+                                                        <MudTextFieldExtended
+                                                            Margin="Margin.Dense"
+                                                            @bind-Value="ResetModel.NewEmail"
+                                                            For="() => ResetModel.NewEmail"
+                                                            Label="New email"
+                                                            Variant="Variant.Outlined"
+                                                            Immediate="true"
+                                                            Clearable="true"/>
+                                                    </MudForm>
+                                                    <MudLoadingButton
+                                                        Size="Size.Small"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Success"
+                                                        ButtonType="ButtonType.Button"
+                                                        OnClick="@(async () => await OnSendCodeAsync())">
+                                                        Change
+                                                    </MudLoadingButton>
+                                                    <MudButton
+                                                        Size="Size.Small"
+                                                        Variant="Variant.Text"
+                                                        Color="Color.Info"
+                                                        ButtonType="ButtonType.Button"
+                                                        Href="@ReturnUrl"
+                                                        OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
+                                                        Cancel
+                                                    </MudButton>
+                                                </MudStack>
+                                            </MudPaper>
+                                        </MudStack>
+                                    </MudItem>
+                                </MudGrid>
+                            </ChildContent>
+                        </MudStepExtended>
+                        <MudStepExtended Order="1" Icon="@Icons.Material.Filled.Check" Title="Verification">
+                            <ChildContent>
+                                <MudGrid Justify="Justify.Center">
+                                    <MudItem xs="8">
+                                        <MudStack Spacing="1" Justify="Justify.Center">
+                                            <MudPaper Outlined Class="pa-3">
+                                                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                                                    Email verification
+                                                </MudTextM3>
+                                            </MudPaper>
+                                            <MudPaper Outlined="true" Class="py-4 px-5">
+                                                <MudStack Spacing="2">
+                                                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                                        Enter code from the letter we sent you
+                                                        to: <strong>@ResetModel.NewEmail</strong>
+                                                    </MudTextM3>
+                                                    <MudForm
+                                                        @ref="confirmForm"
+                                                        Model="ConfirmModel"
+                                                        Validation="Validator.ValidateValue">
+                                                        <MudTextFieldExtended
+                                                            @bind-Value="ConfirmModel.Code"
+                                                            Variant="Variant.Outlined"
+                                                            Margin="Margin.Dense"
+                                                            Placeholder="XXXXXX"
+                                                            Mask="mask"
+                                                            Clearable="true"
+                                                            Immediate="true"/>
+                                                    </MudForm>
+                                                    <MudLoadingButton
+                                                        Size="Size.Small"
+                                                        Variant="Variant.Filled"
+                                                        Color="Color.Primary"
+                                                        ButtonType="ButtonType.Button"
+                                                        Disabled="@(ConfirmModel.Code.Length <= 5)"
+                                                        OnClick="@(async () => await OnVerifyAsync())">
+                                                        Verify
+                                                    </MudLoadingButton>
+                                                    <MudButton
+                                                        Size="Size.Small"
+                                                        Variant="Variant.Text"
+                                                        Color="Color.Info"
+                                                        ButtonType="ButtonType.Button"
+                                                        Href="@ReturnUrl"
+                                                        OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
+                                                        Cancel
+                                                    </MudButton>
+                                                </MudStack>
+                                            </MudPaper>
+                                            <CodeResend Context="messageContext"></CodeResend>
+                                        </MudStack>
+                                    </MudItem>
+                                </MudGrid>
+                            </ChildContent>
+                        </MudStepExtended>
+                    </ChildContent>
+                </MudStepperExtended>
+            </MudItem>
+        </MudGrid>
+    </AccessConfirmed>
+</AccessConfirmation>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = null!;
+
+    [SupplyParameterFromForm] 
+    private ResetEmailModel ResetModel { get; set; } = new();
+
+    [SupplyParameterFromForm] 
+    private CodeModel ConfirmModel { get; set; } = new();
+
+    private PatternMask mask = new("000000");
+    private MudStepperExtended stepper = new();
+    private MudForm resetForm = new();
+    private MudForm confirmForm = new();
+    private MessageContext? messageContext;
+    private ConfirmationContext? confirmationContext;
+
+    protected override void OnInitialized()
+    {
+        confirmationContext = new ConfirmationContext()
+        {
+            Action = ActionType.Reset,
+            Purpose = PurposeType.Email
+        };
+    }
+
+    private async Task OnSendCodeAsync()
+    {
+        await resetForm.Validate();
+
+        if (resetForm.IsValid)
+        {
+            messageContext = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Email,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Verify,
+                Payload = new()
+                {
+                    { "To", ResetModel.NewEmail }
+                }
+            };
+
+            var request = new CheckEmailRequest()
+            {
+                UserId = UserState.UserId,
+                Email = ResetModel.NewEmail
+            };
+
+            var result = await Sender.Send(new CheckEmailCommand(request));
+
+            if (result.Succeeded) await SendCodeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task SendCodeAsync()
+    {
+        var request = messageContext!.ToSendCodeRequest();
+        var result = await Sender.Send(new SendCodeCommand(request));
+
+        if (result.Succeeded) await stepper.StepNextAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        await confirmForm.Validate();
+
+        if (confirmForm.IsValid)
+        {
+            var request = messageContext!.ToVerifyCodeRequest(ConfirmModel.Code);
+            var result = await Sender.Send(new VerifyCodeCommand(request));
+
+            if (result.Succeeded) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new ResetEmailRequest()
+        {
+            UserId = UserState.UserId,
+            NewEmail = ResetModel.NewEmail,
+        };
+
+        var result = await Sender.Send(new ResetEmailCommand(request));
+
+        if (result.Succeeded)
+        {
+            Snackbar.Add("Email was successfully reset", Severity.Success);
+            NavigationManager.NavigateTo(ReturnUrl);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+}

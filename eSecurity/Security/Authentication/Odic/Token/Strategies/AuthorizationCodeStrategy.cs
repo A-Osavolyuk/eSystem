@@ -13,7 +13,6 @@ using eSystem.Core.Security.Authentication.Odic.Client;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
 using eSystem.Core.Security.Cryptography.Protection;
-using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Security.Authentication.Odic.Token.Strategies;
 

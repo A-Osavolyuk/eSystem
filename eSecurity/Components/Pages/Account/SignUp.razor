@@ -1,0 +1,116 @@
+﻿@page "/account/sign-up"
+@inherits PageBase
+
+@inject RegistrationValidator Validator
+
+<Title Text="Sign up for eAccount"/>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4" Style="margin-top: 150px">
+        <MudStack Spacing="1" Justify="Justify.Center">
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4">
+                    Sign up for eAccount
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudForm
+                    @ref="form"
+                    Model="Model"
+                    Validation="Validator.ValidateValue">
+                    <MudTextField
+                        @bind-Value="Model.Email"
+                        For="(() => Model.Email)"
+                        InputType="InputType.Email"
+                        Label="Email"
+                        Immediate
+                        Variant="Variant.Outlined"/>
+                    <MudTextField
+                        @bind-Value="Model.Username"
+                        For="(() => Model.Username)"
+                        InputType="InputType.Email"
+                        Label="Username"
+                        Immediate
+                        Variant="Variant.Outlined"/>
+                    <MudPasswordField
+                        PasswordMode="true"
+                        @bind-Value="Model.Password"
+                        For="(() => Model.Password)"
+                        Label="Password"
+                        InputType="InputType.Password"
+                        Immediate
+                        Variant="Variant.Outlined"/>
+                    <MudPasswordField
+                        PasswordMode="true"
+                        @bind-Value="Model.ConfirmPassword"
+                        For="(() => Model.ConfirmPassword)"
+                        Label="Confirm Password"
+                        InputType="InputType.Password"
+                        Immediate
+                        Variant="Variant.Outlined"/>
+
+                    <MudLoadingButton
+                        ButtonType="ButtonType.Button"
+                        StartIcon="@Icons.Material.Filled.AppRegistration"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        Class="mt-3"
+                        FullWidth
+                        OnClick="@(async () => await OnSignUpAsync())">
+                        Sign up
+                    </MudLoadingButton>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center">Already have an account?
+                    <MudLink Href="@Links.SignIn">
+                        Sign in
+                    </MudLink>
+                </MudText>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromForm] private SignUpModel Model { get; set; } = new();
+
+    private MudForm form = new();
+
+    private async Task OnSignUpAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new SignUpRequest()
+            {
+                Email = Model.Email,
+                Password = Model.Password,
+                Username = Model.Username
+            };
+
+            var result = await Sender.Send(new SignUpCommand(request));
+
+            if (result.Succeeded)
+            {
+                var response = result.Get<SignUpResponse>()!;
+
+                Snackbar.Add(result.Message, Severity.Success);
+
+                var builder = QueryBuilder.Create()
+                    .WithUri(Links.CompleteRegistrationPage)
+                    .WithQueryParam("id", response.UserId.ToString())
+                    .WithQueryParam("return_url", Links.SignIn);
+                
+                NavigationManager.NavigateTo(builder.Build());
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+
+
+}

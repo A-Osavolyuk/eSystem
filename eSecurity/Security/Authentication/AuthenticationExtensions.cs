@@ -1,4 +1,5 @@
-﻿using eSecurity.Security.Authentication.Schemes;
+﻿using eSecurity.Security.Authentication.Jwt;
+using eSecurity.Security.Authentication.Schemes;
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Authentication.Odic;
@@ -9,6 +10,7 @@ using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Jwt;
 using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace eSecurity.Security.Authentication;
 
@@ -23,21 +25,31 @@ public static class AuthenticationExtensions
         builder.Services.Add2FA();
         builder.Services.AddLockout();
         builder.Services.AddOdic();
+        builder.Services.AddScoped<AuthenticationManager>();
+        builder.Services.AddScoped<TokenProvider>();
+        builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 
         builder.Services.AddAuthentication(options =>
             {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultScheme = AuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = AuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = AuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = AuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(AuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = DefaultCookies.External;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                options.Cookie.SameSite = SameSiteMode.Lax;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.Name = DefaultCookies.State;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+
+                options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                options.SlidingExpiration = true;
+
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/logout";
+                options.AccessDeniedPath = "/access-denied";
+                options.ReturnUrlParameter = "return_url";
             })
             .AddGoogle(options =>
             {
@@ -85,6 +97,8 @@ public static class AuthenticationExtensions
                     ValidIssuer = settings.Issuer,
                     IssuerSigningKey = symmetricSecurityKey
                 };
-            });
+            })
+            .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(
+                JwtBearerDefaults.AuthenticationScheme, _ => { });
     }
 }

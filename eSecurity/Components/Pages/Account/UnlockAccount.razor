@@ -1,0 +1,105 @@
+﻿@page "/account/unlock"
+@inherits PageBase
+
+@inject CodeModelValidator Validator
+
+<Title Text="Account recovery"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4">
+        <MudStack Spacing="1" Justify="Justify.Center">
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4"> Account recovery</MudText>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudForm
+                    @ref="form"
+                    Model="Model"
+                    Validation="Validator.ValidateValue">
+                    <MudStack Spacing="2">
+                        <MudText Align="Align.Center">
+                            Your account was locked out due to reason: 'Too many failed login attempts'.
+                            To recover access to your account, please check your email address, we sent you the
+                            letter
+                            with recovery code.
+                        </MudText>
+
+                        <MudCodeInput
+                            Count="6"
+                            Margin="Margin.Normal"
+                            Spacing="2"
+                            Class="d-flex align-items-center"
+                            @bind-Value="Model.Code"
+                            Variant="Variant.Outlined"/>
+
+                        <MudLoadingButton
+                            FullWidth="true"
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            ButtonType="ButtonType.Button"
+                            Disabled="@(Model.Code.Length <= 5)"
+                            OnClick="@(async () => await OnRecoverAsync())">
+                            Recover
+                        </MudLoadingButton>
+                    </MudStack>
+                </MudForm>
+            </MudPaper>
+            <CodeResend Context="context"></CodeResend>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "id")]
+    private Guid UserId { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
+
+    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
+
+    private MudForm form = new();
+    private MessageContext? context;
+
+    protected override void OnInitialized()
+    {
+        context = new MessageContext()
+        {
+            UserId = UserState.UserId,
+            Sender = SenderType.Email,
+            Purpose = PurposeType.Account,
+            Action = ActionType.Unlock,
+            Payload = new()
+            {
+                { "To", UserState.Credentials?.Email! }
+            }
+        };
+    }
+
+    private async Task OnRecoverAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new UnlockAccountRequest()
+            {
+                Code = Model.Code,
+                UserId = UserId
+            };
+
+            var result = await Sender.Send(new UnlockAccountCommand(request));
+
+            if (result.Succeeded)
+            {
+                Snackbar.Add("Account was successfully recovered", Severity.Success);
+                NavigationManager.NavigateTo(ReturnUrl);
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+}

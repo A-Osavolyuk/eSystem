@@ -1,0 +1,205 @@
+﻿@page "/account/email/verify"
+@using eSecurity.Features.Verification.Commands
+@using eSecurity.Security.Identity.Email
+@inherits PageBase
+
+@inject VerifyEmailValidator Validator
+
+@attribute [Authorize]
+
+@switch (Type)
+{
+    case EmailTypes.Primary: <Title Text="Primary email verification"></Title> break;
+    case EmailTypes.Recovery: <Title Text="Recovery email verification"></Title> break;
+    case EmailTypes.Secondary: <Title Text="Secondary email verification"></Title> break;
+}
+
+<MudGrid Justify="Justify.Center" Spacing="1">
+    <MudItem xs="4" Style="margin-top: 100px">
+        <MudStack Spacing="1" Justify="Justify.Center">
+            <MudPaper Outlined Class="pa-3">
+                @switch (Type)
+                {
+                    case EmailTypes.Primary:
+                    {
+                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                            Primary email verification
+                        </MudTextM3>
+                        break;
+                    }
+                    case EmailTypes.Recovery:
+                    {
+                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                            Recovery email verification
+                        </MudTextM3>
+                        break;
+                    }
+                    case EmailTypes.Secondary:
+                    {
+                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                            Secondary email verification
+                        </MudTextM3>
+                        break;
+                    }
+                }
+            </MudPaper>
+            <MudPaper Outlined Class="py-4 px-5">
+                <MudStack Spacing="2" Justify="Justify.Center">
+                    @switch (Type)
+                    {
+                        case EmailTypes.Primary:
+                        {
+                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                We have sent an email with 6-digit code to email:
+                                <strong>@UserState.Credentials?.Email!</strong>
+                            </MudTextM3>
+                            break;
+                        }
+                        case EmailTypes.Recovery:
+                        {
+                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                We have sent an email with 6-digit code to email:
+                                <strong>@Email</strong>
+                            </MudTextM3>
+                            break;
+                        }
+                        case EmailTypes.Secondary:
+                        {
+                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                We have sent an email with 6-digit code to email:
+                                <strong>@Email</strong>
+                            </MudTextM3>
+                            break;
+                        }
+                    }
+                    <MudForm
+                        @ref="form"
+                        Model="Model"
+                        Validation="Validator.ValidateValue">
+                        <MudTextFieldExtended
+                            @bind-Value="Model.Code"
+                            Variant="Variant.Outlined"
+                            Margin="Margin.Dense"
+                            Placeholder="XXXXXX"
+                            Mask="mask"
+                            Clearable="true"
+                            Immediate="true"/>
+                    </MudForm>
+                    <MudLoadingButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        Size="Size.Small"
+                        Disabled="@(Model.Code.Length <= 5)"
+                        OnClick="@(async () => await OnVerifyEmailAsync())">
+                        Verify
+                    </MudLoadingButton>
+                    <MudButton
+                        Size="Size.Small"
+                        Variant="Variant.Text"
+                        Color="Color.Info"
+                        ButtonType="ButtonType.Button"
+                        Href="@ReturnUrl"
+                        OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
+                        Cancel
+                    </MudButton>
+                </MudStack>
+            </MudPaper>
+            <CodeResend Context="context"></CodeResend>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = null!;
+    
+    [SupplyParameterFromQuery(Name = "email")]
+    private string Email { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "type")]
+    private string Type { get; set; } = string.Empty;
+
+    [SupplyParameterFromForm] 
+    private VerifyEmailModel Model { get; set; } = new();
+
+    private PatternMask mask = new("000000");
+    private MudForm form = new();
+    private MessageContext? context;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var to = Type switch
+            {
+                EmailTypes.Primary => UserState.Credentials?.Email!,
+                EmailTypes.Recovery => Email,
+                EmailTypes.Secondary => Email,
+                _ => throw new NotSupportedException("Unsupported email type")
+            };
+
+            context = new MessageContext()
+            {
+                UserId = UserState.UserId,
+                Sender = SenderType.Email,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Verify,
+                Payload = new()
+                {
+                    { "To", to }
+                }
+            };
+
+            await SendCodeAsync();
+        }
+    }
+
+    private async Task SendCodeAsync()
+    {
+        var request = context!.ToSendCodeRequest();
+        var response = await Sender.Send(new SendCodeCommand(request));
+        Snackbar.Add(response.Message, response.Succeeded ? Severity.Success : Severity.Error);
+    }
+
+    private async Task OnVerifyEmailAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = context!.ToVerifyCodeRequest(Model.Code);
+            var result = await Sender.Send(new VerifyCodeCommand(request));
+
+            if (result.Succeeded) await VerifyAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var email = Type switch
+        {
+            EmailTypes.Primary => UserState.Credentials?.Email!,
+            EmailTypes.Recovery => Email,
+            EmailTypes.Secondary => Email,
+            _ => throw new NotSupportedException("Unsupported email type")
+        };
+
+        var request = new VerifyEmailRequest()
+        {
+            UserId = UserState.UserId,
+            Email = email
+        };
+
+        var result = await Sender.Send(new VerifyEmailCommand(request));
+
+        if (result.Succeeded)
+        {
+            Snackbar.Add(result.Message, Severity.Success);
+            NavigationManager.NavigateTo(ReturnUrl);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+}

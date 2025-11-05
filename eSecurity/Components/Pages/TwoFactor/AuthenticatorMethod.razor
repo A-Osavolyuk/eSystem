@@ -1,0 +1,128 @@
+﻿@using eSystem.Core.Security.Authentication.SignIn.Payloads
+@using eSystem.Core.Security.Authentication.TwoFactor
+
+@inject CodeModelValidator Validator
+@inject UserState UserState
+@inject ISnackbar Snackbar
+@inject ISender Sender
+
+<MudStack Spacing="4">
+    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+        Enter the code from your two-factor authentication app or browser extension below.
+    </MudTextM3>
+    <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
+        <MudTextFieldExtended
+            Mask="mask"
+            Placeholder="XXXXXX"
+            Variant="Variant.Outlined"
+            Margin="Margin.Dense"
+            Clearable="true"
+            Immediate="true"
+            @bind-Value="Model.Code"
+            For="() => Model.Code"/>
+    </MudForm>
+    <MudStack Spacing="2">
+        <MudButton
+            Size="Size.Medium"
+            Color="Color.Success"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button"
+            OnClick="@(async () => await OnSignInAsync())">
+            Verify
+        </MudButton>
+        <MudButton
+            Color="Color.Default"
+            Variant="Variant.Outlined"
+            ButtonType="ButtonType.Button"
+            Size="Size.Medium"
+            OnClick="@(() => Expand())"
+            EndIcon="@GetIcon()">
+            More options
+        </MudButton>
+        <MudCollapse Expanded="expanded">
+            <MudDivider Class="my-2"/>
+            <MudStack Spacing="2">
+                @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                {
+                    <MudButton
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Passkey))">
+                        Passkey
+                    </MudButton>
+                }
+                @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+                {
+                    <MudButton
+                        Color="Color.Default"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Sms))">
+                        SMS
+                    </MudButton>
+                }
+                <MudButton
+                    Color="Color.Error"
+                    Variant="Variant.Outlined"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium"
+                    OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.RecoveryCode))">
+                    Recovery codes
+                </MudButton>
+            </MudStack>
+        </MudCollapse>
+    </MudStack>
+</MudStack>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "id")]
+    public Guid UserId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
+
+    [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+
+    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+
+    [SupplyParameterFromForm] public CodeModel Model { get; set; } = new();
+
+    private MudForm form = new();
+    private readonly PatternMask mask = new("000000");
+    private bool expanded;
+
+    private async Task OnSignInAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = new SignInRequest()
+            {
+                Payload = new AuthenticatorSignInPayload()
+                {
+                    Code = Model.Code,
+                    UserId = UserId
+                }
+            };
+
+            var result = await Sender.Send(new SignInCommand(request));
+
+            if (result.Succeeded)
+            {
+                var response = result.Get<SignInResponse>()!;
+
+                UserState.UserId = response.UserId;
+                //TODO: Implement sign-in
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private void Expand() => expanded = !expanded;
+    private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
+}

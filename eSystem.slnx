@@ -1,8 +1,5 @@
 <Solution>
   <Folder Name="/src/" />
-  <Folder Name="/src/Clients/">
-    <Project Path="eAccount\eAccount.csproj" />
-  </Folder>
   <Folder Name="/src/Core/">
     <Project Path="eSystem.Core\eSystem.Core.csproj" />
   </Folder>

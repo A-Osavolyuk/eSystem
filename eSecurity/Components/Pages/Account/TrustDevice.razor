@@ -1,0 +1,170 @@
+﻿@page "/account/device/trust"
+
+@using eSecurity.Features.Devices.Commands
+@using eSecurity.Features.Users.Queries
+@using eSecurity.Features.Verification.Commands
+@using eSecurity.Security.Authorization.Devices
+@inherits PageBase
+
+<Title Text="Device trust"></Title>
+
+<MudGrid Spacing="1" Justify="Justify.Center">
+    <MudItem xs="4">
+        <MudStack Spacing="1">
+            <MudPaper Outlined="true" Class="pa-3" Style="margin-top: 150px">
+                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                    Device trust
+                </MudTextM3>
+            </MudPaper>
+            <MudPaper Outlined="true" Class="px-5 py-4">
+                <MudStack Spacing="2">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                        You attempting to sign-in on new device.
+                        To sign-in on new device, please enter 6-digit code the letter sent to:
+                        <strong>@email</strong>
+                    </MudTextM3>
+                    <MudForm @ref="form" Model="Model">
+                        <MudTextFieldExtended
+                            @bind-Value="Model.Code"
+                            Variant="Variant.Outlined"
+                            Margin="Margin.Dense"
+                            Placeholder="XXXXXX"
+                            Mask="mask"
+                            Clearable="true"
+                            Immediate="true"/>
+                    </MudForm>
+                    <MudLoadingButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Success"
+                        Size="Size.Small"
+                        Disabled="@(Model.Code.Length <= 5)"
+                        OnClick="@(async () => await OnTrustAsync())">
+                        Submit
+                    </MudLoadingButton>
+                </MudStack>
+            </MudPaper>
+            <CodeResend Context="context"></CodeResend>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "device")]
+    public Guid DeviceId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "user")]
+    public Guid UserId { get; set; }
+
+    [SupplyParameterFromForm] public TrustDeviceModel Model { get; set; } = new();
+
+    private MudForm form = new();
+    private PatternMask mask = new("000000");
+
+    private string? email;
+    private MessageContext? context;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //TODO: Implement load device
+        }
+        
+        return Task.CompletedTask;
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await Sender.Send(new GetUserPrimaryEmailQuery(UserId));
+
+        if (result.Succeeded)
+        {
+            var response = result.Get<UserEmailDto>()!;
+            email = response.Email;
+
+            context = new MessageContext()
+            {
+                UserId = UserId,
+                Sender = SenderType.Email,
+                Purpose = PurposeType.Device,
+                Action = ActionType.Trust,
+                Payload = new()
+                {
+                    { "To", email! },
+                    { "OS", Model.Device.OS! },
+                    { "Device", Model.Device.Device! },
+                    { "IpAddress", Model.Device.IpAddress! },
+                    { "Browser", Model.Device.Browser! },
+                }
+            };
+
+            await SendCodeAsync();
+        }
+
+        if (!result.Succeeded) Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task SendCodeAsync()
+    {
+        var request = context!.ToSendCodeRequest();
+        var result = await Sender.Send(new SendCodeCommand(request));
+        if (!result.Succeeded) Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnTrustAsync()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            var request = context!.ToVerifyCodeRequest(Model.Code);
+            var result = await Sender.Send(new VerifyCodeCommand(request));
+
+            if (result.Succeeded)
+            {
+                await TrustAsync();
+            }
+
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+    private async Task TrustAsync()
+    {
+        var request = new TrustDeviceRequest()
+        {
+            UserId = UserId,
+            DeviceId = DeviceId,
+        };
+
+        var result = await Sender.Send(new TrustDeviceCommand(request));
+
+        if (result.Succeeded)
+        {
+            var response = result.Get<TrustDeviceResponse>()!;
+
+            if (response!.IsTwoFactorEnabled)
+            {
+                Snackbar.Add("Device successfully trusted", Severity.Success);
+                
+                var builder = QueryBuilder.Create()
+                    .WithUri(Links.TwoFactorLoginPage)
+                    .WithQueryParam("id", response.UserId.ToString());
+                
+                NavigationManager.NavigateTo(builder.Build());
+            }
+            else
+            {
+                UserState.UserId = response.UserId;
+                //TODO: Implement device verification
+            }
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+
+}

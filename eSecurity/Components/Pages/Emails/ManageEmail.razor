@@ -1,0 +1,131 @@
+﻿@page "/account/email/manage"
+@using eSecurity.Features.Verification.Commands
+@using eSecurity.Security.Identity.Email
+@using eSystem.Core.Security.Identity.Email
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject CodeModelValidator Validator
+
+<Title Text="Manage email"></Title>
+
+<MudGrid Justify="Justify.Center" Spacing="1">
+    <MudItem xs="4" Style="margin-top: 100px">
+        <MudStack Spacing="1" Justify="Justify.Center">
+            <MudPaper Outlined Class="pa-3">
+                <MudText Align="Align.Center" Typo="Typo.h4">
+                    Manage email
+                </MudText>
+            </MudPaper>
+            <MudPaper Outlined Class="pa-3">
+                <MudStack Spacing="3" Justify="Justify.Center">
+                    <MudText Align="Align.Center">
+                        We have sent an email with 6-digit code to:
+                        <strong>@UserState.Credentials?.Email!</strong>
+                    </MudText>
+                    <MudForm
+                        @ref="form"
+                        Model="Model"
+                        Validation="Validator.ValidateValue">
+                        <MudCodeInput
+                            Class="d-flex align-items-center"
+                            Variant="Variant.Outlined"
+                            Spacing="2"
+                            Margin="Margin.None"
+                            Count="6"
+                            @bind-Value="Model.Code"/>
+                    </MudForm>
+                    <MudLoadingButton
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        FullWidth
+                        Disabled="@(Model.Code.Length <= 5)"
+                        OnClick="@(async () => await OnVerifyAsync())">
+                        Verify
+                    </MudLoadingButton>
+                </MudStack>
+            </MudPaper>
+            <CodeResend Context="context"></CodeResend>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "email")]
+    public string Email { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "type")]
+    public string Type { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
+
+    public CodeModel Model { get; set; } = new();
+
+    private MudForm form = new();
+    private MessageContext? context;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            context = new()
+            {
+                UserId = UserState.UserId,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Manage,
+                Sender = SenderType.Email,
+                Payload = new()
+                {
+                    { "To", UserState.Credentials?.Email! }
+                }
+            };
+
+            var request = context.ToSendCodeRequest();
+            var result = await Sender.Send(new SendCodeCommand(request));
+            if (!result.Succeeded) Snackbar.Add(result.Message, Severity.Error);
+            
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnVerifyAsync()
+    {
+        var request = context!.ToVerifyCodeRequest(Model.Code);
+        var result = await Sender.Send(new VerifyCodeCommand(request));
+
+        if (result.Succeeded) await ManageAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task ManageAsync()
+    {
+        var type = Type switch
+        {
+            EmailTypes.Primary => EmailType.Primary,
+            EmailTypes.Recovery => EmailType.Recovery,
+            _ => throw new NotSupportedException("Unsupported email type")
+        };
+
+        var request = new ManageEmailRequest()
+        {
+            UserId = UserState.UserId,
+            Email = Email,
+            Type = type
+        };
+
+        var result = await Sender.Send(new ManageEmailCommand(request));
+
+        if (result.Succeeded)
+        {
+            await UserState.Change();
+            NavigationManager.NavigateTo(ReturnUrl);
+        }
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+}
