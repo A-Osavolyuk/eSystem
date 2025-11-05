@@ -2,5 +2,5 @@
 
 public class LogoutRequest
 {
-    public required Guid UserId { get; set; }
+    public required Guid SessionId { get; set; }
 }

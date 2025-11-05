@@ -1,11 +1,17 @@
 @page "/connect/logout"
 
+@using System.Text.Json
+@using eAccount.Security.Cookies
+@using eSystem.Core.Security.Cookies
+@using eSystem.Core.Security.Cryptography.Protection
 @using eAccount.Security.Authentication.ODIC
 @inherits PageBase
 
 @attribute [Authorize]
 
 @inject IConnectService ConnectService
+@inject ICookieAccessor CookieAccessor
+@inject IProtectorFactory ProtectorFactory
 @inject AuthenticationManager AuthenticationManager
 
 <MudGrid Justify="Justify.Center">
@@ -46,7 +52,12 @@
 
     private async Task OnSignOutAsync()
     {
-        var request = new LogoutRequest() { UserId = UserState.UserId };
+        var protector = ProtectorFactory.Create(ProtectionPurposes.Session);
+        var sessionCookie = CookieAccessor.Get(DefaultCookies.Session)!;
+        var unprotectedCookie = protector.Unprotect(sessionCookie);
+        var session = JsonSerializer.Deserialize<SessionCookie>(unprotectedCookie)!;
+        
+        var request = new LogoutRequest() { SessionId = session.SessionId };
         var result = await ConnectService.LogoutAsync(request);
 
         if (result.Success) await AuthenticationManager.SignOutAsync();

@@ -9,6 +9,11 @@ public class SessionManager(
     private readonly AuthDbContext context = context;
     private readonly SessionOptions options = options.Value;
 
+    public async ValueTask<SessionEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await context.Sessions.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+    }
+
     public async ValueTask<SessionEntity?> FindAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
         return await context.Sessions.FirstOrDefaultAsync(x => x.DeviceId == device.Id, cancellationToken);
