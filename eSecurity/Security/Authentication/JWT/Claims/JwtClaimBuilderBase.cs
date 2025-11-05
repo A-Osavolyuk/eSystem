@@ -7,15 +7,17 @@ public abstract class JwtClaimBuilderBase<TBuilder> where TBuilder : JwtClaimBui
 {
     private readonly List<Claim> claims = [];
     public IReadOnlyCollection<Claim> Build() => claims.AsReadOnly();
-    protected TBuilder Add(string type, string value)
+
+    protected TBuilder Add(string type, string? value)
     {
-        claims.Add(new Claim(type, value));
+        if (!string.IsNullOrEmpty(value)) claims.Add(new Claim(type, value));
         return (TBuilder)this;
     }
 
-    protected TBuilder Add(string type, DateTimeOffset value)
+    protected TBuilder Add(string type, DateTimeOffset? value)
     {
-        return Add(type, value.ToUnixTimeSeconds().ToString());
+        if (!value.HasValue) return (TBuilder)this;
+        return Add(type, value.Value.ToUnixTimeSeconds().ToString());
     }
 
     protected TBuilder Add(string type, bool value)
@@ -28,6 +30,7 @@ public abstract class JwtClaimBuilderBase<TBuilder> where TBuilder : JwtClaimBui
     public TBuilder WithSubject(string subject) => Add(AppClaimTypes.Sub, subject);
     public TBuilder WithTokenId(string tokenId) => Add(AppClaimTypes.Jti, tokenId);
     public TBuilder WithNonce(string nonce) => Add(AppClaimTypes.Nonce, nonce);
+    public TBuilder WithSessionId(string sessionId) => Add(AppClaimTypes.Sid, sessionId);
     public TBuilder WithIssuedTime(DateTimeOffset time) => Add(AppClaimTypes.Iat, time);
     public TBuilder WithExpirationTime(DateTimeOffset time) => Add(AppClaimTypes.Exp, time);
 }

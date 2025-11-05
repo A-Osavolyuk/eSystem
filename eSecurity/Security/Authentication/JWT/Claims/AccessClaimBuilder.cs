@@ -26,7 +26,6 @@ public sealed class AccessClaimBuilder : JwtClaimBuilderBase<AccessClaimBuilder>
     public AccessClaimBuilder WithScope(IEnumerable<string> scopes)
         => Add(AppClaimTypes.Scope, string.Join(" ", scopes));
     
-    public AccessClaimBuilder WithSessionId(string sessionId) => Add(AppClaimTypes.Sid, sessionId);
     public AccessClaimBuilder WithNotBefore(DateTimeOffset notBefore) => Add(AppClaimTypes.Nbf, notBefore);
     public AccessClaimBuilder WithAuthorizedParty(string azp) => Add(AppClaimTypes.Azp, azp);
     public AccessClaimBuilder WithAuthenticationContext(string context) => Add(AppClaimTypes.Acr, context);
