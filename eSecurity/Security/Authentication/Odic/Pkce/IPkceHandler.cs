@@ -1,4 +1,4 @@
-namespace eSecurity.Security.Authentication.Odic.PKCE;
+namespace eSecurity.Security.Authentication.Odic.Pkce;
 
 public interface IPkceHandler
 {

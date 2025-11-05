@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cryptography.Encoding;
 
-namespace eSecurity.Security.Authentication.Odic.PKCE;
+namespace eSecurity.Security.Authentication.Odic.Pkce;
 
 public class PkceHandler : IPkceHandler
 {
