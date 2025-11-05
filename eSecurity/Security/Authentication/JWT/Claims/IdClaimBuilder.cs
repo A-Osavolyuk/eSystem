@@ -26,4 +26,6 @@ public sealed class IdClaimBuilder : JwtClaimBuilderBase<IdClaimBuilder>
     public IdClaimBuilder WithBirthDate(DateTimeOffset date) => Add(AppClaimTypes.BirthDate, date);
     public IdClaimBuilder WithUpdatedTime(DateTimeOffset date) => Add(AppClaimTypes.UpdatedAt, date);
     public IdClaimBuilder WithAuthenticationTime(DateTimeOffset date) => Add(AppClaimTypes.AuthenticationTime, date);
+    public IdClaimBuilder WithAccessTokenHash(string hash) => Add(AppClaimTypes.AccessTokenHash, hash);
+    public IdClaimBuilder WithAuthorizationCodeHash(string hash) => Add(AppClaimTypes.AuthorizationCodeHash, hash);
 }

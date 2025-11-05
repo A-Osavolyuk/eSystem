@@ -29,8 +29,6 @@ public sealed class AccessClaimBuilder : JwtClaimBuilderBase<AccessClaimBuilder>
     public AccessClaimBuilder WithSessionId(string sessionId) => Add(AppClaimTypes.Sid, sessionId);
     public AccessClaimBuilder WithNotBefore(DateTimeOffset notBefore) => Add(AppClaimTypes.Nbf, notBefore);
     public AccessClaimBuilder WithAuthorizedParty(string azp) => Add(AppClaimTypes.Azp, azp);
-    public AccessClaimBuilder WithAccessTokenHash(string hash) => Add(AppClaimTypes.AccessTokenHash, hash);
-    public AccessClaimBuilder WithAuthorizationCodeHash(string hash) => Add(AppClaimTypes.AuthorizationCodeHash, hash);
     public AccessClaimBuilder WithAuthenticationContext(string context) => Add(AppClaimTypes.Acr, context);
     public AccessClaimBuilder WithAuthenticationMethods(IEnumerable<string> methods)
     {
