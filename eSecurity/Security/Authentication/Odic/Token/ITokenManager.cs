@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 
-namespace eSecurity.Security.Authentication.Jwt;
+namespace eSecurity.Security.Authentication.Odic.Token;
 
 public interface ITokenManager
 {

@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using eSystem.Core.Security.Identity.Claims;
 
-namespace eSecurity.Security.Authentication.Jwt.Claims;
+namespace eSecurity.Security.Identity.Claims.Builders;
 
 public abstract class JwtClaimBuilderBase<TBuilder> where TBuilder : JwtClaimBuilderBase<TBuilder>
 {

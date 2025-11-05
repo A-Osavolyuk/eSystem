@@ -1,6 +1,5 @@
 ﻿using eSecurity.Security.Authentication.Schemes;
 using eSecurity.Security.Authorization.OAuth;
-using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Authentication.Odic;
 using eSecurity.Security.Authentication.Password;
@@ -22,7 +21,6 @@ public static class AuthenticationExtensions
         builder.Services.AddPasswordManagement();
         builder.Services.AddSignInStrategies();
         builder.Services.Add2FA();
-        builder.Services.AddJwt();
         builder.Services.AddLockout();
         builder.Services.AddOdic();
 

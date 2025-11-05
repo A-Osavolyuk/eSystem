@@ -4,6 +4,9 @@ using eSecurity.Security.Authentication.Odic.PKCE;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.Odic.Token;
 using eSecurity.Security.Authentication.Odic.Token.Strategies;
+using eSecurity.Security.Cryptography.Tokens.Jwt;
+using eSecurity.Security.Identity.Claims;
+using eSystem.Core.Security.Authentication.Jwt;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 
 namespace eSecurity.Security.Authentication.Odic;
@@ -23,5 +26,13 @@ public static class OdicExtensions
         services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
         services.AddKeyedScoped<TokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
         services.AddKeyedScoped<TokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
+        
+        var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
+        
+        services.AddScoped<ITokenFactory, JwtTokenFactory>();
+        services.AddScoped<ITokenManager, TokenManager>();
+        services.AddSingleton<IClaimBuilderFactory, ClaimBuilderFactory>();
+        
+        services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
     }
 }

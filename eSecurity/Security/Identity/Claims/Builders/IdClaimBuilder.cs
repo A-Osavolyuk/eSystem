@@ -4,7 +4,7 @@ using eSystem.Core.Security.Identity.Claims;
 using eSystem.Core.Security.Identity.Email;
 using eSystem.Core.Security.Identity.PhoneNumber;
 
-namespace eSecurity.Security.Authentication.Jwt.Claims;
+namespace eSecurity.Security.Identity.Claims.Builders;
 
 public sealed class IdClaimBuilder : JwtClaimBuilderBase<IdClaimBuilder>
 {
