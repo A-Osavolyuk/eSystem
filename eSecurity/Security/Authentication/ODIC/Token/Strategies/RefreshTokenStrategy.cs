@@ -1,11 +1,11 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
+using eSecurity.Security.Authentication.JWT.Claims;
 using eSecurity.Security.Authentication.JWT.Constants;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
-using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
 using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
@@ -19,6 +19,7 @@ public class RefreshTokenStrategy(
     ITokenManager tokenManager,
     IUserManager userManager,
     IKeyFactory keyFactory,
+    IClaimBuilderFactory claimBuilderFactory,
     IOptions<JwtOptions> options) : TokenStrategy
 {
     private readonly IProtectorFactory protectorFactory = protectorFactory;
@@ -26,6 +27,7 @@ public class RefreshTokenStrategy(
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
     private readonly IKeyFactory keyFactory = keyFactory;
+    private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
     private readonly JwtOptions options = options.Value;
 
     public override async ValueTask<Result> HandleAsync(TokenRequest request,
@@ -63,7 +65,7 @@ public class RefreshTokenStrategy(
         var user = await userManager.FindByIdAsync(device.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        var accessTokenClaims = ClaimBuilder.Create()
+        var accessTokenClaims = claimBuilderFactory.CreateAccessBuilder()
             .WithIssuer(options.Issuer)
             .WithAudience(client.Name)
             .WithSubject(user.Id.ToString())

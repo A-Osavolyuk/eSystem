@@ -1,5 +1,6 @@
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.JWT;
+using eSecurity.Security.Authentication.JWT.Claims;
 using eSecurity.Security.Authentication.JWT.Constants;
 using eSecurity.Security.Authentication.ODIC.Code;
 using eSecurity.Security.Authentication.ODIC.PKCE;
@@ -8,7 +9,6 @@ using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.JWT;
-using eSystem.Core.Security.Authentication.JWT.Claims;
 using eSystem.Core.Security.Authentication.ODIC.Client;
 using eSystem.Core.Security.Authentication.ODIC.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
@@ -25,6 +25,7 @@ public class AuthorizationCodeStrategy(
     IPkceHandler pkceHandler,
     IKeyFactory keyFactory,
     IProtectorFactory protectorFactory,
+    IClaimBuilderFactory claimBuilderFactory,
     IOptions<JwtOptions> options) : TokenStrategy
 {
     private readonly IUserManager userManager = userManager;
@@ -35,6 +36,7 @@ public class AuthorizationCodeStrategy(
     private readonly IPkceHandler pkceHandler = pkceHandler;
     private readonly IKeyFactory keyFactory = keyFactory;
     private readonly IProtectorFactory protectorFactory = protectorFactory;
+    private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
     private readonly JwtOptions options = options.Value;
 
     public override async ValueTask<Result> HandleAsync(TokenRequest request,
@@ -97,7 +99,7 @@ public class AuthorizationCodeStrategy(
         var codeResult = await authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var accessTokenClaims = ClaimBuilder.Create()
+        var accessTokenClaims = claimBuilderFactory.CreateAccessBuilder()
             .WithIssuer(options.Issuer)
             .WithAudience(client.Name)
             .WithSubject(user.Id.ToString())
