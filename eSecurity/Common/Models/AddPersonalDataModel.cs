@@ -1,4 +1,6 @@
-﻿namespace eSecurity.Common.Models;
+﻿using eSecurity.Security.Identity.Privacy;
+
+namespace eSecurity.Common.Models;
 
 public class AddPersonalDataModel
 {

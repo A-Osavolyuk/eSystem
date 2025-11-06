@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.DTOs;
+﻿namespace eSecurity.Common.DTOs;
 
 public class RoleDto
 {

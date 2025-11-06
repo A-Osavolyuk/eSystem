@@ -3,7 +3,6 @@ global using eSecurity.Common.Mapping;
 global using eSecurity.Data;
 global using eSecurity.Features.Security.Commands;
 global using eSystem.Core.Common.Results;
-global using eSystem.Core.Enums;
 global using eSystem.ServiceDefaults;
 global using FluentValidation;
 global using MediatR;

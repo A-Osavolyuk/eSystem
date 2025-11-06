@@ -1,4 +1,6 @@
-﻿namespace eSystem.Core.DTOs;
+﻿using eSecurity.Security.Identity.Privacy;
+
+namespace eSecurity.Common.DTOs;
 
 public class UserPersonalDto
 {

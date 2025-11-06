@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Security.Authorization.OAuth;
 
-namespace eSystem.Core.DTOs;
+namespace eSecurity.Common.DTOs;
 
 public class UserLinkedAccountDto
 {

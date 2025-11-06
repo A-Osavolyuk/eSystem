@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Security.Authorization.Access;
 
-namespace eSystem.Core.DTOs;
+namespace eSecurity.Common.DTOs;
 
 public class UserVerificationMethod
 {

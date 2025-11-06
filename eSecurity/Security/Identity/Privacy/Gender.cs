@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Enums;
+﻿namespace eSecurity.Security.Identity.Privacy;
 
 public enum Gender
 {

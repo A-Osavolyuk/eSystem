@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Security.Authentication.TwoFactor;
 
-namespace eSystem.Core.DTOs;
+namespace eSecurity.Common.DTOs;
 
 public class UserTwoFactorMethod
 {

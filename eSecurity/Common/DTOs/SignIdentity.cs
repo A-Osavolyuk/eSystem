@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Common.Responses;
+﻿namespace eSecurity.Common.DTOs;
 
 public class SignIdentity
 {

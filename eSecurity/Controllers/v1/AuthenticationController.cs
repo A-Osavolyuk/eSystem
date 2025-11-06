@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using eSecurity.Common.DTOs;
 using eSecurity.Common.Responses;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.Schemes;

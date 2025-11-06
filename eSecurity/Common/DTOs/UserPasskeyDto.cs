@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace eSystem.Core.DTOs;
+namespace eSecurity.Common.DTOs;
 
 public class UserPasskeyDto
 {

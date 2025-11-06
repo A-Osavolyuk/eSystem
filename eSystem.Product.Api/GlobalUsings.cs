@@ -1,14 +1,11 @@
-﻿global using eSystem.Core.Enums;
-global using eSystem.Product.Api.Behaviours;
+﻿global using eSystem.Product.Api.Behaviours;
 global using eSystem.Product.Api.Data;
 global using eSystem.Product.Api.Entities;
 global using eSystem.Product.Api.Extensions;
 global using eSystem.Product.Api.Interfaces;
 global using eSystem.Product.Api.Mapping;
 global using eSystem.ServiceDefaults;
-global using FluentValidation;
 global using MassTransit;
 global using MediatR;
 global using Microsoft.EntityFrameworkCore;
-global using Response = eSystem.Core.Common.Http.HttpResponse;
 global using Results = eSystem.Core.Common.Results.Results;

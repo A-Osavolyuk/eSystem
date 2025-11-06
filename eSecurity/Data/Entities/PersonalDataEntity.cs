@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Data.Entities;
+﻿using eSecurity.Security.Identity.Privacy;
+using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Data.Entities;
 

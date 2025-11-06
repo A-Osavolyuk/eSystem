@@ -1,4 +1,5 @@
-﻿using eSystem.Core.DTOs;
+﻿using eSecurity.Common.DTOs;
+using eSystem.Core.DTOs;
 using OtpNet;
 
 namespace eSecurity.Security.Authentication.TwoFactor.Authenticator;

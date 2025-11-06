@@ -1,4 +1,5 @@
-﻿using eSecurity.Security.Credentials.PublicKey;
+﻿using eSecurity.Common.DTOs;
+using eSecurity.Security.Credentials.PublicKey;
 using eSystem.Core.DTOs;
 
 namespace eSecurity.Features.Passkeys.Queries;
