@@ -2,7 +2,9 @@ using System.Security.Claims;
 using eSecurity.Common.JS.Fetch;
 using eSecurity.Common.Responses;
 using eSecurity.Common.Routing;
+using eSecurity.Common.State.States;
 using eSecurity.Common.Storage;
+using eSecurity.Features.Users.Queries;
 using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.Components;
@@ -14,32 +16,42 @@ public sealed class AuthenticationManager(
     NavigationManager navigationManager,
     AuthenticationStateProvider authenticationStateProvider,
     TokenProvider tokenProvider,
+    UserState userState,
+    ISender sender,
     IFetchClient fetchClient,
     IStorage storage)
 {
     private readonly NavigationManager navigationManager = navigationManager;
     private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
     private readonly TokenProvider tokenProvider = tokenProvider;
+    private readonly UserState userState = userState;
+    private readonly ISender sender = sender;
     private readonly IFetchClient fetchClient = fetchClient;
     private readonly IStorage storage = storage;
 
     public async Task SignInAsync()
     {
-        var fetchOptions = new FetchOptions()
-        {
-            Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
-            Method = HttpMethod.Post,
-        };
+        var claimsResult = await sender.Send(new GetUserClaimsQuery(userState.UserId));
 
-        var result = await fetchClient.FetchAsync(fetchOptions);
-        if (result.Succeeded)
+        if (claimsResult.Succeeded)
         {
-            //TODO: Load user claims
+            var claims = claimsResult.Get<List<Claim>>();
             
-            var claimsIdentity = new ClaimsIdentity([], AuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var fetchOptions = new FetchOptions()
+            {
+                Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
+                Method = HttpMethod.Post,
+                Body = claimsResult
+            };
 
-            (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
+            var result = await fetchClient.FetchAsync(fetchOptions);
+            if (result.Succeeded)
+            {
+                var claimsIdentity = new ClaimsIdentity(claims, AuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
+            }
         }
     }
 
