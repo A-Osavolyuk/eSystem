@@ -2,7 +2,7 @@
 using eSystem.Core.Security.Credentials.PublicKey;
 using Microsoft.JSInterop;
 
-namespace eSecurity.Security.Credentials.PublicKey;
+namespace eSecurity.Common.JS.WebAuthN;
 
 public class WebAuthNManager(IJSRuntime jsRuntime)
 {
