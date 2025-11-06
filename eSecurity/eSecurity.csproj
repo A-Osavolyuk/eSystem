@@ -105,8 +105,8 @@
       <AdditionalFiles Include="Components\Pages\Security\TwoFactorMethods.razor" />
       <AdditionalFiles Include="Components\Pages\Security\TwoFactorPreferredMethod.razor" />
       <AdditionalFiles Include="Components\Pages\Settings.razor" />
-      <AdditionalFiles Include="Components\Pages\SSO\Authorize.razor" />
-      <AdditionalFiles Include="Components\Pages\SSO\Logout.razor" />
+      <AdditionalFiles Include="Components\Pages\Connect\Authorize.razor" />
+      <AdditionalFiles Include="Components\Pages\Connect\Logout.razor" />
       <AdditionalFiles Include="Components\Pages\TwoFactor\AdditionalMethods.razor" />
       <AdditionalFiles Include="Components\Pages\TwoFactor\AuthenticatorMethod.razor" />
       <AdditionalFiles Include="Components\Pages\TwoFactor\AuthenticatorSecretDialog.razor" />
