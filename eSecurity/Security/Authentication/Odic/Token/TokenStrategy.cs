@@ -1,4 +1,4 @@
-using eSecurity.Features.ODIC.Commands;
+using eSecurity.Features.Odic.Commands;
 
 namespace eSecurity.Security.Authentication.Odic.Token;
 

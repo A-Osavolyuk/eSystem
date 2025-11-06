@@ -1,6 +1,6 @@
 ﻿using eSecurity.Security.Authentication.Odic.Token;
 
-namespace eSecurity.Features.ODIC.Commands;
+namespace eSecurity.Features.Odic.Commands;
 
 public class TokenCommand() : IRequest<Result>
 {

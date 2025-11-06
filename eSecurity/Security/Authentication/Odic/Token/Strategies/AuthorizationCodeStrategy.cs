@@ -1,6 +1,6 @@
 using eSecurity.Common.Responses;
 using eSecurity.Data.Entities;
-using eSecurity.Features.ODIC.Commands;
+using eSecurity.Features.Odic.Commands;
 using eSecurity.Security.Authentication.Odic.Code;
 using eSecurity.Security.Authentication.Odic.Pkce;
 using eSecurity.Security.Authentication.Odic.Session;

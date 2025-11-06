@@ -1,4 +1,4 @@
-﻿using eSecurity.Features.ODIC.Commands;
+﻿using eSecurity.Features.Odic.Commands;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
 

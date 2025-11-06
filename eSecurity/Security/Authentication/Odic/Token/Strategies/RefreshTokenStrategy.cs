@@ -1,6 +1,6 @@
 using eSecurity.Common.Responses;
 using eSecurity.Data.Entities;
-using eSecurity.Features.ODIC.Commands;
+using eSecurity.Features.Odic.Commands;
 using eSecurity.Security.Cryptography.Tokens;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.Claims;
