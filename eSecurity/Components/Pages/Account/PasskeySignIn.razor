@@ -71,7 +71,8 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromForm] public PasskeySignInModel Model { get; set; } = new();
+    [SupplyParameterFromForm] 
+    public PasskeySignInModel Model { get; set; } = new();
 
     private MudForm form = new();
 
@@ -113,9 +114,9 @@
             if (result.Succeeded)
             {
                 var response = result.Get<SignInResponse>()!;
-                UserState.UserId = response.UserId;
                 
-                //TODO: Implement sign-in
+                UserState.UserId = response.UserId;
+                await AuthenticationManager.SignInAsync();
             }
             else
             {

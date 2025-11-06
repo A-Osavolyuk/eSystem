@@ -134,7 +134,7 @@
                 }
 
                 UserState.UserId = response.UserId;
-                //TODO: Implement sign-in
+                await AuthenticationManager.SignInAsync();
             }
             else
             {

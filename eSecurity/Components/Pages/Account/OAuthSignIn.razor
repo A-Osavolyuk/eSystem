@@ -36,7 +36,7 @@
                 var response = result.Get<LoadOAuthSessionResponse>()!;
                 
                 UserState.UserId = response.UserId;
-                //TODO: Implement sign-in
+                await AuthenticationManager.SignInAsync();
                 
                 //TODO: Handle different OAuth sign types
 
