@@ -31,4 +31,5 @@ public static class Links
     public const string PhoneNumbersPage = "/account/phone-numbers";
     public const string Authorize = "/connect/authorize";
     public const string Logout = "/connect/logout";
+    public const string Consents = "/connect/logout";
 }
