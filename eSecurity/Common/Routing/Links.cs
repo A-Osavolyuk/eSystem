@@ -30,7 +30,5 @@ public static class Links
     public const string DevicesPage = "/account/devices";
     public const string PhoneNumbersPage = "/account/phone-numbers";
     public const string Authorize = "/connect/authorize";
-    public const string AuthorizeCallback = "/connect/callback";
     public const string Logout = "/connect/logout";
-    public const string LogoutCallback = "/connect/logout/callback";
 }
