@@ -1,7 +1,7 @@
 ﻿using eSystem.Core.Common.Messaging;
 using MassTransit;
 
-namespace eSecurity.Messaging;
+namespace eSecurity.Common.Messaging;
 
 public sealed class MessageService(IBus bus) : IMessageService
 {

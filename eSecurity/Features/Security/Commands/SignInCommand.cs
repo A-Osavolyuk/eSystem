@@ -1,6 +1,5 @@
 ﻿using eSecurity.Security.Authentication.SignIn;
 using eSecurity.Security.Authentication.SignIn.Strategies;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authentication.SignIn.Payloads;
 

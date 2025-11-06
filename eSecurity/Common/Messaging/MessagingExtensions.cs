@@ -1,6 +1,6 @@
 using MassTransit;
 
-namespace eSecurity.Messaging;
+namespace eSecurity.Common.Messaging;
 
 public static class MessagingExtensions
 {

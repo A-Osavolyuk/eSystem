@@ -1,7 +1,6 @@
 ﻿using eSecurity.Features.ODIC.Commands;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
-using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Controllers.v1;
 

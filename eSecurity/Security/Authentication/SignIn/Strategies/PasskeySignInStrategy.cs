@@ -1,9 +1,9 @@
-﻿using eSecurity.Security.Authentication.Odic.Session;
+﻿using eSecurity.Common.Responses;
+using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authentication.SignIn.Payloads;
 using eSystem.Core.Security.Credentials.Constants;

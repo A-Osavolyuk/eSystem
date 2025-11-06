@@ -1,7 +1,7 @@
 ﻿using eSecurity.Common.Models;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace eSecurity.Utilities;
+namespace eSecurity.Common.Utilities;
 
 public static class ImageHandler
 {

@@ -1,6 +1,5 @@
 ﻿using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Features.Passkeys.Commands;
 

@@ -1,4 +1,5 @@
-﻿using eSecurity.Data.Entities;
+﻿using eSecurity.Common.Responses;
+using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.Password;
@@ -6,7 +7,6 @@ using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.Lockout;
 using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authentication.SignIn.Payloads;

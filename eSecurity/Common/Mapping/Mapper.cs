@@ -2,7 +2,6 @@
 using eSecurity.Data.Entities;
 using eSecurity.Features.Users.Commands;
 using eSystem.Core.DTOs;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Identity.Email;
 using eSystem.Core.Security.Identity.PhoneNumber;
 
@@ -42,19 +41,6 @@ public static class Mapper
         };
     }
 
-    public static ChangePersonalDataRequest Map(ChangePersonalDataModel source)
-    {
-        return new()
-        {
-            UserId = source.UserId,
-            FirstName = source.FirstName,
-            LastName = source.LastName,
-            MiddleName = source.MiddleName,
-            BirthDate = source.BirthDate,
-            Gender = source.Gender,
-        };
-    }
-
     public static ChangePersonalDataModel Map(UserPersonalModel source)
     {
         return new()
@@ -62,19 +48,6 @@ public static class Mapper
             UserId = source.UserId,
             Gender = source.Gender,
             BirthDate = source.BirthDate,
-            FirstName = source.FirstName,
-            LastName = source.LastName,
-            MiddleName = source.MiddleName
-        };
-    }
-
-    public static AddPersonalDataRequest Map(AddPersonalDataModel source)
-    {
-        return new()
-        {
-            UserId = source.Id,
-            Gender = source.Gender,
-            BirthDate = source.BirthDate!.Value,
             FirstName = source.FirstName,
             LastName = source.LastName,
             MiddleName = source.MiddleName
@@ -171,18 +144,6 @@ public static class Mapper
             Location = source.Location,
             IsBlocked = source.IsBlocked,
             IsTrusted = source.IsTrusted
-        };
-    }
-
-    public static RoleEntity Map(CreateRoleRequest source)
-    {
-        return new RoleEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            Name = source.Name,
-            NormalizedName = source.Name.ToUpper(),
-            CreateDate = DateTime.UtcNow,
-            UpdateDate = null
         };
     }
 

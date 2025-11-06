@@ -380,8 +380,8 @@
 
     private async Task OnEnableAsync()
     {
-        var command = new EnableTwoFactorRequest() { UserId = UserState.UserId };
-        var result = await Sender.Send(new EnableCommand(command));
+        var command = new EnableCommand() { UserId = UserState.UserId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

@@ -2,7 +2,6 @@
 using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Credentials.Constants;
 using eSystem.Core.Security.Credentials.PublicKey;

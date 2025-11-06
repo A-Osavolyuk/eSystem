@@ -1,12 +1,11 @@
-﻿using eSecurity.Messaging;
-using eSecurity.Messaging.Messages.Email;
-using eSecurity.Messaging.Messages.Sms;
+﻿using eSecurity.Common.Messaging;
+using eSecurity.Common.Messaging.Messages.Email;
+using eSecurity.Common.Messaging.Messages.Sms;
+using eSecurity.Common.Responses;
 using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
-using eSystem.Core.Requests.Auth;
-using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Features.Verification.Commands;

@@ -1,6 +1,6 @@
+using eSecurity.Common.Messaging;
+using eSecurity.Common.Messaging.Messages.Email;
 using eSecurity.Data.Entities;
-using eSecurity.Messaging;
-using eSecurity.Messaging.Messages.Email;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Authorization.OAuth;

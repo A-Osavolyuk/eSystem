@@ -1,11 +1,10 @@
-﻿using eSecurity.Data.Entities;
+﻿using eSecurity.Common.Responses;
+using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.Odic.Client;
 using eSecurity.Security.Authentication.Odic.Code;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Requests.Auth;
-using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.Odic.Client;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 

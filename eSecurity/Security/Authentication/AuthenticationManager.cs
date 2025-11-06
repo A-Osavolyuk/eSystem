@@ -4,10 +4,9 @@ using eSecurity.Common.Responses;
 using eSecurity.Common.Routing;
 using eSecurity.Common.Storage;
 using eSecurity.Security.Authentication.Jwt;
-using eSystem.Core.Requests.Auth;
+using eSecurity.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using SignInRequest = eSecurity.Common.Requests.SignInRequest;
 
 namespace eSecurity.Security.Authentication;
 
@@ -33,17 +32,15 @@ public sealed class AuthenticationManager(
         };
 
         var result = await fetchClient.FetchAsync(fetchOptions);
-        var response = result.Get<SignInResponse>()!;
+        if (result.Succeeded)
+        {
+            //TODO: Load user claims
+            
+            var claimsIdentity = new ClaimsIdentity([], AuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-        var identity = response.Identity;
-        var claims = identity.Claims
-            .Select(x => new Claim(x.Key, x.Value))
-            .ToList();
-
-        var claimsIdentity = new ClaimsIdentity(claims, identity.Scheme);
-        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-        (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
+            (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
+        }
     }
 
     public async Task SignOutAsync()

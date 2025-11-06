@@ -1,6 +1,5 @@
 ﻿using eSecurity.Security.Identity.SignUp;
 using eSecurity.Security.Identity.SignUp.Strategies;
-using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Features.Security.Commands;
 

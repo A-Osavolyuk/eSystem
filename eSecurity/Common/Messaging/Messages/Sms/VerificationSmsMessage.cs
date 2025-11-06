@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Common.Messaging;
 
-namespace eSecurity.Messaging.Messages.Sms;
+namespace eSecurity.Common.Messaging.Messages.Sms;
 
 public class VerificationSmsMessage : Message
 {

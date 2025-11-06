@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Responses.Auth;
+﻿namespace eSecurity.Common.Responses;
 
 public class TokenResponse
 {

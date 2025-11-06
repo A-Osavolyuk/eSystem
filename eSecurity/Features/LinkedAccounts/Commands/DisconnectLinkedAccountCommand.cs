@@ -1,7 +1,6 @@
 ﻿using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Authorization.OAuth;
 

@@ -1,6 +1,5 @@
 ﻿using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Features.Security.Commands;

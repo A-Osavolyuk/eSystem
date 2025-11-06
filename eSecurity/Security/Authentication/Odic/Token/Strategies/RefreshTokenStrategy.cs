@@ -1,11 +1,10 @@
+using eSecurity.Common.Responses;
 using eSecurity.Data.Entities;
 using eSecurity.Features.ODIC.Commands;
 using eSecurity.Security.Cryptography.Tokens;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.Claims;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
-using eSystem.Core.Responses.Auth;
 using eSystem.Core.Security.Authentication.Jwt;
 using eSystem.Core.Security.Authentication.Odic.Client;
 using eSystem.Core.Security.Authentication.Odic.Constants;

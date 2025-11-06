@@ -1,7 +1,7 @@
-﻿using eSecurity.Data.Entities;
+﻿using eSecurity.Common.Responses;
+using eSecurity.Data.Entities;
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Identity.Options;
-using eSystem.Core.Responses.Auth;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
 using OtpNet;

@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Common.Messaging;
 
-namespace eSecurity.Messaging.Messages.Email;
+namespace eSecurity.Common.Messaging.Messages.Email;
 
 public class OAuthSignUpMessage : Message
 {

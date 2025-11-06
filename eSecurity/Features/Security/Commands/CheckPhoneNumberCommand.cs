@@ -1,5 +1,4 @@
 ﻿using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Features.Security.Commands;
 

@@ -3,7 +3,6 @@ using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.TwoFactor;
 using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Identity.Email;

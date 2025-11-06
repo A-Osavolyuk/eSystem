@@ -1,4 +1,6 @@
-﻿namespace eSystem.Core.Responses.Auth;
+﻿using Microsoft.AspNetCore.Authentication;
+
+namespace eSecurity.Common.Responses;
 
 public class OAuthLoginResponse
 {

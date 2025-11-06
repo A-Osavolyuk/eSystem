@@ -3,7 +3,6 @@ using eSecurity.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Credentials.Constants;
 
 namespace eSecurity.Features.Passkeys.Commands;

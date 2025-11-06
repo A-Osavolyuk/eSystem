@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Security.Authentication.Lockout;
 
-namespace eSystem.Core.Responses.Auth;
+namespace eSecurity.Common.Responses;
 
 public class VerifyRecoveryCodeResponse
 {

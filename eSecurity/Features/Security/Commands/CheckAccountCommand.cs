@@ -1,6 +1,5 @@
-﻿using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
-using eSystem.Core.Responses.Auth;
+﻿using eSecurity.Common.Responses;
+using eSecurity.Security.Identity.User;
 using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Security.Commands;

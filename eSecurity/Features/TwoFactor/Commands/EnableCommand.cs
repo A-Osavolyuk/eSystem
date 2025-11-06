@@ -1,13 +1,12 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor;
 using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.TwoFactor;
 using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 
-public record EnableCommand(EnableTwoFactorRequest Request) : IRequest<Result>
+public record EnableCommand() : IRequest<Result>
 {
     public Guid UserId { get; set; }
 }

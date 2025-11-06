@@ -1,5 +1,4 @@
 using eSecurity.Features.ODIC.Commands;
-using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Security.Authentication.Odic.Token;
 

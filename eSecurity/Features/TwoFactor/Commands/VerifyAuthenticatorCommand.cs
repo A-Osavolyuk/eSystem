@@ -1,6 +1,5 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 

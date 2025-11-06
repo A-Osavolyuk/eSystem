@@ -1,7 +1,6 @@
-﻿using eSecurity.Security.Authorization.OAuth;
+﻿using eSecurity.Common.Responses;
+using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
-using eSystem.Core.Responses.Auth;
 
 namespace eSecurity.Features.LinkedAccounts.Commands;
 

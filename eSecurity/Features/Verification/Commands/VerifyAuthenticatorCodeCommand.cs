@@ -2,7 +2,6 @@
 using eSecurity.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Features.Verification.Commands;
