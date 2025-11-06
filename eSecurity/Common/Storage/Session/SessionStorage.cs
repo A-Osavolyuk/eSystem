@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Storage.Session;
+﻿namespace eSecurity.Common.Storage.Session;
 
 public class SessionStorage(IHttpContextAccessor httpContextAccessor) : ISessionStorage
 {

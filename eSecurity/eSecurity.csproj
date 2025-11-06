@@ -47,10 +47,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Messaging\Messages\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <AdditionalFiles Include="Components\AccessDenied.razor" />
       <AdditionalFiles Include="Components\App.razor" />
       <AdditionalFiles Include="Components\Common\Access\AccessConfirmation.razor" />

@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Security.Authentication.Odic;
+﻿namespace eSecurity.Security.Authentication.Odic.Session;
 
 public class SessionCookie
 {

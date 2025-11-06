@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using eSecurity.Common.Responses;
 using eSecurity.Security.Authentication.Jwt;
-using eSecurity.Security.Authentication.Odic;
+using eSecurity.Security.Authentication.Odic.Session;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Cookies;
