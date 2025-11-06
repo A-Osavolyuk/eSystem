@@ -1,5 +1,4 @@
-﻿using eSecurity.Security.Authentication.Schemes;
-using eSecurity.Security.Authorization.OAuth;
+﻿using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Authentication.Odic;
 using eSecurity.Security.Authentication.Password;

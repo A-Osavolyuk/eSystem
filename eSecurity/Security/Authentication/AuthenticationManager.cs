@@ -6,7 +6,6 @@ using eSecurity.Common.Routing;
 using eSecurity.Common.State.States;
 using eSecurity.Common.Storage;
 using eSecurity.Features.Users.Queries;
-using eSecurity.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;

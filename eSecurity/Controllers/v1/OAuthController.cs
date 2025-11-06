@@ -1,7 +1,7 @@
 ﻿using eSecurity.Common.Responses;
 using eSecurity.Features.LinkedAccounts.Commands;
-using eSecurity.Security.Authentication.Schemes;
 using eSecurity.Security.Authentication.SignIn;
+using eSecurity.Security.Authorization.OAuth.Schemes;
 
 namespace eSecurity.Controllers.v1;
 

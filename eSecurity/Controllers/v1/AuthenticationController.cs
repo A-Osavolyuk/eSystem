@@ -3,7 +3,6 @@ using System.Text.Json;
 using eSecurity.Common.DTOs;
 using eSecurity.Common.Responses;
 using eSecurity.Security.Authentication.Odic.Session;
-using eSecurity.Security.Authentication.Schemes;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Security.Cookies;
 using eSystem.Core.Security.Cryptography.Protection;

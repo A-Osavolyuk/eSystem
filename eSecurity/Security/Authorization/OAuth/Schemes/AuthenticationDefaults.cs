@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Security.Authentication.Schemes;
+﻿namespace eSecurity.Security.Authorization.OAuth.Schemes;
 
 public static class AuthenticationDefaults
 {
