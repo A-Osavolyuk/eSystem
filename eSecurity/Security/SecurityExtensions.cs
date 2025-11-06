@@ -1,6 +1,7 @@
 ﻿using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Authentication;
 using eSecurity.Security.Authorization;
+using eSecurity.Security.Cookies;
 using eSecurity.Security.Credentials;
 using eSecurity.Security.Cryptography;
 using eSecurity.Security.Identity;
@@ -18,6 +19,7 @@ public static class SecurityExtensions
         builder.AddAuthorization();
         builder.AddCryptography();
         builder.AddIdentity();
+        builder.AddCookies();
         builder.AddCredentials(cfg =>
         {
             var options = configuration.Get<CredentialOptions>("Configuration:Security:Credentials");
