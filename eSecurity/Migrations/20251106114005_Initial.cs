@@ -23,6 +23,8 @@ namespace eSecurity.Migrations
                     RequirePkce = table.Column<bool>(type: "bit", nullable: false),
                     RequireClientSecret = table.Column<bool>(type: "bit", nullable: false),
                     AllowOfflineAccess = table.Column<bool>(type: "bit", nullable: false),
+                    RefreshTokenRotationEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    RefreshTokenLifetime = table.Column<TimeSpan>(type: "time", nullable: false),
                     LogoUri = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ClientUri = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -117,12 +119,33 @@ namespace eSecurity.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClientPostLogoutUris",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Uri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientPostLogoutUris", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientPostLogoutUris_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClientRedirectUris",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RedirectUri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Uri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -758,7 +781,6 @@ namespace eSecurity.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SessionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NewTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Token = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Revoked = table.Column<bool>(type: "bit", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -775,12 +797,6 @@ namespace eSecurity.Migrations
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RefreshTokens_Clients_NewTokenId",
-                        column: x => x.NewTokenId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_RefreshTokens_Sessions_SessionId",
                         column: x => x.SessionId,
@@ -807,6 +823,11 @@ namespace eSecurity.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ClientGrantTypes_ClientId",
                 table: "ClientGrantTypes",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientPostLogoutUris_ClientId",
+                table: "ClientPostLogoutUris",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
@@ -867,13 +888,6 @@ namespace eSecurity.Migrations
                 name: "IX_RefreshTokens_ClientId",
                 table: "RefreshTokens",
                 column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_NewTokenId",
-                table: "RefreshTokens",
-                column: "NewTokenId",
-                unique: true,
-                filter: "[NewTokenId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_SessionId",
@@ -970,6 +984,9 @@ namespace eSecurity.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClientGrantTypes");
+
+            migrationBuilder.DropTable(
+                name: "ClientPostLogoutUris");
 
             migrationBuilder.DropTable(
                 name: "ClientRedirectUris");
