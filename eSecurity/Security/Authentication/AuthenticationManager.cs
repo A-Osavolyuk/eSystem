@@ -5,7 +5,6 @@ using eSecurity.Common.Routing;
 using eSecurity.Common.State.States;
 using eSecurity.Common.Storage;
 using eSecurity.Features.Users.Queries;
-using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
@@ -16,7 +15,6 @@ namespace eSecurity.Security.Authentication;
 public sealed class AuthenticationManager(
     NavigationManager navigationManager,
     AuthenticationStateProvider authenticationStateProvider,
-    TokenProvider tokenProvider,
     UserState userState,
     ISender sender,
     IFetchClient fetchClient,
@@ -24,7 +22,6 @@ public sealed class AuthenticationManager(
 {
     private readonly NavigationManager navigationManager = navigationManager;
     private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
-    private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly UserState userState = userState;
     private readonly ISender sender = sender;
     private readonly IFetchClient fetchClient = fetchClient;
@@ -56,7 +53,7 @@ public sealed class AuthenticationManager(
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);
+                (authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignIn(claimsPrincipal);
             }
         }
     }
@@ -72,9 +69,8 @@ public sealed class AuthenticationManager(
         var result = await fetchClient.FetchAsync(fetchOptions);
         if (result.Succeeded)
         {
-            await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignOutAsync();
+            await (authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignOutAsync();
             await storage.ClearAsync();
-            tokenProvider.Clear();
 
             navigationManager.NavigateTo(Links.SignIn);
         }

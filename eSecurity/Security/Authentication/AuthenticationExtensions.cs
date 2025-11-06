@@ -1,5 +1,4 @@
-﻿using eSecurity.Security.Authentication.Jwt;
-using eSecurity.Security.Authentication.Schemes;
+﻿using eSecurity.Security.Authentication.Schemes;
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Authentication.Odic;
@@ -26,8 +25,7 @@ public static class AuthenticationExtensions
         builder.Services.AddLockout();
         builder.Services.AddOdic();
         builder.Services.AddScoped<AuthenticationManager>();
-        builder.Services.AddScoped<TokenProvider>();
-        builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+        builder.Services.AddScoped<AuthenticationStateProvider, ClaimAuthenticationStateProvider>();
 
         builder.Services.AddAuthentication(options =>
             {

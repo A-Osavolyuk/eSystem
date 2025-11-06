@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Common.Responses;
-using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.Schemes;
 using eSystem.Core.Common.Http;
@@ -14,11 +13,8 @@ namespace eSecurity.Controllers.v1;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticationController(
-    TokenProvider tokenProvider,
-    IProtectorFactory protectorFactory) : ControllerBase
+public class AuthenticationController(IProtectorFactory protectorFactory) : ControllerBase
 {
-    private readonly TokenProvider tokenProvider = tokenProvider;
     private readonly IProtectorFactory protectorFactory = protectorFactory;
     
     [HttpPost("authorize")]

@@ -37,9 +37,9 @@ public class UserState : State
 
 public class UserCredentials
 {
-    public string? Username { get; init; }
-    public string? Email { get; init; }
-    public string? PhoneNumber { get; init; }
+    public string? Username { get; set; }
+    public string? Email { get; set; }
+    public string? PhoneNumber { get; set; }
 }
 
 public record UserIdentity(
