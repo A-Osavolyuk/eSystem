@@ -29,7 +29,7 @@
 
     private void ToLoginPage()
     {
-        var builder = QueryBuilder.Create().WithUri(Links.SignIn);
+        var builder = QueryBuilder.Create().WithUri(Links.Account.SignIn);
 
         if (!string.IsNullOrEmpty(ReturnUrl))
             builder.WithQueryParam("return_url", ReturnUrl);

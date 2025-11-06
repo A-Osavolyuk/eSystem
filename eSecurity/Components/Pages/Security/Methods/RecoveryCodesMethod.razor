@@ -36,7 +36,7 @@
     [Parameter] public TwoFactorData Model { get; set; } = new();
     
     private string OnViewRecoveryCodes() => QueryBuilder.Create()
-        .WithUri(Links.RecoveryCodesViewPage)
-        .WithQueryParam("return_url", Links.SecurityPage)
+        .WithUri(Links.Account.RecoveryCodesViewPage)
+        .WithQueryParam("return_url", Links.Account.SecurityPage)
         .Build();
 }

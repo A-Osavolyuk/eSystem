@@ -55,7 +55,7 @@
                     StartIcon="@Icons.Material.Filled.Key"
                     Variant="Variant.Filled"
                     Color="Color.Primary"
-                    Href="@Links.PasskeySignInPage"
+                    Href="@Links.Account.PasskeySignInPage"
                     FullWidth="true">
                     Sign in with Passkey
                 </MudLoadingButton>
@@ -64,7 +64,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink Href="@Links.SignUp">
+                    <MudLink Href="@Links.Account.SignUp">
                         Sign up
                     </MudLink>
                 </MudText>
@@ -123,7 +123,7 @@
                     Snackbar.Add(result.Message, Severity.Success);
 
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.TwoFactorLoginPage)
+                        .WithUri(Links.Account.TwoFactorLoginPage)
                         .WithQueryParam("id", response.UserId.ToString());
 
                     if (!string.IsNullOrEmpty(ReturnUrl))
@@ -152,7 +152,7 @@
                     var device = response.DeviceId;
 
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.DeviceTrustPage)
+                        .WithUri(Links.Account.DeviceTrustPage)
                         .WithQueryParam("device", device.ToString()!)
                         .WithQueryParam("user", userId.ToString()!);
 
@@ -168,7 +168,7 @@
                 if (!response.IsEmailConfirmed)
                 {
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.CompleteRegistrationPage)
+                        .WithUri(Links.Account.CompleteRegistrationPage)
                         .WithQueryParam("id", userId.ToString()!);
 
                     Snackbar.Add(result.Message, Severity.Info);
@@ -191,7 +191,7 @@
                 else
                 {
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.LockedOutPage)
+                        .WithUri(Links.Account.LockedOutPage)
                         .WithQueryParam("id", userId.ToString()!);
 
                     NavigationManager.NavigateTo(builder.Build());
@@ -203,16 +203,16 @@
     private string OnForgotPassword()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.ForgotPasswordPage)
-            .WithQueryParam("return_url", Links.SignIn)
+            .WithUri(Links.Account.ForgotPasswordPage)
+            .WithQueryParam("return_url", Links.Account.SignIn)
             .Build();
     }
 
     private string OnRecoverAccount()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.RecoverPage)
-            .WithQueryParam("return_url", Links.SignIn)
+            .WithUri(Links.Account.RecoverPage)
+            .WithQueryParam("return_url", Links.Account.SignIn)
             .Build();
     }
 

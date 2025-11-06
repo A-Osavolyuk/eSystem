@@ -110,10 +110,10 @@
     private string OnVerify()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.EmailVerifyPage)
+            .WithUri(Links.Account.EmailVerifyPage)
             .WithQueryParam("email", Email.Email)
             .WithQueryParam("type", EmailTypes.Recovery)
-            .WithQueryParam("return_url", Links.EmailsPage)
+            .WithQueryParam("return_url", Links.Account.EmailsPage)
             .Build();
     }
 
@@ -121,10 +121,10 @@
     private string OnChange()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.EmailChangePage)
+            .WithUri(Links.Account.EmailChangePage)
             .WithQueryParam("email", Email.Email)
             .WithQueryParam("type", EmailTypes.Recovery)
-            .WithQueryParam("return_url", Links.EmailsPage)
+            .WithQueryParam("return_url", Links.Account.EmailsPage)
             .Build();
     }
 

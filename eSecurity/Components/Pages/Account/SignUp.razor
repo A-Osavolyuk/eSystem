@@ -64,7 +64,7 @@
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">Already have an account?
-                    <MudLink Href="@Links.SignIn">
+                    <MudLink Href="@Links.Account.SignIn">
                         Sign in
                     </MudLink>
                 </MudText>
@@ -100,9 +100,9 @@
                 Snackbar.Add(result.Message, Severity.Success);
 
                 var builder = QueryBuilder.Create()
-                    .WithUri(Links.CompleteRegistrationPage)
+                    .WithUri(Links.Account.CompleteRegistrationPage)
                     .WithQueryParam("id", response.UserId.ToString())
-                    .WithQueryParam("return_url", Links.SignIn);
+                    .WithQueryParam("return_url", Links.Account.SignIn);
                 
                 NavigationManager.NavigateTo(builder.Build());
             }

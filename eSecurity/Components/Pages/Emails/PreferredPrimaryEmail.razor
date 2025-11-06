@@ -40,10 +40,10 @@
     private void OnChange(string email)
     {
         var builder = QueryBuilder.Create()
-            .WithUri(Links.EmailManagePage)
+            .WithUri(Links.Account.EmailManagePage)
             .WithQueryParam("email", email)
             .WithQueryParam("type", EmailTypes.Primary)
-            .WithQueryParam("return_url", Links.EmailsPage);
+            .WithQueryParam("return_url", Links.Account.EmailsPage);
         
         NavigationManager.NavigateTo(builder.Build());
     }

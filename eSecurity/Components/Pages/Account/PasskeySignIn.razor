@@ -45,7 +45,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Have an account with password? Go to
-                    <MudLink Href="@Links.SignIn">
+                    <MudLink Href="@Links.Account.SignIn">
                         Sign in
                     </MudLink>
                 </MudText>
@@ -53,7 +53,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
-                    <MudLink Href="@Links.SignUp">
+                    <MudLink Href="@Links.Account.SignUp">
                         Sign up
                     </MudLink>
                 </MudText>
@@ -61,7 +61,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Or you can sign up with
-                    <MudLink Href="@Links.PasskeySignInPage">
+                    <MudLink Href="@Links.Account.PasskeySignInPage">
                         Passkey
                     </MudLink>
                 </MudText>
@@ -131,7 +131,7 @@
                 if (response.IsLockedOut)
                 {
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.LockedOutPage)
+                        .WithUri(Links.Account.LockedOutPage)
                         .WithQueryParam("id", response.UserId.ToString());
 
                     NavigationManager.NavigateTo(builder.Build());

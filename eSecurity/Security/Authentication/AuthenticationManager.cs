@@ -71,7 +71,7 @@ public sealed class AuthenticationManager(
             await (authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignOutAsync();
             await storage.ClearAsync();
 
-            navigationManager.NavigateTo(Links.SignIn);
+            navigationManager.NavigateTo(Links.Account.SignIn);
         }
     }
 }

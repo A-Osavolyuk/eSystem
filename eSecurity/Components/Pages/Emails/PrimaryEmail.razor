@@ -123,27 +123,27 @@
     private string OnVerify()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.EmailVerifyPage)
+            .WithUri(Links.Account.EmailVerifyPage)
             .WithQueryParam("type", EmailTypes.Primary)
-            .WithQueryParam("return_url", Links.EmailsPage)
+            .WithQueryParam("return_url", Links.Account.EmailsPage)
             .Build();
     }
 
     private string OnChange()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.EmailChangePage)
+            .WithUri(Links.Account.EmailChangePage)
             .WithQueryParam("type", EmailTypes.Primary)
-            .WithQueryParam("return_url", Links.EmailsPage)
+            .WithQueryParam("return_url", Links.Account.EmailsPage)
             .Build();
     }
 
     private string OnReset()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.EmailResetPage)
+            .WithUri(Links.Account.EmailResetPage)
             .WithQueryParam("type", EmailTypes.Primary)
-            .WithQueryParam("return_url", Links.EmailsPage)
+            .WithQueryParam("return_url", Links.Account.EmailsPage)
             .Build();
     }
 

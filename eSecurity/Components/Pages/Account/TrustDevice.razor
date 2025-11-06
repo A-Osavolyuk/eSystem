@@ -159,7 +159,7 @@
                 Snackbar.Add("Device successfully trusted", Severity.Success);
                 
                 var builder = QueryBuilder.Create()
-                    .WithUri(Links.TwoFactorLoginPage)
+                    .WithUri(Links.Account.TwoFactorLoginPage)
                     .WithQueryParam("id", response.UserId.ToString());
                 
                 NavigationManager.NavigateTo(builder.Build());

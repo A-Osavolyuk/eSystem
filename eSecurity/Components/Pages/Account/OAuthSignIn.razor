@@ -43,12 +43,12 @@
                 if (response.SignType == OAuthSignType.SignIn)
                 {
                     Snackbar.Add($"Successfully signed in with {response.LinkedAccount}", Severity.Success);
-                    NavigationManager.NavigateTo(Links.Profile);
+                    NavigationManager.NavigateTo(Links.Account.Profile);
                 }
                 else
                 {
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.OAuthSignedUpPage)
+                        .WithUri(Links.Account.OAuthSignedUpPage)
                         .WithQueryParam("provider", response.LinkedAccount);
                     
                     NavigationManager.NavigateTo(builder.Build());

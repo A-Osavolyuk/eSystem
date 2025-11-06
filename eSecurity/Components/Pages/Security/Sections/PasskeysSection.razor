@@ -117,8 +117,8 @@
     private string OnAdd()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.PasskeyAddPage)
-            .WithQueryParam("return_url", Links.SecurityPage)
+            .WithUri(Links.Account.PasskeyAddPage)
+            .WithQueryParam("return_url", Links.Account.SecurityPage)
             .Build();
     }
 
