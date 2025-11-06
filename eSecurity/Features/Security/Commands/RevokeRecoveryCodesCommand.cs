@@ -4,7 +4,10 @@ using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record RevokeRecoveryCodesCommand(RevokeRecoveryCodesRequest Request) : IRequest<Result>;
+public record RevokeRecoveryCodesCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+}
 
 public class RevokeRecoveryCodesCommandHandler(
     IUserManager userManager,
@@ -15,8 +18,8 @@ public class RevokeRecoveryCodesCommandHandler(
 
     public async Task<Result> Handle(RevokeRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
         if (!user.HasRecoveryCodes()) return Results.BadRequest("User doesn't have recovery codes.");
         
         var result = await recoverManager.RevokeAsync(user, cancellationToken);

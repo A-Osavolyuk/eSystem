@@ -7,7 +7,12 @@ using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Security.Commands;
 
-public sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<Result>;
+public sealed record ChangeEmailCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required EmailType Type { get; set; }
+    public required string NewEmail { get; set; }
+}
 
 public sealed class RequestChangeEmailCommandHandler(
     IUserManager userManager,
@@ -21,18 +26,18 @@ public sealed class RequestChangeEmailCommandHandler(
     public async Task<Result> Handle(ChangeEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}");
 
-        if (request.Request.Type is EmailType.Secondary)
+        if (request.Type is EmailType.Secondary)
             return Results.BadRequest("Cannot change a secondary phone number.");
 
-        var currentEmail = user.Emails.FirstOrDefault(x => x.Type == request.Request.Type);
+        var currentEmail = user.Emails.FirstOrDefault(x => x.Type == request.Type);
         if (currentEmail is null) return Results.BadRequest("User's primary email address is missing");
 
         if (options.RequireUniqueEmail)
         {
-            var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
+            var isTaken = await userManager.IsEmailTakenAsync(request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
@@ -50,7 +55,7 @@ public sealed class RequestChangeEmailCommandHandler(
         if (!newEmailVerificationResult.Succeeded) return newEmailVerificationResult;
 
         var result = await userManager.ChangeEmailAsync(user, currentEmail.Email,
-            request.Request.NewEmail, cancellationToken);
+            request.NewEmail, cancellationToken);
 
         return result;
     }

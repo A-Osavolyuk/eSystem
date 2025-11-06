@@ -8,7 +8,7 @@ public class FetchClient(IJSRuntime jSRuntime) : IFetchClient
 {
     private readonly IJSRuntime jSRuntime = jSRuntime;
 
-    public async ValueTask<HttpResponse> FetchAsync(FetchOptions options)
+    public async ValueTask<Result> FetchAsync(FetchOptions options)
     {
         var body = options.Body is null ? string.Empty : JsonSerializer.Serialize(options.Body);
         var headers = new Dictionary<string, string>()
@@ -17,7 +17,7 @@ public class FetchClient(IJSRuntime jSRuntime) : IFetchClient
             { "Content-Type", "application/json" }
         };
         
-        return await jSRuntime.InvokeAsync<HttpResponse>("fetchApi", new
+        return await jSRuntime.InvokeAsync<Result>("fetchApi", new
         {
             url = options.Url,
             headers,

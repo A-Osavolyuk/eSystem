@@ -109,8 +109,8 @@
     {
         isLoading = true;
         showError = false;
-        var request = new GenerateRequestOptionsRequest() { Username = UserState.Credentials!.Username! };
-        var result = await Sender.Send(new GenerateRequestOptionsCommand(request));
+        var command = new GenerateRequestOptionsCommand() { Username = UserState.Credentials!.Username! };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {
@@ -131,7 +131,7 @@
         if (authenticateResult.Success)
         {
             var credential = authenticateResult.Get<PublicKeyCredential>();
-            var request = new VerifyPasskeyRequest()
+            var command = new VerifyPasskeyCommand()
             {
                 UserId = UserState.UserId,
                 Purpose = Context.Purpose,
@@ -139,7 +139,7 @@
                 Credential = credential
             };
 
-            var result = await Sender.Send(new VerifyPasskeyCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {

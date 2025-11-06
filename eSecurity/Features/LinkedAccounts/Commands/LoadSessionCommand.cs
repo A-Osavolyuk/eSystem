@@ -5,7 +5,11 @@ using eSystem.Core.Responses.Auth;
 
 namespace eSecurity.Features.LinkedAccounts.Commands;
 
-public record LoadSessionCommand(LoadOAuthSessionRequest Request) : IRequest<Result>;
+public class LoadSessionCommand() : IRequest<Result>
+{
+    public Guid Id { get; set; }
+    public string Token { get; set; } = string.Empty;
+}
 
 public class LoadOAuthSessionCommandHandler(
     IUserManager userManager,
@@ -16,7 +20,7 @@ public class LoadOAuthSessionCommandHandler(
 
     public async Task<Result> Handle(LoadSessionCommand request, CancellationToken cancellationToken)
     {
-        var session = await sessionManager.FindAsync(request.Request.Id, request.Request.Token, cancellationToken);
+        var session = await sessionManager.FindAsync(request.Id, request.Token, cancellationToken);
         if (session is null || session.ExpiredDate < DateTimeOffset.UtcNow) 
             return Results.NotFound("Session was not found or already expired.");
 

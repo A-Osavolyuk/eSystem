@@ -49,7 +49,7 @@
             if (UserState.IsAuthenticated)
             {
                 var scopes = Scope.Split(' ').ToList();
-                var request = new AuthorizeRequest()
+                var command = new AuthorizeCommand()
                 {
                     UserId = UserState.UserId,
                     ResponseType = ResponseType,
@@ -62,7 +62,7 @@
                     CodeChallengeMethod = CodeChallengeMethod
                 };
 
-                var result = await Sender.Send(new AuthorizeCommand(request));
+                var result = await Sender.Send(command);
 
                 if (result.Succeeded)
                 {
@@ -70,7 +70,7 @@
                     var cookie = new SessionCookie()
                     {
                         SessionId = response.SessionId,
-                        UserId = request.UserId,
+                        UserId = command.UserId,
                         DeviceId = response.DeviceId,
                         IssuedAt = DateTimeOffset.UtcNow,
                         ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
@@ -86,7 +86,7 @@
                     await FetchClient.FetchAsync(fetchOptions);
 
                     var builder = QueryBuilder.Create()
-                        .WithUri(request.RedirectUri)
+                        .WithUri(command.RedirectUri)
                         .WithQueryParam("code", response.Code)
                         .WithQueryParam("state", response.State);
 

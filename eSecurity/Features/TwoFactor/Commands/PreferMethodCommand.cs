@@ -1,10 +1,15 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
+using eSystem.Core.Security.Authentication.TwoFactor;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 
-public record PreferMethodCommand(PreferTwoFactorMethodRequest Request) : IRequest<Result>;
+public record PreferMethodCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public TwoFactorMethod PreferredMethod { get; set; }
+}
 
 public class PreferMethodCommandHandler(
     IUserManager userManager,
@@ -15,10 +20,10 @@ public class PreferMethodCommandHandler(
 
     public async Task<Result> Handle(PreferMethodCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}");
         
-        var result = await twoFactorManager.PreferAsync(user, request.Request.PreferredMethod, cancellationToken);
+        var result = await twoFactorManager.PreferAsync(user, request.PreferredMethod, cancellationToken);
         return result;
     }
 }

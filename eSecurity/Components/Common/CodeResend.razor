@@ -29,7 +29,7 @@
 
     private async Task ResendCodeAsync()
     {
-        var request = new ResendCodeRequest()
+        var command = new ResendCodeCommand()
         {
             UserId = Context!.UserId,
             Payload = Context!.Payload,
@@ -38,7 +38,7 @@
             Action = Context!.Action
         };
 
-        var result = await Sender.Send(new ResendCodeCommand(request));
+        var result = await Sender.Send(command);
         if (!result.Succeeded) Snackbar.Add(result.Message, Severity.Error);
     }
 

@@ -7,7 +7,12 @@ using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Features.Security.Commands;
 
-public sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request) : IRequest<Result>;
+public sealed record ChangePhoneNumberCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required PhoneNumberType Type { get; set; }
+    public required string NewPhoneNumber { get; set; }
+}
 
 public sealed class RequestChangePhoneNumberCommandHandler(
     IUserManager userManager,
@@ -21,18 +26,18 @@ public sealed class RequestChangePhoneNumberCommandHandler(
     public async Task<Result> Handle(ChangePhoneNumberCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
-        if (request.Request.Type is PhoneNumberType.Secondary)
+        if (request.Type is PhoneNumberType.Secondary)
             return Results.BadRequest("Cannot change a secondary phone number.");
 
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type == request.Request.Type);
+        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type == request.Type);
         if (userPhoneNumber is null) return Results.BadRequest("User's phone number is missing.");
 
         if (options.RequireUniquePhoneNumber)
         {
-            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
+            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.NewPhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
 
@@ -47,7 +52,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         if (!newPhoneNumberVerificationResult.Succeeded) return newPhoneNumberVerificationResult;
 
         var result = await userManager.ChangePhoneNumberAsync(user, userPhoneNumber.PhoneNumber,
-            request.Request.NewPhoneNumber, cancellationToken);
+            request.NewPhoneNumber, cancellationToken);
 
         return result;
     }

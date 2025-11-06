@@ -10,7 +10,11 @@ using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Passkeys.Commands;
 
-public record RemovePasskeyCommand(RemovePasskeyRequest Request) : IRequest<Result>;
+public class RemovePasskeyCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public Guid KeyId { get; set; }
+}
 
 public class RemovePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
@@ -27,11 +31,11 @@ public class RemovePasskeyCommandHandler(
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
-        var passkey = await passkeyManager.FindByIdAsync(request.Request.KeyId, cancellationToken);
-        if (passkey is null) return Results.NotFound($"Cannot find passkey with ID {request.Request.KeyId}.");
+        var passkey = await passkeyManager.FindByIdAsync(request.KeyId, cancellationToken);
+        if (passkey is null) return Results.NotFound($"Cannot find passkey with ID {request.KeyId}.");
 
         if (options.RequireConfirmedEmail && !user.HasEmail(EmailType.Primary) || !user.HasPassword())
             return Results.BadRequest("You need to enable another authentication method first.");

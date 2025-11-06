@@ -106,13 +106,13 @@
 
         if (form.IsValid)
         {
-            var request = new VerifyRecoveryCodeRequest()
+            var command = new VerifyRecoveryCodeCommand()
             {
                 UserId = UserId,
                 Code = Model.Code
             };
 
-            var result = await Sender.Send(new VerifyRecoveryCodeCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {

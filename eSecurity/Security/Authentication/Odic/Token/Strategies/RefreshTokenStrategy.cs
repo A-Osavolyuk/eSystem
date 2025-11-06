@@ -1,4 +1,5 @@
 using eSecurity.Data.Entities;
+using eSecurity.Features.ODIC.Commands;
 using eSecurity.Security.Cryptography.Tokens;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.Claims;
@@ -30,11 +31,11 @@ public class RefreshTokenStrategy(
     private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
     private readonly JwtOptions options = options.Value;
 
-    public override async ValueTask<Result> HandleAsync(TokenRequest request,
+    public override async ValueTask<Result> HandleAsync(TokenCommand command,
         CancellationToken cancellationToken = default)
     {
         var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
-        var unprotectedToken = protector.Unprotect(request.RefreshToken!);
+        var unprotectedToken = protector.Unprotect(command.RefreshToken!);
 
         var refreshToken = await tokenManager.FindByTokenAsync(unprotectedToken, cancellationToken);
         if (refreshToken is null) return Results.NotFound("Refresh token not found.");
@@ -46,7 +47,7 @@ public class RefreshTokenStrategy(
         }
 
         var client = refreshToken.Client;
-        if (!client.ClientId.Equals(request.ClientId)) 
+        if (!client.ClientId.Equals(command.ClientId)) 
             return Results.BadRequest("Invalid client ID.");
 
         if (!client.AllowOfflineAccess || !client.HasScope(Scopes.OfflineAccess))
@@ -54,10 +55,10 @@ public class RefreshTokenStrategy(
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {
-            if (string.IsNullOrEmpty(request.ClientSecret))
+            if (string.IsNullOrEmpty(command.ClientSecret))
                 return Results.BadRequest("Client secret is required.");
 
-            if (!client.ClientSecret.Equals(request.ClientSecret))
+            if (!client.ClientSecret.Equals(command.ClientSecret))
                 return Results.BadRequest("Invalid client secret.");
         }
 

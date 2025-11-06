@@ -7,7 +7,11 @@ using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record ResetPhoneNumberCommand(ResetPhoneNumberRequest Request) : IRequest<Result>;
+public record ResetPhoneNumberCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required string NewPhoneNumber { get; set; }
+}
 
 public class ResetPhoneNumberCommandHandler(
     IUserManager userManager,
@@ -20,16 +24,16 @@ public class ResetPhoneNumberCommandHandler(
 
     public async Task<Result> Handle(ResetPhoneNumberCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
 
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}");
         
         var userCurrentPhoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary);
         if (userCurrentPhoneNumber is null) return Results.BadRequest("User's primary phone number is missing");
         
         if (options.RequireUniquePhoneNumber)
         {
-            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
+            var isTaken = await userManager.IsPhoneNumberTakenAsync(request.NewPhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
         
@@ -43,7 +47,7 @@ public class ResetPhoneNumberCommandHandler(
 
         if (!verifyVerificationResult.Succeeded) return verifyVerificationResult;
         
-        var newPhoneNumber = request.Request.NewPhoneNumber;
+        var newPhoneNumber = request.NewPhoneNumber;
         
         var result = await userManager.ResetPhoneNumberAsync(user, 
             userCurrentPhoneNumber.PhoneNumber, newPhoneNumber, cancellationToken);

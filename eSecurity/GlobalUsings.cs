@@ -14,7 +14,4 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
 global using Scalar.AspNetCore;
-global using HttpOptions = eSystem.Core.Common.Http.HttpOptions;
-global using HttpRequest = eSystem.Core.Common.Http.HttpRequest;
-global using HttpResponse = eSystem.Core.Common.Http.HttpResponse;
 global using Results = eSystem.Core.Common.Results.Results;

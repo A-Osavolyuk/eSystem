@@ -9,7 +9,11 @@ using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record UnlockAccountCommand(UnlockAccountRequest Request) : IRequest<Result>;
+public record UnlockAccountCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public string Code { get; set; } = string.Empty;
+}
 
 public class UnlockAccountCommandHandler(
     IUserManager userManager,
@@ -26,15 +30,15 @@ public class UnlockAccountCommandHandler(
 
     public async Task<Result> Handle(UnlockAccountCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
         
-        var code = request.Request.Code;
+        var code = request.Code;
         var verificationResult = await codeManager.VerifyAsync(user, code, SenderType.Email, 
             ActionType.Unlock, PurposeType.Account, cancellationToken);
 

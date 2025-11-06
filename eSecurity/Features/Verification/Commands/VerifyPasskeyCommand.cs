@@ -3,11 +3,19 @@ using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
+using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Credentials.Constants;
+using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSecurity.Features.Verification.Commands;
 
-public record VerifyPasskeyCommand(VerifyPasskeyRequest Request) : IRequest<Result>;
+public record VerifyPasskeyCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required PurposeType Purpose { get; set; }
+    public required ActionType Action { get; set; }
+    public required PublicKeyCredential Credential { get; set; }
+}
 
 public class VerifyPasskeyCommandHandler(
     IUserManager userManager,
@@ -22,7 +30,7 @@ public class VerifyPasskeyCommandHandler(
 
     public async Task<Result> Handle(VerifyPasskeyCommand request, CancellationToken cancellationToken)
     {
-        var credential = request.Request.Credential;
+        var credential = request.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
         var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
@@ -37,8 +45,8 @@ public class VerifyPasskeyCommandHandler(
         var verificationResult = await passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var purpose = request.Request.Purpose;
-        var action = request.Request.Action;
+        var purpose = request.Purpose;
+        var action = request.Action;
         var result = await verificationManager.CreateAsync(user, purpose, action, cancellationToken);
         return result;
     }

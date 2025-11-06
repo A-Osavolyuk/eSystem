@@ -80,12 +80,12 @@
 
         if (form.IsValid)
         {
-            var request = new GenerateRequestOptionsRequest()
+            var command = new GenerateRequestOptionsCommand()
             {
                 Username = Model.Username
             };
 
-            var result = await Sender.Send(new GenerateRequestOptionsCommand(request));
+            var result = await Sender.Send(command);
             var options = result.Get<PublicKeyCredentialRequestOptions>()!;
 
             if (result.Succeeded) await VerifyAsync(options);
@@ -99,7 +99,7 @@
         if (authenticateResult.Success)
         {
             var credential = authenticateResult.Get<PublicKeyCredential>();
-            var request = new SignInRequest()
+            var command = new SignInCommand()
             {
                 Payload = new PasskeySignInPayload()
                 {
@@ -107,7 +107,7 @@
                 }
             };
 
-            var result = await Sender.Send(new SignInCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {

@@ -83,13 +83,13 @@
 
         if (form.IsValid)
         {
-            var request = new UnlockAccountRequest()
+            var command = new UnlockAccountCommand()
             {
                 Code = Model.Code,
                 UserId = UserId
             };
 
-            var result = await Sender.Send(new UnlockAccountCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {

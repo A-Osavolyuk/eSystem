@@ -84,8 +84,8 @@
 
     private async Task OnSignInAsync()
     {
-        var request = new GenerateRequestOptionsRequest() { UserId = UserId };
-        var result = await Sender.Send(new GenerateRequestOptionsCommand(request));
+        var command = new GenerateRequestOptionsCommand() { UserId = UserId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {
@@ -102,14 +102,14 @@
 
     private async Task SignInAsync(PublicKeyCredential credential)
     {
-        var request = new SignInRequest()
+        var command = new SignInCommand()
         {
             Payload = new PasskeySignInPayload()
             {
                 Credential = credential,
             }
         };
-        var result = await Sender.Send(new SignInCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

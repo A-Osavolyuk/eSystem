@@ -4,7 +4,10 @@ using eSystem.Core.Responses.Auth;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record CheckPasswordCommand(CheckPasswordRequest Request) : IRequest<Result>;
+public record CheckPasswordCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+}
 
 public class CheckPasswordCommandHandler(IUserManager userManager) : IRequestHandler<CheckPasswordCommand, Result>
 {
@@ -12,8 +15,8 @@ public class CheckPasswordCommandHandler(IUserManager userManager) : IRequestHan
 
     public async Task<Result> Handle(CheckPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if(user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if(user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var response = new CheckPasswordResponse()
         {

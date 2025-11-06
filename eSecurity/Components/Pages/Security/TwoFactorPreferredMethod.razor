@@ -82,13 +82,13 @@
             _ => throw new NotSupportedException("Unsupported 2FA type")
         };
 
-        var request = new PreferTwoFactorMethodRequest()
+        var command = new PreferMethodCommand()
         {
             UserId = UserState.UserId,
             PreferredMethod = method
         };
 
-        var result = await Sender.Send(new PreferMethodCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

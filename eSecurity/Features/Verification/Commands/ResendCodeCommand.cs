@@ -7,10 +7,18 @@ using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Responses.Auth;
+using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Features.Verification.Commands;
 
-public record ResendCodeCommand(ResendCodeRequest Request) : IRequest<Result>;
+public class ResendCodeCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required SenderType Sender { get; set; }
+    public required ActionType Action { get; set; }
+    public required PurposeType Purpose { get; set; }
+    public required Dictionary<string, string> Payload { get; set; }
+}
 
 public class ResendCodeCommandHandler(
     IUserManager userManager,
@@ -26,8 +34,8 @@ public class ResendCodeCommandHandler(
     {
         ResendCodeResponse? response;
 
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         if (user.CodeResendAttempts >= options.MaxCodeResendAttempts)
         {
@@ -52,10 +60,10 @@ public class ResendCodeCommandHandler(
         var userUpdateResult = await userManager.UpdateAsync(user, cancellationToken);
         if (!userUpdateResult.Succeeded) return userUpdateResult;
 
-        var sender = request.Request.Sender;
-        var action = request.Request.Action;
-        var purpose = request.Request.Purpose;
-        var payload = request.Request.Payload;
+        var sender = request.Sender;
+        var action = request.Action;
+        var purpose = request.Purpose;
+        var payload = request.Payload;
 
         var code = await codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
         payload["Code"] = code; 

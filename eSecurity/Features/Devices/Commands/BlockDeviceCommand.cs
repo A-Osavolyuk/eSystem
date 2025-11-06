@@ -6,7 +6,11 @@ using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Features.Devices.Commands;
 
-public record BlockDeviceCommand(BlockDeviceRequest Request) : IRequest<Result>;
+public class BlockDeviceCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public Guid DeviceId { get; set; }
+}
 
 public class BlockDeviceCommandHandler(
     IUserManager userManager,
@@ -19,11 +23,11 @@ public class BlockDeviceCommandHandler(
 
     public async Task<Result> Handle(BlockDeviceCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
-        var device = await deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
-        if (device is null) return Results.NotFound($"Cannot find device with ID {request.Request.DeviceId}.");
+        var device = await deviceManager.FindByIdAsync(request.DeviceId, cancellationToken);
+        if (device is null) return Results.NotFound($"Cannot find device with ID {request.DeviceId}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
             PurposeType.Device, ActionType.Block, cancellationToken);

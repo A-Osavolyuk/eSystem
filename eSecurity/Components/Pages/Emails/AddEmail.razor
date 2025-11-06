@@ -56,13 +56,13 @@
 
         if (form is { IsValid: true, IsTouched: true })
         {
-            var request = new CheckEmailRequest()
+            var command = new CheckEmailCommand()
             {
                 UserId = UserState.UserId,
                 Email = Model.Email!
             };
 
-            var result = await Sender.Send(new CheckEmailCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {
@@ -81,13 +81,13 @@
 
     private async Task AddEmailAsync()
     {
-        var request = new AddEmailRequest()
+        var command = new AddEmailCommand()
         {
             UserId = UserState.UserId,
             Email = Model.Email!,
         };
 
-        var result = await Sender.Send(new AddEmailCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

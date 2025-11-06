@@ -170,8 +170,8 @@
 
     private async Task OnGenerateQrCodeAsync()
     {
-        var request = new RegenerateQrCodeRequest() { UserId = UserState.UserId };
-        var result = await Sender.Send(new RegenerateQrCodeCommand(request));
+        var command = new RegenerateQrCodeCommand() { UserId = UserState.UserId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {
@@ -201,14 +201,14 @@
     private async Task OnVerifyCodeAsync()
     {
         showError = false;
-        var request = new VerifyAuthenticatorRequest()
+        var command = new VerifyAuthenticatorCommand()
         {
             UserId = UserState.UserId,
             Code = Model.Code,
             Secret = QrCode.Secret
         };
 
-        var result = await Sender.Send(new VerifyAuthenticatorCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) codeValid = true;
         else showError = true;
@@ -216,13 +216,13 @@
 
     private async Task OnSaveAsync()
     {
-        var request = new ReconfigureAuthenticatorRequest()
+        var command = new ReconfigureAuthenticatorCommand()
         {
             UserId = UserState.UserId,
             Secret = QrCode.Secret
         };
 
-        var result = await Sender.Send(new ReconfigureAuthenticatorCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

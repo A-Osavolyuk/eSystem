@@ -49,36 +49,4 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
             s => Redirect(s.Message),
             f => Redirect(f.Value!.ToString()!));
     }
-    
-    [EndpointSummary("Load OAuth session")]
-    [EndpointDescription("Load OAuth session")]
-    [ProducesResponseType(200)]
-    [HttpPost("load")]
-    public async ValueTask<IActionResult> LoadSessionAsync([FromBody] LoadOAuthSessionRequest request)
-    {
-        var result = await sender.Send(new LoadSessionCommand(request));
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
-    }
-
-    [EndpointSummary("Disconnect related account")]
-    [EndpointDescription("Disconnect related account")]
-    [ProducesResponseType(200)]
-    [HttpPost("disconnect")]
-    public async ValueTask<IActionResult> DisconnectAsync([FromBody] DisconnectLinkedAccountRequest request)
-    {
-        var result = await sender.Send(new DisconnectLinkedAccountCommand(request));
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
-    }
 }

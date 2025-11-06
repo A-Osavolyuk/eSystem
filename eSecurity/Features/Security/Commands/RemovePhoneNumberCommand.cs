@@ -7,7 +7,11 @@ using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record RemovePhoneNumberCommand(RemovePhoneNumberRequest Request) :  IRequest<Result>;
+public record RemovePhoneNumberCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required string PhoneNumber { get; set; }
+}
 
 public class RemovePhoneNumberCommandHandler(
     IUserManager userManager,
@@ -18,8 +22,8 @@ public class RemovePhoneNumberCommandHandler(
 
     public async Task<Result> Handle(RemovePhoneNumberCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         if (!user.HasPhoneNumber(PhoneNumberType.Primary)) return Results.BadRequest(
             "Cannot remove phone number. Phone number is not provided.");
@@ -32,7 +36,7 @@ public class RemovePhoneNumberCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await userManager.RemovePhoneNumberAsync(user, request.Request.PhoneNumber, cancellationToken);
+        var result = await userManager.RemovePhoneNumberAsync(user, request.PhoneNumber, cancellationToken);
         return result;
     }
 }

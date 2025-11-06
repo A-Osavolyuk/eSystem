@@ -22,13 +22,13 @@
     {
         if (firstRender)
         {
-            var request = new LoadOAuthSessionRequest()
+            var command = new LoadSessionCommand()
             {
                 Id = Guid.Parse(SessionId),
                 Token = Token
             };
 
-            var result = await Sender.Send(new LoadSessionCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {

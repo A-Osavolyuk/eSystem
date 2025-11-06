@@ -227,8 +227,8 @@
     {
         if (firstRender)
         {
-            var request = new LoadRecoveryCodesRequest() { UserId = UserState.UserId };
-            var result = await Sender.Send(new LoadRecoveryCodesCommand(request));
+            var command = new LoadRecoveryCodesCommand() { UserId = UserState.UserId };
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {
@@ -250,8 +250,8 @@
 
     private async Task OnGenerateAsync()
     {
-        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
-        var result = await Sender.Send(new GenerateRecoveryCodesCommand(request));
+        var command = new GenerateRecoveryCodesCommand() { UserId = UserState.UserId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

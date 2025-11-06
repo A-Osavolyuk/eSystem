@@ -5,7 +5,10 @@ using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record CheckAccountCommand(CheckAccountRequest Request) : IRequest<Result>;
+public record CheckAccountCommand() : IRequest<Result>
+{
+    public string Username { get; set; } = string.Empty;
+}
 
 public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHandler<CheckAccountCommand, Result>
 {
@@ -15,7 +18,7 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
     {
         CheckAccountResponse? response;
         
-        var user = await userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
+        var user = await userManager.FindByUsernameAsync(request.Username, cancellationToken);
 
         if (user is null)
         {

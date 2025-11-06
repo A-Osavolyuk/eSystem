@@ -11,10 +11,16 @@ using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authentication.TwoFactor;
 using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Credentials.Constants;
+using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSecurity.Features.Passkeys.Commands;
 
-public record CreatePasskeyCommand(CreatePasskeyRequest Request) : IRequest<Result>;
+public class CreatePasskeyCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required string DisplayName { get; set; }
+    public required PublicKeyCredentialCreationResponse Response { get; set; }
+}
 
 public class CreatePasskeyCommandHandler(
     IUserManager userManager,
@@ -36,8 +42,8 @@ public class CreatePasskeyCommandHandler(
     public async Task<Result> Handle(CreatePasskeyCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var userAgent = httpContext.GetUserAgent();
         var ipAddress = httpContext.GetIpV4();
@@ -49,7 +55,7 @@ public class CreatePasskeyCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var credentialResponse = request.Request.Response;
+        var credentialResponse = request.Response;
         var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
         if (clientData is null) return Results.BadRequest("Invalid client data");
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
@@ -68,13 +74,13 @@ public class CreatePasskeyCommandHandler(
             Id = Guid.CreateVersion7(),
             AuthenticatorId = new Guid(authData.AaGuid),
             DeviceId = device.Id,
-            DisplayName = request.Request.DisplayName,
+            DisplayName = request.DisplayName,
             Domain = clientData.Origin,
             CredentialId = Convert.ToBase64String(authData.CredentialId),
             PublicKey = authData.CredentialPublicKey,
             SignCount = authData.SignCount,
             CreateDate = DateTimeOffset.UtcNow,
-            Type = request.Request.Response.Type
+            Type = request.Response.Type
         };
 
         var result = await passkeyManager.CreateAsync(passkey, cancellationToken);

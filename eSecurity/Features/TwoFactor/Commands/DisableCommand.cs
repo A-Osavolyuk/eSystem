@@ -6,7 +6,10 @@ using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 
-public record DisableCommand(DisableTwoFactorRequest Request) : IRequest<Result>;
+public record DisableCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+}
 
 public class DisableTwoFactorCommandHandler(
     IUserManager userManager,
@@ -19,8 +22,8 @@ public class DisableTwoFactorCommandHandler(
 
     public async Task<Result> Handle(DisableCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
         if (!user.TwoFactorEnabled) return Results.BadRequest("2FA already disabled.");
         
         var verificationResult = await verificationManager.VerifyAsync(user,

@@ -106,7 +106,7 @@
 
     private async Task OnSendAsync()
     {
-        var request = new SendCodeRequest()
+        var command = new SendCodeCommand()
         {
             UserId = UserState.UserId,
             Sender = SenderType.Email,
@@ -118,7 +118,7 @@
             }
         };
 
-        var result = await Sender.Send(new SendCodeCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) sendStage = false;
         else Snackbar.Add(result.Message, Severity.Error);
@@ -130,7 +130,7 @@
 
         if (form.IsValid)
         {
-            var request = new VerifyCodeRequest()
+            var command = new VerifyCodeCommand()
             {
                 UserId = UserState.UserId,
                 Code = CodeModel.Code,
@@ -139,7 +139,7 @@
                 Sender = SenderType.Email
             };
 
-            var result = await Sender.Send(new VerifyCodeCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded) await OnAccessConfirmed.InvokeAsync();
             else Snackbar.Add(result.Message, Severity.Error);

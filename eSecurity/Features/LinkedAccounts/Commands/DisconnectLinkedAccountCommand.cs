@@ -3,10 +3,15 @@ using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authorization.Access;
+using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Features.LinkedAccounts.Commands;
 
-public record DisconnectLinkedAccountCommand(DisconnectLinkedAccountRequest Request) : IRequest<Result>;
+public class DisconnectLinkedAccountCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public LinkedAccountType Type { get; set; }
+}
 
 public class DisconnectLinkedAccountCommandHandler(
     IUserManager userManager,
@@ -19,15 +24,15 @@ public class DisconnectLinkedAccountCommandHandler(
 
     public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var verificationResult = await verificationManager.VerifyAsync(user,
             PurposeType.LinkedAccount, ActionType.Disconnect, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
         
-        var linkedAccount = user.GetLinkedAccount(request.Request.Type);;
+        var linkedAccount = user.GetLinkedAccount(request.Type);;
         if (linkedAccount is null) return Results.NotFound("Cannot find user linked account.");
 
         var result = await providerManager.RemoveAsync(linkedAccount, cancellationToken);

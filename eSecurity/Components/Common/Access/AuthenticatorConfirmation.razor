@@ -71,7 +71,7 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = new VerifyAuthenticatorCodeRequest()
+        var command = new VerifyAuthenticatorCodeCommand()
         {
             UserId = UserState.UserId,
             Code = CodeModel.Code,
@@ -79,7 +79,7 @@
             Purpose = Context.Purpose
         };
 
-        var result = await Sender.Send(new VerifyAuthenticatorCodeCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) await OnAccessConfirmed.InvokeAsync();
         else Snackbar.Add(result.Message, Severity.Error);

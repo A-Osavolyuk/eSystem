@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Common.Messaging;
+﻿using eSecurity.Features.Verification.Commands;
+using eSystem.Core.Common.Messaging;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Authorization.Access;
 
@@ -12,9 +13,9 @@ public class MessageContext
     public ActionType Action { get; set; }
     public Dictionary<string, string> Payload { get; set; } = [];
 
-    public SendCodeRequest ToSendCodeRequest()
+    public SendCodeCommand ToSendCodeCommand()
     {
-        return new SendCodeRequest()
+        return new SendCodeCommand()
         {
             UserId = UserId,
             Sender = Sender,
@@ -24,9 +25,9 @@ public class MessageContext
         };
     }
     
-    public VerifyCodeRequest ToVerifyCodeRequest(string code)
+    public VerifyCodeCommand ToVerifyCodeCommand(string code)
     {
-        return new VerifyCodeRequest()
+        return new VerifyCodeCommand()
         {
             UserId = UserId,
             Sender = Sender,

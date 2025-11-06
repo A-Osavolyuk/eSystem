@@ -1,4 +1,5 @@
 using eSecurity.Data.Entities;
+using eSecurity.Features.ODIC.Commands;
 using eSecurity.Security.Authentication.Odic.Code;
 using eSecurity.Security.Authentication.Odic.Pkce;
 using eSecurity.Security.Authentication.Odic.Session;
@@ -39,30 +40,30 @@ public class AuthorizationCodeStrategy(
     private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
     private readonly JwtOptions options = options.Value;
 
-    public override async ValueTask<Result> HandleAsync(TokenRequest request,
+    public override async ValueTask<Result> HandleAsync(TokenCommand command,
         CancellationToken cancellationToken = default)
     {
-        var code = request.Code!;
+        var code = command.Code!;
         var authorizationCode = await authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
         if (authorizationCode is null) return Results.NotFound("Authorization code not found.");
         if (authorizationCode.Used) return Results.BadRequest("Authorization code has already been used.");
         if (authorizationCode.ExpireDate < DateTimeOffset.UtcNow)
             return Results.BadRequest("Authorization code has expired.");
 
-        var redirectUri = request.RedirectUri;
+        var redirectUri = command.RedirectUri;
         if (string.IsNullOrEmpty(redirectUri) || !authorizationCode.RedirectUri.Equals(redirectUri))
             return Results.BadRequest("Invalid redirect URI.");
 
         var client = authorizationCode.Client;
-        if (!client.ClientId.Equals(request.ClientId)) return Results.BadRequest("Invalid client ID.");
+        if (!client.ClientId.Equals(command.ClientId)) return Results.BadRequest("Invalid client ID.");
         if (!client.HasRedirectUri(redirectUri)) return Results.BadRequest("Invalid redirect URI.");
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {
-            if (string.IsNullOrEmpty(request.ClientSecret))
+            if (string.IsNullOrEmpty(command.ClientSecret))
                 return Results.BadRequest("Client secret is required.");
 
-            if (!client.ClientSecret.Equals(request.ClientSecret))
+            if (!client.ClientSecret.Equals(command.ClientSecret))
                 return Results.BadRequest("Invalid client secret.");
         }
 
@@ -74,13 +75,13 @@ public class AuthorizationCodeStrategy(
             if (string.IsNullOrWhiteSpace(authorizationCode.CodeChallengeMethod))
                 return Results.BadRequest("Missing code challenge method in authorization code.");
 
-            if (string.IsNullOrWhiteSpace(request.CodeVerifier))
+            if (string.IsNullOrWhiteSpace(command.CodeVerifier))
                 return Results.BadRequest("Missing code verifier in token request.");
 
             var isValidPkce = pkceHandler.Verify(
                 authorizationCode.CodeChallenge,
                 authorizationCode.CodeChallengeMethod,
-                request.CodeVerifier
+                command.CodeVerifier
             );
 
             if (!isValidPkce) return Results.BadRequest("Invalid PKCE verification (code verifier mismatch).");

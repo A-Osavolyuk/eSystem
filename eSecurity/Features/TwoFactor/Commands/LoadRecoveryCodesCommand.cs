@@ -4,7 +4,10 @@ using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 
-public record LoadRecoveryCodesCommand(LoadRecoveryCodesRequest Request) : IRequest<Result>;
+public record LoadRecoveryCodesCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+}
 
 public class LoadRecoveryCodesCommandHandler(
     IUserManager userManager,
@@ -15,8 +18,8 @@ public class LoadRecoveryCodesCommandHandler(
     
     public async Task<Result> Handle(LoadRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var codes = recoverManager.Unprotect(user);
         return Result.Success(codes);

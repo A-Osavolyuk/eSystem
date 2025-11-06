@@ -11,7 +11,18 @@ using eSystem.Core.Security.Authentication.Odic.Constants;
 
 namespace eSecurity.Features.ODIC.Commands;
 
-public record AuthorizeCommand(AuthorizeRequest Request) : IRequest<Result>;
+public class AuthorizeCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public string ResponseType { get; set; } = string.Empty;
+    public string ClientId { get; set; } = string.Empty;
+    public string RedirectUri { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
+    public string Nonce { get; set; } = string.Empty;
+    public string? CodeChallenge { get; set; }
+    public string? CodeChallengeMethod { get; set; }
+    public List<string> Scopes { get; set; } = [];
+}
 
 public class AuthorizeCommandHandler(
     IUserManager userManager,
@@ -28,8 +39,8 @@ public class AuthorizeCommandHandler(
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
@@ -40,22 +51,22 @@ public class AuthorizeCommandHandler(
         var session = await sessionManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
-        var client = await clientManager.FindByClientIdAsync(request.Request.ClientId, cancellationToken);
+        var client = await clientManager.FindByClientIdAsync(request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client not found.");
-        if (!client.HasRedirectUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
-        if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
-        if (string.IsNullOrWhiteSpace(request.Request.Nonce)) return Results.BadRequest("Invalid nonce.");
+        if (!client.HasRedirectUri(request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
+        if (!client.HasScopes(request.Scopes)) return Results.BadRequest("Invalid scopes.");
+        if (string.IsNullOrWhiteSpace(request.Nonce)) return Results.BadRequest("Invalid nonce.");
 
         if (client is { Type: ClientType.Public, RequirePkce: true })
         {
-            if (string.IsNullOrEmpty(request.Request.CodeChallenge))
+            if (string.IsNullOrEmpty(request.CodeChallenge))
                 return Results.BadRequest("Code challenge is required.");
 
-            if (string.IsNullOrEmpty(request.Request.CodeChallengeMethod))
+            if (string.IsNullOrEmpty(request.CodeChallengeMethod))
                 return Results.BadRequest("Code challenge method is required.");
         }
 
-        if (request.Request.ResponseType != ResponseTypes.Code) 
+        if (request.ResponseType != ResponseTypes.Code) 
             return Results.BadRequest("Invalid response type.");
 
         var code = authorizationCodeManager.Generate();
@@ -65,10 +76,10 @@ public class AuthorizeCommandHandler(
             ClientId = client.Id,
             DeviceId = device.Id,
             Code = code,
-            Nonce = request.Request.Nonce,
-            CodeChallenge = request.Request.CodeChallenge,
-            CodeChallengeMethod = request.Request.CodeChallengeMethod,
-            RedirectUri = request.Request.RedirectUri,
+            Nonce = request.Nonce,
+            CodeChallenge = request.CodeChallenge,
+            CodeChallengeMethod = request.CodeChallengeMethod,
+            RedirectUri = request.RedirectUri,
             ExpireDate = DateTimeOffset.UtcNow.AddMinutes(10),
             CreateDate = DateTimeOffset.UtcNow,
         };
@@ -81,7 +92,7 @@ public class AuthorizeCommandHandler(
             UserId = user.Id,
             SessionId = session.Id,
             DeviceId = device.Id,
-            State = request.Request.State,
+            State = request.State,
             Code = code
         };
 

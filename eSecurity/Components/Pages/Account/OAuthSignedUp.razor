@@ -181,13 +181,13 @@
 
         if (addUsernameForm.IsValid)
         {
-            var request = new ChangeUsernameRequest()
+            var command = new ChangeUsernameCommand()
             {
                 UserId = userId,
                 Username = AddUsernameModel.Username
             };
 
-            var result = await Sender.Send(new ChangeUsernameCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {
@@ -207,13 +207,13 @@
 
         if (addPasswordForm.IsValid)
         {
-            var request = new AddPasswordRequest()
+            var command = new AddPasswordCommand()
             {
                 UserId = userId,
                 Password = AddPasswordModel.Password
             };
 
-            var result = await Sender.Send(new AddPasswordCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {

@@ -4,7 +4,12 @@ using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Features.Passkeys.Commands;
 
-public record ChangePasskeyNameCommand(ChangePasskeyNameRequest Request) : IRequest<Result>;
+public class ChangePasskeyNameCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required Guid PasskeyId { get; set; }
+    public required string DisplayName { get; set; }
+}
 
 public class ChangePasskeyNameCommandHandler(
     IUserManager userManager,
@@ -15,18 +20,18 @@ public class ChangePasskeyNameCommandHandler(
 
     public async Task<Result> Handle(ChangePasskeyNameCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
         if (!user.HasPasskeys()) return Results.BadRequest("User does not have any passkeys.");
 
         var passkey = user.Devices
             .Where(x => x.Passkey is not null)
             .Select(x => x.Passkey!)
-            .FirstOrDefault(x => x.Id == request.Request.PasskeyId);
+            .FirstOrDefault(x => x.Id == request.PasskeyId);
         
         if (passkey is null) return Results.NotFound("Cannot find user's passkey.");
 
-        passkey.DisplayName = request.Request.DisplayName;
+        passkey.DisplayName = request.DisplayName;
         passkey.UpdateDate = DateTimeOffset.UtcNow;
 
         var result = await passkeyManager.UpdateAsync(passkey, cancellationToken);

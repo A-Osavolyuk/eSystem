@@ -7,7 +7,11 @@ using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
+public record ResetEmailCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required string NewEmail { get; set; }
+}
 
 public class ResetEmailCommandHandler(
     IUserManager userManager,
@@ -20,17 +24,17 @@ public class ResetEmailCommandHandler(
 
     public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
     {
-        var newEmail = request.Request.NewEmail;
+        var newEmail = request.NewEmail;
 
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}");
         
         var userCurrentEmail = user.GetEmail(EmailType.Primary);
         if (userCurrentEmail is null) return Results.BadRequest("User's primary email address is missing");
 
         if (options.RequireUniqueEmail)
         {
-            var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
+            var isTaken = await userManager.IsEmailTakenAsync(request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 

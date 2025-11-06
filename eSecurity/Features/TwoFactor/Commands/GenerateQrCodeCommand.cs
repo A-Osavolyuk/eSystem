@@ -7,7 +7,10 @@ using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 
-public record GenerateQrCodeCommand(GenerateQrCodeRequest Request) : IRequest<Result>;
+public record GenerateQrCodeCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+}
 
 public class GenerateQrCodeCommandHandler(
     IUserManager userManager,
@@ -20,8 +23,8 @@ public class GenerateQrCodeCommandHandler(
 
     public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
         
         var email = user.GetEmail(EmailType.Primary)?.Email!;
 

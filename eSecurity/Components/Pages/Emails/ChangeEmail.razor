@@ -228,8 +228,8 @@
                 }
             };
 
-            var request = messageContext!.ToSendCodeRequest();
-            var result = await Sender.Send(new SendCodeCommand(request));
+            var command = messageContext!.ToSendCodeCommand();
+            var result = await Sender.Send(command);
             if (result.Succeeded) await stepper.StepNextAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }
@@ -244,14 +244,14 @@
             _ => throw new NotSupportedException("Unsupported email type")
         };
 
-        var request = new ChangeEmailRequest()
+        var command = new ChangeEmailCommand()
         {
             UserId = UserState.UserId,
             NewEmail = ChangeModel.NewEmail,
             Type = type,
         };
 
-        var result = await Sender.Send(new ChangeEmailCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {
@@ -270,8 +270,8 @@
 
         if (confirmForm.IsValid)
         {
-            var request = messageContext!.ToVerifyCodeRequest(ConfirmModel.Code);
-            var result = await Sender.Send(new VerifyCodeCommand(request));
+            var command = messageContext!.ToVerifyCodeCommand(ConfirmModel.Code);
+            var result = await Sender.Send(command);
 
             if (result.Succeeded) await ChangeAsync();
             else Snackbar.Add(result.Message, Severity.Error);

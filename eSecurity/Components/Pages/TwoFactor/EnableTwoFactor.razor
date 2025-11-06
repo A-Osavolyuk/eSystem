@@ -317,8 +317,8 @@
 
     private async Task OnGenerateQrCodeAsync()
     {
-        var request = new GenerateQrCodeRequest() { UserId = UserState.UserId };
-        var result = await Sender.Send(new GenerateQrCodeCommand(request));
+        var command = new GenerateQrCodeCommand() { UserId = UserState.UserId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) QrCode = result.Get<QrCode>()!;
         else Snackbar.Add(result.Message, Severity.Error);
@@ -327,7 +327,7 @@
     private async Task OnVerifyAsync()
     {
         showError = false;
-        var request = new VerifyAuthenticatorCodeRequest()
+        var command = new VerifyAuthenticatorCodeCommand()
         {
             UserId = UserState.UserId,
             Purpose = PurposeType.AuthenticatorApp,
@@ -335,7 +335,7 @@
             Code = Model.Code
         };
 
-        var result = await Sender.Send(new VerifyAuthenticatorCodeCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) await GenerateRecoveryCodesAsync();
         else showError = true;
@@ -343,8 +343,8 @@
 
     private async Task GenerateRecoveryCodesAsync()
     {
-        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
-        var result = await Sender.Send(new GenerateRecoveryCodesCommand(request));
+        var command = new GenerateRecoveryCodesCommand() { UserId = UserState.UserId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {
@@ -380,8 +380,8 @@
 
     private async Task OnEnableAsync()
     {
-        var request = new EnableTwoFactorRequest() { UserId = UserState.UserId };
-        var result = await Sender.Send(new EnableCommand(request));
+        var command = new EnableTwoFactorRequest() { UserId = UserState.UserId };
+        var result = await Sender.Send(new EnableCommand(command));
 
         if (result.Succeeded)
         {

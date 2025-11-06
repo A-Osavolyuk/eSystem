@@ -83,14 +83,14 @@
 
         if (form.IsValid)
         {
-            var request = new SignUpRequest()
+            var command = new SignUpCommand()
             {
                 Email = Model.Email,
                 Password = Model.Password,
                 Username = Model.Username
             };
 
-            var result = await Sender.Send(new SignUpCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {

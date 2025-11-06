@@ -12,7 +12,11 @@ using eSystem.Core.Security.Authentication.Lockout;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 
-public record VerifyRecoveryCodeCommand(VerifyRecoveryCodeRequest Request) : IRequest<Result>;
+public record VerifyRecoveryCodeCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required string Code { get; set; }
+}
 
 public class VerifyRecoveryCodeCommandHandler(
     IUserManager userManager,
@@ -35,8 +39,8 @@ public class VerifyRecoveryCodeCommandHandler(
     {
         VerifyRecoveryCodeResponse response;
         
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}");
         
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
@@ -64,7 +68,7 @@ public class VerifyRecoveryCodeCommandHandler(
             if (!result.Succeeded) return result;
         }
 
-        var codeResult = await recoveryManager.VerifyAsync(user, request.Request.Code, cancellationToken);
+        var codeResult = await recoveryManager.VerifyAsync(user, request.Code, cancellationToken);
         if (!codeResult.Succeeded)
         {
             user.FailedLoginAttempts += 1;

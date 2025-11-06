@@ -57,8 +57,8 @@
         var unprotectedCookie = protector.Unprotect(sessionCookie);
         var session = JsonSerializer.Deserialize<SessionCookie>(unprotectedCookie)!;
         
-        var request = new LogoutRequest() { SessionId = session.SessionId };
-        var result = await Sender.Send(new LogoutCommand(request));
+        var command = new LogoutCommand() { SessionId = session.SessionId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) await AuthenticationManager.SignOutAsync();
         else Snackbar.Add(result.Message, Severity.Error);

@@ -107,8 +107,8 @@
 
     private async Task SendCodeAsync()
     {
-        var request = context!.ToSendCodeRequest();
-        var result = await Sender.Send(new SendCodeCommand(request));
+        var command = context!.ToSendCodeCommand();
+        var result = await Sender.Send(command);
         if (!result.Succeeded) Snackbar.Add(result.Message, Severity.Error);
     }
 
@@ -118,8 +118,8 @@
 
         if (form.IsValid)
         {
-            var request = context!.ToVerifyCodeRequest(Model.Code);
-            var result = await Sender.Send(new VerifyCodeCommand(request));
+            var command = context!.ToVerifyCodeCommand(Model.Code);
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {
@@ -132,13 +132,13 @@
 
     private async Task TrustAsync()
     {
-        var request = new TrustDeviceRequest()
+        var command = new TrustDeviceCommand()
         {
             UserId = UserId,
             DeviceId = DeviceId,
         };
 
-        var result = await Sender.Send(new TrustDeviceCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

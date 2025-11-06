@@ -81,8 +81,8 @@ else
         var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.TwoFactor, ActionType.Disable);
         if (!confirmationResult!.Canceled)
         {
-            var request = new DisableTwoFactorRequest() { UserId = UserState.UserId };
-            var result = await Sender.Send(new DisableCommand(request));
+            var command = new DisableCommand() { UserId = UserState.UserId };
+            var result = await Sender.Send(command);
 
             if (result.Succeeded) await OnRefresh.InvokeAsync();
             else Snackbar.Add(result.Message, Severity.Error);

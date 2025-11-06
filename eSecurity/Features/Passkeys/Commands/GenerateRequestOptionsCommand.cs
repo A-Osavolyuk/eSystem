@@ -8,7 +8,11 @@ using eSystem.Core.Security.Credentials.Constants;
 
 namespace eSecurity.Features.Passkeys.Commands;
 
-public record GenerateRequestOptionsCommand(GenerateRequestOptionsRequest Request) : IRequest<Result>;
+public class GenerateRequestOptionsCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public string Username { get; set; } = string.Empty;
+}
 
 public class GenerateRequestOptionsCommandHandler(
     IUserManager userManager,
@@ -27,11 +31,11 @@ public class GenerateRequestOptionsCommandHandler(
 
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
+        var user = await userManager.FindByUsernameAsync(request.Username, cancellationToken);
 
         if (user is null)
         {
-            user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+            user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
             if (user is null) return Results.NotFound("Cannot find user.");
         }
 

@@ -4,7 +4,12 @@ using eSystem.Core.Requests.Auth;
 
 namespace eSecurity.Features.Security.Commands;
 
-public sealed record SignUpCommand(SignUpRequest Request) : IRequest<Result>;
+public sealed record SignUpCommand() : IRequest<Result>
+{
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}
 
 public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHandler<SignUpCommand, Result>
 {
@@ -17,9 +22,9 @@ public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHan
 
         var payload = new ManualSignUpPayload()
         {
-            Username = request.Request.Username,
-            Email = request.Request.Email,
-            Password = request.Request.Password
+            Username = request.Username,
+            Email = request.Email,
+            Password = request.Password
         };
         
         return await strategy.SignUpAsync(payload, cancellationToken);

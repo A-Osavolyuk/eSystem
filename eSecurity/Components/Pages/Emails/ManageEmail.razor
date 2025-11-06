@@ -85,8 +85,8 @@
                 }
             };
 
-            var request = context.ToSendCodeRequest();
-            var result = await Sender.Send(new SendCodeCommand(request));
+            var command = context.ToSendCodeCommand();
+            var result = await Sender.Send(command);
             if (!result.Succeeded) Snackbar.Add(result.Message, Severity.Error);
             
             StateHasChanged();
@@ -95,8 +95,8 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = context!.ToVerifyCodeRequest(Model.Code);
-        var result = await Sender.Send(new VerifyCodeCommand(request));
+        var command = context!.ToVerifyCodeCommand(Model.Code);
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) await ManageAsync();
         else Snackbar.Add(result.Message, Severity.Error);
@@ -111,14 +111,14 @@
             _ => throw new NotSupportedException("Unsupported email type")
         };
 
-        var request = new ManageEmailRequest()
+        var command = new ManageEmailCommand()
         {
             UserId = UserState.UserId,
             Email = Email,
             Type = type
         };
 
-        var result = await Sender.Send(new ManageEmailCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

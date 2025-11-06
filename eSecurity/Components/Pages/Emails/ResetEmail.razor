@@ -180,13 +180,13 @@
                 }
             };
 
-            var request = new CheckEmailRequest()
+            var command = new CheckEmailCommand()
             {
                 UserId = UserState.UserId,
                 Email = ResetModel.NewEmail
             };
 
-            var result = await Sender.Send(new CheckEmailCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded) await SendCodeAsync();
             else Snackbar.Add(result.Message, Severity.Error);
@@ -195,8 +195,8 @@
 
     private async Task SendCodeAsync()
     {
-        var request = messageContext!.ToSendCodeRequest();
-        var result = await Sender.Send(new SendCodeCommand(request));
+        var command = messageContext!.ToSendCodeCommand();
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) await stepper.StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
@@ -208,8 +208,8 @@
 
         if (confirmForm.IsValid)
         {
-            var request = messageContext!.ToVerifyCodeRequest(ConfirmModel.Code);
-            var result = await Sender.Send(new VerifyCodeCommand(request));
+            var command = messageContext!.ToVerifyCodeCommand(ConfirmModel.Code);
+            var result = await Sender.Send(command);
 
             if (result.Succeeded) await VerifyAsync();
             else Snackbar.Add(result.Message, Severity.Error);
@@ -218,13 +218,13 @@
 
     private async Task VerifyAsync()
     {
-        var request = new ResetEmailRequest()
+        var command = new ResetEmailCommand()
         {
             UserId = UserState.UserId,
             NewEmail = ResetModel.NewEmail,
         };
 
-        var result = await Sender.Send(new ResetEmailCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

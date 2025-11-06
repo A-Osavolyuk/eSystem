@@ -153,13 +153,13 @@
 
         if (!confirmationResult.Canceled)
         {
-            var request = new DisconnectLinkedAccountRequest()
+            var command = new DisconnectLinkedAccountCommand()
             {
                 UserId = UserState.UserId,
                 Type = type
             };
 
-            var result = await Sender.Send(new DisconnectLinkedAccountCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded) await OnRefresh.InvokeAsync();
             else Snackbar.Add(result.Message, Severity.Error);

@@ -101,7 +101,7 @@
 
         if (form.IsValid)
         {
-            var request = new SignInRequest()
+            var command = new SignInCommand()
             {
                 Payload = new AuthenticatorSignInPayload()
                 {
@@ -110,7 +110,7 @@
                 }
             };
 
-            var result = await Sender.Send(new SignInCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {

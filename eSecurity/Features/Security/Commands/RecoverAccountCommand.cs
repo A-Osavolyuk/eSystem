@@ -6,7 +6,10 @@ using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record RecoverAccountCommand(RecoverAccountRequest Request) : IRequest<Result>;
+public record RecoverAccountCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+}
 
 public class RecoverAccountCommandHandler(
     IUserManager userManager,
@@ -17,8 +20,8 @@ public class RecoverAccountCommandHandler(
 
     public async Task<Result> Handle(RecoverAccountCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var userPrimaryEmail = user.GetEmail(EmailType.Primary);
         if (userPrimaryEmail is null) return Results.BadRequest("User does not have a primary email.");

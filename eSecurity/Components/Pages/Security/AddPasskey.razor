@@ -177,13 +177,13 @@
 
         if (form.IsValid)
         {
-            var request = new GenerateCreationOptionsRequest()
+            var command = new GenerateCreationOptionsCommand()
             {
                 UserId = UserState.UserId,
                 DisplayName = Model.DisplayName
             };
 
-            var result = await Sender.Send(new GenerateCreationOptionsCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {
@@ -200,14 +200,14 @@
         if (assertResult.Success)
         {
             var assertResponse = assertResult.Get<PublicKeyCredentialCreationResponse>();
-            var request = new CreatePasskeyRequest()
+            var command = new CreatePasskeyCommand()
             {
                 UserId = UserState.UserId,
                 DisplayName = Model.DisplayName,
                 Response = assertResponse
             };
 
-            var result = await Sender.Send(new CreatePasskeyCommand(request));
+            var result = await Sender.Send(command);
             if (result.Succeeded) await stepper.StepNextAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }

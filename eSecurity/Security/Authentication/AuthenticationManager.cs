@@ -24,34 +24,12 @@ public sealed class AuthenticationManager(
     private readonly IFetchClient fetchClient = fetchClient;
     private readonly IStorage storage = storage;
 
-    public async Task<HttpResponse> RefreshAsync(string refreshToken)
+    public async Task SignInAsync()
     {
-        var request = new RefreshRequest() { RefreshToken = refreshToken };
-        var fetchOptions = new FetchOptions()
-        {
-            Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/authentication/refresh",
-            Body = request
-        };
-
-        return await fetchClient.FetchAsync(fetchOptions);
-    }
-
-    public async Task SignInAsync(string accessToken, string refreshToken)
-    {
-        tokenProvider.AccessToken = accessToken;
-        
-        var request = new SignInRequest()
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        };
-
         var fetchOptions = new FetchOptions()
         {
             Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
             Method = HttpMethod.Post,
-            Body = request
         };
 
         var result = await fetchClient.FetchAsync(fetchOptions);
@@ -77,7 +55,7 @@ public sealed class AuthenticationManager(
         };
 
         var result = await fetchClient.FetchAsync(fetchOptions);
-        if (result.Success)
+        if (result.Succeeded)
         {
             await (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignOutAsync();
             await storage.ClearAsync();

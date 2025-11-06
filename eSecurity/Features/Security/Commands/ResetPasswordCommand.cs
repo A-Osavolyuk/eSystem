@@ -6,7 +6,11 @@ using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Features.Security.Commands;
 
-public sealed record ResetPasswordCommand(ResetPasswordRequest Request) : IRequest<Result>;
+public sealed record ResetPasswordCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public string NewPassword { get; set; } = string.Empty;
+}
 
 public sealed class ResetPasswordCommandHandler(
     IUserManager userManager,
@@ -19,8 +23,8 @@ public sealed class ResetPasswordCommandHandler(
 
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
         
         if (!user.HasPassword()) return Results.BadRequest("User does not have a password.");
         
@@ -29,7 +33,7 @@ public sealed class ResetPasswordCommandHandler(
         
         if(!verificationResult.Succeeded)  return verificationResult;
         
-        var result = await passwordManager.ResetAsync(user, request.Request.NewPassword, cancellationToken);
+        var result = await passwordManager.ResetAsync(user, request.NewPassword, cancellationToken);
         return result;
     }
 }

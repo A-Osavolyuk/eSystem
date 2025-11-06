@@ -123,14 +123,14 @@
 
     private async Task OnChange(UserPasskeyDto passkey)
     {
-        var request = new ChangePasskeyNameRequest()
+        var command = new ChangePasskeyNameCommand()
         {
             UserId = UserState.UserId,
             PasskeyId = passkey.Id,
             DisplayName = passkey.DisplayName
         };
 
-        var result = await Sender.Send(new ChangePasskeyNameCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) await OnRefresh.InvokeAsync();
         else Snackbar.Add(result.Message, Severity.Error);
@@ -141,13 +141,13 @@
         var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Passkey, ActionType.Remove);
         if (!confirmationResult!.Canceled)
         {
-            var request = new RemovePasskeyRequest()
+            var command = new RemovePasskeyCommand()
             {
                 UserId = UserState.UserId,
                 KeyId = passkey.Id
             };
 
-            var result = await Sender.Send(new RemovePasskeyCommand(request));
+            var result = await Sender.Send(command);
             if (result.Succeeded) await OnRefresh.InvokeAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }

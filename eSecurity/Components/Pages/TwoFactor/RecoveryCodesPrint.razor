@@ -36,8 +36,8 @@
 
     private async Task LoadAsync()
     {
-        var request = new LoadRecoveryCodesRequest() { UserId = UserState.UserId };
-        var result = await Sender.Send(new LoadRecoveryCodesCommand(request));
+        var command = new LoadRecoveryCodesCommand() { UserId = UserState.UserId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded) Codes = result.Get<List<string>>()!;
         else Snackbar.Add(result.Message, Severity.Error);

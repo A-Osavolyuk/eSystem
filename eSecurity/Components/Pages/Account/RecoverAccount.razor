@@ -136,12 +136,12 @@
 
         if (checkAccountForm.IsValid)
         {
-            var request = new CheckAccountRequest()
+            var command = new CheckAccountCommand()
             {
                 Username = RecoverAccountModel.Username
             };
 
-            var result = await Sender.Send(new CheckAccountCommand(request));
+            var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {
@@ -192,8 +192,8 @@
 
     private async Task SendCodeAsync()
     {
-        var request = context!.ToSendCodeRequest();
-        var response = await Sender.Send(new SendCodeCommand(request));
+        var command = context!.ToSendCodeCommand();
+        var response = await Sender.Send(command);
 
         Snackbar.Add(response.Message, response.Succeeded ? Severity.Success : Severity.Error);
     }
@@ -204,8 +204,8 @@
 
         if (verifyCodeForm.IsValid)
         {
-            var request = context!.ToVerifyCodeRequest(CodeModel.Code);
-            var result = await Sender.Send(new VerifyCodeCommand(request));
+            var command = context!.ToVerifyCodeCommand(CodeModel.Code);
+            var result = await Sender.Send(command);
 
             if (result.Succeeded) await VerifyAsync();
             else Snackbar.Add(result.Message, Severity.Error);
@@ -214,8 +214,8 @@
 
     private async Task VerifyAsync()
     {
-        var request = new RecoverAccountRequest() { UserId = userId };
-        var result = await Sender.Send(new RecoverAccountCommand(request));
+        var command = new RecoverAccountCommand() { UserId = userId };
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {

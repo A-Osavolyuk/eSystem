@@ -1,5 +1,6 @@
 ﻿using eSecurity.Common.Models;
 using eSecurity.Data.Entities;
+using eSecurity.Features.Users.Commands;
 using eSystem.Core.DTOs;
 using eSystem.Core.Requests.Auth;
 using eSystem.Core.Security.Identity.Email;
@@ -80,7 +81,7 @@ public static class Mapper
         };
     }
 
-    public static ChangePasswordRequest Map(ChangePasswordModel source)
+    public static ChangePasswordCommand Map(ChangePasswordModel source)
     {
         return new()
         {
@@ -105,7 +106,7 @@ public static class Mapper
         };
     }
     
-        public static PersonalDataEntity Map(AddPersonalDataRequest source)
+        public static PersonalDataEntity Map(AddPersonalDataCommand source)
     {
         return new PersonalDataEntity()
         {

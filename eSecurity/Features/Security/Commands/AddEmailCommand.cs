@@ -5,7 +5,11 @@ using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Security.Commands;
 
-public record AddEmailCommand(AddEmailRequest Request) : IRequest<Result>;
+public record AddEmailCommand() : IRequest<Result>
+{
+    public required Guid UserId { get; set; }
+    public required string Email { get; set; } = string.Empty;
+}
 
 public class AddEmailCommandHandler(
     IUserManager userManager,
@@ -16,19 +20,19 @@ public class AddEmailCommandHandler(
 
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         if (user.Emails.Count(x => x is { Type: EmailType.Secondary }) >= options.SecondaryEmailMaxCount)
             return Results.BadRequest("User already has maximum count of secondary emails.");
 
         if (options.RequireUniqueEmail)
         {
-            var taken = await userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
+            var taken = await userManager.IsEmailTakenAsync(request.Email, cancellationToken);
             if (taken) return Results.BadRequest("Email already taken.");
         }
 
-        var email = request.Request.Email;
+        var email = request.Email;
         var result = await userManager.AddEmailAsync(user, email, EmailType.Secondary, cancellationToken);
         
         return result;

@@ -8,7 +8,11 @@ using eSystem.Core.Security.Credentials.Constants;
 
 namespace eSecurity.Features.Passkeys.Commands;
 
-public record GenerateCreationOptionsCommand(GenerateCreationOptionsRequest Request) : IRequest<Result>;
+public class GenerateCreationOptionsCommand() : IRequest<Result>
+{
+    public Guid UserId { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
+}
 
 public class GenerateCreationOptionsCommandHandler(
     IUserManager userManager,
@@ -28,8 +32,8 @@ public class GenerateCreationOptionsCommandHandler(
     public async Task<Result> Handle(GenerateCreationOptionsCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var userAgent = httpContext.GetUserAgent();
         var ipAddress = httpContext.GetIpV4();
@@ -37,7 +41,7 @@ public class GenerateCreationOptionsCommandHandler(
         if (device is null) return Results.BadRequest("Invalid device.");
 
         var challenge = challengeFactory.Create();
-        var displayName = request.Request.DisplayName;
+        var displayName = request.DisplayName;
         var browser = device.Browser!.Split(" ").First();
         var fingerprint = $"{device.Device}_{browser}";
         

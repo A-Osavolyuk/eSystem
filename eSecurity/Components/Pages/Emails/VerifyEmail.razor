@@ -157,8 +157,8 @@
 
     private async Task SendCodeAsync()
     {
-        var request = context!.ToSendCodeRequest();
-        var response = await Sender.Send(new SendCodeCommand(request));
+        var command = context!.ToSendCodeCommand();
+        var response = await Sender.Send(command);
         Snackbar.Add(response.Message, response.Succeeded ? Severity.Success : Severity.Error);
     }
 
@@ -168,8 +168,8 @@
 
         if (form.IsValid)
         {
-            var request = context!.ToVerifyCodeRequest(Model.Code);
-            var result = await Sender.Send(new VerifyCodeCommand(request));
+            var command = context!.ToVerifyCodeCommand(Model.Code);
+            var result = await Sender.Send(command);
 
             if (result.Succeeded) await VerifyAsync();
             else Snackbar.Add(result.Message, Severity.Error);
@@ -186,13 +186,13 @@
             _ => throw new NotSupportedException("Unsupported email type")
         };
 
-        var request = new VerifyEmailRequest()
+        var command = new VerifyEmailCommand()
         {
             UserId = UserState.UserId,
             Email = email
         };
 
-        var result = await Sender.Send(new VerifyEmailCommand(request));
+        var result = await Sender.Send(command);
 
         if (result.Succeeded)
         {
