@@ -24,7 +24,7 @@ namespace eSecurity.Migrations
                     RequireClientSecret = table.Column<bool>(type: "bit", nullable: false),
                     AllowOfflineAccess = table.Column<bool>(type: "bit", nullable: false),
                     RefreshTokenRotationEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    RefreshTokenLifetime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    RefreshTokenLifetime = table.Column<long>(type: "bigint", nullable: false),
                     LogoUri = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ClientUri = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),

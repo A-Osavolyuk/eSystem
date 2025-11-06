@@ -134,8 +134,8 @@ namespace eSecurity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<TimeSpan>("RefreshTokenLifetime")
-                        .HasColumnType("time");
+                    b.Property<long>("RefreshTokenLifetime")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("RefreshTokenRotationEnabled")
                         .HasColumnType("bit");

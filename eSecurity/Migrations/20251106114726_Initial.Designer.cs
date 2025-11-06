@@ -12,7 +12,7 @@ using eSecurity.Data;
 namespace eSecurity.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251106114005_Initial")]
+    [Migration("20251106114726_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -137,8 +137,8 @@ namespace eSecurity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<TimeSpan>("RefreshTokenLifetime")
-                        .HasColumnType("time");
+                    b.Property<long>("RefreshTokenLifetime")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("RefreshTokenRotationEnabled")
                         .HasColumnType("bit");
