@@ -97,8 +97,6 @@ public static class AuthenticationExtensions
                     ValidIssuer = settings.Issuer,
                     IssuerSigningKey = symmetricSecurityKey
                 };
-            })
-            .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(
-                JwtBearerDefaults.AuthenticationScheme, _ => { });
+            });
     }
 }
