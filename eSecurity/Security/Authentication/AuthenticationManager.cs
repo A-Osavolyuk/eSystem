@@ -7,6 +7,7 @@ using eSecurity.Common.Storage;
 using eSecurity.Features.Users.Queries;
 using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Schemes;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -38,7 +39,7 @@ public sealed class AuthenticationManager(
             var claims = claimsResult.Get<List<Claim>>();
             var identity = new SignIdentity()
             {
-                Scheme = AuthenticationDefaults.AuthenticationScheme,
+                Scheme = CookieAuthenticationDefaults.AuthenticationScheme,
                 Claims = claims.Select(x => new ClaimValue() { Type = x.Type, Value = x.Value }).ToList()
             };
             
@@ -52,7 +53,7 @@ public sealed class AuthenticationManager(
             var result = await fetchClient.FetchAsync(fetchOptions);
             if (result.Succeeded)
             {
-                var claimsIdentity = new ClaimsIdentity(claims, AuthenticationDefaults.AuthenticationScheme);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
                 (authenticationStateProvider as JwtAuthenticationStateProvider)!.SignIn(claimsPrincipal);

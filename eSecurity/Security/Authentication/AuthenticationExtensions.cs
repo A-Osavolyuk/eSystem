@@ -31,13 +31,12 @@ public static class AuthenticationExtensions
 
         builder.Services.AddAuthentication(options =>
             {
-                options.DefaultScheme = AuthenticationDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = AuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = AuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = AuthenticationDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(AuthenticationDefaults.AuthenticationScheme, options =>
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
                 options.Cookie.Name = DefaultCookies.State;
                 options.Cookie.HttpOnly = true;
