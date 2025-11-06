@@ -2,12 +2,10 @@
 
 public class Result
 {
-    private Result(){}
-    
     public bool Succeeded { get; set; }
     public object? Value { get; set; }
     public string Message { get; set; } = string.Empty;
-    private Error? Error { get; set; }
+    public Error? Error { get; set; }
 
     public static Result Success()
     {
