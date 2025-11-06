@@ -36,12 +36,17 @@ public sealed class AuthenticationManager(
         if (claimsResult.Succeeded)
         {
             var claims = claimsResult.Get<List<Claim>>();
+            var identity = new SignIdentity()
+            {
+                Scheme = AuthenticationDefaults.AuthenticationScheme,
+                Claims = claims.Select(x => new ClaimValue() { Type = x.Type, Value = x.Value }).ToList()
+            };
             
             var fetchOptions = new FetchOptions()
             {
                 Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
                 Method = HttpMethod.Post,
-                Body = claimsResult
+                Body = identity
             };
 
             var result = await fetchClient.FetchAsync(fetchOptions);

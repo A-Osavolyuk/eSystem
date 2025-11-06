@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using eSecurity.Common.Responses;
 using eSecurity.Security.Authentication.Jwt;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.Schemes;
@@ -40,12 +41,13 @@ public class AuthenticationController(
     }
 
     [HttpPost("sign-in")]
-    public async Task<IActionResult> SignInAsync([FromBody] IEnumerable<Claim> claims)
+    public async Task<IActionResult> SignInAsync([FromBody] SignIdentity signIdentity)
     {
-        var identity = new ClaimsIdentity(claims, AuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
+        var claims = signIdentity.Claims.Select(x => new Claim(x.Type, x.Value));
+        var claimsIdentity = new ClaimsIdentity(claims, signIdentity.Scheme);
+        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
         var properties = new AuthenticationProperties() { IsPersistent = true, };
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, properties);
         
         return Ok(Result.Success());
     }
