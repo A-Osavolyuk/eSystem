@@ -1,5 +1,4 @@
 ﻿global using System.Text;
-global using eSecurity.Common.Mapping;
 global using eSecurity.Data;
 global using eSecurity.Features.Security.Commands;
 global using eSystem.Core.Common.Results;
