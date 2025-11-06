@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using eSecurity.Common.DTOs;
 using eSecurity.Common.JS.Fetch;
-using eSecurity.Common.Responses;
 using eSecurity.Common.Routing;
 using eSecurity.Common.State.States;
 using eSecurity.Common.Storage;

@@ -1,6 +1,4 @@
-﻿using eSystem.Core.DTOs;
-
-namespace eSecurity.Common.Models;
+﻿namespace eSecurity.Common.Models;
 
 public class TrustDeviceModel
 {

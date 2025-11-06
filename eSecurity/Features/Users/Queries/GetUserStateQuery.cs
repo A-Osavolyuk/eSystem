@@ -1,6 +1,5 @@
 ﻿using eSecurity.Common.DTOs;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.DTOs;
 using eSystem.Core.Security.Identity.Email;
 using eSystem.Core.Security.Identity.PhoneNumber;
 
@@ -24,8 +23,17 @@ public class GetUserStateQueryHandler(IUserManager userManager) : IRequestHandle
             Email = user.GetEmail(EmailType.Primary)?.Email,
             PhoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary)?.PhoneNumber,
             LockedOut = user.LockoutState.Enabled,
-            Roles = user.Roles.Select(x => Mapper.Map(x.Role)).ToList(),
-            Permissions = user.Permissions.Select(x => Mapper.Map(x.Permission)).ToList(),
+            Roles = user.Roles.Select(x => new RoleDto()
+            {
+                Id = x.Role.Id,
+                Name = x.Role.Name,
+                NormalizedName = x.Role.NormalizedName
+            }).ToList(),
+            Permissions = user.Permissions.Select(x => new PermissionDto
+            {
+                Id = x.Permission.Id,
+                Name = x.Permission.Name
+            }).ToList(),
         };
         
         return Result.Success(response);

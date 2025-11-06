@@ -1,7 +1,6 @@
 using eSecurity.Common.DTOs;
 using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.DTOs;
 
 namespace eSecurity.Features.Users.Queries;
 

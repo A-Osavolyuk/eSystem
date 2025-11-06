@@ -1,4 +1,5 @@
-﻿using eSecurity.Security.Identity.User;
+﻿using eSecurity.Common.DTOs;
+using eSecurity.Security.Identity.User;
 
 namespace eSecurity.Features.Users.Queries;
 
@@ -15,7 +16,17 @@ public class GetUserPersonalQueryHandler(IUserManager userManager) : IRequestHan
         if (user.PersonalData is null) return Results.NotFound(
             $"Cannot find personal data of user with ID {request.UserId}.");
         
-        var response = Mapper.Map(user.PersonalData);
+        var response = new UserPersonalDto()
+        {
+            UserId = user.Id,
+            FirstName = user.PersonalData.FirstName,
+            LastName = user.PersonalData.LastName,
+            MiddleName = user.PersonalData.MiddleName,
+            Gender = user.PersonalData.Gender,
+            BirthDate = user.PersonalData.BirthDate,
+            UpdateDate = user.PersonalData.UpdateDate
+        };
+        
         return Result.Success(response);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using eSecurity.Common.DTOs;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.DTOs;
 using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Users.Queries;

@@ -1,4 +1,7 @@
-﻿using eSecurity.Security.Identity.User;
+﻿using eSecurity.Common.DTOs;
+using eSecurity.Security.Identity.User;
+using eSystem.Core.Security.Identity.Email;
+using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Features.Users.Queries;
 
@@ -15,7 +18,24 @@ public sealed class GetUserQueryHandler(
         var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
-        var response = Mapper.Map(user);
+        var primaryEmail = user.GetEmail(EmailType.Primary);
+        var primaryPhoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary);
+
+        var response = new UserDto
+        {
+            Id = user.Id,
+            Email = primaryEmail?.Email,
+            EmailConfirmed = primaryEmail?.IsVerified,
+            EmailChangeDate = primaryEmail?.UpdateDate,
+            EmailConfirmationDate = primaryEmail?.VerifiedDate,
+            PhoneNumber = primaryPhoneNumber?.PhoneNumber,
+            PhoneNumberConfirmed = primaryPhoneNumber?.IsVerified,
+            PhoneNumberChangeDate = primaryPhoneNumber?.UpdateDate,
+            PhoneNumberConfirmationDate = primaryPhoneNumber?.VerifiedDate,
+            Username = user.Username,
+            UserNameChangeDate = user.UsernameChangeDate,
+        };
+        
         return Result.Success(response);
     }
 }
