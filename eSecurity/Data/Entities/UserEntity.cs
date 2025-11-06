@@ -27,6 +27,7 @@ public class UserEntity : Entity
     public UserSecretEntity? Secret { get; set; }
     public UserLockoutStateEntity LockoutState { get; set; } = null!;
     public ConsentEntity Consent { get; set; } = null!;
+    public ICollection<UserClientEntity> Clients { get; set; } = null!;
     public ICollection<UserEmailEntity> Emails { get; set; } = null!;
     public ICollection<UserPhoneNumberEntity> PhoneNumbers { get; set; } = null!;
     public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;

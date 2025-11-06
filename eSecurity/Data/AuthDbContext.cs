@@ -30,6 +30,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<VerificationEntity> Verifications { get; set; }
     public DbSet<UserVerificationMethodEntity> UserVerificationMethods { get; set; }
     public DbSet<ClientEntity> Clients { get; set; }
+    public DbSet<UserClientEntity> UserClients { get; set; }
     public DbSet<ClientAllowedScopeEntity> ClientAllowedScopes { get; set; }
     public DbSet<ClientRedirectUriEntity> ClientRedirectUris { get; set; }
     public DbSet<ClientPostLogoutRedirectUriEntity> ClientPostLogoutUris { get; set; }
@@ -425,6 +426,21 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(rt => rt.Client)
                 .WithMany()
                 .HasForeignKey(rt => rt.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<UserClientEntity>(entity =>
+        {
+            entity.HasKey(x => new { x.UserId, x.ClientId });
+
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.Clients)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Client)
+                .WithMany()
+                .HasForeignKey(x => x.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
