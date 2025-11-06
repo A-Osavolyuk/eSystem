@@ -56,22 +56,30 @@
     [SupplyParameterFromQuery(Name = "user")]
     public Guid UserId { get; set; }
 
-    [SupplyParameterFromForm] public TrustDeviceModel Model { get; set; } = new();
+    [SupplyParameterFromForm] 
+    public TrustDeviceModel Model { get; set; } = new();
 
     private MudForm form = new();
     private PatternMask mask = new("000000");
 
     private string? email;
     private MessageContext? context;
+    private UserDeviceDto device = new();
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            //TODO: Implement load device
+            var command = new GetUserDeviceQuery(UserId, DeviceId);
+            var result = await Sender.Send(command);
+
+            if (result.Succeeded)
+            {
+                device = result.Get<UserDeviceDto>();
+                StateHasChanged();
+            }
+            else Snackbar.Add(result.Message, Severity.Error);
         }
-        
-        return Task.CompletedTask;
     }
 
     private async Task LoadAsync()
@@ -92,10 +100,10 @@
                 Payload = new()
                 {
                     { "To", email! },
-                    { "OS", Model.Device.OS! },
-                    { "Device", Model.Device.Device! },
-                    { "IpAddress", Model.Device.IpAddress! },
-                    { "Browser", Model.Device.Browser! },
+                    { "OS", device.OS! },
+                    { "Device", device.Device! },
+                    { "IpAddress", device.IpAddress! },
+                    { "Browser", device.Browser! },
                 }
             };
 
@@ -157,7 +165,7 @@
             else
             {
                 UserState.UserId = response.UserId;
-                //TODO: Implement device verification
+                await AuthenticationManager.SignInAsync();
             }
         }
         else
