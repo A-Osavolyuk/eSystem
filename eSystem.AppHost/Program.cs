@@ -59,45 +59,45 @@ var authApi = builder.AddProject<Projects.eSecurity>("e-security")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging");
 
-var productApi = builder.AddProject<Projects.eSystem_Product_Api>("product-api")
-    .WithJwtConfig()
-    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-    .WithReference(rabbitMq).WaitFor(rabbitMq)
-    .WithReference(redisCache).WaitFor(rabbitMq)
-    .WithReference(productDb).WaitFor(productDb);
+// var productApi = builder.AddProject<Projects.eSystem_Product_Api>("product-api")
+//     .WithJwtConfig()
+//     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+//     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
+//     .WithReference(rabbitMq).WaitFor(rabbitMq)
+//     .WithReference(redisCache).WaitFor(rabbitMq)
+//     .WithReference(productDb).WaitFor(productDb);
+//
+// var commentApi = builder.AddProject<Projects.eSystem_Comments_Api>("comment-api")
+//     .WithJwtConfig()
+//     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+//     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
+//     .WithReference(commentsDb).WaitFor(commentsDb)
+//     .WithReference(redisCache).WaitFor(redisCache)
+//     .WithReference(rabbitMq).WaitFor(rabbitMq);
+//
+// var cartApi = builder.AddProject<Projects.eSystem_Cart_Api>("cart-api")
+//     .WithJwtConfig()
+//     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+//     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
+//     .WithReference(rabbitMq).WaitFor(rabbitMq)
+//     .WithReference(redisCache).WaitFor(redisCache)
+//     .WithReference(cartDb).WaitFor(cartDb);
+//
+// var storageApi = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
+//     .WithJwtConfig()
+//     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+//     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
+//     .WithReference(rabbitMq).WaitFor(rabbitMq)
+//     .WithReference(redisCache).WaitFor(redisCache)
+//     .WithReference(blobs).WaitFor(blobs);
 
-var commentApi = builder.AddProject<Projects.eSystem_Comments_Api>("comment-api")
-    .WithJwtConfig()
-    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-    .WithReference(commentsDb).WaitFor(commentsDb)
-    .WithReference(redisCache).WaitFor(redisCache)
-    .WithReference(rabbitMq).WaitFor(rabbitMq);
-
-var cartApi = builder.AddProject<Projects.eSystem_Cart_Api>("cart-api")
-    .WithJwtConfig()
-    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-    .WithReference(rabbitMq).WaitFor(rabbitMq)
-    .WithReference(redisCache).WaitFor(redisCache)
-    .WithReference(cartDb).WaitFor(cartDb);
-
-var storageApi = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
-    .WithJwtConfig()
-    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-    .WithReference(rabbitMq).WaitFor(rabbitMq)
-    .WithReference(redisCache).WaitFor(redisCache)
-    .WithReference(blobs).WaitFor(blobs);
-
-var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
-    .WithJwtConfig()
-    .WithReference(authApi).WaitFor(authApi)
-    .WithReference(productApi).WaitFor(productApi)
-    .WithReference(cartApi).WaitFor(cartApi)
-    .WithReference(storageApi).WaitFor(storageApi)
-    .WithReference(commentApi).WaitFor(commentApi);
+// var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
+//     .WithJwtConfig()
+//     .WithReference(authApi).WaitFor(authApi)
+//     .WithReference(productApi).WaitFor(productApi)
+//     .WithReference(cartApi).WaitFor(cartApi)
+//     .WithReference(storageApi).WaitFor(storageApi)
+//     .WithReference(commentApi).WaitFor(commentApi);
 
 var app = builder.Build();
 
