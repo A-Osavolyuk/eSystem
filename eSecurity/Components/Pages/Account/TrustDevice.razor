@@ -76,6 +76,7 @@
             if (result.Succeeded)
             {
                 device = result.Get<UserDeviceDto>();
+                await LoadAsync();
                 StateHasChanged();
             }
             else Snackbar.Add(result.Message, Severity.Error);
