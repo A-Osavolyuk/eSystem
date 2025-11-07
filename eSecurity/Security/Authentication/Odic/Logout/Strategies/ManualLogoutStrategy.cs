@@ -5,7 +5,6 @@ using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Cookies;
 using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Security.Authentication.Odic.Logout.Strategies;

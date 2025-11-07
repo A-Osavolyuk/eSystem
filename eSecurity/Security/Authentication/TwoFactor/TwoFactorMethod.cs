@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.TwoFactor;
+﻿namespace eSecurity.Security.Authentication.TwoFactor;
 
 public enum TwoFactorMethod
 {

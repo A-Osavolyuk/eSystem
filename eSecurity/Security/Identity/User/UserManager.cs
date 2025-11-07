@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
-using eSystem.Core.Security.Authentication.Lockout;
-using eSystem.Core.Security.Authorization.Access;
+using eSecurity.Security.Authentication.Lockout;
+using eSecurity.Security.Authorization.Access;
 using eSystem.Core.Security.Identity.Email;
 using eSystem.Core.Security.Identity.PhoneNumber;
 

@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authorization.Access;
+﻿using eSecurity.Security.Authorization.Access;
 
 namespace eSecurity.Common.DTOs;
 

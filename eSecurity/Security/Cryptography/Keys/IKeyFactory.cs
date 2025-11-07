@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Cryptography.Keys;
+﻿namespace eSecurity.Security.Cryptography.Keys;
 
 public interface IKeyFactory
 {

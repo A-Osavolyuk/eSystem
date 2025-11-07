@@ -4,7 +4,6 @@ using eSecurity.Security.Cryptography.Hashing.Hashers;
 using eSecurity.Security.Cryptography.Keys;
 using eSecurity.Security.Cryptography.Keys.SigningKey;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
-using eSystem.Core.Security.Cryptography.Keys;
 
 namespace eSecurity.Security.Cryptography;
 

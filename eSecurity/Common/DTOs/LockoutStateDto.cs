@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authentication.Lockout;
+﻿using eSecurity.Security.Authentication.Lockout;
 
 namespace eSecurity.Common.DTOs;
 

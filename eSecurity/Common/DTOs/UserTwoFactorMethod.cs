@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authentication.TwoFactor;
+﻿using eSecurity.Security.Authentication.TwoFactor;
 
 namespace eSecurity.Common.DTOs;
 

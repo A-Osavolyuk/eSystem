@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Security.Authorization.Access;
-
-namespace eSecurity.Security.Authorization.Access;
+﻿namespace eSecurity.Security.Authorization.Access;
 
 public class ConfirmationContext
 {

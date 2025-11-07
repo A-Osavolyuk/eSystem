@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
+using eSecurity.Security.Cryptography.Keys;
 using eSecurity.Security.Cryptography.Protection;
-using eSystem.Core.Security.Cryptography.Keys;
 
 namespace eSecurity.Security.Authentication.TwoFactor.Secret;
 

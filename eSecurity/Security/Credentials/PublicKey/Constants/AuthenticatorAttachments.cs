@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Credentials.Constants;
+﻿namespace eSecurity.Security.Credentials.PublicKey.Constants;
 
 public static class AuthenticatorAttachments
 {

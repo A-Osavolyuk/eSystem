@@ -4,14 +4,13 @@ using eSecurity.Security.Authentication.Odic.Client;
 using eSecurity.Security.Authentication.Odic.Code;
 using eSecurity.Security.Authentication.Odic.Pkce;
 using eSecurity.Security.Authentication.Odic.Session;
+using eSecurity.Security.Cryptography.Keys;
 using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Cryptography.Tokens;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.Claims;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Authentication.Odic.Client;
 using eSystem.Core.Security.Authentication.Odic.Constants;
-using eSystem.Core.Security.Cryptography.Keys;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Security.Authentication.Odic.Token.Strategies;

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using eSystem.Core.Security.Credentials.Constants;
+using eSecurity.Security.Credentials.PublicKey.Constants;
 
-namespace eSystem.Core.Security.Credentials.PublicKey;
+namespace eSecurity.Security.Credentials.PublicKey.Credentials;
 
 public class PublicKeyCredentialCreationOptions
 {

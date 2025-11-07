@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authorization.OAuth;
+﻿using eSecurity.Security.Authorization.OAuth;
 
 namespace eSecurity.Common.Responses;
 

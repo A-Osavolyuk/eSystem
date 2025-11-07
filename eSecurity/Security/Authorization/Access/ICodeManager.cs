@@ -1,6 +1,5 @@
 ﻿using eSecurity.Data.Entities;
 using eSystem.Core.Common.Messaging;
-using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Security.Authorization.Access;
 

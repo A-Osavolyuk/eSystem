@@ -1,8 +1,6 @@
 ﻿using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Authorization.Access;
-using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Features.LinkedAccounts.Commands;
 

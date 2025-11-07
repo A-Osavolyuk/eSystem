@@ -1,6 +1,6 @@
-﻿namespace eSystem.Core.Security.Credentials.Constants;
+﻿namespace eSecurity.Security.Credentials.PublicKey.Constants;
 
-public static class UserVerifications
+public static class ResidentKeys
 {
     public const string Required = "required";
     public const string Preferred = "preferred";

@@ -9,7 +9,6 @@ using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authentication.Lockout;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Security.Authentication.SignIn.Strategies;

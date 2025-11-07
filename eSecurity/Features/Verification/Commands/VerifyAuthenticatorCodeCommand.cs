@@ -3,7 +3,6 @@ using eSecurity.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Authorization.Access;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Features.Verification.Commands;

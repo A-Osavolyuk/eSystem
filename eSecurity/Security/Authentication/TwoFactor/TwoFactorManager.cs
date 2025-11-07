@@ -1,5 +1,4 @@
 ﻿using eSecurity.Data.Entities;
-using eSystem.Core.Security.Authentication.TwoFactor;
 
 namespace eSecurity.Security.Authentication.TwoFactor;
 

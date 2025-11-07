@@ -9,7 +9,6 @@ using eSecurity.Security.Authorization.Roles;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;
-using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Identity.Email;
 using eSystem.Core.Utilities.Query;
 

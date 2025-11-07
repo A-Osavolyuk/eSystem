@@ -1,6 +1,6 @@
 ﻿using eSecurity.Features.Verification.Commands;
+using eSecurity.Security.Authorization.Access;
 using eSystem.Core.Common.Messaging;
-using eSystem.Core.Security.Authorization.Access;
 
 namespace eSecurity.Common.Messaging;
 

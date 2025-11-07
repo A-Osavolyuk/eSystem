@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Authentication.Odic.Client;
+﻿using eSecurity.Security.Authentication.Odic.Client;
+using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Data.Entities;
 

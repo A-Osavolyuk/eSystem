@@ -4,9 +4,9 @@ using eSecurity.Security.Authentication.Odic;
 using eSecurity.Security.Authentication.Password;
 using eSecurity.Security.Authentication.SignIn;
 using eSecurity.Security.Authentication.TwoFactor;
+using eSecurity.Security.Cookies;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Jwt;
-using eSystem.Core.Security.Cookies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 

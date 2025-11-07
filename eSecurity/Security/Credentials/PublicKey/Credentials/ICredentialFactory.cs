@@ -1,5 +1,4 @@
 ﻿using eSecurity.Data.Entities;
-using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSecurity.Security.Credentials.PublicKey.Credentials;
 

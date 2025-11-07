@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using eSystem.Core.Security.Credentials.PublicKey;
 using eSystem.Core.Security.Cryptography.Encoding;
 using PeterO.Cbor;
 

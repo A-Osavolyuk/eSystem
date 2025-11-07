@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authorization.Access;
+﻿namespace eSecurity.Security.Authorization.Access;
 
 /// <summary>
 /// Defines the various states or actions related to the verification process.

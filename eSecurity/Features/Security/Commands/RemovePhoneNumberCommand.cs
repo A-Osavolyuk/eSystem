@@ -1,7 +1,6 @@
-﻿using eSecurity.Security.Authorization.Access;
+﻿using eSecurity.Security.Authentication.TwoFactor;
+using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Authentication.TwoFactor;
-using eSystem.Core.Security.Authorization.Access;
 using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Features.Security.Commands;

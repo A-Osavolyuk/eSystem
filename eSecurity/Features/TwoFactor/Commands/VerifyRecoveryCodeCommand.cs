@@ -7,7 +7,6 @@ using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authentication.Lockout;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 

@@ -4,13 +4,10 @@ using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.TwoFactor;
 using eSecurity.Security.Authorization.Access;
 using eSecurity.Security.Credentials.PublicKey;
+using eSecurity.Security.Credentials.PublicKey.Constants;
 using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authentication.TwoFactor;
-using eSystem.Core.Security.Authorization.Access;
-using eSystem.Core.Security.Credentials.Constants;
-using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSecurity.Features.Passkeys.Commands;
 

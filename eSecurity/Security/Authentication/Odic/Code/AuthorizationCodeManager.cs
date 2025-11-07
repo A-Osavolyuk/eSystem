@@ -1,5 +1,5 @@
 ﻿using eSecurity.Data.Entities;
-using eSystem.Core.Security.Cryptography.Keys;
+using eSecurity.Security.Cryptography.Keys;
 
 namespace eSecurity.Security.Authentication.Odic.Code;
 

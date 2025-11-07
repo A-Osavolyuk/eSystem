@@ -5,7 +5,6 @@ using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Security.Authentication.SignIn.Strategies;

@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authorization.OAuth;
+﻿namespace eSecurity.Security.Authorization.OAuth;
 
 public enum LinkedAccountType
 {

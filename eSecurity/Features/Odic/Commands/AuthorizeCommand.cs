@@ -5,7 +5,6 @@ using eSecurity.Security.Authentication.Odic.Code;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authentication.Odic.Client;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 
 namespace eSecurity.Features.Odic.Commands;

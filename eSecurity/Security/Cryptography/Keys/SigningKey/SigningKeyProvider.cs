@@ -2,7 +2,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using eSecurity.Data.Entities;
 using eSecurity.Security.Cryptography.Protection;
-using eSystem.Core.Security.Cryptography.Keys;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Security.Cryptography.Keys.SigningKey;

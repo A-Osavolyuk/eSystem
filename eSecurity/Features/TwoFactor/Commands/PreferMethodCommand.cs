@@ -1,6 +1,5 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Authentication.TwoFactor;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 

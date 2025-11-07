@@ -1,11 +1,10 @@
 ﻿using eSecurity.Common.Responses;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Credentials.PublicKey;
+using eSecurity.Security.Credentials.PublicKey.Constants;
 using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Credentials.Constants;
-using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSecurity.Security.Authentication.SignIn.Strategies;
 
