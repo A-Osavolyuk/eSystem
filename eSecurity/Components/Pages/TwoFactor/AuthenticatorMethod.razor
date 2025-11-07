@@ -86,11 +86,17 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
 
-    [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    [Parameter] 
+    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnSignIn { get; set; }
 
-    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+    [Parameter] 
+    public List<UserTwoFactorMethod> Methods { get; set; } = [];
 
-    [SupplyParameterFromForm] public CodeModel Model { get; set; } = new();
+    [SupplyParameterFromForm] 
+    public CodeModel Model { get; set; } = new();
 
     private MudForm form = new();
     private readonly PatternMask mask = new("000000");
@@ -118,7 +124,7 @@
                 var response = result.Get<SignInResponse>()!;
 
                 UserState.UserId = response.UserId;
-                //TODO: Implement sign-in
+                await OnSignIn.InvokeAsync();
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }

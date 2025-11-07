@@ -30,6 +30,7 @@
                     {
                         <AuthenticatorMethod
                             Methods="Methods"
+                            OnSignIn="SignInAsync"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -37,6 +38,7 @@
                     {
                         <PasskeyMethod
                             Methods="Methods"
+                            OnSignIn="SignInAsync"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -44,6 +46,7 @@
                     {
                         <RecoveryCodeMethod
                             Methods="Methods"
+                            OnSignIn="SignInAsync"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -75,5 +78,10 @@
     private void ChangeMethod(TwoFactorMethod method)
     {
         PreferredMethod = method;
+    }
+
+    private async Task SignInAsync()
+    {
+        await AuthenticationManager.SignInAsync();
     }
 }

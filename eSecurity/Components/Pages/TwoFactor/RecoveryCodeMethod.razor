@@ -87,6 +87,9 @@
     public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
     
     [Parameter] 
+    public EventCallback OnSignIn { get; set; }
+    
+    [Parameter] 
     public List<UserTwoFactorMethod> Methods { get; set; } = [];
     
     [SupplyParameterFromQuery(Name = "id")]
@@ -121,7 +124,7 @@
                 var response = result.Get<VerifyRecoveryCodeResponse>()!;
 
                 UserState.UserId = response.UserId;
-                //TODO: Implement user sign-in
+                await OnSignIn.InvokeAsync();
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }

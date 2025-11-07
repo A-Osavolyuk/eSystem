@@ -71,9 +71,14 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    [Parameter] 
+    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnSignIn { get; set; }
 
-    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+    [Parameter] 
+    public List<UserTwoFactorMethod> Methods { get; set; } = [];
 
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
@@ -117,7 +122,7 @@
             var response = result.Get<SignInResponse>()!;
 
             UserState.UserId = response.UserId;
-            //TODO: Implement sign-in
+            await OnSignIn.InvokeAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
