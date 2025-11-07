@@ -4,6 +4,7 @@ using eSecurity.Common.Messaging;
 using eSecurity.Common.State;
 using eSecurity.Common.Storage;
 using eSecurity.Conventions;
+using eSecurity.Middlewares;
 using eSecurity.Security;
 using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
@@ -21,6 +22,8 @@ public static class HostApplicationBuilderExtensions
 {
     public static void AddServices(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddTransient<InvalidEncodedRouteMiddleware>();
+        
         builder.AddVersioning();
         builder.AddMessaging();
         builder.AddValidation<IAssemblyMarker>();

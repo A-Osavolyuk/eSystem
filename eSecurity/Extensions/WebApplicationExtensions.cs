@@ -1,4 +1,5 @@
 using eSecurity.Components;
+using eSecurity.Middlewares;
 using eSystem.Core.Data;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 
@@ -12,6 +13,7 @@ public static class WebApplicationExtensions
         app.MapOpenApi();
         app.MapScalarApiReference();
         app.UseRouting();
+        app.UseMiddleware<InvalidEncodedRouteMiddleware>();
         app.UseSession();
         app.UseAuthentication();
         app.UseAuthorization();
@@ -22,6 +24,7 @@ public static class WebApplicationExtensions
         app.UseStatusCodePagesWithRedirects("/not-found");
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();
+        
 
         await app.ConfigureDatabaseAsync<AuthDbContext>();
     }
