@@ -123,7 +123,7 @@ public class AuthorizationCodeStrategy(
         
         var response = new TokenResponse()
         {
-            AccessToken = tokenFactory.Create(accessClaims),
+            AccessToken = await tokenFactory.CreateAsync(accessClaims),
             ExpiresIn = options.AccessTokenExpirationMinutes * 60,
             TokenType = TokenTypes.Bearer,
         };
@@ -163,7 +163,7 @@ public class AuthorizationCodeStrategy(
                 .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
                 .Build();
             
-            response.IdToken = tokenFactory.Create(idClaims);
+            response.IdToken = await tokenFactory.CreateAsync(idClaims);
         }
 
         return Result.Success(response);

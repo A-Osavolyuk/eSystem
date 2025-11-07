@@ -1,20 +1,22 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using eSystem.Core.Security.Authentication.Jwt;
+﻿using System.Security.Claims;
+using eSecurity.Security.Cryptography.Keys.PrivateKey;
 
 namespace eSecurity.Security.Cryptography.Tokens.Jwt;
 
-public class JwtTokenFactory(IOptions<JwtOptions> options) : ITokenFactory
+public class JwtTokenFactory(
+    IJwtSigner signer,
+    IKeyProvider keyProvider) : ITokenFactory
 {
-    private readonly JwtOptions options = options.Value;
+    private readonly IJwtSigner signer = signer;
+    private readonly IKeyProvider keyProvider = keyProvider;
 
-    public string Create(IEnumerable<Claim> claims)
+    public async Task<string> CreateAsync(IEnumerable<Claim> claims)
     {
-        const string algorithm = SecurityAlgorithms.HmacSha256;
-        var key = Encoding.UTF8.GetBytes(options.Secret);
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), algorithm);
-        var securityToken = new JwtSecurityToken(claims: claims, signingCredentials: signingCredentials);
-        var handler = new JwtSecurityTokenHandler();
-        return handler.WriteToken(securityToken);
+        var privateKey = await keyProvider.GetPrivateKeyAsync();
+        if (privateKey is null) throw new NullReferenceException("Private key is null.");
+
+        var securityKey = new RsaSecurityKey(privateKey) { KeyId = Guid.CreateVersion7().ToString() };
+        var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
+        return signer.Sign(claims, signingCredentials);
     }
 }

@@ -34,7 +34,6 @@ public static class OdicExtensions
         
         var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
         
-        services.AddScoped<ITokenFactory, JwtTokenFactory>();
         services.AddScoped<ITokenManager, TokenManager>();
         services.AddSingleton<IClaimBuilderFactory, ClaimBuilderFactory>();
         

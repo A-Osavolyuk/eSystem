@@ -86,12 +86,10 @@ public class RefreshTokenStrategy(
             .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
-
-        var accessToken = tokenFactory.Create(accessTokenClaims);
-
+        
         var response = new TokenResponse()
         {
-            AccessToken = accessToken,
+            AccessToken = await tokenFactory.CreateAsync(accessTokenClaims),
             ExpiresIn = options.AccessTokenExpirationMinutes * 60,
             TokenType = TokenTypes.Bearer,
         };
@@ -138,7 +136,7 @@ public class RefreshTokenStrategy(
                 .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
                 .Build();
             
-            response.IdToken = tokenFactory.Create(idClaims);
+            response.IdToken = await tokenFactory.CreateAsync(idClaims);
         }
 
         return Result.Success(response);

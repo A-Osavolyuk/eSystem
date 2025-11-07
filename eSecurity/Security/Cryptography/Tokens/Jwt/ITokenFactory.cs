@@ -4,5 +4,5 @@ namespace eSecurity.Security.Cryptography.Tokens.Jwt;
 
 public interface ITokenFactory
 {
-    public string Create(IEnumerable<Claim> claims);
+    public Task<string> CreateAsync(IEnumerable<Claim> claims);
 }
