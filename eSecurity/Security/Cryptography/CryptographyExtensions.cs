@@ -2,6 +2,7 @@
 using eSecurity.Security.Cryptography.Hashing;
 using eSecurity.Security.Cryptography.Hashing.Hashers;
 using eSecurity.Security.Cryptography.Keys;
+using eSecurity.Security.Cryptography.Keys.PrivateKey;
 using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Cryptography.Protection.Protectors;
 using eSystem.Core.Security.Cryptography.Keys;
@@ -32,5 +33,11 @@ public static class CryptographyExtensions
     {
         services.AddScoped<IHasherFactory, HasherFactory>();
         services.AddKeyedScoped<Hasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
+    }
+
+    private static void AddKeyManagement(this IServiceCollection services)
+    {
+        services.AddScoped<IKeyFactory, RandomKeyFactory>();
+        services.AddScoped<IKeyProvider, RsaKeyProvider>();
     }
 }
