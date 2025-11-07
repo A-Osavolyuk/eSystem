@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace eSecurity.Common.Conventions;
+namespace eSecurity.Conventions;
 
 public class RoutePrefixConvention(string prefix) : IApplicationModelConvention
 {
