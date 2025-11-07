@@ -36,7 +36,7 @@ public class AuthorizationCodeStrategy(
     IKeyFactory keyFactory,
     IDataProtectionProvider protectionProvider,
     IClaimBuilderFactory claimBuilderFactory,
-    IOptions<JwtOptions> options) : ITokenStrategy
+    IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISessionManager sessionManager = sessionManager;
@@ -47,7 +47,7 @@ public class AuthorizationCodeStrategy(
     private readonly IKeyFactory keyFactory = keyFactory;
     private readonly IDataProtectionProvider protectionProvider = protectionProvider;
     private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
-    private readonly JwtOptions options = options.Value;
+    private readonly TokenOptions options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
         CancellationToken cancellationToken = default)
@@ -117,7 +117,7 @@ public class AuthorizationCodeStrategy(
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithSessionId(session.Id.ToString())
             .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
+            .WithExpirationTime(DateTimeOffset.UtcNow.Add(options.AccessTokenLifetime))
             .WithNonce(authorizationCode.Nonce)
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
@@ -125,7 +125,7 @@ public class AuthorizationCodeStrategy(
         var response = new TokenResponse()
         {
             AccessToken = await tokenFactory.CreateAsync(accessClaims),
-            ExpiresIn = options.AccessTokenExpirationMinutes * 60,
+            ExpiresIn = options.AccessTokenLifetime.Seconds,
             TokenType = TokenTypes.Bearer,
         };
         
@@ -161,7 +161,7 @@ public class AuthorizationCodeStrategy(
                 .WithNonce(authorizationCode.Nonce)
                 .WithIssuedTime(DateTimeOffset.UtcNow)
                 .WithAuthenticationTime(DateTimeOffset.UtcNow)
-                .WithExpirationTime(DateTimeOffset.UtcNow.AddMinutes(options.AccessTokenExpirationMinutes))
+                .WithExpirationTime(DateTimeOffset.UtcNow.Add(options.IdTokenLifetime))
                 .Build();
             
             response.IdToken = await tokenFactory.CreateAsync(idClaims);

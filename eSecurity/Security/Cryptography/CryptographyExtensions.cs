@@ -12,7 +12,13 @@ public static class CryptographyExtensions
 {
     public static void AddCryptography(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddTokens();
+        builder.Services.AddJwt(cfg =>
+        {
+            cfg.Issuer = "eSecurity";
+            cfg.AccessTokenLifetime = TimeSpan.FromMinutes(10);
+            cfg.IdTokenLifetime = TimeSpan.FromMinutes(10);
+        });
+        
         builder.Services.AddHashing();
         builder.Services.AddProtection();
         builder.Services.AddKeyManagement();
@@ -34,9 +40,11 @@ public static class CryptographyExtensions
         services.AddScoped<IKeyFactory, RandomKeyFactory>();
         services.AddScoped<IKeyProvider, RsaKeyProvider>();
     }
-
-    private static void AddTokens(this IServiceCollection services)
+    
+    private static void AddJwt(this IServiceCollection services, Action<TokenOptions> configure)
     {
+        services.Configure(configure);
+        
         services.AddScoped<ITokenFactory, JwtTokenFactory>();
         services.AddScoped<IJwtSigner, JwtSigner>();
     }

@@ -76,23 +76,6 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
-            })
-            .AddJwtBearer(options =>
-            {
-                var settings = configuration.Get<JwtOptions>("Jwt");
-                var encodedKey = Encoding.UTF8.GetBytes(settings.Secret);
-                var symmetricSecurityKey = new SymmetricSecurityKey(encodedKey);
-
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidAudience = settings.Audience,
-                    ValidIssuer = settings.Issuer,
-                    IssuerSigningKey = symmetricSecurityKey
-                };
             });
     }
 }

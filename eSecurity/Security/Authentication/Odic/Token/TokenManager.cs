@@ -6,15 +6,9 @@ using eSystem.Core.Security.Cryptography.Keys;
 namespace eSecurity.Security.Authentication.Odic.Token;
 
 public sealed class TokenManager(
-    AuthDbContext context,
-    IOptions<JwtOptions> options,
-    IKeyFactory keyFactory,
-    ITokenFactory tokenFactory) : ITokenManager
+    AuthDbContext context) : ITokenManager
 {
     private readonly AuthDbContext context = context;
-    private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly ITokenFactory tokenFactory = tokenFactory;
-    private readonly JwtOptions options = options.Value;
 
     public async Task<Result> CreateAsync(RefreshTokenEntity token, 
         CancellationToken cancellationToken = default)

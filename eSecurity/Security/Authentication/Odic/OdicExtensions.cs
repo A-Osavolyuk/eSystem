@@ -32,11 +32,7 @@ public static class OdicExtensions
         services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
         services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
         
-        var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
-        
         services.AddScoped<ITokenManager, TokenManager>();
         services.AddSingleton<IClaimBuilderFactory, ClaimBuilderFactory>();
-        
-        services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
     }
 }
