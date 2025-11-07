@@ -1,5 +1,7 @@
 ﻿using eSecurity.Security.Authentication.Odic.Client;
 using eSecurity.Security.Authentication.Odic.Code;
+using eSecurity.Security.Authentication.Odic.Logout;
+using eSecurity.Security.Authentication.Odic.Logout.Strategies;
 using eSecurity.Security.Authentication.Odic.Pkce;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.Odic.Token;
@@ -26,6 +28,9 @@ public static class OdicExtensions
         services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
         services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
         services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
+
+        services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
+        services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
         
         var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
         
