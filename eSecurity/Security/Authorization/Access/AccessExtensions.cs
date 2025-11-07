@@ -1,3 +1,5 @@
+using eSecurity.Common.Confirmation;
+
 namespace eSecurity.Security.Authorization.Access;
 
 public static class AccessExtensions
@@ -6,6 +8,5 @@ public static class AccessExtensions
     {
         services.AddScoped<ICodeManager, CodeManager>();
         services.AddScoped<IVerificationManager, VerificationManager>();
-        services.AddScoped<ConfirmationManager>();
     }
 }

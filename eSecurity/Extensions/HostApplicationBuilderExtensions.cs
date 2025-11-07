@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using eSecurity.Common.Confirmation;
 using eSecurity.Common.JS;
 using eSecurity.Common.Messaging;
 using eSecurity.Common.State;
@@ -38,6 +39,7 @@ public static class HostApplicationBuilderExtensions
         builder.AddState();
         builder.AddJs();
         
+        builder.Services.AddConfirmation();
         builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
         builder.Services.AddMudExtensions();
         builder.Services.AddRazorComponents()

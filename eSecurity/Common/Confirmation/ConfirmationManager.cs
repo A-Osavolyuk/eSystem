@@ -1,7 +1,8 @@
 ﻿using eSecurity.Components.Common.Access;
+using eSecurity.Security.Authorization.Access;
 using MudBlazor;
 
-namespace eSecurity.Security.Authorization.Access;
+namespace eSecurity.Common.Confirmation;
 
 public class ConfirmationManager(IDialogService dialogService)
 {
