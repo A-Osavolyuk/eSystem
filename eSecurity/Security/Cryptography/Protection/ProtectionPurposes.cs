@@ -7,4 +7,5 @@ public static class ProtectionPurposes
     public const string Session = "SSO.Session";
     public const string RefreshToken = "SSO.RefreshToken";
     public const string Password = "JWT.PrivateKey.Password";
+    public const string Certificate = "JWT.PrivateKey.Certificate";
 }

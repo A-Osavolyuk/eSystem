@@ -2,7 +2,7 @@
 using eSecurity.Security.Cryptography.Hashing;
 using eSecurity.Security.Cryptography.Hashing.Hashers;
 using eSecurity.Security.Cryptography.Keys;
-using eSecurity.Security.Cryptography.Keys.PrivateKey;
+using eSecurity.Security.Cryptography.Keys.SigningKey;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSystem.Core.Security.Cryptography.Keys;
 
@@ -38,7 +38,7 @@ public static class CryptographyExtensions
     private static void AddKeyManagement(this IServiceCollection services)
     {
         services.AddScoped<IKeyFactory, RandomKeyFactory>();
-        services.AddScoped<IKeyProvider, RsaKeyProvider>();
+        services.AddScoped<ISigningKeyProvider, SigningKeyProvider>();
     }
     
     private static void AddJwt(this IServiceCollection services, Action<TokenOptions> configure)
