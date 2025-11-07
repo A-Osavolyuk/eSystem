@@ -4,5 +4,5 @@ public class SignUpResolver(IServiceProvider serviceProvider) : ISignUpResolver
 {
     private readonly IServiceProvider serviceProvider = serviceProvider;
 
-    public SignUpStrategy Resolve(SignUpType type) => serviceProvider.GetRequiredKeyedService<SignUpStrategy>(type);
+    public ISignUpStrategy Resolve(SignUpType type) => serviceProvider.GetRequiredKeyedService<ISignUpStrategy>(type);
 }

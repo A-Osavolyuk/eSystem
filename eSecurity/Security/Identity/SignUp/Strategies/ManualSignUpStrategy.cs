@@ -25,7 +25,7 @@ public sealed class ManualSignUpStrategy(
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
-    IOptions<AccountOptions> options) : SignUpStrategy
+    IOptions<AccountOptions> options) : ISignUpStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasswordManager passwordManager = passwordManager;
@@ -35,7 +35,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly AccountOptions options = options.Value;
 
-    public override async ValueTask<Result> SignUpAsync(SignUpPayload payload, 
+    public async ValueTask<Result> SignUpAsync(SignUpPayload payload, 
         CancellationToken cancellationToken = default)
     {
         if (payload is not ManualSignUpPayload manualPayload)

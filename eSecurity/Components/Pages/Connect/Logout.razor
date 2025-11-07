@@ -39,8 +39,7 @@
                 Size="Size.Large"
                 Color="Color.Error"
                 Variant="Variant.Outlined"
-                ButtonType="ButtonType.Button"
-                OnClick="@(async () => await OnSignOutAsync())">
+                ButtonType="ButtonType.Button">
                 Sign out
             </MudButton>
         </MudStack>
@@ -49,17 +48,4 @@
 
 @code {
 
-    private async Task OnSignOutAsync()
-    {
-        var protector = ProtectorFactory.Create(ProtectionPurposes.Session);
-        var sessionCookie = CookieAccessor.Get(DefaultCookies.Session)!;
-        var unprotectedCookie = protector.Unprotect(sessionCookie);
-        var session = JsonSerializer.Deserialize<SessionCookie>(unprotectedCookie)!;
-        
-        var command = new LogoutCommand() { SessionId = session.SessionId };
-        var result = await Sender.Send(command);
-
-        if (result.Succeeded) await AuthenticationManager.SignOutAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
-    }
 }

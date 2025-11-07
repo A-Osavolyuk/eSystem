@@ -7,7 +7,7 @@ public static class SignUpExtensions
     public static void AddSignUpStrategies(this IServiceCollection services)
     {
         services.AddScoped<ISignUpResolver, SignUpResolver>();
-        services.AddKeyedScoped<SignUpStrategy, ManualSignUpStrategy>(SignUpType.Manual);
-        services.AddKeyedScoped<SignUpStrategy, OAuthSignUpStrategy>(SignUpType.OAuth);
+        services.AddKeyedScoped<ISignUpStrategy, ManualSignUpStrategy>(SignUpType.Manual);
+        services.AddKeyedScoped<ISignUpStrategy, OAuthSignUpStrategy>(SignUpType.OAuth);
     }
 }

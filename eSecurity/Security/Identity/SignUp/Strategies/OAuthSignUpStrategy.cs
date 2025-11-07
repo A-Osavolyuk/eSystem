@@ -33,7 +33,7 @@ public sealed class OAuthSignUpStrategy(
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
-    ISessionManager sessionManager) : SignUpStrategy
+    ISessionManager sessionManager) : ISignUpStrategy
 {
     private readonly IPermissionManager permissionManager = permissionManager;
     private readonly IUserManager userManager = userManager;
@@ -45,7 +45,7 @@ public sealed class OAuthSignUpStrategy(
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager sessionManager = sessionManager;
 
-    public override async ValueTask<Result> SignUpAsync(SignUpPayload payload,
+    public async ValueTask<Result> SignUpAsync(SignUpPayload payload,
         CancellationToken cancellationToken = default)
     {
         if (payload is not OAuthSignUpPayload oauthPayload)
