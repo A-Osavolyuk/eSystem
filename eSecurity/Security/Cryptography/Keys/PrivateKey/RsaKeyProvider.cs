@@ -16,13 +16,13 @@ public class RsaKeyProvider(
     public async Task<RSA?> GetPublicKeyAsync()
     {
         var certificate = await GetCertificateAsync();
-        return certificate.GetRSAPrivateKey();
+        return certificate.GetRSAPublicKey();
     }
 
     public async Task<RSA?> GetPrivateKeyAsync()
     {
         var certificate = await GetCertificateAsync();
-        return certificate.GetRSAPublicKey();
+        return certificate.GetRSAPrivateKey();
     }
 
     private async Task<X509Certificate2> GetCertificateAsync()
