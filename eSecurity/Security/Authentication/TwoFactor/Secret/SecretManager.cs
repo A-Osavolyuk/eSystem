@@ -1,17 +1,15 @@
 ﻿using eSecurity.Data.Entities;
+using eSecurity.Security.Cryptography.Protection;
 using eSystem.Core.Security.Cryptography.Keys;
-using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSecurity.Security.Authentication.TwoFactor.Secret;
 
 public sealed class SecretManager(
     AuthDbContext context,
-    IProtectorFactory protectorFactory,
     IKeyFactory keyFactory) : ISecretManager
 {
     private readonly AuthDbContext context = context;
     private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.Secret);
 
     public async ValueTask<UserSecretEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
@@ -52,6 +50,4 @@ public sealed class SecretManager(
     }
 
     public string Generate() => keyFactory.Create(20);
-    public string Protect(string unprotectedSecret) => protector.Protect(unprotectedSecret);
-    public string Unprotect(string protectedSecret) => protector.Unprotect(protectedSecret);
 }

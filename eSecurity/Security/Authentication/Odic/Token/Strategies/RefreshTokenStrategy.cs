@@ -1,6 +1,7 @@
 using eSecurity.Common.Responses;
 using eSecurity.Data.Entities;
 using eSecurity.Features.Odic.Commands;
+using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Cryptography.Tokens;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.Claims;
@@ -9,7 +10,7 @@ using eSystem.Core.Security.Authentication.Jwt;
 using eSystem.Core.Security.Authentication.Odic.Client;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
-using eSystem.Core.Security.Cryptography.Protection;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Security.Authentication.Odic.Token.Strategies;
 
@@ -22,7 +23,7 @@ public sealed class RefreshTokenPayload : TokenPayload
 }
 
 public class RefreshTokenStrategy(
-    IProtectorFactory protectorFactory,
+    IDataProtectionProvider protectionProvider,
     ITokenFactory tokenFactory,
     ITokenManager tokenManager,
     IUserManager userManager,
@@ -30,7 +31,7 @@ public class RefreshTokenStrategy(
     IClaimBuilderFactory claimBuilderFactory,
     IOptions<JwtOptions> options) : ITokenStrategy
 {
-    private readonly IProtectorFactory protectorFactory = protectorFactory;
+    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
     private readonly ITokenFactory tokenFactory = tokenFactory;
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IUserManager userManager = userManager;
@@ -44,7 +45,7 @@ public class RefreshTokenStrategy(
         if(payload is not RefreshTokenPayload refreshPayload)
             throw new NotSupportedException("Payload type must be 'RefreshTokenPayload'.");
         
-        var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
+        var protector = protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
         var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
 
         var refreshToken = await tokenManager.FindByTokenAsync(unprotectedToken, cancellationToken);

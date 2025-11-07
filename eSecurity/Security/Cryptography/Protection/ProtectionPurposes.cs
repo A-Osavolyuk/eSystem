@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Cryptography.Protection;
+﻿namespace eSecurity.Security.Cryptography.Protection;
 
 public static class ProtectionPurposes
 {

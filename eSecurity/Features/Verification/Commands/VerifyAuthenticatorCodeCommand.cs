@@ -1,8 +1,10 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Security.Authorization.Access;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Features.Verification.Commands;
 
@@ -17,11 +19,13 @@ public record VerifyAuthenticatorCodeCommand() : IRequest<Result>
 public class VerifyAuthenticatorCodeCommandHandler(
     IUserManager userManager,
     ISecretManager secretManager,
-    IVerificationManager verificationManager) : IRequestHandler<VerifyAuthenticatorCodeCommand, Result>
+    IVerificationManager verificationManager,
+    IDataProtectionProvider protectionProvider) : IRequestHandler<VerifyAuthenticatorCodeCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(VerifyAuthenticatorCodeCommand request, CancellationToken cancellationToken)
     {
@@ -31,7 +35,8 @@ public class VerifyAuthenticatorCodeCommandHandler(
         var userSecret = await secretManager.FindAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
-        var unprotectedSecret = secretManager.Unprotect(userSecret.Secret);
+        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+        var unprotectedSecret = protector.Unprotect(userSecret.Secret);
         var verified = AuthenticatorUtils.VerifyCode(request.Code, unprotectedSecret);
         if (!verified) return Results.BadRequest("Invalid authenticator code");
         

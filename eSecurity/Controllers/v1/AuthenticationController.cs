@@ -2,25 +2,26 @@
 using System.Text.Json;
 using eSecurity.Common.DTOs;
 using eSecurity.Security.Authentication.Odic.Session;
+using eSecurity.Security.Cryptography.Protection;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Security.Cookies;
-using eSystem.Core.Security.Cryptography.Protection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Controllers.v1;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticationController(IProtectorFactory protectorFactory) : ControllerBase
+public class AuthenticationController(IDataProtectionProvider protectionProvider) : ControllerBase
 {
-    private readonly IProtectorFactory protectorFactory = protectorFactory;
+    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
     
     [HttpPost("authorize")]
     public IActionResult Authorize([FromBody] SessionCookie cookie)
     {
         var cookieJson = JsonSerializer.Serialize(cookie);
-        var protector = protectorFactory.Create(ProtectionPurposes.Session);
+        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Session);
         var protectedCookie = protector.Protect(cookieJson);
         var cookieOptions = new CookieOptions()
         {

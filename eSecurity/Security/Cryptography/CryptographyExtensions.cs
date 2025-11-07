@@ -3,12 +3,8 @@ using eSecurity.Security.Cryptography.Hashing;
 using eSecurity.Security.Cryptography.Hashing.Hashers;
 using eSecurity.Security.Cryptography.Keys;
 using eSecurity.Security.Cryptography.Keys.PrivateKey;
-using eSecurity.Security.Cryptography.Protection;
-using eSecurity.Security.Cryptography.Protection.Protectors;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSystem.Core.Security.Cryptography.Keys;
-using eSystem.Core.Security.Cryptography.Protection;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace eSecurity.Security.Cryptography;
 
@@ -25,11 +21,6 @@ public static class CryptographyExtensions
     private static void AddProtection(this IServiceCollection services)
     {
         services.AddDataProtection();
-        services.AddScoped<IProtectorFactory, ProtectorFactory>();
-        services.AddKeyedScoped<IProtector, CodeProtector>(ProtectionPurposes.RecoveryCode);
-        services.AddKeyedScoped<IProtector, TokenProtector>(ProtectionPurposes.RefreshToken);
-        services.AddKeyedScoped<IProtector, SecretProtector>(ProtectionPurposes.Secret);
-        services.AddKeyedScoped<IProtector, SessionProtector>(ProtectionPurposes.Session);
     }
 
     private static void AddHashing(this IServiceCollection services)

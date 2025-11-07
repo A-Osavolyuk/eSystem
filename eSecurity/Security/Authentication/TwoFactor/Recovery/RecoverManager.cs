@@ -1,16 +1,17 @@
 ﻿using eSecurity.Data.Entities;
-using eSystem.Core.Security.Cryptography.Protection;
+using eSecurity.Security.Cryptography.Protection;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Security.Authentication.TwoFactor.Recovery;
 
 public sealed class RecoverManager(
     AuthDbContext context,
-    IProtectorFactory protectorFactory,
+    IDataProtectionProvider protectionProvider,
     IRecoveryCodeFactory recoveryCodeFactory) : IRecoverManager
 {
     private readonly AuthDbContext context = context;
+    private readonly IDataProtector protector = protectionProvider.CreateProtector(ProtectionPurposes.RecoveryCode);
     private readonly IRecoveryCodeFactory recoveryCodeFactory = recoveryCodeFactory;
-    private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.RecoveryCode);
 
     public List<string> Unprotect(UserEntity user)
     {

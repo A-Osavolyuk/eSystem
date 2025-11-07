@@ -1,7 +1,9 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Security.Authorization.Access;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 
@@ -14,11 +16,13 @@ public record ReconfigureAuthenticatorCommand() : IRequest<Result>
 public class ReconfigureAuthenticatorCommandHandler(
     IUserManager userManager,
     ISecretManager secretManager,
-    IVerificationManager verificationManager) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
+    IVerificationManager verificationManager,
+    IDataProtectionProvider protectionProvider) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISecretManager secretManager = secretManager;
     private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(ReconfigureAuthenticatorCommand request, CancellationToken cancellationToken)
     {
@@ -30,7 +34,8 @@ public class ReconfigureAuthenticatorCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var protectedSecret = secretManager.Protect(request.Secret);
+        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+        var protectedSecret = protector.Protect(request.Secret);
         var userSecret = user.Secret!;
 
         userSecret.Secret = protectedSecret;

@@ -5,11 +5,12 @@ using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Security.Authorization.Devices;
+using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Security.Authentication.Lockout;
-using eSystem.Core.Security.Cryptography.Protection;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Security.Authentication.SignIn.Strategies;
 
@@ -26,7 +27,7 @@ public sealed class AuthenticatorSignInStrategy(
     ISessionManager sessionManager,
     ISecretManager secretManager,
     IHttpContextAccessor accessor,
-    IProtectorFactory protectorFactory,
+    IDataProtectionProvider protectionProvider,
     IOptions<SignInOptions> options) : ISignInStrategy
 {
     private readonly IUserManager userManager = userManager;
@@ -34,9 +35,9 @@ public sealed class AuthenticatorSignInStrategy(
     private readonly IDeviceManager deviceManager = deviceManager;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly ISecretManager secretManager = secretManager;
+    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
     private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly SignInOptions options = options.Value;
-    private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.Secret);
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload, 
         CancellationToken cancellationToken = default)
@@ -78,6 +79,7 @@ public sealed class AuthenticatorSignInStrategy(
         var userSecret = await secretManager.FindAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
+        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
         var isCodeVerified = AuthenticatorUtils.VerifyCode(authenticatorPayload.Code, unprotectedSecret);
 

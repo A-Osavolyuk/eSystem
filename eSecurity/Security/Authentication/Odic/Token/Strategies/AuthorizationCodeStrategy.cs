@@ -4,6 +4,7 @@ using eSecurity.Features.Odic.Commands;
 using eSecurity.Security.Authentication.Odic.Code;
 using eSecurity.Security.Authentication.Odic.Pkce;
 using eSecurity.Security.Authentication.Odic.Session;
+using eSecurity.Security.Cryptography.Protection;
 using eSecurity.Security.Cryptography.Tokens;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.Claims;
@@ -12,7 +13,7 @@ using eSystem.Core.Security.Authentication.Jwt;
 using eSystem.Core.Security.Authentication.Odic.Client;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
-using eSystem.Core.Security.Cryptography.Protection;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Security.Authentication.Odic.Token.Strategies;
 
@@ -33,7 +34,7 @@ public class AuthorizationCodeStrategy(
     ITokenManager tokenManager,
     IPkceHandler pkceHandler,
     IKeyFactory keyFactory,
-    IProtectorFactory protectorFactory,
+    IDataProtectionProvider protectionProvider,
     IClaimBuilderFactory claimBuilderFactory,
     IOptions<JwtOptions> options) : ITokenStrategy
 {
@@ -44,7 +45,7 @@ public class AuthorizationCodeStrategy(
     private readonly ITokenManager tokenManager = tokenManager;
     private readonly IPkceHandler pkceHandler = pkceHandler;
     private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly IProtectorFactory protectorFactory = protectorFactory;
+    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
     private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
     private readonly JwtOptions options = options.Value;
 
@@ -143,7 +144,7 @@ public class AuthorizationCodeStrategy(
             var tokenResult = await tokenManager.CreateAsync(refreshToken, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
             
-            var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
+            var protector = protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
             var protectedRefreshToken = protector.Protect(refreshToken.Token);
             response.RefreshToken = protectedRefreshToken;
         }
