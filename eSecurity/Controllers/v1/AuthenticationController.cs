@@ -11,8 +11,9 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Controllers.v1;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class AuthenticationController(IDataProtectionProvider protectionProvider) : ControllerBase
 {
     private readonly IDataProtectionProvider protectionProvider = protectionProvider;
