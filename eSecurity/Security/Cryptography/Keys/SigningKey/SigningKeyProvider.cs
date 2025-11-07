@@ -10,10 +10,12 @@ namespace eSecurity.Security.Cryptography.Keys.SigningKey;
 public class SigningKeyProvider(
     AuthDbContext context,
     IKeyFactory keyFactory,
-    IDataProtectionProvider protection) : ISigningKeyProvider
+    IDataProtectionProvider protection,
+    IOptions<SigningKeyOptions> options) : ISigningKeyProvider
 {
     private readonly AuthDbContext context = context;
     private readonly IKeyFactory keyFactory = keyFactory;
+    private readonly SigningKeyOptions options = options.Value;
     private readonly IDataProtector passwordProtector = protection.CreateProtector(ProtectionPurposes.Password);
     private readonly IDataProtector certificateProtector = protection.CreateProtector(ProtectionPurposes.Password);
 
@@ -23,10 +25,10 @@ public class SigningKeyProvider(
 
         if (key is null)
         {
-            var rsa = RSA.Create(2048);
+            var rsa = RSA.Create(options.KeyLength * 8);
 
             var request = new CertificateRequest(
-                "CN=JwtSigningKey",
+                options.SubjectName,
                 rsa,
                 HashAlgorithmName.SHA256,
                 RSASignaturePadding.Pkcs1
@@ -37,7 +39,7 @@ public class SigningKeyProvider(
             
             var certificate = request.CreateSelfSigned(
                 DateTimeOffset.UtcNow,
-                DateTimeOffset.UtcNow.AddMonths(6));
+                DateTimeOffset.UtcNow.Add(options.CertificateLifetime));
             
             var certificateBytes = certificate.Export(X509ContentType.Pkcs12, password);
             var protectedCertificate = certificateProtector.Protect(certificateBytes);
@@ -47,7 +49,7 @@ public class SigningKeyProvider(
                 Id = Guid.CreateVersion7(),
                 ProtectedPassword = protectedPassword,
                 ProtectedPfx = protectedCertificate,
-                ExpireDate = DateTimeOffset.UtcNow.AddMonths(6),
+                ExpireDate = DateTimeOffset.UtcNow.Add(options.CertificateLifetime),
                 CreateDate = DateTimeOffset.UtcNow,
             };
             
