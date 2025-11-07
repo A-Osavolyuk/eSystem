@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using eSecurity.Common.Conventions;
 using eSecurity.Common.JS;
 using eSecurity.Common.Messaging;
 using eSecurity.Common.State;
@@ -55,7 +56,10 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddDistributedMemoryCache();
         builder.Services
-            .AddControllers()
+            .AddControllers(options =>
+            {
+                options.Conventions.Add(new RoutePrefixConvention("api"));
+            })
             .AddJsonOptions(cfg =>
             {
                 cfg.JsonSerializerOptions.WriteIndented = true;

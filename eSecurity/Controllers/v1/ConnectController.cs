@@ -4,7 +4,7 @@ using eSystem.Core.Common.Http;
 
 namespace eSecurity.Controllers.v1;
 
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
 public class ConnectController(ISender sender) : ControllerBase
@@ -15,9 +15,26 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Token")]
     [ProducesResponseType(200)]
     [HttpPost("token")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> TokenAsync([FromBody] TokenCommand command)
+    public async ValueTask<IActionResult> TokenAsync(
+        [FromQuery(Name = "grant_type")] string grantType, 
+        [FromQuery(Name = "client_id")] string clientId,
+        [FromQuery(Name = "redirect_uri")] string? redirectUri,
+        [FromQuery(Name = "refresh_token")] string? refreshToken,
+        [FromQuery(Name = "code")] string? code,
+        [FromQuery(Name = "client_secret")] string? clientSecret,
+        [FromQuery(Name = "code_verifier")] string? codeVerifier)
     {
+        var command = new TokenCommand()
+        {
+            GrantType = grantType,
+            ClientId = clientId,
+            RedirectUri = redirectUri,
+            ClientSecret = clientSecret,
+            Code = code,
+            CodeVerifier = codeVerifier,
+            RefreshToken = refreshToken
+        };
+
         var result = await sender.Send(command);
 
         return result.Match(
