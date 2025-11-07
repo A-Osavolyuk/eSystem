@@ -4,5 +4,5 @@ public class SignInResolver(IServiceProvider provider) : ISignInResolver
 {
     private readonly IServiceProvider provider = provider;
 
-    public SignInStrategy Resolve(SignInType type) => provider.GetRequiredKeyedService<SignInStrategy>(type);
+    public ISignInStrategy Resolve(SignInType type) => provider.GetRequiredKeyedService<ISignInStrategy>(type);
 }

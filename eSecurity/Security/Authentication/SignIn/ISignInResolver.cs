@@ -2,5 +2,5 @@
 
 public interface ISignInResolver
 {
-    public SignInStrategy Resolve(SignInType type);
+    public ISignInStrategy Resolve(SignInType type);
 }

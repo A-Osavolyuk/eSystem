@@ -5,7 +5,6 @@ using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authentication.SignIn;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Utilities.Query;
 
@@ -27,7 +26,7 @@ public sealed class OAuthSignInStrategy(
     IHttpContextAccessor httpContextAccessor,
     ILinkedAccountManager providerManager,
     IOAuthSessionManager oauthSessionManager,
-    ISessionManager sessionManager) : SignInStrategy
+    ISessionManager sessionManager) : ISignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly IDeviceManager deviceManager = deviceManager;
@@ -37,7 +36,7 @@ public sealed class OAuthSignInStrategy(
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
-    public override async ValueTask<Result> SignInAsync(SignInPayload payload,
+    public async ValueTask<Result> SignInAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
         if(payload is not OAuthSignInPayload oauthPayload)

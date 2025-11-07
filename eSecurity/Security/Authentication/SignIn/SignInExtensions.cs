@@ -8,9 +8,9 @@ public static class SignInExtensions
     {
         services.AddScoped<ISignInResolver, SignInResolver>();
         services.AddScoped<ISignInManager, SignInManager>();
-        services.AddKeyedScoped<SignInStrategy, PasswordSignInStrategy>(SignInType.Password);
-        services.AddKeyedScoped<SignInStrategy, PasskeySignInStrategy>(SignInType.Passkey);
-        services.AddKeyedScoped<SignInStrategy, AuthenticatorSignInStrategy>(SignInType.AuthenticatorApp);
-        services.AddKeyedScoped<SignInStrategy, OAuthSignInStrategy>(SignInType.OAuth);
+        services.AddKeyedScoped<ISignInStrategy, PasswordSignInStrategy>(SignInType.Password);
+        services.AddKeyedScoped<ISignInStrategy, PasskeySignInStrategy>(SignInType.Passkey);
+        services.AddKeyedScoped<ISignInStrategy, AuthenticatorSignInStrategy>(SignInType.AuthenticatorApp);
+        services.AddKeyedScoped<ISignInStrategy, OAuthSignInStrategy>(SignInType.OAuth);
     }
 }

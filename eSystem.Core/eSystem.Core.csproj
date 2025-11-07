@@ -32,4 +32,8 @@
         <PackageReference Include="UAParser" Version="3.1.47" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Security\Authentication\SignIn\" />
+    </ItemGroup>
+
 </Project>

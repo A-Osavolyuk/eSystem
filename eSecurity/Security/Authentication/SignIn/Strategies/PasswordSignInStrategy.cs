@@ -8,11 +8,15 @@ using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Security.Authentication.Lockout;
-using eSystem.Core.Security.Authentication.SignIn;
-using eSystem.Core.Security.Authentication.SignIn.Payloads;
 using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Security.Authentication.SignIn.Strategies;
+
+public sealed class PasswordSignInPayload : SignInPayload
+{
+    public required string Login { get; set; }
+    public required string Password { get; set; }
+}
 
 public sealed class PasswordSignInStrategy(
     IUserManager userManager,
@@ -21,7 +25,7 @@ public sealed class PasswordSignInStrategy(
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
     IHttpContextAccessor accessor,
-    IOptions<SignInOptions> options) : SignInStrategy
+    IOptions<SignInOptions> options) : ISignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasswordManager passwordManager = passwordManager;
@@ -31,7 +35,7 @@ public sealed class PasswordSignInStrategy(
     private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly SignInOptions options = options.Value;
 
-    public override async ValueTask<Result> SignInAsync(SignInPayload payload,
+    public async ValueTask<Result> SignInAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
         UserEntity? user = null;

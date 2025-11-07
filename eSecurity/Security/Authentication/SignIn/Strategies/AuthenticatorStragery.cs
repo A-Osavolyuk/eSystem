@@ -9,11 +9,15 @@ using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Security.Authentication.Lockout;
-using eSystem.Core.Security.Authentication.SignIn;
-using eSystem.Core.Security.Authentication.SignIn.Payloads;
 using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSecurity.Security.Authentication.SignIn.Strategies;
+
+public sealed class AuthenticatorSignInPayload : SignInPayload
+{
+    public required Guid UserId { get; set; }
+    public required string Code { get; set; }
+}
 
 public sealed class AuthenticatorSignInStrategy(
     IUserManager userManager,
@@ -23,7 +27,7 @@ public sealed class AuthenticatorSignInStrategy(
     ISecretManager secretManager,
     IHttpContextAccessor accessor,
     IProtectorFactory protectorFactory,
-    IOptions<SignInOptions> options) : SignInStrategy
+    IOptions<SignInOptions> options) : ISignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly ILockoutManager lockoutManager = lockoutManager;
@@ -34,7 +38,7 @@ public sealed class AuthenticatorSignInStrategy(
     private readonly SignInOptions options = options.Value;
     private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.Secret);
 
-    public override async ValueTask<Result> SignInAsync(SignInPayload payload, 
+    public async ValueTask<Result> SignInAsync(SignInPayload payload, 
         CancellationToken cancellationToken = default)
     {
         SignInResponse? response;

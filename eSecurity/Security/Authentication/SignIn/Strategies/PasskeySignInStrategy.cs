@@ -4,24 +4,28 @@ using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authentication.SignIn;
-using eSystem.Core.Security.Authentication.SignIn.Payloads;
 using eSystem.Core.Security.Credentials.Constants;
+using eSystem.Core.Security.Credentials.PublicKey;
 
 namespace eSecurity.Security.Authentication.SignIn.Strategies;
+
+public sealed class PasskeySignInPayload : SignInPayload
+{
+    public required PublicKeyCredential Credential { get; set; }
+}
 
 public sealed class PasskeySignInStrategy(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
     ISessionManager sessionManager,
-    IHttpContextAccessor accessor) : SignInStrategy
+    IHttpContextAccessor accessor) : ISignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly IPasskeyManager passkeyManager = passkeyManager;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
 
-    public override async ValueTask<Result> SignInAsync(SignInPayload payload,
+    public async ValueTask<Result> SignInAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
         SignInResponse response;
