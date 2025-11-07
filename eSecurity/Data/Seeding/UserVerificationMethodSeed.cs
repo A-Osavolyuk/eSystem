@@ -1,5 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Authorization.Access.Verification;
 using eSystem.Core.Data.Seeding;
 
 namespace eSecurity.Data.Seeding;

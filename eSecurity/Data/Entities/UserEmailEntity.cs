@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Identity.Email;
+﻿using eSecurity.Security.Identity;
+using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Data.Entities;
 

@@ -3,7 +3,7 @@ using eSecurity.Security.Cryptography.Codes;
 using eSecurity.Security.Cryptography.Hashing;
 using eSystem.Core.Common.Messaging;
 
-namespace eSecurity.Security.Authorization.Access;
+namespace eSecurity.Security.Authorization.Access.Codes;
 
 public sealed class CodeManager(
     AuthDbContext context,

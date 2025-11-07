@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 
-namespace eSecurity.Security.Authorization.OAuth;
+namespace eSecurity.Security.Authorization.OAuth.LinkedAccount;
 
 public interface ILinkedAccountManager
 {

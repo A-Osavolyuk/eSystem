@@ -1,4 +1,5 @@
 ﻿using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Authorization.Access.Verification;
 using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Data.Entities;

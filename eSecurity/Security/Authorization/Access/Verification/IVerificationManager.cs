@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
 
-namespace eSecurity.Security.Authorization.Access;
+namespace eSecurity.Security.Authorization.Access.Verification;
 
 public interface IVerificationManager
 {

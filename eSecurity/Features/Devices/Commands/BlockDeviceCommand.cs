@@ -1,4 +1,5 @@
 ﻿using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Authorization.Access.Verification;
 using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Identity.User;
 

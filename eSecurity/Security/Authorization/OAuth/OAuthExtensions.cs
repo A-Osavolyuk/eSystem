@@ -1,3 +1,5 @@
+using eSecurity.Security.Authorization.OAuth.LinkedAccount;
+
 namespace eSecurity.Security.Authorization.OAuth;
 
 public static class OAuthExtensions

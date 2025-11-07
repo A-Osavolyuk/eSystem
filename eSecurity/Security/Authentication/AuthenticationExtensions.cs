@@ -5,6 +5,7 @@ using eSecurity.Security.Authentication.Password;
 using eSecurity.Security.Authentication.SignIn;
 using eSecurity.Security.Authentication.TwoFactor;
 using eSecurity.Security.Cookies;
+using eSecurity.Security.Cookies.Constants;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Jwt;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -50,7 +51,7 @@ public static class AuthenticationExtensions
             .AddGoogle(options =>
             {
                 var settings =
-                    configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Google");
+                    configuration.Get<OAuthOptions>("Configuration:Security:Authentication:Providers:Google");
 
                 options.ClientId = settings.ClientId;
                 options.ClientSecret = settings.ClientSecret;
@@ -60,7 +61,7 @@ public static class AuthenticationExtensions
             .AddFacebook(options =>
             {
                 var settings =
-                    configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Facebook");
+                    configuration.Get<OAuthOptions>("Configuration:Security:Authentication:Providers:Facebook");
 
                 options.ClientId = settings.ClientId;
                 options.ClientSecret = settings.ClientSecret;
@@ -70,7 +71,7 @@ public static class AuthenticationExtensions
             .AddMicrosoftAccount(options =>
             {
                 var settings =
-                    configuration.Get<ProviderOptions>("Configuration:Security:Authentication:Providers:Microsoft");
+                    configuration.Get<OAuthOptions>("Configuration:Security:Authentication:Providers:Microsoft");
 
                 options.ClientId = settings.ClientId;
                 options.ClientSecret = settings.ClientSecret;

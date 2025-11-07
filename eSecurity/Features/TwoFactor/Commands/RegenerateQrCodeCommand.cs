@@ -1,7 +1,7 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Security.Authentication.TwoFactor.Secret;
+using eSecurity.Security.Identity;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.TwoFactor.Commands;
 

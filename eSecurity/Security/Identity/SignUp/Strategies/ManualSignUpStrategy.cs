@@ -7,7 +7,6 @@ using eSecurity.Security.Authorization.Roles;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Security.Identity.SignUp.Strategies;
 

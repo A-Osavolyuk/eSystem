@@ -1,6 +1,6 @@
 ﻿namespace eSecurity.Security.Authorization.OAuth.Constants;
 
-public class ExternalAccounts
+public static class ExternalAccounts
 {
     public const string Google = "Google";
     public const string Facebook = "Facebook";

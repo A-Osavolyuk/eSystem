@@ -1,7 +1,6 @@
 ﻿using eSecurity.Common.DTOs;
+using eSecurity.Security.Identity;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Identity.Email;
-using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Features.Users.Queries;
 

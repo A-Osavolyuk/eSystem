@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Security.Identity.PhoneNumber;
+﻿namespace eSecurity.Security.Identity.Constants;
 
 public static class PhoneNumberTypes
 {

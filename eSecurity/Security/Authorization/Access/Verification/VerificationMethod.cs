@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Security.Authorization.Access;
+﻿namespace eSecurity.Security.Authorization.Access.Verification;
 
 public enum VerificationMethod
 {

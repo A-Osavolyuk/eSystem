@@ -2,8 +2,8 @@
 using eSecurity.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Security.Cryptography.Protection;
+using eSecurity.Security.Identity;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Identity.Email;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Features.TwoFactor.Commands;

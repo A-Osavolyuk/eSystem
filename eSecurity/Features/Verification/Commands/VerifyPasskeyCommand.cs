@@ -1,4 +1,5 @@
 ﻿using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Authorization.Access.Verification;
 using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Credentials.PublicKey.Constants;
 using eSecurity.Security.Credentials.PublicKey.Credentials;

@@ -1,6 +1,6 @@
 ﻿using eSecurity.Common.Responses;
+using eSecurity.Security.Identity;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Security.Commands;
 

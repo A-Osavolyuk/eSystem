@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Identity.PhoneNumber;
+﻿using eSecurity.Security.Identity;
 
 namespace eSecurity.Common.DTOs;
 

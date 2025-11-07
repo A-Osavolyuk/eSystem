@@ -1,4 +1,5 @@
 ﻿using eSecurity.Security.Authorization.OAuth;
+using eSecurity.Security.Authorization.OAuth.LinkedAccount;
 
 namespace eSecurity.Common.DTOs;
 

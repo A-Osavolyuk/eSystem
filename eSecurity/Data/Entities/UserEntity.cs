@@ -1,9 +1,10 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor;
 using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Authorization.Access.Verification;
 using eSecurity.Security.Authorization.OAuth;
+using eSecurity.Security.Authorization.OAuth.LinkedAccount;
+using eSecurity.Security.Identity;
 using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Identity.Email;
-using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Data.Entities;
 

@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Identity.Email;
+﻿namespace eSecurity.Security.Identity;
 
 public enum EmailType
 {

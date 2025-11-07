@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Security.Identity.Email;
+﻿namespace eSecurity.Security.Identity.Constants;
 
 public static class EmailTypes
 {

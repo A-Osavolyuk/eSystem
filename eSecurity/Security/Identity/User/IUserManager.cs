@@ -1,6 +1,4 @@
 ﻿using eSecurity.Data.Entities;
-using eSystem.Core.Security.Identity.Email;
-using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Security.Identity.User;
 

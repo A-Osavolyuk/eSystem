@@ -3,6 +3,7 @@ using eSecurity.Common.Storage.Session;
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.TwoFactor;
 using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Authorization.Access.Verification;
 using eSecurity.Security.Credentials.PublicKey;
 using eSecurity.Security.Credentials.PublicKey.Constants;
 using eSecurity.Security.Credentials.PublicKey.Credentials;

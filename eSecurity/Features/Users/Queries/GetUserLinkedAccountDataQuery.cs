@@ -1,5 +1,6 @@
 ﻿using eSecurity.Common.DTOs;
 using eSecurity.Security.Authorization.OAuth;
+using eSecurity.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Security.Identity.User;
 
 namespace eSecurity.Features.Users.Queries;

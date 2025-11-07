@@ -4,10 +4,10 @@ using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authentication.Password;
 using eSecurity.Security.Authorization.Devices;
+using eSecurity.Security.Identity;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Security.Authentication.SignIn.Strategies;
 

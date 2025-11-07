@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Identity.Email;
+﻿using eSecurity.Security.Identity;
 
 namespace eSecurity.Common.DTOs;
 

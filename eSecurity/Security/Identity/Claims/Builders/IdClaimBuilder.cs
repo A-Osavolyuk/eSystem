@@ -1,8 +1,6 @@
 using eSecurity.Data.Entities;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Identity.Claims;
-using eSystem.Core.Security.Identity.Email;
-using eSystem.Core.Security.Identity.PhoneNumber;
 
 namespace eSecurity.Security.Identity.Claims.Builders;
 

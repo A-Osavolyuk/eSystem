@@ -1,6 +1,6 @@
 ﻿using eSecurity.Data.Entities;
+using eSecurity.Security.Identity;
 using eSystem.Core.Data.Seeding;
-using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Data.Seeding;
 

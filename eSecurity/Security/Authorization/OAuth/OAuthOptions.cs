@@ -1,6 +1,6 @@
 ﻿namespace eSecurity.Security.Authorization.OAuth;
 
-public class ProviderOptions
+public class OAuthOptions
 {
     public string ClientId { get; set; } = string.Empty;
     public string ClientSecret { get; set; } = string.Empty;

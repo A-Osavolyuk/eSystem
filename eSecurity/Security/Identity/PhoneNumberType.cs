@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Identity.PhoneNumber;
+﻿namespace eSecurity.Security.Identity;
 
 public enum PhoneNumberType
 {

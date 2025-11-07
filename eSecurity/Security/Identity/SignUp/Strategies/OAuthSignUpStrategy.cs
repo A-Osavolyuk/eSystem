@@ -4,12 +4,12 @@ using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.Odic.Session;
 using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Authorization.OAuth;
+using eSecurity.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Security.Authorization.Permissions;
 using eSecurity.Security.Authorization.Roles;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;
-using eSystem.Core.Security.Identity.Email;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Security.Identity.SignUp.Strategies;

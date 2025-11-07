@@ -1,6 +1,6 @@
 ﻿namespace eSecurity.Security.Authorization.OAuth.Constants;
 
-public class AuthenticationTypes
+public static class AuthenticationTypes
 {
     public const string Google = "Google";
     public const string Facebook = "Facebook";

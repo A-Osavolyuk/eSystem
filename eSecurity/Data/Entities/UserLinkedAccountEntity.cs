@@ -1,4 +1,5 @@
 ﻿using eSecurity.Security.Authorization.OAuth;
+using eSecurity.Security.Authorization.OAuth.LinkedAccount;
 using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Data.Entities;

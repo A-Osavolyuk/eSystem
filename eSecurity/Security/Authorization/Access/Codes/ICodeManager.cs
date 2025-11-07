@@ -1,7 +1,7 @@
 ﻿using eSecurity.Data.Entities;
 using eSystem.Core.Common.Messaging;
 
-namespace eSecurity.Security.Authorization.Access;
+namespace eSecurity.Security.Authorization.Access.Codes;
 
 public interface ICodeManager
 {

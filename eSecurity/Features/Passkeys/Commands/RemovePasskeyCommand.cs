@@ -1,9 +1,10 @@
 ﻿using eSecurity.Security.Authentication.TwoFactor;
 using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Authorization.Access.Verification;
 using eSecurity.Security.Credentials.PublicKey;
+using eSecurity.Security.Identity;
 using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Identity.Email;
 
 namespace eSecurity.Features.Passkeys.Commands;
 
