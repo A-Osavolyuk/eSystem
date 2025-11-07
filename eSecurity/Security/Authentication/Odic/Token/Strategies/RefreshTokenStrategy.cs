@@ -13,6 +13,14 @@ using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSecurity.Security.Authentication.Odic.Token.Strategies;
 
+public sealed class RefreshTokenPayload : TokenPayload
+{
+    public required string ClientId { get; set; }
+    public string? ClientSecret { get; set; }
+    public string? RefreshToken { get; set; }
+    public string? RedirectUri { get; set; }
+}
+
 public class RefreshTokenStrategy(
     IProtectorFactory protectorFactory,
     ITokenFactory tokenFactory,
@@ -20,7 +28,7 @@ public class RefreshTokenStrategy(
     IUserManager userManager,
     IKeyFactory keyFactory,
     IClaimBuilderFactory claimBuilderFactory,
-    IOptions<JwtOptions> options) : TokenStrategy
+    IOptions<JwtOptions> options) : ITokenStrategy
 {
     private readonly IProtectorFactory protectorFactory = protectorFactory;
     private readonly ITokenFactory tokenFactory = tokenFactory;
@@ -30,11 +38,14 @@ public class RefreshTokenStrategy(
     private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
     private readonly JwtOptions options = options.Value;
 
-    public override async ValueTask<Result> HandleAsync(TokenCommand command,
+    public async ValueTask<Result> HandleAsync(TokenPayload payload,
         CancellationToken cancellationToken = default)
     {
+        if(payload is not RefreshTokenPayload refreshPayload)
+            throw new NotSupportedException("Payload type must be 'RefreshTokenPayload'.");
+        
         var protector = protectorFactory.Create(ProtectionPurposes.RefreshToken);
-        var unprotectedToken = protector.Unprotect(command.RefreshToken!);
+        var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
 
         var refreshToken = await tokenManager.FindByTokenAsync(unprotectedToken, cancellationToken);
         if (refreshToken is null) return Results.NotFound("Refresh token not found.");
@@ -46,7 +57,7 @@ public class RefreshTokenStrategy(
         }
 
         var client = refreshToken.Client;
-        if (!client.ClientId.Equals(command.ClientId)) 
+        if (!client.ClientId.Equals(refreshPayload.ClientId)) 
             return Results.BadRequest("Invalid client ID.");
 
         if (!client.AllowOfflineAccess || !client.HasScope(Scopes.OfflineAccess))
@@ -54,10 +65,10 @@ public class RefreshTokenStrategy(
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {
-            if (string.IsNullOrEmpty(command.ClientSecret))
+            if (string.IsNullOrEmpty(refreshPayload.ClientSecret))
                 return Results.BadRequest("Client secret is required.");
 
-            if (!client.ClientSecret.Equals(command.ClientSecret))
+            if (!client.ClientSecret.Equals(refreshPayload.ClientSecret))
                 return Results.BadRequest("Invalid client secret.");
         }
 

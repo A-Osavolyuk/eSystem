@@ -16,6 +16,15 @@ using eSystem.Core.Security.Cryptography.Protection;
 
 namespace eSecurity.Security.Authentication.Odic.Token.Strategies;
 
+public sealed class AuthorizationCodeTokenPayload : TokenPayload
+{
+    public required string ClientId { get; set; }
+    public string? RedirectUri { get; set; }
+    public string? Code { get; set; }
+    public string? ClientSecret { get; set; }
+    public string? CodeVerifier { get; set; }
+}
+
 public class AuthorizationCodeStrategy(
     IUserManager userManager,
     ISessionManager sessionManager,
@@ -26,7 +35,7 @@ public class AuthorizationCodeStrategy(
     IKeyFactory keyFactory,
     IProtectorFactory protectorFactory,
     IClaimBuilderFactory claimBuilderFactory,
-    IOptions<JwtOptions> options) : TokenStrategy
+    IOptions<JwtOptions> options) : ITokenStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly ISessionManager sessionManager = sessionManager;
@@ -39,30 +48,33 @@ public class AuthorizationCodeStrategy(
     private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
     private readonly JwtOptions options = options.Value;
 
-    public override async ValueTask<Result> HandleAsync(TokenCommand command,
+    public async ValueTask<Result> HandleAsync(TokenPayload payload,
         CancellationToken cancellationToken = default)
     {
-        var code = command.Code!;
+        if (payload is not AuthorizationCodeTokenPayload authorizationPayload)
+            throw new NotSupportedException("Payload type must be 'AuthorizationCodeTokenPayload'");
+        
+        var code = authorizationPayload.Code!;
         var authorizationCode = await authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
         if (authorizationCode is null) return Results.NotFound("Authorization code not found.");
         if (authorizationCode.Used) return Results.BadRequest("Authorization code has already been used.");
         if (authorizationCode.ExpireDate < DateTimeOffset.UtcNow)
             return Results.BadRequest("Authorization code has expired.");
 
-        var redirectUri = command.RedirectUri;
+        var redirectUri = authorizationPayload.RedirectUri;
         if (string.IsNullOrEmpty(redirectUri) || !authorizationCode.RedirectUri.Equals(redirectUri))
             return Results.BadRequest("Invalid redirect URI.");
 
         var client = authorizationCode.Client;
-        if (!client.ClientId.Equals(command.ClientId)) return Results.BadRequest("Invalid client ID.");
+        if (!client.ClientId.Equals(authorizationPayload.ClientId)) return Results.BadRequest("Invalid client ID.");
         if (!client.HasRedirectUri(redirectUri)) return Results.BadRequest("Invalid redirect URI.");
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {
-            if (string.IsNullOrEmpty(command.ClientSecret))
+            if (string.IsNullOrEmpty(authorizationPayload.ClientSecret))
                 return Results.BadRequest("Client secret is required.");
 
-            if (!client.ClientSecret.Equals(command.ClientSecret))
+            if (!client.ClientSecret.Equals(authorizationPayload.ClientSecret))
                 return Results.BadRequest("Invalid client secret.");
         }
 
@@ -74,13 +86,13 @@ public class AuthorizationCodeStrategy(
             if (string.IsNullOrWhiteSpace(authorizationCode.CodeChallengeMethod))
                 return Results.BadRequest("Missing code challenge method in authorization code.");
 
-            if (string.IsNullOrWhiteSpace(command.CodeVerifier))
+            if (string.IsNullOrWhiteSpace(authorizationPayload.CodeVerifier))
                 return Results.BadRequest("Missing code verifier in token request.");
 
             var isValidPkce = pkceHandler.Verify(
                 authorizationCode.CodeChallenge,
                 authorizationCode.CodeChallengeMethod,
-                command.CodeVerifier
+                authorizationPayload.CodeVerifier
             );
 
             if (!isValidPkce) return Results.BadRequest("Invalid PKCE verification (code verifier mismatch).");

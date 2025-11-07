@@ -4,6 +4,6 @@ public class TokenStrategyResolver(IServiceProvider serviceProvider) : ITokenStr
 {
     private readonly IServiceProvider serviceProvider = serviceProvider;
 
-    public TokenStrategy Resolve(string grantType) 
-        => serviceProvider.GetRequiredKeyedService<TokenStrategy>(grantType);
+    public ITokenStrategy Resolve(string grantType) 
+        => serviceProvider.GetRequiredKeyedService<ITokenStrategy>(grantType);
 }

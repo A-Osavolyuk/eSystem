@@ -2,5 +2,5 @@ namespace eSecurity.Security.Authentication.Odic.Token;
 
 public interface ITokenStrategyResolver
 {
-    public TokenStrategy Resolve(string grantType);
+    public ITokenStrategy Resolve(string grantType);
 }

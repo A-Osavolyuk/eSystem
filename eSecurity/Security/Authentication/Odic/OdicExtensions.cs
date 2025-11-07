@@ -24,8 +24,8 @@ public static class OdicExtensions
         services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
         services.AddScoped<IPkceHandler, PkceHandler>();
         services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
-        services.AddKeyedScoped<TokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
-        services.AddKeyedScoped<TokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
+        services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
+        services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
         
         var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
         
