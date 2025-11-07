@@ -26,6 +26,7 @@ public class TokenCommandHandler(ITokenStrategyResolver tokenStrategyResolver) :
             GrantTypes.AuthorizationCode => new AuthorizationCodeTokenPayload()
             {
                 ClientId = request.ClientId,
+                GrantType = request.GrantType,
                 ClientSecret = request.ClientSecret,
                 Code = request.Code,
                 CodeVerifier = request.CodeVerifier,
@@ -34,6 +35,7 @@ public class TokenCommandHandler(ITokenStrategyResolver tokenStrategyResolver) :
             GrantTypes.RefreshToken => new RefreshTokenPayload()
             {
                 ClientId = request.ClientId,
+                GrantType = request.GrantType,
                 ClientSecret = request.ClientSecret,
                 RedirectUri = request.RedirectUri,
                 RefreshToken = request.RefreshToken

@@ -31,4 +31,6 @@ public class ClientEntity : Entity
         => scopes.All(scope => AllowedScopes.Any(x => x.Scope.Name == scope));
     public bool HasScope(string scope) 
         => AllowedScopes.Any(x => x.Scope.Name == scope);
+    public bool HasGrantType(string grantType)
+        => GrantTypes.Any(x => x.Type == grantType);
 }

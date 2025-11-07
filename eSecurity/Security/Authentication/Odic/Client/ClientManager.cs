@@ -11,6 +11,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
         return await context.Clients
             .Where(c => c.ClientId == clientId)
             .Include(x => x.RedirectUris)
+            .Include(x => x.PostLogoutRedirectUris)
             .Include(x => x.AllowedScopes)
             .ThenInclude(x => x.Scope)
             .Include(x => x.GrantTypes)
@@ -22,6 +23,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
         return await context.Clients
             .Where(c => c.Id == id)
             .Include(x => x.RedirectUris)
+            .Include(x => x.PostLogoutRedirectUris)
             .Include(x => x.AllowedScopes)
             .ThenInclude(x => x.Scope)
             .Include(x => x.GrantTypes)

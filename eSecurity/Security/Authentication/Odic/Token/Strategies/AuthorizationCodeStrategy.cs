@@ -1,6 +1,6 @@
 using eSecurity.Common.Responses;
 using eSecurity.Data.Entities;
-using eSecurity.Features.Odic.Commands;
+using eSecurity.Security.Authentication.Odic.Client;
 using eSecurity.Security.Authentication.Odic.Code;
 using eSecurity.Security.Authentication.Odic.Pkce;
 using eSecurity.Security.Authentication.Odic.Session;
@@ -9,7 +9,6 @@ using eSecurity.Security.Cryptography.Tokens;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Security.Identity.Claims;
 using eSecurity.Security.Identity.User;
-using eSystem.Core.Security.Authentication.Jwt;
 using eSystem.Core.Security.Authentication.Odic.Client;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 using eSystem.Core.Security.Cryptography.Keys;
@@ -19,7 +18,6 @@ namespace eSecurity.Security.Authentication.Odic.Token.Strategies;
 
 public sealed class AuthorizationCodeTokenPayload : TokenPayload
 {
-    public required string ClientId { get; set; }
     public string? RedirectUri { get; set; }
     public string? Code { get; set; }
     public string? ClientSecret { get; set; }
@@ -28,6 +26,7 @@ public sealed class AuthorizationCodeTokenPayload : TokenPayload
 
 public class AuthorizationCodeStrategy(
     IUserManager userManager,
+    IClientManager clientManager,
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
     ITokenFactory tokenFactory,
@@ -39,6 +38,7 @@ public class AuthorizationCodeStrategy(
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IUserManager userManager = userManager;
+    private readonly IClientManager clientManager = clientManager;
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenFactory tokenFactory = tokenFactory;
@@ -54,6 +54,11 @@ public class AuthorizationCodeStrategy(
     {
         if (payload is not AuthorizationCodeTokenPayload authorizationPayload)
             throw new NotSupportedException("Payload type must be 'AuthorizationCodeTokenPayload'");
+
+        var client = await clientManager.FindByClientIdAsync(authorizationPayload.ClientId, cancellationToken);
+        if (client is null) return Results.NotFound("Client was not found.");
+        if (!client.HasGrantType(authorizationPayload.GrantType))
+            return Results.BadRequest($"Client doesn't support grant type {authorizationPayload.GrantType}");
         
         var code = authorizationPayload.Code!;
         var authorizationCode = await authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
@@ -65,10 +70,10 @@ public class AuthorizationCodeStrategy(
         var redirectUri = authorizationPayload.RedirectUri;
         if (string.IsNullOrEmpty(redirectUri) || !authorizationCode.RedirectUri.Equals(redirectUri))
             return Results.BadRequest("Invalid redirect URI.");
-
-        var client = authorizationCode.Client;
+        
         if (!client.ClientId.Equals(authorizationPayload.ClientId)) return Results.BadRequest("Invalid client ID.");
         if (!client.HasRedirectUri(redirectUri)) return Results.BadRequest("Invalid redirect URI.");
+
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {

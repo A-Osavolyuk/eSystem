@@ -24,11 +24,6 @@ public sealed class TokenManager(
         return await context.RefreshTokens
             .Include(x => x.Session)
             .ThenInclude(x => x.Device)
-            .Include(x => x.Client)
-            .ThenInclude(x => x.AllowedScopes)
-            .ThenInclude(x => x.Scope)
-            .Include(x => x.Client)
-            .ThenInclude(x => x.RedirectUris)
             .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
     }
 
