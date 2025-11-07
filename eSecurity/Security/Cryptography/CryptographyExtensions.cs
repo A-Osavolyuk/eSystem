@@ -19,13 +19,14 @@ public static class CryptographyExtensions
             cfg.IdTokenLifetime = TimeSpan.FromMinutes(10);
         });
         
-        builder.Services.AddSigningKeyManagement(cfg =>
+        builder.Services.AddSigningKeys(cfg =>
         {
             cfg.SubjectName = "CN=JwtSigningKey";
             cfg.CertificateLifetime = TimeSpan.FromDays(180);
             cfg.KeyLength = 256;
         });
-        
+
+        builder.Services.AddKeys();
         builder.Services.AddHashing();
         builder.Services.AddProtection();
         builder.Services.AddScoped<ICodeFactory, CodeFactory>();
@@ -41,10 +42,14 @@ public static class CryptographyExtensions
         services.AddKeyedScoped<Hasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
     }
 
-    private static void AddSigningKeyManagement(this IServiceCollection services, Action<SigningKeyOptions> configure)
+    private static void AddKeys(this IServiceCollection services)
+    {
+        services.AddScoped<IKeyFactory, RandomKeyFactory>();
+    }
+
+    private static void AddSigningKeys(this IServiceCollection services, Action<SigningKeyOptions> configure)
     {
         services.Configure(configure);
-        services.AddScoped<IKeyFactory, RandomKeyFactory>();
         services.AddScoped<ISigningKeyProvider, SigningKeyProvider>();
     }
     
