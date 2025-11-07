@@ -45,7 +45,7 @@ public sealed class OAuthSignUpStrategy(
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager sessionManager = sessionManager;
 
-    public async ValueTask<Result> SignUpAsync(SignUpPayload payload,
+    public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
         CancellationToken cancellationToken = default)
     {
         if (payload is not OAuthSignUpPayload oauthPayload)

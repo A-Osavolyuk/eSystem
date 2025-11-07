@@ -25,6 +25,6 @@ public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHand
         if (type == SignInType.OAuth) return Results.BadRequest("Unsupported for manual call");
         
         var strategy = signInResolver.Resolve(type);
-        return await strategy.SignInAsync(request.Payload, cancellationToken);
+        return await strategy.ExecuteAsync(request.Payload, cancellationToken);
     }
 }

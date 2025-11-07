@@ -35,7 +35,7 @@ public sealed class PasswordSignInStrategy(
     private readonly HttpContext httpContext = accessor.HttpContext!;
     private readonly SignInOptions options = options.Value;
 
-    public async ValueTask<Result> SignInAsync(SignInPayload payload,
+    public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
         UserEntity? user = null;

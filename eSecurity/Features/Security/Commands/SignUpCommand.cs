@@ -26,6 +26,6 @@ public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHan
             Password = request.Password
         };
         
-        return await strategy.SignUpAsync(payload, cancellationToken);
+        return await strategy.ExecuteAsync(payload, cancellationToken);
     }
 }

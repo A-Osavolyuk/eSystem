@@ -48,7 +48,7 @@ public class AuthorizationCodeStrategy(
     private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
     private readonly JwtOptions options = options.Value;
 
-    public async ValueTask<Result> HandleAsync(TokenPayload payload,
+    public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
         CancellationToken cancellationToken = default)
     {
         if (payload is not AuthorizationCodeTokenPayload authorizationPayload)

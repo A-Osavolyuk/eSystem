@@ -36,7 +36,7 @@ public sealed class OAuthSignInStrategy(
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
 
-    public async ValueTask<Result> SignInAsync(SignInPayload payload,
+    public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
         if(payload is not OAuthSignInPayload oauthPayload)

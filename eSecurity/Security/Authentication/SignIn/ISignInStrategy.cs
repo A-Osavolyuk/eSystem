@@ -2,6 +2,6 @@
 
 public interface ISignInStrategy
 {
-    public ValueTask<Result> SignInAsync(SignInPayload payload, 
+    public ValueTask<Result> ExecuteAsync(SignInPayload payload, 
         CancellationToken cancellationToken = default);
 }

@@ -35,7 +35,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
     private readonly AccountOptions options = options.Value;
 
-    public async ValueTask<Result> SignUpAsync(SignUpPayload payload, 
+    public async ValueTask<Result> ExecuteAsync(SignUpPayload payload, 
         CancellationToken cancellationToken = default)
     {
         if (payload is not ManualSignUpPayload manualPayload)

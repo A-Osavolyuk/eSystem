@@ -64,7 +64,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 SessionId = Guid.Parse(sessionId),
             };
             
-            var signUpResult = await signUpStrategy.SignUpAsync(signUpPayload, cancellationToken);
+            var signUpResult = await signUpStrategy.ExecuteAsync(signUpPayload, cancellationToken);
             
             return !signUpResult.Succeeded 
                 ? Result.Failure(signUpResult.GetError(), fallbackUri) 
@@ -81,6 +81,6 @@ public sealed class HandleOAuthLoginCommandHandler(
         };
         
         var strategy = signInResolver.Resolve(SignInType.OAuth);
-        return await strategy.SignInAsync(signInPayload, cancellationToken);
+        return await strategy.ExecuteAsync(signInPayload, cancellationToken);
     }
 }

@@ -25,7 +25,7 @@ public sealed class PasskeySignInStrategy(
     private readonly ISessionManager sessionManager = sessionManager;
     private readonly HttpContext httpContext = accessor.HttpContext!;
 
-    public async ValueTask<Result> SignInAsync(SignInPayload payload,
+    public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
         SignInResponse response;

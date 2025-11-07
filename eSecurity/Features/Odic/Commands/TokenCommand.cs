@@ -42,6 +42,6 @@ public class TokenCommandHandler(ITokenStrategyResolver tokenStrategyResolver) :
         };
         
         var strategy = tokenStrategyResolver.Resolve(request.GrantType);
-        return await strategy.HandleAsync(payload, cancellationToken);
+        return await strategy.ExecuteAsync(payload, cancellationToken);
     }
 }

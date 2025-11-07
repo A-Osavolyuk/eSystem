@@ -38,7 +38,7 @@ public sealed class AuthenticatorSignInStrategy(
     private readonly SignInOptions options = options.Value;
     private readonly IProtector protector = protectorFactory.Create(ProtectionPurposes.Secret);
 
-    public async ValueTask<Result> SignInAsync(SignInPayload payload, 
+    public async ValueTask<Result> ExecuteAsync(SignInPayload payload, 
         CancellationToken cancellationToken = default)
     {
         SignInResponse? response;
