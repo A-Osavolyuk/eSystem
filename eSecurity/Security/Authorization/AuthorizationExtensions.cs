@@ -1,4 +1,5 @@
 ﻿using eSecurity.Security.Authorization.Access;
+using eSecurity.Security.Authorization.Consents;
 using eSecurity.Security.Authorization.Devices;
 using eSecurity.Security.Authorization.OAuth;
 using eSecurity.Security.Authorization.Permissions;
@@ -17,5 +18,6 @@ public static class AuthorizationExtensions
         builder.Services.AddDeviceManagement();
         builder.Services.AddOAuthAuthorization();
         builder.Services.AddPermissionManagement();
+        builder.Services.AddConsentManagement();
     }
 }
