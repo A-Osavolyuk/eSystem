@@ -1,6 +1,4 @@
-using eSecurity.Security.Cryptography.Signing.Certificates;
-
-namespace eSecurity.Security.Cryptography.Signing.Keys;
+namespace eSecurity.Security.Cryptography.Signing.Certificates;
 
 public interface ICertificateProvider
 {

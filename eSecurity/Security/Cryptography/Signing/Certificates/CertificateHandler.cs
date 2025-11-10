@@ -16,7 +16,7 @@ public class CertificateHandler(
     private readonly IDataProtector passwordProtector = protection.CreateProtector(ProtectionPurposes.Password);
     private readonly IDataProtector certificateProtector = protection.CreateProtector(ProtectionPurposes.Certificate);
     
-    public CertificateMetadata CreateCertificate()
+    public ProtectedCertificate CreateCertificate()
     {
         using var rsa = RSA.Create(options.KeyLength * 8);
 
@@ -34,10 +34,10 @@ public class CertificateHandler(
         var password = keyFactory.Create(20);
         var certificateBytes = certificate.Export(X509ContentType.Pkcs12, password);
 
-        return new CertificateMetadata()
+        return new ProtectedCertificate()
         {
-            ProtectedCertificate = certificateProtector.Protect(certificateBytes),
-            ProtectedPassword = passwordProtector.Protect(Encoding.UTF8.GetBytes(password)),
+            ProtectedCertificateBytes = certificateProtector.Protect(certificateBytes),
+            ProtectedPasswordBytes = passwordProtector.Protect(Encoding.UTF8.GetBytes(password)),
             Certificate = certificate
         };
     }

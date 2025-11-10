@@ -1,8 +1,6 @@
-using System.Security.Cryptography.X509Certificates;
 using eSecurity.Data.Entities;
-using eSecurity.Security.Cryptography.Signing.Certificates;
 
-namespace eSecurity.Security.Cryptography.Signing.Keys;
+namespace eSecurity.Security.Cryptography.Signing.Certificates;
 
 public class CertificateProvider(
     AuthDbContext context,
@@ -18,14 +16,14 @@ public class CertificateProvider(
         
         if (certificateEntity is null)
         {
-            var signingCertificate = certificateHandler.CreateCertificate();
+            var protectedCertificate = certificateHandler.CreateCertificate();
 
             var entity = new SigningCertificateEntity()
             {
                 Id = Guid.CreateVersion7(),
-                ProtectedPassword = signingCertificate.ProtectedPassword,
-                ProtectedCertificate = signingCertificate.ProtectedCertificate,
-                ExpireDate = signingCertificate.Certificate.NotAfter,
+                ProtectedPassword = protectedCertificate.ProtectedPasswordBytes,
+                ProtectedCertificate = protectedCertificate.ProtectedCertificateBytes,
+                ExpireDate = protectedCertificate.Certificate.NotAfter,
                 CreateDate = DateTimeOffset.UtcNow,
             };
 
@@ -35,7 +33,7 @@ public class CertificateProvider(
             return new SigningCertificate()
             {
                 Id = entity.Id,
-                Certificate = signingCertificate.Certificate
+                Certificate = protectedCertificate.Certificate
             };
         }
 
