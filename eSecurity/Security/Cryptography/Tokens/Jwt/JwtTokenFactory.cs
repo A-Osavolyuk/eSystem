@@ -13,7 +13,7 @@ public class JwtTokenFactory(
 
     public async Task<string> CreateAsync(IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
     {
-        var certificate = await certificateProvider.GetCertificateAsync(cancellationToken);
+        var certificate = await certificateProvider.GetActiveAsync(cancellationToken);
         var privateKey = certificate.Certificate.GetRSAPrivateKey();
         if (privateKey is null) throw new NullReferenceException("Private key is null.");
 

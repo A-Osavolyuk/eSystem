@@ -9,11 +9,30 @@ public class CertificateProvider(
     private readonly AuthDbContext context = context;
     private readonly ICertificateHandler certificateHandler = certificateHandler;
 
-    public async ValueTask<SigningCertificate> GetCertificateAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<SigningCertificate?> FindByIdAsync(Guid kid, CancellationToken cancellationToken = default)
+    {
+        var certificateEntity = await context.Certificates.SingleOrDefaultAsync(
+            x => x.Id == kid, cancellationToken);
+
+        if (certificateEntity is null) return null;
+
+        var certificate = certificateHandler.ExportCertificate(
+            certificateEntity.ProtectedCertificate,
+            certificateEntity.ProtectedPassword
+        );
+
+        return new SigningCertificate()
+        {
+            Id = certificateEntity.Id,
+            Certificate = certificate
+        };
+    }
+
+    public async ValueTask<SigningCertificate> GetActiveAsync(CancellationToken cancellationToken = default)
     {
         var certificateEntity = await context.Certificates.SingleOrDefaultAsync(
             x => x.IsActive, cancellationToken);
-        
+
         if (certificateEntity is null)
         {
             var protectedCertificate = certificateHandler.CreateCertificate();
@@ -38,7 +57,7 @@ public class CertificateProvider(
         }
 
         var certificate = certificateHandler.ExportCertificate(
-            certificateEntity.ProtectedCertificate, 
+            certificateEntity.ProtectedCertificate,
             certificateEntity.ProtectedPassword);
 
         return new SigningCertificate()
@@ -46,5 +65,20 @@ public class CertificateProvider(
             Id = certificateEntity.Id,
             Certificate = certificate
         };
+    }
+
+    public async ValueTask<List<SigningCertificate>> GetValidAsync(CancellationToken cancellationToken = default)
+    {
+        return await context.Certificates
+            .Where(x => x.IsValid)
+            .Select(certificate => new SigningCertificate()
+            {
+                Id = certificate.Id,
+                Certificate = certificateHandler.ExportCertificate(
+                    certificate.ProtectedCertificate,
+                    certificate.ProtectedPassword
+                )
+            })
+            .ToListAsync(cancellationToken);
     }
 }
