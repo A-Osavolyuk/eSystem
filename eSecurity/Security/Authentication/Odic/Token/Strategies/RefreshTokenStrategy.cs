@@ -93,7 +93,7 @@ public class RefreshTokenStrategy(
 
         var response = new TokenResponse()
         {
-            AccessToken = await tokenFactory.CreateAsync(accessTokenClaims),
+            AccessToken = await tokenFactory.CreateAsync(accessTokenClaims, cancellationToken),
             ExpiresIn = options.AccessTokenLifetime.Seconds,
             TokenType = TokenTypes.Bearer,
         };
@@ -140,7 +140,7 @@ public class RefreshTokenStrategy(
                 .WithExpirationTime(DateTimeOffset.UtcNow.Add(options.IdTokenLifetime))
                 .Build();
 
-            response.IdToken = await tokenFactory.CreateAsync(idClaims);
+            response.IdToken = await tokenFactory.CreateAsync(idClaims, cancellationToken);
         }
 
         return Result.Success(response);

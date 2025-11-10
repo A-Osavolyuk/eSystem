@@ -40,7 +40,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<SessionEntity> Sessions { get; set; }
     public DbSet<AuthorizationCodeEntity> AuthorizationCodes { get; set; }
     public DbSet<ConsentEntity> Consents { get; set; }
-    public DbSet<SigningKeyEntity> SigningKeys { get; set; }
+    public DbSet<SigningCertificateEntity> Certificates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -444,7 +444,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        builder.Entity<SigningKeyEntity>(entity =>
+        builder.Entity<SigningCertificateEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
         });

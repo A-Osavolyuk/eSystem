@@ -128,7 +128,7 @@ public class AuthorizationCodeStrategy(
         
         var response = new TokenResponse()
         {
-            AccessToken = await tokenFactory.CreateAsync(accessClaims),
+            AccessToken = await tokenFactory.CreateAsync(accessClaims, cancellationToken),
             ExpiresIn = options.AccessTokenLifetime.Seconds,
             TokenType = TokenTypes.Bearer,
         };
@@ -168,7 +168,7 @@ public class AuthorizationCodeStrategy(
                 .WithExpirationTime(DateTimeOffset.UtcNow.Add(options.IdTokenLifetime))
                 .Build();
             
-            response.IdToken = await tokenFactory.CreateAsync(idClaims);
+            response.IdToken = await tokenFactory.CreateAsync(idClaims, cancellationToken);
         }
 
         return Result.Success(response);

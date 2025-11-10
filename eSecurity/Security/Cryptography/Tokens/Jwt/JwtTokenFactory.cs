@@ -1,21 +1,23 @@
 ﻿using System.Security.Claims;
-using eSecurity.Security.Cryptography.Keys.SigningKey;
+using System.Security.Cryptography.X509Certificates;
+using eSecurity.Security.Cryptography.Signing.Keys;
 
 namespace eSecurity.Security.Cryptography.Tokens.Jwt;
 
 public class JwtTokenFactory(
     IJwtSigner signer,
-    ISigningKeyProvider signingKeyProvider) : ITokenFactory
+    ICertificateProvider certificateProvider) : ITokenFactory
 {
     private readonly IJwtSigner signer = signer;
-    private readonly ISigningKeyProvider signingKeyProvider = signingKeyProvider;
+    private readonly ICertificateProvider certificateProvider = certificateProvider;
 
-    public async Task<string> CreateAsync(IEnumerable<Claim> claims)
+    public async Task<string> CreateAsync(IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
     {
-        var signingKey = await signingKeyProvider.GetAsync();
-        if (signingKey is null) throw new NullReferenceException("Private key is null.");
+        var certificate = await certificateProvider.GetCertificateAsync(cancellationToken);
+        var privateKey = certificate.Certificate.GetRSAPrivateKey();
+        if (privateKey is null) throw new NullReferenceException("Private key is null.");
 
-        var securityKey = new RsaSecurityKey(signingKey.PrivateKey) { KeyId = signingKey.Id.ToString() };
+        var securityKey = new RsaSecurityKey(privateKey) { KeyId = certificate.Id.ToString() };
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
         return signer.Sign(claims, signingCredentials);
     }

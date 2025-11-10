@@ -2,7 +2,8 @@
 using eSecurity.Security.Cryptography.Hashing;
 using eSecurity.Security.Cryptography.Hashing.Hashers;
 using eSecurity.Security.Cryptography.Keys;
-using eSecurity.Security.Cryptography.Keys.SigningKey;
+using eSecurity.Security.Cryptography.Signing.Certificates;
+using eSecurity.Security.Cryptography.Signing.Keys;
 using eSecurity.Security.Cryptography.Tokens.Jwt;
 
 namespace eSecurity.Security.Cryptography;
@@ -18,7 +19,7 @@ public static class CryptographyExtensions
             cfg.IdTokenLifetime = TimeSpan.FromMinutes(10);
         });
         
-        builder.Services.AddSigningKeys(cfg =>
+        builder.Services.AddSigning(cfg =>
         {
             cfg.SubjectName = "CN=JwtSigningKey";
             cfg.CertificateLifetime = TimeSpan.FromDays(180);
@@ -46,10 +47,11 @@ public static class CryptographyExtensions
         services.AddScoped<IKeyFactory, RandomKeyFactory>();
     }
 
-    private static void AddSigningKeys(this IServiceCollection services, Action<SigningKeyOptions> configure)
+    private static void AddSigning(this IServiceCollection services, Action<CertificateOptions> configure)
     {
         services.Configure(configure);
-        services.AddScoped<ISigningKeyProvider, SigningKeyProvider>();
+        services.AddScoped<ICertificateProvider, CertificateProvider>();
+        services.AddScoped<ICertificateHandler, CertificateHandler>();
     }
     
     private static void AddJwt(this IServiceCollection services, Action<TokenOptions> configure)
