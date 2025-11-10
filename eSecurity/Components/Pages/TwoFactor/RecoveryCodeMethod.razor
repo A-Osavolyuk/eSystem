@@ -1,6 +1,8 @@
 ﻿@using eSecurity.Common.DTOs
 @using eSecurity.Common.Responses
 @using eSecurity.Features.TwoFactor.Commands
+@using eSecurity.Security.Authentication.SignIn.Strategies
+@using ZXing.QrCode.Internal
 @using eSecurity.Security.Authentication.TwoFactor
 
 @inject UserState UserState
@@ -111,17 +113,20 @@
 
         if (form.IsValid)
         {
-            var command = new VerifyRecoveryCodeCommand()
+            var command = new SignInCommand()
             {
-                UserId = UserId,
-                Code = Model.Code
+                Payload = new RecoveryCodeSignInPayload()
+                {
+                    Code = Model.Code,
+                    UserId = UserId
+                }
             };
 
             var result = await Sender.Send(command);
 
             if (result.Succeeded)
             {
-                var response = result.Get<VerifyRecoveryCodeResponse>()!;
+                var response = result.Get<SignInResponse>()!;
 
                 UserState.UserId = response.UserId;
                 await OnSignIn.InvokeAsync();

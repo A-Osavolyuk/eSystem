@@ -1,4 +1,4 @@
-﻿using eSecurity.Common.Responses;
+using eSecurity.Common.Responses;
 using eSecurity.Data.Entities;
 using eSecurity.Security.Authentication.Lockout;
 using eSecurity.Security.Authentication.Odic.Session;
@@ -8,22 +8,22 @@ using eSecurity.Security.Identity.Options;
 using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 
-namespace eSecurity.Features.TwoFactor.Commands;
+namespace eSecurity.Security.Authentication.SignIn.Strategies;
 
-public record VerifyRecoveryCodeCommand() : IRequest<Result>
+public sealed class RecoveryCodeSignInPayload : SignInPayload
 {
     public required Guid UserId { get; set; }
     public required string Code { get; set; }
 }
 
-public class VerifyRecoveryCodeCommandHandler(
+public sealed class RecoveryCodeSignInStrategy(
     IUserManager userManager,
     IRecoverManager recoveryManager,
     IHttpContextAccessor httpContextAccessor,
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
     ILockoutManager lockoutManager,
-    IOptions<SignInOptions> options) : IRequestHandler<VerifyRecoveryCodeCommand, Result>
+    IOptions<SignInOptions> options) : ISignInStrategy
 {
     private readonly IUserManager userManager = userManager;
     private readonly IRecoverManager recoveryManager = recoveryManager;
@@ -33,13 +33,16 @@ public class VerifyRecoveryCodeCommandHandler(
     private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
     private readonly SignInOptions options = options.Value;
 
-    public async Task<Result> Handle(VerifyRecoveryCodeCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> ExecuteAsync(SignInPayload payload, CancellationToken cancellationToken = default)
     {
-        VerifyRecoveryCodeResponse response;
-        
-        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}");
-        
+        SignInResponse response;
+
+        if (payload is not RecoveryCodeSignInPayload recoveryPayload)
+            throw new NotSupportedException("Payload type must be 'RecoveryCodeSignInPayload'");
+
+        var user = await userManager.FindByIdAsync(recoveryPayload.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {recoveryPayload.UserId}");
+
         var userAgent = httpContext.GetUserAgent()!;
         var ipAddress = httpContext.GetIpV4()!;
         var clientInfo = httpContext.GetClientInfo()!;
@@ -66,14 +69,14 @@ public class VerifyRecoveryCodeCommandHandler(
             if (!result.Succeeded) return result;
         }
 
-        var codeResult = await recoveryManager.VerifyAsync(user, request.Code, cancellationToken);
+        var codeResult = await recoveryManager.VerifyAsync(user, recoveryPayload.Code, cancellationToken);
         if (!codeResult.Succeeded)
         {
             user.FailedLoginAttempts += 1;
 
             if (user.FailedLoginAttempts < options.MaxFailedLoginAttempts)
             {
-                response = new VerifyRecoveryCodeResponse()
+                response = new SignInResponse
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
@@ -86,12 +89,12 @@ public class VerifyRecoveryCodeCommandHandler(
             var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user, 
+            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user,
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            response = new VerifyRecoveryCodeResponse()
+            response = new SignInResponse
             {
                 UserId = user.Id,
                 IsLockedOut = true,
@@ -111,8 +114,8 @@ public class VerifyRecoveryCodeCommandHandler(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        response = new VerifyRecoveryCodeResponse() { UserId = user.Id, };
-        
+        response = new SignInResponse() { UserId = user.Id, };
+
         await sessionManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);

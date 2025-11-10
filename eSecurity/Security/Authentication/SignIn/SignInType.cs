@@ -5,5 +5,6 @@ public enum SignInType
     Password,
     AuthenticatorApp,
     Passkey,
-    OAuth
+    OAuth,
+    RecoveryCode
 }
