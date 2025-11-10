@@ -12,6 +12,24 @@ namespace eSecurity.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Certificates",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ProtectedCertificate = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ProtectedPassword = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RotateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Certificates", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Clients",
                 columns: table => new
                 {
@@ -326,6 +344,32 @@ namespace eSecurity.Migrations
                     table.PrimaryKey("PK_Passwords", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Passwords_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserClients",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserClients", x => new { x.UserId, x.ClientId });
+                    table.ForeignKey(
+                        name: "FK_UserClients_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserClients_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -848,8 +892,7 @@ namespace eSecurity.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Consents_UserId",
                 table: "Consents",
-                column: "UserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GrantedScopes_ConsentId",
@@ -908,6 +951,11 @@ namespace eSecurity.Migrations
                 name: "IX_Sessions_DeviceId",
                 table: "Sessions",
                 column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserClients_ClientId",
+                table: "UserClients",
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserDevices_UserId",
@@ -980,6 +1028,9 @@ namespace eSecurity.Migrations
                 name: "AuthorizationCodes");
 
             migrationBuilder.DropTable(
+                name: "Certificates");
+
+            migrationBuilder.DropTable(
                 name: "ClientAllowedScopes");
 
             migrationBuilder.DropTable(
@@ -1014,6 +1065,9 @@ namespace eSecurity.Migrations
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
+
+            migrationBuilder.DropTable(
+                name: "UserClients");
 
             migrationBuilder.DropTable(
                 name: "UserEmails");

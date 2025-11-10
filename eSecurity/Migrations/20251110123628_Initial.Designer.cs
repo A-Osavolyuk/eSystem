@@ -12,8 +12,8 @@ using eSecurity.Data;
 namespace eSecurity.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251107133615_AddSigningKey")]
-    partial class AddSigningKey
+    [Migration("20251110123628_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -306,8 +306,7 @@ namespace eSecurity.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Consents");
                 });
@@ -709,7 +708,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.SigningKeyEntity", b =>
+            modelBuilder.Entity("eSecurity.Data.Entities.SigningCertificateEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -724,11 +723,11 @@ namespace eSecurity.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<byte[]>("ProtectedPassword")
+                    b.Property<byte[]>("ProtectedCertificate")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<byte[]>("ProtectedPfx")
+                    b.Property<byte[]>("ProtectedPassword")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
@@ -740,7 +739,7 @@ namespace eSecurity.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SigningKeys");
+                    b.ToTable("Certificates");
                 });
 
             modelBuilder.Entity("eSecurity.Data.Entities.UserClientEntity", b =>
@@ -1305,8 +1304,8 @@ namespace eSecurity.Migrations
                         .IsRequired();
 
                     b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
-                        .WithOne("Consent")
-                        .HasForeignKey("eSecurity.Data.Entities.ConsentEntity", "UserId")
+                        .WithMany("Consents")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1658,8 +1657,7 @@ namespace eSecurity.Migrations
                 {
                     b.Navigation("Clients");
 
-                    b.Navigation("Consent")
-                        .IsRequired();
+                    b.Navigation("Consents");
 
                     b.Navigation("Devices");
 
