@@ -1,5 +1,4 @@
 var builder = DistributedApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
 
 var storage = builder.AddAzureStorage("storage")
     .RunAsEmulator(azurite =>
@@ -17,17 +16,8 @@ var redisCache = builder.AddRedis()
 
 var sqlServer = builder.AddSqlServer()
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithDataVolume();
-
-var mongo = builder.AddMongoDb()
-    .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume()
-    .WithMongoExpress(configuration);
-
-var cartDb = mongo.AddDatabase("cart-db", "CartDB");
-var authDb = sqlServer.AddDatabase("auth-db", "AuthDB");
-var commentsDb = sqlServer.AddDatabase("comment-db", "CommentsDB");
-var productDb = sqlServer.AddDatabase("product-db", "ProductDB");
+    .AddDatabase("auth-db", "AuthDB");
 
 var rabbitMq = builder.AddRabbitMq()
     .WithLifetime(ContainerLifetime.Persistent)
@@ -53,51 +43,21 @@ var messageBus = builder.AddProject<Projects.eSystem_MessageBus>("message-bus")
     .WaitFor(telegramService);
 
 var authApi = builder.AddProject<Projects.eSecurity>("e-security")
-    .WithJwtConfig()
-    .WithReference(authDb).WaitFor(authDb)
+    .WithReference(sqlServer).WaitFor(sqlServer)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging");
 
-// var productApi = builder.AddProject<Projects.eSystem_Product_Api>("product-api")
-//     .WithJwtConfig()
-//     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-//     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-//     .WithReference(rabbitMq).WaitFor(rabbitMq)
-//     .WithReference(redisCache).WaitFor(rabbitMq)
-//     .WithReference(productDb).WaitFor(productDb);
-//
-// var commentApi = builder.AddProject<Projects.eSystem_Comments_Api>("comment-api")
-//     .WithJwtConfig()
-//     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-//     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-//     .WithReference(commentsDb).WaitFor(commentsDb)
-//     .WithReference(redisCache).WaitFor(redisCache)
-//     .WithReference(rabbitMq).WaitFor(rabbitMq);
-//
-// var cartApi = builder.AddProject<Projects.eSystem_Cart_Api>("cart-api")
-//     .WithJwtConfig()
-//     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-//     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-//     .WithReference(rabbitMq).WaitFor(rabbitMq)
-//     .WithReference(redisCache).WaitFor(redisCache)
-//     .WithReference(cartDb).WaitFor(cartDb);
-//
-// var storageApi = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
-//     .WithJwtConfig()
-//     .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
-//     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
-//     .WithReference(rabbitMq).WaitFor(rabbitMq)
-//     .WithReference(redisCache).WaitFor(redisCache)
-//     .WithReference(blobs).WaitFor(blobs);
+var storageApi = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
+    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
+    .WithReference(rabbitMq).WaitFor(rabbitMq)
+    .WithReference(redisCache).WaitFor(redisCache)
+    .WithReference(blobs).WaitFor(blobs);
 
-// var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
-//     .WithJwtConfig()
-//     .WithReference(authApi).WaitFor(authApi)
-//     .WithReference(productApi).WaitFor(productApi)
-//     .WithReference(cartApi).WaitFor(cartApi)
-//     .WithReference(storageApi).WaitFor(storageApi)
-//     .WithReference(commentApi).WaitFor(commentApi);
+var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
+    .WithReference(authApi).WaitFor(authApi)
+    .WithReference(storageApi).WaitFor(storageApi);
 
 var app = builder.Build();
 
