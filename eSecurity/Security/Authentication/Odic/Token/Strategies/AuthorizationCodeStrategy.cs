@@ -129,7 +129,7 @@ public class AuthorizationCodeStrategy(
         var response = new TokenResponse()
         {
             AccessToken = await tokenFactory.CreateAsync(accessClaims, cancellationToken),
-            ExpiresIn = options.AccessTokenLifetime.Seconds,
+            ExpiresIn = (int)options.AccessTokenLifetime.TotalSeconds,
             TokenType = TokenTypes.Bearer,
         };
         

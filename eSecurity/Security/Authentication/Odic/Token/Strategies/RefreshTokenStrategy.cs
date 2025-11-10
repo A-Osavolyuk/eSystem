@@ -94,7 +94,7 @@ public class RefreshTokenStrategy(
         var response = new TokenResponse()
         {
             AccessToken = await tokenFactory.CreateAsync(accessTokenClaims, cancellationToken),
-            ExpiresIn = options.AccessTokenLifetime.Seconds,
+            ExpiresIn = (int)options.AccessTokenLifetime.TotalSeconds,
             TokenType = TokenTypes.Bearer,
         };
 
