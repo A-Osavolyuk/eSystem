@@ -168,6 +168,7 @@
             {
                 UserState.UserId = response.UserId;
                 await AuthenticationManager.SignInAsync();
+                NavigationManager.NavigateTo(Links.Account.Profile);
             }
         }
         else
