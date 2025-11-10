@@ -40,6 +40,7 @@ public class CertificateProvider(
             var entity = new SigningCertificateEntity()
             {
                 Id = Guid.CreateVersion7(),
+                IsActive = true,
                 ProtectedPassword = protectedCertificate.ProtectedPasswordBytes,
                 ProtectedCertificate = protectedCertificate.ProtectedCertificateBytes,
                 ExpireDate = protectedCertificate.Certificate.NotAfter,
