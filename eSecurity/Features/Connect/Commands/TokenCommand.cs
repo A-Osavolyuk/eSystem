@@ -2,7 +2,7 @@
 using eSecurity.Security.Authentication.Odic.Token.Strategies;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 
-namespace eSecurity.Features.Odic.Commands;
+namespace eSecurity.Features.Connect.Commands;
 
 public class TokenCommand() : IRequest<Result>
 {

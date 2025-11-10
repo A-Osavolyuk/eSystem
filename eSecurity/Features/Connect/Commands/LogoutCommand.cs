@@ -1,7 +1,7 @@
 ﻿using eSecurity.Security.Authentication.Odic.Logout;
 using eSecurity.Security.Authentication.Odic.Logout.Strategies;
 
-namespace eSecurity.Features.Odic.Commands;
+namespace eSecurity.Features.Connect.Commands;
 
 public class LogoutCommand() : IRequest<Result>
 {

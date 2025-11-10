@@ -7,7 +7,7 @@ using eSecurity.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Security.Authentication.Odic.Constants;
 
-namespace eSecurity.Features.Odic.Commands;
+namespace eSecurity.Features.Connect.Commands;
 
 public class AuthorizeCommand() : IRequest<Result>
 {
