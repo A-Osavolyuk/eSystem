@@ -1,9 +1,4 @@
 ﻿@inject UserState UserState
-@inject ISender Sender
-
-@using eSecurity.Common.DTOs
-@using eSecurity.Features.Users.Queries
-@implements IDisposable
 
 <MudAvatar @onclick="DrawerToggle">
     <MudImage
@@ -87,42 +82,5 @@
 @code {
     private bool isDrawerOpen = false;
 
-    protected override void OnInitialized()
-    {
-        UserState.OnChange += ReloadAsync;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await LoadStateAsync();
-            StateHasChanged();
-        }
-    }
-
-    private async Task ReloadAsync()
-    {
-        await LoadStateAsync();
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task LoadStateAsync()
-    {
-        var result = await Sender.Send(new GetUserStateQuery(UserState.UserId));
-        
-        if (result.Succeeded)
-        {
-            var state = result.Get<UserStateDto>()!;
-            UserState.Map(state);
-        }
-    }
-
     private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
-
-    public void Dispose()
-    {
-        UserState.OnChange -= ReloadAsync;
-    }
-
 }
