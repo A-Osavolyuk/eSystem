@@ -9,14 +9,12 @@ public static class WebApplicationExtensions
     public static void MapServices(this WebApplication app)
     {
         app.MapDefaultEndpoints();
+        app.UseStaticWebAssets();
         app.UseRouting();
-        app.UseSession();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.UseExceptionHandler();
         app.UseAntiforgery();
-        app.UseStaticWebAssets();
         app.UseStatusCodePagesWithRedirects("/not-found");
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();

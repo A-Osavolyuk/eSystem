@@ -7,7 +7,9 @@ using eSecurity.Client.Security;
 using eSecurity.Client.Services.Implementations;
 using eSecurity.Client.Services.Interfaces;
 using eSystem.Core.Common.Network.Gateway;
+using eSystem.Core.Validation;
 using eSystem.ServiceDefaults;
+using FluentValidation;
 using MudBlazor;
 using MudBlazor.Services;
 using MudExtensions.Services;
@@ -19,6 +21,7 @@ public static class HostApplicationBuilderExtensions
     public static void AddServices(this IHostApplicationBuilder builder)
     {
         builder.AddServiceDefaults();
+        builder.AddValidation<IAssemblyMarker>();
         
         builder.Services.AddHttpClient();
         builder.Services.AddHttpContextAccessor();
@@ -42,6 +45,7 @@ public static class HostApplicationBuilderExtensions
         builder.Services.AddGateway();
         builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
         builder.Services.AddMudExtensions();
+        builder.Services.AddControllers();
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
