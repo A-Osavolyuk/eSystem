@@ -1,4 +1,5 @@
 ﻿using eSecurity.Core.Security.Cookies.Constants;
+using eSecurity.Server.Security.Authentication.Handlers;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.Odic;
 using eSecurity.Server.Security.Authentication.Password;
@@ -22,13 +23,11 @@ public static class AuthenticationExtensions
         builder.Services.Add2FA();
         builder.Services.AddLockout();
         builder.Services.AddOdic();
-
-        //TODO: Implement JWT authentication handler
         
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = AuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
@@ -69,6 +68,8 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
-            });
+            })
+            .AddScheme<JwtAuthenticationSchemeOptions, JwtAuthenticationHandler>(
+                JwtBearerDefaults.AuthenticationScheme, _ => {});
     }
 }
