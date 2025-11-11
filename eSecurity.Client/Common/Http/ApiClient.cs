@@ -69,7 +69,7 @@ public class ApiClient(
             message.IncludeCookies(httpContext);
             message.AddContent(httpRequest, httpOptions);
 
-            var httpClient = clientFactory.CreateClient("eAccount.Client");
+            var httpClient = clientFactory.CreateClient("eSecurity.Client");
             var httpResponseMessage = await httpClient.SendAsync(message);
 
             if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)

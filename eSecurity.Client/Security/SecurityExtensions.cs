@@ -1,6 +1,7 @@
 using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.Handlers.Jwt;
 using eSecurity.Client.Security.Authentication.Odic;
+using eSecurity.Client.Security.Authentication.Odic.Token;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,6 +16,7 @@ public static class SecurityExtensions
     {
         services.AddOdic();
         services.AddCookies();
+        services.AddScoped<TokenProvider>();
         services.AddScoped<AuthenticationManager>();
         services.AddScoped<AuthenticationStateProvider, ClaimAuthenticationStateProvider>();
         
