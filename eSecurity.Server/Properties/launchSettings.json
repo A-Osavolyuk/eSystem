@@ -14,7 +14,7 @@
     "http": {
       "commandName": "Project",
       "launchBrowser": false,
-      "launchUrl": "account/sign-in" ,
+      "launchUrl": "scalar/v1" ,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
