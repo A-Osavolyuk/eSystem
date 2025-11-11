@@ -109,7 +109,7 @@ public static class HostApplicationBuilderExtensions
                 ClusterId = "security-cluster",
                 Destinations = new Dictionary<string, DestinationConfig>()
                 {
-                    ["security-destination"] = new() { Address = configuration["services:e-security:http:0"]! }
+                    ["security-destination"] = new() { Address = configuration["services:e-security-server:http:0"]! }
                 }
             },
             new ClusterConfig
