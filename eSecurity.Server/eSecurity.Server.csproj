@@ -42,22 +42,4 @@
         <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
         <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\app.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css.map" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\global.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\favicon.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\images\avatar.jpg" />
-      <_ContentIncludedByDefault Remove="wwwroot\images\no-avatar.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\scripts\clipboard.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\scripts\cookieManager.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\scripts\fetchClient.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\scripts\fileDownload.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\scripts\pageTitle.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\scripts\printer.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\scripts\scrollAnimation.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\scripts\webAuthN.js" />
-    </ItemGroup>
 </Project>
