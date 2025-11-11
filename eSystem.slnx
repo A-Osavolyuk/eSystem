@@ -3,12 +3,16 @@
   <Folder Name="/src/Core/">
     <Project Path="eSystem.Core\eSystem.Core.csproj" />
   </Folder>
+  <Folder Name="/src/eSecurity/">
+    <Project Path="eSecurity.Client\eSecurity.Client.csproj" Type="Classic C#" />
+    <Project Path="eSecurity.Core\eSecurity.Core.csproj" Type="Classic C#" />
+    <Project Path="eSecurity.Server\eSecurity.Server.csproj" />
+  </Folder>
   <Folder Name="/src/Hosting/">
     <Project Path="eSystem.AppHost\eSystem.AppHost.csproj" />
     <Project Path="eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/src/Microservices/">
-    <Project Path="eSecurity\eSecurity.csproj" />
     <Project Path="eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
     <Project Path="eSystem.MessageBus\eSystem.MessageBus.csproj" />
     <Project Path="eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />

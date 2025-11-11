@@ -1,0 +1,88 @@
+﻿@using eSecurity.Client.Common.State.States
+@using eSecurity.Core.Common.Routing
+@inject UserState UserState
+
+<MudAvatar @onclick="DrawerToggle">
+    <MudImage
+        Src="/images/avatar.jpg"
+        Alt="Avatar"
+        FallbackSrc="/images/avatar.jpg"/>
+</MudAvatar>
+<MudDrawer Class="py-3"
+           @bind-Open="isDrawerOpen"
+           ClipMode="DrawerClipMode.Never"
+           Overlay="true"
+           Anchor="Anchor.End"
+           Variant="DrawerVariant.Temporary"
+           Width="300px"
+           Elevation="2">
+    <MudDrawerHeader Class="w-100">
+        <MudStack Class="w-100">
+            <MudStack Row="true" Justify="Justify.Center">
+                <MudAvatar Size="Size.Large">
+                    <MudImage
+                        Src="/images/avatar.jpg"
+                        Alt="Avatar"
+                        FallbackSrc="/images/avatar.jpg"/>
+
+                </MudAvatar>
+            </MudStack>
+            @if (!string.IsNullOrEmpty(UserState.Credentials?.Username))
+            {
+                <MudText Inline="true" Align="Align.Center"> @UserState.Credentials!.Username </MudText>
+            }
+            <MudDivider/>
+        </MudStack>
+    </MudDrawerHeader>
+    <MudNavMenu Color="Color.Primary" Class="px-3">
+        <MudNavLink
+            Href="@Links.Account.Profile"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.AccountBox">
+            Profile
+        </MudNavLink>
+        <MudNavLink
+            Href="@Links.Account.SettingsPage"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Settings">
+            Settings
+        </MudNavLink>
+        <MudNavLink
+            Href="@Links.Account.SecurityPage"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Security">
+            Password and authentication
+        </MudNavLink>
+        <MudNavLink
+            Href="@Links.Account.DevicesPage"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Devices">
+            Devices
+        </MudNavLink>
+        <MudNavLink
+            Href="@Links.Account.EmailsPage"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Email">
+            Emails
+        </MudNavLink>
+        <MudNavLink
+            Href="@Links.Account.PhoneNumbersPage"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Smartphone">
+            Phone numbers
+        </MudNavLink>
+        <MudDivider Class="my-2"/>
+        <MudNavLink
+            Href="@Links.Connect.Logout"
+            Match="NavLinkMatch.All"
+            Icon="@Icons.Material.Filled.Logout">
+            Logout
+        </MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+
+@code {
+    private bool isDrawerOpen = false;
+
+    private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
+}

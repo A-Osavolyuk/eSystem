@@ -1,0 +1,158 @@
+﻿@using eSecurity.Core.Common.DTOs
+@using eSecurity.Core.Security.Authentication.TwoFactor
+
+<MudPaper Outlined Class="pa-5">
+    <MudStack Spacing="3">
+        <MudTextM3 Typo="TypoM3.Title" Size="Size.Large" Class="fw-normal">
+            Don't get locked out, configure additional authentication methods
+        </MudTextM3>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+            Configuring additional authentication methods will help you gain access to
+            your account in case you lose your device and don't have your recovery codes.
+        </MudTextM3>
+        <MudStack Spacing="3">
+            <MudStack Row="true">
+                <MudIcon Size="Size.Medium" Class="mt-1" Icon="@Icons.Material.Filled.Key"/>
+                <MudStack Spacing="0">
+                    <MudStack Spacing="1" Row="true">
+                        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="pt-1">
+                            Passkeys
+                        </MudTextM3>
+                        @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                        {
+                            <MudChip
+                                Class="mx-0"
+                                T="string"
+                                Variant="Variant.Outlined"
+                                Color="Color.Success"
+                                Size="Size.Small">
+                                Configured
+                            </MudChip>
+                        }
+                        else
+                        {
+                            <MudChip
+                                Class="mx-0"
+                                T="string"
+                                Variant="Variant.Outlined"
+                                Color="Color.Error"
+                                Size="Size.Small">
+                                Not configured
+                            </MudChip>
+                        }
+                    </MudStack>
+                    <MudStack Row="true">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                            Passkeys are webauthn credentials that validate your identity using touch, facial 
+                            recognition, a device password, or a PIN. They can be used as a password 
+                            replacement or as a 2FA method.
+                        </MudTextM3>
+                        <MudSpacer/>
+                        <MudStack>
+                            @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                            {
+                                <MudButton
+                                    Variant="Variant.Outlined"
+                                    Color="Color.Default"
+                                    ButtonType="ButtonType.Button"
+                                    Size="Size.Small"
+                                    EndIcon="@Icons.Material.Filled.ArrowForward">
+                                    Edit
+                                </MudButton>
+                            }
+                            else
+                            {
+                                <MudButton
+                                    Variant="Variant.Outlined"
+                                    Color="Color.Default"
+                                    ButtonType="ButtonType.Button"
+                                    Size="Size.Small"
+                                    Href="@Links.Account.PasskeyAddPage"
+                                    EndIcon="@Icons.Material.Filled.ArrowForward">
+                                    Add
+                                </MudButton>
+                            }
+                        </MudStack>
+                    </MudStack>
+                </MudStack>
+            </MudStack>
+            <MudStack Row="true">
+                <MudIcon Size="Size.Medium" Class="mt-1" Icon="@Icons.Material.Outlined.Sms"/>
+                <MudStack Spacing="0">
+                    <MudStack Spacing="1" Row="true">
+                        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="pt-1">
+                            SMS/Text message
+                        </MudTextM3>
+                        <MudChip
+                            Class="mx-0"
+                            T="string"
+                            Variant="Variant.Outlined"
+                            Color="Color.Error"
+                            Size="Size.Small">
+                            Less secure
+                        </MudChip>
+                        @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+                        {
+                            <MudChip
+                                Class="mx-0"
+                                T="string"
+                                Variant="Variant.Outlined"
+                                Color="Color.Success"
+                                Size="Size.Small">
+                                Configured
+                            </MudChip>
+                        }
+                        else
+                        {
+                            <MudChip
+                                Class="mx-0"
+                                T="string"
+                                Variant="Variant.Outlined"
+                                Color="Color.Error"
+                                Size="Size.Small">
+                                Not configured
+                            </MudChip>
+                        }
+                    </MudStack>
+                    <MudStack Row="true">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                            Get one-time codes sent to your phone via SMS to complete authentication requests. 
+                            We strongly advise against using SMS because it is susceptible to interception, does not
+                            provide resistance against phishing attacks, and deliverability can be unreliable.
+                            It is recommended to use an Authenticator app instead of SMS.
+                        </MudTextM3>
+                        <MudSpacer/>
+                        <MudStack>
+                            @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+                            {
+                                <MudButton
+                                    Variant="Variant.Outlined"
+                                    Color="Color.Default"
+                                    ButtonType="ButtonType.Button"
+                                    Size="Size.Small"
+                                    EndIcon="@Icons.Material.Filled.ArrowForward">
+                                    Edit
+                                </MudButton>
+                            }
+                            else
+                            {
+                                <MudButton
+                                    Variant="Variant.Outlined"
+                                    Color="Color.Default"
+                                    ButtonType="ButtonType.Button"
+                                    Size="Size.Small"
+                                    EndIcon="@Icons.Material.Filled.ArrowForward">
+                                    Edit
+                                </MudButton>
+                            }
+                        </MudStack>
+                    </MudStack>
+                </MudStack>
+            </MudStack>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+}

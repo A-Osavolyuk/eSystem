@@ -1,0 +1,48 @@
+﻿@using eSecurity.Client.Services.Interfaces
+@using eSecurity.Core.Common.Requests
+@using eSecurity.Core.Common.Messaging
+
+@inject ISnackbar Snackbar
+@inject IVerificationService VerificationService
+
+@if (Context is not null)
+{
+    <MudPaper Outlined Class="pa-3">
+        @if (Context.Sender == SenderType.Email)
+        {
+            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                Didn't received an email?
+                <strong @onclick="async () => await ResendCodeAsync()"
+                        class="cursor-pointer">Resend</strong>
+            </MudTextM3>
+        }
+        else if (Context.Sender == SenderType.Sms)
+        {
+            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                 Didn't received a SMS?
+                <strong @onclick="async () => await ResendCodeAsync()"
+                        class="cursor-pointer">Resend</strong>
+            </MudTextM3>
+        }
+    </MudPaper>
+}
+
+@code {
+    [Parameter] public MessageContext? Context { get; set; } = new();
+
+    private async Task ResendCodeAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            UserId = Context!.UserId,
+            Payload = Context!.Payload,
+            Purpose = Context!.Purpose,
+            Sender = Context!.Sender,
+            Action = Context!.Action
+        };
+
+        var result = await VerificationService.ResendCodeAsync(request);
+        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+    }
+
+}

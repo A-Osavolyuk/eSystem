@@ -1,0 +1,51 @@
+@page "/connect/token"
+
+@using eSecurity.Client.Security.Authentication.Odic.Clients
+@using eSecurity.Core.Common.Responses
+
+@inherits PageBase
+
+@inject IConnectService ConnectService
+@inject IOptions<ClientOptions> ClientOptions
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "code")]
+    public string Code { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string State { get; set; } = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var options = ClientOptions.Value;
+
+            var request = new TokenRequest()
+            {
+                ClientId = options.ClientId,
+                ClientSecret = options.ClientSecret,
+                RedirectUri = options.CallbackUri,
+                GrantType = GrantTypes.AuthorizationCode,
+                Code = Code,
+            };
+
+            var result = await ConnectService.TokenAsync(request);
+
+            if (result.Success)
+            {
+                var response = result.Get<TokenResponse>();
+
+                await AuthenticationManager.SignInAsync(
+                    response.RefreshToken!,
+                    response.AccessToken,
+                    response.IdToken!
+                );
+                
+                NavigationManager.NavigateTo(Links.Account.Profile);
+            }
+        }
+    }
+
+}

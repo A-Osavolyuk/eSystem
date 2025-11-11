@@ -1,0 +1,44 @@
+﻿using eSecurity.Core.Common.Requests;
+using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Cryptography.Protection.Constants;
+using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
+using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Identity.User;
+using Microsoft.AspNetCore.DataProtection;
+
+namespace eSecurity.Server.Features.TwoFactor.Commands;
+
+public record ReconfigureAuthenticatorCommand(ReconfigureAuthenticatorRequest Request) : IRequest<Result>;
+
+public class ReconfigureAuthenticatorCommandHandler(
+    IUserManager userManager,
+    ISecretManager secretManager,
+    IVerificationManager verificationManager,
+    IDataProtectionProvider protectionProvider) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
+{
+    private readonly IUserManager userManager = userManager;
+    private readonly ISecretManager secretManager = secretManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
+
+    public async Task<Result> Handle(ReconfigureAuthenticatorCommand request, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+
+        var verificationResult = await verificationManager.VerifyAsync(user, PurposeType.AuthenticatorApp,
+            ActionType.Reconfigure, cancellationToken);
+
+        if (!verificationResult.Succeeded) return verificationResult;
+
+        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+        var protectedSecret = protector.Protect(request.Request.Secret);
+        var userSecret = user.Secret!;
+
+        userSecret.Secret = protectedSecret;
+        userSecret.UpdateDate = DateTimeOffset.UtcNow;
+
+        var result = await secretManager.UpdateAsync(userSecret, cancellationToken);
+        return result;
+    }
+}

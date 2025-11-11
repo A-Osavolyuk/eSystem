@@ -1,0 +1,22 @@
+﻿using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Server.Data.Entities;
+
+namespace eSecurity.Server.Security.Authorization.Access.Verification;
+
+public interface IVerificationManager
+{
+    public ValueTask<Result> CreateAsync(UserEntity user, PurposeType purpose, 
+        ActionType action, CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> VerifyAsync(UserEntity user, PurposeType purpose, 
+        ActionType action, CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> SubscribeAsync(UserEntity user, VerificationMethod method, 
+        bool preferred = false, CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> UnsubscribeAsync(UserVerificationMethodEntity method, 
+        CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> PreferAsync(UserEntity user, VerificationMethod method, 
+        CancellationToken cancellationToken = default);
+}

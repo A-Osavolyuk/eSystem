@@ -1,0 +1,154 @@
+﻿@using eSecurity.Core.Common.DTOs
+@inject NavigationManager NavigationManager
+@inject UserState UserState
+@inject ConfirmationManager ConfirmationManager
+@inject ISnackbar Snackbar
+@inject IPasskeyService PasskeyService
+
+<MudStack Spacing="0" Class="px-5 pb-2">
+    <MudStack Row="true" Spacing="3">
+        <MudStack>
+            <MudIcon Icon="@Icons.Material.Filled.Key" Class="mt-1"/>
+        </MudStack>
+        <MudStack Spacing="3">
+            <MudStack Spacing="0">
+                <MudStack Row="true" Spacing="0">
+                    <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
+                        Passkeys
+                    </MudTextM3>
+                    @if (Model.HasPasskeys)
+                    {
+                        <MudChip
+                            T="string"
+                            Color="Color.Success"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Enabled
+                        </MudChip>
+                    }
+                    else
+                    {
+                        <MudChip
+                            T="string"
+                            Color="Color.Error"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small">
+                            Disabled
+                        </MudChip>
+                    }
+                </MudStack>
+                <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
+                    Additional sign-in method.
+                    Works by key-per-device principal.
+                    You can use this method instead of password one.
+                </MudTextM3>
+                @if (Model.HasPasskeys)
+                {
+                    <MudStack Row="true" Spacing="1" Class="mt-1 cursor-pointer" @onclick="@ToggleExpand">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50 pt-1 user-select-none">
+                            @(GetPasskeysText())
+                        </MudTextM3>
+                        <MudIcon
+                            Size="Size.Small"
+                            Class="opacity-50"
+                            Icon="@(GetExpandIcon())"/>
+                    </MudStack>
+                }
+            </MudStack>
+            @if (isExpanded && Model.HasPasskeys)
+            {
+                <MudStack Spacing="3">
+                    <MudDivider/>
+                    @foreach (var passkey in Model.Passkeys)
+                    {
+                        <Passkey 
+                            Model="passkey" 
+                            OnDelete="@(async (value) => await OnDelete(value))"
+                            OnChange="@(async (value) => await OnChange(value))"/>
+                    }
+                </MudStack>
+            }
+        </MudStack>
+        <MudSpacer/>
+        <MudStack>
+            <MudButton
+                Variant="Variant.Outlined"
+                ButtonType="ButtonType.Button"
+                Size="Size.Small"
+                OnClick="@(() => NavigationManager.NavigateTo(OnAdd()))"
+                Href="@(OnAdd())">
+                Add
+            </MudButton>
+        </MudStack>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] 
+    public PasskeysData Model { get; set; } = new();
+    
+    [Parameter] 
+    public EventCallback OnRefresh { get; set; }
+
+    private bool isExpanded = false;
+    
+    private void ToggleExpand() => isExpanded = !isExpanded;
+
+    private string GetExpandIcon()
+    {
+        const string unexpandedIcon = Icons.Material.Outlined.ExpandMore;
+        const string expandedIcon = Icons.Material.Outlined.ExpandLess;
+
+        return isExpanded ? expandedIcon : unexpandedIcon;
+    }
+
+    private string GetPasskeysText()
+    {
+        return Model.Passkeys.Count switch
+        {
+            1 => "1 passkey configured",
+            > 1 => $"{Model.Passkeys.Count} passkeys configured",
+            _ => ""
+        };
+    }
+
+    private string OnAdd()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.Account.PasskeyAddPage)
+            .WithQueryParam("return_url", Links.Account.SecurityPage)
+            .Build();
+    }
+
+    private async Task OnChange(UserPasskeyDto passkey)
+    {
+        var request = new ChangePasskeyNameRequest()
+        {
+            UserId = UserState.UserId,
+            PasskeyId = passkey.Id,
+            DisplayName = passkey.DisplayName
+        };
+
+        var result = await PasskeyService.ChangeNameAsync(request);
+
+        if (result.Success) await OnRefresh.InvokeAsync();
+        else Snackbar.Add(result.Message, Severity.Error);
+    }
+
+    private async Task OnDelete(UserPasskeyDto passkey)
+    {
+        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Passkey, ActionType.Remove);
+        if (!confirmationResult!.Canceled)
+        {
+            var request = new RemovePasskeyRequest()
+            {
+                UserId = UserState.UserId,
+                PasskeyId = passkey.Id
+            };
+
+            var result = await PasskeyService.RemoveAsync(request);
+            if (result.Success) await OnRefresh.InvokeAsync();
+            else Snackbar.Add(result.Message, Severity.Error);
+        }
+    }
+}

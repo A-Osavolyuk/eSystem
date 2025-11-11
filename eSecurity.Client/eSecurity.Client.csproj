@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\App.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\MainLayout.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Error.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Home.razor" />
+      <_ContentIncludedByDefault Remove="Components\Routes.razor" />
+      <_ContentIncludedByDefault Remove="Components\_Imports.razor" />
+      <_ContentIncludedByDefault Remove="wwwroot\app.css" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\eSecurity.Core\eSecurity.Core.csproj" />
+      <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
+      <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Security\Cookies\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Pages\Connect\Consents.razor" />
+      <AdditionalFiles Include="Components\Pages\Devices\Devices.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+      <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.2.5" />
+      <PackageReference Include="MudBlazor" Version="8.13.0" />
+    </ItemGroup>
+
+</Project>

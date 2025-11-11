@@ -18,7 +18,7 @@ public sealed class HttpResponse
         };
     }
     
-    public TValue? Get<TValue>()
+    public TValue Get<TValue>()
     {
         var options = new JsonSerializerOptions()
         {
@@ -27,7 +27,7 @@ public sealed class HttpResponse
         };
         
         var json = JsonSerializer.Serialize(Result, options);
-        var value = JsonSerializer.Deserialize<TValue>(json, options);
+        var value = JsonSerializer.Deserialize<TValue>(json, options)!;
         return value;
     }
 }

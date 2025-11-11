@@ -16,7 +16,6 @@ public static class HostApplicationBuilderExtensions
     {
         builder.AddLogging();
         builder.AddServiceDefaults();
-        builder.AddAuthentication();
         builder.AddVersioning();
         builder.AddValidation();
         builder.AddDependencyInjection();

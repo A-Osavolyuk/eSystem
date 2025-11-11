@@ -10,7 +10,6 @@ public static class HostApplicationBuilderExtensions
     public static void AppApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddServiceDefaults();
-        builder.AddAuthentication();
         builder.AddLogging();
         builder.AddReverseProxy();
         builder.AddCors();
@@ -36,8 +35,63 @@ public static class HostApplicationBuilderExtensions
         {
             new RouteConfig
             {
+                RouteId = "account-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Account/{**catch-all}" }
+            },
+            new RouteConfig
+            {
                 RouteId = "connect-route", ClusterId = "security-cluster",
                 Match = new RouteMatch { Path = "/api/v1/Connect/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "device-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Device/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "email-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Email/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "linked-account-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/LinkedAccount/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "oauth-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/OAuth/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "passkey-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Passkey/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "password-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Password/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "phone-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Phone/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "2fa-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/TwoFactor/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "user-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/User/{**catch-all}" }
+            },
+            new RouteConfig
+            {
+                RouteId = "verification-route", ClusterId = "security-cluster",
+                Match = new RouteMatch { Path = "/api/v1/Verification/{**catch-all}" }
             },
             new RouteConfig
             {

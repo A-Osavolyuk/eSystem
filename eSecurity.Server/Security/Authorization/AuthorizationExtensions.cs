@@ -1,0 +1,23 @@
+﻿using eSecurity.Server.Security.Authorization.Access;
+using eSecurity.Server.Security.Authorization.Consents;
+using eSecurity.Server.Security.Authorization.Devices;
+using eSecurity.Server.Security.Authorization.OAuth;
+using eSecurity.Server.Security.Authorization.Permissions;
+using eSecurity.Server.Security.Authorization.Policies;
+using eSecurity.Server.Security.Authorization.Roles;
+
+namespace eSecurity.Server.Security.Authorization;
+
+public static class AuthorizationExtensions
+{
+    public static void AddAuthorization(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddPolicies();
+        builder.Services.AddRoleManagement();
+        builder.Services.AddAccessManagement();
+        builder.Services.AddDeviceManagement();
+        builder.Services.AddOAuthAuthorization();
+        builder.Services.AddPermissionManagement();
+        builder.Services.AddConsentManagement();
+    }
+}

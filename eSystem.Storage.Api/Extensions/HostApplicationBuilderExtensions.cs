@@ -14,7 +14,6 @@ public static class HostApplicationBuilderExtensions
     public static void AddApiServices(this IHostApplicationBuilder builder)
     {
         builder.AddLogging();
-        builder.AddAuthentication();
         builder.AddVersioning();
         builder.AddDependencyInjection();
         builder.AddServiceDefaults();

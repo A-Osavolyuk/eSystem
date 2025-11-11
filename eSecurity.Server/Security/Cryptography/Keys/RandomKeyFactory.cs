@@ -1,0 +1,13 @@
+﻿using OtpNet;
+
+namespace eSecurity.Server.Security.Cryptography.Keys;
+
+public class RandomKeyFactory : IKeyFactory
+{
+    public string Create(int length)
+    {
+        var keyBytes = KeyGeneration.GenerateRandomKey(length);
+        var keyString = Base32Encoding.ToString(keyBytes);
+        return keyString[..length]!;
+    }
+}

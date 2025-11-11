@@ -1,0 +1,51 @@
+﻿using eSecurity.Core.Common.Requests;
+using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Data;
+using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Identity.Options;
+using eSecurity.Server.Security.Identity.User;
+
+namespace eSecurity.Server.Features.Email.Commands;
+
+public record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
+
+public class ResetEmailCommandHandler(
+    IUserManager userManager,
+    IVerificationManager verificationManager,
+    IOptions<AccountOptions> options) : IRequestHandler<ResetEmailCommand, Result>
+{
+    private readonly IUserManager userManager = userManager;
+    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly AccountOptions options = options.Value;
+
+    public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
+    {
+        var newEmail = request.Request.NewEmail;
+
+        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        
+        var userCurrentEmail = user.GetEmail(EmailType.Primary);
+        if (userCurrentEmail is null) return Results.BadRequest("User's primary email address is missing");
+
+        if (options.RequireUniqueEmail)
+        {
+            var isTaken = await userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
+            if (isTaken) return Results.BadRequest("This email address is already taken");
+        }
+
+        var resetVerificationResult = await verificationManager.VerifyAsync(user,
+            PurposeType.Email, ActionType.Reset, cancellationToken);
+
+        if (!resetVerificationResult.Succeeded) return resetVerificationResult;
+        
+        var verifyVerificationResult = await verificationManager.VerifyAsync(user,
+            PurposeType.Email, ActionType.Verify, cancellationToken);
+
+        if (!verifyVerificationResult.Succeeded) return verifyVerificationResult;
+
+        var result = await userManager.ResetEmailAsync(user, userCurrentEmail.Email, newEmail, cancellationToken);
+        return result;
+    }
+}

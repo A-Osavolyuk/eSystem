@@ -1,0 +1,71 @@
+﻿@using eSecurity.Core.Security.Authorization.OAuth.Constants
+
+@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+
+<MudPaper Outlined Class="pa-3">
+    <MudGrid Spacing="1" Justify="Justify.Center">
+        <MudItem xs="6">
+            <MudButton
+                ButtonType="ButtonType.Button"
+                StartIcon="@Icons.Custom.Brands.Google"
+                Variant="Variant.Filled"
+                OnClick="@(() => OnOAuth(ExternalAccounts.Google))"
+                Color="Color.Primary"
+                FullWidth="true">
+                Google
+            </MudButton>
+        </MudItem>
+        <MudItem xs="6">
+            <MudButton
+                ButtonType="ButtonType.Button"
+                StartIcon="@Icons.Custom.Brands.Facebook"
+                Variant="Variant.Filled"
+                OnClick="@(() => OnOAuth(ExternalAccounts.Facebook))"
+                Color="Color.Primary"
+                FullWidth="true">
+                Facebook
+            </MudButton>
+        </MudItem>
+        <MudItem xs="6">
+            <MudButton
+                ButtonType="ButtonType.Button"
+                StartIcon="@Icons.Custom.Brands.Microsoft"
+                Variant="Variant.Filled"
+                OnClick="@(() => OnOAuth(ExternalAccounts.Microsoft))"
+                Color="Color.Primary"
+                FullWidth="true">
+                Microsoft
+            </MudButton>
+        </MudItem>
+        <MudItem xs="6">
+            <MudButton
+                ButtonType="ButtonType.Button"
+                StartIcon="@Icons.Custom.Brands.X"
+                Variant="Variant.Filled"
+                OnClick="@(() => OnOAuth(ExternalAccounts.X))"
+                Color="Color.Primary"
+                FullWidth="true">
+                X
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@code {
+    private void OnOAuth(string type)
+    {
+        var gatewayPath = Configuration["services:proxy:http:0"]!;
+        var baseUri = $"{NavigationManager.BaseUri}account/oauth";
+        var uri = $"{gatewayPath}/api/v1/OAuth/login/{type}";
+        var returnUri = $"{baseUri}/sign-in";
+        var fallbackUri = $"{baseUri}/fallback";
+        
+        var builder = QueryBuilder.Create()
+            .WithUri(uri)
+            .WithQueryParam("returnUri", returnUri)
+            .WithQueryParam("fallbackUri", fallbackUri);
+        
+        NavigationManager.NavigateTo(builder.Build());
+    }
+}

@@ -42,22 +42,26 @@ var messageBus = builder.AddProject<Projects.eSystem_MessageBus>("message-bus")
     .WaitFor(smsService)
     .WaitFor(telegramService);
 
-var authApi = builder.AddProject<Projects.eSecurity>("e-security")
+var securityServer = builder.AddProject<Projects.eSecurity_Server>("e-security-server")
     .WithReference(sqlServer).WaitFor(sqlServer)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging");
 
 var storageApi = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
-    .WaitFor(authApi).WithRelationship(authApi.Resource, "Authentication")
+    .WaitFor(securityServer).WithRelationship(securityServer.Resource, "Authentication")
     .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(blobs).WaitFor(blobs);
 
 var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
-    .WithReference(authApi).WaitFor(authApi)
+    .WithReference(securityServer).WaitFor(securityServer)
     .WithReference(storageApi).WaitFor(storageApi);
+
+var securityClient = builder.AddProject<Projects.eSecurity_Client>("e-security-client")
+    .WithReference(securityServer).WaitFor(securityServer)
+    .WithReference(rabbitMq).WaitFor(proxy);
 
 var app = builder.Build();
 
