@@ -1,9 +1,11 @@
-﻿using eSecurity.Server.Security.Authentication.Lockout;
+﻿using eSecurity.Core.Security.Cookies.Constants;
+using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.Odic;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.OAuth;
+using eSecurity.Server.Security.Authorization.OAuth.Schemes;
 using eSystem.Core.Common.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -27,10 +29,17 @@ public static class AuthenticationExtensions
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = AuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(AuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.Name = DefaultCookies.External;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.MaxAge = TimeSpan.FromDays(30);
+            })
             .AddGoogle(options =>
             {
                 var settings =
