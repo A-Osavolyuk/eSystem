@@ -7,15 +7,16 @@ public static class WebApplicationExtensions
 {
     public static async Task MapServicesAsync(this WebApplication app)
     {
-        app.MapDefaultEndpoints();
-        app.MapOpenApi();
-        app.MapScalarApiReference();
+        app.UseExceptionHandler();
+        app.UseStaticFiles();
         app.UseRouting();
         app.UseSession();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.UseExceptionHandler();
+        app.MapOpenApi();
+        app.MapScalarApiReference();
+        app.MapDefaultEndpoints();
 
         await app.ConfigureDatabaseAsync<AuthDbContext>();
     }
