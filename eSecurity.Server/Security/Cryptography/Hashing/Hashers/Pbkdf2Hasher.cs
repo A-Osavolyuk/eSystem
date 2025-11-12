@@ -7,16 +7,16 @@ public class Pbkdf2Hasher : Hasher
     private const int SaltSize = 16;
     private const int KeySize = 32;
     private const int Iterations = 10000;
-    
+
     public override string Hash(string value)
     {
         using var rng = RandomNumberGenerator.Create();
         var salt = new byte[SaltSize];
         rng.GetBytes(salt);
 
-        using var pbkdf2 = new Rfc2898DeriveBytes(value, salt, Iterations, HashAlgorithmName.SHA256);
-        var hash = pbkdf2.GetBytes(KeySize);
-
+        var hash = Rfc2898DeriveBytes.Pbkdf2(value, salt, 
+            Iterations, HashAlgorithmName.SHA256, KeySize);
+        
         var hashBytes = new byte[1 + 4 + SaltSize + KeySize];
         hashBytes[0] = 0x01;
         BitConverter.GetBytes(Iterations).CopyTo(hashBytes, 1);
@@ -39,9 +39,9 @@ public class Pbkdf2Hasher : Hasher
         Array.Copy(hashBytes, 5, salt, 0, SaltSize);
         Array.Copy(hashBytes, 5 + SaltSize, storedSubkey, 0, KeySize);
 
-        using var pbkdf2 = new Rfc2898DeriveBytes(value, salt, iterations, HashAlgorithmName.SHA256);
-        var computedSubkey = pbkdf2.GetBytes(KeySize);
-
+        var computedSubkey = Rfc2898DeriveBytes.Pbkdf2(value, salt, 
+            iterations, HashAlgorithmName.SHA256, KeySize);
+        
         return CryptographicOperations.FixedTimeEquals(storedSubkey, computedSubkey);
     }
 }
