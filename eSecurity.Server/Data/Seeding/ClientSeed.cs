@@ -15,7 +15,7 @@ public class ClientSeed : Seed<ClientEntity>
                 Id = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
                 ClientId = "eSecurity",
                 ClientSecret = "2f213a036e325a55dc19320f03c2fad7c13f0169788b5968686cb4931341c393a651d7e6",
-                Name = "eAccount",
+                Name = "eSecurity",
                 RequireClientSecret = true,
                 RequirePkce = false,
                 AllowOfflineAccess = true,
