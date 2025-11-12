@@ -10,31 +10,31 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.5.2" />
-        <PackageReference Include="Aspire.StackExchange.Redis" Version="9.5.2" />
+        <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.0.0" />
+        <PackageReference Include="Aspire.StackExchange.Redis" Version="13.0.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
         <PackageReference Include="Azure.Storage.Files.Shares" Version="12.24.0" />
         <PackageReference Include="Azure.Storage.Queues" Version="12.24.0" />
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
         <PackageReference Include="MediatR" Version="13.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="9.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="9.0.10" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="10.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="10.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.5" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="9.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.10" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="10.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Azure" Version="1.13.0" />
         <PackageReference Include="Otp.NET" Version="1.4.0" />
         <PackageReference Include="PeterO.Cbor" Version="4.5.5" />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.9.0" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.10.3" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
     </ItemGroup>
 
