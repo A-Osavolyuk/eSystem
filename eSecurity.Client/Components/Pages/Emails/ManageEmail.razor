@@ -31,7 +31,7 @@
                         <strong>@UserState.Credentials?.Email!</strong>
                     </MudText>
                     <MudForm
-                        @ref="form"
+                        @ref="_form"
                         Model="Model"
                         Validation="Validator.ValidateValue">
                         <MudCodeInput
@@ -53,7 +53,7 @@
                     </MudLoadingButton>
                 </MudStack>
             </MudPaper>
-            <CodeResend Context="context"></CodeResend>
+            <CodeResend Context="_context"></CodeResend>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -71,14 +71,14 @@
 
     public CodeModel Model { get; set; } = new();
 
-    private MudForm form = new();
-    private MessageContext? context;
+    private MudForm _form = new();
+    private MessageContext? _context;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            context = new()
+            _context = new()
             {
                 UserId = UserState.UserId,
                 Purpose = PurposeType.Email,
@@ -90,7 +90,7 @@
                 }
             };
 
-            var request = context.ToSendCodeRequest();
+            var request = _context.ToSendCodeRequest();
             var result = await VerificationService.SendCodeAsync(request);
             if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
             
@@ -100,7 +100,7 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = context!.ToVerifyCodeRequest(Model.Code);
+        var request = _context!.ToVerifyCodeRequest(Model.Code);
         var result = await VerificationService.VerifyCodeAsync(request);
 
         if (result.Success) await ManageAsync();

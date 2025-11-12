@@ -11,13 +11,13 @@ internal sealed record UploadFilesCommand(IFormFileCollection Files, Metadata Me
 internal sealed class UploadFilesCommandHandler(
     IStorageManager service) : IRequestHandler<UploadFilesCommand, Result>
 {
-    private readonly IStorageManager service = service;
+    private readonly IStorageManager _service = service;
 
     public async Task<Result> Handle(UploadFilesCommand request,
         CancellationToken cancellationToken)
     {
         var metadata = request.Metadata;
-        var list = await service.UploadAsync(request.Files, metadata);
+        var list = await _service.UploadAsync(request.Files, metadata);
 
         if (list.Count == 0)
         {

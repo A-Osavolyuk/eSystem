@@ -7,5 +7,5 @@ namespace eSystem.SmsSender.Api.Controllers.v1;
 [ApiVersion("1.0")]
 public class SmsController(ISmsService smsService) : ControllerBase
 {
-    private readonly ISmsService smsService = smsService;
+    private readonly ISmsService _smsService = smsService;
 }

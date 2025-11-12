@@ -8,12 +8,12 @@ namespace eSecurity.Server.Security.Identity.User;
 
 public sealed class UserManager(AuthDbContext context) : IUserManager
 {
-    private readonly AuthDbContext context = context;
+    private readonly AuthDbContext _context = context;
 
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToUpper();
-        var user = await context.Users
+        var user = await _context.Users
             .Include(x => x.Emails)
             .Where(x => x.Emails.Any(e => e.NormalizedEmail == normalizedEmail && e.Type == EmailType.Primary))
             .Include(x => x.Roles)
@@ -38,7 +38,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
     public async ValueTask<UserEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await context.Users.Where(x => x.Id == id)
+        var user = await _context.Users.Where(x => x.Id == id)
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -63,7 +63,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default)
     {
         var normalizedUserName = name.ToUpper();
-        var user = await context.Users.Where(x => x.NormalizedUsername == normalizedUserName)
+        var user = await _context.Users.Where(x => x.NormalizedUsername == normalizedUserName)
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
@@ -88,7 +88,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
         CancellationToken cancellationToken = default)
     {
-        var user = await context.Users
+        var user = await _context.Users
             .Include(x => x.PhoneNumbers)
             .Where(x => x.PhoneNumbers.Any(p => p.PhoneNumber == phoneNumber && p.Type == PhoneNumberType.Primary))
             .Include(x => x.Roles)
@@ -128,9 +128,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        await context.UserEmails.AddAsync(userEmail, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        await _context.UserEmails.AddAsync(userEmail, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -154,9 +154,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        await context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -168,8 +168,8 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         user.UsernameChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -182,7 +182,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         {
             currentEmail.Type = EmailType.Secondary;
             currentEmail.UpdateDate = DateTimeOffset.UtcNow;
-            context.UserEmails.Update(currentEmail);
+            _context.UserEmails.Update(currentEmail);
         }
 
         var nextEmail = user.GetEmail(email);
@@ -191,8 +191,8 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         nextEmail.Type = type;
         nextEmail.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.UserEmails.Update(nextEmail);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserEmails.Update(nextEmail);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -208,9 +208,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         userEmail.CreateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserEmails.Update(userEmail);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserEmails.Update(userEmail);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -226,9 +226,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserPhoneNumbers.Update(userPhoneNumber);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserPhoneNumbers.Update(userPhoneNumber);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -247,9 +247,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserEmails.Update(userEmail);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserEmails.Update(userEmail);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -266,9 +266,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserPhoneNumbers.Update(userPhoneNumber);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserPhoneNumbers.Update(userPhoneNumber);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -281,9 +281,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserPhoneNumbers.Remove(userPhoneNumber);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserPhoneNumbers.Remove(userPhoneNumber);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -295,9 +295,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserEmails.Remove(userEmail);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserEmails.Remove(userEmail);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -316,9 +316,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserEmails.Update(userEmail);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserEmails.Update(userEmail);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -335,9 +335,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserPhoneNumbers.Update(userPhoneNumber);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserPhoneNumbers.Update(userPhoneNumber);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -359,9 +359,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        await context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -384,9 +384,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        await context.UserEmails.AddAsync(userEmail, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        await _context.UserEmails.AddAsync(userEmail, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -413,10 +413,10 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         user.NormalizedUsername = user.Username.ToUpper();
         user.CreateDate = DateTimeOffset.UtcNow;
 
-        await context.Users.AddAsync(user, cancellationToken);
-        await context.LockoutStates.AddAsync(lockoutState, cancellationToken);
-        await context.UserVerificationMethods.AddAsync(verificationMethod, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.Users.AddAsync(user, cancellationToken);
+        await _context.LockoutStates.AddAsync(lockoutState, cancellationToken);
+        await _context.UserVerificationMethods.AddAsync(verificationMethod, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -426,8 +426,8 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     {
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -440,8 +440,8 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         user.UsernameChangeDate = DateTimeOffset.UtcNow;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -449,8 +449,8 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<Result> DeleteAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
-        context.Users.Remove(user);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -459,7 +459,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         CancellationToken cancellationToken = default)
     {
         var normalizedUserName = userName.ToUpper();
-        var result = await context.Users.AnyAsync(
+        var result = await _context.Users.AnyAsync(
             u => u.NormalizedUsername == normalizedUserName, cancellationToken);
 
         return result;
@@ -469,7 +469,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToUpper();
-        var result = await context.UserEmails.AnyAsync(
+        var result = await _context.UserEmails.AnyAsync(
             u => u.NormalizedEmail == normalizedEmail, cancellationToken);
 
         return result;
@@ -478,7 +478,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber,
         CancellationToken cancellationToken = default)
     {
-        var result = await context.UserPhoneNumbers
+        var result = await _context.UserPhoneNumbers
             .AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
 
         return result;

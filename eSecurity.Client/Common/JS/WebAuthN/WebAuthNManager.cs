@@ -6,15 +6,15 @@ namespace eSecurity.Client.Common.JS.WebAuthN;
 
 public class WebAuthNManager(IJSRuntime jsRuntime)
 {
-    private readonly IJSRuntime jsRuntime = jsRuntime;
+    private readonly IJSRuntime _jsRuntime = jsRuntime;
 
     public async Task<JsResult> AssertAsync(PublicKeyCredentialCreationOptions options)
     {
-        return await jsRuntime.InvokeAsync<JsResult>("assert", options);
+        return await _jsRuntime.InvokeAsync<JsResult>("assert", options);
     }
     
     public async Task<JsResult> AuthenticateAsync(PublicKeyCredentialRequestOptions options)
     {
-        return await jsRuntime.InvokeAsync<JsResult>("authenticate", options);
+        return await _jsRuntime.InvokeAsync<JsResult>("authenticate", options);
     }
 }

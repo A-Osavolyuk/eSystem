@@ -5,7 +5,7 @@ namespace eSecurity.Server.Common.Messaging;
 
 public sealed class MessageService(IBus bus) : IMessageService
 {
-    private readonly IBus bus = bus;
+    private readonly IBus _bus = bus;
     
     public async ValueTask SendMessageAsync(SenderType type, Message message, CancellationToken cancellationToken = default)
     {
@@ -20,7 +20,7 @@ public sealed class MessageService(IBus bus) : IMessageService
         };
 
         var address = new Uri($"rabbitmq://localhost/unified-message");
-        var endpoint = await bus.GetSendEndpoint(address);
+        var endpoint = await _bus.GetSendEndpoint(address);
         await endpoint.Send(request as object, cancellationToken);
     }
 }

@@ -6,7 +6,7 @@ namespace eSecurity.Client.Common.Confirmation;
 
 public class ConfirmationManager(IDialogService dialogService)
 {
-    private readonly IDialogService dialogService = dialogService;
+    private readonly IDialogService _dialogService = dialogService;
 
     public async ValueTask<DialogResult> InitiateAsync(PurposeType purpose, ActionType action)
     {
@@ -30,7 +30,7 @@ public class ConfirmationManager(IDialogService dialogService)
         };
 
         const string title = "Access confirmation";
-        var dialog = await dialogService.ShowAsync<AccessConfirmationDialog>(title, parameters, options);
+        var dialog = await _dialogService.ShowAsync<AccessConfirmationDialog>(title, parameters, options);
         var result = await dialog.Result;
         return result!;
     }

@@ -6,7 +6,7 @@ namespace eSecurity.Server.Security.Authentication.TwoFactor;
 
 public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
-    private readonly AuthDbContext context = context;
+    private readonly AuthDbContext _context = context;
 
     public async ValueTask<Result> SubscribeAsync(UserEntity user, TwoFactorMethod method,
         bool preferred = false, CancellationToken cancellationToken = default)
@@ -17,7 +17,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
             preferredMethod.Preferred = false;
             preferredMethod.UpdateDate = DateTimeOffset.UtcNow;
 
-            context.UserTwoFactorMethods.Update(preferredMethod);
+            _context.UserTwoFactorMethods.Update(preferredMethod);
         }
 
         var userProvider = new UserTwoFactorMethodEntity()
@@ -34,9 +34,9 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
             user.UpdateDate = DateTimeOffset.UtcNow;
         }
 
-        context.Users.Update(user);
-        await context.UserTwoFactorMethods.AddAsync(userProvider, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        await _context.UserTwoFactorMethods.AddAsync(userProvider, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -47,9 +47,9 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         user.TwoFactorEnabled = false;
         user.UpdateDate = DateTimeOffset.UtcNow;
 
-        context.Users.Update(user);
-        context.UserTwoFactorMethods.RemoveRange(user.TwoFactorMethods);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Users.Update(user);
+        _context.UserTwoFactorMethods.RemoveRange(user.TwoFactorMethods);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -57,8 +57,8 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     public async ValueTask<Result> UnsubscribeAsync(UserTwoFactorMethodEntity method,
         CancellationToken cancellationToken = default)
     {
-        context.UserTwoFactorMethods.Remove(method);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserTwoFactorMethods.Remove(method);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -76,8 +76,8 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         nextPreferredMethod.Preferred = true;
         nextPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
         
-        context.UserTwoFactorMethods.UpdateRange([currentPreferredMethod, nextPreferredMethod]);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserTwoFactorMethods.UpdateRange([currentPreferredMethod, nextPreferredMethod]);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }

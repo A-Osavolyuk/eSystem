@@ -4,7 +4,7 @@ namespace eSystem.EmailSender.Api.Consumers;
 
 public class EmailConsumer(IEmailService emailService) : IConsumer<MessageRequest>
 {
-    private readonly IEmailService emailService = emailService;
+    private readonly IEmailService _emailService = emailService;
 
     public async Task Consume(ConsumeContext<MessageRequest> context)
     {
@@ -15,6 +15,6 @@ public class EmailConsumer(IEmailService emailService) : IConsumer<MessageReques
             To = message.Credentials["To"],
         };
         
-        await emailService.SendMessageAsync(message.Body, options);
+        await _emailService.SendMessageAsync(message.Body, options);
     }
 }

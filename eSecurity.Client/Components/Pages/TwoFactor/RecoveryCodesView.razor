@@ -13,12 +13,12 @@
 
 <Title Text="Recovery codes"></Title>
 
-<AccessConfirmation Context="confirmationContext">
+<AccessConfirmation Context="_confirmationContext">
     <AccessConfirmed>
         <MudGrid Justify="Justify.Center">
             <MudItem xs="4">
                 <MudStack Spacing="3">
-                    @if (recoveryCodesRegenerated)
+                    @if (_recoveryCodesRegenerated)
                     {
                         <MudAlert Variant="Variant.Outlined" Severity="Severity.Success" >
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
@@ -69,7 +69,7 @@
                                     </MudLink>,.
                                 </MudTextM3>
                             </MudStack>
-                            @if (recoveryCodesRegenerated)
+                            @if (_recoveryCodesRegenerated)
                             {
                                 <MudAlert
                                     Class="px-5"
@@ -220,8 +220,8 @@
     public string ReturnUrl { get; set; } = string.Empty;
 
     private List<string> Codes { get; set; } = [];
-    private ConfirmationContext? confirmationContext;
-    private bool recoveryCodesRegenerated;
+    private ConfirmationContext? _confirmationContext;
+    private bool _recoveryCodesRegenerated;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -241,7 +241,7 @@
 
     protected override void OnInitialized()
     {
-        confirmationContext = new()
+        _confirmationContext = new()
         {
             Action = ActionType.Show,
             Purpose = PurposeType.RecoveryCodes
@@ -256,7 +256,7 @@
         if (result.Success)
         {
             Codes = result.Get<List<string>>()!;
-            recoveryCodesRegenerated = true;
+            _recoveryCodesRegenerated = true;
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

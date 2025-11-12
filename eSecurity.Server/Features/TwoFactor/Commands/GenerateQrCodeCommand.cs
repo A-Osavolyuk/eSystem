@@ -18,16 +18,16 @@ public class GenerateQrCodeCommandHandler(
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider) : IRequestHandler<GenerateQrCodeCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IQrCodeFactory qrCodeFactory = qrCodeFactory;
-    private readonly ISecretManager secretManager = secretManager;
-    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
+    private readonly ISecretManager _secretManager = secretManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
-        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
         var email = user.GetEmail(EmailType.Primary)?.Email!;
@@ -35,7 +35,7 @@ public class GenerateQrCodeCommandHandler(
         var userSecret = user.Secret;
         if (userSecret is null)
         {
-            var secret = secretManager.Generate();
+            var secret = _secretManager.Generate();
 
 
             var protectedSecret = protector.Protect(secret);
@@ -47,12 +47,12 @@ public class GenerateQrCodeCommandHandler(
                 CreateDate = DateTimeOffset.UtcNow,
             };
             
-            var secretResult = await secretManager.AddAsync(userSecret, cancellationToken);
+            var secretResult = await _secretManager.AddAsync(userSecret, cancellationToken);
             if (!secretResult.Succeeded) return secretResult;
         }
 
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
-        var qrCode = qrCodeFactory.Create(email, unprotectedSecret, QrCodeConfiguration.Issuer);
+        var qrCode = _qrCodeFactory.Create(email, unprotectedSecret, QrCodeConfiguration.Issuer);
 
         return Result.Success(qrCode);
     }

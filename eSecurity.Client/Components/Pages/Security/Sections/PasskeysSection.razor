@@ -55,7 +55,7 @@
                     </MudStack>
                 }
             </MudStack>
-            @if (isExpanded && Model.HasPasskeys)
+            @if (_isExpanded && Model.HasPasskeys)
             {
                 <MudStack Spacing="3">
                     <MudDivider/>
@@ -90,16 +90,16 @@
     [Parameter] 
     public EventCallback OnRefresh { get; set; }
 
-    private bool isExpanded = false;
+    private bool _isExpanded = false;
     
-    private void ToggleExpand() => isExpanded = !isExpanded;
+    private void ToggleExpand() => _isExpanded = !_isExpanded;
 
     private string GetExpandIcon()
     {
         const string unexpandedIcon = Icons.Material.Outlined.ExpandMore;
         const string expandedIcon = Icons.Material.Outlined.ExpandLess;
 
-        return isExpanded ? expandedIcon : unexpandedIcon;
+        return _isExpanded ? expandedIcon : unexpandedIcon;
     }
 
     private string GetPasskeysText()

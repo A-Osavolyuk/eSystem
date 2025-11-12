@@ -19,12 +19,12 @@ public sealed class AuthenticationManager(
     IFetchClient fetchClient,
     IStorage storage)
 {
-    private readonly NavigationManager navigationManager = navigationManager;
-    private readonly AuthenticationStateProvider authenticationStateProvider = authenticationStateProvider;
-    private readonly TokenProvider tokenProvider = tokenProvider;
-    private readonly UserState userState = userState;
-    private readonly IFetchClient fetchClient = fetchClient;
-    private readonly IStorage storage = storage;
+    private readonly NavigationManager _navigationManager = navigationManager;
+    private readonly AuthenticationStateProvider _authenticationStateProvider = authenticationStateProvider;
+    private readonly TokenProvider _tokenProvider = tokenProvider;
+    private readonly UserState _userState = userState;
+    private readonly IFetchClient _fetchClient = fetchClient;
+    private readonly IStorage _storage = storage;
 
     public void Authorize()
     {
@@ -33,8 +33,8 @@ public sealed class AuthenticationManager(
     
     public async Task SignInAsync(string refreshToken, string accessToken, string idToken)
     {
-        tokenProvider.AccessToken = accessToken;
-        tokenProvider.IdToken = idToken;
+        _tokenProvider.AccessToken = accessToken;
+        _tokenProvider.IdToken = idToken;
         
         var tokenIdentity = new TokenIdentity()
         {
@@ -44,12 +44,12 @@ public sealed class AuthenticationManager(
         
         var fetchOptions = new FetchOptions()
         {
-            Url = $"{navigationManager.BaseUri}api/authentication/sign-in",
+            Url = $"{_navigationManager.BaseUri}api/authentication/sign-in",
             Method = HttpMethod.Post,
             Body = tokenIdentity
         };
 
-        var result = await fetchClient.FetchAsync(fetchOptions);
+        var result = await _fetchClient.FetchAsync(fetchOptions);
     }
 
     public async Task SignOutAsync()
@@ -57,16 +57,16 @@ public sealed class AuthenticationManager(
         var fetchOptions = new FetchOptions()
         {
             Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/authentication/sign-out",
+            Url = $"{_navigationManager.BaseUri}api/authentication/sign-out",
         };
 
-        var result = await fetchClient.FetchAsync(fetchOptions);
+        var result = await _fetchClient.FetchAsync(fetchOptions);
         if (result.Success)
         {
-            await (authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignOutAsync();
-            await storage.ClearAsync();
+            await (_authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignOutAsync();
+            await _storage.ClearAsync();
 
-            navigationManager.NavigateTo(Links.Account.SignIn);
+            _navigationManager.NavigateTo(Links.Account.SignIn);
         }
     }
 }

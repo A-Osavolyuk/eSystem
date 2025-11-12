@@ -251,7 +251,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
 
             entity.Property(x => x.Device).HasMaxLength(64);
             entity.Property(x => x.Browser).HasMaxLength(64);
-            entity.Property(x => x.OS).HasMaxLength(64);
+            entity.Property(x => x.Os).HasMaxLength(64);
             entity.Property(x => x.UserAgent).HasMaxLength(128);
             entity.Property(x => x.Location).HasMaxLength(128);
             entity.Property(x => x.IpAddress).HasMaxLength(15);

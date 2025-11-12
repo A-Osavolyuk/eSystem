@@ -11,15 +11,15 @@ public class GetUserLoginMethodsQueryHandler(
     IUserManager userManager,
     IHttpContextAccessor accessor) : IRequestHandler<GetUserLoginMethodsQuery, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly HttpContext httpContext = accessor.HttpContext!;
+    private readonly IUserManager _userManager = userManager;
+    private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserLoginMethodsQuery request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
-        var userAgent = httpContext.GetUserAgent();
+        var userAgent = _httpContext.GetUserAgent();
         var response = new UserLoginMethodsDto()
         {
             PasswordData = new PasswordData()

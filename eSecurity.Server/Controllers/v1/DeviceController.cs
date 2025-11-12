@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [Route("v{version:apiVersion}/[controller]")]
 public class DeviceController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Trust device")]
     [EndpointDescription("Trust device")]
@@ -19,7 +19,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> TrustAsync([FromBody] TrustDeviceRequest request)
     {
-        var result = await sender.Send(new TrustDeviceCommand(request));
+        var result = await _sender.Send(new TrustDeviceCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -37,7 +37,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> BlockAsync([FromBody] BlockDeviceRequest request)
     {
-        var result = await sender.Send(new BlockDeviceCommand(request));
+        var result = await _sender.Send(new BlockDeviceCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -55,7 +55,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> UnblockAsync([FromBody] UnblockDeviceRequest request)
     {
-        var result = await sender.Send(new UnblockDeviceCommand(request));
+        var result = await _sender.Send(new UnblockDeviceCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -73,7 +73,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyDeviceRequest request)
     {
-        var result = await sender.Send(new VerifyDeviceCommand(request));
+        var result = await _sender.Send(new VerifyDeviceCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

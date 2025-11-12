@@ -5,11 +5,11 @@ namespace eSecurity.Server.Security.Authorization.OAuth;
 
 public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager
 {
-    private readonly AuthDbContext context = context;
+    private readonly AuthDbContext _context = context;
     
     public async ValueTask<OAuthSessionEntity?> FindAsync(Guid id, string token, CancellationToken cancellationToken = default)
     {
-        return await context.OAuthSessions
+        return await _context.OAuthSessions
             .Where(x => x.Id == id && x.Token == token)
             .Include(x => x.LinkedAccount)
             .FirstOrDefaultAsync(cancellationToken);
@@ -17,8 +17,8 @@ public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager
 
     public async ValueTask<Result> CreateAsync(OAuthSessionEntity session, CancellationToken cancellationToken = default)
     {
-        await context.OAuthSessions.AddAsync(session, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.OAuthSessions.AddAsync(session, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -27,8 +27,8 @@ public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager
     {
         session.UpdateDate = DateTimeOffset.UtcNow;
         
-        context.OAuthSessions.Update(session);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.OAuthSessions.Update(session);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

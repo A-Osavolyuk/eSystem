@@ -26,14 +26,14 @@ public sealed class AuthenticatorSignInStrategy(
     IDataProtectionProvider protectionProvider,
     IOptions<SignInOptions> options) : ISignInStrategy
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ILockoutManager lockoutManager = lockoutManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly ISecretManager secretManager = secretManager;
-    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
-    private readonly HttpContext httpContext = accessor.HttpContext!;
-    private readonly SignInOptions options = options.Value;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ILockoutManager _lockoutManager = lockoutManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ISecretManager _secretManager = secretManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly HttpContext _httpContext = accessor.HttpContext!;
+    private readonly SignInOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload, 
         CancellationToken cancellationToken = default)
@@ -43,12 +43,12 @@ public sealed class AuthenticatorSignInStrategy(
         if (payload is not AuthenticatorSignInPayload authenticatorPayload)
             return Results.BadRequest("Invalid payload type");
 
-        var user = await userManager.FindByIdAsync(authenticatorPayload.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(authenticatorPayload.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {authenticatorPayload.UserId}.");
 
-        var userAgent = httpContext.GetUserAgent()!;
-        var ipAddress = httpContext.GetIpV4()!;
-        var clientInfo = httpContext.GetClientInfo()!;
+        var userAgent = _httpContext.GetUserAgent()!;
+        var ipAddress = _httpContext.GetIpV4()!;
+        var clientInfo = _httpContext.GetClientInfo()!;
         var device = user.GetDevice(userAgent, ipAddress);
 
         if (device is null)
@@ -60,7 +60,7 @@ public sealed class AuthenticatorSignInStrategy(
                 UserAgent = userAgent,
                 IpAddress = ipAddress,
                 Browser = clientInfo.UA.ToString(),
-                OS = clientInfo.OS.ToString(),
+                Os = clientInfo.OS.ToString(),
                 Device = clientInfo.Device.ToString(),
                 IsTrusted = false,
                 IsBlocked = false,
@@ -68,14 +68,14 @@ public sealed class AuthenticatorSignInStrategy(
                 CreateDate = DateTimeOffset.UtcNow
             };
 
-            var result = await deviceManager.CreateAsync(device, cancellationToken);
+            var result = await _deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
         
-        var userSecret = await secretManager.FindAsync(user, cancellationToken);
+        var userSecret = await _secretManager.FindAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
-        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
         var isCodeVerified = AuthenticatorUtils.VerifyCode(authenticatorPayload.Code, unprotectedSecret);
 
@@ -83,22 +83,22 @@ public sealed class AuthenticatorSignInStrategy(
         {
             user.FailedLoginAttempts += 1;
 
-            if (user.FailedLoginAttempts < options.MaxFailedLoginAttempts)
+            if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
             {
                 response = new SignInResponse()
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
+                    MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
                 };
 
                 return Results.BadRequest($"Invalid two-factor code {authenticatorPayload.Code}.", response);
             }
 
-            var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
+            var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user, 
+            var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user, 
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
@@ -108,7 +108,7 @@ public sealed class AuthenticatorSignInStrategy(
                 UserId = user.Id,
                 IsLockedOut = true,
                 FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
+                MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 
@@ -119,13 +119,13 @@ public sealed class AuthenticatorSignInStrategy(
         {
             user.FailedLoginAttempts = 0;
 
-            var userUpdateResult = await userManager.UpdateAsync(user, cancellationToken);
+            var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
         response = new SignInResponse() { UserId = user.Id, };
         
-        await sessionManager.CreateAsync(device, cancellationToken);
+        await _sessionManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);
     }

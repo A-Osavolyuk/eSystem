@@ -5,18 +5,18 @@ namespace eSecurity.Server.Security.Authorization.Consents;
 
 public class ConsentManager(AuthDbContext context) : IConsentManager
 {
-    private readonly AuthDbContext context = context;
+    private readonly AuthDbContext _context = context;
 
     public async ValueTask<ConsentEntity?> FindByIdAsync(Guid id,
         CancellationToken cancellationToken = default)
     {
-        return await context.Consents.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+        return await _context.Consents.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
     }
 
     public async ValueTask<ConsentEntity?> FindAsync(UserEntity user, ClientEntity client,
         CancellationToken cancellationToken = default)
     {
-        return await context.Consents.FirstOrDefaultAsync(
+        return await _context.Consents.FirstOrDefaultAsync(
             c => c.UserId == user.Id && c.ClientId == client.Id, cancellationToken);
     }
 
@@ -30,8 +30,8 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
             CreateDate = DateTimeOffset.UtcNow
         };
         
-        await context.Consents.AddAsync(consent, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.Consents.AddAsync(consent, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
@@ -46,8 +46,8 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
             CreateDate = DateTimeOffset.UtcNow
         };
 
-        await context.GrantedScopes.AddAsync(grantedScope, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.GrantedScopes.AddAsync(grantedScope, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -55,13 +55,13 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
     public async ValueTask<Result> RevokeAsync(ConsentEntity consent, ScopeEntity scope,
         CancellationToken cancellationToken = default)
     {
-        var grantedScope = await context.GrantedScopes.FirstOrDefaultAsync(
+        var grantedScope = await _context.GrantedScopes.FirstOrDefaultAsync(
             x => x.ConsentId == consent.Id && x.ScopeId == scope.Id, cancellationToken);
 
         if (grantedScope is null) return Results.NotFound("Scope is not granted.");
 
-        context.GrantedScopes.Remove(grantedScope);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.GrantedScopes.Remove(grantedScope);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }

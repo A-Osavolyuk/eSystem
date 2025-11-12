@@ -13,12 +13,12 @@ public class RecoverAccountCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager) : IRequestHandler<RecoverAccountCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(RecoverAccountCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var userPrimaryEmail = user.GetEmail(EmailType.Primary);
@@ -29,7 +29,7 @@ public class RecoverAccountCommandHandler(
         if (userRecoveryEmail is null) return Results.BadRequest("User does not have a recovery email.");
         if (!userRecoveryEmail.IsVerified) return Results.BadRequest("User's recovery email is not verified.");
 
-        var verificationResult = await verificationManager.VerifyAsync(user,
+        var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Account, ActionType.Recover, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
@@ -40,7 +40,7 @@ public class RecoverAccountCommandHandler(
         userRecoveryEmail.Type = EmailType.Primary;
         userRecoveryEmail.UpdateDate = DateTimeOffset.UtcNow;
 
-        var updateResult = await userManager.UpdateAsync(user, cancellationToken);
+        var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
         return updateResult;
     }
 }

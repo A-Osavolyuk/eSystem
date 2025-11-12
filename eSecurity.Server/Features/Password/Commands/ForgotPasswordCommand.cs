@@ -9,12 +9,12 @@ public sealed record ForgotPasswordCommand(ForgotPasswordRequest Request) : IReq
 public sealed class ForgotPasswordCommandHandler(
     IUserManager userManager) : IRequestHandler<ForgotPasswordCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
+    private readonly IUserManager _userManager = userManager;
 
     public async Task<Result> Handle(ForgotPasswordCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with email {request.Request.Email}.");
 
         if (!user.HasPassword()) return Results.BadRequest("Cannot reset password, password was not provided.");

@@ -29,14 +29,14 @@ public class RefreshTokenStrategy(
     IClaimBuilderFactory claimBuilderFactory,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
-    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
-    private readonly ITokenFactory tokenFactory = tokenFactory;
-    private readonly IClientManager clientManager = clientManager;
-    private readonly ITokenManager tokenManager = tokenManager;
-    private readonly IUserManager userManager = userManager;
-    private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
-    private readonly TokenOptions options = options.Value;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly ITokenFactory _tokenFactory = tokenFactory;
+    private readonly IClientManager _clientManager = clientManager;
+    private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IKeyFactory _keyFactory = keyFactory;
+    private readonly IClaimBuilderFactory _claimBuilderFactory = claimBuilderFactory;
+    private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
         CancellationToken cancellationToken = default)
@@ -44,15 +44,15 @@ public class RefreshTokenStrategy(
         if (payload is not RefreshTokenPayload refreshPayload)
             throw new NotSupportedException("Payload type must be 'RefreshTokenPayload'.");
 
-        var client = await clientManager.FindByClientIdAsync(refreshPayload.ClientId, cancellationToken);
+        var client = await _clientManager.FindByClientIdAsync(refreshPayload.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client was not found.");
         if (!client.HasGrantType(refreshPayload.GrantType))
             return Results.BadRequest($"Client doesn't support grant type {refreshPayload.GrantType}");
 
-        var protector = protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
         var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
 
-        var refreshToken = await tokenManager.FindByTokenAsync(unprotectedToken, cancellationToken);
+        var refreshToken = await _tokenManager.FindByTokenAsync(unprotectedToken, cancellationToken);
         if (refreshToken is null) return Results.NotFound("Refresh token not found.");
         if (!refreshToken.IsValid) return Results.BadRequest("Refresh token is invalid.");
 
@@ -77,24 +77,24 @@ public class RefreshTokenStrategy(
         }
 
         var device = refreshToken.Session.Device;
-        var user = await userManager.FindByIdAsync(device.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        var accessTokenClaims = claimBuilderFactory.CreateAccessBuilder()
-            .WithIssuer(options.Issuer)
+        var accessTokenClaims = _claimBuilderFactory.CreateAccessBuilder()
+            .WithIssuer(_options.Issuer)
             .WithAudience(client.Name)
             .WithSubject(user.Id.ToString())
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithSessionId(refreshToken.Session.Id.ToString())
             .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.Add(options.AccessTokenLifetime))
+            .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime))
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
 
         var response = new TokenResponse()
         {
-            AccessToken = await tokenFactory.CreateAsync(accessTokenClaims, cancellationToken),
-            ExpiresIn = (int)options.AccessTokenLifetime.TotalSeconds,
+            AccessToken = await _tokenFactory.CreateAsync(accessTokenClaims, cancellationToken),
+            ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = TokenTypes.Bearer,
         };
 
@@ -106,15 +106,15 @@ public class RefreshTokenStrategy(
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                Token = keyFactory.Create(20),
+                Token = _keyFactory.Create(20),
                 ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };
 
-            var createResult = await tokenManager.CreateAsync(newRefreshToken, cancellationToken);
+            var createResult = await _tokenManager.CreateAsync(newRefreshToken, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
-            var revokeResult = await tokenManager.RevokeAsync(refreshToken, cancellationToken);
+            var revokeResult = await _tokenManager.RevokeAsync(refreshToken, cancellationToken);
             if (!revokeResult.Succeeded) return revokeResult;
 
             var protectedToken = protector.Protect(newRefreshToken.Token);
@@ -128,19 +128,19 @@ public class RefreshTokenStrategy(
 
         if (client.HasScope(Scopes.OpenId))
         {
-            var idClaims = claimBuilderFactory.CreateIdBuilder()
+            var idClaims = _claimBuilderFactory.CreateIdBuilder()
                 .WithOpenId(user, client)
-                .WithIssuer(options.Issuer)
+                .WithIssuer(_options.Issuer)
                 .WithAudience(client.Name)
                 .WithSubject(user.Id.ToString())
                 .WithTokenId(Guid.CreateVersion7().ToString())
                 .WithSessionId(refreshToken.Session.Id.ToString())
                 .WithIssuedTime(DateTimeOffset.UtcNow)
                 .WithAuthenticationTime(DateTimeOffset.UtcNow)
-                .WithExpirationTime(DateTimeOffset.UtcNow.Add(options.IdTokenLifetime))
+                .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime))
                 .Build();
 
-            response.IdToken = await tokenFactory.CreateAsync(idClaims, cancellationToken);
+            response.IdToken = await _tokenFactory.CreateAsync(idClaims, cancellationToken);
         }
 
         return Result.Success(response);

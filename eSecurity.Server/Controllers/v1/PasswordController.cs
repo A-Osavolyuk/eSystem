@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [Route("v{version:apiVersion}/[controller]")]
 public class PasswordController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Add password")]
     [EndpointDescription("Add password")]
@@ -19,7 +19,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> AddAsync([FromBody] AddPasswordRequest request)
     {
-        var result = await sender.Send(new AddPasswordCommand(request));
+        var result = await _sender.Send(new AddPasswordCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -37,7 +37,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangePasswordRequest request)
     {
-        var result = await sender.Send(new ChangePasswordCommand(request));
+        var result = await _sender.Send(new ChangePasswordCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -55,7 +55,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetPasswordRequest request)
     {
-        var result = await sender.Send(new ResetPasswordCommand(request));
+        var result = await _sender.Send(new ResetPasswordCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -73,7 +73,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasswordRequest request)
     {
-        var result = await sender.Send(new RemovePasswordCommand(request));
+        var result = await _sender.Send(new RemovePasswordCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -91,7 +91,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckPasswordRequest request)
     {
-        var result = await sender.Send(new CheckPasswordCommand(request));
+        var result = await _sender.Send(new CheckPasswordCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -109,7 +109,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> ForgotAsync([FromBody] ForgotPasswordRequest request)
     {
-        var result = await sender.Send(new ForgotPasswordCommand(request));
+        var result = await _sender.Send(new ForgotPasswordCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

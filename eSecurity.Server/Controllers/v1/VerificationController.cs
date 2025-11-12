@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [Route("v{version:apiVersion}/[controller]")]
 public class VerificationController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Send code")]
     [EndpointDescription("Send code")]
@@ -19,7 +19,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> SendCodeAsync([FromBody] SendCodeRequest request)
     {
-        var result = await sender.Send(new SendCodeCommand(request));
+        var result = await _sender.Send(new SendCodeCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -37,7 +37,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> ResendCodeAsync([FromBody] ResendCodeRequest request)
     {
-        var result = await sender.Send(new ResendCodeCommand(request));
+        var result = await _sender.Send(new ResendCodeCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -55,7 +55,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
     {
-        var result = await sender.Send(new VerifyCodeCommand(request));
+        var result = await _sender.Send(new VerifyCodeCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -73,7 +73,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> VerifyAuthenticatorCodeAsync([FromBody] VerifyAuthenticatorCodeRequest request)
     {
-        var result = await sender.Send(new VerifyAuthenticatorCodeCommand(request));
+        var result = await _sender.Send(new VerifyAuthenticatorCodeCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -91,7 +91,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> VerifyPasskeyAsync([FromBody] VerifyPasskeyRequest request)
     {
-        var result = await sender.Send(new VerifyPasskeyCommand(request));
+        var result = await _sender.Send(new VerifyPasskeyCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

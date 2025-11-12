@@ -18,23 +18,23 @@ public class ResendCodeCommandHandler(
     IMessageService messageService,
     IOptions<CodeOptions> options) : IRequestHandler<ResendCodeCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
-    private readonly CodeOptions options = options.Value;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ICodeManager _codeManager = codeManager;
+    private readonly IMessageService _messageService = messageService;
+    private readonly CodeOptions _options = options.Value;
     public async Task<Result> Handle(ResendCodeCommand request, CancellationToken cancellationToken)
     {
         ResendCodeResponse? response;
 
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        if (user.CodeResendAttempts >= options.MaxCodeResendAttempts)
+        if (user.CodeResendAttempts >= _options.MaxCodeResendAttempts)
         {
             response = new ResendCodeResponse()
             {
                 CodeResendAttempts = user.CodeResendAttempts,
-                MaxCodeResendAttempts = options.MaxCodeResendAttempts,
+                MaxCodeResendAttempts = _options.MaxCodeResendAttempts,
                 CodeResendAvailableDate = user.CodeResendAvailableDate
             };
 
@@ -43,13 +43,13 @@ public class ResendCodeCommandHandler(
 
         user.CodeResendAttempts += 1;
 
-        if (user.CodeResendAttempts == options.MaxCodeResendAttempts)
+        if (user.CodeResendAttempts == _options.MaxCodeResendAttempts)
         {
             user.CodeResendAvailableDate = DateTimeOffset.UtcNow.AddMinutes(
-                options.CodeResendUnavailableTime);
+                _options.CodeResendUnavailableTime);
         }
 
-        var userUpdateResult = await userManager.UpdateAsync(user, cancellationToken);
+        var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
         if (!userUpdateResult.Succeeded) return userUpdateResult;
 
         var sender = request.Request.Sender;
@@ -57,7 +57,7 @@ public class ResendCodeCommandHandler(
         var purpose = request.Request.Purpose;
         var payload = request.Request.Payload;
 
-        var code = await codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
+        var code = await _codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
         payload["Code"] = code; 
         payload["UserName"] = user.Username;
 
@@ -71,12 +71,12 @@ public class ResendCodeCommandHandler(
         if (message is null) return Results.BadRequest("Invalid message type.");
 
         message.Initialize(payload);
-        await messageService.SendMessageAsync(sender, message, cancellationToken);
+        await _messageService.SendMessageAsync(sender, message, cancellationToken);
 
         response = new ResendCodeResponse()
         {
             CodeResendAttempts = user.CodeResendAttempts,
-            MaxCodeResendAttempts = options.MaxCodeResendAttempts,
+            MaxCodeResendAttempts = _options.MaxCodeResendAttempts,
             CodeResendAvailableDate = user.CodeResendAvailableDate
         };
         

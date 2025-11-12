@@ -1,6 +1,6 @@
 ﻿@using eSecurity.Core.Common.DTOs
 <MudStack Row="true" Spacing="0">
-    @if (!editMode)
+    @if (!_editMode)
     {
         <MudStack Spacing="1">
             <MudStack Row="true" Spacing="1">
@@ -57,7 +57,7 @@
                 Nickname:
             </MudTextM3>
             <MudStack Row="true" Spacing="1">
-                <MudForm Model="Model" @ref="form">
+                <MudForm Model="Model" @ref="_form">
                     <MudTextFieldExtended
                         Style="width: 400px;"
                         Class="my-0"
@@ -106,10 +106,10 @@
     [Parameter] 
     public EventCallback<UserPasskeyDto> OnChange { get; set; }
 
-    private MudForm form = new();
-    private bool editMode;
+    private MudForm _form = new();
+    private bool _editMode;
 
-    private void ToggleEditMode() => editMode = !editMode;
+    private void ToggleEditMode() => _editMode = !_editMode;
 
     private async Task OnSaveAsync()
     {

@@ -74,7 +74,7 @@
                         }
                     }
                     <MudForm
-                        @ref="form"
+                        @ref="_form"
                         Model="Model"
                         Validation="Validator.ValidateValue">
                         <MudTextFieldExtended
@@ -82,7 +82,7 @@
                             Variant="Variant.Outlined"
                             Margin="Margin.Dense"
                             Placeholder="XXXXXX"
-                            Mask="mask"
+                            Mask="_mask"
                             Clearable="true"
                             Immediate="true"/>
                     </MudForm>
@@ -106,7 +106,7 @@
                     </MudButton>
                 </MudStack>
             </MudPaper>
-            <CodeResend Context="context"></CodeResend>
+            <CodeResend Context="_context"></CodeResend>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -124,9 +124,9 @@
     [SupplyParameterFromForm] 
     private VerifyEmailModel Model { get; set; } = new();
 
-    private PatternMask mask = new("000000");
-    private MudForm form = new();
-    private MessageContext? context;
+    private PatternMask _mask = new("000000");
+    private MudForm _form = new();
+    private MessageContext? _context;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -140,7 +140,7 @@
                 _ => throw new NotSupportedException("Unsupported email type")
             };
 
-            context = new MessageContext()
+            _context = new MessageContext()
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
@@ -158,18 +158,18 @@
 
     private async Task SendCodeAsync()
     {
-        var request = context!.ToSendCodeRequest();
+        var request = _context!.ToSendCodeRequest();
         var response = await VerificationService.SendCodeAsync(request);
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
     }
 
     private async Task OnVerifyEmailAsync()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (form.IsValid)
+        if (_form.IsValid)
         {
-            var request = context!.ToVerifyCodeRequest(Model.Code);
+            var request = _context!.ToVerifyCodeRequest(Model.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();

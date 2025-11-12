@@ -4,7 +4,7 @@ namespace eSecurity.Server.Conventions;
 
 public class RoutePrefixConvention(string prefix) : IApplicationModelConvention
 {
-    private readonly AttributeRouteModel routePrefix = new AttributeRouteModel(new RouteAttribute(prefix));
+    private readonly AttributeRouteModel _routePrefix = new AttributeRouteModel(new RouteAttribute(prefix));
 
     public void Apply(ApplicationModel application)
     {
@@ -19,14 +19,14 @@ public class RoutePrefixConvention(string prefix) : IApplicationModelConvention
                 foreach (var selector in matchedSelectors)
                 {
                     selector.AttributeRouteModel = AttributeRouteModel.CombineAttributeRouteModel(
-                        routePrefix, selector.AttributeRouteModel);
+                        _routePrefix, selector.AttributeRouteModel);
                 }
             }
             else
             {
                 controller.Selectors.Add(new SelectorModel
                 {
-                    AttributeRouteModel = routePrefix
+                    AttributeRouteModel = _routePrefix
                 });
             }
         }

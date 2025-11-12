@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [Route("v{version:apiVersion}/[controller]")]
 public class EmailController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Verify email")]
     [EndpointDescription("Verify email")]
@@ -19,7 +19,7 @@ public class EmailController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyEmailRequest request)
     {
-        var result = await sender.Send(new VerifyEmailCommand(request));
+        var result = await _sender.Send(new VerifyEmailCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -37,7 +37,7 @@ public class EmailController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckEmailRequest request)
     {
-        var result = await sender.Send(new CheckEmailCommand(request));
+        var result = await _sender.Send(new CheckEmailCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -55,7 +55,7 @@ public class EmailController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> AddAsync([FromBody] AddEmailRequest request)
     {
-        var result = await sender.Send(new AddEmailCommand(request));
+        var result = await _sender.Send(new AddEmailCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -73,7 +73,7 @@ public class EmailController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangeEmailRequest request)
     {
-        var result = await sender.Send(new ChangeEmailCommand(request));
+        var result = await _sender.Send(new ChangeEmailCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -91,7 +91,7 @@ public class EmailController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetEmailRequest request)
     {
-        var result = await sender.Send(new ResetEmailCommand(request));
+        var result = await _sender.Send(new ResetEmailCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -109,7 +109,7 @@ public class EmailController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemoveEmailRequest request)
     {
-        var result = await sender.Send(new RemoveEmailCommand(request));
+        var result = await _sender.Send(new RemoveEmailCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -127,7 +127,7 @@ public class EmailController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> ManageAsync([FromBody] ManageEmailRequest request)
     {
-        var result = await sender.Send(new ManageEmailCommand(request));
+        var result = await _sender.Send(new ManageEmailCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [ApiVersion("1.0")]
 public class TwoFactorController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Enable 2FA")]
     [EndpointDescription("Enable 2FA")]
@@ -19,7 +19,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> EnableAsync([FromBody] EnableTwoFactorRequest request)
     {
-        var result = await sender.Send(new EnableTwoFactorCommand(request));
+        var result = await _sender.Send(new EnableTwoFactorCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -37,7 +37,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> DisableAsync([FromBody] DisableTwoFactorRequest request)
     {
-        var result = await sender.Send(new DisableTwoFactorCommand(request));
+        var result = await _sender.Send(new DisableTwoFactorCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -55,7 +55,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> PreferAsync([FromBody] PreferTwoFactorMethodRequest request)
     {
-        var result = await sender.Send(new PreferTwoFactorMethodCommand(request));
+        var result = await _sender.Send(new PreferTwoFactorMethodCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -73,7 +73,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GenerateQrCodeAsync([FromBody] GenerateQrCodeRequest request)
     {
-        var result = await sender.Send(new GenerateQrCodeCommand(request));
+        var result = await _sender.Send(new GenerateQrCodeCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -91,7 +91,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> RegenerateQrCodeAsync([FromBody] RegenerateQrCodeRequest request)
     {
-        var result = await sender.Send(new RegenerateQrCodeCommand(request));
+        var result = await _sender.Send(new RegenerateQrCodeCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -109,7 +109,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GenerateRecoveryCodesAsync([FromBody] GenerateRecoveryCodesRequest request)
     {
-        var result = await sender.Send(new GenerateRecoveryCodesCommand(request));
+        var result = await _sender.Send(new GenerateRecoveryCodesCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -127,7 +127,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> LoadRecoveryCodesAsync([FromBody] LoadRecoveryCodesRequest request)
     {
-        var result = await sender.Send(new LoadRecoveryCodesCommand(request));
+        var result = await _sender.Send(new LoadRecoveryCodesCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -145,7 +145,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> RevokeRecoveryCodesAsync([FromBody] RevokeRecoveryCodesRequest request)
     {
-        var result = await sender.Send(new RevokeRecoveryCodesCommand(request));
+        var result = await _sender.Send(new RevokeRecoveryCodesCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -163,7 +163,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> VerifyAuthenticatorAsync([FromBody] VerifyAuthenticatorRequest request)
     {
-        var result = await sender.Send(new VerifyAuthenticatorCommand(request));
+        var result = await _sender.Send(new VerifyAuthenticatorCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -181,7 +181,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> ReconfigureAuthenticatorAsync([FromBody] ReconfigureAuthenticatorRequest request)
     {
-        var result = await sender.Send(new ReconfigureAuthenticatorCommand(request));
+        var result = await _sender.Send(new ReconfigureAuthenticatorCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

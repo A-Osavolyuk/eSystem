@@ -6,7 +6,7 @@ namespace eSecurity.Client.Common.JS.Download;
 
 public class DownloadManager(IJSRuntime jSRuntime)
 {
-    private readonly IJSRuntime jSRuntime = jSRuntime;
+    private readonly IJSRuntime _jSRuntime = jSRuntime;
 
     public async Task DownloadAsync(string fileName, object data)
     {
@@ -14,6 +14,6 @@ public class DownloadManager(IJSRuntime jSRuntime)
         var bytes = Encoding.UTF8.GetBytes(json);
         var base64 = Convert.ToBase64String(bytes);
         
-        await jSRuntime.InvokeVoidAsync("downloadFile", fileName, base64);
+        await _jSRuntime.InvokeVoidAsync("downloadFile", fileName, base64);
     }
 }

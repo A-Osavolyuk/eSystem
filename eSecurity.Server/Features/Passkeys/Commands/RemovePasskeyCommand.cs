@@ -20,24 +20,24 @@ public class RemovePasskeyCommandHandler(
     ITwoFactorManager twoFactorManager,
     IOptions<SignInOptions> options) : IRequestHandler<RemovePasskeyCommand, Result>
 {
-    private readonly IPasskeyManager passkeyManager = passkeyManager;
-    private readonly IUserManager userManager = userManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
-    private readonly SignInOptions options = options.Value;
+    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var passkey = await passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);
+        var passkey = await _passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);
         if (passkey is null) return Results.NotFound($"Cannot find passkey with ID {request.Request.PasskeyId}.");
 
-        if (options.RequireConfirmedEmail && !user.HasEmail(EmailType.Primary) || !user.HasPassword())
+        if (_options.RequireConfirmedEmail && !user.HasEmail(EmailType.Primary) || !user.HasPassword())
             return Results.BadRequest("You need to enable another authentication method first.");
 
-        var verificationResult = await verificationManager.VerifyAsync(user, 
+        var verificationResult = await _verificationManager.VerifyAsync(user, 
             PurposeType.Passkey, ActionType.Remove, cancellationToken);
         
         if (!verificationResult.Succeeded) return verificationResult;
@@ -50,12 +50,12 @@ public class RemovePasskeyCommandHandler(
 
                 if (twoFactorMethod.Preferred)
                 {
-                    var preferredResult = await twoFactorManager.PreferAsync(user, 
+                    var preferredResult = await _twoFactorManager.PreferAsync(user, 
                         TwoFactorMethod.AuthenticatorApp, cancellationToken);
                     if (!preferredResult.Succeeded) return preferredResult;
                 }
                 
-                var twoFactorResult = await twoFactorManager.UnsubscribeAsync(twoFactorMethod, cancellationToken);
+                var twoFactorResult = await _twoFactorManager.UnsubscribeAsync(twoFactorMethod, cancellationToken);
                 if (!twoFactorResult.Succeeded) return twoFactorResult;
             }
 
@@ -69,16 +69,16 @@ public class RemovePasskeyCommandHandler(
                         ? VerificationMethod.AuthenticatorApp 
                         : VerificationMethod.Email;
                 
-                    var methodResult = await verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
+                    var methodResult = await _verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
                     if (!methodResult.Succeeded) return methodResult;
                 }
                 
-                var unsubscribeResult = await verificationManager.UnsubscribeAsync(method, cancellationToken);
+                var unsubscribeResult = await _verificationManager.UnsubscribeAsync(method, cancellationToken);
                 if (!unsubscribeResult.Succeeded) return unsubscribeResult;
             }
         }
 
-        var result = await passkeyManager.DeleteAsync(passkey, cancellationToken);
+        var result = await _passkeyManager.DeleteAsync(passkey, cancellationToken);
         return result;
     }
 }

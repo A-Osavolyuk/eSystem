@@ -37,15 +37,15 @@ public sealed class OAuthSignUpStrategy(
     IHttpContextAccessor httpContextAccessor,
     ISessionManager sessionManager) : ISignUpStrategy
 {
-    private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly IUserManager userManager = userManager;
-    private readonly IMessageService messageService = messageService;
-    private readonly IRoleManager roleManager = roleManager;
-    private readonly IOAuthSessionManager oauthSessionManager = oauthSessionManager;
-    private readonly ILinkedAccountManager providerManager = providerManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
-    private readonly ISessionManager sessionManager = sessionManager;
+    private readonly IPermissionManager _permissionManager = permissionManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IMessageService _messageService = messageService;
+    private readonly IRoleManager _roleManager = roleManager;
+    private readonly IOAuthSessionManager _oauthSessionManager = oauthSessionManager;
+    private readonly ILinkedAccountManager _providerManager = providerManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly ISessionManager _sessionManager = sessionManager;
 
     public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
         CancellationToken cancellationToken = default)
@@ -53,10 +53,10 @@ public sealed class OAuthSignUpStrategy(
         if (payload is not OAuthSignUpPayload oauthPayload)
             return Results.BadRequest("Invalid payload");
 
-        var session = await oauthSessionManager.FindAsync(oauthPayload.SessionId, oauthPayload.Token, cancellationToken);
+        var session = await _oauthSessionManager.FindAsync(oauthPayload.SessionId, oauthPayload.Token, cancellationToken);
         if (session is null) return Results.NotFound("Session was not found");
 
-        var taken = await userManager.IsEmailTakenAsync(oauthPayload.Email, cancellationToken);
+        var taken = await _userManager.IsEmailTakenAsync(oauthPayload.Email, cancellationToken);
         if (taken) return Results.BadRequest("Email is already taken");
 
         var user = new UserEntity()
@@ -65,16 +65,16 @@ public sealed class OAuthSignUpStrategy(
             Username = oauthPayload.Email,
         };
 
-        var createResult = await userManager.CreateAsync(user, cancellationToken: cancellationToken);
+        var createResult = await _userManager.CreateAsync(user, cancellationToken: cancellationToken);
         if (!createResult.Succeeded) return Result.Failure(createResult.GetError());
 
-        var setResult = await userManager.SetEmailAsync(user, oauthPayload.Email, EmailType.Primary, cancellationToken);
+        var setResult = await _userManager.SetEmailAsync(user, oauthPayload.Email, EmailType.Primary, cancellationToken);
         if (!setResult.Succeeded) return setResult;
 
-        var role = await roleManager.FindByNameAsync("User", cancellationToken);
+        var role = await _roleManager.FindByNameAsync("User", cancellationToken);
         if (role is null) return Results.NotFound("Cannot find role 'User'");
 
-        var assignResult = await roleManager.AssignAsync(user, role, cancellationToken);
+        var assignResult = await _roleManager.AssignAsync(user, role, cancellationToken);
         if (!assignResult.Succeeded) return Result.Failure(assignResult.GetError());
 
         if (role.Permissions.Count > 0)
@@ -82,16 +82,16 @@ public sealed class OAuthSignUpStrategy(
             var permissions = role.Permissions.Select(x => x.Permission).ToList();
             foreach (var permission in permissions)
             {
-                var result = await permissionManager.GrantAsync(user, permission, cancellationToken);
+                var result = await _permissionManager.GrantAsync(user, permission, cancellationToken);
 
                 if (result.Succeeded) continue;
                 return Result.Failure(result.GetError());
             }
         }
 
-        var userAgent = httpContext.GetUserAgent();
-        var ipAddress = httpContext.GetIpV4();
-        var clientInfo = httpContext.GetClientInfo();
+        var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
+        var clientInfo = _httpContext.GetClientInfo();
 
         var newDevice = new UserDeviceEntity()
         {
@@ -100,7 +100,7 @@ public sealed class OAuthSignUpStrategy(
             UserAgent = userAgent,
             IpAddress = ipAddress,
             Browser = clientInfo.UA.ToString(),
-            OS = clientInfo.OS.ToString(),
+            Os = clientInfo.OS.ToString(),
             Device = clientInfo.Device.ToString(),
             IsTrusted = true,
             IsBlocked = false,
@@ -108,7 +108,7 @@ public sealed class OAuthSignUpStrategy(
             CreateDate = DateTimeOffset.UtcNow
         };
 
-        var deviceResult = await deviceManager.CreateAsync(newDevice, cancellationToken);
+        var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return Result.Failure(deviceResult.GetError());
 
         var message = new OAuthSignUpMessage()
@@ -125,7 +125,7 @@ public sealed class OAuthSignUpStrategy(
             }
         };
 
-        await messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+        await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
         var userLinkedAccount = new UserLinkedAccountEntity()
         {
@@ -135,17 +135,17 @@ public sealed class OAuthSignUpStrategy(
             CreateDate = DateTimeOffset.UtcNow
         };
 
-        var linkedAccountResult = await providerManager.CreateAsync(userLinkedAccount, cancellationToken);
+        var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);
         if (!linkedAccountResult.Succeeded)
             return Result.Failure(linkedAccountResult.GetError());
 
         session.SignType = OAuthSignType.SignUp;
         session.LinkedAccountId = userLinkedAccount.Id;
 
-        var sessionResult = await oauthSessionManager.UpdateAsync(session, cancellationToken);
+        var sessionResult = await _oauthSessionManager.UpdateAsync(session, cancellationToken);
         if (!sessionResult.Succeeded) return Result.Failure(sessionResult.GetError());
 
-        await sessionManager.CreateAsync(newDevice, cancellationToken);
+        await _sessionManager.CreateAsync(newDevice, cancellationToken);
 
 
         var builder = QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)

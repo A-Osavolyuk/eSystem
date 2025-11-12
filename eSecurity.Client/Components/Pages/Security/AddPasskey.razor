@@ -13,12 +13,12 @@
 
 <Title Text="Add passkey"></Title>
 
-<AccessConfirmation Context="context">
+<AccessConfirmation Context="_context">
     <AccessConfirmed>
         <MudGrid Justify="Justify.Center">
             <MudItem xs="6" Style="margin-top: 50px">
                 <MudStepperExtended
-                    @ref="stepper"
+                    @ref="_stepper"
                     Color="Color.Primary"
                     Variant="Variant.Filled"
                     Animation="true"
@@ -58,7 +58,7 @@
                                                         Passkey nickname
                                                     </MudTextM3>
                                                     <MudForm 
-                                                        @ref="form" 
+                                                        @ref="_form" 
                                                         Model="Model" 
                                                         Validation="Validator.ValidateValue">
                                                         <MudTextFieldExtended
@@ -69,7 +69,7 @@
                                                             Clearable="true"/>
                                                     </MudForm>
                                                 </MudStack>
-                                                @if (showError)
+                                                @if (_showError)
                                                 {
                                                     <MudAlert
                                                         ContentAlignment="HorizontalAlignment.Center"
@@ -86,7 +86,7 @@
                                                     ButtonType="ButtonType.Button"
                                                     Size="Size.Small"
                                                     OnClick="@(async () => await OnAddPasskeyAsync())">
-                                                    @(showError ? "Retry add passkey" : "Add passkey")
+                                                    @(_showError ? "Retry add passkey" : "Add passkey")
                                                 </MudButton>
                                                 <MudButton
                                                     Color="Color.Info"
@@ -158,14 +158,14 @@
     public string ReturnUrl { get; set; } = null!;
 
     private CreatePasskeyModel Model { get; set; } = new();
-    private MudStepperExtended stepper = new();
-    private ConfirmationContext? context;
-    private MudForm form = new();
-    private bool showError;
+    private MudStepperExtended _stepper = new();
+    private ConfirmationContext? _context;
+    private MudForm _form = new();
+    private bool _showError;
 
     protected override void OnInitialized()
     {
-        context = new()
+        _context = new()
         {
             Action = ActionType.Create,
             Purpose = PurposeType.Passkey
@@ -174,10 +174,10 @@
 
     private async Task OnAddPasskeyAsync()
     {
-        showError = false;
-        await form.Validate();
+        _showError = false;
+        await _form.Validate();
 
-        if (form.IsValid)
+        if (_form.IsValid)
         {
             var request = new GenerateCreationOptionsRequest()
             {
@@ -210,9 +210,9 @@
             };
 
             var result = await PasskeyService.CreateAsync(request);
-            if (result.Success) await stepper.StepNextAsync();
+            if (result.Success) await _stepper.StepNextAsync();
             else Snackbar.Add(result.Message, Severity.Error);
         }
-        else showError = true;
+        else _showError = true;
     }
 }

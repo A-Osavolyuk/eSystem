@@ -13,23 +13,23 @@ public sealed class ResetPasswordCommandHandler(
     IPasswordManager passwordManager,
     IVerificationManager verificationManager) : IRequestHandler<ResetPasswordCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IPasswordManager passwordManager = passwordManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
         if (!user.HasPassword()) return Results.BadRequest("User does not have a password.");
         
-        var verificationResult = await verificationManager.VerifyAsync(user, 
+        var verificationResult = await _verificationManager.VerifyAsync(user, 
             PurposeType.Password, ActionType.Reset, cancellationToken);
         
         if(!verificationResult.Succeeded)  return verificationResult;
         
-        var result = await passwordManager.ResetAsync(user, request.Request.NewPassword, cancellationToken);
+        var result = await _passwordManager.ResetAsync(user, request.Request.NewPassword, cancellationToken);
         return result;
     }
 }

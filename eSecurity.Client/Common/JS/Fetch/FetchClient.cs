@@ -7,7 +7,7 @@ namespace eSecurity.Client.Common.JS.Fetch;
 
 public class FetchClient(IJSRuntime jSRuntime) : IFetchClient
 {
-    private readonly IJSRuntime jSRuntime = jSRuntime;
+    private readonly IJSRuntime _jSRuntime = jSRuntime;
 
     public async ValueTask<HttpResponse> FetchAsync(FetchOptions options)
     {
@@ -18,7 +18,7 @@ public class FetchClient(IJSRuntime jSRuntime) : IFetchClient
             { "Content-Type", "application/json" }
         };
         
-        return await jSRuntime.InvokeAsync<HttpResponse>("fetchApi", new
+        return await _jSRuntime.InvokeAsync<HttpResponse>("fetchApi", new
         {
             url = options.Url,
             headers,

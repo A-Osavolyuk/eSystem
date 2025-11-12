@@ -7,10 +7,10 @@ namespace eSecurity.Client.Services.Implementations;
 
 public class SecurityService(IApiClient apiClient) : ISecurityService
 {
-    private readonly IApiClient apiClient = apiClient;
+    private readonly IApiClient _apiClient = apiClient;
 
     public async ValueTask<HttpResponse> SignInAsync(SignInRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -19,7 +19,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> SignUpAsync(SignUpRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -28,7 +28,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -37,7 +37,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> CheckEmailAsync(CheckEmailRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -46,7 +46,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> ChangeEmailAsync(ChangeEmailRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -55,7 +55,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> VerifyEmailAsync(VerifyEmailRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -64,7 +64,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> ManageEmailAsync(ManageEmailRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -73,7 +73,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> RemoveEmailAsync(RemoveEmailRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -82,7 +82,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> ResetEmailAsync(ResetEmailRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -91,7 +91,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> ChangeUsernameAsync(ChangeUsernameRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -100,7 +100,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> CheckAccountAsync(CheckAccountRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -109,7 +109,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> RecoverAccountAsync(RecoverAccountRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -118,7 +118,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> UnlockAccountAsync(UnlockAccountRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -127,7 +127,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> AddPasswordAsync(AddPasswordRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -136,7 +136,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> ForgotPasswordAsync(ForgotPasswordRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -145,7 +145,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> ResetPasswordAsync(ResetPasswordRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -154,7 +154,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,

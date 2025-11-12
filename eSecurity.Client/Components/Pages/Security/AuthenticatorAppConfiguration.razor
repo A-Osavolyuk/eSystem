@@ -83,7 +83,7 @@
             Verify the code from the app
         </MudTextM3>
         <MudForm
-            @ref="form"
+            @ref="_form"
             Model="Model"
             Validation="Validator.ValidateValue">
             <MudStack Row="true" AlignItems="AlignItems.Center">
@@ -92,26 +92,26 @@
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         Immediate="true"
-                        Mask="@mask"
+                        Mask="@_mask"
                         Placeholder="XXXXXX"
                         @bind-Value="Model.Code"
-                        Disabled="codeValid"/>
+                        Disabled="_codeValid"/>
                 </MudStack>
-                @if (codeValid)
+                @if (_codeValid)
                 {
                     <MudIcon Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.Check"/>
                 }
             </MudStack>
         </MudForm>
         <MudStack Spacing="2">
-            @if (showError)
+            @if (_showError)
             {
                 <MudAlert Dense="true" Severity="Severity.Error" Variant="Variant.Outlined">
                     Invalid code
                 </MudAlert>
             }
             <MudStack Row="true" Spacing="2">
-                @if (codeValid)
+                @if (_codeValid)
                 {
                     <MudButton
                         Size="Size.Small"
@@ -153,10 +153,10 @@
     private CodeModel Model { get; set; } = new();
     private QrCode QrCode { get; set; } = new();
 
-    private MudForm form = new();
-    private PatternMask mask = new("000000");
-    private bool codeValid;
-    private bool showError;
+    private MudForm _form = new();
+    private PatternMask _mask = new("000000");
+    private bool _codeValid;
+    private bool _showError;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -199,7 +199,7 @@
 
     private async Task OnVerifyCodeAsync()
     {
-        showError = false;
+        _showError = false;
         var request = new VerifyAuthenticatorRequest()
         {
             UserId = UserState.UserId,
@@ -209,8 +209,8 @@
 
         var result = await TwoFactorService.VerifyAuthenticatorAsync(request);
 
-        if (result.Success) codeValid = true;
-        else showError = true;
+        if (result.Success) _codeValid = true;
+        else _showError = true;
     }
 
     private async Task OnSaveAsync()

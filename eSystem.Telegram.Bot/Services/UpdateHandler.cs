@@ -4,8 +4,8 @@ namespace eSystem.Telegram.Bot.Services;
 
 public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger) : IUpdateHandler
 {
-    private readonly ITelegramBotClient bot = bot;
-    private readonly ILogger<UpdateHandler> logger = logger;
+    private readonly ITelegramBotClient _bot = bot;
+    private readonly ILogger<UpdateHandler> _logger = logger;
 
     public Task OnUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
@@ -17,7 +17,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
     public Task OnErrorAsync(ITelegramBotClient botClient, Exception exception, HandleErrorSource source,
         CancellationToken cancellationToken)
     {
-        logger.LogInformation("Handling error: {exception}", exception);
+        _logger.LogInformation("Handling error: {exception}", exception);
 
         return Task.CompletedTask;
     }

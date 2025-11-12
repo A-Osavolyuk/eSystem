@@ -7,10 +7,10 @@ namespace eSecurity.Client.Services.Implementations;
 
 public class LinkedAccountService(IApiClient apiClient) : ILinkedAccountService
 {
-    private readonly IApiClient apiClient = apiClient;
+    private readonly IApiClient _apiClient = apiClient;
 
     public async ValueTask<HttpResponse> DisconnectAsync(DisconnectLinkedAccountRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,

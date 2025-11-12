@@ -16,10 +16,10 @@ public sealed class PasskeySignInStrategy(
     ISessionManager sessionManager,
     IHttpContextAccessor accessor) : ISignInStrategy
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IPasskeyManager passkeyManager = passkeyManager;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly HttpContext httpContext = accessor.HttpContext!;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
@@ -31,16 +31,16 @@ public sealed class PasskeySignInStrategy(
 
         var credential = passkeyPayload.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
-        var passkey = await passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
+        var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null) return Results.BadRequest("Invalid credential");
 
-        var user = await userManager.FindByIdAsync(passkey.Device.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(passkey.Device.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {passkey.Device.UserId}.");
 
-        var savedChallenge = httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
+        var savedChallenge = _httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
         if (string.IsNullOrEmpty(savedChallenge)) return Results.BadRequest("Invalid challenge");
 
-        var result = await passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
+        var result = await _passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!result.Succeeded) return result;
 
         if (user.LockoutState.Enabled)
@@ -54,12 +54,12 @@ public sealed class PasskeySignInStrategy(
             return Results.BadRequest("Account is locked out", response);
         }
 
-        var userAgent = httpContext.GetUserAgent()!;
-        var ipAddress = httpContext.GetIpV4()!;
+        var userAgent = _httpContext.GetUserAgent()!;
+        var ipAddress = _httpContext.GetIpV4()!;
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound($"Invalid device.");
 
-        await sessionManager.CreateAsync(device, cancellationToken);
+        await _sessionManager.CreateAsync(device, cancellationToken);
 
         response = new SignInResponse() { UserId = user.Id, };
         return Result.Success(response);

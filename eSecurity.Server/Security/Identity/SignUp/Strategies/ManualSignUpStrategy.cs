@@ -27,13 +27,13 @@ public sealed class ManualSignUpStrategy(
     IHttpContextAccessor httpContextAccessor,
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IPasswordManager passwordManager = passwordManager;
-    private readonly IPermissionManager permissionManager = permissionManager;
-    private readonly IRoleManager roleManager = roleManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private readonly AccountOptions options = options.Value;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly IPermissionManager _permissionManager = permissionManager;
+    private readonly IRoleManager _roleManager = roleManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private readonly AccountOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignUpPayload payload, 
         CancellationToken cancellationToken = default)
@@ -41,15 +41,15 @@ public sealed class ManualSignUpStrategy(
         if (payload is not ManualSignUpPayload manualPayload)
             return Results.BadRequest("Incorrect payload type");
         
-        if (options.RequireUniqueEmail)
+        if (_options.RequireUniqueEmail)
         {
-            var isTaken = await userManager.IsEmailTakenAsync(manualPayload.Email, cancellationToken);
+            var isTaken = await _userManager.IsEmailTakenAsync(manualPayload.Email, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
-        if (options.RequireUniqueUserName)
+        if (_options.RequireUniqueUserName)
         {
-            var isUserNameTaken = await userManager.IsUsernameTakenAsync(manualPayload.Username, cancellationToken);
+            var isUserNameTaken = await _userManager.IsUsernameTakenAsync(manualPayload.Username, cancellationToken);
             if (isUserNameTaken) return Results.NotFound("Username is already taken");
         }
 
@@ -60,21 +60,21 @@ public sealed class ManualSignUpStrategy(
             NormalizedUsername = manualPayload.Username.ToUpperInvariant(),
         };
 
-        var createResult = await userManager.CreateAsync(user, cancellationToken);
+        var createResult = await _userManager.CreateAsync(user, cancellationToken);
         if (!createResult.Succeeded) return createResult;
         
-        var passwordResult = await passwordManager.AddAsync(user, manualPayload.Password, cancellationToken);
+        var passwordResult = await _passwordManager.AddAsync(user, manualPayload.Password, cancellationToken);
         if (!passwordResult.Succeeded) return passwordResult;
 
-        var setResult = await userManager.SetEmailAsync(user, manualPayload.Email,
+        var setResult = await _userManager.SetEmailAsync(user, manualPayload.Email,
             EmailType.Primary, cancellationToken);
 
         if (setResult.Succeeded) return setResult;
 
-        var role = await roleManager.FindByNameAsync("User", cancellationToken);
+        var role = await _roleManager.FindByNameAsync("User", cancellationToken);
         if (role is null) return Results.NotFound("Cannot find role with name User");
 
-        var assignRoleResult = await roleManager.AssignAsync(user, role, cancellationToken);
+        var assignRoleResult = await _roleManager.AssignAsync(user, role, cancellationToken);
         if (!assignRoleResult.Succeeded) return assignRoleResult;
 
         if (role.Permissions.Count > 0)
@@ -83,14 +83,14 @@ public sealed class ManualSignUpStrategy(
 
             foreach (var permission in permissions)
             {
-                var grantResult = await permissionManager.GrantAsync(user, permission, cancellationToken);
+                var grantResult = await _permissionManager.GrantAsync(user, permission, cancellationToken);
                 if (!grantResult.Succeeded) return grantResult;
             }
         }
 
-        var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
-        var clientInfo = httpContextAccessor.HttpContext?.GetClientInfo()!;
+        var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
+        var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
+        var clientInfo = _httpContextAccessor.HttpContext?.GetClientInfo()!;
 
         var newDevice = new UserDeviceEntity()
         {
@@ -99,7 +99,7 @@ public sealed class ManualSignUpStrategy(
             UserAgent = userAgent,
             IpAddress = ipAddress,
             Browser = clientInfo.UA.ToString(),
-            OS = clientInfo.OS.ToString(),
+            Os = clientInfo.OS.ToString(),
             Device = clientInfo.Device.ToString(),
             IsTrusted = true,
             IsBlocked = false,
@@ -107,7 +107,7 @@ public sealed class ManualSignUpStrategy(
             CreateDate = DateTimeOffset.UtcNow
         };
 
-        var deviceResult = await deviceManager.CreateAsync(newDevice, cancellationToken);
+        var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
         var response = new SignUpResponse()

@@ -15,7 +15,7 @@
 
 <Title Text="Registration completion"></Title>
 
-@if (email is not null)
+@if (_email is not null)
 {
     <MudGrid Justify="Justify.Center" Spacing="1">
         <MudItem xs="4" Style="margin-top: 100px">
@@ -28,10 +28,10 @@
                 <MudPaper Outlined Class="px-5 py-4">
                     <MudStack Spacing="2" Justify="Justify.Center">
                         <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
-                            We have sent an email with code to email: <strong>@email?.Email</strong>
+                            We have sent an email with code to email: <strong>@_email?.Email</strong>
                         </MudTextM3>
                         <MudForm
-                            @ref="form"
+                            @ref="_form"
                             Model="Model"
                             Validation="Validator.ValidateValue">
                             <MudTextFieldExtended
@@ -39,7 +39,7 @@
                                 Variant="Variant.Outlined"
                                 Margin="Margin.Dense"
                                 Placeholder="XXXXXX"
-                                Mask="mask"
+                                Mask="_mask"
                                 Clearable="true"
                                 Immediate="true"/>
                         </MudForm>
@@ -54,7 +54,7 @@
                         </MudLoadingButton>
                     </MudStack>
                 </MudPaper>
-                <CodeResend Context="context"/>
+                <CodeResend Context="_context"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -70,11 +70,11 @@
 
     [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
 
-    private MudForm form = new();
-    private PatternMask mask = new("000000");
+    private MudForm _form = new();
+    private PatternMask _mask = new("000000");
 
-    private UserEmailDto? email;
-    private MessageContext? context;
+    private UserEmailDto? _email;
+    private MessageContext? _context;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -84,7 +84,7 @@
             if (result.Success)
             {
                 var response = result.Get<UserEmailDto>()!;
-                email = response;
+                _email = response;
                 StateHasChanged();
 
                 await SendCodeAsync();
@@ -95,7 +95,7 @@
 
     private async Task SendCodeAsync()
     {
-        context = new MessageContext()
+        _context = new MessageContext()
         {
             UserId = UserId,
             Sender = SenderType.Email,
@@ -103,11 +103,11 @@
             Action = ActionType.Verify,
             Payload = new()
             {
-                { "To", email!.Email! }
+                { "To", _email!.Email! }
             }
         };
 
-        var request = context!.ToSendCodeRequest();
+        var request = _context!.ToSendCodeRequest();
         var response = await VerificationService.SendCodeAsync(request);
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
         StateHasChanged();
@@ -115,11 +115,11 @@
 
     private async Task OnVerifyEmailAsync()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (form.IsValid)
+        if (_form.IsValid)
         {
-            var request = context!.ToVerifyCodeRequest(Model.Code);
+            var request = _context!.ToVerifyCodeRequest(Model.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();
@@ -132,7 +132,7 @@
         var request = new VerifyEmailRequest()
         {
             UserId = UserId,
-            Email = email?.Email!
+            Email = _email?.Email!
         };
 
         var result = await SecurityService.VerifyEmailAsync(request);

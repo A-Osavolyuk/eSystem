@@ -9,7 +9,7 @@ public record LogoutCommand(LogoutRequest Request) : IRequest<Result>;
 
 public class LogoutCommandHandler(ILogoutStrategyResolver resolver) : IRequestHandler<LogoutCommand, Result>
 {
-    private readonly ILogoutStrategyResolver resolver = resolver;
+    private readonly ILogoutStrategyResolver _resolver = resolver;
 
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
@@ -19,7 +19,7 @@ public class LogoutCommandHandler(ILogoutStrategyResolver resolver) : IRequestHa
             _ => throw new NotSupportedException("Unsupported logout type")
         };
 
-        var strategy = resolver.Resolve(request.Request.Type);
+        var strategy = _resolver.Resolve(request.Request.Type);
         return await strategy.ExecuteAsync(payload, cancellationToken);
     }
 }

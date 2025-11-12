@@ -13,18 +13,18 @@ public class RegenerateQrCodeCommandHandler(
     IQrCodeFactory qrCodeFactory,
     ISecretManager secretManager) : IRequestHandler<RegenerateQrCodeCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IQrCodeFactory qrCodeFactory = qrCodeFactory;
-    private readonly ISecretManager secretManager = secretManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
+    private readonly ISecretManager _secretManager = secretManager;
 
     public async Task<Result> Handle(RegenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var secret = secretManager.Generate();
+        var secret = _secretManager.Generate();
         var email = user.GetEmail(EmailType.Primary)!.Email;
-        var qrCode = qrCodeFactory.Create(email, secret, QrCodeConfiguration.Issuer);
+        var qrCode = _qrCodeFactory.Create(email, secret, QrCodeConfiguration.Issuer);
         return Result.Success(qrCode);
     }
 }

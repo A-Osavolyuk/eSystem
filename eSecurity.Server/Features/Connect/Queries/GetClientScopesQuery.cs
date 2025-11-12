@@ -8,11 +8,11 @@ public sealed record GetClientScopesQuery(string ClientId) : IRequest<Result>;
 public class GetClientScopesQueryHandler(
     IClientManager clientManager) : IRequestHandler<GetClientScopesQuery, Result>
 {
-    private readonly IClientManager clientManager = clientManager;
+    private readonly IClientManager _clientManager = clientManager;
 
     public async Task<Result> Handle(GetClientScopesQuery request, CancellationToken cancellationToken)
     {
-        var client = await clientManager.FindByClientIdAsync(request.ClientId, cancellationToken);
+        var client = await _clientManager.FindByClientIdAsync(request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client was not found.");
 
         var response = client.AllowedScopes

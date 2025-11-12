@@ -31,15 +31,15 @@ public class ApiClient(
     IOptions<GatewayOptions> gatewayOptions,
     IOptions<ClientOptions> clientOptions) : IApiClient
 {
-    private readonly IHttpClientFactory clientFactory = clientFactory;
-    private readonly ICookieAccessor cookieAccessor = cookieAccessor;
-    private readonly IFetchClient fetchClient = fetchClient;
-    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
-    private readonly NavigationManager navigationManager = navigationManager;
-    private readonly TokenProvider tokenProvider = tokenProvider;
-    private readonly AuthenticationManager authenticationManager = authenticationManager;
-    private readonly GatewayOptions gatewayOptions = gatewayOptions.Value;
-    private readonly ClientOptions clientOptions = clientOptions.Value;
+    private readonly IHttpClientFactory _clientFactory = clientFactory;
+    private readonly ICookieAccessor _cookieAccessor = cookieAccessor;
+    private readonly IFetchClient _fetchClient = fetchClient;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly NavigationManager _navigationManager = navigationManager;
+    private readonly TokenProvider _tokenProvider = tokenProvider;
+    private readonly AuthenticationManager _authenticationManager = authenticationManager;
+    private readonly GatewayOptions _gatewayOptions = gatewayOptions.Value;
+    private readonly ClientOptions _clientOptions = clientOptions.Value;
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions)
     {
@@ -49,27 +49,27 @@ public class ApiClient(
             
             if (httpOptions.WithBearer)
             {
-                if (string.IsNullOrEmpty(tokenProvider.AccessToken))
+                if (string.IsNullOrEmpty(_tokenProvider.AccessToken))
                 {
                     var result = await RefreshAsync();
                 
                     if (!result.Success)
                     {
-                        tokenProvider.Clear();
-                        navigationManager.NavigateTo(Links.Account.SignIn);
+                        _tokenProvider.Clear();
+                        _navigationManager.NavigateTo(Links.Account.SignIn);
                     }
                 }
                 
-                message.Headers.AddBearerAuthorization(tokenProvider.AccessToken);
+                message.Headers.AddBearerAuthorization(_tokenProvider.AccessToken);
             }
             
-            message.RequestUri = new Uri($"{gatewayOptions.Url}/{httpRequest.Url}");
+            message.RequestUri = new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}");
             message.Method = httpRequest.Method;
-            message.IncludeUserAgent(httpContext);
-            message.IncludeCookies(httpContext);
+            message.IncludeUserAgent(_httpContext);
+            message.IncludeCookies(_httpContext);
             message.AddContent(httpRequest, httpOptions);
 
-            var httpClient = clientFactory.CreateClient("eSecurity.Client");
+            var httpClient = _clientFactory.CreateClient("eSecurity.Client");
             var httpResponseMessage = await httpClient.SendAsync(message);
 
             if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
@@ -78,12 +78,12 @@ public class ApiClient(
                 
                 if (!result.Success)
                 {
-                    await authenticationManager.SignOutAsync();
-                    navigationManager.NavigateTo(Links.Account.SignIn);
+                    await _authenticationManager.SignOutAsync();
+                    _navigationManager.NavigateTo(Links.Account.SignIn);
                 }
                 else
                 {
-                    message.Headers.AddBearerAuthorization(tokenProvider.AccessToken);
+                    message.Headers.AddBearerAuthorization(_tokenProvider.AccessToken);
                     httpResponseMessage = await httpClient.SendAsync(message);
                 }
             }
@@ -110,11 +110,11 @@ public class ApiClient(
     
     private async Task<HttpResponse> RefreshAsync()
     {
-        var refreshToken = cookieAccessor.Get(DefaultCookies.RefreshToken)!;
+        var refreshToken = _cookieAccessor.Get(DefaultCookies.RefreshToken)!;
         var request = new TokenRequest()
         {
-            ClientId = clientOptions.ClientId,
-            ClientSecret = clientOptions.ClientSecret,
+            ClientId = _clientOptions.ClientId,
+            ClientSecret = _clientOptions.ClientSecret,
             RefreshToken = refreshToken,
             GrantType = GrantTypes.RefreshToken
         };
@@ -132,16 +132,16 @@ public class ApiClient(
         if (!result.Success) return result;
         
         var response = result.Get<TokenResponse>()!;
-        tokenProvider.AccessToken = response.AccessToken;
-        tokenProvider.IdToken = response.IdToken;
+        _tokenProvider.AccessToken = response.AccessToken;
+        _tokenProvider.IdToken = response.IdToken;
 
         var fetchOptions = new FetchOptions()
         {
             Method = HttpMethod.Post,
-            Url = $"{navigationManager.BaseUri}api/authentication/refresh",
+            Url = $"{_navigationManager.BaseUri}api/authentication/refresh",
             Body = refreshToken
         };
         
-        return await fetchClient.FetchAsync(fetchOptions);
+        return await _fetchClient.FetchAsync(fetchOptions);
     }
 }

@@ -9,15 +9,15 @@ namespace eSystem.Core.Common.Errors;
 public class GlobalExceptionHandler(
     ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
-    private readonly ILogger<GlobalExceptionHandler> logger = logger;
+    private readonly ILogger<GlobalExceptionHandler> _logger = logger;
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Handling global exception");
+        _logger.LogInformation("Handling global exception");
         
         if (exception is FailedValidationException failedValidationException)
         {
-            logger.LogInformation("Handled validation exception");
+            _logger.LogInformation("Handled validation exception");
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
             await httpContext.Response.WriteAsJsonAsync(
                 HttpResponseBuilder.Create()
@@ -27,7 +27,7 @@ public class GlobalExceptionHandler(
         }
         else
         {
-            logger.LogInformation("Handled global exception");
+            _logger.LogInformation("Handled global exception");
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await httpContext.Response.WriteAsJsonAsync(
                 HttpResponseBuilder.Create()

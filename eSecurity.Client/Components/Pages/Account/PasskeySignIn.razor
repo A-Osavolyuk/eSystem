@@ -25,7 +25,7 @@
                 </MudText>
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
-                <MudForm @ref="form" Model="Model" Validation="Validator.ValidateValue">
+                <MudForm @ref="_form" Model="Model" Validation="Validator.ValidateValue">
                     <MudStack Spacing="3">
                         <MudTextField
                             @bind-Value="Model.Username"
@@ -79,13 +79,13 @@
     [SupplyParameterFromForm] 
     public PasskeySignInModel Model { get; set; } = new();
 
-    private MudForm form = new();
+    private MudForm _form = new();
 
     private async Task OnSubmitAsync()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (form.IsValid)
+        if (_form.IsValid)
         {
             var request = new GenerateRequestOptionsRequest()
             {

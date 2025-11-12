@@ -7,10 +7,10 @@ namespace eSecurity.Client.Services.Implementations;
 
 public class DeviceService(IApiClient apiClient) : IDeviceService
 {
-    private readonly IApiClient apiClient = apiClient;
+    private readonly IApiClient _apiClient = apiClient;
 
     public async ValueTask<HttpResponse> TrustAsync(TrustDeviceRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,

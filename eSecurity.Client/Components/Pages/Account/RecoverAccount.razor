@@ -16,7 +16,7 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="6" Style="margin-top: 100px">
-        <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+        <MudStepperExtended @ref="_stepper" Color="Color.Primary" Variant="Variant.Filled"
                             Animation="true"
                             HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
                             ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
@@ -42,7 +42,7 @@
                                                 email address as primary. Please, enter your username.
                                             </MudText>
                                             <MudForm
-                                                @ref="checkAccountForm"
+                                                @ref="_checkAccountForm"
                                                 Model="RecoverAccountModel">
                                                 <MudTextField
                                                     Label="Username"
@@ -82,10 +82,10 @@
                                             <MudText Align="Align.Center" Typo="Typo.body1"
                                                      Style="width: 55ch; margin: auto">
                                                 Enter 6-digit code from the email we sent you to:
-                                                <strong>@recoveryEmail</strong>
+                                                <strong>@_recoveryEmail</strong>
                                             </MudText>
                                             <MudForm
-                                                @ref="verifyCodeForm"
+                                                @ref="_verifyCodeForm"
                                                 Model="CodeModel"
                                                 Validation="Validator.ValidateValue">
                                                 <MudCodeInput
@@ -108,7 +108,7 @@
                                             </MudLoadingButton>
                                         </MudStack>
                                     </MudPaper>
-                                    <CodeResend Context="context"></CodeResend>
+                                    <CodeResend Context="_context"></CodeResend>
                                 </MudStack>
                             </MudItem>
                         </MudGrid>
@@ -129,19 +129,19 @@
     [SupplyParameterFromForm] 
     private CodeModel CodeModel { get; set; } = new();
 
-    private MudStepperExtended stepper = new();
-    private MudForm checkAccountForm = new();
-    private MudForm verifyCodeForm = new();
+    private MudStepperExtended _stepper = new();
+    private MudForm _checkAccountForm = new();
+    private MudForm _verifyCodeForm = new();
 
-    private Guid userId;
-    private string? recoveryEmail;
-    private MessageContext? context;
+    private Guid _userId;
+    private string? _recoveryEmail;
+    private MessageContext? _context;
 
     private async Task OnCheckAsync()
     {
-        await checkAccountForm.Validate();
+        await _checkAccountForm.Validate();
 
-        if (checkAccountForm.IsValid)
+        if (_checkAccountForm.IsValid)
         {
             var request = new CheckAccountRequest()
             {
@@ -175,22 +175,22 @@
                     return;
                 }
 
-                userId = response.UserId;
-                recoveryEmail = response.RecoveryEmail;
+                _userId = response.UserId;
+                _recoveryEmail = response.RecoveryEmail;
                 
-                context = new MessageContext()
+                _context = new MessageContext()
                 {
-                    UserId = userId,
+                    UserId = _userId,
                     Sender = SenderType.Email,
                     Purpose = PurposeType.Account,
                     Action = ActionType.Recover,
                     Payload = new()
                     {
-                        { "To", recoveryEmail! }
+                        { "To", _recoveryEmail! }
                     }
                 };
 
-                await stepper.StepNextAsync();
+                await _stepper.StepNextAsync();
                 await SendCodeAsync();
             }
             else Snackbar.Add(result.Message, Severity.Error);
@@ -199,7 +199,7 @@
 
     private async Task SendCodeAsync()
     {
-        var request = context!.ToSendCodeRequest();
+        var request = _context!.ToSendCodeRequest();
         var response = await VerificationService.SendCodeAsync(request);
 
         Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
@@ -207,11 +207,11 @@
 
     private async Task OnVerifyAsync()
     {
-        await verifyCodeForm.Validate();
+        await _verifyCodeForm.Validate();
 
-        if (verifyCodeForm.IsValid)
+        if (_verifyCodeForm.IsValid)
         {
-            var request = context!.ToVerifyCodeRequest(CodeModel.Code);
+            var request = _context!.ToVerifyCodeRequest(CodeModel.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();
@@ -221,7 +221,7 @@
 
     private async Task VerifyAsync()
     {
-        var request = new RecoverAccountRequest() { UserId = userId };
+        var request = new RecoverAccountRequest() { UserId = _userId };
         var result = await SecurityService.RecoverAccountAsync(request);
 
         if (result.Success)

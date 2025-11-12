@@ -16,27 +16,27 @@ public class VerifyAuthenticatorCodeCommandHandler(
     IVerificationManager verificationManager,
     IDataProtectionProvider protectionProvider) : IRequestHandler<VerifyAuthenticatorCodeCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ISecretManager secretManager = secretManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ISecretManager _secretManager = secretManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(VerifyAuthenticatorCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        var userSecret = await secretManager.FindAsync(user, cancellationToken);
+        var userSecret = await _secretManager.FindAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
-        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
         var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, unprotectedSecret);
         if (!verified) return Results.BadRequest("Invalid authenticator code");
         
         var purpose = request.Request.Purpose;
         var action = request.Request.Action;
-        var result = await verificationManager.CreateAsync(user, purpose, action, cancellationToken);
+        var result = await _verificationManager.CreateAsync(user, purpose, action, cancellationToken);
         return result;
     }
 }

@@ -13,12 +13,12 @@ public class RemoveEmailCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager) : IRequestHandler<RemoveEmailCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(RemoveEmailCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var userEmail = user.Emails.FirstOrDefault(x => x.Email == request.Request.Email);
@@ -39,12 +39,12 @@ public class RemoveEmailCommandHandler(
             }
         }
 
-        var verificationResult = await verificationManager.VerifyAsync(user,
+        var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Email, ActionType.Remove, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
         
-        var result = await userManager.RemoveEmailAsync(user, request.Request.Email, cancellationToken);
+        var result = await _userManager.RemoveEmailAsync(user, request.Request.Email, cancellationToken);
         return result;
     }
 }

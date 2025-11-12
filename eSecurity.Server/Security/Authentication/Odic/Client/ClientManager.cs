@@ -5,11 +5,11 @@ namespace eSecurity.Server.Security.Authentication.Odic.Client;
 
 public class ClientManager(AuthDbContext context) : IClientManager
 {
-    private readonly AuthDbContext context = context;
+    private readonly AuthDbContext _context = context;
 
     public async ValueTask<ClientEntity?> FindByClientIdAsync(string clientId, CancellationToken cancellationToken = default)
     {
-        return await context.Clients
+        return await _context.Clients
             .Where(c => c.ClientId == clientId)
             .Include(x => x.RedirectUris)
             .Include(x => x.PostLogoutRedirectUris)
@@ -21,7 +21,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
 
     public async ValueTask<ClientEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await context.Clients
+        return await _context.Clients
             .Where(c => c.Id == id)
             .Include(x => x.RedirectUris)
             .Include(x => x.PostLogoutRedirectUris)

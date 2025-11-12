@@ -9,7 +9,7 @@ public record TokenCommand(TokenRequest Request) : IRequest<Result>;
 
 public class TokenCommandHandler(ITokenStrategyResolver tokenStrategyResolver) : IRequestHandler<TokenCommand, Result>
 {
-    private readonly ITokenStrategyResolver tokenStrategyResolver = tokenStrategyResolver;
+    private readonly ITokenStrategyResolver _tokenStrategyResolver = tokenStrategyResolver;
 
     public async Task<Result> Handle(TokenCommand request, CancellationToken cancellationToken)
     {
@@ -35,7 +35,7 @@ public class TokenCommandHandler(ITokenStrategyResolver tokenStrategyResolver) :
             _ => throw new NotSupportedException("Unsupported grant type")
         };
         
-        var strategy = tokenStrategyResolver.Resolve(request.Request.GrantType);
+        var strategy = _tokenStrategyResolver.Resolve(request.Request.GrantType);
         return await strategy.ExecuteAsync(payload, cancellationToken);
     }
 }

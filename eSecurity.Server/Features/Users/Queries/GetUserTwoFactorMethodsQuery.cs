@@ -7,11 +7,11 @@ public record GetUserTwoFactorMethodsQuery(Guid Id) : IRequest<Result>;
 
 public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHandler<GetUserTwoFactorMethodsQuery, Result>
 {
-    private readonly IUserManager userManager = userManager;
+    private readonly IUserManager _userManager = userManager;
 
     public async Task<Result> Handle(GetUserTwoFactorMethodsQuery request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Id, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
 
         var providers = user.TwoFactorMethods.ToList();

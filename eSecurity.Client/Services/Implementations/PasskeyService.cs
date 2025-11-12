@@ -7,10 +7,10 @@ namespace eSecurity.Client.Services.Implementations;
 
 public class PasskeyService(IApiClient apiClient) : IPasskeyService
 {
-    private readonly IApiClient apiClient = apiClient;
+    private readonly IApiClient _apiClient = apiClient;
     
     public async ValueTask<HttpResponse> GenerateRequestOptionsAsync(GenerateRequestOptionsRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -19,7 +19,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> GenerateCreationOptionsAsync(GenerateCreationOptionsRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -28,7 +28,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> CreateAsync(CreatePasskeyRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -37,7 +37,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> ChangeNameAsync(ChangePasskeyNameRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -46,7 +46,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
     public async ValueTask<HttpResponse> RemoveAsync(RemovePasskeyRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,

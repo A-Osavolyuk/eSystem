@@ -8,12 +8,12 @@ public sealed record SignUpCommand(SignUpRequest Request) : IRequest<Result>;
 
 public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHandler<SignUpCommand, Result>
 {
-    private readonly ISignUpResolver resolver = resolver;
+    private readonly ISignUpResolver _resolver = resolver;
 
     public async Task<Result> Handle(SignUpCommand request,
         CancellationToken cancellationToken)
     {
-        var strategy = resolver.Resolve(SignUpType.Manual);
+        var strategy = _resolver.Resolve(SignUpType.Manual);
 
         var payload = new ManualSignUpPayload()
         {

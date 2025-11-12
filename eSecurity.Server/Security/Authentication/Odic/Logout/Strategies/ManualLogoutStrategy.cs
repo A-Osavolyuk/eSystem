@@ -18,27 +18,27 @@ public sealed class ManualLogoutStrategy(
     ISessionManager sessionManager,
     ICookieAccessor cookieAccessor) : ILogoutStrategy
 {
-    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
-    private readonly IUserManager userManager = userManager;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly ICookieAccessor cookieAccessor = cookieAccessor;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ICookieAccessor _cookieAccessor = cookieAccessor;
 
     public async ValueTask<Result> ExecuteAsync(LogoutPayload payload, CancellationToken cancellationToken = default)
     {
-        var protectedCookie = cookieAccessor.Get(DefaultCookies.Session);
+        var protectedCookie = _cookieAccessor.Get(DefaultCookies.Session);
         if (string.IsNullOrEmpty(protectedCookie)) return Results.BadRequest("Session doesn't exist.");
 
-        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Session);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
         var cookiesJson = protector.Unprotect(protectedCookie);
         var cookie = JsonSerializer.Deserialize<SessionCookie>(cookiesJson)!;
 
-        var session = await sessionManager.FindByIdAsync(cookie.SessionId, cancellationToken);
+        var session = await _sessionManager.FindByIdAsync(cookie.SessionId, cancellationToken);
         if (session is null) return Results.NotFound("Session was not found.");
 
-        var user = await userManager.FindByIdAsync(cookie.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(cookie.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User was not found");
         
-        var result = await sessionManager.RemoveAsync(session, cancellationToken);
+        var result = await _sessionManager.RemoveAsync(session, cancellationToken);
         if (!result.Succeeded) return result;
 
         var response = new LogoutResponse() { RedirectUri = Links.Account.SignIn };

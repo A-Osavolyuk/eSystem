@@ -13,12 +13,12 @@ public class RemovePhoneNumberCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager) : IRequestHandler<RemovePhoneNumberCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(RemovePhoneNumberCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         if (!user.HasPhoneNumber(PhoneNumberType.Primary)) return Results.BadRequest(
@@ -27,12 +27,12 @@ public class RemovePhoneNumberCommandHandler(
         if (user.HasTwoFactor(TwoFactorMethod.Sms))
             return Results.BadRequest("Cannot remove phone number. First disable 2FA with SMS.");
         
-        var verificationResult = await verificationManager.VerifyAsync(user, 
+        var verificationResult = await _verificationManager.VerifyAsync(user, 
             PurposeType.PhoneNumber, ActionType.Remove, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await userManager.RemovePhoneNumberAsync(user, request.Request.PhoneNumber, cancellationToken);
+        var result = await _userManager.RemovePhoneNumberAsync(user, request.Request.PhoneNumber, cancellationToken);
         return result;
     }
 }

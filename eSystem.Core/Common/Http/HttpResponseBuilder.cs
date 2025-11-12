@@ -2,9 +2,9 @@
 
 public sealed class HttpResponseBuilder
 {
-    private string? message;
-    private object? result;
-    private bool isSucceeded;
+    private string? _message;
+    private object? _result;
+    private bool _isSucceeded;
 
     private HttpResponseBuilder(){}
 
@@ -12,30 +12,30 @@ public sealed class HttpResponseBuilder
 
     public HttpResponseBuilder WithResult(object? value)
     {
-        result = value;
+        _result = value;
         return this;
     }
 
     public HttpResponseBuilder WithMessage(string value)
     {
-        message = value;
+        _message = value;
         return this;
     }
 
     public HttpResponseBuilder Failed()
     {
-        isSucceeded = false;
+        _isSucceeded = false;
         return this;
     }
 
     public HttpResponseBuilder Succeeded()
     {
-        isSucceeded = true;
+        _isSucceeded = true;
         return this;
     }
 
     public HttpResponse Build()
     {
-        return HttpResponse.Create(message, result, isSucceeded);
+        return HttpResponse.Create(_message, _result, _isSucceeded);
     }
 }

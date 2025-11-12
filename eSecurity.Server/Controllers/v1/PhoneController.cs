@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [Route("v{version:apiVersion}/[controller]")]
 public class PhoneController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Verify phone number")]
     [EndpointDescription("Verify phone number")]
@@ -19,7 +19,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyPhoneNumberRequest request)
     {
-        var result = await sender.Send(new VerifyPhoneNumberCommand(request));
+        var result = await _sender.Send(new VerifyPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -37,7 +37,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckPhoneNumberRequest request)
     {
-        var result = await sender.Send(new CheckPhoneNumberCommand(request));
+        var result = await _sender.Send(new CheckPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -55,7 +55,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> AddAsync([FromBody] AddPhoneNumberRequest request)
     {
-        var result = await sender.Send(new AddPhoneNumberCommand(request));
+        var result = await _sender.Send(new AddPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -73,7 +73,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangePhoneNumberRequest request)
     {
-        var result = await sender.Send(new ChangePhoneNumberCommand(request));
+        var result = await _sender.Send(new ChangePhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -91,7 +91,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetPhoneNumberRequest request)
     {
-        var result = await sender.Send(new ResetPhoneNumberCommand(request));
+        var result = await _sender.Send(new ResetPhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -109,7 +109,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePhoneNumberRequest request)
     {
-        var result = await sender.Send(new RemovePhoneNumberCommand(request));
+        var result = await _sender.Send(new RemovePhoneNumberCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

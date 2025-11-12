@@ -28,15 +28,15 @@
                     <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                         You attempting to sign-in on new device.
                         To sign-in on new device, please enter 6-digit code the letter sent to:
-                        <strong>@email</strong>
+                        <strong>@_email</strong>
                     </MudTextM3>
-                    <MudForm @ref="form" Model="Model">
+                    <MudForm @ref="_form" Model="Model">
                         <MudTextFieldExtended
                             @bind-Value="Model.Code"
                             Variant="Variant.Outlined"
                             Margin="Margin.Dense"
                             Placeholder="XXXXXX"
-                            Mask="mask"
+                            Mask="_mask"
                             Clearable="true"
                             Immediate="true"/>
                     </MudForm>
@@ -51,7 +51,7 @@
                     </MudLoadingButton>
                 </MudStack>
             </MudPaper>
-            <CodeResend Context="context"></CodeResend>
+            <CodeResend Context="_context"></CodeResend>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -67,12 +67,12 @@
     [SupplyParameterFromForm] 
     public TrustDeviceModel Model { get; set; } = new();
 
-    private MudForm form = new();
-    private PatternMask mask = new("000000");
+    private MudForm _form = new();
+    private PatternMask _mask = new("000000");
 
-    private string? email;
-    private MessageContext? context;
-    private UserDeviceDto device = new();
+    private string? _email;
+    private MessageContext? _context;
+    private UserDeviceDto _device = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -82,7 +82,7 @@
 
             if (result.Success)
             {
-                device = result.Get<UserDeviceDto>()!;
+                _device = result.Get<UserDeviceDto>()!;
                 await LoadAsync();
                 StateHasChanged();
             }
@@ -97,9 +97,9 @@
         if (result.Success)
         {
             var response = result.Get<UserEmailDto>()!;
-            email = response.Email;
+            _email = response.Email;
 
-            context = new MessageContext()
+            _context = new MessageContext()
             {
                 UserId = UserId,
                 Sender = SenderType.Email,
@@ -107,11 +107,11 @@
                 Action = ActionType.Trust,
                 Payload = new()
                 {
-                    { "To", email! },
-                    { "OS", device.OS! },
-                    { "Device", device.Device! },
-                    { "IpAddress", device.IpAddress! },
-                    { "Browser", device.Browser! },
+                    { "To", _email! },
+                    { "OS", _device.Os! },
+                    { "Device", _device.Device! },
+                    { "IpAddress", _device.IpAddress! },
+                    { "Browser", _device.Browser! },
                 }
             };
 
@@ -122,18 +122,18 @@
 
     private async Task SendCodeAsync()
     {
-        var request = context!.ToSendCodeRequest();
+        var request = _context!.ToSendCodeRequest();
         var result = await VerificationService.SendCodeAsync(request);
         if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnTrustAsync()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (form.IsValid)
+        if (_form.IsValid)
         {
-            var request = context!.ToVerifyCodeRequest(Model.Code);
+            var request = _context!.ToVerifyCodeRequest(Model.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success)

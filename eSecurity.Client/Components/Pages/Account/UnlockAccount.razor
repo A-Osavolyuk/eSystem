@@ -19,7 +19,7 @@
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
                 <MudForm
-                    @ref="form"
+                    @ref="_form"
                     Model="Model"
                     Validation="Validator.ValidateValue">
                     <MudStack Spacing="2">
@@ -50,7 +50,7 @@
                     </MudStack>
                 </MudForm>
             </MudPaper>
-            <CodeResend Context="context"></CodeResend>
+            <CodeResend Context="_context"></CodeResend>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -65,12 +65,12 @@
 
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
-    private MudForm form = new();
-    private MessageContext? context;
+    private MudForm _form = new();
+    private MessageContext? _context;
 
     protected override void OnInitialized()
     {
-        context = new MessageContext()
+        _context = new MessageContext()
         {
             UserId = UserState.UserId,
             Sender = SenderType.Email,
@@ -85,9 +85,9 @@
 
     private async Task OnRecoverAsync()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (form.IsValid)
+        if (_form.IsValid)
         {
             var request = new UnlockAccountRequest()
             {

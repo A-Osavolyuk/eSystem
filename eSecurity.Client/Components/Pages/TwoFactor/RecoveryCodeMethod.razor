@@ -11,9 +11,9 @@
     <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
         Enter one of the 16 recovery codes saved during 2FA configuration.
     </MudTextM3>
-    <MudForm @ref="form" Model="Model">
+    <MudForm @ref="_form" Model="Model">
         <MudTextFieldExtended
-            Mask="mask"
+            Mask="_mask"
             Placeholder="XXXXXXXXXX"
             Variant="Variant.Outlined"
             Margin="Margin.Dense"
@@ -41,7 +41,7 @@
             EndIcon="@GetIcon()">
             More options
         </MudButton>
-        <MudCollapse Expanded="expanded">
+        <MudCollapse Expanded="_expanded">
             <MudDivider Class="my-2"/>
             <MudStack Spacing="2">
                 @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
@@ -101,15 +101,15 @@
     [SupplyParameterFromForm] 
     public CodeModel Model { get; set; } = new();
     
-    private MudForm form = new();
-    private readonly PatternMask mask = new("**********");
-    private bool expanded;
+    private MudForm _form = new();
+    private readonly PatternMask _mask = new("**********");
+    private bool _expanded;
 
     private async Task OnSignInAsync()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (form.IsValid)
+        if (_form.IsValid)
         {
             var request = new SignInRequest()
             {
@@ -133,6 +133,6 @@
         }
     }
     
-    private void Expand() => expanded = !expanded;
-    private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
+    private void Expand() => _expanded = !_expanded;
+    private string GetIcon() => _expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
 }

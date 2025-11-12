@@ -12,13 +12,13 @@ public class VerifyCodeCommandHandler(
     ICodeManager codeManager,
     IVerificationManager verificationManager) : IRequestHandler<VerifyCodeCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ICodeManager _codeManager = codeManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var code = request.Request.Code;
@@ -26,10 +26,10 @@ public class VerifyCodeCommandHandler(
         var action = request.Request.Action;
         var purpose = request.Request.Purpose;
         
-        var codeResult = await codeManager.VerifyAsync(user, code, sender, action, purpose, cancellationToken);
+        var codeResult = await _codeManager.VerifyAsync(user, code, sender, action, purpose, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var result = await verificationManager.CreateAsync(user, purpose, action, cancellationToken);
+        var result = await _verificationManager.CreateAsync(user, purpose, action, cancellationToken);
         return result;
     }
 }

@@ -8,34 +8,34 @@ public sealed class SecretManager(
     AuthDbContext context,
     IKeyFactory keyFactory) : ISecretManager
 {
-    private readonly AuthDbContext context = context;
-    private readonly IKeyFactory keyFactory = keyFactory;
+    private readonly AuthDbContext _context = context;
+    private readonly IKeyFactory _keyFactory = keyFactory;
 
     public async ValueTask<UserSecretEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var userSecret = await context.UserSecret.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
+        var userSecret = await _context.UserSecret.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
         return userSecret;
     }
 
     public async ValueTask<Result> AddAsync(UserSecretEntity secret,
         CancellationToken cancellationToken = default)
     {
-        await context.UserSecret.AddAsync(secret, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.UserSecret.AddAsync(secret, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
     
     public async ValueTask<Result> UpdateAsync(UserSecretEntity secret,
         CancellationToken cancellationToken = default)
     {
-        context.UserSecret.Update(secret);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserSecret.Update(secret);
+        await _context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 
     public async ValueTask<Result> RemoveAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var secret = await context.UserSecret.FirstOrDefaultAsync(
+        var secret = await _context.UserSecret.FirstOrDefaultAsync(
             x => x.UserId == user.Id, cancellationToken);
 
         if (secret is null)
@@ -43,11 +43,11 @@ public sealed class SecretManager(
             return Results.NotFound("Cannot find user secret or doesn't exists");
         }
 
-        context.UserSecret.Remove(secret);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserSecret.Remove(secret);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    public string Generate() => keyFactory.Create(20);
+    public string Generate() => _keyFactory.Create(20);
 }

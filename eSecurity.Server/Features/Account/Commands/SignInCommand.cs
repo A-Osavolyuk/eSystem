@@ -8,7 +8,7 @@ public record SignInCommand(SignInRequest Request) : IRequest<Result>;
 
 public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHandler<SignInCommand, Result>
 {
-    private readonly ISignInResolver signInResolver = signInResolver;
+    private readonly ISignInResolver _signInResolver = signInResolver;
 
     public async Task<Result> Handle(SignInCommand request, CancellationToken cancellationToken)
     {
@@ -23,7 +23,7 @@ public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHand
         };
         if (type == SignInType.OAuth) return Results.BadRequest("Unsupported for manual call");
         
-        var strategy = signInResolver.Resolve(type);
+        var strategy = _signInResolver.Resolve(type);
         return await strategy.ExecuteAsync(request.Request.Payload, cancellationToken);
     }
 }

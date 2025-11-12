@@ -20,9 +20,9 @@ public sealed class HandleOAuthLoginCommandHandler(
     ISignUpResolver signUpResolver,
     ISignInResolver signInResolver) : IRequestHandler<HandleLoginCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ISignUpResolver signUpResolver = signUpResolver;
-    private readonly ISignInResolver signInResolver = signInResolver;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ISignUpResolver _signUpResolver = signUpResolver;
+    private readonly ISignInResolver _signInResolver = signInResolver;
 
     public async Task<Result> Handle(HandleLoginCommand request,
         CancellationToken cancellationToken)
@@ -51,10 +51,10 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         if (email is null) return Results.BadRequest("Email is not provider in credentials", fallbackUri);
 
-        var user = await userManager.FindByEmailAsync(email, cancellationToken);
+        var user = await _userManager.FindByEmailAsync(email, cancellationToken);
         if (user is null)
         {
-            var signUpStrategy = signUpResolver.Resolve(SignUpType.OAuth);
+            var signUpStrategy = _signUpResolver.Resolve(SignUpType.OAuth);
             var signUpPayload = new OAuthSignUpPayload()
             {
                 Type = linkedAccountType,
@@ -80,7 +80,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             SessionId = Guid.Parse(sessionId),
         };
         
-        var strategy = signInResolver.Resolve(SignInType.OAuth);
+        var strategy = _signInResolver.Resolve(SignInType.OAuth);
         return await strategy.ExecuteAsync(signInPayload, cancellationToken);
     }
 }

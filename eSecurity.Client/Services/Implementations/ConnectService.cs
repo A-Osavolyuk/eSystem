@@ -7,10 +7,10 @@ namespace eSecurity.Client.Services.Implementations;
 
 public class ConnectService(IApiClient apiClient) : IConnectService
 {
-    private readonly IApiClient apiClient = apiClient;
+    private readonly IApiClient _apiClient = apiClient;
 
     public async ValueTask<HttpResponse> AuthorizeAsync(AuthorizeRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -19,7 +19,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> TokenAsync(TokenRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -28,7 +28,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> LogoutAsync(LogoutRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,

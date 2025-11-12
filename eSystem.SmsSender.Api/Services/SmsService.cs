@@ -6,11 +6,11 @@ namespace eSystem.SmsSender.Api.Services;
 
 public class SmsService(IAmazonSimpleNotificationService simpleNotificationService) : ISmsService
 {
-    private readonly IAmazonSimpleNotificationService simpleNotificationService = simpleNotificationService;
+    private readonly IAmazonSimpleNotificationService _simpleNotificationService = simpleNotificationService;
 
     public async Task<Result> SendMessageAsync(string phoneNumber, string message)
     {
-        var response = await simpleNotificationService.PublishAsync(new PublishRequest
+        var response = await _simpleNotificationService.PublishAsync(new PublishRequest
         {
             Message = message,
             PhoneNumber = phoneNumber

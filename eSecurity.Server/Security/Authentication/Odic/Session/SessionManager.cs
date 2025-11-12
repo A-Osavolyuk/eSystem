@@ -7,17 +7,17 @@ public class SessionManager(
     AuthDbContext context,
     IOptions<SessionOptions> options) : ISessionManager
 {
-    private readonly AuthDbContext context = context;
-    private readonly SessionOptions options = options.Value;
+    private readonly AuthDbContext _context = context;
+    private readonly SessionOptions _options = options.Value;
 
     public async ValueTask<SessionEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await context.Sessions.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+        return await _context.Sessions.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
     public async ValueTask<SessionEntity?> FindAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
-        return await context.Sessions.FirstOrDefaultAsync(x => x.DeviceId == device.Id, cancellationToken);
+        return await _context.Sessions.FirstOrDefaultAsync(x => x.DeviceId == device.Id, cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
@@ -28,19 +28,19 @@ public class SessionManager(
             DeviceId = device.Id,
             IsActive = true,
             CreateDate = DateTimeOffset.UtcNow,
-            ExpireDate = DateTimeOffset.UtcNow.Add(options.Timestamp)
+            ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
         
-        await context.Sessions.AddAsync(session, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.Sessions.AddAsync(session, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
     public async ValueTask<Result> RemoveAsync(SessionEntity session, CancellationToken cancellationToken = default)
     {
-        context.Sessions.Remove(session);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Sessions.Remove(session);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

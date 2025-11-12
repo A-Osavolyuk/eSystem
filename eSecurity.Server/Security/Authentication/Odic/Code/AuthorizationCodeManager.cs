@@ -8,13 +8,13 @@ public class AuthorizationCodeManager(
     AuthDbContext context,
     IKeyFactory keyFactory) : IAuthorizationCodeManager
 {
-    private readonly AuthDbContext context = context;
-    private readonly IKeyFactory keyFactory = keyFactory;
+    private readonly AuthDbContext _context = context;
+    private readonly IKeyFactory _keyFactory = keyFactory;
 
     public async ValueTask<AuthorizationCodeEntity?> FindByCodeAsync(string code, 
         CancellationToken cancellationToken = default)
     {
-        return await context.AuthorizationCodes
+        return await _context.AuthorizationCodes
             .Include(x => x.Device)
             .FirstOrDefaultAsync(c => c.Code == code, cancellationToken);
     }
@@ -22,8 +22,8 @@ public class AuthorizationCodeManager(
     public async ValueTask<Result> CreateAsync(AuthorizationCodeEntity code, 
         CancellationToken cancellationToken = default)
     {
-        await context.AuthorizationCodes.AddAsync(code, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.AuthorizationCodes.AddAsync(code, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
@@ -34,11 +34,11 @@ public class AuthorizationCodeManager(
         code.Used = true;
         code.UpdateDate = DateTimeOffset.UtcNow;
         
-        context.AuthorizationCodes.Update(code);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.AuthorizationCodes.Update(code);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
 
-    public string Generate() => keyFactory.Create(20);
+    public string Generate() => _keyFactory.Create(20);
 }

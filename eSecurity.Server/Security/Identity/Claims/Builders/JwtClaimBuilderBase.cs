@@ -5,12 +5,12 @@ namespace eSecurity.Server.Security.Identity.Claims.Builders;
 
 public abstract class JwtClaimBuilderBase<TBuilder> where TBuilder : JwtClaimBuilderBase<TBuilder>
 {
-    private readonly List<Claim> claims = [];
-    public IReadOnlyCollection<Claim> Build() => claims.AsReadOnly();
+    private readonly List<Claim> _claims = [];
+    public IReadOnlyCollection<Claim> Build() => _claims.AsReadOnly();
 
     protected TBuilder Add(string type, string? value)
     {
-        if (!string.IsNullOrEmpty(value)) claims.Add(new Claim(type, value));
+        if (!string.IsNullOrEmpty(value)) _claims.Add(new Claim(type, value));
         return (TBuilder)this;
     }
 

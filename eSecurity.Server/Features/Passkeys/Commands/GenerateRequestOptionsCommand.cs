@@ -19,33 +19,33 @@ public class GenerateRequestOptionsCommandHandler(
     ICredentialFactory credentialFactory,
     IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ISessionStorage sessionStorage = sessionStorage;
-    private readonly IChallengeFactory challengeFactory = challengeFactory;
-    private readonly ICredentialFactory credentialFactory = credentialFactory;
-    private readonly CredentialOptions credentialOptions = options.Value;
-    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ISessionStorage _sessionStorage = sessionStorage;
+    private readonly IChallengeFactory _challengeFactory = challengeFactory;
+    private readonly ICredentialFactory _credentialFactory = credentialFactory;
+    private readonly CredentialOptions _credentialOptions = options.Value;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByUsernameAsync(request.Request.Username!, cancellationToken);
+        var user = await _userManager.FindByUsernameAsync(request.Request.Username!, cancellationToken);
 
         if (user is null)
         {
-            user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+            user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
             if (user is null) return Results.NotFound("Cannot find user.");
         }
 
-        var userAgent = httpContext.GetUserAgent();
-        var ipAddress = httpContext.GetIpV4();
+        var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
         if (device.Passkey is null) return Results.BadRequest("This device does not have a passkey.");
 
-        var challenge = challengeFactory.Create();
-        var options = credentialFactory.CreateRequestOptions(device.Passkey, challenge, credentialOptions);
+        var challenge = _challengeFactory.Create();
+        var options = _credentialFactory.CreateRequestOptions(device.Passkey, challenge, _credentialOptions);
 
-        sessionStorage.Set(ChallengeSessionKeys.Assertion, challenge);
+        _sessionStorage.Set(ChallengeSessionKeys.Assertion, challenge);
         return Result.Success(options);
     }
 }

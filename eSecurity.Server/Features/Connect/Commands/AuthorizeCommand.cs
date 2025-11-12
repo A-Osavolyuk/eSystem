@@ -20,27 +20,27 @@ public class AuthorizeCommandHandler(
     IAuthorizationCodeManager authorizationCodeManager,
     IClientManager clientManager) : IRequestHandler<AuthorizeCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
-    private readonly IClientManager clientManager = clientManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
+    private readonly IClientManager _clientManager = clientManager;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var userAgent = httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipAddress = httpContextAccessor.HttpContext?.GetIpV4()!;
+        var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
+        var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
 
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.NotFound("Invalid device.");
 
-        var session = await sessionManager.FindAsync(device, cancellationToken);
+        var session = await _sessionManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
-        var client = await clientManager.FindByClientIdAsync(request.Request.ClientId, cancellationToken);
+        var client = await _clientManager.FindByClientIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client not found.");
         if (!client.HasRedirectUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
         if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
@@ -58,7 +58,7 @@ public class AuthorizeCommandHandler(
         if (request.Request.ResponseType != ResponseTypes.Code) 
             return Results.BadRequest("Invalid response type.");
 
-        var code = authorizationCodeManager.Generate();
+        var code = _authorizationCodeManager.Generate();
         var authorizationCode = new AuthorizationCodeEntity()
         {
             Id = Guid.CreateVersion7(),
@@ -73,7 +73,7 @@ public class AuthorizeCommandHandler(
             CreateDate = DateTimeOffset.UtcNow,
         };
 
-        var codeResult = await authorizationCodeManager.CreateAsync(authorizationCode, cancellationToken);
+        var codeResult = await _authorizationCodeManager.CreateAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return Results.BadRequest(codeResult);
 
         var response = new AuthorizeResponse()

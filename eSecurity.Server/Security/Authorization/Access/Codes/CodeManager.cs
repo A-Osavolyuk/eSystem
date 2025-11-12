@@ -12,28 +12,28 @@ public sealed class CodeManager(
     IHasherFactory hasherFactory,
     ICodeFactory codeFactory) : ICodeManager
 {
-    private readonly AuthDbContext context = context;
-    private readonly ICodeFactory codeFactory = codeFactory;
-    private readonly Hasher hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
+    private readonly AuthDbContext _context = context;
+    private readonly ICodeFactory _codeFactory = codeFactory;
+    private readonly Hasher _hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
         ActionType action, PurposeType purpose, CancellationToken cancellationToken = default)
     {
-        var entity = await context.Codes
+        var entity = await _context.Codes
             .FirstOrDefaultAsync(x => x.UserId == user.Id 
                                       && x.Action == action 
                                       && x.Sender == sender, cancellationToken);
 
         if (entity is not null)
         {
-            context.Codes.Remove(entity);
-            await context.SaveChangesAsync(cancellationToken);
+            _context.Codes.Remove(entity);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        var code = codeFactory.Create();
-        var codeHash = hasher.Hash(code);
+        var code = _codeFactory.Create();
+        var codeHash = _hasher.Hash(code);
 
-        await context.Codes.AddAsync(new CodeEntity()
+        await _context.Codes.AddAsync(new CodeEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -45,24 +45,24 @@ public sealed class CodeManager(
             ExpireDate = DateTime.UtcNow.AddMinutes(10)
         }, cancellationToken);
 
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         return code;
     }
 
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code, SenderType sender, ActionType action,
         PurposeType purpose, CancellationToken cancellationToken = default)
     {
-        var entity = await context.Codes.SingleOrDefaultAsync(
+        var entity = await _context.Codes.SingleOrDefaultAsync(
                 x => x.UserId == user.Id && x.Action == action && x.Sender == sender
                 && x.Purpose == purpose && x.ExpireDate > DateTime.UtcNow, cancellationToken);
 
         if (entity is null) return Results.NotFound("Code not found");
         
-        var isValidHash = hasher.VerifyHash(code, entity.CodeHash);
+        var isValidHash = _hasher.VerifyHash(code, entity.CodeHash);
         if (!isValidHash) return Results.BadRequest("Invalid code");
 
-        context.Codes.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.Codes.Remove(entity);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

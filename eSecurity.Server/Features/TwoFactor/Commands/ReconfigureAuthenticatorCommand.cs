@@ -16,29 +16,29 @@ public class ReconfigureAuthenticatorCommandHandler(
     IVerificationManager verificationManager,
     IDataProtectionProvider protectionProvider) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ISecretManager secretManager = secretManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ISecretManager _secretManager = secretManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(ReconfigureAuthenticatorCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var verificationResult = await verificationManager.VerifyAsync(user, PurposeType.AuthenticatorApp,
+        var verificationResult = await _verificationManager.VerifyAsync(user, PurposeType.AuthenticatorApp,
             ActionType.Reconfigure, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var protectedSecret = protector.Protect(request.Request.Secret);
         var userSecret = user.Secret!;
 
         userSecret.Secret = protectedSecret;
         userSecret.UpdateDate = DateTimeOffset.UtcNow;
 
-        var result = await secretManager.UpdateAsync(userSecret, cancellationToken);
+        var result = await _secretManager.UpdateAsync(userSecret, cancellationToken);
         return result;
     }
 }

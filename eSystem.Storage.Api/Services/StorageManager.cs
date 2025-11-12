@@ -5,7 +5,7 @@ namespace eSystem.Storage.Api.Services;
 
 internal sealed class StorageManager(BlobServiceClient blobServiceClient) : IStorageManager
 {
-    private readonly BlobServiceClient blobServiceClient = blobServiceClient;
+    private readonly BlobServiceClient _blobServiceClient = blobServiceClient;
 
     public async ValueTask<List<string>> LoadAsync(Metadata metadata)
     {
@@ -52,9 +52,9 @@ internal sealed class StorageManager(BlobServiceClient blobServiceClient) : ISto
 
     private async Task<BlobContainerClient> GetClientAsync(string type)
     {
-        var containerClient = blobServiceClient.GetBlobContainerClient(type);
+        var containerClient = _blobServiceClient.GetBlobContainerClient(type);
         await containerClient.CreateIfNotExistsAsync();
         
-        return blobServiceClient.GetBlobContainerClient(type);
+        return _blobServiceClient.GetBlobContainerClient(type);
     }
 }

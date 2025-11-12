@@ -5,11 +5,11 @@ namespace eSecurity.Server.Security.Authorization.Devices;
 
 public class DeviceManager(AuthDbContext context) : IDeviceManager
 {
-    private readonly AuthDbContext context = context;
+    private readonly AuthDbContext _context = context;
 
     public async ValueTask<UserDeviceEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var device = await context.UserDevices.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var device = await _context.UserDevices.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         return device;
     }
 
@@ -20,8 +20,8 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
             device.Device = "Desktop";
         }
         
-        await context.UserDevices.AddAsync(device, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.UserDevices.AddAsync(device, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
@@ -31,8 +31,8 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         device.IsTrusted = true;
         device.UpdateDate = DateTimeOffset.UtcNow;
         
-        context.UserDevices.Update(device);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserDevices.Update(device);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -43,8 +43,8 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         device.BlockedDate = DateTimeOffset.UtcNow;
         device.UpdateDate = DateTimeOffset.UtcNow;
         
-        context.UserDevices.Update(device);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserDevices.Update(device);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
@@ -55,8 +55,8 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         device.BlockedDate = null;
         device.UpdateDate = DateTimeOffset.UtcNow;
         
-        context.UserDevices.Update(device);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserDevices.Update(device);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

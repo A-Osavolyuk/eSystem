@@ -11,7 +11,7 @@ public class UserDeviceDto
     public string? IpAddress { get; set; } = string.Empty;
     public string? Browser { get; set; }
     public string? Device { get; set; }
-    public string? OS { get; set; }
+    public string? Os { get; set; }
     public string? Location { get; set; }
 
     public DateTimeOffset FirstSeen { get; set; }

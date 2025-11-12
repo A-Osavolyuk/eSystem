@@ -35,7 +35,7 @@
             EndIcon="@GetIcon()">
             More options
         </MudButton>
-        <MudCollapse Expanded="expanded" Class="w-100">
+        <MudCollapse Expanded="_expanded" Class="w-100">
             <MudDivider Class="my-2"/>
             <MudStack Spacing="2">
                 <MudButton
@@ -88,7 +88,7 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
 
-    private bool expanded;
+    private bool _expanded;
 
     private async Task OnSignInAsync()
     {
@@ -129,6 +129,6 @@
         else Snackbar.Add(result.Message, Severity.Error);
     }
 
-    private void Expand() => expanded = !expanded;
-    private string GetIcon() => expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
+    private void Expand() => _expanded = !_expanded;
+    private string GetIcon() => _expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
 }

@@ -21,14 +21,14 @@ public class AuthenticationController(
     IDataProtectionProvider protectionProvider,
     TokenProvider tokenProvider) : ControllerBase
 {
-    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
-    private readonly TokenProvider tokenProvider = tokenProvider;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly TokenProvider _tokenProvider = tokenProvider;
 
     [HttpPost("authorize")]
     public IActionResult Authorize([FromBody] SessionCookie cookie)
     {
         var cookieJson = JsonSerializer.Serialize(cookie);
-        var protector = protectionProvider.CreateProtector(ProtectionPurposes.Session);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
         var protectedCookie = protector.Protect(cookieJson);
         var cookieOptions = new CookieOptions()
         {
@@ -60,7 +60,7 @@ public class AuthenticationController(
     [HttpPost("sign-in")]
     public async Task<IActionResult> SignInAsync([FromBody] TokenIdentity tokenIdentity)
     {
-        tokenProvider.IdToken = tokenIdentity.IdToken;
+        _tokenProvider.IdToken = tokenIdentity.IdToken;
 
         var authenticationResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
         if (!authenticationResult.Succeeded)

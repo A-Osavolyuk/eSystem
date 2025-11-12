@@ -26,26 +26,26 @@ public class CreatePasskeyCommandHandler(
     ISessionStorage sessionStorage,
     IOptions<CredentialOptions> options) : IRequestHandler<CreatePasskeyCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IPasskeyManager passkeyManager = passkeyManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
-    private readonly ISessionStorage sessionStorage = sessionStorage;
-    private readonly CredentialOptions credentialOptions = options.Value;
-    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly ISessionStorage _sessionStorage = sessionStorage;
+    private readonly CredentialOptions _credentialOptions = options.Value;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(CreatePasskeyCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var userAgent = httpContext.GetUserAgent();
-        var ipAddress = httpContext.GetIpV4();
+        var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
         var device = user.GetDevice(userAgent, ipAddress);
         if (device is null) return Results.BadRequest("Invalid device.");
 
-        var verificationResult = await verificationManager.VerifyAsync(user,
+        var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Passkey, ActionType.Create, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
@@ -56,11 +56,11 @@ public class CreatePasskeyCommandHandler(
         if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
 
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
-        var savedChallenge = sessionStorage.Get(ChallengeSessionKeys.Attestation);
+        var savedChallenge = _sessionStorage.Get(ChallengeSessionKeys.Attestation);
         if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
 
         var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
-        var source = Encoding.UTF8.GetBytes(credentialOptions.Domain.ToArray());
+        var source = Encoding.UTF8.GetBytes(_credentialOptions.Domain.ToArray());
         var rpHash = SHA256.HashData(source);
         if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
 
@@ -78,12 +78,12 @@ public class CreatePasskeyCommandHandler(
             Type = request.Request.Response.Type
         };
 
-        var result = await passkeyManager.CreateAsync(passkey, cancellationToken);
+        var result = await _passkeyManager.CreateAsync(passkey, cancellationToken);
         if (!result.Succeeded) return result;
 
         if (user.TwoFactorEnabled && !user.HasTwoFactor(TwoFactorMethod.Passkey))
         {
-            var twoFactorResult = await twoFactorManager.SubscribeAsync(user,
+            var twoFactorResult = await _twoFactorManager.SubscribeAsync(user,
                 TwoFactorMethod.Passkey, cancellationToken: cancellationToken);
 
             if (!twoFactorResult.Succeeded) return twoFactorResult;
@@ -91,7 +91,7 @@ public class CreatePasskeyCommandHandler(
 
         if (!user.HasVerification(VerificationMethod.Passkey))
         {
-            var verificationMethodResult = await verificationManager.SubscribeAsync(user,
+            var verificationMethodResult = await _verificationManager.SubscribeAsync(user,
                 VerificationMethod.Passkey, cancellationToken: cancellationToken);
 
             if (!verificationMethodResult.Succeeded) return verificationMethodResult;

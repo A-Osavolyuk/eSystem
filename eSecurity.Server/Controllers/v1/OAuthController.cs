@@ -14,8 +14,8 @@ namespace eSecurity.Server.Controllers.v1;
 [AllowAnonymous]
 public class OAuthController(ISender sender, ISignInManager signInManager) : ControllerBase
 {
-    private readonly ISender sender = sender;
-    private readonly ISignInManager signInManager = signInManager;
+    private readonly ISender _sender = sender;
+    private readonly ISignInManager _signInManager = signInManager;
     
     [EndpointSummary("OAuth login")]
     [EndpointDescription("OAuth login")]
@@ -23,7 +23,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [HttpGet("login/{type}")]
     public async ValueTask<IActionResult> OAuthLoginAsync(string type, string returnUri, string fallbackUri)
     {
-        var result = await sender.Send(new OAuthLoginCommand(type, returnUri, fallbackUri));
+        var result = await _sender.Send(new OAuthLoginCommand(type, returnUri, fallbackUri));
 
         return result.Match<IActionResult>(
             s =>
@@ -41,10 +41,10 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     public async ValueTask<IActionResult> HandleOAuthLoginAsync(string? remoteError = null,
         string? returnUri = null)
     {
-        var authenticationResult = await signInManager.AuthenticateAsync(
+        var authenticationResult = await _signInManager.AuthenticateAsync(
             AuthenticationDefaults.AuthenticationScheme);
         
-        var result = await sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
+        var result = await _sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
         return result.Match(
             s => Redirect(s.Message),
             f => Redirect(f.Value!.ToString()!));
@@ -56,7 +56,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [HttpPost("load")]
     public async ValueTask<IActionResult> LoadAsync([FromBody] LoadOAuthSessionRequest request)
     {
-        var result = await sender.Send(new LoadOAuthSessionCommand(request));
+        var result = await _sender.Send(new LoadOAuthSessionCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

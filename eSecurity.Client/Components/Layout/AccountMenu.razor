@@ -9,7 +9,7 @@
         FallbackSrc="/images/avatar.jpg"/>
 </MudAvatar>
 <MudDrawer Class="py-3"
-           @bind-Open="isDrawerOpen"
+           @bind-Open="_isDrawerOpen"
            ClipMode="DrawerClipMode.Never"
            Overlay="true"
            Anchor="Anchor.End"
@@ -82,7 +82,7 @@
 </MudDrawer>
 
 @code {
-    private bool isDrawerOpen = false;
+    private bool _isDrawerOpen = false;
 
-    private void DrawerToggle() => isDrawerOpen = !isDrawerOpen;
+    private void DrawerToggle() => _isDrawerOpen = !_isDrawerOpen;
 }

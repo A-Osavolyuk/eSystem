@@ -6,7 +6,7 @@ namespace eSecurity.Server.Security.Authentication.TwoFactor;
 
 public static class TwoFactorExtensions
 {
-    public static void Add2FA(this IServiceCollection services)
+    public static void Add2Fa(this IServiceCollection services)
     {
         services.AddScoped<IQrCodeFactory, QrCodeFactory>();
         services.AddScoped<IRecoveryCodeFactory, RecoveryCodeFactory>();

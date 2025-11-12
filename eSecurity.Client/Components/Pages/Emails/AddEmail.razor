@@ -10,7 +10,7 @@
             Add email
         </MudTextM3>
         <MudStack Row="true" Spacing="1">
-            <MudForm Model="Model" @ref="form" Validation="Validator.ValidateValue" Spacing="0">
+            <MudForm Model="Model" @ref="_form" Validation="Validator.ValidateValue" Spacing="0">
                 <MudTextFieldExtended
                     Style="width: 400px"
                     Class="my-0"
@@ -21,8 +21,8 @@
                     Variant="Variant.Outlined"
                     Immediate="true"
                     Clearable="true"
-                    Error="@showError"
-                    ErrorText="@error"/>
+                    Error="@_showError"
+                    ErrorText="@_error"/>
             </MudForm>
             <MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                 <MudButton
@@ -46,16 +46,16 @@
     [Parameter] public EventCallback OnRefresh { get; set; }
 
     private AddEmailModel Model { get; set; } = new();
-    private MudForm form = new();
+    private MudForm _form = new();
 
-    private string? error;
-    private bool showError = false;
+    private string? _error;
+    private bool _showError = false;
 
     private async Task OnAddAsync()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (form is { IsValid: true, IsTouched: true })
+        if (_form is { IsValid: true, IsTouched: true })
         {
             var request = new CheckEmailRequest()
             {
@@ -67,17 +67,17 @@
 
             if (result.Success)
             {
-                showError = false;
-                error = null;
+                _showError = false;
+                _error = null;
                 await AddEmailAsync();
             }
             else
             {
-                showError = true;
-                error = result.Message;
+                _showError = true;
+                _error = result.Message;
             }
         }
-        else if (!form.IsValid) showError = true;
+        else if (!_form.IsValid) _showError = true;
     }
 
     private async Task AddEmailAsync()

@@ -14,15 +14,15 @@ public sealed class OAuthLoginCommandHandler(
     IOAuthSessionManager sessionManager,
     IOptions<SignInOptions> options) : IRequestHandler<OAuthLoginCommand, Result>
 {
-    private readonly IOAuthSessionManager sessionManager = sessionManager;
-    private readonly SignInOptions options = options.Value;
+    private readonly IOAuthSessionManager _sessionManager = sessionManager;
+    private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(OAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
         var fallbackUri = request.FallbackUri;
         
-        if (!options.AllowOAuthLogin)
+        if (!_options.AllowOAuthLogin)
         {
             return Results.BadRequest("Signing with linked account is not allowed.", fallbackUri);
         }
@@ -52,7 +52,7 @@ public sealed class OAuthLoginCommandHandler(
             }
         };
         
-        await sessionManager.CreateAsync(session, cancellationToken);
+        await _sessionManager.CreateAsync(session, cancellationToken);
         
         var result = Result.Success(new OAuthLoginResponse()
         {

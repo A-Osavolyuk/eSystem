@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [Route("v{version:apiVersion}/[controller]")]
 public class AccountController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Sign in")]
     [EndpointDescription("Sign in")]
@@ -19,7 +19,7 @@ public class AccountController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> SignInAsync([FromBody] SignInRequest request)
     {
-        var result = await sender.Send(new SignInCommand(request));
+        var result = await _sender.Send(new SignInCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -37,7 +37,7 @@ public class AccountController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> SignUpAsync([FromBody] SignUpRequest request)
     {
-        var result = await sender.Send(new SignUpCommand(request));
+        var result = await _sender.Send(new SignUpCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -55,7 +55,7 @@ public class AccountController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckAccountRequest request)
     {
-        var result = await sender.Send(new CheckAccountCommand(request));
+        var result = await _sender.Send(new CheckAccountCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -73,7 +73,7 @@ public class AccountController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> RecoverAsync([FromBody] RecoverAccountRequest request)
     {
-        var result = await sender.Send(new RecoverAccountCommand(request));
+        var result = await _sender.Send(new RecoverAccountCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -91,7 +91,7 @@ public class AccountController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> UnlockAsync([FromBody] UnlockAccountRequest request)
     {
-        var result = await sender.Send(new UnlockAccountCommand(request));
+        var result = await _sender.Send(new UnlockAccountCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

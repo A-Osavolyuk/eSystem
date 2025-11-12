@@ -23,13 +23,13 @@ public sealed class PasswordSignInStrategy(
     IHttpContextAccessor accessor,
     IOptions<SignInOptions> options) : ISignInStrategy
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IPasswordManager passwordManager = passwordManager;
-    private readonly ILockoutManager lockoutManager = lockoutManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly HttpContext httpContext = accessor.HttpContext!;
-    private readonly SignInOptions options = options.Value;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly ILockoutManager _lockoutManager = lockoutManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly HttpContext _httpContext = accessor.HttpContext!;
+    private readonly SignInOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
@@ -40,22 +40,22 @@ public sealed class PasswordSignInStrategy(
         if(payload is not PasswordSignInPayload passwordPayload)
             return Results.BadRequest("Invalid payload type");
 
-        if (options.AllowUserNameLogin)
+        if (_options.AllowUserNameLogin)
         {
-            user = await userManager.FindByUsernameAsync(passwordPayload.Login, cancellationToken);
+            user = await _userManager.FindByUsernameAsync(passwordPayload.Login, cancellationToken);
         }
 
-        if (user is null && options.AllowEmailLogin)
+        if (user is null && _options.AllowEmailLogin)
         {
-            user = await userManager.FindByEmailAsync(passwordPayload.Login, cancellationToken);
+            user = await _userManager.FindByEmailAsync(passwordPayload.Login, cancellationToken);
         }
 
         if (user is null) return Results.NotFound($"Cannot find user with login {passwordPayload.Login}.");
         if (!user.HasPassword()) return Results.BadRequest("Cannot log in, you don't have a password.");
 
-        var userAgent = httpContext.GetUserAgent()!;
-        var ipAddress = httpContext.GetIpV4()!;
-        var clientInfo = httpContext.GetClientInfo()!;
+        var userAgent = _httpContext.GetUserAgent()!;
+        var ipAddress = _httpContext.GetIpV4()!;
+        var clientInfo = _httpContext.GetClientInfo()!;
         var device = user.GetDevice(userAgent, ipAddress);
 
         if (device is null)
@@ -67,7 +67,7 @@ public sealed class PasswordSignInStrategy(
                 UserAgent = userAgent,
                 IpAddress = ipAddress,
                 Browser = clientInfo.UA.ToString(),
-                OS = clientInfo.OS.ToString(),
+                Os = clientInfo.OS.ToString(),
                 Device = clientInfo.Device.ToString(),
                 IsTrusted = false,
                 IsBlocked = false,
@@ -75,12 +75,12 @@ public sealed class PasswordSignInStrategy(
                 CreateDate = DateTimeOffset.UtcNow
             };
 
-            var result = await deviceManager.CreateAsync(device, cancellationToken);
+            var result = await _deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
 
         var userPrimaryEmail = user.GetEmail(EmailType.Primary)!;
-        if (options.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
+        if (_options.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
         {
             response = new SignInResponse()
             {
@@ -105,30 +105,30 @@ public sealed class PasswordSignInStrategy(
 
         if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
-        var isValidPassword = passwordManager.Check(user, passwordPayload.Password);
+        var isValidPassword = _passwordManager.Check(user, passwordPayload.Password);
         if (!isValidPassword)
         {
             user.FailedLoginAttempts += 1;
 
-            var updateResult = await userManager.UpdateAsync(user, cancellationToken);
+            var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
             if (!updateResult.Succeeded) return updateResult;
 
-            if (user.FailedLoginAttempts < options.MaxFailedLoginAttempts)
+            if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
             {
                 response = new SignInResponse()
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
+                    MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
                 };
 
                 return Results.BadRequest("The password is not valid.", response);
             }
 
-            var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
+            var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user,
+            var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user,
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
@@ -138,7 +138,7 @@ public sealed class PasswordSignInStrategy(
                 UserId = user.Id,
                 IsLockedOut = true,
                 FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
+                MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 
@@ -149,11 +149,11 @@ public sealed class PasswordSignInStrategy(
         {
             user.FailedLoginAttempts = 0;
 
-            var userUpdateResult = await userManager.UpdateAsync(user, cancellationToken);
+            var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        if (options.RequireTrustedDevice)
+        if (_options.RequireTrustedDevice)
         {
             response = new SignInResponse()
             {
@@ -187,7 +187,7 @@ public sealed class PasswordSignInStrategy(
 
         response = new SignInResponse() { UserId = user.Id, };
         
-        await sessionManager.CreateAsync(device, cancellationToken);
+        await _sessionManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);
     }

@@ -10,12 +10,12 @@ public class ChangePasskeyNameCommandHandler(
     IUserManager userManager,
     IPasskeyManager passkeyManager) : IRequestHandler<ChangePasskeyNameCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IPasskeyManager passkeyManager = passkeyManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IPasskeyManager _passkeyManager = passkeyManager;
 
     public async Task<Result> Handle(ChangePasskeyNameCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         if (!user.HasPasskeys()) return Results.BadRequest("User does not have any passkeys.");
 
@@ -29,7 +29,7 @@ public class ChangePasskeyNameCommandHandler(
         passkey.DisplayName = request.Request.DisplayName;
         passkey.UpdateDate = DateTimeOffset.UtcNow;
 
-        var result = await passkeyManager.UpdateAsync(passkey, cancellationToken);
+        var result = await _passkeyManager.UpdateAsync(passkey, cancellationToken);
         return result;
     }
 }

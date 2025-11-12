@@ -13,7 +13,7 @@
 <MudStack Spacing="3">
     <MudPaper Outlined="true" Class="pa-5">
         <MudStack>
-            @if (sendStage)
+            @if (_sendStage)
             {
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
                     When you are ready, trigger a mailer to verify your identity.
@@ -38,12 +38,12 @@
                         If it doesn’t appear within a few minutes, check your spam folder.
                     </MudTextM3>
                 </MudStack>
-                <MudForm @ref="form" Model="CodeModel">
+                <MudForm @ref="_form" Model="CodeModel">
                     <MudTextFieldExtended
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         Immediate="true"
-                        Mask="@mask"
+                        Mask="@_mask"
                         Placeholder="XXXXXX"
                         @bind-Value="CodeModel.Code"/>
                 </MudForm>
@@ -107,9 +107,9 @@
 
     private CodeModel CodeModel { get; set; } = new();
 
-    private PatternMask mask = new PatternMask("000000");
-    private MudForm form = new();
-    private bool sendStage = true;
+    private PatternMask _mask = new PatternMask("000000");
+    private MudForm _form = new();
+    private bool _sendStage = true;
 
     private async Task OnSendAsync()
     {
@@ -127,15 +127,15 @@
 
         var result = await VerificationService.SendCodeAsync(request);
 
-        if (result.Success) sendStage = false;
+        if (result.Success) _sendStage = false;
         else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnVerifyAsync()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (form.IsValid)
+        if (_form.IsValid)
         {
             var request = new VerifyCodeRequest()
             {

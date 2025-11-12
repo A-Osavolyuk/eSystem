@@ -11,7 +11,7 @@ namespace eSecurity.Server.Controllers.v1;
 [ApiVersion("1.0")]
 public class UserController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Change username")]
     [EndpointDescription("Change username")]
@@ -20,7 +20,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> EnableAsync([FromBody] ChangeUsernameRequest request)
     {
-        var result = await sender.Send(new ChangeUsernameCommand(request));
+        var result = await _sender.Send(new ChangeUsernameCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -38,7 +38,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserQuery(userId));
+        var result = await _sender.Send(new GetUserQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -56,7 +56,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserStateAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserStateQuery(userId));
+        var result = await _sender.Send(new GetUserStateQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -74,7 +74,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserRolesAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserRolesQuery(userId));
+        var result = await _sender.Send(new GetUserRolesQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -92,7 +92,7 @@ public class UserController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserTwoFactorMethodsAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserTwoFactorMethodsQuery(userId));
+        var result = await _sender.Send(new GetUserTwoFactorMethodsQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -110,7 +110,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserVerificationMethodsAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserVerificationDataQuery(userId));
+        var result = await _sender.Send(new GetUserVerificationDataQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -128,7 +128,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserPersonalDataAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserPersonalQuery(userId));
+        var result = await _sender.Send(new GetUserPersonalQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -146,7 +146,7 @@ public class UserController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserLogoutStateAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserLockoutQuery(userId));
+        var result = await _sender.Send(new GetUserLockoutQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -164,7 +164,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserLinkedAccountsAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserLinkedAccountDataQuery(userId));
+        var result = await _sender.Send(new GetUserLinkedAccountDataQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -182,7 +182,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserLoginMethodsAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserLoginMethodsQuery(userId));
+        var result = await _sender.Send(new GetUserLoginMethodsQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -200,7 +200,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserDevicesQuery(userId));
+        var result = await _sender.Send(new GetUserDevicesQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -218,7 +218,7 @@ public class UserController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId, Guid deviceId)
     {
-        var result = await sender.Send(new GetUserDeviceQuery(userId, deviceId));
+        var result = await _sender.Send(new GetUserDeviceQuery(userId, deviceId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -236,7 +236,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserEmailsAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserEmailsQuery(userId));
+        var result = await _sender.Send(new GetUserEmailsQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -254,7 +254,7 @@ public class UserController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserPrimaryEmailAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserPrimaryEmailQuery(userId));
+        var result = await _sender.Send(new GetUserPrimaryEmailQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -272,7 +272,7 @@ public class UserController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserPhoneNumbersQuery(userId));
+        var result = await _sender.Send(new GetUserPhoneNumbersQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -290,7 +290,7 @@ public class UserController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserPrimaryPhoneNumberAsync(Guid userId)
     {
-        var result = await sender.Send(new GetUserPrimaryPhoneNumberQuery(userId));
+        var result = await _sender.Send(new GetUserPrimaryPhoneNumberQuery(userId));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

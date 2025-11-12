@@ -8,17 +8,17 @@ public class JwtTokenFactory(
     IJwtSigner signer,
     ICertificateProvider certificateProvider) : ITokenFactory
 {
-    private readonly IJwtSigner signer = signer;
-    private readonly ICertificateProvider certificateProvider = certificateProvider;
+    private readonly IJwtSigner _signer = signer;
+    private readonly ICertificateProvider _certificateProvider = certificateProvider;
 
     public async Task<string> CreateAsync(IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
     {
-        var certificate = await certificateProvider.GetActiveAsync(cancellationToken);
+        var certificate = await _certificateProvider.GetActiveAsync(cancellationToken);
         var privateKey = certificate.Certificate.GetRSAPrivateKey();
         if (privateKey is null) throw new NullReferenceException("Private key is null.");
 
         var securityKey = new RsaSecurityKey(privateKey) { KeyId = certificate.Id.ToString() };
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
-        return signer.Sign(claims, signingCredentials);
+        return _signer.Sign(claims, signingCredentials);
     }
 }

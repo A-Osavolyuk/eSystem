@@ -5,13 +5,13 @@ namespace eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 
 public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
 {
-    private readonly AuthDbContext context = context;
+    private readonly AuthDbContext _context = context;
 
     public async ValueTask<Result> CreateAsync(UserLinkedAccountEntity linkedAccount, 
         CancellationToken cancellationToken = default)
     {
-        await context.UserLinkedAccounts.AddAsync(linkedAccount, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.UserLinkedAccounts.AddAsync(linkedAccount, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
@@ -19,8 +19,8 @@ public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
     public async ValueTask<Result> RemoveAsync(UserLinkedAccountEntity linkedAccount, 
         CancellationToken cancellationToken = default)
     {
-        context.UserLinkedAccounts.Remove(linkedAccount);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserLinkedAccounts.Remove(linkedAccount);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }

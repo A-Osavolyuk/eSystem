@@ -10,15 +10,15 @@ public class GetUserDeviceQueryHandler(
     IDeviceManager deviceManager,
     IUserManager userManager) : IRequestHandler<GetUserDeviceQuery, Result>
 {
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IUserManager userManager = userManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IUserManager _userManager = userManager;
 
     public async Task<Result> Handle(GetUserDeviceQuery request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"User with ID {request.UserId} was not found.");
 
-        var device = await deviceManager.FindByIdAsync(request.DeviceId, cancellationToken);
+        var device = await _deviceManager.FindByIdAsync(request.DeviceId, cancellationToken);
         if (device is null) return Results.NotFound($"Device with ID {request.DeviceId} was not found.");
 
         var response = new UserDeviceDto()
@@ -33,7 +33,7 @@ public class GetUserDeviceQueryHandler(
             IsTrusted = device.IsTrusted,
             LastSeen = device.LastSeen,
             Location = device.Location,
-            OS = device.OS,
+            Os = device.Os,
             UserAgent = device.UserAgent,
         };
         

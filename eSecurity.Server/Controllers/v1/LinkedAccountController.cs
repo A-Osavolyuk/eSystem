@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [Route("v{version:apiVersion}/[controller]")]
 public class LinkedAccountController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Disconnect linked account")]
     [EndpointDescription("Disconnect linked account")]
@@ -19,7 +19,7 @@ public class LinkedAccountController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> DisconnectAsync([FromBody] DisconnectLinkedAccountRequest request)
     {
-        var result = await sender.Send(new DisconnectLinkedAccountCommand(request));
+        var result = await _sender.Send(new DisconnectLinkedAccountCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

@@ -4,7 +4,7 @@ namespace eSecurity.Server.Security.Authentication.Odic.Logout;
 
 public class LogoutStrategyResolver(IServiceProvider serviceProvider) : ILogoutStrategyResolver
 {
-    private readonly IServiceProvider serviceProvider = serviceProvider;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public ILogoutStrategy Resolve(LogoutType type) => serviceProvider.GetRequiredKeyedService<ILogoutStrategy>(type);
+    public ILogoutStrategy Resolve(LogoutType type) => _serviceProvider.GetRequiredKeyedService<ILogoutStrategy>(type);
 }

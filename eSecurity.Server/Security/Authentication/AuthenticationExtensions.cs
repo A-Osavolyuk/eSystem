@@ -20,7 +20,7 @@ public static class AuthenticationExtensions
         
         builder.Services.AddPasswordManagement();
         builder.Services.AddSignInStrategies();
-        builder.Services.Add2FA();
+        builder.Services.Add2Fa();
         builder.Services.AddLockout();
         builder.Services.AddOdic();
         

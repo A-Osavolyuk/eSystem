@@ -10,15 +10,15 @@ public class GenerateRecoveryCodesCommandHandler(
     IRecoverManager recoverManager,
     IUserManager userManager) : IRequestHandler<GenerateRecoveryCodesCommand, Result>
 {
-    private readonly IRecoverManager recoverManager = recoverManager;
-    private readonly IUserManager userManager = userManager;
+    private readonly IRecoverManager _recoverManager = recoverManager;
+    private readonly IUserManager _userManager = userManager;
 
     public async Task<Result> Handle(GenerateRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
-        var codes = await recoverManager.GenerateAsync(user, cancellationToken);
+        var codes = await _recoverManager.GenerateAsync(user, cancellationToken);
         
         return Result.Success(codes);
     }

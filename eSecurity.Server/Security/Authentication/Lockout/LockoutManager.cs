@@ -6,7 +6,7 @@ namespace eSecurity.Server.Security.Authentication.Lockout;
 
 public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
 {
-    private readonly AuthDbContext context = context;
+    private readonly AuthDbContext _context = context;
 
     public async ValueTask<Result> BlockPermanentlyAsync(UserEntity user, LockoutType type, 
          string? description = null, CancellationToken cancellationToken = default)
@@ -19,8 +19,8 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         state.EndDate = null;
         state.StartDate = DateTimeOffset.UtcNow;
         
-        context.LockoutStates.Update(state);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.LockoutStates.Update(state);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
@@ -47,8 +47,8 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         state.EndDate = startDate.Add(duration);
         state.StartDate = startDate;
         
-        context.LockoutStates.Update(state);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.LockoutStates.Update(state);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
@@ -65,15 +65,15 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         state.EndDate = startDate.Add(duration);
         state.StartDate = startDate;
         
-        context.LockoutStates.Update(state);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.LockoutStates.Update(state);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
 
     public async ValueTask<Result> UnblockAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
     {
-        var entity = await context.LockoutStates.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
+        var entity = await _context.LockoutStates.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
         
         entity.Permanent = false;
         entity.UpdateDate = DateTimeOffset.UtcNow;
@@ -82,8 +82,8 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         entity.EndDate = DateTimeOffset.UtcNow;
         entity.Description = null;
 
-        context.LockoutStates.Update(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.LockoutStates.Update(entity);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

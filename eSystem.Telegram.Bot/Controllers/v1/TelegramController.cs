@@ -12,9 +12,9 @@ public class TelegramController(
     ITelegramBotClient bot,
     UpdateHandler updateHandler) : ControllerBase
 {
-    private readonly ITelegramBotClient bot = bot;
-    private readonly UpdateHandler updateHandler = updateHandler;
-    private readonly BotOptions options = options.Value;
+    private readonly ITelegramBotClient _bot = bot;
+    private readonly UpdateHandler _updateHandler = updateHandler;
+    private readonly BotOptions _options = options.Value;
 
     [EndpointSummary("Set webhook")]
     [EndpointDescription("Sets the webhook")]
@@ -22,8 +22,8 @@ public class TelegramController(
     [HttpGet("setWebhook")]
     public async ValueTask<IActionResult> SetWebHookAsync(CancellationToken ct)
     {
-        var webhookUrl = options.WebhookUrl;
-        await bot.SetWebhook(webhookUrl, allowedUpdates: [], secretToken: options.Secret, cancellationToken: ct);
+        var webhookUrl = _options.WebhookUrl;
+        await _bot.SetWebhook(webhookUrl, allowedUpdates: [], secretToken: _options.Secret, cancellationToken: ct);
         return Ok($"Webhook set to {webhookUrl}");
     }
 
@@ -33,15 +33,15 @@ public class TelegramController(
     [HttpPost("update")]
     public async ValueTask<IActionResult> UpdateAsync([FromBody] Update update, CancellationToken ct)
     {
-        if (Request.Headers["X-Telegram-Bot-Api-Secret-Token"] != options.Secret)
+        if (Request.Headers["X-Telegram-Bot-Api-Secret-Token"] != _options.Secret)
             return Forbid();
         try
         {
-            await updateHandler.OnUpdateAsync(bot, update, ct);
+            await _updateHandler.OnUpdateAsync(_bot, update, ct);
         }
         catch (Exception exception)
         {
-            await updateHandler.OnErrorAsync(bot, exception, HandleErrorSource.HandleUpdateError, ct);
+            await _updateHandler.OnErrorAsync(_bot, exception, HandleErrorSource.HandleUpdateError, ct);
         }
 
         return Ok();
@@ -53,7 +53,7 @@ public class TelegramController(
     [HttpPost("send-message")]
     public async ValueTask<ActionResult<HttpResponse>> SendAsync([FromBody] SendMessageRequest request)
     {
-        await bot.SendMessage(chatId: new ChatId(request.ChatId), text: request.Message);
+        await _bot.SendMessage(chatId: new ChatId(request.ChatId), text: request.Message);
 
         return Ok(HttpResponseBuilder.Create().WithMessage("Message was successfully sent!").Build());
     }

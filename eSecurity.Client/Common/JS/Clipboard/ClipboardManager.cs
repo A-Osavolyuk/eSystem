@@ -4,10 +4,10 @@ namespace eSecurity.Client.Common.JS.Clipboard;
 
 public class ClipboardManager(IJSRuntime jsRuntime)
 {
-    private readonly IJSRuntime jsRuntime = jsRuntime;
+    private readonly IJSRuntime _jsRuntime = jsRuntime;
 
     public async Task CopyAsync(string text)
     {
-        await jsRuntime.InvokeVoidAsync("clipboardCopy", text);
+        await _jsRuntime.InvokeVoidAsync("clipboardCopy", text);
     }
 }

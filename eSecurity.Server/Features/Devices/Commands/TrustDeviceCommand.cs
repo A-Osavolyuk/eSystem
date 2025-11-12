@@ -16,25 +16,25 @@ public class TrustDeviceCommandHandler(
     ISessionManager sessionManager,
     IVerificationManager verificationManager) : IRequestHandler<TrustDeviceCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(TrustDeviceCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        var device = await deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
+        var device = await _deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
         if (device is null) return Results.NotFound($"Cannot find user with ID {request.Request.DeviceId}.");
         
-        var verificationResult = await verificationManager.VerifyAsync(user, 
+        var verificationResult = await _verificationManager.VerifyAsync(user, 
             PurposeType.Device, ActionType.Trust, cancellationToken);
         
         if(!verificationResult.Succeeded) return verificationResult;
         
-        var deviceResult = await deviceManager.TrustAsync(device, cancellationToken);
+        var deviceResult = await _deviceManager.TrustAsync(device, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
         if (user.HasMethods() && user.TwoFactorEnabled)
@@ -46,7 +46,7 @@ public class TrustDeviceCommandHandler(
             });
         }
         
-        await sessionManager.CreateAsync(device, cancellationToken);
+        await _sessionManager.CreateAsync(device, cancellationToken);
         
         var response = new TrustDeviceResponse()
         {

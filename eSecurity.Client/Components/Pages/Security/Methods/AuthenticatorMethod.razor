@@ -44,7 +44,7 @@
                 </MudChip>
             }
         </MudStack>
-        @if (showConfiguration)
+        @if (_showConfiguration)
         {
             <AuthenticatorAppConfiguration OnClose="@(() => ToggleConfiguration())"/>
         }
@@ -63,7 +63,7 @@
             Variant="Variant.Outlined"
             Size="Size.Small"
             OnClick="@(async () => await ShowAsync())"
-            Disabled="showConfiguration">
+            Disabled="_showConfiguration">
             Edit
         </MudButton>
     </MudStack>
@@ -72,7 +72,7 @@
 @code {
     [Parameter] public TwoFactorData Model { get; set; } = new();
 
-    private bool showConfiguration;
+    private bool _showConfiguration;
 
     private async Task ShowAsync()
     {
@@ -82,5 +82,5 @@
         if (!confirmationResult!.Canceled) ToggleConfiguration();
     }
 
-    private void ToggleConfiguration() => showConfiguration = !showConfiguration;
+    private void ToggleConfiguration() => _showConfiguration = !_showConfiguration;
 }

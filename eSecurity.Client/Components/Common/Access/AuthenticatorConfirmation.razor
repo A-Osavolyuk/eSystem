@@ -13,12 +13,12 @@
 <MudStack Spacing="3">
     <MudPaper Outlined="true" Class="pa-5">
         <MudStack Spacing="3">
-            <MudForm @ref="form" Model="CodeModel">
+            <MudForm @ref="_form" Model="CodeModel">
                 <MudTextFieldExtended
                     Variant="Variant.Outlined"
                     Margin="Margin.Dense"
                     Immediate="true"
-                    Mask="@mask"
+                    Mask="@_mask"
                     Placeholder="XXXXXX"
                     @bind-Value="CodeModel.Code"/>
             </MudForm>
@@ -73,8 +73,8 @@
     public UserVerificationData Model { get; set; } = new();
 
     private CodeModel CodeModel { get; set; } = new();
-    private PatternMask mask = new("000000");
-    private MudForm form = new();
+    private PatternMask _mask = new("000000");
+    private MudForm _form = new();
 
     private async Task OnVerifyAsync()
     {

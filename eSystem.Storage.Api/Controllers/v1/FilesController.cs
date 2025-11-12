@@ -11,7 +11,7 @@ namespace eSystem.Storage.Api.Controllers.v1;
 [ApiVersion("1.0")]
 public class FilesController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
 
     [EndpointSummary("Upload files")]
     [EndpointDescription("Uploads files")]
@@ -20,7 +20,7 @@ public class FilesController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> UploadFilesAsync(IFormFileCollection files, [FromForm] string metadata)
     {
         var metadataObject = JsonSerializer.Deserialize<Metadata>(metadata)!;
-        var response = await sender.Send(new UploadFilesCommand(files, metadataObject));
+        var response = await _sender.Send(new UploadFilesCommand(files, metadataObject));
         return response.Match(
             s => Ok(HttpResponseBuilder.Create().Succeeded().WithResult(s.Value).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);
@@ -32,7 +32,7 @@ public class FilesController(ISender sender) : ControllerBase
     [HttpPost("load")]
     public async ValueTask<IActionResult> LoadFilesAsync([FromBody] LoadFilesRequest request)
     {
-        var response = await sender.Send(new LoadFilesCommand(request));
+        var response = await _sender.Send(new LoadFilesCommand(request));
         return response.Match(
             s => Ok(HttpResponseBuilder.Create().Succeeded().WithResult(s.Value).WithMessage(s.Message).Build()),
             ErrorHandler.Handle);

@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [ApiVersion("1.0")]
 public class ConnectController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
 
     [EndpointSummary("Token")]
     [EndpointDescription("Token")]
@@ -18,7 +18,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpPost("token")]
     public async ValueTask<IActionResult> TokenAsync([FromBody] TokenRequest request)
     {
-        var result = await sender.Send(new TokenCommand(request));
+        var result = await _sender.Send(new TokenCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -35,7 +35,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpPost("authorize")]
     public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
     {
-        var result = await sender.Send(new AuthorizeCommand(request));
+        var result = await _sender.Send(new AuthorizeCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -52,7 +52,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpPost("logout")]
     public async ValueTask<IActionResult> LogoutAsync([FromBody] LogoutRequest request)
     {
-        var result = await sender.Send(new LogoutCommand(request));
+        var result = await _sender.Send(new LogoutCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

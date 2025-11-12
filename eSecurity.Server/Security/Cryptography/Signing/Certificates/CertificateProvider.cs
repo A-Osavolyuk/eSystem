@@ -7,17 +7,17 @@ public class CertificateProvider(
     AuthDbContext context,
     ICertificateHandler certificateHandler) : ICertificateProvider
 {
-    private readonly AuthDbContext context = context;
-    private readonly ICertificateHandler certificateHandler = certificateHandler;
+    private readonly AuthDbContext _context = context;
+    private readonly ICertificateHandler _certificateHandler = certificateHandler;
 
     public async ValueTask<SigningCertificate?> FindByIdAsync(Guid kid, CancellationToken cancellationToken = default)
     {
-        var certificateEntity = await context.Certificates.SingleOrDefaultAsync(
+        var certificateEntity = await _context.Certificates.SingleOrDefaultAsync(
             x => x.Id == kid, cancellationToken);
 
         if (certificateEntity is null) return null;
 
-        var certificate = certificateHandler.ExportCertificate(
+        var certificate = _certificateHandler.ExportCertificate(
             certificateEntity.ProtectedCertificate,
             certificateEntity.ProtectedPassword
         );
@@ -31,12 +31,12 @@ public class CertificateProvider(
 
     public async ValueTask<SigningCertificate> GetActiveAsync(CancellationToken cancellationToken = default)
     {
-        var certificateEntity = await context.Certificates.SingleOrDefaultAsync(
+        var certificateEntity = await _context.Certificates.SingleOrDefaultAsync(
             x => x.IsActive, cancellationToken);
 
         if (certificateEntity is null)
         {
-            var protectedCertificate = certificateHandler.CreateCertificate();
+            var protectedCertificate = _certificateHandler.CreateCertificate();
 
             var entity = new SigningCertificateEntity()
             {
@@ -48,8 +48,8 @@ public class CertificateProvider(
                 CreateDate = DateTimeOffset.UtcNow,
             };
 
-            await context.Certificates.AddAsync(entity, cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
+            await _context.Certificates.AddAsync(entity, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return new SigningCertificate()
             {
@@ -58,7 +58,7 @@ public class CertificateProvider(
             };
         }
 
-        var certificate = certificateHandler.ExportCertificate(
+        var certificate = _certificateHandler.ExportCertificate(
             certificateEntity.ProtectedCertificate,
             certificateEntity.ProtectedPassword);
 
@@ -71,12 +71,12 @@ public class CertificateProvider(
 
     public async ValueTask<List<SigningCertificate>> GetValidAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Certificates
+        return await _context.Certificates
             .Where(x => x.IsValid)
             .Select(certificate => new SigningCertificate()
             {
                 Id = certificate.Id,
-                Certificate = certificateHandler.ExportCertificate(
+                Certificate = _certificateHandler.ExportCertificate(
                     certificate.ProtectedCertificate,
                     certificate.ProtectedPassword
                 )

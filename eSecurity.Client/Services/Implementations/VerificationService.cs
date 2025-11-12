@@ -7,10 +7,10 @@ namespace eSecurity.Client.Services.Implementations;
 
 public class VerificationService(IApiClient apiClient) : IVerificationService
 {
-    private readonly IApiClient apiClient = apiClient;
+    private readonly IApiClient _apiClient = apiClient;
 
     public async ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -19,7 +19,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -29,7 +29,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
 
 
     public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -39,7 +39,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
 
 
     public async ValueTask<HttpResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -49,7 +49,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
 
 
     public async ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request)
-        => await apiClient.SendAsync(
+        => await _apiClient.SendAsync(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,

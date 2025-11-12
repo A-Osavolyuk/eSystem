@@ -10,12 +10,12 @@ public sealed record GetUserQuery(Guid UserId) : IRequest<Result>;
 public sealed class GetUserQueryHandler(
     IUserManager userManager) : IRequestHandler<GetUserQuery, Result>
 {
-    private readonly IUserManager userManager = userManager;
+    private readonly IUserManager _userManager = userManager;
     
     public async Task<Result> Handle(GetUserQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var primaryEmail = user.GetEmail(EmailType.Primary);

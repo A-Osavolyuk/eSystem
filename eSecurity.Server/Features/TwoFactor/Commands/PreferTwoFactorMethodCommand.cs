@@ -10,15 +10,15 @@ public class PreferMethodCommandHandler(
     IUserManager userManager,
     ITwoFactorManager twoFactorManager) : IRequestHandler<PreferTwoFactorMethodCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(PreferTwoFactorMethodCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
-        var result = await twoFactorManager.PreferAsync(user, request.Request.PreferredMethod, cancellationToken);
+        var result = await _twoFactorManager.PreferAsync(user, request.Request.PreferredMethod, cancellationToken);
         return result;
     }
 }

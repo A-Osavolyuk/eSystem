@@ -10,23 +10,23 @@
             {
                 <MudStack Row="true" Spacing="1" Class="position-relative">
                     <MudText Style="padding-top: 5px">
-                        @if (device.OS!.Contains("Windows") && device.Device!.Contains("Desktop"))
+                        @if (device.Os!.Contains("Windows") && device.Device!.Contains("Desktop"))
                         {
                             <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.DesktopWindows"></MudIcon>
                         }
-                        @if (device.OS!.Contains("Android") && device.Device!.Contains("Phone"))
+                        @if (device.Os!.Contains("Android") && device.Device!.Contains("Phone"))
                         {
                             <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.PhoneAndroid"></MudIcon>
                         }
-                        else if (device.OS.Contains("iOS") && device.Device!.Contains("Phone"))
+                        else if (device.Os.Contains("iOS") && device.Device!.Contains("Phone"))
                         {
                             <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.PhoneIphone"></MudIcon>
                         }
-                        else if (device.OS.Contains("Mac OS") && device.Device!.Contains("Desktop"))
+                        else if (device.Os.Contains("Mac OS") && device.Device!.Contains("Desktop"))
                         {
                             <MudIcon Class="mr-1" Icon="@Icons.Material.Filled.DesktopMac"></MudIcon>
                         }
-                        @($"{device.Device}, {device.OS} ({device.Browser}, IP: {device.IpAddress})")
+                        @($"{device.Device}, {device.Os} ({device.Browser}, IP: {device.IpAddress})")
                     </MudText>
                     @if (device.IsBlocked)
                     {

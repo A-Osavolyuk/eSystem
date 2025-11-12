@@ -36,17 +36,17 @@ public class AuthorizationCodeStrategy(
     IClaimBuilderFactory claimBuilderFactory,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IClientManager clientManager = clientManager;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly IAuthorizationCodeManager authorizationCodeManager = authorizationCodeManager;
-    private readonly ITokenFactory tokenFactory = tokenFactory;
-    private readonly ITokenManager tokenManager = tokenManager;
-    private readonly IPkceHandler pkceHandler = pkceHandler;
-    private readonly IKeyFactory keyFactory = keyFactory;
-    private readonly IDataProtectionProvider protectionProvider = protectionProvider;
-    private readonly IClaimBuilderFactory claimBuilderFactory = claimBuilderFactory;
-    private readonly TokenOptions options = options.Value;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IClientManager _clientManager = clientManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
+    private readonly ITokenFactory _tokenFactory = tokenFactory;
+    private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly IPkceHandler _pkceHandler = pkceHandler;
+    private readonly IKeyFactory _keyFactory = keyFactory;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly IClaimBuilderFactory _claimBuilderFactory = claimBuilderFactory;
+    private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
         CancellationToken cancellationToken = default)
@@ -54,13 +54,13 @@ public class AuthorizationCodeStrategy(
         if (payload is not AuthorizationCodeTokenPayload authorizationPayload)
             throw new NotSupportedException("Payload type must be 'AuthorizationCodeTokenPayload'");
 
-        var client = await clientManager.FindByClientIdAsync(authorizationPayload.ClientId, cancellationToken);
+        var client = await _clientManager.FindByClientIdAsync(authorizationPayload.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client was not found.");
         if (!client.HasGrantType(authorizationPayload.GrantType))
             return Results.BadRequest($"Client doesn't support grant type {authorizationPayload.GrantType}");
         
         var code = authorizationPayload.Code!;
-        var authorizationCode = await authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
+        var authorizationCode = await _authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
         if (authorizationCode is null) return Results.NotFound("Authorization code not found.");
         if (authorizationCode.Used) return Results.BadRequest("Authorization code has already been used.");
         if (authorizationCode.ExpireDate < DateTimeOffset.UtcNow)
@@ -94,7 +94,7 @@ public class AuthorizationCodeStrategy(
             if (string.IsNullOrWhiteSpace(authorizationPayload.CodeVerifier))
                 return Results.BadRequest("Missing code verifier in token request.");
 
-            var isValidPkce = pkceHandler.Verify(
+            var isValidPkce = _pkceHandler.Verify(
                 authorizationCode.CodeChallenge,
                 authorizationCode.CodeChallengeMethod,
                 authorizationPayload.CodeVerifier
@@ -104,32 +104,32 @@ public class AuthorizationCodeStrategy(
         }
 
         var device = authorizationCode.Device;
-        var session = await sessionManager.FindAsync(device, cancellationToken);
+        var session = await _sessionManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Session not found.");
         if (session.ExpireDate < DateTimeOffset.UtcNow) return Results.BadRequest("Session has expired.");
 
-        var user = await userManager.FindByIdAsync(device.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        var codeResult = await authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
+        var codeResult = await _authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var accessClaims = claimBuilderFactory.CreateAccessBuilder()
-            .WithIssuer(options.Issuer)
+        var accessClaims = _claimBuilderFactory.CreateAccessBuilder()
+            .WithIssuer(_options.Issuer)
             .WithAudience(client.Name)
             .WithSubject(user.Id.ToString())
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithSessionId(session.Id.ToString())
             .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.Add(options.AccessTokenLifetime))
+            .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime))
             .WithNonce(authorizationCode.Nonce)
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
         
         var response = new TokenResponse()
         {
-            AccessToken = await tokenFactory.CreateAsync(accessClaims, cancellationToken),
-            ExpiresIn = (int)options.AccessTokenLifetime.TotalSeconds,
+            AccessToken = await _tokenFactory.CreateAsync(accessClaims, cancellationToken),
+            ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = TokenTypes.Bearer,
         };
         
@@ -140,24 +140,24 @@ public class AuthorizationCodeStrategy(
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                Token = keyFactory.Create(20),
+                Token = _keyFactory.Create(20),
                 ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };
         
-            var tokenResult = await tokenManager.CreateAsync(refreshToken, cancellationToken);
+            var tokenResult = await _tokenManager.CreateAsync(refreshToken, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
             
-            var protector = protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
+            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
             var protectedRefreshToken = protector.Protect(refreshToken.Token);
             response.RefreshToken = protectedRefreshToken;
         }
 
         if (client.HasScope(Scopes.OpenId))
         {
-            var idClaims = claimBuilderFactory.CreateIdBuilder()
+            var idClaims = _claimBuilderFactory.CreateIdBuilder()
                 .WithOpenId(user, client)
-                .WithIssuer(options.Issuer)
+                .WithIssuer(_options.Issuer)
                 .WithAudience(client.Name)
                 .WithSubject(user.Id.ToString())
                 .WithTokenId(Guid.CreateVersion7().ToString())
@@ -165,10 +165,10 @@ public class AuthorizationCodeStrategy(
                 .WithNonce(authorizationCode.Nonce)
                 .WithIssuedTime(DateTimeOffset.UtcNow)
                 .WithAuthenticationTime(DateTimeOffset.UtcNow)
-                .WithExpirationTime(DateTimeOffset.UtcNow.Add(options.IdTokenLifetime))
+                .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime))
                 .Build();
             
-            response.IdToken = await tokenFactory.CreateAsync(idClaims, cancellationToken);
+            response.IdToken = await _tokenFactory.CreateAsync(idClaims, cancellationToken);
         }
 
         return Result.Success(response);

@@ -5,7 +5,7 @@ namespace eSystem.MessageBus.Consumers;
 
 public class MessageConsumer(IBus bus) : IConsumer<MessageRequest>
 {
-    private readonly IBus bus = bus;
+    private readonly IBus _bus = bus;
 
     public async Task Consume(ConsumeContext<MessageRequest> context)
     {
@@ -20,7 +20,7 @@ public class MessageConsumer(IBus bus) : IConsumer<MessageRequest>
         };
 
         var address = new Uri($"rabbitmq://localhost/{queue}");
-        var endpoint = await bus.GetSendEndpoint(address);
+        var endpoint = await _bus.GetSendEndpoint(address);
         await endpoint.Send(request);
     }
 }

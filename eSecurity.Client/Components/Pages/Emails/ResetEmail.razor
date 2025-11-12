@@ -12,11 +12,11 @@
 
 <Title Text="Reset email"></Title>
 
-<AccessConfirmation Context="confirmationContext">
+<AccessConfirmation Context="_confirmationContext">
     <AccessConfirmed>
         <MudGrid Justify="Justify.Center">
             <MudItem xs="6" Style="margin-top: 100px">
-                <MudStepperExtended @ref="stepper" Color="Color.Primary" Variant="Variant.Filled"
+                <MudStepperExtended @ref="_stepper" Color="Color.Primary" Variant="Variant.Filled"
                                     HeaderTextView="HeaderTextView.All" HeaderBadgeView="HeaderBadgeView.All"
                                     ShowNextButton="false" ShowPreviousButton="false" ShowSkipButton="false">
                     <ChildContent>
@@ -39,7 +39,7 @@
                                                         address.
                                                     </MudTextM3>
                                                     <MudForm
-                                                        @ref="resetForm"
+                                                        @ref="_resetForm"
                                                         Model="ResetModel"
                                                         Validation="ResetEmailValidator.ValidateValue">
                                                         <MudTextFieldExtended
@@ -92,7 +92,7 @@
                                                         to: <strong>@ResetModel.NewEmail</strong>
                                                     </MudTextM3>
                                                     <MudForm
-                                                        @ref="confirmForm"
+                                                        @ref="_confirmForm"
                                                         Model="ConfirmModel"
                                                         Validation="Validator.ValidateValue">
                                                         <MudTextFieldExtended
@@ -100,7 +100,7 @@
                                                             Variant="Variant.Outlined"
                                                             Margin="Margin.Dense"
                                                             Placeholder="XXXXXX"
-                                                            Mask="mask"
+                                                            Mask="_mask"
                                                             Clearable="true"
                                                             Immediate="true"/>
                                                     </MudForm>
@@ -124,7 +124,7 @@
                                                     </MudButton>
                                                 </MudStack>
                                             </MudPaper>
-                                            <CodeResend Context="messageContext"></CodeResend>
+                                            <CodeResend Context="_messageContext"></CodeResend>
                                         </MudStack>
                                     </MudItem>
                                 </MudGrid>
@@ -148,16 +148,16 @@
     [SupplyParameterFromForm] 
     private CodeModel ConfirmModel { get; set; } = new();
 
-    private PatternMask mask = new("000000");
-    private MudStepperExtended stepper = new();
-    private MudForm resetForm = new();
-    private MudForm confirmForm = new();
-    private MessageContext? messageContext;
-    private ConfirmationContext? confirmationContext;
+    private PatternMask _mask = new("000000");
+    private MudStepperExtended _stepper = new();
+    private MudForm _resetForm = new();
+    private MudForm _confirmForm = new();
+    private MessageContext? _messageContext;
+    private ConfirmationContext? _confirmationContext;
 
     protected override void OnInitialized()
     {
-        confirmationContext = new ConfirmationContext()
+        _confirmationContext = new ConfirmationContext()
         {
             Action = ActionType.Reset,
             Purpose = PurposeType.Email
@@ -166,11 +166,11 @@
 
     private async Task OnSendCodeAsync()
     {
-        await resetForm.Validate();
+        await _resetForm.Validate();
 
-        if (resetForm.IsValid)
+        if (_resetForm.IsValid)
         {
-            messageContext = new MessageContext()
+            _messageContext = new MessageContext()
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
@@ -197,20 +197,20 @@
 
     private async Task SendCodeAsync()
     {
-        var request = messageContext!.ToSendCodeRequest();
+        var request = _messageContext!.ToSendCodeRequest();
         var result = await VerificationService.SendCodeAsync(request);
 
-        if (result.Success) await stepper.StepNextAsync();
+        if (result.Success) await _stepper.StepNextAsync();
         else Snackbar.Add(result.Message, Severity.Error);
     }
 
     private async Task OnVerifyAsync()
     {
-        await confirmForm.Validate();
+        await _confirmForm.Validate();
 
-        if (confirmForm.IsValid)
+        if (_confirmForm.IsValid)
         {
-            var request = messageContext!.ToVerifyCodeRequest(ConfirmModel.Code);
+            var request = _messageContext!.ToVerifyCodeRequest(ConfirmModel.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Success) await VerifyAsync();

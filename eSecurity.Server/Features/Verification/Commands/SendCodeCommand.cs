@@ -15,13 +15,13 @@ public class SendCodeCommandHandler(
     ICodeManager codeManager,
     IMessageService messageService) : IRequestHandler<SendCodeCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ICodeManager codeManager = codeManager;
-    private readonly IMessageService messageService = messageService;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ICodeManager _codeManager = codeManager;
+    private readonly IMessageService _messageService = messageService;
 
     public async Task<Result> Handle(SendCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
         var sender = request.Request.Sender;
@@ -29,7 +29,7 @@ public class SendCodeCommandHandler(
         var purpose = request.Request.Purpose;
         var payload = request.Request.Payload;
 
-        var code = await codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
+        var code = await _codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
 
         payload["Code"] = code;
         payload["UserName"] = user.Username;
@@ -44,7 +44,7 @@ public class SendCodeCommandHandler(
         if (message is null) return Results.BadRequest("Invalid message type.");
 
         message.Initialize(payload);
-        await messageService.SendMessageAsync(sender, message, cancellationToken);
+        await _messageService.SendMessageAsync(sender, message, cancellationToken);
 
         return Result.Success();
     }

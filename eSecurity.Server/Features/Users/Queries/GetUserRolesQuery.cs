@@ -7,12 +7,12 @@ public sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
 
 public sealed class GetUserRolesQueryHandler(IUserManager userManager) : IRequestHandler<GetUserRolesQuery, Result>
 {
-    private readonly IUserManager userManager = userManager;
+    private readonly IUserManager _userManager = userManager;
 
     public async Task<Result> Handle(GetUserRolesQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Id, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Id, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
 
         var roles = user.Roles.Select(x => x.Role).ToList();

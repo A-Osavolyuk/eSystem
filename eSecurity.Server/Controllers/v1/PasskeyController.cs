@@ -10,7 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [ApiVersion("1.0")]
 public class PasskeyController(ISender sender) : ControllerBase
 {
-    private readonly ISender sender = sender;
+    private readonly ISender _sender = sender;
     
     [EndpointSummary("Generate public key credential creation options")]
     [EndpointDescription("Generate public key credential creation options")]
@@ -20,7 +20,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GenerateCreationOptionsAsync(
         [FromBody] GenerateCreationOptionsRequest request)
     {
-        var result = await sender.Send(new GenerateCreationOptionsCommand(request));
+        var result = await _sender.Send(new GenerateCreationOptionsCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -38,7 +38,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GenerateRequestOptionsAsync([FromBody] GenerateRequestOptionsRequest request)
     {
-        var result = await sender.Send(new GenerateRequestOptionsCommand(request));
+        var result = await _sender.Send(new GenerateRequestOptionsCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -56,7 +56,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> CreateAsync([FromBody] CreatePasskeyRequest request)
     {
-        var result = await sender.Send(new CreatePasskeyCommand(request));
+        var result = await _sender.Send(new CreatePasskeyCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -74,7 +74,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasskeyRequest request)
     {
-        var result = await sender.Send(new RemovePasskeyCommand(request));
+        var result = await _sender.Send(new RemovePasskeyCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()
@@ -92,7 +92,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize]
     public async ValueTask<IActionResult> ChangeNameAsync([FromBody] ChangePasskeyNameRequest request)
     {
-        var result = await sender.Send(new ChangePasskeyNameCommand(request));
+        var result = await _sender.Send(new ChangePasskeyNameCommand(request));
 
         return result.Match(
             s => Ok(HttpResponseBuilder.Create()

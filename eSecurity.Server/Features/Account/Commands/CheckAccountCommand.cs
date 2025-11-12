@@ -9,13 +9,13 @@ public record CheckAccountCommand(CheckAccountRequest Request) : IRequest<Result
 
 public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHandler<CheckAccountCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
+    private readonly IUserManager _userManager = userManager;
 
     public async Task<Result> Handle(CheckAccountCommand request, CancellationToken cancellationToken)
     {
         CheckAccountResponse? response;
         
-        var user = await userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
+        var user = await _userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
 
         if (user is null)
         {

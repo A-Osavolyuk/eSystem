@@ -16,12 +16,12 @@
 
 <Title Text="Enable two-factor authentication (2FA)"></Title>
 
-<AccessConfirmation Context="confirmationContext">
+<AccessConfirmation Context="_confirmationContext">
     <AccessConfirmed>
         <MudGrid Justify="Justify.Center">
             <MudItem xs="6" Style="margin-top: 50px">
                 <MudStepperExtended
-                    @ref="stepper"
+                    @ref="_stepper"
                     Color="Color.Primary"
                     Variant="Variant.Filled"
                     Animation="true"
@@ -125,7 +125,7 @@
                                                             Verify the code from the app
                                                         </MudTextM3>
                                                         <MudForm
-                                                            @ref="form"
+                                                            @ref="_form"
                                                             Model="Model"
                                                             Validation="Validator.ValidateValue">
                                                             <MudStack Row="true" Spacing="1">
@@ -133,12 +133,12 @@
                                                                     Variant="Variant.Outlined"
                                                                     Margin="Margin.Dense"
                                                                     Immediate="true"
-                                                                    Mask="@mask"
+                                                                    Mask="@_mask"
                                                                     Placeholder="XXXXXX"
                                                                     @bind-Value="Model.Code"/>
                                                             </MudStack>
                                                         </MudForm>
-                                                        @if (showError)
+                                                        @if (_showError)
                                                         {
                                                             <MudAlert
                                                                 Severity="Severity.Error"
@@ -286,11 +286,11 @@
 
     [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
 
-    private MudStepperExtended stepper = new();
-    private MudForm form = new();
-    private ConfirmationContext? confirmationContext;
-    private readonly PatternMask mask = new("000000");
-    private bool showError;
+    private MudStepperExtended _stepper = new();
+    private MudForm _form = new();
+    private ConfirmationContext? _confirmationContext;
+    private readonly PatternMask _mask = new("000000");
+    private bool _showError;
 
     private bool DownloadedCodes { get; set; }
     private QrCode QrCode { get; set; } = new();
@@ -299,7 +299,7 @@
 
     protected override void OnInitialized()
     {
-        confirmationContext = new ConfirmationContext()
+        _confirmationContext = new ConfirmationContext()
         {
             Purpose = PurposeType.TwoFactor,
             Action = ActionType.Enable,
@@ -326,7 +326,7 @@
 
     private async Task OnVerifyAsync()
     {
-        showError = false;
+        _showError = false;
         var request = new VerifyAuthenticatorCodeRequest()
         {
             UserId = UserState.UserId,
@@ -338,7 +338,7 @@
         var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);
 
         if (result.Success) await GenerateRecoveryCodesAsync();
-        else showError = true;
+        else _showError = true;
     }
 
     private async Task GenerateRecoveryCodesAsync()
@@ -349,7 +349,7 @@
         if (result.Success)
         {
             Codes = result.Get<List<string>>()!;
-            await stepper.StepNextAsync();
+            await _stepper.StepNextAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }
@@ -386,7 +386,7 @@
         if (result.Success)
         {
             await LoadMethodsAsync();
-            await stepper.StepNextAsync();
+            await _stepper.StepNextAsync();
         }
         else Snackbar.Add(result.Message, Severity.Error);
     }

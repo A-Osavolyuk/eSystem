@@ -22,13 +22,13 @@ public sealed class RecoveryCodeSignInStrategy(
     ILockoutManager lockoutManager,
     IOptions<SignInOptions> options) : ISignInStrategy
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IRecoverManager recoveryManager = recoveryManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly ISessionManager sessionManager = sessionManager;
-    private readonly ILockoutManager lockoutManager = lockoutManager;
-    private readonly HttpContext httpContext = httpContextAccessor.HttpContext!;
-    private readonly SignInOptions options = options.Value;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IRecoverManager _recoveryManager = recoveryManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ILockoutManager _lockoutManager = lockoutManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly SignInOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload, CancellationToken cancellationToken = default)
     {
@@ -37,12 +37,12 @@ public sealed class RecoveryCodeSignInStrategy(
         if (payload is not RecoveryCodeSignInPayload recoveryPayload)
             throw new NotSupportedException("Payload type must be 'RecoveryCodeSignInPayload'");
 
-        var user = await userManager.FindByIdAsync(recoveryPayload.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(recoveryPayload.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {recoveryPayload.UserId}");
 
-        var userAgent = httpContext.GetUserAgent()!;
-        var ipAddress = httpContext.GetIpV4()!;
-        var clientInfo = httpContext.GetClientInfo()!;
+        var userAgent = _httpContext.GetUserAgent()!;
+        var ipAddress = _httpContext.GetIpV4()!;
+        var clientInfo = _httpContext.GetClientInfo()!;
         var device = user.GetDevice(userAgent, ipAddress);
 
         if (device is null)
@@ -54,7 +54,7 @@ public sealed class RecoveryCodeSignInStrategy(
                 UserAgent = userAgent,
                 IpAddress = ipAddress,
                 Browser = clientInfo.UA.ToString(),
-                OS = clientInfo.OS.ToString(),
+                Os = clientInfo.OS.ToString(),
                 Device = clientInfo.Device.ToString(),
                 IsTrusted = false,
                 IsBlocked = false,
@@ -62,31 +62,31 @@ public sealed class RecoveryCodeSignInStrategy(
                 CreateDate = DateTimeOffset.UtcNow
             };
 
-            var result = await deviceManager.CreateAsync(device, cancellationToken);
+            var result = await _deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
 
-        var codeResult = await recoveryManager.VerifyAsync(user, recoveryPayload.Code, cancellationToken);
+        var codeResult = await _recoveryManager.VerifyAsync(user, recoveryPayload.Code, cancellationToken);
         if (!codeResult.Succeeded)
         {
             user.FailedLoginAttempts += 1;
 
-            if (user.FailedLoginAttempts < options.MaxFailedLoginAttempts)
+            if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
             {
                 response = new SignInResponse
                 {
                     UserId = user.Id,
                     FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
+                    MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
                 };
 
                 return Results.BadRequest("Invalid code.", response);
             }
 
-            var deviceBlockResult = await deviceManager.BlockAsync(device, cancellationToken);
+            var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var lockoutResult = await lockoutManager.BlockPermanentlyAsync(user,
+            var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user,
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
@@ -96,7 +96,7 @@ public sealed class RecoveryCodeSignInStrategy(
                 UserId = user.Id,
                 IsLockedOut = true,
                 FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = options.MaxFailedLoginAttempts,
+                MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
                 Type = LockoutType.TooManyFailedLoginAttempts
             };
 
@@ -107,13 +107,13 @@ public sealed class RecoveryCodeSignInStrategy(
         {
             user.FailedLoginAttempts = 0;
 
-            var userUpdateResult = await userManager.UpdateAsync(user, cancellationToken);
+            var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
         response = new SignInResponse() { UserId = user.Id, };
 
-        await sessionManager.CreateAsync(device, cancellationToken);
+        await _sessionManager.CreateAsync(device, cancellationToken);
 
         return Result.Success(response);
     }

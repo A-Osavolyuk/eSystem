@@ -13,24 +13,24 @@ public class BlockDeviceCommandHandler(
     IDeviceManager deviceManager,
     IVerificationManager verificationManager) : IRequestHandler<BlockDeviceCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly IDeviceManager deviceManager = deviceManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(BlockDeviceCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var device = await deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
+        var device = await _deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
         if (device is null) return Results.NotFound($"Cannot find device with ID {request.Request.DeviceId}.");
 
-        var verificationResult = await verificationManager.VerifyAsync(user,
+        var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Device, ActionType.Block, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await deviceManager.BlockAsync(device, cancellationToken);
+        var result = await _deviceManager.BlockAsync(device, cancellationToken);
         return result;
     }
 }

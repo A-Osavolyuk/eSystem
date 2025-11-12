@@ -14,17 +14,17 @@ public class DisableTwoFactorCommandHandler(
     ITwoFactorManager twoFactorManager,
     IVerificationManager verificationManager) : IRequestHandler<DisableTwoFactorCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ITwoFactorManager twoFactorManager = twoFactorManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(DisableTwoFactorCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         if (!user.TwoFactorEnabled) return Results.BadRequest("2FA already disabled.");
         
-        var verificationResult = await verificationManager.VerifyAsync(user,
+        var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.TwoFactor, ActionType.Disable, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
@@ -33,14 +33,14 @@ public class DisableTwoFactorCommandHandler(
             ? VerificationMethod.Passkey
             : VerificationMethod.Email;
         
-        var result = await verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
+        var result = await _verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
         if (!result.Succeeded) return result;
 
         var authenticatorMethod = user.GetVerificationMethod(VerificationMethod.AuthenticatorApp)!;
-        var authenticatorResult = await verificationManager.UnsubscribeAsync(authenticatorMethod, cancellationToken);
+        var authenticatorResult = await _verificationManager.UnsubscribeAsync(authenticatorMethod, cancellationToken);
         if (!authenticatorResult.Succeeded) return authenticatorResult;
         
-        var methodResult = await twoFactorManager.UnsubscribeAsync(user, cancellationToken);
+        var methodResult = await _twoFactorManager.UnsubscribeAsync(user, cancellationToken);
         return methodResult;
     }
 }

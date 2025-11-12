@@ -21,7 +21,7 @@
             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                 When you are ready, authenticate using the button below.
             </MudTextM3>
-            @if (isLoading)
+            @if (_isLoading)
             {
                 <MudStack Row="true" Justify="Justify.Center" AlignItems="AlignItems.Center">
                     <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Primary"/>
@@ -32,7 +32,7 @@
             }
             else
             {
-                if (showError)
+                if (_showError)
                 {
                     <MudButton
                         ButtonType="ButtonType.Button"
@@ -108,13 +108,13 @@
     [Parameter] 
     public UserVerificationData Model { get; set; } = new();
 
-    private bool isLoading;
-    private bool showError;
+    private bool _isLoading;
+    private bool _showError;
 
     private async Task OnVerifyAsync()
     {
-        isLoading = true;
-        showError = false;
+        _isLoading = true;
+        _showError = false;
         var request = new GenerateRequestOptionsRequest() { Username = UserState.Credentials!.Username! };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
@@ -125,8 +125,8 @@
         }
         else
         {
-            showError = true;
-            isLoading = false;
+            _showError = true;
+            _isLoading = false;
             Snackbar.Add(result.Message, Severity.Error);
         }
     }
@@ -150,13 +150,13 @@
             if (result.Success)
             {
                 await OnAccessConfirmed.InvokeAsync();
-                showError = false;
+                _showError = false;
             }
             else Snackbar.Add(result.Message, Severity.Error);
         }
-        else showError = true;
+        else _showError = true;
 
-        isLoading = false;
+        _isLoading = false;
     }
 
 }

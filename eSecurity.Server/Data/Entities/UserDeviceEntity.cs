@@ -14,7 +14,7 @@ public class UserDeviceEntity : Entity
     public required string IpAddress { get; set; }
     public required string Browser { get; set; }
     public required string Device { get; set; }
-    public required string OS { get; set; }
+    public required string Os { get; set; }
     public string? Location { get; set; }
 
     public DateTimeOffset FirstSeen { get; set; }

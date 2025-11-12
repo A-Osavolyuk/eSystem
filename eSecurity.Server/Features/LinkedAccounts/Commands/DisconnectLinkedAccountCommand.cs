@@ -14,16 +14,16 @@ public class DisconnectLinkedAccountCommandHandler(
     ILinkedAccountManager providerManager,
     IVerificationManager verificationManager) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
 {
-    private readonly IUserManager userManager = userManager;
-    private readonly ILinkedAccountManager providerManager = providerManager;
-    private readonly IVerificationManager verificationManager = verificationManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ILinkedAccountManager _providerManager = providerManager;
+    private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var verificationResult = await verificationManager.VerifyAsync(user,
+        var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.LinkedAccount, ActionType.Disconnect, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
@@ -31,7 +31,7 @@ public class DisconnectLinkedAccountCommandHandler(
         var linkedAccount = user.GetLinkedAccount(request.Request.Type);;
         if (linkedAccount is null) return Results.NotFound("Cannot find user linked account.");
 
-        var result = await providerManager.RemoveAsync(linkedAccount, cancellationToken);
+        var result = await _providerManager.RemoveAsync(linkedAccount, cancellationToken);
         return result;
     }
 }
