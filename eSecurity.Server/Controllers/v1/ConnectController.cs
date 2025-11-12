@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Connect.Commands;
+using eSecurity.Server.Features.Connect.Queries;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
 
@@ -11,6 +12,16 @@ namespace eSecurity.Server.Controllers.v1;
 public class ConnectController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
+    
+    [EndpointSummary("OpenId configuration")]
+    [EndpointDescription("OpenId configuration")]
+    [ProducesResponseType(200)]
+    [HttpGet(".well-known/openid-configuration")]
+    public async ValueTask<IActionResult> OpenIdConfigurationAsync()
+    {
+        var result = await _sender.Send(new GetOpenidConfigurationQuery());
+        return Ok(result.Value);
+    }
 
     [EndpointSummary("Token")]
     [EndpointDescription("Token")]
