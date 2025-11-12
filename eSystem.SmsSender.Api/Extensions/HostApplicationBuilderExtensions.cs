@@ -12,56 +12,59 @@ namespace eSystem.SmsSender.Api.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static IHostApplicationBuilder AddApiServices(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.AddLogging();
-        builder.AddServiceDefaults();
-        builder.AddVersioning();
-        builder.AddValidation();
-        builder.AddDependencyInjection();
-        builder.AddMessageBus();
-        builder.AddMediatR();
-        builder.AddRedisCache();
-        builder.AddExceptionHandler();
-        builder.AddDocumentation();
-        builder.Services.AddControllers();
-
-        return builder;
-    }
-    
-    private static void AddValidation(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
-    }
-
-    private static void AddMediatR(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddMediatR(x =>
+        public IHostApplicationBuilder AddApiServices()
         {
-            x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-        });
-    }
-    
-    private static void AddDependencyInjection(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddScoped<ISmsService, SmsService>();
-        builder.Services.AddSingleton<IAmazonSimpleNotificationService>(sp =>
-            new AmazonSimpleNotificationServiceClient(RegionEndpoint.EUNorth1));
-    }
+            builder.AddLogging();
+            builder.AddServiceDefaults();
+            builder.AddVersioning();
+            builder.AddValidation();
+            builder.AddDependencyInjection();
+            builder.AddMessageBus();
+            builder.AddMediatR();
+            builder.AddRedisCache();
+            builder.AddExceptionHandler();
+            builder.AddDocumentation();
+            builder.Services.AddControllers();
 
-    private static void AddMessageBus(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddMassTransit(x =>
+            return builder;
+        }
+
+        private void AddValidation()
         {
-            x.UsingRabbitMq((context, cfg) =>
+            builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+        }
+
+        private void AddMediatR()
+        {
+            builder.Services.AddMediatR(x =>
             {
-                var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
-                cfg.Host(connectionString);
-                
-                cfg.ReceiveEndpoint("sms-message", (e) => e.ConfigureConsumer<SmsConsumer>(context));
+                x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
             });
+        }
 
-            x.AddConsumer<SmsConsumer>();
-        });
+        private void AddDependencyInjection()
+        {
+            builder.Services.AddScoped<ISmsService, SmsService>();
+            builder.Services.AddSingleton<IAmazonSimpleNotificationService>(sp =>
+                new AmazonSimpleNotificationServiceClient(RegionEndpoint.EUNorth1));
+        }
+
+        private void AddMessageBus()
+        {
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
+                    cfg.Host(connectionString);
+                
+                    cfg.ReceiveEndpoint("sms-message", (e) => e.ConfigureConsumer<SmsConsumer>(context));
+                });
+
+                x.AddConsumer<SmsConsumer>();
+            });
+        }
     }
 }

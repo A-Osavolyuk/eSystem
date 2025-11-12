@@ -8,26 +8,30 @@ namespace eSecurity.Server.Data;
 
 public static class UserEntityExtensions
 {
-    public static UserDeviceEntity? GetDevice(this UserEntity user, string userAgent, string ipAddress)
-        => user.Devices.FirstOrDefault(x => x.UserAgent == userAgent && x.IpAddress == ipAddress);
+    extension(UserEntity user)
+    {
+        public UserDeviceEntity? GetDevice(string userAgent, string ipAddress)
+            => user.Devices.FirstOrDefault(x => x.UserAgent == userAgent && x.IpAddress == ipAddress);
 
-    public static UserLinkedAccountEntity? GetLinkedAccount(this UserEntity user, LinkedAccountType type)
-        => user.LinkedAccounts.FirstOrDefault(x => x.Type == type);
+        public UserLinkedAccountEntity? GetLinkedAccount(LinkedAccountType type)
+            => user.LinkedAccounts.FirstOrDefault(x => x.Type == type);
 
-    public static UserEmailEntity? GetEmail(this UserEntity user, EmailType type)
-        => user.Emails.FirstOrDefault(x => x.Type == type);
+        public UserEmailEntity? GetEmail(EmailType type)
+            => user.Emails.FirstOrDefault(x => x.Type == type);
 
-    public static UserEmailEntity? GetEmail(this UserEntity user, string email)
-        => user.Emails.FirstOrDefault(x => x.Email == email);
+        public UserEmailEntity? GetEmail(string email)
+            => user.Emails.FirstOrDefault(x => x.Email == email);
 
-    public static UserPhoneNumberEntity? GetPhoneNumber(this UserEntity user, PhoneNumberType type)
-        => user.PhoneNumbers.FirstOrDefault(x => x.Type == type);
+        public UserPhoneNumberEntity? GetPhoneNumber(PhoneNumberType type)
+            => user.PhoneNumbers.FirstOrDefault(x => x.Type == type);
 
-    public static UserTwoFactorMethodEntity? GetTwoFactorMethod(this UserEntity user, TwoFactorMethod method)
-        => user.TwoFactorMethods.FirstOrDefault(x => x.Method == method);
+        public UserTwoFactorMethodEntity? GetTwoFactorMethod(TwoFactorMethod method)
+            => user.TwoFactorMethods.FirstOrDefault(x => x.Method == method);
 
-    public static UserVerificationMethodEntity? GetVerificationMethod(this UserEntity user, VerificationMethod method)
-        => user.VerificationMethods.FirstOrDefault(x => x.Method == method);
-    public static int CountPasskeys(this UserEntity user) 
-        => user.Devices.Select(x => x.Passkey).Count();
+        public UserVerificationMethodEntity? GetVerificationMethod(VerificationMethod method)
+            => user.VerificationMethods.FirstOrDefault(x => x.Method == method);
+
+        public int CountPasskeys() 
+            => user.Devices.Select(x => x.Passkey).Count();
+    }
 }

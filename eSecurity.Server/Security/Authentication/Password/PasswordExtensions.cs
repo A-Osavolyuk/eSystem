@@ -2,8 +2,11 @@ namespace eSecurity.Server.Security.Authentication.Password;
 
 public static class PasswordExtensions
 {
-    public static void AddPasswordManagement(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<IPasswordManager, PasswordManager>();
+        public void AddPasswordManagement()
+        {
+            services.AddScoped<IPasswordManager, PasswordManager>();
+        }
     }
 }

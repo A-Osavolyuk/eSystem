@@ -5,9 +5,12 @@ namespace eSecurity.Server.Security.Authentication.Odic.Logout;
 
 public static class LogoutExtensions
 {
-    public static void AddLogoutFlow(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
-        services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
+        public void AddLogoutFlow()
+        {
+            services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
+            services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
+        }
     }
 }

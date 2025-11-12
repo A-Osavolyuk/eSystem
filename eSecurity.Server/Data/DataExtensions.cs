@@ -4,15 +4,18 @@ namespace eSecurity.Server.Data;
 
 public static class DataExtensions
 {
-    public static void AddMsSqlDb(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.AddSqlServerDbContext<AuthDbContext>("auth-db",
-            configureDbContextOptions: cfg =>
-            {
-                cfg.UseAsyncSeeding(async (ctx, _, ct) =>
+        public void AddMsSqlDb()
+        {
+            builder.AddSqlServerDbContext<AuthDbContext>("auth-db",
+                configureDbContextOptions: cfg =>
                 {
-                    await ctx.SeedAsync<IAssemblyMarker>(ct);
+                    cfg.UseAsyncSeeding(async (ctx, _, ct) =>
+                    {
+                        await ctx.SeedAsync<IAssemblyMarker>(ct);
+                    });
                 });
-            });
+        }
     }
 }

@@ -6,12 +6,15 @@ namespace eSystem.Core.Common.Documentation;
 
 public static class DocumentationExtensions
 {
-    public static void AddDocumentation(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddOpenApi(options =>
+        public void AddDocumentation()
         {
-            options.AddDocumentTransformer<BearerTokenTransformer>();
-        });
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddOpenApi(options =>
+            {
+                options.AddDocumentTransformer<BearerTokenTransformer>();
+            });
+        }
     }
 }

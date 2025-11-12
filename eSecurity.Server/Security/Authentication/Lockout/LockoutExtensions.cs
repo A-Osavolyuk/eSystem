@@ -2,8 +2,11 @@ namespace eSecurity.Server.Security.Authentication.Lockout;
 
 public static class LockoutExtensions
 {
-    public static void AddLockout(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<ILockoutManager, LockoutManager>();
+        public void AddLockout()
+        {
+            services.AddScoped<ILockoutManager, LockoutManager>();
+        }
     }
 }

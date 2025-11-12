@@ -5,9 +5,12 @@ namespace eSecurity.Server.Security.Authorization.Access;
 
 public static class AccessExtensions
 {
-    public static void AddAccessManagement(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<ICodeManager, CodeManager>();
-        services.AddScoped<IVerificationManager, VerificationManager>();
+        public void AddAccessManagement()
+        {
+            services.AddScoped<ICodeManager, CodeManager>();
+            services.AddScoped<IVerificationManager, VerificationManager>();
+        }
     }
 }

@@ -4,10 +4,13 @@ namespace eSecurity.Server.Common.Messaging;
 
 public static class MessagingExtensions
 {
-    public static void AddMessaging(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.Services.AddMessageBus();
-        builder.Services.AddScoped<IMessageService, MessageService>();
+        public void AddMessaging()
+        {
+            builder.Services.AddMessageBus();
+            builder.Services.AddScoped<IMessageService, MessageService>();
+        }
     }
     
     private static void AddMessageBus(this IServiceCollection services)

@@ -5,9 +5,12 @@ namespace eSystem.Core.Common.Errors;
 
 public static class ErrorsExtensions
 {
-    public static void AddExceptionHandler(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
+        public void AddExceptionHandler()
+        {
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
+        }
     }
 }

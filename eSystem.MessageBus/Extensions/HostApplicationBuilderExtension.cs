@@ -8,27 +8,30 @@ namespace eSystem.MessageBus.Extensions;
 
 public static class HostApplicationBuilderExtension
 {
-    public static void AddServices(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.AddMessageBus();
-        builder.AddExceptionHandler();
-        builder.AddLogging();
-        builder.AddServiceDefaults();
-    }
-
-    private static void AddMessageBus(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddMassTransit(x =>
+        public void AddServices()
         {
-            x.UsingRabbitMq((context, cfg) =>
+            builder.AddMessageBus();
+            builder.AddExceptionHandler();
+            builder.AddLogging();
+            builder.AddServiceDefaults();
+        }
+
+        private void AddMessageBus()
+        {
+            builder.Services.AddMassTransit(x =>
             {
-                var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
-                cfg.Host(connectionString);
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    var connectionString = builder.Configuration.GetConnectionString("rabbit-mq");
+                    cfg.Host(connectionString);
 
-                cfg.ReceiveEndpoint("unified-message", e => e.ConfigureConsumer<MessageConsumer>(context));
+                    cfg.ReceiveEndpoint("unified-message", e => e.ConfigureConsumer<MessageConsumer>(context));
+                });
+
+                x.AddConsumer<MessageConsumer>();
             });
-
-            x.AddConsumer<MessageConsumer>();
-        });
+        }
     }
 }

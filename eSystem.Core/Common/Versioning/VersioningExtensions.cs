@@ -7,26 +7,29 @@ namespace eSystem.Core.Common.Versioning;
 
 public static class VersioningExtensions
 {
-    public static void AddVersioning(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.Services.AddApiVersioning(options =>
+        public void AddVersioning()
         {
-            const string key = "api-version";
+            builder.Services.AddApiVersioning(options =>
+            {
+                const string key = "api-version";
             
-            options.ReportApiVersions = true;
-            options.DefaultApiVersion = ApiVersion.Default;
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ApiVersionReader = ApiVersionReader.Combine(
-                new QueryStringApiVersionReader(key),
-                new HeaderApiVersionReader(key));
-        });
+                options.ReportApiVersions = true;
+                options.DefaultApiVersion = ApiVersion.Default;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new QueryStringApiVersionReader(key),
+                    new HeaderApiVersionReader(key));
+            });
 
-        builder.Services.AddVersionedApiExplorer(options =>
-        {
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = ApiVersion.Default;
-            options.SubstituteApiVersionInUrl = true;
-            options.GroupNameFormat = "'v'V";
-        });
+            builder.Services.AddVersionedApiExplorer(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = ApiVersion.Default;
+                options.SubstituteApiVersionInUrl = true;
+                options.GroupNameFormat = "'v'V";
+            });
+        }
     }
 }

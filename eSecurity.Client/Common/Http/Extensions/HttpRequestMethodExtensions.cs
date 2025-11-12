@@ -8,63 +8,66 @@ namespace eSecurity.Client.Common.Http.Extensions;
 
 public static class HttpRequestMethodExtensions
 {
-    public static void IncludeUserAgent(this HttpRequestMessage message, HttpContext context)
+    extension(HttpRequestMessage message)
     {
-        var userAgent = context.Request.Headers.UserAgent.ToString();
-        message.Headers.Add("User-Agent", userAgent);
-    }
-
-    public static void IncludeCookies(this HttpRequestMessage message, HttpContext context)
-    {
-        var cookies = context.Request.Cookies
-            .ToDictionary(cookie => cookie.Key, cookie => cookie.Value)
-            .Select(cookie => $"{cookie.Key}={cookie.Value}")
-            .Aggregate((acc, item) => $"{acc}; {item}");
-            
-        message.Headers.Add("Cookie", cookies);
-    }
-
-    public static void AddContent(this HttpRequestMessage message, HttpRequest request, HttpOptions options)
-    {
-        switch (options.Type)
+        public void IncludeUserAgent(HttpContext context)
         {
-            case DataType.Text:
+            var userAgent = context.Request.Headers.UserAgent.ToString();
+            message.Headers.Add("User-Agent", userAgent);
+        }
+
+        public void IncludeCookies(HttpContext context)
+        {
+            var cookies = context.Request.Cookies
+                .ToDictionary(cookie => cookie.Key, cookie => cookie.Value)
+                .Select(cookie => $"{cookie.Key}={cookie.Value}")
+                .Aggregate((acc, item) => $"{acc}; {item}");
+            
+            message.Headers.Add("Cookie", cookies);
+        }
+
+        public void AddContent(HttpRequest request, HttpOptions options)
+        {
+            switch (options.Type)
             {
-                if (request.Data is not null)
+                case DataType.Text:
                 {
-                    message.Content = new StringContent(JsonSerializer.Serialize(request.Data),
-                        Encoding.UTF8, "application/json");
-                }
-
-                break;
-            }
-            case DataType.File:
-            {
-                message.Headers.Add("Accept", "multipart/form-data");
-
-                var content = new MultipartFormDataContent();
-
-                if (request.Data is not null)
-                {
-                    if (request.Data is IReadOnlyList<IBrowserFile> files)
+                    if (request.Data is not null)
                     {
-                        foreach (var file in files)
-                        {
-                            var fileContent = new StreamContent(file.OpenReadStream());
-                            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                            content.Add(fileContent, "files", file.Name);
-                        }
+                        message.Content = new StringContent(JsonSerializer.Serialize(request.Data),
+                            Encoding.UTF8, "application/json");
                     }
 
-                    var metadata = JsonSerializer.Serialize(request.Metadata);
-                    content.Add(new StringContent(metadata), "metadata");
-
-                    message.Content = content;
+                    break;
                 }
+                case DataType.File:
+                {
+                    message.Headers.Add("Accept", "multipart/form-data");
 
-                break;
+                    var content = new MultipartFormDataContent();
+
+                    if (request.Data is not null)
+                    {
+                        if (request.Data is IReadOnlyList<IBrowserFile> files)
+                        {
+                            foreach (var file in files)
+                            {
+                                var fileContent = new StreamContent(file.OpenReadStream());
+                                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                                content.Add(fileContent, "files", file.Name);
+                            }
+                        }
+
+                        var metadata = JsonSerializer.Serialize(request.Metadata);
+                        content.Add(new StringContent(metadata), "metadata");
+
+                        message.Content = content;
+                    }
+
+                    break;
+                }
+                default: throw new NotSupportedException("Unsupported request type");
             }
-            default: throw new NotSupportedException("Unsupported request type");
         }
     }
 }

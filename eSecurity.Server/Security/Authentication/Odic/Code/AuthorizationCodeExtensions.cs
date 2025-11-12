@@ -2,8 +2,11 @@ namespace eSecurity.Server.Security.Authentication.Odic.Code;
 
 public static class AuthorizationCodeExtensions
 {
-    public static void AddAuthorizationCodeManagement(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
+        public void AddAuthorizationCodeManagement()
+        {
+            services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
+        }
     }
 }

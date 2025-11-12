@@ -5,9 +5,12 @@ namespace eSystem.Core.Common.Logging;
 
 public static class LoggingExtensions
 {
-    public static void AddLogging(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        const string key = "Configuration:Logging";
-        builder.Logging.AddConfiguration(builder.Configuration.GetSection(key));
+        public void AddLogging()
+        {
+            const string key = "Configuration:Logging";
+            builder.Logging.AddConfiguration(builder.Configuration.GetSection(key));
+        }
     }
 }

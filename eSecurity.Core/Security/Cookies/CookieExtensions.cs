@@ -5,8 +5,11 @@ namespace eSecurity.Core.Security.Cookies;
 
 public static class CookieExtensions
 {
-    public static void AddCookies(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<ICookieAccessor, CookieAccessor>();
+        public void AddCookies()
+        {
+            services.AddScoped<ICookieAccessor, CookieAccessor>();
+        }
     }
 }

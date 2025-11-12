@@ -4,9 +4,12 @@ namespace eSystem.MessageBus.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static void MapServices(this WebApplication app)
+    extension(WebApplication app)
     {
-        app.MapDefaultEndpoints();
+        public void MapServices()
+        {
+            app.MapDefaultEndpoints();
+        }
     }
 
 }

@@ -6,24 +6,27 @@ namespace eSecurity.Client.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static void MapServices(this WebApplication app)
+    extension(WebApplication app)
     {
-        app.MapDefaultEndpoints();
-        app.UseStaticWebAssets();
-        app.UseRouting();
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.MapControllers();
-        app.UseAntiforgery();
-        app.UseStatusCodePagesWithRedirects("/not-found");
-        app.MapRazorComponents<App>()
-            .AddInteractiveServerRenderMode();
-    }
-    
-    private static void UseStaticWebAssets(this WebApplication app)
-    {
-        app.UseStaticFiles();
-        app.MapStaticAssets();
-        StaticWebAssetsLoader.UseStaticWebAssets(app.Environment, app.Configuration);
+        public void MapServices()
+        {
+            app.MapDefaultEndpoints();
+            app.UseStaticWebAssets();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.UseAntiforgery();
+            app.UseStatusCodePagesWithRedirects("/not-found");
+            app.MapRazorComponents<App>()
+                .AddInteractiveServerRenderMode();
+        }
+
+        private void UseStaticWebAssets()
+        {
+            app.UseStaticFiles();
+            app.MapStaticAssets();
+            StaticWebAssetsLoader.UseStaticWebAssets(app.Environment, app.Configuration);
+        }
     }
 }

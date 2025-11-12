@@ -2,8 +2,11 @@ namespace eSecurity.Server.Security.Authorization.Consents;
 
 public static class ConsentExtensions
 {
-    public static void AddConsentManagement(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<IConsentManager, ConsentManager>();
+        public void AddConsentManagement()
+        {
+            services.AddScoped<IConsentManager, ConsentManager>();
+        }
     }
 }

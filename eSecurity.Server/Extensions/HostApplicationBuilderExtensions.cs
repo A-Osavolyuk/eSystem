@@ -15,33 +15,36 @@ namespace eSecurity.Server.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static void AddServices(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.AddVersioning();
-        builder.AddMessaging();
-        builder.AddValidation<IAssemblyMarker>();
-        builder.AddServiceDefaults();
-        builder.AddSecurity();
-        builder.AddRedisCache();
-        builder.AddMsSqlDb();
-        builder.AddLogging();
-        builder.AddExceptionHandler();
-        builder.AddDocumentation();
-        builder.AddStorage();
+        public void AddServices()
+        {
+            builder.AddVersioning();
+            builder.AddMessaging();
+            builder.AddValidation<IAssemblyMarker>();
+            builder.AddServiceDefaults();
+            builder.AddSecurity();
+            builder.AddRedisCache();
+            builder.AddMsSqlDb();
+            builder.AddLogging();
+            builder.AddExceptionHandler();
+            builder.AddDocumentation();
+            builder.AddStorage();
 
-        builder.Services.AddHttpContextAccessor();
-        builder.Services.AddDistributedMemoryCache();
-        builder.Services
-            .AddControllers(options =>
-            {
-                options.Conventions.Add(new RoutePrefixConvention("api"));
-            })
-            .AddJsonOptions(cfg =>
-            {
-                cfg.JsonSerializerOptions.WriteIndented = true;
-                cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            });
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services
+                .AddControllers(options =>
+                {
+                    options.Conventions.Add(new RoutePrefixConvention("api"));
+                })
+                .AddJsonOptions(cfg =>
+                {
+                    cfg.JsonSerializerOptions.WriteIndented = true;
+                    cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                });
 
-        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>());
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>());
+        }
     }
 }

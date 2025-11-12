@@ -4,10 +4,13 @@ namespace eSecurity.Server.Security.Identity.SignUp;
 
 public static class SignUpExtensions
 {
-    public static void AddSignUpStrategies(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<ISignUpResolver, SignUpResolver>();
-        services.AddKeyedScoped<ISignUpStrategy, ManualSignUpStrategy>(SignUpType.Manual);
-        services.AddKeyedScoped<ISignUpStrategy, OAuthSignUpStrategy>(SignUpType.OAuth);
+        public void AddSignUpStrategies()
+        {
+            services.AddScoped<ISignUpResolver, SignUpResolver>();
+            services.AddKeyedScoped<ISignUpStrategy, ManualSignUpStrategy>(SignUpType.Manual);
+            services.AddKeyedScoped<ISignUpStrategy, OAuthSignUpStrategy>(SignUpType.OAuth);
+        }
     }
 }

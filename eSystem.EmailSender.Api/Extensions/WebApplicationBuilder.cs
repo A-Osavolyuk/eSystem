@@ -2,11 +2,14 @@
 
 public static class WebApplicationBuilder
 {
-    public static void MapApiServices(this WebApplication app)
+    extension(WebApplication app)
     {
-        app.MapDefaultEndpoints();
-        app.UseExceptionHandler();
-        app.MapOpenApi();
-        app.MapScalarApiReference();
+        public void MapApiServices()
+        {
+            app.MapDefaultEndpoints();
+            app.UseExceptionHandler();
+            app.MapOpenApi();
+            app.MapScalarApiReference();
+        }
     }
 }

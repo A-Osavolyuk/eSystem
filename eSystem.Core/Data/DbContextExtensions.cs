@@ -5,41 +5,43 @@ namespace eSystem.Core.Data;
 
 public static class DbContextExtensions
 {
-    public static async Task SeedAsync<TMarker>(this DbContext context,
-        CancellationToken cancellationToken = default)
+    extension(DbContext context)
     {
-        var baseType = typeof(Seed<>);
-        var assembly = typeof(TMarker).Assembly;
-
-        var implementations = assembly
-            .GetTypes()
-            .Where(t =>
-                t is
-                {
-                    IsClass: true, IsAbstract: false, IsGenericType: false,
-                    BaseType: { IsGenericType: true, IsAbstract: true }
-                } && t.BaseType.GetGenericTypeDefinition() == baseType)
-            .ToList();
-
-        foreach (var implType in implementations)
+        public async Task SeedAsync<TMarker>(CancellationToken cancellationToken = default)
         {
-            var instance = Activator.CreateInstance(implType);
-            if (instance is null)
-                continue;
+            var baseType = typeof(Seed<>);
+            var assembly = typeof(TMarker).Assembly;
 
-            var method = implType.GetMethod("Get");
-            var result = method?.Invoke(instance, null);
-            if (result is not IEnumerable<object> entities)
-                continue;
+            var implementations = assembly
+                .GetTypes()
+                .Where(t =>
+                    t is
+                    {
+                        IsClass: true, IsAbstract: false, IsGenericType: false,
+                        BaseType: { IsGenericType: true, IsAbstract: true }
+                    } && t.BaseType.GetGenericTypeDefinition() == baseType)
+                .ToList();
 
-            var entityType = implType.BaseType!.GetGenericArguments().First();
-            if (!await AnyAsync(context, entityType, cancellationToken))
+            foreach (var implType in implementations)
             {
-                await AddRangeAsync(context, entityType, entities, cancellationToken);
-            }
-        }
+                var instance = Activator.CreateInstance(implType);
+                if (instance is null)
+                    continue;
 
-        await context.SaveChangesAsync(cancellationToken);
+                var method = implType.GetMethod("Get");
+                var result = method?.Invoke(instance, null);
+                if (result is not IEnumerable<object> entities)
+                    continue;
+
+                var entityType = implType.BaseType!.GetGenericArguments().First();
+                if (!await AnyAsync(context, entityType, cancellationToken))
+                {
+                    await AddRangeAsync(context, entityType, entities, cancellationToken);
+                }
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }
 
     private static async Task<bool> AnyAsync(DbContext context, 

@@ -6,11 +6,14 @@ namespace eSecurity.Server.Security.Credentials;
 
 public static class CredentialExtensions
 {
-    public static void AddCredentials(this IHostApplicationBuilder builder, Action<CredentialOptions> configure)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.Services.Configure(configure);
-        builder.Services.AddScoped<IChallengeFactory, ChallengeFactory>();
-        builder.Services.AddScoped<ICredentialFactory, CredentialFactory>();
-        builder.Services.AddScoped<IPasskeyManager, PasskeyManager>();
+        public void AddCredentials(Action<CredentialOptions> configure)
+        {
+            builder.Services.Configure(configure);
+            builder.Services.AddScoped<IChallengeFactory, ChallengeFactory>();
+            builder.Services.AddScoped<ICredentialFactory, CredentialFactory>();
+            builder.Services.AddScoped<IPasskeyManager, PasskeyManager>();
+        }
     }
 }

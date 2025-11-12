@@ -8,12 +8,15 @@ namespace eSystem.Core.Data;
 
 public static class MigrationExtensions
 {
-    public static async Task ConfigureDatabaseAsync<TDbContext>(this WebApplication app) where TDbContext : DbContext
+    extension(WebApplication app)
     {
-        using var score = app.Services.CreateScope();
-        var context = score.ServiceProvider.GetRequiredService<TDbContext>();
-        await EnsureDatabaseAsync(context);
-        await RunMigrationsAsync(context);
+        public async Task ConfigureDatabaseAsync<TDbContext>() where TDbContext : DbContext
+        {
+            using var score = app.Services.CreateScope();
+            var context = score.ServiceProvider.GetRequiredService<TDbContext>();
+            await EnsureDatabaseAsync(context);
+            await RunMigrationsAsync(context);
+        }
     }
 
     private static async Task EnsureDatabaseAsync(DbContext context)

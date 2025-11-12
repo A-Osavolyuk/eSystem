@@ -30,34 +30,37 @@ public static class CryptographyExtensions
         builder.Services.AddProtection();
         builder.Services.AddScoped<ICodeFactory, CodeFactory>();
     }
-    private static void AddProtection(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddDataProtection();
-    }
+        private void AddProtection()
+        {
+            services.AddDataProtection();
+        }
 
-    private static void AddHashing(this IServiceCollection services)
-    {
-        services.AddScoped<IHasherFactory, HasherFactory>();
-        services.AddKeyedScoped<Hasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
-    }
+        private void AddHashing()
+        {
+            services.AddScoped<IHasherFactory, HasherFactory>();
+            services.AddKeyedScoped<Hasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
+        }
 
-    private static void AddKeys(this IServiceCollection services)
-    {
-        services.AddScoped<IKeyFactory, RandomKeyFactory>();
-    }
+        private void AddKeys()
+        {
+            services.AddScoped<IKeyFactory, RandomKeyFactory>();
+        }
 
-    private static void AddSigning(this IServiceCollection services, Action<CertificateOptions> configure)
-    {
-        services.Configure(configure);
-        services.AddScoped<ICertificateProvider, CertificateProvider>();
-        services.AddScoped<ICertificateHandler, CertificateHandler>();
-    }
-    
-    private static void AddJwt(this IServiceCollection services, Action<TokenOptions> configure)
-    {
-        services.Configure(configure);
+        private void AddSigning(Action<CertificateOptions> configure)
+        {
+            services.Configure(configure);
+            services.AddScoped<ICertificateProvider, CertificateProvider>();
+            services.AddScoped<ICertificateHandler, CertificateHandler>();
+        }
+
+        private void AddJwt(Action<TokenOptions> configure)
+        {
+            services.Configure(configure);
         
-        services.AddScoped<ITokenFactory, JwtTokenFactory>();
-        services.AddScoped<IJwtSigner, JwtSigner>();
+            services.AddScoped<ITokenFactory, JwtTokenFactory>();
+            services.AddScoped<IJwtSigner, JwtSigner>();
+        }
     }
 }

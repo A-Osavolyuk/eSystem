@@ -5,15 +5,18 @@ namespace eSystem.Storage.Api.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static void MapAppServices(this WebApplication app)
+    extension(WebApplication app)
     {
-        app.MapOpenApi();
-        app.MapScalarApiReference();
-        app.UseAuthorization();
-        app.MapControllers();
-        app.MapDefaultEndpoints();
-        app.UseExceptionHandler();
+        public void MapAppServices()
+        {
+            app.MapOpenApi();
+            app.MapScalarApiReference();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.MapDefaultEndpoints();
+            app.UseExceptionHandler();
 
-        app.Run();
+            app.Run();
+        }
     }
 }

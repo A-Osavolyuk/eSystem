@@ -2,8 +2,11 @@ namespace eSecurity.Server.Security.Authorization.Devices;
 
 public static class DeviceExtensions
 {
-    public static void AddDeviceManagement(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<IDeviceManager, DeviceManager>();
+        public void AddDeviceManagement()
+        {
+            services.AddScoped<IDeviceManager, DeviceManager>();
+        }
     }
 }

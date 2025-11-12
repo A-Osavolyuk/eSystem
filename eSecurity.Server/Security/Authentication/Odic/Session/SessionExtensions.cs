@@ -2,9 +2,12 @@
 
 public static class SessionExtensions
 {
-    public static void AddSession(this IServiceCollection services, Action<SessionOptions> configure)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<ISessionManager, SessionManager>();
-        services.Configure(configure);
+        public void AddSession(Action<SessionOptions> configure)
+        {
+            services.AddScoped<ISessionManager, SessionManager>();
+            services.Configure(configure);
+        }
     }
 }

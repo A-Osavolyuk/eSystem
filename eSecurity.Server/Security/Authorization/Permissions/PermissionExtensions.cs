@@ -4,9 +4,12 @@ namespace eSecurity.Server.Security.Authorization.Permissions;
 
 public static class PermissionExtensions
 {
-    public static void AddPermissionManagement(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-        services.AddScoped<IPermissionManager, PermissionManager>();
+        public void AddPermissionManagement()
+        {
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddScoped<IPermissionManager, PermissionManager>();
+        }
     }
 }

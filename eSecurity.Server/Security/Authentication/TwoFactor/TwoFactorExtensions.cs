@@ -6,12 +6,15 @@ namespace eSecurity.Server.Security.Authentication.TwoFactor;
 
 public static class TwoFactorExtensions
 {
-    public static void Add2Fa(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<IQrCodeFactory, QrCodeFactory>();
-        services.AddScoped<IRecoveryCodeFactory, RecoveryCodeFactory>();
-        services.AddScoped<IRecoverManager, RecoverManager>();
-        services.AddScoped<ISecretManager, SecretManager>();
-        services.AddScoped<ITwoFactorManager, TwoFactorManager>();
+        public void Add2Fa()
+        {
+            services.AddScoped<IQrCodeFactory, QrCodeFactory>();
+            services.AddScoped<IRecoveryCodeFactory, RecoveryCodeFactory>();
+            services.AddScoped<IRecoverManager, RecoverManager>();
+            services.AddScoped<ISecretManager, SecretManager>();
+            services.AddScoped<ITwoFactorManager, TwoFactorManager>();
+        }
     }
 }

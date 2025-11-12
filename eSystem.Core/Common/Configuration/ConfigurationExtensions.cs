@@ -4,22 +4,25 @@ namespace eSystem.Core.Common.Configuration;
 
 public static class ConfigurationExtensions
 {
-    public static TValue Get<TValue>(this IConfiguration configurationManager, string key)
+    extension(IConfiguration configuration)
     {
-        var section = configurationManager.GetSection(key);
+        public TValue Get<TValue>(string key)
+        {
+            var section = configuration.GetSection(key);
         
-        if (!section.Exists())
-        {
-            throw new KeyNotFoundException($"Configuration section '{key}' was not found.");
+            if (!section.Exists())
+            {
+                throw new KeyNotFoundException($"Configuration section '{key}' was not found.");
+            }
+
+            var value = section.Get<TValue>();
+
+            if (value == null)
+            {
+                throw new InvalidOperationException($"Configuration value for key '{key}' could not be found or is null.");
+            }
+
+            return value;
         }
-
-        var value = section.Get<TValue>();
-
-        if (value == null)
-        {
-            throw new InvalidOperationException($"Configuration value for key '{key}' could not be found or is null.");
-        }
-
-        return value;
     }
 }

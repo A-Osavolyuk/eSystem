@@ -2,8 +2,11 @@ namespace eSecurity.Server.Security.Authorization.Roles;
 
 public static class RolesExtensions
 {
-    public static void AddRoleManagement(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<IRoleManager, RoleManager>();
+        public void AddRoleManagement()
+        {
+            services.AddScoped<IRoleManager, RoleManager>();
+        }
     }
 }

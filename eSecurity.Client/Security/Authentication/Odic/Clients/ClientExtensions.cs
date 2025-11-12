@@ -2,8 +2,11 @@ namespace eSecurity.Client.Security.Authentication.Odic.Clients;
 
 public static class ClientExtensions
 {
-    public static void AddClient(this IServiceCollection services, Action<ClientOptions> configure)
+    extension(IServiceCollection services)
     {
-        services.Configure(configure);
+        public void AddClient(Action<ClientOptions> configure)
+        {
+            services.Configure(configure);
+        }
     }
 }

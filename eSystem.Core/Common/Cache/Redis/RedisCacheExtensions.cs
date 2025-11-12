@@ -4,8 +4,11 @@ namespace eSystem.Core.Common.Cache.Redis;
 
 public static class RedisCacheExtensions
 {
-    public static void AddRedisCache(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.AddRedisClient("redis");
+        public void AddRedisCache()
+        {
+            builder.AddRedisClient("redis");
+        }
     }
 }

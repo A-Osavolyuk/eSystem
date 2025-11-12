@@ -4,9 +4,12 @@ namespace eSecurity.Client.Extensions;
 
 public static class MudStepperExtendedExtensions
 {
-    public static async Task StepNextAsync(this MudStepperExtended stepper)
+    extension(MudStepperExtended stepper)
     {
-        var index = stepper.GetActiveIndex();
-        await stepper.CompleteStep(index);
+        public async Task StepNextAsync()
+        {
+            var index = stepper.GetActiveIndex();
+            await stepper.CompleteStep(index);
+        }
     }
 }

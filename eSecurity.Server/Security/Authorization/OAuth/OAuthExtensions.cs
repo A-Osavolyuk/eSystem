@@ -4,9 +4,12 @@ namespace eSecurity.Server.Security.Authorization.OAuth;
 
 public static class OAuthExtensions
 {
-    public static void AddOAuthAuthorization(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<IOAuthSessionManager, OAuthSessionManager>();
-        services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
+        public void AddOAuthAuthorization()
+        {
+            services.AddScoped<IOAuthSessionManager, OAuthSessionManager>();
+            services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
+        }
     }
 }

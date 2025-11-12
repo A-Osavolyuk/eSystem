@@ -5,8 +5,11 @@ namespace eSystem.Core.Validation;
 
 public static class ValidationExtensions
 {
-    public static void AddValidation<TAssemblyMarker>(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        builder.Services.AddValidatorsFromAssemblyContaining<TAssemblyMarker>();
+        public void AddValidation<TAssemblyMarker>()
+        {
+            builder.Services.AddValidatorsFromAssemblyContaining<TAssemblyMarker>();
+        }
     }
 }
