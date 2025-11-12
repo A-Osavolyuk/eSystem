@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace eSecurity.Server.Security.Authentication.Odic.Configuration;
 
-public class OpenidConfiguration
+public class OpenIdOptions
 {
     [JsonPropertyName("issuer")]
     public string Issuer { get; set; } = string.Empty;
