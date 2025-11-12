@@ -1,11 +1,16 @@
-﻿using eSecurity.Server.Security.Authentication.Odic.Client;
+﻿using eSecurity.Core.Security.Authentication.Odic.Logout;
+using eSecurity.Server.Security.Authentication.Odic.Client;
 using eSecurity.Server.Security.Authentication.Odic.Code;
 using eSecurity.Server.Security.Authentication.Odic.Configuration;
 using eSecurity.Server.Security.Authentication.Odic.Logout;
+using eSecurity.Server.Security.Authentication.Odic.Logout.Strategies;
 using eSecurity.Server.Security.Authentication.Odic.Pkce;
 using eSecurity.Server.Security.Authentication.Odic.Session;
 using eSecurity.Server.Security.Authentication.Odic.Token;
+using eSecurity.Server.Security.Authentication.Odic.Token.Strategies;
+using eSecurity.Server.Security.Identity.Claims;
 using eSystem.Core.Security.Authentication.Odic.Constants;
+using SessionOptions = eSecurity.Server.Security.Authentication.Odic.Session.SessionOptions;
 
 namespace eSecurity.Server.Security.Authentication.Odic;
 
@@ -15,6 +20,13 @@ public static class OdicExtensions
     {
         public void AddOdic()
         {
+            services.AddPkceHandler();
+            services.AddLogoutFlow();
+            services.AddTokenFlow();
+            services.AddClientManagement();
+            services.AddAuthorizationCodeManagement();
+            services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
+            
             services.AddOpenidConfiguration(cfg =>
             {
                 cfg.Issuer = "http://localhost:5201";
@@ -58,13 +70,47 @@ public static class OdicExtensions
                 cfg.FrontchannelLogoutSupported = true;
                 cfg.FrontchannelLogoutSessionSupported = true;
             });
+        }
 
-            services.AddPkceHandler();
-            services.AddLogoutFlow();
-            services.AddTokenFlow();
-            services.AddClientManagement();
-            services.AddAuthorizationCodeManagement();
-            services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
+        private void AddClientManagement()
+        {
+            services.AddScoped<IClientManager, ClientManager>();
+        }
+
+        private void AddAuthorizationCodeManagement()
+        {
+            services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
+        }
+
+        private void AddOpenidConfiguration(Action<OpenIdOptions> configure)
+        {
+            services.Configure(configure);
+        }
+
+        private void AddLogoutFlow()
+        {
+            services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
+            services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
+        }
+
+        private void AddPkceHandler()
+        {
+            services.AddScoped<IPkceHandler, PkceHandler>();
+        }
+
+        private void AddSession(Action<SessionOptions> configure)
+        {
+            services.AddScoped<ISessionManager, SessionManager>();
+            services.Configure(configure);
+        }
+        
+        public void AddTokenFlow()
+        {
+            services.AddScoped<ITokenManager, TokenManager>();
+            services.AddSingleton<IClaimBuilderFactory, ClaimBuilderFactory>();
+            services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
+            services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
+            services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
         }
     }
 }
