@@ -22,6 +22,16 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new GetOpenidConfigurationQuery());
         return Ok(result.Value);
     }
+    
+    [EndpointSummary("Json Web Key")]
+    [EndpointDescription("Json Web Key")]
+    [ProducesResponseType(200)]
+    [HttpGet(".well-known/jwks.json")]
+    public async ValueTask<IActionResult> JsonWebKeyAsync()
+    {
+        var result = await _sender.Send(new GetJwksQuery());
+        return Ok(result.Value);
+    }
 
     [EndpointSummary("Token")]
     [EndpointDescription("Token")]
