@@ -90,6 +90,7 @@ public static class OdicExtensions
         {
             services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
             services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
+            services.AddKeyedScoped<ILogoutStrategy, OidcLogoutStrategy>(LogoutType.Oidc);
         }
 
         private void AddPkceHandler()
