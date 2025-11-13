@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Client.Security.Authentication;
-using eSecurity.Client.Security.Authentication.Odic.Token;
+using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;

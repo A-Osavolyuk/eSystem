@@ -2,7 +2,7 @@ using System.Security.Claims;
 using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Client.Common.State.States;
 using eSecurity.Client.Common.Storage;
-using eSecurity.Client.Security.Authentication.Odic.Token;
+using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Common.Routing;
 using Microsoft.AspNetCore.Authentication.Cookies;

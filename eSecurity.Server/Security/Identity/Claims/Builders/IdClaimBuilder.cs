@@ -1,7 +1,7 @@
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
-using eSystem.Core.Security.Authentication.Odic.Constants;
+using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Identity.Claims.Builders;

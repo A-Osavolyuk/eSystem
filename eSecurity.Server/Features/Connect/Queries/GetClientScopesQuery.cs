@@ -1,5 +1,5 @@
 using eSecurity.Core.Common.DTOs;
-using eSecurity.Server.Security.Authentication.Odic.Client;
+using eSecurity.Server.Security.Authentication.Oidc.Client;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 

@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Security.Cookies.Constants;
 using eSecurity.Server.Security.Authentication.Handlers;
 using eSecurity.Server.Security.Authentication.Lockout;
-using eSecurity.Server.Security.Authentication.Odic;
+using eSecurity.Server.Security.Authentication.Oidc;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.TwoFactor;
@@ -22,7 +22,7 @@ public static class AuthenticationExtensions
         builder.Services.AddSignInStrategies();
         builder.Services.Add2Fa();
         builder.Services.AddLockout();
-        builder.Services.AddOdic();
+        builder.Services.AddOidc();
         
         builder.Services.AddAuthentication(options =>
             {

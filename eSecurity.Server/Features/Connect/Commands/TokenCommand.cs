@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Server.Security.Authentication.Odic.Token;
-using eSecurity.Server.Security.Authentication.Odic.Token.Strategies;
-using eSystem.Core.Security.Authentication.Odic.Constants;
+using eSecurity.Server.Security.Authentication.Oidc.Token;
+using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
+using eSystem.Core.Security.Authentication.Oidc.Constants;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

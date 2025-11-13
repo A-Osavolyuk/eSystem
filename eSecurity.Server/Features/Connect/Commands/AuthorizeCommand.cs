@@ -2,12 +2,12 @@
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.Odic.Client;
-using eSecurity.Server.Security.Authentication.Odic.Code;
-using eSecurity.Server.Security.Authentication.Odic.Session;
+using eSecurity.Server.Security.Authentication.Oidc.Client;
+using eSecurity.Server.Security.Authentication.Oidc.Code;
+using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authentication.Odic.Constants;
+using eSystem.Core.Security.Authentication.Oidc.Constants;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

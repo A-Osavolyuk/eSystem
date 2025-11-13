@@ -1,0 +1,17 @@
+using eSecurity.Core.Security.Authentication.Oidc.Logout;
+using eSecurity.Server.Security.Authentication.Oidc.Logout.Strategies;
+
+namespace eSecurity.Server.Security.Authentication.Oidc.Logout;
+
+public static class LogoutExtensions
+{
+    extension(IServiceCollection services)
+    {
+        public void AddLogoutFlow()
+        {
+            services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
+            services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
+            services.AddKeyedScoped<ILogoutStrategy, OidcLogoutStrategy>(LogoutType.Oidc);
+        }
+    }
+}

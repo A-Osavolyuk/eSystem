@@ -2,7 +2,7 @@
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Data;
-using eSecurity.Server.Security.Authentication.Odic.Session;
+using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;

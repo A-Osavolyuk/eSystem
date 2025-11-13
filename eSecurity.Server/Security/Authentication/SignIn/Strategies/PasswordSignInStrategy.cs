@@ -5,7 +5,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
-using eSecurity.Server.Security.Authentication.Odic.Session;
+using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.Options;

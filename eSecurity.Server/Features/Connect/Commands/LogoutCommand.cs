@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Core.Security.Authentication.Odic.Logout;
-using eSecurity.Server.Security.Authentication.Odic.Logout;
-using eSecurity.Server.Security.Authentication.Odic.Logout.Strategies;
+using eSecurity.Core.Security.Authentication.Oidc.Logout;
+using eSecurity.Server.Security.Authentication.Oidc.Logout;
+using eSecurity.Server.Security.Authentication.Oidc.Logout.Strategies;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

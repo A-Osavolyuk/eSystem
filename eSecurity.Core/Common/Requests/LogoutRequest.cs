@@ -1,4 +1,4 @@
-using eSecurity.Core.Security.Authentication.Odic.Logout;
+using eSecurity.Core.Security.Authentication.Oidc.Logout;
 
 namespace eSecurity.Core.Common.Requests;
 

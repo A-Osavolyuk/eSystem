@@ -5,7 +5,7 @@ using eSecurity.Core.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
-using eSecurity.Server.Security.Authentication.Odic.Session;
+using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Authorization.Devices;

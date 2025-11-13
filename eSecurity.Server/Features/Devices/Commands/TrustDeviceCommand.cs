@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authorization.Access;
-using eSecurity.Server.Security.Authentication.Odic.Session;
+using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;

@@ -1,4 +1,4 @@
-using eSecurity.Server.Security.Authentication.Odic.Configuration;
+using eSecurity.Server.Security.Authentication.Oidc;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 
