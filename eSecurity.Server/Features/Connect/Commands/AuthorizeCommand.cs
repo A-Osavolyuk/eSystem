@@ -74,7 +74,7 @@ public class AuthorizeCommandHandler(
         };
 
         var codeResult = await _authorizationCodeManager.CreateAsync(authorizationCode, cancellationToken);
-        if (!codeResult.Succeeded) return Results.BadRequest(codeResult);
+        if (!codeResult.Succeeded) return codeResult;
 
         var response = new AuthorizeResponse()
         {
