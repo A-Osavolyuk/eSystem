@@ -68,19 +68,4 @@ public class CertificateProvider(
             Certificate = certificate
         };
     }
-
-    public async ValueTask<List<SigningCertificate>> GetValidAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Certificates
-            .Where(x => x.IsValid)
-            .Select(certificate => new SigningCertificate()
-            {
-                Id = certificate.Id,
-                Certificate = _certificateHandler.ExportCertificate(
-                    certificate.ProtectedCertificate,
-                    certificate.ProtectedPassword
-                )
-            })
-            .ToListAsync(cancellationToken);
-    }
 }
