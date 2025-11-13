@@ -11,6 +11,7 @@ public static class LogoutExtensions
         {
             services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
             services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
+            services.AddKeyedScoped<ILogoutStrategy, OidcLogoutStrategy>(LogoutType.Oidc);
         }
     }
 }

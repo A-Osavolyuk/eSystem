@@ -13,9 +13,10 @@ public class LogoutCommandHandler(ILogoutStrategyResolver resolver) : IRequestHa
 
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
-        var payload = request.Request.Type switch
+        LogoutPayload payload = request.Request.Type switch
         {
             LogoutType.Manual => new ManualLogoutPayload(),
+            LogoutType.Oidc => new OidcLogoutPayload(),
             _ => throw new NotSupportedException("Unsupported logout type")
         };
 

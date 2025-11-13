@@ -30,4 +30,21 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .Include(x => x.GrantTypes)
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+    public async ValueTask<ClientEntity?> FindByAudienceAsync(string audience, CancellationToken cancellationToken = default)
+    {
+        return await _context.Clients
+            .Where(c => c.Name == audience)
+            .Include(x => x.RedirectUris)
+            .Include(x => x.PostLogoutRedirectUris)
+            .Include(x => x.AllowedScopes)
+            .ThenInclude(x => x.Scope)
+            .Include(x => x.GrantTypes)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async ValueTask<List<string>> GetAudiencesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Clients.Select(x => x.Name).ToListAsync(cancellationToken);
+    }
 }
