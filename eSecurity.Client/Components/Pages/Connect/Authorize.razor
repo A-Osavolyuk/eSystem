@@ -1,6 +1,7 @@
 @page "/connect/authorize"
 @using eSecurity.Client.Common.JS.Fetch
 @using eSecurity.Core.Common.Responses
+@using eSystem.Core.Security.Authentication.Oidc.Constants
 @using eSecurity.Core.Security.Cookies
 
 @inherits PageBase
@@ -10,9 +11,11 @@
 
 <Title Text="Authorization"></Title>
 
-@if (!UserState.IsAuthenticated)
+@if (showConsents)
 {
-    
+}
+else if (showAccountSelect)
+{
 }
 
 @code {
@@ -44,60 +47,151 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
 
+    [SupplyParameterFromQuery(Name = "prompt")]
+    public string? Prompt { get; set; }
+
+    private bool showConsents;
+    private bool showAccountSelect;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (UserState.IsAuthenticated)
+            if (string.IsNullOrEmpty(Prompt))
             {
-                var scopes = Scope.Split(' ').ToList();
-                var request = new AuthorizeRequest()
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(RedirectUri)
+                    .WithQueryParam("error", OAuthErrors.InvalidRequest)
+                    .WithQueryParam("error_description", "Query parameter 'prompt' is required.")
+                    .Build());
+
+                return;
+            }
+
+            var prompts = Prompt!.Split(' ');
+            var processedPrompt = prompts.First();
+            
+            if (prompts.Contains(Prompts.None) && prompts.Length > 1)
+            {
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(RedirectUri)
+                    .WithQueryParam("error", OAuthErrors.InvalidRequest)
+                    .WithQueryParam("error_description", "Prompt 'none' cannot be combined with other prompt values.")
+                    .Build());
+
+                return;
+            }
+
+            switch (processedPrompt)
+            {
+                case Prompts.None:
                 {
-                    UserId = UserState.UserId,
-                    ResponseType = ResponseType,
-                    ClientId = ClientId,
-                    RedirectUri = RedirectUri,
-                    Scopes = scopes,
-                    Nonce = Nonce,
-                    State = State,
-                    CodeChallenge = CodeChallenge,
-                    CodeChallengeMethod = CodeChallengeMethod
-                };
+                    if (!UserState.IsAuthenticated)
+                    {
+                        NavigationManager.NavigateTo(QueryBuilder.Create()
+                            .WithUri(RedirectUri)
+                            .WithQueryParam("error", OAuthErrors.LoginRequired)
+                            .WithQueryParam("error_description", "User must be authenticated.")
+                            .Build());
+                    }
 
-                var result = await ConnectService.AuthorizeAsync(request);
-
-                if (result.Success)
+                    await OnAuthorizeAsync();
+                    
+                    break;
+                }
+                case Prompts.Login:
                 {
-                    var response = result.Get<AuthorizeResponse>()!;
-                    var cookie = new SessionCookie()
-                    {
-                        SessionId = response.SessionId,
-                        UserId = request.UserId,
-                        DeviceId = response.DeviceId,
-                        IssuedAt = DateTimeOffset.UtcNow,
-                        ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
-                    };
-
-                    var fetchOptions = new FetchOptions()
-                    {
-                        Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
-                        Method = HttpMethod.Post,
-                        Body = cookie
-                    };
-
-                    await FetchClient.FetchAsync(fetchOptions);
-
-                    var builder = QueryBuilder.Create()
-                        .WithUri(request.RedirectUri)
-                        .WithQueryParam("code", response.Code)
-                        .WithQueryParam("state", response.State);
-
-                    if (!string.IsNullOrEmpty(ReturnUrl)) builder.WithQueryParam("return_url", ReturnUrl);
-
-                    NavigationManager.NavigateTo(builder.Build());
+                    OnLogin(prompts);
+                    break;
+                }
+                case Prompts.Consent:
+                {
+                    showConsents = true;
+                    break;
+                }
+                case Prompts.SelectAccount:
+                {
+                    showAccountSelect = true;
+                    break;
+                }
+                default:
+                {
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(RedirectUri)
+                        .WithQueryParam("error", OAuthErrors.InvalidRequest)
+                        .WithQueryParam("error_description", $"Prompt '{processedPrompt}' is not supported.")
+                        .Build());
+                    break;
                 }
             }
         }
+    }
+
+    private async Task OnAuthorizeAsync()
+    {
+        var scopes = Scope.Split(' ').ToList();
+        var request = new AuthorizeRequest()
+        {
+            UserId = UserState.UserId,
+            ResponseType = ResponseType,
+            ClientId = ClientId,
+            RedirectUri = RedirectUri,
+            Scopes = scopes,
+            Nonce = Nonce,
+            State = State,
+            CodeChallenge = CodeChallenge,
+            CodeChallengeMethod = CodeChallengeMethod
+        };
+
+        var result = await ConnectService.AuthorizeAsync(request);
+
+        if (result.Success)
+        {
+            var response = result.Get<AuthorizeResponse>()!;
+            var cookie = new SessionCookie()
+            {
+                SessionId = response.SessionId,
+                UserId = request.UserId,
+                DeviceId = response.DeviceId,
+                IssuedAt = DateTimeOffset.UtcNow,
+                ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
+            };
+
+            var fetchOptions = new FetchOptions()
+            {
+                Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
+                Method = HttpMethod.Post,
+                Body = cookie
+            };
+
+            await FetchClient.FetchAsync(fetchOptions);
+
+            var builder = QueryBuilder.Create()
+                .WithUri(request.RedirectUri)
+                .WithQueryParam("code", response.Code)
+                .WithQueryParam("state", response.State);
+
+            if (!string.IsNullOrEmpty(ReturnUrl)) builder.WithQueryParam("return_url", ReturnUrl);
+
+            NavigationManager.NavigateTo(builder.Build());
+        }
+    }
+
+    private void OnLogin(string[] prompts)
+    {
+        var returnUrlBuilder = QueryBuilder.Create().WithUri(NavigationManager.Uri);
+
+        if (prompts.Length > 1)
+        {
+            var prompt = string.Join(" ", prompts.Where(x => x != prompts.First()));
+            returnUrlBuilder.WithQueryParam("prompt", prompt);
+        }
+
+        var redirectUriBuilder = QueryBuilder.Create()
+            .WithUri(Links.Account.SignIn)
+            .WithQueryParam("return_url", returnUrlBuilder.Build());
+
+        NavigationManager.NavigateTo(redirectUriBuilder.Build());
     }
 
 }
