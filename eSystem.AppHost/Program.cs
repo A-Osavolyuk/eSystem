@@ -61,7 +61,7 @@ var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
 
 var securityClient = builder.AddProject<Projects.eSecurity_Client>("e-security-client")
     .WithReference(securityServer).WaitFor(securityServer)
-    .WithReference(rabbitMq).WaitFor(proxy);
+    .WithReference(proxy).WaitFor(proxy);
 
 var app = builder.Build();
 
