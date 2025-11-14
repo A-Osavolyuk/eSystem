@@ -1,6 +1,6 @@
 using eSecurity.Core.Common.Requests;
 
-namespace eSecurity.Client.Services.Interfaces;
+namespace eSecurity.Client.Security.Credentials.PublicKey;
 
 public interface IPasskeyService
 {

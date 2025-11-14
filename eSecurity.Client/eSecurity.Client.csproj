@@ -24,10 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Security\Cookies\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <AdditionalFiles Include="Components\Pages\Connect\Consents.razor" />
       <AdditionalFiles Include="Components\Pages\Devices\Devices.razor" />
     </ItemGroup>

@@ -1,9 +1,8 @@
 using eSecurity.Client.Common.Http;
-using eSecurity.Client.Services.Interfaces;
 using eSecurity.Core.Common.Requests;
 using eSystem.Core.Common.Http;
 
-namespace eSecurity.Client.Services.Implementations;
+namespace eSecurity.Client.Security.Authorization.LinkedAccounts;
 
 public class LinkedAccountService(IApiClient apiClient) : ILinkedAccountService
 {

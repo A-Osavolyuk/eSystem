@@ -4,8 +4,14 @@ using eSecurity.Client.Common.JS;
 using eSecurity.Client.Common.State;
 using eSecurity.Client.Common.Storage;
 using eSecurity.Client.Security;
-using eSecurity.Client.Services.Implementations;
-using eSecurity.Client.Services.Interfaces;
+using eSecurity.Client.Security.Authentication.Oidc;
+using eSecurity.Client.Security.Authentication.TwoFactor;
+using eSecurity.Client.Security.Authorization.Access.Verification;
+using eSecurity.Client.Security.Authorization.Devices;
+using eSecurity.Client.Security.Authorization.LinkedAccounts;
+using eSecurity.Client.Security.Authorization.OAuth;
+using eSecurity.Client.Security.Credentials.PublicKey;
+using eSecurity.Client.Security.Identity;
 using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Validation;
 using eSystem.ServiceDefaults;
@@ -27,16 +33,6 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddHttpClient();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<IApiClient, ApiClient>();
-        
-            builder.Services.AddScoped<ISecurityService, SecurityService>();
-            builder.Services.AddScoped<IConnectService, ConnectService>();
-            builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
-            builder.Services.AddScoped<IOAuthService, OAuthService>();
-            builder.Services.AddScoped<ILinkedAccountService, LinkedAccountService>();
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IDeviceService, DeviceService>();
-            builder.Services.AddScoped<IPasskeyService, PasskeyService>();
-            builder.Services.AddScoped<IVerificationService, VerificationService>();
         
             builder.Services.AddSecurity();
             builder.Services.AddConfirmation();

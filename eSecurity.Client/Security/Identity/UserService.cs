@@ -1,8 +1,7 @@
 using eSecurity.Client.Common.Http;
-using eSecurity.Client.Services.Interfaces;
 using eSystem.Core.Common.Http;
 
-namespace eSecurity.Client.Services.Implementations;
+namespace eSecurity.Client.Security.Identity;
 
 public class UserService(IApiClient apiClient) : IUserService
 {

@@ -1,4 +1,4 @@
-namespace eSecurity.Client.Services.Interfaces;
+namespace eSecurity.Client.Security.Identity;
 
 public interface IUserService
 {
