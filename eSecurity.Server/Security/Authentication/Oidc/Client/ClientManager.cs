@@ -7,7 +7,8 @@ public class ClientManager(AuthDbContext context) : IClientManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<ClientEntity?> FindByIdAsync(string clientId, CancellationToken cancellationToken = default)
+    public async ValueTask<ClientEntity?> FindByIdAsync(string clientId, 
+        CancellationToken cancellationToken = default)
     {
         return await _context.Clients
             .Where(c => c.Id == Guid.Parse(clientId))
@@ -19,7 +20,8 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<ClientEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async ValueTask<ClientEntity?> FindByIdAsync(Guid id, 
+        CancellationToken cancellationToken = default)
     {
         return await _context.Clients
             .Where(c => c.Id == id)
@@ -31,10 +33,11 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<ClientEntity?> FindByAudienceAsync(string audience, CancellationToken cancellationToken = default)
+    public async ValueTask<ClientEntity?> FindByAudienceAsync(string audience, 
+        CancellationToken cancellationToken = default)
     {
         return await _context.Clients
-            .Where(c => c.Name == audience)
+            .Where(c => c.Audience == audience)
             .Include(x => x.RedirectUris)
             .Include(x => x.PostLogoutRedirectUris)
             .Include(x => x.AllowedScopes)
@@ -45,6 +48,6 @@ public class ClientManager(AuthDbContext context) : IClientManager
 
     public async ValueTask<List<string>> GetAudiencesAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.Clients.Select(x => x.Name).ToListAsync(cancellationToken);
+        return await _context.Clients.Select(x => x.Audience).ToListAsync(cancellationToken);
     }
 }

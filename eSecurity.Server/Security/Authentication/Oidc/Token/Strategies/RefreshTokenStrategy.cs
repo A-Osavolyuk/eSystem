@@ -82,7 +82,7 @@ public class RefreshTokenStrategy(
 
         var accessTokenClaims = _claimBuilderFactory.CreateAccessBuilder()
             .WithIssuer(_options.Issuer)
-            .WithAudience(client.Name)
+            .WithAudience(client.Audience)
             .WithSubject(user.Id.ToString())
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithSessionId(refreshToken.Session.Id.ToString())
@@ -131,7 +131,7 @@ public class RefreshTokenStrategy(
             var idClaims = _claimBuilderFactory.CreateIdBuilder()
                 .WithOpenId(user, client)
                 .WithIssuer(_options.Issuer)
-                .WithAudience(client.Name)
+                .WithAudience(client.Audience)
                 .WithSubject(user.Id.ToString())
                 .WithTokenId(Guid.CreateVersion7().ToString())
                 .WithSessionId(refreshToken.Session.Id.ToString())
