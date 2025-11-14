@@ -15,7 +15,15 @@ public class ConnectService(IApiClient apiClient) : IConnectService
             {
                 Method = HttpMethod.Get,
                 Url = "api/v1/Connect/.well-known/jwks.json",
-            }, new HttpOptions() { Type = DataType.Text });
+            }, new HttpOptions() { Type = DataType.Text, Wrap = true });
+
+    public async ValueTask<HttpResponse> GetOpenidConfigurationAsync()
+        => await _apiClient.SendAsync(
+            new HttpRequest()
+            {
+                Method = HttpMethod.Get,
+                Url = "api/v1/Connect/.well-known/openid-configuration",
+            }, new HttpOptions() { Type = DataType.Text, Wrap = true });
 
     public async ValueTask<HttpResponse> AuthorizeAsync(AuthorizeRequest request)
         => await _apiClient.SendAsync(
