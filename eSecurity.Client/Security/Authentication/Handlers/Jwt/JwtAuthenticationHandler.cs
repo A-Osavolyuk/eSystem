@@ -5,6 +5,7 @@ using System.Text.Encodings.Web;
 using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Client.Services.Interfaces;
+using eSecurity.Core.Security.Authentication.Oidc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
@@ -28,27 +29,32 @@ public class JwtAuthenticationHandler(
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var result = await _connectService.GetPublicKeysAsync();
-        if (!result.Success) return AuthenticateResult.Fail("Cannot get public key.");
+        var keysResult = await _connectService.GetPublicKeysAsync();
+        if (!keysResult.Success) return AuthenticateResult.Fail(keysResult.Message);
 
         var handler = new JwtSecurityTokenHandler();
         var securityToken = handler.ReadJwtToken(_tokenProvider.IdToken);
         if (securityToken is null) return AuthenticateResult.Fail("Invalid token.");
         
-        var keys = new JsonWebKeySet(result.Result!.ToString());
+        var keys = new JsonWebKeySet(keysResult.Result!.ToString());
         var publicKey = keys.Keys.FirstOrDefault(x => x.KeyId == securityToken.Header.Kid);
         if (publicKey is null) return AuthenticateResult.Fail("Invalid key.");
 
+        var openIdResult = await _connectService.GetOpenidConfigurationAsync();
+        if (openIdResult.Success) return AuthenticateResult.Fail(openIdResult.Message);
+
+        var openIdOptions = openIdResult.Get<OpenIdOptions>();
+        var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));
         var parameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
-            ValidIssuer = "http://localhost:5201",
+            ValidIssuer = openIdOptions.Issuer,
             ValidateAudience = true,
             ValidAudience = _clientOptions.ClientId,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5),
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey)),
+            IssuerSigningKey = signingKey,
         };
         
         var principal = handler.ValidateToken(_tokenProvider.IdToken, parameters, out _);
