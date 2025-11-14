@@ -9,8 +9,8 @@ public static class GatewayExtensions
     {
         public void AddGateway()
         {
-            const string httpKey = "services:proxy:http:0";
-            const string httpsKey = "services:proxy:https:0";
+            const string httpKey = "PROXY_HTTP";
+            const string httpsKey = "PROXY_HTTPS";
         
             var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
             var gatewayUrl = configuration.GetValue<string>(httpKey) ?? configuration.GetValue<string>(httpsKey)!;
