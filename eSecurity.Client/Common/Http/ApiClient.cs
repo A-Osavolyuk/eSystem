@@ -27,7 +27,7 @@ public class ApiClient(
     NavigationManager navigationManager,
     TokenProvider tokenProvider,
     AuthenticationManager authenticationManager,
-    IOptions<GatewayOptions> gatewayOptions,
+    GatewayOptions gatewayOptions,
     IOptions<ClientOptions> clientOptions) : IApiClient
 {
     private readonly IHttpClientFactory _clientFactory = clientFactory;
@@ -37,7 +37,7 @@ public class ApiClient(
     private readonly NavigationManager _navigationManager = navigationManager;
     private readonly TokenProvider _tokenProvider = tokenProvider;
     private readonly AuthenticationManager _authenticationManager = authenticationManager;
-    private readonly GatewayOptions _gatewayOptions = gatewayOptions.Value;
+    private readonly GatewayOptions _gatewayOptions = gatewayOptions;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
     public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions)
@@ -92,6 +92,13 @@ public class ApiClient(
                 WriteIndented = true, 
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
+
+            var jsonResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+            if (!jsonResponse.Contains("result"))
+                return HttpResponseBuilder.Create()
+                    .Succeeded()
+                    .WithResult(jsonResponse)
+                    .Build();
             
             var response = await httpResponseMessage.Content.ReadAsAsync<HttpResponse>(serializationOptions);
             return response;
