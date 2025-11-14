@@ -5,11 +5,11 @@ namespace eSecurity.Server.Data.Entities;
 
 public class ClientEntity : Entity
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
+    public required ClientType Type { get; set; }
     public required string Name { get; set; }
-    public ClientType Type { get; set; }
-    public required string ClientId { get; set; }
-    public required string ClientSecret { get; set; }
+    public required string Audience { get; set; }
+    public required string Secret { get; set; }
     public bool RequirePkce { get; set; }
     public bool RequireClientSecret { get; set; }
     public bool AllowOfflineAccess { get; set; }

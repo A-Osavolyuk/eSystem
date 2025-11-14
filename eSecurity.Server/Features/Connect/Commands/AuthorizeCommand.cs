@@ -40,7 +40,7 @@ public class AuthorizeCommandHandler(
         var session = await _sessionManager.FindAsync(device, cancellationToken);
         if (session is null) return Results.NotFound("Invalid authorization session.");
 
-        var client = await _clientManager.FindByClientIdAsync(request.Request.ClientId, cancellationToken);
+        var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client not found.");
         if (!client.HasRedirectUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
         if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");

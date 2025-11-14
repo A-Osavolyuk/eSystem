@@ -349,9 +349,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<ClientEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.ClientId).HasMaxLength(200);
-            entity.Property(x => x.ClientSecret).HasMaxLength(200);
-            entity.Property(x => x.Name).HasMaxLength(100);
+            entity.Property(x => x.Secret).HasMaxLength(200);
+            entity.Property(x => x.Name).HasMaxLength(64);
+            entity.Property(x => x.Audience).HasMaxLength(64);
             entity.Property(x => x.LogoUri).HasMaxLength(100);
             entity.Property(x => x.ClientUri).HasMaxLength(100);
             entity.Property(x => x.Type).HasEnumConversion();

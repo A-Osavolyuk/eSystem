@@ -77,11 +77,11 @@ public sealed class OidcLogoutStrategy(
         if (string.IsNullOrEmpty(odicPayload.ClientId))
         {
             var audience = principal.Claims.First(x => x.Type == AppClaimTypes.Aud);
-            client = await _clientManager.FindByClientIdAsync(audience.Value, cancellationToken);
+            client = await _clientManager.FindByIdAsync(audience.Value, cancellationToken);
         }
         else
         {
-            client = await _clientManager.FindByClientIdAsync(odicPayload.ClientId, cancellationToken);
+            client = await _clientManager.FindByIdAsync(odicPayload.ClientId, cancellationToken);
         }
         
         if (client is null) return Results.NotFound("Client was not found.");

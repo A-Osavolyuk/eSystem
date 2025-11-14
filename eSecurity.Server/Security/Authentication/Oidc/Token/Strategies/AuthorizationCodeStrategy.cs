@@ -54,7 +54,7 @@ public class AuthorizationCodeStrategy(
         if (payload is not AuthorizationCodeTokenPayload authorizationPayload)
             throw new NotSupportedException("Payload type must be 'AuthorizationCodeTokenPayload'");
 
-        var client = await _clientManager.FindByClientIdAsync(authorizationPayload.ClientId, cancellationToken);
+        var client = await _clientManager.FindByIdAsync(authorizationPayload.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client was not found.");
         if (!client.HasGrantType(authorizationPayload.GrantType))
             return Results.BadRequest($"Client doesn't support grant type {authorizationPayload.GrantType}");
@@ -70,7 +70,7 @@ public class AuthorizationCodeStrategy(
         if (string.IsNullOrEmpty(redirectUri) || !authorizationCode.RedirectUri.Equals(redirectUri))
             return Results.BadRequest("Invalid redirect URI.");
         
-        if (!client.ClientId.Equals(authorizationPayload.ClientId)) return Results.BadRequest("Invalid client ID.");
+        if (client.Id != authorizationCode.ClientId) return Results.BadRequest("Invalid client ID.");
         if (!client.HasRedirectUri(redirectUri)) return Results.BadRequest("Invalid redirect URI.");
 
 
@@ -79,7 +79,7 @@ public class AuthorizationCodeStrategy(
             if (string.IsNullOrEmpty(authorizationPayload.ClientSecret))
                 return Results.BadRequest("Client secret is required.");
 
-            if (!client.ClientSecret.Equals(authorizationPayload.ClientSecret))
+            if (!client.Secret.Equals(authorizationPayload.ClientSecret))
                 return Results.BadRequest("Invalid client secret.");
         }
 

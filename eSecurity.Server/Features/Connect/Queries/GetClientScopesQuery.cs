@@ -12,7 +12,7 @@ public class GetClientScopesQueryHandler(
 
     public async Task<Result> Handle(GetClientScopesQuery request, CancellationToken cancellationToken)
     {
-        var client = await _clientManager.FindByClientIdAsync(request.ClientId, cancellationToken);
+        var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client was not found.");
 
         var response = client.AllowedScopes

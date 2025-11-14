@@ -7,10 +7,10 @@ public class ClientManager(AuthDbContext context) : IClientManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<ClientEntity?> FindByClientIdAsync(string clientId, CancellationToken cancellationToken = default)
+    public async ValueTask<ClientEntity?> FindByIdAsync(string clientId, CancellationToken cancellationToken = default)
     {
         return await _context.Clients
-            .Where(c => c.ClientId == clientId)
+            .Where(c => c.Id == Guid.Parse(clientId))
             .Include(x => x.RedirectUris)
             .Include(x => x.PostLogoutRedirectUris)
             .Include(x => x.AllowedScopes)

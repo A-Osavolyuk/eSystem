@@ -44,7 +44,7 @@ public class RefreshTokenStrategy(
         if (payload is not RefreshTokenPayload refreshPayload)
             throw new NotSupportedException("Payload type must be 'RefreshTokenPayload'.");
 
-        var client = await _clientManager.FindByClientIdAsync(refreshPayload.ClientId, cancellationToken);
+        var client = await _clientManager.FindByIdAsync(refreshPayload.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client was not found.");
         if (!client.HasGrantType(refreshPayload.GrantType))
             return Results.BadRequest($"Client doesn't support grant type {refreshPayload.GrantType}");
@@ -61,7 +61,7 @@ public class RefreshTokenStrategy(
             //TODO: Implement revoked token reuse detection
         }
         
-        if (!client.ClientId.Equals(refreshPayload.ClientId))
+        if (client.Id != refreshToken.ClientId)
             return Results.BadRequest("Invalid client ID.");
 
         if (!client.AllowOfflineAccess || !client.HasScope(Scopes.OfflineAccess))
@@ -72,7 +72,7 @@ public class RefreshTokenStrategy(
             if (string.IsNullOrEmpty(refreshPayload.ClientSecret))
                 return Results.BadRequest("Client secret is required.");
 
-            if (!client.ClientSecret.Equals(refreshPayload.ClientSecret))
+            if (!client.Secret.Equals(refreshPayload.ClientSecret))
                 return Results.BadRequest("Invalid client secret.");
         }
 
