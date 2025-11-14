@@ -44,23 +44,23 @@ public class ApiClient(
         try
         {
             var message = new HttpRequestMessage();
-            
+
             if (httpOptions.WithBearer)
             {
                 if (string.IsNullOrEmpty(_tokenProvider.AccessToken))
                 {
                     var result = await RefreshAsync();
-                
+
                     if (!result.Success)
                     {
                         _tokenProvider.Clear();
                         _navigationManager.NavigateTo(Links.Account.SignIn);
                     }
                 }
-                
+
                 message.Headers.AddBearerAuthorization(_tokenProvider.AccessToken);
             }
-            
+
             message.RequestUri = new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}");
             message.Method = httpRequest.Method;
             message.IncludeUserAgent(_httpContext);
@@ -73,7 +73,7 @@ public class ApiClient(
             if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
                 var result = await RefreshAsync();
-                
+
                 if (!result.Success)
                 {
                     await _authenticationManager.SignOutAsync();
@@ -85,21 +85,22 @@ public class ApiClient(
                     httpResponseMessage = await httpClient.SendAsync(message);
                 }
             }
-            
+
             var serializationOptions = new JsonSerializerOptions()
             {
-                WriteIndented = true, 
+                WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
             var jsonResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-            if (!jsonResponse.Contains("result"))
+
+            if (httpOptions.Wrap)
                 return HttpResponseBuilder.Create()
                     .Succeeded()
                     .WithResult(jsonResponse)
                     .Build();
-            
-            var response = await httpResponseMessage.Content.ReadAsAsync<HttpResponse>(serializationOptions);
+
+            var response = JsonSerializer.Deserialize<HttpResponse>(jsonResponse, serializationOptions)!;
             return response;
         }
         catch (Exception ex)
@@ -112,7 +113,7 @@ public class ApiClient(
             return response;
         }
     }
-    
+
     private async Task<HttpResponse> RefreshAsync()
     {
         var refreshToken = _cookieAccessor.Get(DefaultCookies.RefreshToken)!;
@@ -123,19 +124,19 @@ public class ApiClient(
             RefreshToken = refreshToken,
             GrantType = GrantTypes.RefreshToken
         };
-        
+
         var httpRequest = new HttpRequest()
         {
             Method = HttpMethod.Post,
             Url = "api/v1/Connect/token",
             Data = request
         };
-        
+
         var httpOptions = new HttpOptions() { Type = DataType.Text };
         var result = await SendAsync(httpRequest, httpOptions);
 
         if (!result.Success) return result;
-        
+
         var response = result.Get<TokenResponse>()!;
         _tokenProvider.AccessToken = response.AccessToken;
         _tokenProvider.IdToken = response.IdToken;
@@ -146,7 +147,7 @@ public class ApiClient(
             Url = $"{_navigationManager.BaseUri}api/authentication/refresh",
             Body = refreshToken
         };
-        
+
         return await _fetchClient.FetchAsync(fetchOptions);
     }
 }
