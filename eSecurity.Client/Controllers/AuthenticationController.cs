@@ -99,6 +99,7 @@ public class AuthenticationController(
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         Response.Cookies.Delete(DefaultCookies.Session);
+        Response.Cookies.Delete(DefaultCookies.RefreshToken);
 
         return Ok(HttpResponseBuilder.Create().Succeeded().Build());
     }
