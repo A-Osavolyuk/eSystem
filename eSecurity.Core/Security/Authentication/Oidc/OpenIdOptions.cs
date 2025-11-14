@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace eSecurity.Server.Security.Authentication.Oidc;
+namespace eSecurity.Core.Security.Authentication.Oidc;
 
 public class OpenIdOptions
 {
