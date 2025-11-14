@@ -9,7 +9,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
 {
     private readonly IApiClient _apiClient = apiClient;
     
-    public async ValueTask<HttpResponse> GetPublicKeyAsync()
+    public async ValueTask<HttpResponse> GetPublicKeysAsync()
         => await _apiClient.SendAsync(
             new HttpRequest()
             {

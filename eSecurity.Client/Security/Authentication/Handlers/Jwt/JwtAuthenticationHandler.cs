@@ -28,7 +28,7 @@ public class JwtAuthenticationHandler(
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var result = await _connectService.GetPublicKeyAsync();
+        var result = await _connectService.GetPublicKeysAsync();
         if (!result.Success) return AuthenticateResult.Fail("Cannot get public key.");
 
         var handler = new JwtSecurityTokenHandler();
