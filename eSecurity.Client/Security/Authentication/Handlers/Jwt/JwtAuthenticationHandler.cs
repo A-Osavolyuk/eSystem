@@ -5,7 +5,6 @@ using System.Text.Encodings.Web;
 using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Client.Services.Interfaces;
-using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;

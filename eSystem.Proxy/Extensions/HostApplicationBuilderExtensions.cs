@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.Common.Logging;
-using eSystem.Core.Security.Authentication;
 using eSystem.ServiceDefaults;
 using Yarp.ReverseProxy.Configuration;
 

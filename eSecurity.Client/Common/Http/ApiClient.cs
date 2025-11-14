@@ -2,7 +2,6 @@ using System.Net;
 using System.Text.Json;
 using eSecurity.Client.Common.Http.Extensions;
 using eSecurity.Client.Common.JS.Fetch;
-using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Core.Common.Requests;

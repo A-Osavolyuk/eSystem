@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
+﻿using System.Text.Json;
 using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Core.Common.DTOs;

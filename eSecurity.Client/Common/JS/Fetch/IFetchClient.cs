@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Common.Results;
-
-namespace eSecurity.Client.Common.JS.Fetch;
+﻿namespace eSecurity.Client.Common.JS.Fetch;
 
 public interface IFetchClient
 {

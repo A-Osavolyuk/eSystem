@@ -3,7 +3,6 @@ using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Logging;
 using eSystem.Core.Common.Versioning;
-using eSystem.Core.Security.Authentication;
 using eSystem.ServiceDefaults;
 using eSystem.Storage.Api.Interfaces;
 
