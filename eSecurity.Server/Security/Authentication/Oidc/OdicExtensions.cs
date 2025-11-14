@@ -26,7 +26,7 @@ public static class OdicExtensions
             services.AddClientManagement();
             services.AddAuthorizationCodeManagement();
             services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
-            
+
             services.AddOpenidConfiguration(cfg =>
             {
                 cfg.Issuer = "http://localhost:5201";
@@ -39,8 +39,26 @@ public static class OdicExtensions
                 cfg.RevocationEndpoint = "http://localhost:5201/api/v1/connect/revoke";
                 cfg.JwksUri = "http://localhost:5201/api/v1/connect/jwks.json";
 
-                cfg.ResponseTypesSupported = [ResponseTypes.Code, ResponseTypes.IdToken, ResponseTypes.Token];
-                cfg.GrantTypesSupported = [GrantTypes.AuthorizationCode, GrantTypes.RefreshToken];
+                cfg.ResponseTypesSupported =
+                [
+                    ResponseTypes.Code,
+                    ResponseTypes.IdToken,
+                    ResponseTypes.Token
+                ];
+                
+                cfg.GrantTypesSupported =
+                [
+                    GrantTypes.AuthorizationCode,
+                    GrantTypes.RefreshToken
+                ];
+                
+                cfg.PromptValuesSupported =
+                [
+                    Prompts.None,
+                    Prompts.Login,
+                    Prompts.Consent,
+                    Prompts.SelectAccount
+                ];
 
                 cfg.SubjectTypesSupported = [SubjectTypes.Public, SubjectTypes.Pairwise];
                 cfg.IdTokenSigningAlgValuesSupported = [SecurityAlgorithms.RsaSha256];
@@ -66,7 +84,7 @@ public static class OdicExtensions
 
                 cfg.BackchannelLogoutSupported = false;
                 cfg.BackchannelLogoutSessionSupported = false;
-            
+
                 cfg.FrontchannelLogoutSupported = true;
                 cfg.FrontchannelLogoutSessionSupported = true;
             });
@@ -104,7 +122,7 @@ public static class OdicExtensions
             services.AddScoped<ISessionManager, SessionManager>();
             services.Configure(configure);
         }
-        
+
         public void AddTokenFlow()
         {
             services.AddScoped<ITokenManager, TokenManager>();

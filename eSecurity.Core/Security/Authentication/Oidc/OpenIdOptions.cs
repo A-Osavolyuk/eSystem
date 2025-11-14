@@ -39,6 +39,9 @@ public class OpenIdOptions
     [JsonPropertyName("response_types_supported")]
     public string[] ResponseTypesSupported { get; set; } = [];
     
+    [JsonPropertyName("prompt_values_supported")]
+    public string[] PromptValuesSupported { get; set; } = [];
+    
     
     [JsonPropertyName("subject_types_supported")]
     public string[] SubjectTypesSupported { get; set; } = [];
