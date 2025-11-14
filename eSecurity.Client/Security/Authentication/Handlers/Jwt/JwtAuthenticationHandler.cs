@@ -50,7 +50,7 @@ public class JwtAuthenticationHandler(
             ValidateIssuer = true,
             ValidIssuer = openIdOptions.Issuer,
             ValidateAudience = true,
-            ValidAudience = _clientOptions.ClientId,
+            ValidAudience = _clientOptions.ClientAudience,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5),
             ValidateIssuerSigningKey = true,
