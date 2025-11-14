@@ -1,5 +1,10 @@
 @page "/connect/callback"
+
+@using eSecurity.Client.Common.JS.Fetch
+@using eSecurity.Client.Security.Authentication
 @using eSecurity.Client.Security.Authentication.Oidc.Clients
+@using eSecurity.Client.Security.Authentication.Oidc.Token
+@using eSecurity.Core.Common.DTOs
 @using eSystem.Core.Security.Authentication.Oidc.Constants
 @using eSecurity.Core.Common.Responses
 
@@ -7,6 +12,9 @@
 
 @inject IConnectService ConnectService
 @inject IOptions<ClientOptions> ClientOptions
+@inject IFetchClient FetchClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject TokenProvider TokenProvider
 
 @code {
 
@@ -37,14 +45,44 @@
             {
                 var response = result.Get<TokenResponse>();
 
-                await AuthenticationManager.SignInAsync(
-                    response.RefreshToken!,
+                await SignInAsync(
                     response.AccessToken,
-                    response.IdToken!
+                    response.IdToken!,
+                    response.RefreshToken!
                 );
                 
                 NavigationManager.NavigateTo(Links.Account.Profile);
             }
+        }
+    }
+
+    private async Task SignInAsync(string accessToken, string idToken, string refreshToken)
+    {
+        TokenProvider.AccessToken = accessToken;
+        TokenProvider.IdToken = idToken;
+        
+        var tokenIdentity = new TokenIdentity()
+        {
+            RefreshToken = refreshToken,
+            IdToken = idToken
+        };
+        
+        var fetchOptions = new FetchOptions()
+        {
+            Url = $"{NavigationManager.BaseUri}api/authentication/sign-in",
+            Method = HttpMethod.Post,
+            Body = tokenIdentity
+        };
+
+        var result = await FetchClient.FetchAsync(fetchOptions);
+
+        if (result.Success)
+        {
+            var response = result.Get<SignIdentity>();
+            var claims = response.Claims.Select(c => new Claim(c.Type, c.Value));
+            var claimsIdentity = new ClaimsIdentity(claims, response.Scheme);
+            var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
+            (AuthenticationStateProvider as ClaimAuthenticationStateProvider)!.SignIn(claimPrincipal);
         }
     }
 

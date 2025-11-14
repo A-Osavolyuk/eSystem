@@ -1,30 +1,26 @@
-using System.Security.Claims;
 using eSecurity.Client.Common.JS.Fetch;
-using eSecurity.Client.Common.State.States;
 using eSecurity.Client.Common.Storage;
+using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
-using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Common.Routing;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using eSystem.Core.Security.Authentication.Oidc.Constants;
+using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Options;
 
 namespace eSecurity.Client.Security.Authentication;
 
 public sealed class AuthenticationManager(
     NavigationManager navigationManager,
     AuthenticationStateProvider authenticationStateProvider,
-    UserState userState,
     TokenProvider tokenProvider,
     IFetchClient fetchClient,
-    IStorage storage)
     IStorage storage,
     IOptions<ClientOptions> clientOptions)
 {
     private readonly NavigationManager _navigationManager = navigationManager;
     private readonly AuthenticationStateProvider _authenticationStateProvider = authenticationStateProvider;
-    private readonly TokenProvider _tokenProvider = tokenProvider;
-    private readonly UserState _userState = userState;
     private readonly IFetchClient _fetchClient = fetchClient;
     private readonly IStorage _storage = storage;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
@@ -42,27 +38,6 @@ public sealed class AuthenticationManager(
             .Build();
         
         _navigationManager.NavigateTo(redirectUri);
-    }
-    
-    public async Task SignInAsync(string refreshToken, string accessToken, string idToken)
-    {
-        _tokenProvider.AccessToken = accessToken;
-        _tokenProvider.IdToken = idToken;
-        
-        var tokenIdentity = new TokenIdentity()
-        {
-            RefreshToken = refreshToken, 
-            IdToken = idToken
-        };
-        
-        var fetchOptions = new FetchOptions()
-        {
-            Url = $"{_navigationManager.BaseUri}api/authentication/sign-in",
-            Method = HttpMethod.Post,
-            Body = tokenIdentity
-        };
-
-        var result = await _fetchClient.FetchAsync(fetchOptions);
     }
 
     public async Task SignOutAsync()
