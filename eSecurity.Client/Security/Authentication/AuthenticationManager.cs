@@ -35,6 +35,7 @@ public sealed class AuthenticationManager(
             .WithQueryParam("scope", string.Join(" ", _clientOptions.Scopes))
             .WithQueryParam("nonce", "1234567890")
             .WithQueryParam("state", "1234567890")
+            .WithQueryParam("prompt", Prompts.Consent)
             .Build();
         
         _navigationManager.NavigateTo(redirectUri);
