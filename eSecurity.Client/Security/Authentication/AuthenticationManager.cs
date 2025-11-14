@@ -18,6 +18,8 @@ public sealed class AuthenticationManager(
     TokenProvider tokenProvider,
     IFetchClient fetchClient,
     IStorage storage)
+    IStorage storage,
+    IOptions<ClientOptions> clientOptions)
 {
     private readonly NavigationManager _navigationManager = navigationManager;
     private readonly AuthenticationStateProvider _authenticationStateProvider = authenticationStateProvider;
@@ -25,10 +27,21 @@ public sealed class AuthenticationManager(
     private readonly UserState _userState = userState;
     private readonly IFetchClient _fetchClient = fetchClient;
     private readonly IStorage _storage = storage;
+    private readonly ClientOptions _clientOptions = clientOptions.Value;
 
     public void Authorize()
     {
-        //TODO: Implement OIDC authorization flow initialization
+        var redirectUri = QueryBuilder.Create()
+            .WithUri("/connect/authorize")
+            .WithQueryParam("response_type", ResponseTypes.Code)
+            .WithQueryParam("client_id", _clientOptions.ClientId)
+            .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
+            .WithQueryParam("scope", string.Join(" ", _clientOptions.Scopes))
+            .WithQueryParam("nonce", "1234567890")
+            .WithQueryParam("state", "1234567890")
+            .Build();
+        
+        _navigationManager.NavigateTo(redirectUri);
     }
     
     public async Task SignInAsync(string refreshToken, string accessToken, string idToken)
