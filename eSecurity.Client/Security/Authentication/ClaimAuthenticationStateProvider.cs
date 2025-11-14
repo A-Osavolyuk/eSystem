@@ -19,7 +19,7 @@ public class ClaimAuthenticationStateProvider(
         
         var principal = _httpContext.User;
         var claims = _httpContext.User.Claims.ToList();
-        var userId = Guid.Parse(claims.Single(x => x.Type == AppClaimTypes.Sub).Value);
+        var userId = Guid.Parse(claims.Single(x => x.Type == ClaimTypes.NameIdentifier).Value);
         
         _userState.UserId = userId;
         _userState.Credentials = new UserCredentials();
