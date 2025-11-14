@@ -6,7 +6,9 @@ public static class Links
     {
         public const string Authorize = "/connect/authorize";
         public const string Logout = "/connect/logout";
-        public const string Consents = "/connect/logout";
+        public const string LogoutCallback = "/connect/logout/callback";
+        public const string Consents = "/connect/consents";
+        public const string SelectAccount = "/connect/select-account";
     }
 
     public static class Account
