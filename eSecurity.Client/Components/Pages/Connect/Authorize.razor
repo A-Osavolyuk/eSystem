@@ -11,13 +11,6 @@
 
 <Title Text="Authorization"></Title>
 
-@if (showConsents)
-{
-}
-else if (showAccountSelect)
-{
-}
-
 @code {
 
     [SupplyParameterFromQuery(Name = "response_type")]
@@ -49,9 +42,6 @@ else if (showAccountSelect)
 
     [SupplyParameterFromQuery(Name = "prompt")]
     public string? Prompt { get; set; }
-
-    private bool showConsents;
-    private bool showAccountSelect;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -101,17 +91,17 @@ else if (showAccountSelect)
                 }
                 case Prompts.Login:
                 {
-                    OnLogin(prompts);
+                    OnProcessConsent(Links.Account.SignIn ,prompts);
                     break;
                 }
                 case Prompts.Consent:
                 {
-                    showConsents = true;
+                    OnProcessConsent(Links.Connect.Consents ,prompts);
                     break;
                 }
                 case Prompts.SelectAccount:
                 {
-                    showAccountSelect = true;
+                    OnProcessConsent(Links.Connect.SelectAccount ,prompts);
                     break;
                 }
                 default:
@@ -177,18 +167,31 @@ else if (showAccountSelect)
         }
     }
 
-    private void OnLogin(string[] prompts)
+    private void OnProcessConsent(string uri, string[] prompts)
     {
-        var returnUrlBuilder = QueryBuilder.Create().WithUri(NavigationManager.Uri);
+        var returnUrlBuilder = QueryBuilder.Create()
+            .WithUri(Links.Connect.Authorize)
+            .WithQueryParam("response_type", ResponseType)
+            .WithQueryParam("client_id", ClientId)
+            .WithQueryParam("redirect_uri", RedirectUri)
+            .WithQueryParam("scope", Scope)
+            .WithQueryParam("state", State)
+            .WithQueryParam("nonce", Nonce);
+
+        if (!string.IsNullOrEmpty(CodeChallenge))
+            returnUrlBuilder.WithQueryParam("code_challenge", CodeChallenge);
+        
+        if (!string.IsNullOrEmpty(CodeChallengeMethod))
+            returnUrlBuilder.WithQueryParam("code_challenge_method", CodeChallengeMethod);
 
         if (prompts.Length > 1)
         {
-            var prompt = string.Join(" ", prompts.Where(x => x != prompts.First()));
-            returnUrlBuilder.WithQueryParam("prompt", prompt);
+            var nextPrompts = prompts.Where(x => x != prompts.First());
+            returnUrlBuilder.WithQueryParam("prompt", string.Join(" ", nextPrompts));
         }
-
+        
         var redirectUriBuilder = QueryBuilder.Create()
-            .WithUri(Links.Account.SignIn)
+            .WithUri(uri)
             .WithQueryParam("return_url", returnUrlBuilder.Build());
 
         NavigationManager.NavigateTo(redirectUriBuilder.Build());
