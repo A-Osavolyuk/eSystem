@@ -9,10 +9,10 @@ using eSecurity.Server.Data;
 
 #nullable disable
 
-namespace eSecurity.Migrations
+namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251110123628_Initial")]
+    [Migration("20251114141306_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,12 +20,12 @@ namespace eSecurity.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("eSecurity.Data.Entities.AuthorizationCodeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthorizationCodeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -81,7 +81,7 @@ namespace eSecurity.Migrations
                     b.ToTable("AuthorizationCodes");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientAllowedScopeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientAllowedScopeEntity", b =>
                 {
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
@@ -102,7 +102,7 @@ namespace eSecurity.Migrations
                     b.ToTable("ClientAllowedScopes");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -111,15 +111,10 @@ namespace eSecurity.Migrations
                     b.Property<bool>("AllowOfflineAccess")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ClientId")
+                    b.Property<string>("Audience")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("ClientSecret")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("ClientUri")
                         .HasMaxLength(100)
@@ -134,8 +129,8 @@ namespace eSecurity.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<long>("RefreshTokenLifetime")
                         .HasColumnType("bigint");
@@ -149,6 +144,11 @@ namespace eSecurity.Migrations
                     b.Property<bool>("RequirePkce")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Secret")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -161,7 +161,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientGrantTypeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientGrantTypeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -188,7 +188,7 @@ namespace eSecurity.Migrations
                     b.ToTable("ClientGrantTypes");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientPostLogoutRedirectUriEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientPostLogoutRedirectUriEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -215,7 +215,7 @@ namespace eSecurity.Migrations
                     b.ToTable("ClientPostLogoutUris");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientRedirectUriEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientRedirectUriEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -242,7 +242,7 @@ namespace eSecurity.Migrations
                     b.ToTable("ClientRedirectUris");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.CodeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.CodeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -284,7 +284,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Codes");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ConsentEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ConsentEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -311,7 +311,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Consents");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.GrantedScopeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantedScopeEntity", b =>
                 {
                     b.Property<Guid>("ScopeId")
                         .HasColumnType("uniqueidentifier");
@@ -332,7 +332,7 @@ namespace eSecurity.Migrations
                     b.ToTable("GrantedScopes");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.OAuthSessionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -366,7 +366,7 @@ namespace eSecurity.Migrations
                     b.ToTable("OAuthSessions");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.PasskeyEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PasskeyEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -422,7 +422,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Passkeys");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.PasswordEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PasswordEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -450,7 +450,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Passwords");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.PermissionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PermissionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -477,7 +477,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.PersonalDataEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PersonalDataEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -515,7 +515,7 @@ namespace eSecurity.Migrations
                     b.ToTable("PersonalData");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.RefreshTokenEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.RefreshTokenEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -556,7 +556,7 @@ namespace eSecurity.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ResourceEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -583,7 +583,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ResourceOwnerEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceOwnerEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -605,7 +605,7 @@ namespace eSecurity.Migrations
                     b.ToTable("ResourceOwners");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.RoleEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.RoleEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -632,7 +632,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.RolePermissionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.RolePermissionEntity", b =>
                 {
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
@@ -653,7 +653,7 @@ namespace eSecurity.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ScopeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ScopeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -680,7 +680,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Scopes");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.SessionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -708,7 +708,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.SigningCertificateEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SigningCertificateEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -731,7 +731,7 @@ namespace eSecurity.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<DateTimeOffset>("RotateDate")
+                    b.Property<DateTimeOffset?>("RotateDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
@@ -742,7 +742,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Certificates");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserClientEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserClientEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -763,7 +763,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserClients");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserDeviceEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserDeviceEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -806,7 +806,7 @@ namespace eSecurity.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("OS")
+                    b.Property<string>("Os")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
@@ -829,7 +829,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserDevices");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserEmailEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEmailEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -871,7 +871,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserEmails");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -923,7 +923,7 @@ namespace eSecurity.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserLinkedAccountEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserLinkedAccountEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -949,7 +949,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserLinkedAccounts");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserLockoutStateEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserLockoutStateEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -988,7 +988,7 @@ namespace eSecurity.Migrations
                     b.ToTable("LockoutStates");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserPermissionsEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserPermissionsEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -1009,7 +1009,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserPermissions");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserPhoneNumberEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserPhoneNumberEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1046,7 +1046,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserPhoneNumbers");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserRecoveryCodeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserRecoveryCodeEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1073,7 +1073,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserRecoveryCodes");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserRoleEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserRoleEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -1094,7 +1094,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserSecretEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserSecretEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1122,7 +1122,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserSecret");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserTwoFactorMethodEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserTwoFactorMethodEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1151,7 +1151,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserTwoFactorMethods");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserVerificationMethodEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserVerificationMethodEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1180,7 +1180,7 @@ namespace eSecurity.Migrations
                     b.ToTable("UserVerificationMethods");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.VerificationEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1213,15 +1213,15 @@ namespace eSecurity.Migrations
                     b.ToTable("Verifications");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.AuthorizationCodeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthorizationCodeEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ClientEntity", "Client")
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.UserDeviceEntity", "Device")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1232,15 +1232,15 @@ namespace eSecurity.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientAllowedScopeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientAllowedScopeEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ClientEntity", "Client")
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany("AllowedScopes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.ScopeEntity", "Scope")
+                    b.HasOne("eSecurity.Server.Data.Entities.ScopeEntity", "Scope")
                         .WithMany()
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1251,9 +1251,9 @@ namespace eSecurity.Migrations
                     b.Navigation("Scope");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientGrantTypeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientGrantTypeEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ClientEntity", "Client")
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany("GrantTypes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1262,9 +1262,9 @@ namespace eSecurity.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientPostLogoutRedirectUriEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientPostLogoutRedirectUriEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ClientEntity", "Client")
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany("PostLogoutRedirectUris")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1273,9 +1273,9 @@ namespace eSecurity.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientRedirectUriEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientRedirectUriEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ClientEntity", "Client")
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany("RedirectUris")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1284,9 +1284,9 @@ namespace eSecurity.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.CodeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.CodeEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1295,15 +1295,15 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ConsentEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ConsentEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ClientEntity", "Client")
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("Consents")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1314,15 +1314,15 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.GrantedScopeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantedScopeEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ConsentEntity", "Consent")
+                    b.HasOne("eSecurity.Server.Data.Entities.ConsentEntity", "Consent")
                         .WithMany("GrantedScopes")
                         .HasForeignKey("ConsentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.ScopeEntity", "Scope")
+                    b.HasOne("eSecurity.Server.Data.Entities.ScopeEntity", "Scope")
                         .WithMany()
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1333,9 +1333,9 @@ namespace eSecurity.Migrations
                     b.Navigation("Scope");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.OAuthSessionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserLinkedAccountEntity", "LinkedAccount")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserLinkedAccountEntity", "LinkedAccount")
                         .WithMany()
                         .HasForeignKey("LinkedAccountId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -1343,31 +1343,31 @@ namespace eSecurity.Migrations
                     b.Navigation("LinkedAccount");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.PasskeyEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PasskeyEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserDeviceEntity", "Device")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
                         .WithOne("Passkey")
-                        .HasForeignKey("eSecurity.Data.Entities.PasskeyEntity", "DeviceId")
+                        .HasForeignKey("eSecurity.Server.Data.Entities.PasskeyEntity", "DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.PasswordEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PasswordEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithOne("Password")
-                        .HasForeignKey("eSecurity.Data.Entities.PasswordEntity", "UserId")
+                        .HasForeignKey("eSecurity.Server.Data.Entities.PasswordEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.PermissionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PermissionEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ResourceEntity", "Resource")
+                    b.HasOne("eSecurity.Server.Data.Entities.ResourceEntity", "Resource")
                         .WithMany()
                         .HasForeignKey("ResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1376,15 +1376,15 @@ namespace eSecurity.Migrations
                     b.Navigation("Resource");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.RefreshTokenEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.RefreshTokenEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ClientEntity", "Client")
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.SessionEntity", "Session")
+                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1395,9 +1395,9 @@ namespace eSecurity.Migrations
                     b.Navigation("Session");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ResourceEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ResourceOwnerEntity", "Owner")
+                    b.HasOne("eSecurity.Server.Data.Entities.ResourceOwnerEntity", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1406,15 +1406,15 @@ namespace eSecurity.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.RolePermissionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.RolePermissionEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.PermissionEntity", "Permission")
+                    b.HasOne("eSecurity.Server.Data.Entities.PermissionEntity", "Permission")
                         .WithMany()
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.RoleEntity", "Role")
+                    b.HasOne("eSecurity.Server.Data.Entities.RoleEntity", "Role")
                         .WithMany("Permissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1425,9 +1425,9 @@ namespace eSecurity.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.SessionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserDeviceEntity", "Device")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
                         .WithMany("Sessions")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1436,15 +1436,15 @@ namespace eSecurity.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserClientEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserClientEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.ClientEntity", "Client")
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("Clients")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1455,9 +1455,9 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserDeviceEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserDeviceEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("Devices")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1466,9 +1466,9 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserEmailEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEmailEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("Emails")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1477,18 +1477,18 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.PersonalDataEntity", "PersonalData")
+                    b.HasOne("eSecurity.Server.Data.Entities.PersonalDataEntity", "PersonalData")
                         .WithOne("User")
-                        .HasForeignKey("eSecurity.Data.Entities.UserEntity", "PersonalDataId");
+                        .HasForeignKey("eSecurity.Server.Data.Entities.UserEntity", "PersonalDataId");
 
                     b.Navigation("PersonalData");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserLinkedAccountEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserLinkedAccountEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("LinkedAccounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1497,26 +1497,26 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserLockoutStateEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserLockoutStateEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithOne("LockoutState")
-                        .HasForeignKey("eSecurity.Data.Entities.UserLockoutStateEntity", "UserId")
+                        .HasForeignKey("eSecurity.Server.Data.Entities.UserLockoutStateEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserPermissionsEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserPermissionsEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.PermissionEntity", "Permission")
+                    b.HasOne("eSecurity.Server.Data.Entities.PermissionEntity", "Permission")
                         .WithMany()
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("Permissions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1527,9 +1527,9 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserPhoneNumberEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserPhoneNumberEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("PhoneNumbers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1538,9 +1538,9 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserRecoveryCodeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserRecoveryCodeEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("RecoveryCodes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1549,15 +1549,15 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserRoleEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserRoleEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.RoleEntity", "Role")
+                    b.HasOne("eSecurity.Server.Data.Entities.RoleEntity", "Role")
                         .WithMany("Roles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("Roles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1568,20 +1568,20 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserSecretEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserSecretEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithOne("Secret")
-                        .HasForeignKey("eSecurity.Data.Entities.UserSecretEntity", "UserId")
+                        .HasForeignKey("eSecurity.Server.Data.Entities.UserSecretEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserTwoFactorMethodEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserTwoFactorMethodEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("TwoFactorMethods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1590,9 +1590,9 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserVerificationMethodEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserVerificationMethodEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany("VerificationMethods")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1601,9 +1601,9 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.VerificationEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationEntity", b =>
                 {
-                    b.HasOne("eSecurity.Data.Entities.UserEntity", "User")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1612,7 +1612,7 @@ namespace eSecurity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ClientEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientEntity", b =>
                 {
                     b.Navigation("AllowedScopes");
 
@@ -1623,37 +1623,37 @@ namespace eSecurity.Migrations
                     b.Navigation("RedirectUris");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.ConsentEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ConsentEntity", b =>
                 {
                     b.Navigation("GrantedScopes");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.PersonalDataEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PersonalDataEntity", b =>
                 {
                     b.Navigation("User")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.RoleEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.RoleEntity", b =>
                 {
                     b.Navigation("Permissions");
 
                     b.Navigation("Roles");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.SessionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.Navigation("RefreshTokens");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserDeviceEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserDeviceEntity", b =>
                 {
                     b.Navigation("Passkey");
 
                     b.Navigation("Sessions");
                 });
 
-            modelBuilder.Entity("eSecurity.Data.Entities.UserEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEntity", b =>
                 {
                     b.Navigation("Clients");
 

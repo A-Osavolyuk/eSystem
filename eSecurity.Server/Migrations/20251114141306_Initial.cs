@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace eSecurity.Migrations
+namespace eSecurity.Server.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -20,7 +20,7 @@ namespace eSecurity.Migrations
                     ProtectedCertificate = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     ProtectedPassword = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    RotateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RotateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -34,10 +34,10 @@ namespace eSecurity.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    ClientSecret = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Audience = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Secret = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     RequirePkce = table.Column<bool>(type: "bit", nullable: false),
                     RequireClientSecret = table.Column<bool>(type: "bit", nullable: false),
                     AllowOfflineAccess = table.Column<bool>(type: "bit", nullable: false),
@@ -388,7 +388,7 @@ namespace eSecurity.Migrations
                     IpAddress = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     Browser = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Device = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    OS = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Os = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Location = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     FirstSeen = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     LastSeen = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
