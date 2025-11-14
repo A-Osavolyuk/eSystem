@@ -8,6 +8,14 @@ namespace eSecurity.Client.Services.Implementations;
 public class ConnectService(IApiClient apiClient) : IConnectService
 {
     private readonly IApiClient _apiClient = apiClient;
+    
+    public async ValueTask<HttpResponse> GetPublicKeyAsync()
+        => await _apiClient.SendAsync(
+            new HttpRequest()
+            {
+                Method = HttpMethod.Get,
+                Url = "api/v1/Connect/.well-known/jwks.json",
+            }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse> AuthorizeAsync(AuthorizeRequest request)
         => await _apiClient.SendAsync(
