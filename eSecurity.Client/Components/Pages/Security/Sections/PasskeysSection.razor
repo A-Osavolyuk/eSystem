@@ -133,7 +133,7 @@
         var result = await PasskeyService.ChangeNameAsync(request);
 
         if (result.Succeeded) await OnRefresh.InvokeAsync();
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task OnDelete(UserPasskeyDto passkey)
@@ -149,7 +149,7 @@
 
             var result = await PasskeyService.RemoveAsync(request);
             if (result.Succeeded) await OnRefresh.InvokeAsync();
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 }

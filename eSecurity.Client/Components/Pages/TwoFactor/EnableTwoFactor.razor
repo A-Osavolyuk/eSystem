@@ -324,7 +324,7 @@
         var result = await TwoFactorService.GenerateQrCodeAsync(request);
 
         if (result.Succeeded) QrCode = result.Get<QrCode>()!;
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task OnVerifyAsync()
@@ -354,7 +354,7 @@
             Codes = result.Get<List<string>>()!;
             await _stepper.StepNextAsync();
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task ShowSetupKeyAsync()
@@ -391,7 +391,7 @@
             await LoadMethodsAsync();
             await _stepper.StepNextAsync();
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task LoadMethodsAsync()
@@ -399,7 +399,7 @@
         var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.UserId);
 
         if (result.Succeeded) Methods = result.Get<List<UserTwoFactorMethod>>()!;
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
 }

@@ -68,6 +68,6 @@ else
         {
             Model = result.Get<UserLoginMethodsDto>()!;
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

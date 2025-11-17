@@ -189,7 +189,7 @@
                 await _stepper.StepNextAsync();
                 await SendCodeAsync();
             }
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -198,7 +198,7 @@
         var request = _context!.ToSendCodeRequest();
         var response = await VerificationService.SendCodeAsync(request);
 
-        Snackbar.Add(response.GetError().ErrorDescription, response.Succeeded ? Severity.Success : Severity.Error);
+        Snackbar.Add(response.GetError().Description, response.Succeeded ? Severity.Success : Severity.Error);
     }
 
     private async Task OnVerifyAsync()
@@ -211,7 +211,7 @@
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -226,6 +226,6 @@
             Snackbar.Add(message, Severity.Success);
             NavigationManager.NavigateTo(ReturnUrl);
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

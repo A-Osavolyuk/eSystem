@@ -177,7 +177,7 @@
         {
             QrCode = result.Get<QrCode>()!;
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task ShowSetupKeyAsync()
@@ -229,7 +229,7 @@
             Snackbar.Add("Authenticator app was successfully configured.", Severity.Success);
             await OnClose.InvokeAsync();
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
 }

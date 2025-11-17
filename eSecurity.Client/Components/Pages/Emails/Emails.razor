@@ -101,7 +101,7 @@
                 RecoveryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Recovery)
             };
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task LoadLinkedAccountsAsync()
@@ -109,6 +109,6 @@
         var result = await UserService.GetUserLinkedAccountsAsync(UserState.UserId);
 
         if (result.Succeeded) LinkedAccountsData = result.Get<UserLinkedAccountData>()!;
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

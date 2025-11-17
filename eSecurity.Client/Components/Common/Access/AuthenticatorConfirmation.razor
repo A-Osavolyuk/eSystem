@@ -84,7 +84,7 @@
         var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);
 
         if (result.Succeeded) await OnAccessConfirmed.InvokeAsync();
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
 }

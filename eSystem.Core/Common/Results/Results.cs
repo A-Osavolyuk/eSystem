@@ -15,84 +15,84 @@ public static class Results
     public static Result BadRequest(string details)
         => Result.Failure(HttpStatusCode.BadRequest, new Error
         {
-            ErrorCode = Errors.Common.BadRequest,
-            ErrorDescription = details
+            Code = Errors.Common.BadRequest,
+            Description = details
         });
 
     public static Result BadRequest(string error, string details)
         => Result.Failure(HttpStatusCode.BadRequest, new Error
         {
-            ErrorCode = error,
-            ErrorDescription = details
+            Code = error,
+            Description = details
         });
     
     public static Result Unauthorized(string details)
         => Result.Failure(HttpStatusCode.Unauthorized, new Error
         {
-            ErrorCode = Errors.Common.Unauthorized,
-            ErrorDescription = details
+            Code = Errors.Common.Unauthorized,
+            Description = details
         });
 
     public static Result Unauthorized(string error, string details)
         => Result.Failure(HttpStatusCode.Unauthorized, new Error
         {
-            ErrorCode = error,
-            ErrorDescription = details
+            Code = error,
+            Description = details
         });
     
     public static Result Forbidden(string details)
         => Result.Failure(HttpStatusCode.Forbidden, new Error
         {
-            ErrorCode = Errors.Common.Forbidden,
-            ErrorDescription = details
+            Code = Errors.Common.Forbidden,
+            Description = details
         });
 
     public static Result Forbidden(string error, string details)
         => Result.Failure(HttpStatusCode.Forbidden, new Error
         {
-            ErrorCode = error,
-            ErrorDescription = details
+            Code = error,
+            Description = details
         });
     
     public static Result NotFound(string details)
         => Result.Failure(HttpStatusCode.NotFound, new Error
         {
-            ErrorCode = Errors.Common.NotFound,
-            ErrorDescription = details
+            Code = Errors.Common.NotFound,
+            Description = details
         });
 
     public static Result NotFound(string error, string details)
         => Result.Failure(HttpStatusCode.NotFound, new Error
         {
-            ErrorCode = error,
-            ErrorDescription = details
+            Code = error,
+            Description = details
         });
     
     public static Result TooManyRequests(string details)
         => Result.Failure(HttpStatusCode.TooManyRequests, new Error
         {
-            ErrorCode = Errors.Common.TooManyRequests,
-            ErrorDescription = details
+            Code = Errors.Common.TooManyRequests,
+            Description = details
         });
 
     public static Result TooManyRequests(string error, string details)
         => Result.Failure(HttpStatusCode.TooManyRequests, new Error
         {
-            ErrorCode = error,
-            ErrorDescription = details
+            Code = error,
+            Description = details
         });
 
     public static Result InternalServerError(string details)
         => Result.Failure(HttpStatusCode.InternalServerError, new Error
         {
-            ErrorCode = Errors.Common.InternalServerError,
-            ErrorDescription = details
+            Code = Errors.Common.InternalServerError,
+            Description = details
         });
 
     public static Result InternalServerError(string code, string details)
         => Result.Failure(HttpStatusCode.InternalServerError, new Error
         {
-            ErrorCode = code,
-            ErrorDescription = details
+            Code = code,
+            Description = details
         });
 }

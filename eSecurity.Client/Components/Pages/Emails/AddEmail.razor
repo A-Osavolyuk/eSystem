@@ -74,7 +74,7 @@
             else
             {
                 _showError = true;
-                _error = result.GetError().ErrorDescription;
+                _error = result.GetError().Description;
             }
         }
         else if (!_form.IsValid) _showError = true;
@@ -95,7 +95,7 @@
             Model = new();
             await OnRefresh.InvokeAsync();
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
 }

@@ -233,7 +233,7 @@
             var request = _messageContext!.ToSendCodeRequest();
             var result = await VerificationService.SendCodeAsync(request);
             if (result.Succeeded) await _stepper.StepNextAsync();
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -262,7 +262,7 @@
         }
         else
         {
-            Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -276,7 +276,7 @@
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await ChangeAsync();
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 

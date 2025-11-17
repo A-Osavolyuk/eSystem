@@ -42,6 +42,6 @@
         var result = await TwoFactorService.LoadRecoveryCodesAsync(request);
 
         if (result.Succeeded) Codes = result.Get<List<string>>()!;
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

@@ -107,7 +107,7 @@
                 await SignInAsync(credential);
             }
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task SignInAsync(PublicKeyCredential credential)
@@ -128,7 +128,7 @@
             UserState.UserId = response.UserId;
             await OnSignIn.InvokeAsync();
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private void Expand() => _expanded = !_expanded;

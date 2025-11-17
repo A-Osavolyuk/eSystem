@@ -193,7 +193,7 @@
                 var options = result.Get<PublicKeyCredentialCreationOptions>()!;
                 await VerifyPasskeyAsync(options);
             }
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -212,7 +212,7 @@
 
             var result = await PasskeyService.CreateAsync(request);
             if (result.Succeeded) await _stepper.StepNextAsync();
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
         else _showError = true;
     }

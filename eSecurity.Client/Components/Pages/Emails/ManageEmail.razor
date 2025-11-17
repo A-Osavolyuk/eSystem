@@ -89,7 +89,7 @@
 
             var request = _context.ToSendCodeRequest();
             var result = await VerificationService.SendCodeAsync(request);
-            if (!result.Succeeded) Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            if (!result.Succeeded) Snackbar.Add(result.GetError().Description, Severity.Error);
             
             StateHasChanged();
         }
@@ -101,7 +101,7 @@
         var result = await VerificationService.VerifyCodeAsync(request);
 
         if (result.Succeeded) await ManageAsync();
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task ManageAsync()
@@ -127,7 +127,7 @@
             await UserState.Change();
             NavigationManager.NavigateTo(ReturnUrl);
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
 }

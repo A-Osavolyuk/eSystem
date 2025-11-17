@@ -236,7 +236,7 @@
                 Codes = result.Get<List<string>>()!;
                 StateHasChanged();
             }
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -259,7 +259,7 @@
             Codes = result.Get<List<string>>()!;
             _recoveryCodesRegenerated = true;
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
     
     private async Task OnDownloadAsync()

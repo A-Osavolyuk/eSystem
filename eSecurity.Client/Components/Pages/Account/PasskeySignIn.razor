@@ -95,7 +95,7 @@
             var options = result.Get<PublicKeyCredentialRequestOptions>()!;
 
             if (result.Succeeded) await VerifyAsync(options);
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -126,7 +126,7 @@
             {
                 if (result.Value is null)
                 {
-                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+                    Snackbar.Add(result.GetError().Description, Severity.Error);
                     return;
                 }
 
@@ -142,7 +142,7 @@
                 }
                 else
                 {
-                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+                    Snackbar.Add(result.GetError().Description, Severity.Error);
                 }
             }
         }

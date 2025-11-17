@@ -162,7 +162,7 @@
     {
         var request = _context!.ToSendCodeRequest();
         var response = await VerificationService.SendCodeAsync(request);
-        Snackbar.Add(response.GetError().ErrorDescription, response.Succeeded ? Severity.Success : Severity.Error);
+        Snackbar.Add(response.GetError().Description, response.Succeeded ? Severity.Success : Severity.Error);
     }
 
     private async Task OnVerifyEmailAsync()
@@ -175,7 +175,7 @@
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -199,10 +199,10 @@
 
         if (result.Succeeded)
         {
-            Snackbar.Add(result.GetError().ErrorDescription, Severity.Success);
+            Snackbar.Add(result.GetError().Description, Severity.Success);
             NavigationManager.NavigateTo(ReturnUrl);
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
 }

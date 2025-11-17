@@ -90,6 +90,6 @@
             var response = result.Get<LogoutResponse>();
             NavigationManager.NavigateTo(response.RedirectUri);
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

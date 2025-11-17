@@ -76,7 +76,7 @@
             Methods = result.Get<List<UserTwoFactorMethod>>()!;
             PreferredMethod = Methods.Single(x => x.Preferred).Method;
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private void ChangeMethod(TwoFactorMethod method)

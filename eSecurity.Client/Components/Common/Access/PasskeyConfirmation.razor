@@ -124,7 +124,7 @@
         {
             _showError = true;
             _isLoading = false;
-            Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -149,7 +149,7 @@
                 await OnAccessConfirmed.InvokeAsync();
                 _showError = false;
             }
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
         else _showError = true;
 

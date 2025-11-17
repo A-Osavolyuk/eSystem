@@ -84,7 +84,7 @@
                 await LoadAsync();
                 StateHasChanged();
             }
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -115,14 +115,14 @@
 
             await SendCodeAsync();
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task SendCodeAsync()
     {
         var request = _context!.ToSendCodeRequest();
         var result = await VerificationService.SendCodeAsync(request);
-        if (!result.Succeeded) Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        if (!result.Succeeded) Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task OnTrustAsync()
@@ -139,7 +139,7 @@
                 await TrustAsync();
             }
 
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -175,7 +175,7 @@
         }
         else
         {
-            Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 

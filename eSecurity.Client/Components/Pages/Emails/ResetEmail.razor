@@ -191,7 +191,7 @@
             var result = await SecurityService.CheckEmailAsync(request);
 
             if (result.Succeeded) await SendCodeAsync();
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -201,7 +201,7 @@
         var result = await VerificationService.SendCodeAsync(request);
 
         if (result.Succeeded) await _stepper.StepNextAsync();
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private async Task OnVerifyAsync()
@@ -214,7 +214,7 @@
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();
-            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -233,7 +233,7 @@
             Snackbar.Add("Email was successfully reset", Severity.Success);
             NavigationManager.NavigateTo(ReturnUrl);
         }
-        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
 }
