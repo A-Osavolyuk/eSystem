@@ -3,6 +3,7 @@
 @using eSecurity.Client.Security.Authentication.Oidc
 @using eSecurity.Core.Common.Responses
 @using eSystem.Core.Security.Authentication.Oidc.Constants
+@using eSystem.Core.Common.Results
 @using eSecurity.Core.Security.Cookies
 
 @inherits PageBase
@@ -52,7 +53,7 @@
             {
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(RedirectUri)
-                    .WithQueryParam("error", OAuthErrors.InvalidRequest)
+                    .WithQueryParam("error", Errors.OAuth.InvalidRequest)
                     .WithQueryParam("error_description", "Query parameter 'prompt' is required.")
                     .Build());
 
@@ -66,7 +67,7 @@
             {
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(RedirectUri)
-                    .WithQueryParam("error", OAuthErrors.InvalidRequest)
+                    .WithQueryParam("error", Errors.OAuth.InvalidRequest)
                     .WithQueryParam("error_description", "Prompt 'none' cannot be combined with other prompt values.")
                     .Build());
 
@@ -81,7 +82,7 @@
                     {
                         NavigationManager.NavigateTo(QueryBuilder.Create()
                             .WithUri(RedirectUri)
-                            .WithQueryParam("error", OAuthErrors.LoginRequired)
+                            .WithQueryParam("error", Errors.OAuth.LoginRequired)
                             .WithQueryParam("error_description", "User must be authenticated.")
                             .Build());
                     }
@@ -109,7 +110,7 @@
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(RedirectUri)
-                        .WithQueryParam("error", OAuthErrors.InvalidRequest)
+                        .WithQueryParam("error", Errors.OAuth.InvalidRequest)
                         .WithQueryParam("error_description", $"Prompt '{processedPrompt}' is not supported.")
                         .Build());
                     break;
