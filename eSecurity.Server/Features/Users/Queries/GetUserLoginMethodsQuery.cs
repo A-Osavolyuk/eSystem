@@ -62,6 +62,6 @@ public class GetUserLoginMethodsQueryHandler(
             }
         };
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

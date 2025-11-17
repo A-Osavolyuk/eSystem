@@ -7,4 +7,4 @@ global using eSystem.Storage.Api.Services;
 global using FluentValidation;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
-global using Results_ = eSystem.Core.Common.Results.Results;
+global using Results = eSystem.Core.Common.Results.Results;

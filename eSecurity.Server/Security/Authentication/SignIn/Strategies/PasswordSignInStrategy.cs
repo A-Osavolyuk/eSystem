@@ -35,10 +35,9 @@ public sealed class PasswordSignInStrategy(
         CancellationToken cancellationToken = default)
     {
         UserEntity? user = null;
-        SignInResponse? response;
-        
-        if(payload is not PasswordSignInPayload passwordPayload)
-            return Results.BadRequest("Invalid payload type");
+
+        if (payload is not PasswordSignInPayload passwordPayload)
+            return Results.BadRequest(Errors.Common.InvalidPayloadType, "Invalid payload type");
 
         if (_options.AllowUserNameLogin)
         {
@@ -81,27 +80,10 @@ public sealed class PasswordSignInStrategy(
 
         var userPrimaryEmail = user.GetEmail(EmailType.Primary)!;
         if (_options.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
-        {
-            response = new SignInResponse()
-            {
-                UserId = user.Id,
-                IsEmailConfirmed = false
-            };
-
-            return Results.BadRequest("User's primary email is not verified.", response);
-        }
+            return Results.BadRequest("User's primary email is not verified.");
 
         if (user.LockoutState.Enabled)
-        {
-            response = new SignInResponse()
-            {
-                UserId = user.Id,
-                IsLockedOut = true,
-                Type = user.LockoutState.Type,
-            };
-
-            return Results.BadRequest("Account is locked out", response);
-        }
+            return Results.BadRequest(Errors.Common.AccountLockedOut, "Account is locked out");
 
         if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
@@ -114,16 +96,7 @@ public sealed class PasswordSignInStrategy(
             if (!updateResult.Succeeded) return updateResult;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-            {
-                response = new SignInResponse()
-                {
-                    UserId = user.Id,
-                    FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
-                };
-
-                return Results.BadRequest("The password is not valid.", response);
-            }
+                return Results.BadRequest("The password is not valid.");
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
@@ -133,16 +106,8 @@ public sealed class PasswordSignInStrategy(
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            response = new SignInResponse()
-            {
-                UserId = user.Id,
-                IsLockedOut = true,
-                FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
-                Type = LockoutType.TooManyFailedLoginAttempts
-            };
-
-            return Results.BadRequest("Account is locked out due to too many failed login attempts", response);
+            return Results.BadRequest(Errors.Common.AccountLockedOut,
+                "Account is locked out due to too many failed login attempts");
         }
 
         if (user.FailedLoginAttempts > 0)
@@ -155,40 +120,22 @@ public sealed class PasswordSignInStrategy(
 
         if (_options.RequireTrustedDevice)
         {
-            response = new SignInResponse()
-            {
-                UserId = user.Id,
-                DeviceId = device.Id,
-                IsDeviceTrusted = device.IsTrusted,
-                IsDeviceBlocked = device.IsBlocked,
-            };
-
             if (device.IsBlocked)
-            {
-                return Results.BadRequest("Cannot sign in, device is blocked.", response);
-            }
+                return Results.BadRequest(Errors.Common.BlockedDevice,
+                    "Cannot sign in, device is blocked.");
 
             if (!device.IsTrusted)
-            {
-                return Results.BadRequest("You need to trust this device before sign in.", response);
-            }
+                return Results.BadRequest(Errors.Common.UntrustedDevice,
+                    "You need to trust this device before sign in.");
         }
-
-        if (user.HasMethods() && user.TwoFactorEnabled)
-        {
-            response = new SignInResponse()
-            {
-                UserId = user.Id,
-                IsTwoFactorEnabled = true,
-            };
-
-            return Result.Success(response);
-        }
-
-        response = new SignInResponse() { UserId = user.Id, };
         
+        var response = new SignInResponse() { UserId = user.Id, };
+        
+        if (user.HasMethods() && user.TwoFactorEnabled)
+            response.IsTwoFactorEnabled = true;
+
         await _sessionManager.CreateAsync(device, cancellationToken);
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

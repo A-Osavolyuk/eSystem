@@ -97,6 +97,6 @@ public sealed class OidcLogoutStrategy(
             queryBuilder.WithQueryParam("state", odicPayload.State);
 
         var response = new LogoutResponse() { RedirectUri = queryBuilder.Build() };
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

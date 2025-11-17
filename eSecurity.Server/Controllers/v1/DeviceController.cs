@@ -20,14 +20,7 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> TrustAsync([FromBody] TrustDeviceRequest request)
     {
         var result = await _sender.Send(new TrustDeviceCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Block device")]
@@ -38,14 +31,7 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> BlockAsync([FromBody] BlockDeviceRequest request)
     {
         var result = await _sender.Send(new BlockDeviceCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Unblock device")]
@@ -56,14 +42,7 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> UnblockAsync([FromBody] UnblockDeviceRequest request)
     {
         var result = await _sender.Send(new UnblockDeviceCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Verify device")]
@@ -74,13 +53,6 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyDeviceRequest request)
     {
         var result = await _sender.Send(new VerifyDeviceCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }

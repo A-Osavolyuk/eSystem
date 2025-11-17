@@ -42,6 +42,6 @@ public sealed class ManualLogoutStrategy(
         if (!result.Succeeded) return result;
 
         var response = new LogoutResponse() { RedirectUri = Links.Account.SignIn };
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

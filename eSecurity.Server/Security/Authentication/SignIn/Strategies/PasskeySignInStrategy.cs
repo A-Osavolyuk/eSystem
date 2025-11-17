@@ -24,10 +24,8 @@ public sealed class PasskeySignInStrategy(
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
-        SignInResponse response;
-
         if (payload is not PasskeySignInPayload passkeyPayload)
-            return Results.BadRequest("Invalid payload type");
+            return Results.BadRequest(Errors.Common.InvalidPayloadType, "Invalid payload type");
 
         var credential = passkeyPayload.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
@@ -44,24 +42,16 @@ public sealed class PasskeySignInStrategy(
         if (!result.Succeeded) return result;
 
         if (user.LockoutState.Enabled)
-        {
-            response = new SignInResponse()
-            {
-                UserId = user.Id,
-                IsLockedOut = user.LockoutState.Enabled,
-            };
-
-            return Results.BadRequest("Account is locked out", response);
-        }
+            return Results.BadRequest(Errors.Common.AccountLockedOut, "Account is locked out");
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
         var device = user.GetDevice(userAgent, ipAddress);
-        if (device is null) return Results.NotFound($"Invalid device.");
+        if (device is null) return Results.NotFound(Errors.Common.InvalidDevice, "Invalid device.");
 
         await _sessionManager.CreateAsync(device, cancellationToken);
 
-        response = new SignInResponse() { UserId = user.Id, };
-        return Result.Success(response);
+        var response = new SignInResponse() { UserId = user.Id, };
+        return Results.Ok(response);
     }
 }

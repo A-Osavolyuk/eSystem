@@ -21,11 +21,11 @@ internal sealed class UploadFilesCommandHandler(
 
         if (list.Count == 0)
         {
-            return Results_.InternalServerError($"Cannot upload files of type '{metadata.Type}' with identifier '{metadata.Identifier}'.");
+            return Results.InternalServerError($"Cannot upload files of type '{metadata.Type}' with identifier '{metadata.Identifier}'.");
         }
 
         var response = new UploadFiledResponse() { Files = list };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

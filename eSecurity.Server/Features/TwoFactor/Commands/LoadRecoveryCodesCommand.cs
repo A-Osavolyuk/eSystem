@@ -19,6 +19,6 @@ public class LoadRecoveryCodesCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
         var codes = _recoverManager.Unprotect(user);
-        return Result.Success(codes);
+        return Results.Ok(codes);
     }
 }

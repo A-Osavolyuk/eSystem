@@ -20,6 +20,6 @@ public class GenerateRecoveryCodesCommandHandler(
 
         var codes = await _recoverManager.GenerateAsync(user, cancellationToken);
         
-        return Result.Success(codes);
+        return Results.Ok(codes);
     }
 }

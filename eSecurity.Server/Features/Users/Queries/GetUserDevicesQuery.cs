@@ -30,6 +30,6 @@ public class GetUserDevicesQueryHandler(IUserManager userManager) : IRequestHand
             BlockedDate = device.BlockedDate
         }).ToList();
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

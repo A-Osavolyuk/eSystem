@@ -18,6 +18,6 @@ public class CheckEmailCommandHandler(
         var isTaken = await _userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
         if (isTaken) return Results.BadRequest("Email is already taken.");
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

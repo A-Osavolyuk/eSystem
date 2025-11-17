@@ -20,14 +20,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> SignInAsync([FromBody] SignInRequest request)
     {
         var result = await _sender.Send(new SignInCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Sign up")]
@@ -38,14 +31,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> SignUpAsync([FromBody] SignUpRequest request)
     {
         var result = await _sender.Send(new SignUpCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Check")]
@@ -56,14 +42,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckAccountRequest request)
     {
         var result = await _sender.Send(new CheckAccountCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Recover")]
@@ -74,14 +53,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RecoverAsync([FromBody] RecoverAccountRequest request)
     {
         var result = await _sender.Send(new RecoverAccountCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Unlock")]
@@ -92,13 +64,6 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> UnlockAsync([FromBody] UnlockAccountRequest request)
     {
         var result = await _sender.Send(new UnlockAccountCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }

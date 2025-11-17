@@ -97,6 +97,6 @@ public class CreatePasskeyCommandHandler(
             if (!verificationMethodResult.Succeeded) return verificationMethodResult;
         }
         
-        return Result.Success();
+        return Results.Ok();
     }
 }

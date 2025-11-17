@@ -46,6 +46,6 @@ public class GenerateCreationOptionsCommandHandler(
             displayName, challenge, fingerprint, _credentialOptions);
 
         _sessionStorage.Set(ChallengeSessionKeys.Attestation, challenge);
-        return Result.Success(options);
+        return Results.Ok(options);
     }
 }

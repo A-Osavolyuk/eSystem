@@ -21,14 +21,7 @@ public class PasskeyController(ISender sender) : ControllerBase
         [FromBody] GenerateCreationOptionsRequest request)
     {
         var result = await _sender.Send(new GenerateCreationOptionsCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Generate public key credential request options")]
@@ -39,14 +32,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GenerateRequestOptionsAsync([FromBody] GenerateRequestOptionsRequest request)
     {
         var result = await _sender.Send(new GenerateRequestOptionsCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Create passkey")]
@@ -57,14 +43,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CreateAsync([FromBody] CreatePasskeyRequest request)
     {
         var result = await _sender.Send(new CreatePasskeyCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Remove passkey")]
@@ -75,14 +54,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasskeyRequest request)
     {
         var result = await _sender.Send(new RemovePasskeyCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Change passkey display name")]
@@ -93,13 +65,6 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ChangeNameAsync([FromBody] ChangePasskeyNameRequest request)
     {
         var result = await _sender.Send(new ChangePasskeyNameCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }

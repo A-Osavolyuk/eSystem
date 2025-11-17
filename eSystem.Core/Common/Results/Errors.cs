@@ -28,7 +28,19 @@ public partial class Errors
 
     public static class Common
     {
-        public const string NotFound = "not_found";
+        public const string TooManyFailedLoginAttempts = "too_many_failed_login_attempts";
+        public const string InvalidCode = "invalid_code";
+        public const string InvalidPayloadType = "invalid_payload_type";
+        public const string InvalidDevice = "invalid_device";
+        public const string UntrustedDevice = "untrusted_device";
+        public const string UnverifiedEmail = "unverified_email";
+        public const string AccountLockedOut = "account_locked_out";
+        public const string BlockedDevice = "blocked_device";
         public const string BadRequest = "bad_request";
+        public const string Unauthorized = "unauthotized";
+        public const string Forbidden = "forbidden";
+        public const string NotFound = "not_found";
+        public const string TooManyRequests = "too_many_requests";
+        public const string InternalServerError = "internal_server_error";
     }
 }

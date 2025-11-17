@@ -20,6 +20,6 @@ public class CheckPasswordCommandHandler(IUserManager userManager) : IRequestHan
             HasPassword = user.HasPassword()
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

@@ -36,6 +36,6 @@ public sealed class GetUserQueryHandler(
             UserNameChangeDate = user.UsernameChangeDate,
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

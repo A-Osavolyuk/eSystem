@@ -46,6 +46,6 @@ public class SendCodeCommandHandler(
         message.Initialize(payload);
         await _messageService.SendMessageAsync(sender, message, cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

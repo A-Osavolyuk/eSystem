@@ -34,7 +34,7 @@ public sealed class OAuthSignInStrategy(
         CancellationToken cancellationToken = default)
     {
         if(payload is not OAuthSignInPayload oauthPayload)
-            return Results.BadRequest("Invalid payload type");
+            return Results.BadRequest(Errors.Common.InvalidPayloadType, "Invalid payload type");
 
         var user = await _userManager.FindByEmailAsync(oauthPayload.Email, cancellationToken);
         if (user is null) return Results.BadRequest($"Cannot find user with email {oauthPayload.Email}.");
@@ -65,17 +65,19 @@ public sealed class OAuthSignInStrategy(
             if (!result.Succeeded) return result;
         }
         
-        if (device.IsBlocked) return Results.BadRequest("Device is blocked");
+        if (device.IsBlocked) 
+            return Results.BadRequest(Errors.Common.BlockedDevice, "Device is blocked");
+        
         if (!device.IsTrusted)
         {
             var deviceResult = await _deviceManager.TrustAsync(device, cancellationToken);
-            if (!deviceResult.Succeeded) return Result.Failure(deviceResult.GetError());
+            if (!deviceResult.Succeeded) return deviceResult;
         }
 
         if (user.LockoutState.Enabled)
         {
             var lockoutResult = await _lockoutManager.UnblockAsync(user, cancellationToken);
-            if (!lockoutResult.Succeeded) return Result.Failure(lockoutResult.GetError());
+            if (!lockoutResult.Succeeded) return lockoutResult;
         }
 
         var linkedAccount = new UserLinkedAccountEntity()
@@ -89,7 +91,7 @@ public sealed class OAuthSignInStrategy(
         if (!user.HasLinkedAccount(oauthPayload.LinkedAccount))
         {
             var connectResult = await _providerManager.CreateAsync(linkedAccount, cancellationToken);
-            if (!connectResult.Succeeded) return Result.Failure(connectResult.GetError());
+            if (!connectResult.Succeeded) return connectResult;
         }
 
         var session = await _oauthSessionManager.FindAsync(oauthPayload.SessionId, oauthPayload.Token, cancellationToken);
@@ -99,7 +101,7 @@ public sealed class OAuthSignInStrategy(
         session.LinkedAccountId = linkedAccount.Id;
 
         var updateResult = await _oauthSessionManager.UpdateAsync(session, cancellationToken);
-        if (!updateResult.Succeeded) return Result.Failure(updateResult.GetError());
+        if (!updateResult.Succeeded) return updateResult;
         
         await _sessionManager.CreateAsync(device, cancellationToken);
 
@@ -107,6 +109,6 @@ public sealed class OAuthSignInStrategy(
             .WithQueryParam("sessionId", session.Id.ToString())
             .WithQueryParam("token", oauthPayload.Token);
         
-        return Result.Success(builder.Build());
+        return Results.Ok(builder.Build());
     }
 }

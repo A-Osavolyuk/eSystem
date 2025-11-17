@@ -20,7 +20,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> OpenIdConfigurationAsync()
     {
         var result = await _sender.Send(new GetOpenidConfigurationQuery());
-        return Ok(result.Value);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Json Web Key")]
@@ -30,7 +30,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> JsonWebKeyAsync()
     {
         var result = await _sender.Send(new GetJwksQuery());
-        return Ok(result.Value);
+        return ResultHandler.Handle(result);
     }
 
     [EndpointSummary("Token")]
@@ -40,14 +40,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> TokenAsync([FromBody] TokenRequest request)
     {
         var result = await _sender.Send(new TokenCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Authorize")]
@@ -57,14 +50,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
     {
         var result = await _sender.Send(new AuthorizeCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Logout")]
@@ -74,13 +60,6 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> LogoutAsync([FromBody] LogoutRequest request)
     {
         var result = await _sender.Send(new LogoutCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }

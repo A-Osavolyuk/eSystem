@@ -20,13 +20,6 @@ public class LinkedAccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> DisconnectAsync([FromBody] DisconnectLinkedAccountRequest request)
     {
         var result = await _sender.Send(new DisconnectLinkedAccountCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }

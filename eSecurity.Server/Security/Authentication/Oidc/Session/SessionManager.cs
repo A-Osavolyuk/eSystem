@@ -34,7 +34,7 @@ public class SessionManager(
         await _context.Sessions.AddAsync(session, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RemoveAsync(SessionEntity session, CancellationToken cancellationToken = default)
@@ -42,6 +42,6 @@ public class SessionManager(
         _context.Sessions.Remove(session);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

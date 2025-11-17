@@ -17,6 +17,6 @@ public class VerifyAuthenticatorCommandHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
         var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, request.Request.Secret);
-        return verified ? Result.Success() : Results.BadRequest("Invalid code.");
+        return verified ? Results.Ok() : Results.BadRequest("Invalid code.");
     }
 }

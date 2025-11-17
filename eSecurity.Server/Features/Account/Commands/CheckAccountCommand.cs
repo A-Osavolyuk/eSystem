@@ -20,7 +20,7 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
         if (user is null)
         {
             response = new CheckAccountResponse { Exists = false };
-            return Result.Success(response);
+            return Results.Ok(response);
         }
 
         if (user.LockoutState.Enabled)
@@ -32,7 +32,7 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
                 IsLockedOut = user.LockoutState.Enabled,
             };
             
-            return Result.Success(response);
+            return Results.Ok(response);
         }
         
         var email = user.Emails.FirstOrDefault(x => x is { Type: EmailType.Recovery, IsVerified: true });
@@ -46,7 +46,7 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
                 HasRecoveryEmail = false,
             };
             
-            return Result.Success(response);
+            return Results.Ok(response);
         }
         
         response = new CheckAccountResponse
@@ -57,6 +57,6 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
             RecoveryEmail = email.Email
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

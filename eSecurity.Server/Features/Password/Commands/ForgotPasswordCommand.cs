@@ -20,6 +20,6 @@ public sealed class ForgotPasswordCommandHandler(
         if (!user.HasPassword()) return Results.BadRequest("Cannot reset password, password was not provided.");
 
         var response = new ForgotPasswordResponse() { UserId = user.Id };
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

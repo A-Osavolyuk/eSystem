@@ -25,6 +25,6 @@ public class GetUserEmailsQueryHandler(IUserManager userManager) : IRequestHandl
             UpdateDate = email.UpdateDate
         });
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

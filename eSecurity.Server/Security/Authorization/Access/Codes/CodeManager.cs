@@ -64,6 +64,6 @@ public sealed class CodeManager(
         _context.Codes.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

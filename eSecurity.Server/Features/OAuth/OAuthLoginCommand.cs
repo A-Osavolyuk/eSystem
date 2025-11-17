@@ -54,7 +54,7 @@ public sealed class OAuthLoginCommandHandler(
         
         await _sessionManager.CreateAsync(session, cancellationToken);
         
-        var result = Result.Success(new OAuthLoginResponse()
+        var result = Results.Ok(new OAuthLoginResponse()
         {
             Provider = request.Type,
             AuthenticationProperties = properties

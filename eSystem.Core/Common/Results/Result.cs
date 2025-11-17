@@ -2,86 +2,46 @@
 
 public class Result
 {
-    public bool Succeeded { get; set; }
-    public object? Value { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public Error? Error { get; set; }
-
-    public static Result Success()
-    {
-        var result = new Result
-        {
-            Succeeded = true,
-        };
-
-        return result;
-    }
+    private Result() {}
     
-    public static Result Success(object? response)
+    public bool Succeeded { get; init; }
+    public StatusCode StatusCode { get; init; }
+    public object? Value { get; init; }
+    public Error? Error { private get; init; }
+
+    public static Result Success(StatusCode statusCode, object? value) => new()
     {
-        var result = new Result
-        {
-            Succeeded = true,
-            Value = response,
-        };
-
-        return result;
-    }
-
-    public static Result Success(string message)
+        Succeeded = true,
+        StatusCode = statusCode,
+        Value = value,
+    };
+    
+    public static Result Success(StatusCode statusCode) => new()
     {
-        var result = new Result
-        {
-            Succeeded = true,
-            Message = message,
-        };
-
-        return result;
-    }
-
-    public static Result Success(object? response, string message)
+        Succeeded = true,
+        StatusCode = statusCode,
+    };
+    
+    public static Result Failure(StatusCode statusCode, Error error) => new()
     {
-        var result = new Result
-        {
-            Succeeded = true,
-            Value = response,
-            Message = message,
-        };
-
-        return result;
-    }
-
-    public static Result Failure(Error error, object? value = null)
+        Succeeded = false,
+        StatusCode = statusCode,
+        Error = error,
+    };
+    
+    public static Result Failure(StatusCode statusCode, object value) => new()
     {
-        var result = new Result
-        {
-            Succeeded = false,
-            Error = error,
-            Message = error.Message,
-            Value = value
-        };
-        
-        return result;
-    }
-
+        Succeeded = false,
+        StatusCode = statusCode,
+        Value = value,
+    };
+    
+    public Error GetError() => Error!;
+    
     public TResponse Match<TResponse>(Func<Result, TResponse> success, Func<Result, TResponse> failure)
     {
-        if (Succeeded)
-        {
-            return success(this);
-        }
-        
-        return failure(this);
+        return Succeeded 
+            ? success(this) 
+            : failure(this);
     }
-
-    public Error GetError() => Error!;
-
-    public TResponse Get<TResponse>() => (TResponse)Value!;
-}
-
-public class Error
-{
-    public ErrorCode Code { get; init; }
-    public string Message { get; init; } = string.Empty;
-    public string? Details { get; init; }
 }

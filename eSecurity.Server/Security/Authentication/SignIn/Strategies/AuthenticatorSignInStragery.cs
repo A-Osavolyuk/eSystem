@@ -35,13 +35,11 @@ public sealed class AuthenticatorSignInStrategy(
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _options = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(SignInPayload payload, 
+    public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
-        SignInResponse? response;
-
         if (payload is not AuthenticatorSignInPayload authenticatorPayload)
-            return Results.BadRequest("Invalid payload type");
+            return Results.BadRequest(Errors.Common.InvalidPayloadType, "Invalid payload type");
 
         var user = await _userManager.FindByIdAsync(authenticatorPayload.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {authenticatorPayload.UserId}.");
@@ -71,7 +69,7 @@ public sealed class AuthenticatorSignInStrategy(
             var result = await _deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-        
+
         var userSecret = await _secretManager.FindAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
@@ -84,35 +82,18 @@ public sealed class AuthenticatorSignInStrategy(
             user.FailedLoginAttempts += 1;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-            {
-                response = new SignInResponse()
-                {
-                    UserId = user.Id,
-                    FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
-                };
-
-                return Results.BadRequest($"Invalid two-factor code {authenticatorPayload.Code}.", response);
-            }
+                return Results.BadRequest(Errors.Common.InvalidCode,
+                    $"Invalid two-factor code {authenticatorPayload.Code}.");
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
-            var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user, 
+            var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user,
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
-
-            response = new SignInResponse()
-            {
-                UserId = user.Id,
-                IsLockedOut = true,
-                FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
-                Type = LockoutType.TooManyFailedLoginAttempts
-            };
-
-            return Results.BadRequest("Account is locked out due to too many failed login attempts", response);
+            return Results.BadRequest(Errors.Common.AccountLockedOut,
+                "Account is locked out due to too many failed login attempts");
         }
 
         if (user.FailedLoginAttempts > 0)
@@ -123,10 +104,10 @@ public sealed class AuthenticatorSignInStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        response = new SignInResponse() { UserId = user.Id, };
-        
+        var response = new SignInResponse() { UserId = user.Id, };
+
         await _sessionManager.CreateAsync(device, cancellationToken);
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

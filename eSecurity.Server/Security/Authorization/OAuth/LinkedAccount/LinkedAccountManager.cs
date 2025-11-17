@@ -13,7 +13,7 @@ public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
         await _context.UserLinkedAccounts.AddAsync(linkedAccount, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RemoveAsync(UserLinkedAccountEntity linkedAccount, 
@@ -22,6 +22,6 @@ public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
         _context.UserLinkedAccounts.Remove(linkedAccount);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Results;
 using eSystem.Core.Requests.Storage;
 using eSystem.Storage.Api.Features.Commands;
 
@@ -21,9 +22,7 @@ public class FilesController(ISender sender) : ControllerBase
     {
         var metadataObject = JsonSerializer.Deserialize<Metadata>(metadata)!;
         var response = await _sender.Send(new UploadFilesCommand(files, metadataObject));
-        return response.Match(
-            s => Ok(HttpResponseBuilder.Create().Succeeded().WithResult(s.Value).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(response);
     }
     
     [EndpointSummary("Load files")]
@@ -33,8 +32,6 @@ public class FilesController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> LoadFilesAsync([FromBody] LoadFilesRequest request)
     {
         var response = await _sender.Send(new LoadFilesCommand(request));
-        return response.Match(
-            s => Ok(HttpResponseBuilder.Create().Succeeded().WithResult(s.Value).WithMessage(s.Message).Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(response);
     }
 }

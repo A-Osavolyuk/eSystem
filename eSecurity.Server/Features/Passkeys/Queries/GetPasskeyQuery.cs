@@ -21,6 +21,6 @@ public class GetPasskeyQueryHandler(IPasskeyManager passkeyManager) : IRequestHa
             LastSeenDate = passkey.LastSeenDate,
             CreateDate = passkey.CreateDate,
         };;
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

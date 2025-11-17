@@ -12,6 +12,6 @@ public class GetOpenidConfigurationQueryHandler(
 
     public Task<Result> Handle(GetOpenidConfigurationQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(Result.Success(_options));
+        return Task.FromResult(Results.Ok(_options));
     }
 }

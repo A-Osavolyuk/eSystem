@@ -23,7 +23,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         await _context.UserDevices.AddAsync(device, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> TrustAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
@@ -34,7 +34,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> BlockAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
@@ -46,7 +46,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UnblockAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
@@ -58,6 +58,6 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

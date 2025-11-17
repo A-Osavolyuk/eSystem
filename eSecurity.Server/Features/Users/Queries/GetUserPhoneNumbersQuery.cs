@@ -24,6 +24,6 @@ public class GetUserPhoneNumbersQueryHandler(IUserManager userManager) : IReques
             UpdateDate = phoneNumber.UpdateDate
         });
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

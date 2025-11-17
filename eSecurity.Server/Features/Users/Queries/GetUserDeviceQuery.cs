@@ -37,6 +37,6 @@ public class GetUserDeviceQueryHandler(
             UserAgent = device.UserAgent,
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

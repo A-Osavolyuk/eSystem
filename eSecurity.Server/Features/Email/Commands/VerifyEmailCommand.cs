@@ -28,6 +28,6 @@ public sealed class VerifyEmailCommandHandler(
         var confirmResult = await _userManager.VerifyEmailAsync(user, request.Request.Email, cancellationToken);
         if (!confirmResult.Succeeded) return confirmResult;
 
-        return Result.Success("Your email address was successfully confirmed.");
+        return Results.Ok("Your email address was successfully confirmed.");
     }
 }

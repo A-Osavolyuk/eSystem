@@ -25,7 +25,7 @@ public class AuthorizationCodeManager(
         await _context.AuthorizationCodes.AddAsync(code, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UseAsync(AuthorizationCodeEntity code, 
@@ -37,7 +37,7 @@ public class AuthorizationCodeManager(
         _context.AuthorizationCodes.Update(code);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public string Generate() => _keyFactory.Create(20);

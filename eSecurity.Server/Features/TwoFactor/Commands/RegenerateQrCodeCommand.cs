@@ -25,6 +25,6 @@ public class RegenerateQrCodeCommandHandler(
         var secret = _secretManager.Generate();
         var email = user.GetEmail(EmailType.Primary)!.Email;
         var qrCode = _qrCodeFactory.Create(email, secret, QrCodeConfiguration.Issuer);
-        return Result.Success(qrCode);
+        return Results.Ok(qrCode);
     }
 }

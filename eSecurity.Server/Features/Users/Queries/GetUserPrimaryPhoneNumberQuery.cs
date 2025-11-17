@@ -30,6 +30,6 @@ public class GetUserPrimaryPhoneNumberQueryHandler(
             VerifiedDate = primaryPhoneNumber.VerifiedDate
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

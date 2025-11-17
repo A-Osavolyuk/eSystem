@@ -54,7 +54,7 @@ public sealed class RecoverManager(
         _context.UserRecoveryCodes.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RevokeAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -66,6 +66,6 @@ public sealed class RecoverManager(
         _context.UserRecoveryCodes.RemoveRange(codes);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 }

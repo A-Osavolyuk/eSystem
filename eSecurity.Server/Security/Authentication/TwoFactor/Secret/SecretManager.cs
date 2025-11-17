@@ -22,7 +22,7 @@ public sealed class SecretManager(
     {
         await _context.UserSecret.AddAsync(secret, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        return Result.Success();
+        return Results.Ok();
     }
     
     public async ValueTask<Result> UpdateAsync(UserSecretEntity secret,
@@ -30,7 +30,7 @@ public sealed class SecretManager(
     {
         _context.UserSecret.Update(secret);
         await _context.SaveChangesAsync(cancellationToken);
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RemoveAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -46,7 +46,7 @@ public sealed class SecretManager(
         _context.UserSecret.Remove(secret);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public string Generate() => _keyFactory.Create(20);

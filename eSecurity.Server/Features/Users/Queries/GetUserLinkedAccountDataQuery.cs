@@ -30,6 +30,6 @@ public class GetUserLinkedAccountDataQueryHandler(
             }).ToList()
         };
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

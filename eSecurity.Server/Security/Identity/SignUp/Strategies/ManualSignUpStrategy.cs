@@ -115,6 +115,6 @@ public sealed class ManualSignUpStrategy(
             UserId = user.Id,
         };
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

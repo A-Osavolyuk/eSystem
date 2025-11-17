@@ -29,7 +29,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         await context.Verifications.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> VerifyAsync(UserEntity user,
@@ -43,7 +43,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         if (entity is null) return Results.NotFound("Verification not found");
         if (entity.ExpireDate < DateTimeOffset.Now) return Results.BadRequest("Verification is expired");
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> SubscribeAsync(UserEntity user, VerificationMethod method, 
@@ -72,7 +72,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         await context.UserVerificationMethods.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UnsubscribeAsync(UserVerificationMethodEntity method,
@@ -81,7 +81,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         context.UserVerificationMethods.Remove(method);
         await context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> PreferAsync(UserEntity user, VerificationMethod method, 
@@ -104,6 +104,6 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         context.UserVerificationMethods.UpdateRange(currentPreferredMethod, nextPreferredMethod);
         await context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 }

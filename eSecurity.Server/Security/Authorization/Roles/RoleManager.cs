@@ -44,7 +44,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         _context.Roles.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> CreateAsync(RoleEntity entity, CancellationToken cancellationToken = default)
@@ -52,7 +52,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         await _context.Roles.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UpdateAsync(RoleEntity entity, CancellationToken cancellationToken = default)
@@ -60,7 +60,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         _context.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return  Result.Success();
+        return  Results.Ok();
     }
     
     public async ValueTask<Result> UnassignAsync(UserEntity user, string roleName,
@@ -79,7 +79,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         _context.UserRoles.Remove(role);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UnassignAsync(UserEntity user, RoleEntity role,
@@ -96,7 +96,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         _context.UserRoles.Remove(userRole);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UnassignAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -108,7 +108,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         _context.UserRoles.RemoveRange(userRoles);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> AssignAsync(UserEntity user, RoleEntity role,
@@ -119,7 +119,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
 
         if (hasRole)
         {
-            return Result.Success();
+            return Results.Ok();
         }
         
         var userRole = new UserRoleEntity()
@@ -132,6 +132,6 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         await _context.UserRoles.AddAsync(userRole, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

@@ -54,6 +54,6 @@ public class GenerateQrCodeCommandHandler(
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
         var qrCode = _qrCodeFactory.Create(email, unprotectedSecret, QrCodeConfiguration.Issuer);
 
-        return Result.Success(qrCode);
+        return Results.Ok(qrCode);
     }
 }

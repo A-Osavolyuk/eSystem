@@ -27,6 +27,6 @@ public class GetUserPersonalQueryHandler(IUserManager userManager) : IRequestHan
             UpdateDate = user.PersonalData.UpdateDate
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

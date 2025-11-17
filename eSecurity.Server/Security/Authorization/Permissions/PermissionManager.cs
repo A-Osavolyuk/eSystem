@@ -52,13 +52,13 @@ public sealed class PermissionManager(AuthDbContext context) : IPermissionManage
         
         if (hasPermission)
         {
-            return Result.Success();
+            return Results.Ok();
         }
         
         var entity = new UserPermissionsEntity() { UserId = user.Id, PermissionId = permission!.Id };
         await _context.UserPermissions.AddAsync( entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RevokeAsync(UserEntity user,
@@ -77,6 +77,6 @@ public sealed class PermissionManager(AuthDbContext context) : IPermissionManage
         _context.UserPermissions.Remove(userPermission);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

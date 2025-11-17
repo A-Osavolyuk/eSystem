@@ -22,6 +22,6 @@ public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHa
             UpdateDate = provider.UpdateDate,
         }).ToList();
         
-        return Result.Success(result);
+        return Results.Ok(result);
     }
 }

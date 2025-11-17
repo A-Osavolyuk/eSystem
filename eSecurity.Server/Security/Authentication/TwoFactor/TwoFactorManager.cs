@@ -38,7 +38,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         await _context.UserTwoFactorMethods.AddAsync(userProvider, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UnsubscribeAsync(UserEntity user,
@@ -51,7 +51,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         _context.UserTwoFactorMethods.RemoveRange(user.TwoFactorMethods);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UnsubscribeAsync(UserTwoFactorMethodEntity method,
@@ -60,7 +60,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         _context.UserTwoFactorMethods.Remove(method);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> PreferAsync(UserEntity user,
@@ -79,6 +79,6 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         _context.UserTwoFactorMethods.UpdateRange([currentPreferredMethod, nextPreferredMethod]);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 }

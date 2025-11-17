@@ -143,6 +143,6 @@ public class RefreshTokenStrategy(
             response.IdToken = await _tokenFactory.CreateAsync(idClaims, cancellationToken);
         }
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

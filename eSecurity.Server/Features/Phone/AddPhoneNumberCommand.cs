@@ -42,6 +42,6 @@ public class AddPhoneNumberCommandHandler(
 
         if (!result.Succeeded) return result;
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

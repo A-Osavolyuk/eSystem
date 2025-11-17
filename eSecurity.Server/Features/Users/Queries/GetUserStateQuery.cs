@@ -36,6 +36,6 @@ public class GetUserStateQueryHandler(IUserManager userManager) : IRequestHandle
             }).ToList(),
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

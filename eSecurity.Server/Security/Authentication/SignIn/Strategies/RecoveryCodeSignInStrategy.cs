@@ -32,8 +32,6 @@ public sealed class RecoveryCodeSignInStrategy(
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload, CancellationToken cancellationToken = default)
     {
-        SignInResponse response;
-
         if (payload is not RecoveryCodeSignInPayload recoveryPayload)
             throw new NotSupportedException("Payload type must be 'RecoveryCodeSignInPayload'");
 
@@ -72,16 +70,7 @@ public sealed class RecoveryCodeSignInStrategy(
             user.FailedLoginAttempts += 1;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-            {
-                response = new SignInResponse
-                {
-                    UserId = user.Id,
-                    FailedLoginAttempts = user.FailedLoginAttempts,
-                    MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
-                };
-
-                return Results.BadRequest("Invalid code.", response);
-            }
+                return Results.BadRequest(Errors.Common.InvalidCode, "Invalid code.");
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
@@ -90,17 +79,8 @@ public sealed class RecoveryCodeSignInStrategy(
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
-
-            response = new SignInResponse
-            {
-                UserId = user.Id,
-                IsLockedOut = true,
-                FailedLoginAttempts = user.FailedLoginAttempts,
-                MaxFailedLoginAttempts = _options.MaxFailedLoginAttempts,
-                Type = LockoutType.TooManyFailedLoginAttempts
-            };
-
-            return Results.BadRequest("Account is locked out due to too many failed login attempts", response);
+            return Results.BadRequest(Errors.Common.AccountLockedOut,
+                "Account is locked out due to too many failed login attempts");
         }
 
         if (user.FailedLoginAttempts > 0)
@@ -111,10 +91,10 @@ public sealed class RecoveryCodeSignInStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        response = new SignInResponse() { UserId = user.Id, };
+        var response = new SignInResponse() { UserId = user.Id, };
 
         await _sessionManager.CreateAsync(device, cancellationToken);
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

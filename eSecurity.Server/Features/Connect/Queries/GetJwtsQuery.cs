@@ -24,6 +24,6 @@ public class GetJwksQueryHandler(
         jwks.Alg = SecurityAlgorithms.RsaSha256;
 
         var response = new JsonWebKeySet() { Keys = { jwks } };
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

@@ -45,6 +45,6 @@ public class GetUserVerificationMethodsQueryHandler(
             response.Methods.Remove(passkeyMethod);
         }
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

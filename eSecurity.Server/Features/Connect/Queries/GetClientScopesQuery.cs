@@ -23,6 +23,6 @@ public class GetClientScopesQueryHandler(
                 Description = scope.Description,
             }).ToList();
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

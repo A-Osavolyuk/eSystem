@@ -132,7 +132,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         await _context.UserEmails.AddAsync(userEmail, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> SetPhoneNumberAsync(UserEntity user, string phoneNumber, PhoneNumberType type,
@@ -158,7 +158,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> SetUsernameAsync(UserEntity user, string username,
@@ -171,7 +171,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> ManageEmailAsync(UserEntity user, EmailType type, string email,
@@ -194,7 +194,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserEmails.Update(nextEmail);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> VerifyEmailAsync(UserEntity user, string email,
@@ -212,7 +212,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user, string phoneNumber,
@@ -230,7 +230,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserPhoneNumbers.Update(userPhoneNumber);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> ResetEmailAsync(UserEntity user, string currentEmail,
@@ -251,7 +251,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string currentPhoneNumber,
@@ -270,7 +270,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserPhoneNumbers.Update(userPhoneNumber);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RemovePhoneNumberAsync(UserEntity user, string phoneNumber,
@@ -285,7 +285,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserPhoneNumbers.Remove(userPhoneNumber);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RemoveEmailAsync(UserEntity user, string email,
@@ -299,7 +299,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserEmails.Remove(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string currentEmail, string newEmail,
@@ -320,7 +320,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string currentPhoneNumber,
@@ -339,7 +339,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.UserPhoneNumbers.Update(userPhoneNumber);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber,
@@ -363,7 +363,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> AddEmailAsync(UserEntity user, string email,
@@ -388,7 +388,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         await _context.UserEmails.AddAsync(userEmail, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -418,7 +418,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         await _context.UserVerificationMethods.AddAsync(verificationMethod, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UpdateAsync(UserEntity user,
@@ -429,7 +429,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName,
@@ -443,7 +443,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> DeleteAsync(UserEntity user,
@@ -452,7 +452,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.Users.Remove(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<bool> IsUsernameTakenAsync(string userName,

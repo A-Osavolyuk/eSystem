@@ -67,7 +67,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             var signUpResult = await signUpStrategy.ExecuteAsync(signUpPayload, cancellationToken);
             
             return !signUpResult.Succeeded 
-                ? Result.Failure(signUpResult.GetError(), fallbackUri) 
+                ? Results.Found(fallbackUri) 
                 : signUpResult;
         }
 

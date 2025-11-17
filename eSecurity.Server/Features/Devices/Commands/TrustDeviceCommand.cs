@@ -39,7 +39,7 @@ public class TrustDeviceCommandHandler(
 
         if (user.HasMethods() && user.TwoFactorEnabled)
         {
-            return Result.Success(new TrustDeviceResponse()
+            return Results.Ok(new TrustDeviceResponse()
             {
                 IsTwoFactorEnabled = true,
                 UserId = user.Id
@@ -53,6 +53,6 @@ public class TrustDeviceCommandHandler(
             UserId = user.Id,
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

@@ -13,7 +13,7 @@ public sealed class TokenManager(
     {
         await _context.RefreshTokens.AddAsync(token, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async Task<RefreshTokenEntity?> FindByTokenAsync(string token, 
@@ -35,7 +35,7 @@ public sealed class TokenManager(
         _context.RefreshTokens.Update(token);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async Task<Result> RemoveAsync(RefreshTokenEntity token, CancellationToken cancellationToken = default)
@@ -43,6 +43,6 @@ public sealed class TokenManager(
         _context.RefreshTokens.Remove(token);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

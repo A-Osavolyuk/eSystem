@@ -85,6 +85,6 @@ public class AuthorizeCommandHandler(
             Code = code
         };
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

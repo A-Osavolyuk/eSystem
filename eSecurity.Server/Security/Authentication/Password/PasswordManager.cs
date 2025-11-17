@@ -25,7 +25,7 @@ public class PasswordManager(
         await _context.Passwords.AddAsync(passwordEntity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> ChangeAsync(UserEntity user, string newPassword, 
@@ -40,7 +40,7 @@ public class PasswordManager(
         _context.Passwords.Update(passwordEntity);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> ResetAsync(UserEntity user, string newPassword, 
@@ -55,7 +55,7 @@ public class PasswordManager(
         _context.Passwords.Update(passwordEntity);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RemoveAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -66,7 +66,7 @@ public class PasswordManager(
         _context.Passwords.Remove(passwordEntity);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public bool Check(UserEntity user, string password) 

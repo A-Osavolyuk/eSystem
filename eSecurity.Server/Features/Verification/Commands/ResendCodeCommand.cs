@@ -38,7 +38,7 @@ public class ResendCodeCommandHandler(
                 CodeResendAvailableDate = user.CodeResendAvailableDate
             };
 
-            return Result.Success(response);
+            return Results.Ok(response);
         }
 
         user.CodeResendAttempts += 1;
@@ -80,6 +80,6 @@ public class ResendCodeCommandHandler(
             CodeResendAvailableDate = user.CodeResendAvailableDate
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

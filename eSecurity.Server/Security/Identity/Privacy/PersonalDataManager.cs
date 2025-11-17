@@ -13,7 +13,7 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         await _context.PersonalData.AddAsync(personalData, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UpdateAsync(PersonalDataEntity personalData, 
@@ -22,7 +22,7 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         _context.PersonalData.Update(personalData);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> DeleteAsync(PersonalDataEntity personalData, 
@@ -31,6 +31,6 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         _context.PersonalData.Remove(personalData);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

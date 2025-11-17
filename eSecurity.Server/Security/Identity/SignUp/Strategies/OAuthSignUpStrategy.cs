@@ -66,7 +66,7 @@ public sealed class OAuthSignUpStrategy(
         };
 
         var createResult = await _userManager.CreateAsync(user, cancellationToken: cancellationToken);
-        if (!createResult.Succeeded) return Result.Failure(createResult.GetError());
+        if (!createResult.Succeeded) return createResult;
 
         var setResult = await _userManager.SetEmailAsync(user, oauthPayload.Email, EmailType.Primary, cancellationToken);
         if (!setResult.Succeeded) return setResult;
@@ -75,7 +75,7 @@ public sealed class OAuthSignUpStrategy(
         if (role is null) return Results.NotFound("Cannot find role 'User'");
 
         var assignResult = await _roleManager.AssignAsync(user, role, cancellationToken);
-        if (!assignResult.Succeeded) return Result.Failure(assignResult.GetError());
+        if (!assignResult.Succeeded) return assignResult;
 
         if (role.Permissions.Count > 0)
         {
@@ -85,7 +85,7 @@ public sealed class OAuthSignUpStrategy(
                 var result = await _permissionManager.GrantAsync(user, permission, cancellationToken);
 
                 if (result.Succeeded) continue;
-                return Result.Failure(result.GetError());
+                return result;
             }
         }
 
@@ -109,7 +109,7 @@ public sealed class OAuthSignUpStrategy(
         };
 
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
-        if (!deviceResult.Succeeded) return Result.Failure(deviceResult.GetError());
+        if (!deviceResult.Succeeded) return deviceResult;
 
         var message = new OAuthSignUpMessage()
         {
@@ -136,14 +136,13 @@ public sealed class OAuthSignUpStrategy(
         };
 
         var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);
-        if (!linkedAccountResult.Succeeded)
-            return Result.Failure(linkedAccountResult.GetError());
+        if (!linkedAccountResult.Succeeded) return linkedAccountResult;
 
         session.SignType = OAuthSignType.SignUp;
         session.LinkedAccountId = userLinkedAccount.Id;
 
         var sessionResult = await _oauthSessionManager.UpdateAsync(session, cancellationToken);
-        if (!sessionResult.Succeeded) return Result.Failure(sessionResult.GetError());
+        if (!sessionResult.Succeeded) return sessionResult;
 
         await _sessionManager.CreateAsync(newDevice, cancellationToken);
 
@@ -152,6 +151,6 @@ public sealed class OAuthSignUpStrategy(
             .WithQueryParam("sessionId", session.Id.ToString())
             .WithQueryParam("token", oauthPayload.Token);
 
-        return Result.Success(builder.Build());
+        return Results.Ok(builder.Build());
     }
 }

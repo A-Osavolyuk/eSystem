@@ -22,7 +22,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> BlockTemporaryAsync(UserEntity user, LockoutType type, LockoutPeriod period, 
@@ -50,7 +50,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
     
     public async ValueTask<Result> BlockTemporaryAsync(UserEntity user, LockoutType type, TimeSpan duration, 
@@ -68,7 +68,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UnblockAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
@@ -85,6 +85,6 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         _context.LockoutStates.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

@@ -54,7 +54,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         _context.Passkeys.Update(passkey);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> CreateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
@@ -62,7 +62,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         await _context.Passkeys.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UpdateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
@@ -70,7 +70,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         _context.Passkeys.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> DeleteAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
@@ -78,6 +78,6 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         _context.Passkeys.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 }

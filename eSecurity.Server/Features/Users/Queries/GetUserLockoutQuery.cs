@@ -25,6 +25,6 @@ public class GetLockoutStateQueryHandler(IUserManager userManager) : IRequestHan
             StartDate = user.LockoutState.StartDate,
         };
         
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

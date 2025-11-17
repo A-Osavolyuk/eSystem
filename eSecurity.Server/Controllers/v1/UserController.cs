@@ -21,14 +21,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> EnableAsync([FromBody] ChangeUsernameRequest request)
     {
         var result = await _sender.Send(new ChangeUsernameCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user")]
@@ -39,14 +32,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's state")]
@@ -57,14 +43,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserStateAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserStateQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's roles")]
@@ -75,14 +54,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserRolesAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserRolesQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's 2FA methods")]
@@ -93,14 +65,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserTwoFactorMethodsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserTwoFactorMethodsQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's verification methods")]
@@ -111,14 +76,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserVerificationMethodsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserVerificationDataQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's personal data")]
@@ -129,14 +87,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPersonalDataAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPersonalQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's lockout state")]
@@ -147,14 +98,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserLogoutStateAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserLockoutQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's linked accounts")]
@@ -165,14 +109,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserLinkedAccountsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserLinkedAccountDataQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's login methods")]
@@ -183,14 +120,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserLoginMethodsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserLoginMethodsQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's devices")]
@@ -201,14 +131,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserDevicesQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's device")]
@@ -219,14 +142,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId, Guid deviceId)
     {
         var result = await _sender.Send(new GetUserDeviceQuery(userId, deviceId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's emails")]
@@ -237,14 +153,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserEmailsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserEmailsQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's primary email")]
@@ -255,14 +164,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPrimaryEmailAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPrimaryEmailQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's phone numbers")]
@@ -273,14 +175,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPhoneNumbersQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Get user's primary phone number")]
@@ -291,13 +186,6 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPrimaryPhoneNumberAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPrimaryPhoneNumberQuery(userId));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }

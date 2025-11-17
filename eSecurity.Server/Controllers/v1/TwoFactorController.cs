@@ -20,14 +20,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> EnableAsync([FromBody] EnableTwoFactorRequest request)
     {
         var result = await _sender.Send(new EnableTwoFactorCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Disable 2FA")]
@@ -38,14 +31,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> DisableAsync([FromBody] DisableTwoFactorRequest request)
     {
         var result = await _sender.Send(new DisableTwoFactorCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Prefer 2FA method")]
@@ -56,14 +42,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> PreferAsync([FromBody] PreferTwoFactorMethodRequest request)
     {
         var result = await _sender.Send(new PreferTwoFactorMethodCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Generate QR code")]
@@ -74,14 +53,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GenerateQrCodeAsync([FromBody] GenerateQrCodeRequest request)
     {
         var result = await _sender.Send(new GenerateQrCodeCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Regenerate QR code")]
@@ -92,14 +64,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RegenerateQrCodeAsync([FromBody] RegenerateQrCodeRequest request)
     {
         var result = await _sender.Send(new RegenerateQrCodeCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Generate recovery codes")]
@@ -110,14 +75,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GenerateRecoveryCodesAsync([FromBody] GenerateRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new GenerateRecoveryCodesCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Load recovery codes")]
@@ -128,14 +86,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> LoadRecoveryCodesAsync([FromBody] LoadRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new LoadRecoveryCodesCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Revoke recovery codes")]
@@ -146,14 +97,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RevokeRecoveryCodesAsync([FromBody] RevokeRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new RevokeRecoveryCodesCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Verify authenticator")]
@@ -164,14 +108,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAuthenticatorAsync([FromBody] VerifyAuthenticatorRequest request)
     {
         var result = await _sender.Send(new VerifyAuthenticatorCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Reconfigure authenticator")]
@@ -182,13 +119,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ReconfigureAuthenticatorAsync([FromBody] ReconfigureAuthenticatorRequest request)
     {
         var result = await _sender.Send(new ReconfigureAuthenticatorCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }

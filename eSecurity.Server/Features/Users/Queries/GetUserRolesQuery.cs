@@ -25,6 +25,6 @@ public sealed class GetUserRolesQueryHandler(IUserManager userManager) : IReques
             NormalizedName = role.NormalizedName
         }).ToList();
         
-        return Result.Success(result);
+        return Results.Ok(result);
     }
 }

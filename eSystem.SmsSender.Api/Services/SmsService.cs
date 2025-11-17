@@ -21,6 +21,6 @@ public class SmsService(IAmazonSimpleNotificationService simpleNotificationServi
             return Results.InternalServerError($"Failed to send SMS with code: {response.HttpStatusCode}");
         }
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

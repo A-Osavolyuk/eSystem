@@ -20,14 +20,7 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> SendCodeAsync([FromBody] SendCodeRequest request)
     {
         var result = await _sender.Send(new SendCodeCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Resend code")]
@@ -38,16 +31,9 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ResendCodeAsync([FromBody] ResendCodeRequest request)
     {
         var result = await _sender.Send(new ResendCodeCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
-    
+
     [EndpointSummary("Verify code")]
     [EndpointDescription("verify code")]
     [ProducesResponseType(200)]
@@ -56,16 +42,9 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
     {
         var result = await _sender.Send(new VerifyCodeCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
-    
+
     [EndpointSummary("Verify authenticator code")]
     [EndpointDescription("verify authenticator code")]
     [ProducesResponseType(200)]
@@ -74,14 +53,7 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAuthenticatorCodeAsync([FromBody] VerifyAuthenticatorCodeRequest request)
     {
         var result = await _sender.Send(new VerifyAuthenticatorCodeCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
     
     [EndpointSummary("Verify passkey")]
@@ -92,13 +64,6 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyPasskeyAsync([FromBody] VerifyPasskeyRequest request)
     {
         var result = await _sender.Send(new VerifyPasskeyCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }

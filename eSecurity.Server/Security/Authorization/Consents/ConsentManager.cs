@@ -33,7 +33,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         await _context.Consents.AddAsync(consent, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> GrantAsync(ConsentEntity consent, ScopeEntity scope,
@@ -49,7 +49,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         await _context.GrantedScopes.AddAsync(grantedScope, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> RevokeAsync(ConsentEntity consent, ScopeEntity scope,
@@ -63,6 +63,6 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         _context.GrantedScopes.Remove(grantedScope);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return Results.Ok();
     }
 }

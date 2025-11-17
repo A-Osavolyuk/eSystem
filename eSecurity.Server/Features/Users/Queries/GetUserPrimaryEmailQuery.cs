@@ -31,6 +31,6 @@ public class GetUserPrimaryEmailQueryHandler(IUserManager userManager)
             VerifiedDate = userPrimaryEmail.VerifiedDate
         };
 
-        return Result.Success(response);
+        return Results.Ok(response);
     }
 }

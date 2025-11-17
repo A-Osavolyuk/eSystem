@@ -20,7 +20,7 @@ public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager
         await _context.OAuthSessions.AddAsync(session, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 
     public async ValueTask<Result> UpdateAsync(OAuthSessionEntity session, CancellationToken cancellationToken = default)
@@ -30,6 +30,6 @@ public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager
         _context.OAuthSessions.Update(session);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Results.Ok();
     }
 }

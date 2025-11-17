@@ -46,6 +46,6 @@ public class GenerateRequestOptionsCommandHandler(
         var options = _credentialFactory.CreateRequestOptions(device.Passkey, challenge, _credentialOptions);
 
         _sessionStorage.Set(ChallengeSessionKeys.Assertion, challenge);
-        return Result.Success(options);
+        return Results.Ok(options);
     }
 }

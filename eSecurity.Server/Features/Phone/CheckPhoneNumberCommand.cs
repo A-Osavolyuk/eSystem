@@ -17,6 +17,6 @@ public class CheckPhoneNumberCommandHandler(IUserManager userManager) : IRequest
         var isTaken = await _userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
         if (isTaken) return Results.BadRequest("Phone number is already taken.");
         
-        return Result.Success();
+        return Results.Ok();
     }
 }

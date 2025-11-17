@@ -46,7 +46,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
         
         var result = await _sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
         return result.Match(
-            s => Redirect(s.Message),
+            s => Redirect(s.Value!.ToString()!),
             f => Redirect(f.Value!.ToString()!));
     }
     
@@ -57,13 +57,6 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     public async ValueTask<IActionResult> LoadAsync([FromBody] LoadOAuthSessionRequest request)
     {
         var result = await _sender.Send(new LoadOAuthSessionCommand(request));
-
-        return result.Match(
-            s => Ok(HttpResponseBuilder.Create()
-                .Succeeded()
-                .WithMessage(s.Message)
-                .WithResult(s.Value)
-                .Build()),
-            ErrorHandler.Handle);
+        return ResultHandler.Handle(result);
     }
 }
