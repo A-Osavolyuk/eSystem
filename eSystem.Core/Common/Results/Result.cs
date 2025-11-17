@@ -1,35 +1,37 @@
-﻿namespace eSystem.Core.Common.Results;
+﻿using System.Net;
+
+namespace eSystem.Core.Common.Results;
 
 public class Result
 {
     private Result() {}
     
     public bool Succeeded { get; init; }
-    public StatusCode StatusCode { get; init; }
+    public HttpStatusCode StatusCode { get; init; }
     public object? Value { get; init; }
     public Error? Error { private get; init; }
 
-    public static Result Success(StatusCode statusCode, object? value) => new()
+    public static Result Success(HttpStatusCode statusCode, object? value) => new()
     {
         Succeeded = true,
         StatusCode = statusCode,
         Value = value,
     };
     
-    public static Result Success(StatusCode statusCode) => new()
+    public static Result Success(HttpStatusCode statusCode) => new()
     {
         Succeeded = true,
         StatusCode = statusCode,
     };
     
-    public static Result Failure(StatusCode statusCode, Error error) => new()
+    public static Result Failure(HttpStatusCode statusCode, Error error) => new()
     {
         Succeeded = false,
         StatusCode = statusCode,
         Error = error,
     };
     
-    public static Result Failure(StatusCode statusCode, object value) => new()
+    public static Result Failure(HttpStatusCode statusCode, object value) => new()
     {
         Succeeded = false,
         StatusCode = statusCode,
