@@ -30,18 +30,18 @@ public class JwtAuthenticationHandler(
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         var keysResult = await _connectService.GetPublicKeysAsync();
-        if (!keysResult.Success) return AuthenticateResult.Fail(keysResult.Message);
+        if (!keysResult.Succeeded) return AuthenticateResult.Fail(keysResult.GetError().ErrorDescription);
 
         var handler = new JwtSecurityTokenHandler();
         var securityToken = handler.ReadJwtToken(_tokenProvider.IdToken);
         if (securityToken is null) return AuthenticateResult.Fail("Invalid token.");
         
-        var keys = new JsonWebKeySet(keysResult.Result!.ToString());
+        var keys = new JsonWebKeySet(keysResult.Value!.ToString());
         var publicKey = keys.Keys.FirstOrDefault(x => x.KeyId == securityToken.Header.Kid);
         if (publicKey is null) return AuthenticateResult.Fail("Invalid key.");
 
         var openIdResult = await _connectService.GetOpenidConfigurationAsync();
-        if (openIdResult.Success) return AuthenticateResult.Fail(openIdResult.Message);
+        if (openIdResult.Succeeded) return AuthenticateResult.Fail(keysResult.GetError().ErrorDescription);
 
         var openIdOptions = openIdResult.Get<OpenIdOptions>();
         var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));

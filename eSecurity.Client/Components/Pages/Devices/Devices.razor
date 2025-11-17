@@ -42,7 +42,7 @@
     {
         var result = await UserService.GetUserDevicesAsync(UserState.UserId);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             var devices = result.Get<List<UserDeviceDto>>()!;
 
@@ -50,7 +50,7 @@
         }
         else
         {
-            Snackbar.Add(result.Message, Severity.Error);
+            Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 }

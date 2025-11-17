@@ -41,7 +41,7 @@
         var request = new LoadRecoveryCodesRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.LoadRecoveryCodesAsync(request);
 
-        if (result.Success) Codes = result.Get<List<string>>()!;
-        else Snackbar.Add(result.Message, Severity.Error);
+        if (result.Succeeded) Codes = result.Get<List<string>>()!;
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 }

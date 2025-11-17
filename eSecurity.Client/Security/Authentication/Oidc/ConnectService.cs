@@ -8,7 +8,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
 {
     private readonly IApiClient _apiClient = apiClient;
     
-    public async ValueTask<HttpResponse> GetPublicKeysAsync()
+    public async ValueTask<Result> GetPublicKeysAsync()
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -16,7 +16,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Url = "api/v1/Connect/.well-known/jwks.json",
             }, new HttpOptions() { Type = DataType.Text, Wrap = true });
 
-    public async ValueTask<HttpResponse> GetOpenidConfigurationAsync()
+    public async ValueTask<Result> GetOpenidConfigurationAsync()
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -24,7 +24,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Url = "api/v1/Connect/.well-known/openid-configuration",
             }, new HttpOptions() { Type = DataType.Text, Wrap = true });
 
-    public async ValueTask<HttpResponse> AuthorizeAsync(AuthorizeRequest request)
+    public async ValueTask<Result> AuthorizeAsync(AuthorizeRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -33,7 +33,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions() { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> TokenAsync(TokenRequest request)
+    public async ValueTask<Result> TokenAsync(TokenRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -42,7 +42,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions() { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> LogoutAsync(LogoutRequest request)
+    public async ValueTask<Result> LogoutAsync(LogoutRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {

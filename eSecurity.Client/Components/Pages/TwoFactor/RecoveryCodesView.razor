@@ -231,12 +231,12 @@
             var request = new LoadRecoveryCodesRequest() { UserId = UserState.UserId };
             var result = await TwoFactorService.LoadRecoveryCodesAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 Codes = result.Get<List<string>>()!;
                 StateHasChanged();
             }
-            else Snackbar.Add(result.Message, Severity.Error);
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -254,12 +254,12 @@
         var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             Codes = result.Get<List<string>>()!;
             _recoveryCodesRegenerated = true;
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
     
     private async Task OnDownloadAsync()

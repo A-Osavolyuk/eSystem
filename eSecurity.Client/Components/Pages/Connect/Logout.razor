@@ -83,13 +83,13 @@
 
         var result = await ConnectService.LogoutAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             await AuthenticationManager.SignOutAsync();
             
             var response = result.Get<LogoutResponse>();
             NavigationManager.NavigateTo(response.RedirectUri);
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 }

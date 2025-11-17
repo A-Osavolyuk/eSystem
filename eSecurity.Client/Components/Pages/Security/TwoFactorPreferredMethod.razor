@@ -90,12 +90,12 @@
 
         var result = await TwoFactorService.PreferAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             Type = value;
             await OnRefresh.InvokeAsync();
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
 }

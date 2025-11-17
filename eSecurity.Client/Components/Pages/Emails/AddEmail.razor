@@ -65,7 +65,7 @@
 
             var result = await SecurityService.CheckEmailAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 _showError = false;
                 _error = null;
@@ -74,7 +74,7 @@
             else
             {
                 _showError = true;
-                _error = result.Message;
+                _error = result.GetError().ErrorDescription;
             }
         }
         else if (!_form.IsValid) _showError = true;
@@ -90,12 +90,12 @@
 
         var result = await SecurityService.AddEmailAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             Model = new();
             await OnRefresh.InvokeAsync();
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
 }

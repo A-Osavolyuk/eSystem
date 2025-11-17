@@ -188,12 +188,12 @@
 
             var result = await PasskeyService.GenerateCreationOptionsAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 var options = result.Get<PublicKeyCredentialCreationOptions>()!;
                 await VerifyPasskeyAsync(options);
             }
-            else Snackbar.Add(result.Message, Severity.Error);
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -211,8 +211,8 @@
             };
 
             var result = await PasskeyService.CreateAsync(request);
-            if (result.Success) await _stepper.StepNextAsync();
-            else Snackbar.Add(result.Message, Severity.Error);
+            if (result.Succeeded) await _stepper.StepNextAsync();
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
         else _showError = true;
     }

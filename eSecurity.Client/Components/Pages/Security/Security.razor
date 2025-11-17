@@ -64,10 +64,10 @@ else
     private async Task LoadAsync()
     {
         var result = await UserService.GetUserLoginMethodsAsync(UserState.UserId);
-        if (result.Success)
+        if (result.Succeeded)
         {
             Model = result.Get<UserLoginMethodsDto>()!;
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System.Net;
+using System.Text.Json;
 
 namespace eSystem.Core.Common.Results;
 
 public class Result
 {
-    private Result() {}
-    
     public bool Succeeded { get; init; }
     public HttpStatusCode StatusCode { get; init; }
     public object? Value { get; init; }
@@ -39,6 +38,17 @@ public class Result
     };
     
     public Error GetError() => Error!;
+
+    public TResponse Get<TResponse>()
+    {
+        var json = Value!.ToString()!;
+        var serializationOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        return JsonSerializer.Deserialize<TResponse>(json, serializationOptions)!;
+    }
     
     public TResponse Match<TResponse>(Func<Result, TResponse> success, Func<Result, TResponse> failure)
     {

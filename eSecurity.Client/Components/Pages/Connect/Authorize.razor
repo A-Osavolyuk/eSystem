@@ -137,7 +137,7 @@
 
         var result = await ConnectService.AuthorizeAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             var response = result.Get<AuthorizeResponse>()!;
             var cookie = new SessionCookie()

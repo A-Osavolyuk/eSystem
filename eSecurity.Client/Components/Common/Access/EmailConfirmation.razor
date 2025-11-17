@@ -122,8 +122,8 @@
 
         var result = await VerificationService.SendCodeAsync(request);
 
-        if (result.Success) _sendStage = false;
-        else Snackbar.Add(result.Message, Severity.Error);
+        if (result.Succeeded) _sendStage = false;
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task OnVerifyAsync()
@@ -143,8 +143,8 @@
 
             var result = await VerificationService.VerifyCodeAsync(request);
 
-            if (result.Success) await OnAccessConfirmed.InvokeAsync();
-            else Snackbar.Add(result.Message, Severity.Error);
+            if (result.Succeeded) await OnAccessConfirmed.InvokeAsync();
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 

@@ -95,11 +95,11 @@
 
             var result = await SecurityService.SignUpAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 var response = result.Get<SignUpResponse>()!;
 
-                Snackbar.Add(result.Message, Severity.Success);
+                Snackbar.Add("Successfully signed-up. Not you need to verify your email address.", Severity.Success);
 
                 var builder = QueryBuilder.Create()
                     .WithUri(Links.Account.CompleteRegistrationPage)
@@ -110,7 +110,7 @@
             }
             else
             {
-                Snackbar.Add(result.Message, Severity.Error);
+                Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
             }
         }
     }

@@ -2,5 +2,5 @@
 
 public interface IFetchClient
 {
-    public ValueTask<HttpResponse> FetchAsync(FetchOptions options);
+    public ValueTask<Result> FetchAsync(FetchOptions options);
 }

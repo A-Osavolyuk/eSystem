@@ -116,13 +116,13 @@
             };
             var result = await SecurityService.SignInAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 var response = result.Get<SignInResponse>()!;
 
                 if (response.IsTwoFactorEnabled)
                 {
-                    Snackbar.Add(result.Message, Severity.Success);
+                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Success);
 
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.TwoFactorLoginPage)
@@ -140,9 +140,9 @@
             }
             else
             {
-                if (result.Result is null)
+                if (result.Value is null)
                 {
-                    Snackbar.Add(result.Message, Severity.Error);
+                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
                     return;
                 }
 
@@ -163,7 +163,7 @@
 
                     NavigationManager.NavigateTo(builder.Build());
 
-                    Snackbar.Add(result.Message, Severity.Info);
+                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Info);
                     return;
                 }
 
@@ -173,7 +173,7 @@
                         .WithUri(Links.Account.CompleteRegistrationPage)
                         .WithQueryParam("id", userId.ToString()!);
 
-                    Snackbar.Add(result.Message, Severity.Info);
+                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Info);
                     NavigationManager.NavigateTo(builder.Build());
                     return;
                 }
@@ -188,7 +188,7 @@
 
                 if (response is { FailedLoginAttempts: 0, IsLockedOut: false })
                 {
-                    Snackbar.Add(result.Message, Severity.Error);
+                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
                 }
                 else
                 {

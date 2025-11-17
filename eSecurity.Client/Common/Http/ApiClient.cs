@@ -15,6 +15,7 @@ using eSystem.Core.Security.Authentication.Oidc.Constants;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using AuthenticationManager = eSecurity.Client.Security.Authentication.AuthenticationManager;
+using Results = eSystem.Core.Common.Results.Results;
 
 namespace eSecurity.Client.Common.Http;
 
@@ -39,7 +40,7 @@ public class ApiClient(
     private readonly GatewayOptions _gatewayOptions = gatewayOptions;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
-    public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions)
+    public async ValueTask<Result> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions)
     {
         try
         {
@@ -51,7 +52,7 @@ public class ApiClient(
                 {
                     var result = await RefreshAsync();
 
-                    if (!result.Success)
+                    if (!result.Succeeded)
                     {
                         _tokenProvider.Clear();
                         _navigationManager.NavigateTo(Links.Account.SignIn);
@@ -70,51 +71,30 @@ public class ApiClient(
             var httpClient = _clientFactory.CreateClient("eSecurity.Client");
             var httpResponseMessage = await httpClient.SendAsync(message);
 
-            if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                var result = await RefreshAsync();
-
-                if (!result.Success)
-                {
-                    await _authenticationManager.SignOutAsync();
-                    _navigationManager.NavigateTo(Links.Account.SignIn);
-                }
-                else
-                {
-                    message.Headers.AddBearerAuthorization(_tokenProvider.AccessToken);
-                    httpResponseMessage = await httpClient.SendAsync(message);
-                }
-            }
-
             var serializationOptions = new JsonSerializerOptions()
             {
                 WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
-
-            var jsonResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-
-            if (httpOptions.Wrap)
-                return HttpResponseBuilder.Create()
-                    .Succeeded()
-                    .WithResult(jsonResponse)
-                    .Build();
-
-            var response = JsonSerializer.Deserialize<HttpResponse>(jsonResponse, serializationOptions)!;
-            return response;
+            
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var content = await httpResponseMessage.Content.ReadAsStringAsync();
+                return Result.Success(httpResponseMessage.StatusCode, content);
+            }
+            else
+            {
+                var error = await httpResponseMessage.Content.ReadAsAsync<Error>(serializationOptions);
+                return Result.Failure(httpResponseMessage.StatusCode, error);
+            }
         }
         catch (Exception ex)
         {
-            var response = HttpResponseBuilder.Create()
-                .Failed()
-                .WithMessage(ex.Message)
-                .Build();
-
-            return response;
+            return Results.InternalServerError(ex.Message);
         }
     }
 
-    private async Task<HttpResponse> RefreshAsync()
+    private async Task<Result> RefreshAsync()
     {
         var refreshToken = _cookieAccessor.Get(DefaultCookies.RefreshToken)!;
         var request = new TokenRequest()
@@ -135,9 +115,9 @@ public class ApiClient(
         var httpOptions = new HttpOptions() { Type = DataType.Text };
         var result = await SendAsync(httpRequest, httpOptions);
 
-        if (!result.Success) return result;
+        if (!result.Succeeded) return result;
 
-        var response = result.Get<TokenResponse>()!;
+        var response = result.Get<TokenResponse>();
         _tokenProvider.AccessToken = response.AccessToken;
         _tokenProvider.IdToken = response.IdToken;
 

@@ -78,13 +78,13 @@
         {
             var result = await UserService.GetUserDeviceAsync(UserId, DeviceId);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 _device = result.Get<UserDeviceDto>()!;
                 await LoadAsync();
                 StateHasChanged();
             }
-            else Snackbar.Add(result.Message, Severity.Error);
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -92,7 +92,7 @@
     {
         var result = await UserService.GetUserPrimaryEmailAsync(UserId);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             var response = result.Get<UserEmailDto>()!;
             _email = response.Email;
@@ -115,14 +115,14 @@
 
             await SendCodeAsync();
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task SendCodeAsync()
     {
         var request = _context!.ToSendCodeRequest();
         var result = await VerificationService.SendCodeAsync(request);
-        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+        if (!result.Succeeded) Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task OnTrustAsync()
@@ -134,12 +134,12 @@
             var request = _context!.ToVerifyCodeRequest(Model.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 await TrustAsync();
             }
 
-            else Snackbar.Add(result.Message, Severity.Error);
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -153,7 +153,7 @@
 
         var result = await DeviceService.TrustAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             var response = result.Get<TrustDeviceResponse>()!;
 
@@ -175,7 +175,7 @@
         }
         else
         {
-            Snackbar.Add(result.Message, Severity.Error);
+            Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 

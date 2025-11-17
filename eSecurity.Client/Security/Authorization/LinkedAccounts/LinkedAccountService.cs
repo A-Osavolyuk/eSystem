@@ -8,7 +8,7 @@ public class LinkedAccountService(IApiClient apiClient) : ILinkedAccountService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<HttpResponse> DisconnectAsync(DisconnectLinkedAccountRequest request)
+    public async ValueTask<Result> DisconnectAsync(DisconnectLinkedAccountRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {

@@ -8,7 +8,7 @@ public class OAuthService(IApiClient apiClient) : IOAuthService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<HttpResponse> LoadSessionAsync(LoadOAuthSessionRequest request)
+    public async ValueTask<Result> LoadSessionAsync(LoadOAuthSessionRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {

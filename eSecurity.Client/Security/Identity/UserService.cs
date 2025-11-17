@@ -7,7 +7,7 @@ public class UserService(IApiClient apiClient) : IUserService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<HttpResponse> GetUserVerificationMethodsAsync(Guid id)
+    public async ValueTask<Result> GetUserVerificationMethodsAsync(Guid id)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -16,7 +16,7 @@ public class UserService(IApiClient apiClient) : IUserService
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
 
-    public async ValueTask<HttpResponse> GetUserPrimaryEmailAsync(Guid id)
+    public async ValueTask<Result> GetUserPrimaryEmailAsync(Guid id)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -24,7 +24,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/emails/primary"
             }, new HttpOptions() { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GetUserEmailsAsync(Guid id)
+    public async ValueTask<Result> GetUserEmailsAsync(Guid id)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -32,7 +32,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/emails"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<HttpResponse> GetUserDeviceAsync(Guid id, Guid deviceId)
+    public async ValueTask<Result> GetUserDeviceAsync(Guid id, Guid deviceId)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -40,7 +40,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/devices/{deviceId}"
             }, new HttpOptions() { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GetUserDevicesAsync(Guid id)
+    public async ValueTask<Result> GetUserDevicesAsync(Guid id)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -48,7 +48,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/devices"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<HttpResponse> GetUserLinkedAccountsAsync(Guid id)
+    public async ValueTask<Result> GetUserLinkedAccountsAsync(Guid id)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -56,7 +56,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/linked-accounts"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<HttpResponse> GetUserTwoFactorMethodsAsync(Guid id)
+    public async ValueTask<Result> GetUserTwoFactorMethodsAsync(Guid id)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -64,7 +64,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/2fa/methods"
             }, new HttpOptions() { Type = DataType.Text });
 
-    public async ValueTask<HttpResponse> GetUserLoginMethodsAsync(Guid id)
+    public async ValueTask<Result> GetUserLoginMethodsAsync(Guid id)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {

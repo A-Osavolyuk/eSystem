@@ -78,7 +78,7 @@
         if (firstRender)
         {
             var result = await UserService.GetUserPrimaryEmailAsync(UserId);
-            if (result.Success)
+            if (result.Succeeded)
             {
                 var response = result.Get<UserEmailDto>()!;
                 _email = response;
@@ -86,7 +86,7 @@
 
                 await SendCodeAsync();
             }
-            else Snackbar.Add(result.Message, Severity.Error);
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -105,8 +105,8 @@
         };
 
         var request = _context!.ToSendCodeRequest();
-        var response = await VerificationService.SendCodeAsync(request);
-        Snackbar.Add(response.Message, response.Success ? Severity.Success : Severity.Error);
+        var result = await VerificationService.SendCodeAsync(request);
+        Snackbar.Add(result.GetError().ErrorDescription, result.Succeeded ? Severity.Success : Severity.Error);
         StateHasChanged();
     }
 
@@ -119,8 +119,8 @@
             var request = _context!.ToVerifyCodeRequest(Model.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
-            if (result.Success) await VerifyAsync();
-            else Snackbar.Add(result.Message, Severity.Error);
+            if (result.Succeeded) await VerifyAsync();
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -134,9 +134,9 @@
 
         var result = await SecurityService.VerifyEmailAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
-            Snackbar.Add(result.Message, Severity.Success);
+            Snackbar.Add(result.GetError().ErrorDescription, Severity.Success);
             NavigationManager.NavigateTo(ReturnUrl);
         }
     }

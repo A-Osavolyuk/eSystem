@@ -323,8 +323,8 @@
         var request = new GenerateQrCodeRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateQrCodeAsync(request);
 
-        if (result.Success) QrCode = result.Get<QrCode>()!;
-        else Snackbar.Add(result.Message, Severity.Error);
+        if (result.Succeeded) QrCode = result.Get<QrCode>()!;
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task OnVerifyAsync()
@@ -340,7 +340,7 @@
 
         var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);
 
-        if (result.Success) await GenerateRecoveryCodesAsync();
+        if (result.Succeeded) await GenerateRecoveryCodesAsync();
         else _showError = true;
     }
 
@@ -349,12 +349,12 @@
         var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             Codes = result.Get<List<string>>()!;
             await _stepper.StepNextAsync();
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task ShowSetupKeyAsync()
@@ -386,20 +386,20 @@
         var request = new EnableTwoFactorRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.EnableAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             await LoadMethodsAsync();
             await _stepper.StepNextAsync();
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task LoadMethodsAsync()
     {
         var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.UserId);
 
-        if (result.Success) Methods = result.Get<List<UserTwoFactorMethod>>()!;
-        else Snackbar.Add(result.Message, Severity.Error);
+        if (result.Succeeded) Methods = result.Get<List<UserTwoFactorMethod>>()!;
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
 }

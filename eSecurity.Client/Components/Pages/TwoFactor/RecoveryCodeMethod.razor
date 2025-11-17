@@ -123,14 +123,14 @@
 
             var result = await SecurityService.SignInAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 var response = result.Get<SignInResponse>()!;
 
                 UserState.UserId = response.UserId;
                 await OnSignIn.InvokeAsync();
             }
-            else Snackbar.Add(result.Message, Severity.Error);
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
     

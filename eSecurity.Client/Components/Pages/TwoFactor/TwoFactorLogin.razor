@@ -71,12 +71,12 @@
     {
         var result = await UserService.GetUserTwoFactorMethodsAsync(UserId);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             Methods = result.Get<List<UserTwoFactorMethod>>()!;
             PreferredMethod = Methods.Single(x => x.Preferred).Method;
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private void ChangeMethod(TwoFactorMethod method)

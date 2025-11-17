@@ -42,7 +42,7 @@
 
             var result = await ConnectService.TokenAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 var response = result.Get<TokenResponse>();
 
@@ -77,7 +77,7 @@
 
         var result = await FetchClient.FetchAsync(fetchOptions);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             var response = result.Get<SignIdentity>();
             var claims = response.Claims.Select(c => new Claim(c.Type, c.Value));

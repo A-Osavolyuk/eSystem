@@ -94,8 +94,8 @@
             var result = await PasskeyService.GenerateRequestOptionsAsync(request);
             var options = result.Get<PublicKeyCredentialRequestOptions>()!;
 
-            if (result.Success) await VerifyAsync(options);
-            else Snackbar.Add(result.Message, Severity.Error);
+            if (result.Succeeded) await VerifyAsync(options);
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -115,7 +115,7 @@
 
             var result = await SecurityService.SignInAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 var response = result.Get<SignInResponse>()!;
                 
@@ -124,9 +124,9 @@
             }
             else
             {
-                if (result.Result is null)
+                if (result.Value is null)
                 {
-                    Snackbar.Add(result.Message, Severity.Error);
+                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
                     return;
                 }
 
@@ -142,7 +142,7 @@
                 }
                 else
                 {
-                    Snackbar.Add(result.Message, Severity.Error);
+                    Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
                 }
             }
         }

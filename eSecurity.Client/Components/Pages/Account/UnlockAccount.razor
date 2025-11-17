@@ -93,14 +93,14 @@
 
             var result = await SecurityService.UnlockAccountAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 Snackbar.Add("Account was successfully recovered", Severity.Success);
                 NavigationManager.NavigateTo(ReturnUrl);
             }
             else
             {
-                Snackbar.Add(result.Message, Severity.Error);
+                Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
             }
         }
     }

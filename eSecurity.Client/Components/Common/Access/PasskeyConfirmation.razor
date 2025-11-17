@@ -115,7 +115,7 @@
         var request = new GenerateRequestOptionsRequest() { Username = UserState.Credentials!.Username! };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             var options = result.Get<PublicKeyCredentialRequestOptions>()!;
             await VerifyAsync(options);
@@ -124,7 +124,7 @@
         {
             _showError = true;
             _isLoading = false;
-            Snackbar.Add(result.Message, Severity.Error);
+            Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -144,12 +144,12 @@
 
             var result = await VerificationService.VerifyPasskeyAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 await OnAccessConfirmed.InvokeAsync();
                 _showError = false;
             }
-            else Snackbar.Add(result.Message, Severity.Error);
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
         else _showError = true;
 

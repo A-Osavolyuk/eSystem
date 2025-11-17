@@ -39,7 +39,7 @@
         };
 
         var result = await VerificationService.ResendCodeAsync(request);
-        if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+        if (!result.Succeeded) Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
 }

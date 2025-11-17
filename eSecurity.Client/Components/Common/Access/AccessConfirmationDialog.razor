@@ -98,8 +98,8 @@
     {
         var result = await UserService.GetUserVerificationMethodsAsync(UserState.UserId);
 
-        if (result.Success) Model = result.Get<UserVerificationData>()!;
-        else Snackbar.Add(result.Message, Severity.Error);
+        if (result.Succeeded) Model = result.Get<UserVerificationData>()!;
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
 }

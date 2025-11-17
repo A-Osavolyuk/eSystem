@@ -191,14 +191,14 @@
 
             var result = await SecurityService.ChangeUsernameAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 Snackbar.Add("Username was successfully added", Severity.Success);
                 NavigationManager.NavigateTo(Links.Account.Profile);
             }
             else
             {
-                Snackbar.Add(result.Message, Severity.Error);
+                Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
             }
         }
     }
@@ -217,14 +217,14 @@
 
             var result = await SecurityService.AddPasswordAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 Snackbar.Add("Password was successfully added", Severity.Success);
                 await StepNextAsync();
             }
             else
             {
-                Snackbar.Add(result.Message, Severity.Error);
+                Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
             }
         }
     }

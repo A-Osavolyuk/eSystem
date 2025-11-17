@@ -50,7 +50,7 @@ public sealed class AuthenticationManager(
         };
 
         var result = await _fetchClient.FetchAsync(fetchOptions);
-        if (result.Success)
+        if (result.Succeeded)
         {
             await (_authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignOutAsync();
             await _storage.ClearAsync();

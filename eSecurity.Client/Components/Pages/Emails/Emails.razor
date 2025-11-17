@@ -91,7 +91,7 @@
     {
         var result = await UserService.GetUserEmailsAsync(UserState.UserId);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             var emails = result.Get<List<UserEmailDto>>()!;
             Model = new()
@@ -101,14 +101,14 @@
                 RecoveryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Recovery)
             };
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task LoadLinkedAccountsAsync()
     {
         var result = await UserService.GetUserLinkedAccountsAsync(UserState.UserId);
 
-        if (result.Success) LinkedAccountsData = result.Get<UserLinkedAccountData>()!;
-        else Snackbar.Add(result.Message, Severity.Error);
+        if (result.Succeeded) LinkedAccountsData = result.Get<UserLinkedAccountData>()!;
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 }

@@ -232,8 +232,8 @@
 
             var request = _messageContext!.ToSendCodeRequest();
             var result = await VerificationService.SendCodeAsync(request);
-            if (result.Success) await _stepper.StepNextAsync();
-            else Snackbar.Add(result.Message, Severity.Error);
+            if (result.Succeeded) await _stepper.StepNextAsync();
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -255,14 +255,14 @@
 
         var result = await SecurityService.ChangeEmailAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             Snackbar.Add("Email address was successfully changed", Severity.Success);
             NavigationManager.NavigateTo(ReturnUrl);
         }
         else
         {
-            Snackbar.Add(result.Message, Severity.Error);
+            Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 
@@ -275,8 +275,8 @@
             var request = _messageContext!.ToVerifyCodeRequest(ConfirmModel.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
-            if (result.Success) await ChangeAsync();
-            else Snackbar.Add(result.Message, Severity.Error);
+            if (result.Succeeded) await ChangeAsync();
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 

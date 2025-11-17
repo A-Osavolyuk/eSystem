@@ -173,11 +173,11 @@
         var request = new RegenerateQrCodeRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.RegenerateQrCodeAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             QrCode = result.Get<QrCode>()!;
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task ShowSetupKeyAsync()
@@ -210,7 +210,7 @@
 
         var result = await TwoFactorService.VerifyAuthenticatorAsync(request);
 
-        if (result.Success) _codeValid = true;
+        if (result.Succeeded) _codeValid = true;
         else _showError = true;
     }
 
@@ -224,12 +224,12 @@
 
         var result = await TwoFactorService.ReconfigureAuthenticatorAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             Snackbar.Add("Authenticator app was successfully configured.", Severity.Success);
             await OnClose.InvokeAsync();
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
 }

@@ -142,14 +142,14 @@
 
             var result = await SecurityService.RemoveEmailAsync(request);
 
-            if (result.Success)
+            if (result.Succeeded)
             {
                 Snackbar.Add("Email was successfully removed", Severity.Success);
                 await OnRefresh.InvokeAsync();
             }
             else
             {
-                Snackbar.Add(result.Message, Severity.Error);
+                Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
             }
         }
     }

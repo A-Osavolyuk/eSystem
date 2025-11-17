@@ -161,8 +161,8 @@
 
             var result = await LinkedAccountService.DisconnectAsync(request);
 
-            if (result.Success) await OnRefresh.InvokeAsync();
-            else Snackbar.Add(result.Message, Severity.Error);
+            if (result.Succeeded) await OnRefresh.InvokeAsync();
+            else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
         }
     }
 }

@@ -89,7 +89,7 @@
 
             var request = _context.ToSendCodeRequest();
             var result = await VerificationService.SendCodeAsync(request);
-            if (!result.Success) Snackbar.Add(result.Message, Severity.Error);
+            if (!result.Succeeded) Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
             
             StateHasChanged();
         }
@@ -100,8 +100,8 @@
         var request = _context!.ToVerifyCodeRequest(Model.Code);
         var result = await VerificationService.VerifyCodeAsync(request);
 
-        if (result.Success) await ManageAsync();
-        else Snackbar.Add(result.Message, Severity.Error);
+        if (result.Succeeded) await ManageAsync();
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
     private async Task ManageAsync()
@@ -122,12 +122,12 @@
 
         var result = await SecurityService.ManageEmailAsync(request);
 
-        if (result.Success)
+        if (result.Succeeded)
         {
             await UserState.Change();
             NavigationManager.NavigateTo(ReturnUrl);
         }
-        else Snackbar.Add(result.Message, Severity.Error);
+        else Snackbar.Add(result.GetError().ErrorDescription, Severity.Error);
     }
 
 }
