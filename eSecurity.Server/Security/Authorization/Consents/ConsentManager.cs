@@ -20,16 +20,8 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
             c => c.UserId == user.Id && c.ClientId == client.Id, cancellationToken);
     }
 
-    public async ValueTask<Result> CreateAsync(UserEntity user, ClientEntity client, 
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(ConsentEntity consent, CancellationToken cancellationToken = default)
     {
-        var consent = new ConsentEntity()
-        {
-            UserId = user.Id,
-            ClientId = client.Id,
-            CreateDate = DateTimeOffset.UtcNow
-        };
-        
         await _context.Consents.AddAsync(consent, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         

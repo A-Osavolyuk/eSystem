@@ -19,8 +19,8 @@ public static class AuthorizationExtensions
         builder.Services.AddDeviceManagement();
         builder.Services.AddOAuthAuthorization();
         builder.Services.AddPermissionManagement();
-        builder.Services.AddConsentManagement();
 
+        builder.Services.AddScoped<IConsentManager, ConsentManager>();
         builder.Services.AddScoped<IScopeManager, ScopeManager>();
     }
 }

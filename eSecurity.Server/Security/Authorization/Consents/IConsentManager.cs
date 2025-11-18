@@ -10,7 +10,7 @@ public interface IConsentManager
     public ValueTask<ConsentEntity?> FindAsync(UserEntity user, ClientEntity client, 
         CancellationToken cancellationToken = default);
     
-    public ValueTask<Result> CreateAsync(UserEntity user, ClientEntity client, 
+    public ValueTask<Result> CreateAsync(ConsentEntity consent, 
         CancellationToken cancellationToken = default);
     
     public ValueTask<Result> GrantAsync(ConsentEntity consent, ScopeEntity scope, 
