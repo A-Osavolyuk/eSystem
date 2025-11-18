@@ -44,12 +44,13 @@ public sealed class HandleOAuthLoginCommandHandler(
          };
 
         if (!string.IsNullOrEmpty(request.RemoteError)) 
-            return Results.InternalServerError(request.RemoteError, fallbackUri);
+            return Results.InternalServerError(request.RemoteError);
 
         var email = request.AuthenticationResult.Principal.Claims
             .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
-        if (email is null) return Results.BadRequest("Email is not provider in credentials", fallbackUri);
+        //TODO: Implement redirect to fallback page on error
+        if (email is null) return Results.BadRequest("Email is not provider in credentials");
 
         var user = await _userManager.FindByEmailAsync(email, cancellationToken);
         if (user is null)

@@ -34,7 +34,11 @@ public sealed class OAuthSignInStrategy(
         CancellationToken cancellationToken = default)
     {
         if(payload is not OAuthSignInPayload oauthPayload)
-            return Results.BadRequest(Errors.Common.InvalidPayloadType, "Invalid payload type");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPayloadType, 
+                Description = "Invalid payload type"
+            });
 
         var user = await _userManager.FindByEmailAsync(oauthPayload.Email, cancellationToken);
         if (user is null) return Results.BadRequest($"Cannot find user with email {oauthPayload.Email}.");
@@ -66,7 +70,11 @@ public sealed class OAuthSignInStrategy(
         }
         
         if (device.IsBlocked) 
-            return Results.BadRequest(Errors.Common.BlockedDevice, "Device is blocked");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.BlockedDevice, 
+                Description = "Device is blocked"
+            });
         
         if (!device.IsTrusted)
         {

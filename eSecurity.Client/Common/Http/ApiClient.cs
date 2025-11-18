@@ -175,7 +175,11 @@ public class ApiClient(
         if (!result.Succeeded)
         {
             var error = result.GetError();
-            return Results.BadRequest(error.Code, error.Description);
+            return Results.BadRequest(new Error()
+            {
+                Code = error.Code, 
+                Description = error.Description,
+            });
         }
 
         var response = result.Get();

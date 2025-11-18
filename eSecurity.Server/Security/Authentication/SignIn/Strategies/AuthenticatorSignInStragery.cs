@@ -39,7 +39,11 @@ public sealed class AuthenticatorSignInStrategy(
         CancellationToken cancellationToken = default)
     {
         if (payload is not AuthenticatorSignInPayload authenticatorPayload)
-            return Results.BadRequest(Errors.Common.InvalidPayloadType, "Invalid payload type");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPayloadType,
+                Description = "Invalid payload type"
+            });
 
         var user = await _userManager.FindByIdAsync(authenticatorPayload.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {authenticatorPayload.UserId}.");
@@ -82,12 +86,16 @@ public sealed class AuthenticatorSignInStrategy(
             user.FailedLoginAttempts += 1;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-                return Results.BadRequest(Errors.Common.FailedLoginAttempt, "Invalid two-factor code.",
-                    new()
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.FailedLoginAttempt, 
+                    Description = "Invalid two-factor code.",
+                    Details = new()
                     {
                         { "maxFailedLoginAttempts", _options.MaxFailedLoginAttempts },
                         { "failedLoginAttempts", user.FailedLoginAttempts },
-                    });
+                    }
+                });
 
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
@@ -97,9 +105,12 @@ public sealed class AuthenticatorSignInStrategy(
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
-            return Results.BadRequest(Errors.Common.TooManyFailedLoginAttempts,
-                "Account is locked out due to too many failed login attempts",
-                new() { { "userId", user.Id } });
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.TooManyFailedLoginAttempts,
+                Description = "Account is locked out due to too many failed login attempts",
+                Details = new() { { "userId", user.Id } }
+            });
         }
 
         if (user.FailedLoginAttempts > 0)

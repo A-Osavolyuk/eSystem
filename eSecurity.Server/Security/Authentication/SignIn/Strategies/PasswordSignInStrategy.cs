@@ -37,7 +37,11 @@ public sealed class PasswordSignInStrategy(
         UserEntity? user = null;
 
         if (payload is not PasswordSignInPayload passwordPayload)
-            return Results.BadRequest(Errors.Common.InvalidPayloadType, "Invalid payload type");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPayloadType,
+                Description = "Invalid payload type"
+            });
 
         if (_options.AllowUserNameLogin)
         {
@@ -80,12 +84,20 @@ public sealed class PasswordSignInStrategy(
 
         var userPrimaryEmail = user.GetEmail(EmailType.Primary)!;
         if (_options.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
-            return Results.BadRequest(Errors.Common.UnverifiedEmail, "Email is not verified.",
-                new() { { "userId", user.Id } });
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.UnverifiedEmail,
+                Description = "Email is not verified.",
+                Details = new() { { "userId", user.Id } }
+            });
 
         if (user.LockoutState.Enabled)
-            return Results.BadRequest(Errors.Common.AccountLockedOut, "Account is locked out",
-                new() { { "userId", user.Id } });
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.AccountLockedOut,
+                Description = "Account is locked out",
+                Details = new() { { "userId", user.Id } }
+            });
 
         if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
@@ -98,12 +110,16 @@ public sealed class PasswordSignInStrategy(
             if (!updateResult.Succeeded) return updateResult;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-                return Results.BadRequest(Errors.Common.FailedLoginAttempt, "The password is not valid.",
-                    new()
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.FailedLoginAttempt,
+                    Description = "The password is not valid.",
+                    Details = new()
                     {
                         { "maxFailedLoginAttempts", _options.MaxFailedLoginAttempts },
                         { "failedLoginAttempts", user.FailedLoginAttempts },
-                    });
+                    }
+                });
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
@@ -113,9 +129,12 @@ public sealed class PasswordSignInStrategy(
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            return Results.BadRequest(Errors.Common.TooManyFailedLoginAttempts,
-                "Account is locked out due to too many failed login attempts",
-                new() { { "userId", user.Id } });
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.TooManyFailedLoginAttempts,
+                Description = "Account is locked out due to too many failed login attempts",
+                Details = new() { { "userId", user.Id } }
+            });
         }
 
         if (user.FailedLoginAttempts > 0)
@@ -129,17 +148,23 @@ public sealed class PasswordSignInStrategy(
         if (_options.RequireTrustedDevice)
         {
             if (device.IsBlocked)
-                return Results.BadRequest(Errors.Common.BlockedDevice,
-                    "Cannot sign in, device is blocked.");
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.BlockedDevice,
+                    Description = "Cannot sign in, device is blocked."
+                });
 
             if (!device.IsTrusted)
-                return Results.BadRequest(Errors.Common.UntrustedDevice, 
-                    "You need to trust this device before sign in.",
-                    new()
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.UntrustedDevice,
+                    Description = "You need to trust this device before sign in.",
+                    Details = new()
                     {
                         { "userId", user.Id },
                         { "deviceId", device.Id }
-                    });
+                    }
+                });
         }
 
         var response = new SignInResponse() { UserId = user.Id, };

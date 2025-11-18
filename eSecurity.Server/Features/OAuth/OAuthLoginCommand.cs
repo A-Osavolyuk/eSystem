@@ -22,9 +22,10 @@ public sealed class OAuthLoginCommandHandler(
     {
         var fallbackUri = request.FallbackUri;
         
+        //TODO: Implement redirect to fallback on error
         if (!_options.AllowOAuthLogin)
         {
-            return Results.BadRequest("Signing with linked account is not allowed.", fallbackUri);
+            return Results.BadRequest("Signing with linked account is not allowed.");
         }
         
         var randomBytes = KeyGeneration.GenerateRandomKey(20);
