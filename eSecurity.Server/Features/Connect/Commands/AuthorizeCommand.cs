@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
+using eSecurity.Core.Security.Authentication.Oidc;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
@@ -18,45 +19,135 @@ public class AuthorizeCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
-    IClientManager clientManager) : IRequestHandler<AuthorizeCommand, Result>
+    IClientManager clientManager,
+    IOptions<OpenIdOptions> options) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly IClientManager _clientManager = clientManager;
+    private readonly OpenIdOptions _options = options.Value;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
+        if (!_options.ResponseTypesSupported.Contains(request.Request.ResponseType))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.UnsupportedResponseType,
+                Description = $"'{request.Request.ResponseType}' is unsupported response type"
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Request.Nonce))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "'nonce' param is required."
+            });
+        }
+        
+        var unsupportedScopes = request.Request.Scopes
+            .Where(x => !_options.ScopesSupported.Contains(x))
+            .ToList();
+
+        if (unsupportedScopes.Count > 0)
+        {
+            if (unsupportedScopes.Count == 1)
+            {
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.OAuth.InvalidScope,
+                    Description = $"'{unsupportedScopes.First()}' scope is invalid."
+                });
+            }
+
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidScope,
+                Description = $"'{string.Join(" ", unsupportedScopes)}' scopes are invalid."
+            });
+        }
+
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null)
+        {
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "User was not found."
+            });
+        }
 
         var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
 
         var device = user.GetDevice(userAgent, ipAddress);
-        if (device is null) return Results.NotFound("Invalid device.");
+        if (device is null)
+        {
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Invalid device."
+            });
+        }
 
         var session = await _sessionManager.FindAsync(device, cancellationToken);
-        if (session is null) return Results.NotFound("Invalid authorization session.");
+        if (session is null)
+        {
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Invalid authorization session."
+            });
+        }
 
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client not found.");
-        if (!client.HasRedirectUri(request.Request.RedirectUri)) return Results.BadRequest("Invalid redirect URI.");
-        if (!client.HasScopes(request.Request.Scopes)) return Results.BadRequest("Invalid scopes.");
-        if (string.IsNullOrWhiteSpace(request.Request.Nonce)) return Results.BadRequest("Invalid nonce.");
+        if (client is null)
+        {
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.OAuth.InvalidClient,
+                Description = "Client was not found."
+            });
+        }
+
+        if (!client.HasRedirectUri(request.Request.RedirectUri))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "'redirect_uri' is invalid."
+            });
+        }
+        
+        if (!client.HasScopes(request.Request.Scopes))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidScope,
+                Description = "Invalid scopes."
+            });
+        }
 
         if (client is { Type: ClientType.Public, RequirePkce: true })
         {
             if (string.IsNullOrEmpty(request.Request.CodeChallenge))
-                return Results.BadRequest("Code challenge is required.");
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.OAuth.InvalidRequest,
+                    Description = "'code_challenge' param is required for public clients."
+                });
 
             if (string.IsNullOrEmpty(request.Request.CodeChallengeMethod))
-                return Results.BadRequest("Code challenge method is required.");
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.OAuth.InvalidRequest,
+                    Description = "'code_challenge_method' param is required for public clients."
+                });
         }
-
-        if (request.Request.ResponseType != ResponseTypes.Code) 
-            return Results.BadRequest("Invalid response type.");
 
         var code = _authorizationCodeManager.Generate();
         var authorizationCode = new AuthorizationCodeEntity()
