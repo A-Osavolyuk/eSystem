@@ -119,10 +119,7 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
     
-    [SupplyParameterFromForm] 
     private RecoverAccountModel RecoverAccountModel { get; set; } = new();
-    
-    [SupplyParameterFromForm] 
     private CodeModel CodeModel { get; set; } = new();
 
     private MudStepperExtended _stepper = new();

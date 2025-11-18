@@ -141,11 +141,8 @@
 
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
-
-    [SupplyParameterFromForm] 
+    
     private ResetEmailModel ResetModel { get; set; } = new();
-
-    [SupplyParameterFromForm] 
     private CodeModel ConfirmModel { get; set; } = new();
 
     private PatternMask _mask = new("000000");

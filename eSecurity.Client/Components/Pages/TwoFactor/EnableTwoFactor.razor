@@ -287,7 +287,7 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
 
-    [SupplyParameterFromForm] private CodeModel Model { get; set; } = new();
+    private CodeModel Model { get; set; } = new();
 
     private MudStepperExtended _stepper = new();
     private MudForm _form = new();

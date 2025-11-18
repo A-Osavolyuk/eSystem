@@ -160,8 +160,8 @@
     [SupplyParameterFromQuery(Name = "provider")]
     public string Provider { get; set; } = string.Empty;
 
-    [SupplyParameterFromForm] public AddPasswordModel AddPasswordModel { get; set; } = new();
-    [SupplyParameterFromForm] public AddUsernameModel AddUsernameModel { get; set; } = new();
+    public AddPasswordModel AddPasswordModel { get; set; } = new();
+    public AddUsernameModel AddUsernameModel { get; set; } = new();
 
     private MudStepperExtended _stepper = new();
     private MudForm _addPasswordForm = new();

@@ -123,7 +123,6 @@
     [SupplyParameterFromQuery(Name = "type")]
     private string Type { get; set; } = string.Empty;
 
-    [SupplyParameterFromForm] 
     private VerifyEmailModel Model { get; set; } = new();
 
     private PatternMask _mask = new("000000");

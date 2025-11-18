@@ -65,7 +65,7 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     private string ReturnUrl { get; set; } = string.Empty;
 
-    [SupplyParameterFromForm] private VerifyEmailModel Model { get; set; } = new();
+    private VerifyEmailModel Model { get; set; } = new();
 
     private MudForm _form = new();
     private PatternMask _mask = new("000000");

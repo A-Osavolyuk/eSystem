@@ -14,7 +14,6 @@ namespace eSecurity.Client.Security.Authentication;
 public sealed class AuthenticationManager(
     NavigationManager navigationManager,
     AuthenticationStateProvider authenticationStateProvider,
-    TokenProvider tokenProvider,
     IFetchClient fetchClient,
     IStorage storage,
     IOptions<ClientOptions> clientOptions)

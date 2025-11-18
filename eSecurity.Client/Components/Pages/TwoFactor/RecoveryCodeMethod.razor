@@ -99,7 +99,6 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
     
-    [SupplyParameterFromForm] 
     public CodeModel Model { get; set; } = new();
     
     private MudForm _form = new();
