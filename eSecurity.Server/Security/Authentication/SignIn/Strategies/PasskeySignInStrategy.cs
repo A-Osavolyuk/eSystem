@@ -42,7 +42,8 @@ public sealed class PasskeySignInStrategy(
         if (!result.Succeeded) return result;
 
         if (user.LockoutState.Enabled)
-            return Results.BadRequest(Errors.Common.AccountLockedOut, "Account is locked out");
+            return Results.BadRequest(Errors.Common.AccountLockedOut, "Account is locked out",
+                new() { { "userId", user.Id } });
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;

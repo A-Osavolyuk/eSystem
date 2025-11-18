@@ -80,10 +80,12 @@ public sealed class PasswordSignInStrategy(
 
         var userPrimaryEmail = user.GetEmail(EmailType.Primary)!;
         if (_options.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
-            return Results.BadRequest("User's primary email is not verified.");
+            return Results.BadRequest(Errors.Common.UnverifiedEmail, "Email is not verified.",
+                new() { { "userId", user.Id } });
 
         if (user.LockoutState.Enabled)
-            return Results.BadRequest(Errors.Common.AccountLockedOut, "Account is locked out");
+            return Results.BadRequest(Errors.Common.AccountLockedOut, "Account is locked out",
+                new() { { "userId", user.Id } });
 
         if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
 
@@ -96,7 +98,12 @@ public sealed class PasswordSignInStrategy(
             if (!updateResult.Succeeded) return updateResult;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-                return Results.BadRequest("The password is not valid.");
+                return Results.BadRequest(Errors.Common.FailedLoginAttempt, "The password is not valid.",
+                    new()
+                    {
+                        { "maxFailedLoginAttempts", _options.MaxFailedLoginAttempts },
+                        { "failedLoginAttempts", user.FailedLoginAttempts },
+                    });
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
@@ -107,7 +114,8 @@ public sealed class PasswordSignInStrategy(
             if (!lockoutResult.Succeeded) return lockoutResult;
 
             return Results.BadRequest(Errors.Common.TooManyFailedLoginAttempts,
-                "Account is locked out due to too many failed login attempts");
+                "Account is locked out due to too many failed login attempts",
+                new() { { "userId", user.Id } });
         }
 
         if (user.FailedLoginAttempts > 0)
@@ -125,12 +133,17 @@ public sealed class PasswordSignInStrategy(
                     "Cannot sign in, device is blocked.");
 
             if (!device.IsTrusted)
-                return Results.BadRequest(Errors.Common.UntrustedDevice,
-                    "You need to trust this device before sign in.");
+                return Results.BadRequest(Errors.Common.UntrustedDevice, 
+                    "You need to trust this device before sign in.",
+                    new()
+                    {
+                        { "userId", user.Id },
+                        { "deviceId", device.Id }
+                    });
         }
-        
+
         var response = new SignInResponse() { UserId = user.Id, };
-        
+
         if (user.HasMethods() && user.TwoFactorEnabled)
             response.IsTwoFactorEnabled = true;
 

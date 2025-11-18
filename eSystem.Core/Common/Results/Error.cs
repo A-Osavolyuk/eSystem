@@ -14,5 +14,5 @@ public class Error
     public string? Uri { get; set; }
 
     [JsonPropertyName("details")]
-    public Dictionary<string, string> Details { get; set; } = [];
+    public Dictionary<string, object> Details { get; set; } = [];
 }

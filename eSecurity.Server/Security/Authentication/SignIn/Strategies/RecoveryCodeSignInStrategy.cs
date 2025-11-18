@@ -70,7 +70,12 @@ public sealed class RecoveryCodeSignInStrategy(
             user.FailedLoginAttempts += 1;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-                return Results.BadRequest(Errors.Common.InvalidCode, "Invalid code.");
+                return Results.BadRequest(Errors.Common.FailedLoginAttempt, "Invalid code.",
+                    new()
+                    {
+                        { "maxFailedLoginAttempts", _options.MaxFailedLoginAttempts },
+                        { "failedLoginAttempts", user.FailedLoginAttempts },
+                    });
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
@@ -80,7 +85,8 @@ public sealed class RecoveryCodeSignInStrategy(
 
             if (!lockoutResult.Succeeded) return lockoutResult;
             return Results.BadRequest(Errors.Common.AccountLockedOut,
-                "Account is locked out due to too many failed login attempts");
+                "Account is locked out due to too many failed login attempts",
+                new() { { "userId", user.Id } });
         }
 
         if (user.FailedLoginAttempts > 0)

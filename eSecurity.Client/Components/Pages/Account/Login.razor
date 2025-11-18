@@ -144,8 +144,8 @@
 
                 if (error.Code == Errors.Common.UntrustedDevice)
                 {
-                    var deviceId = error.Details["deviceId"];
-                    var userId = error.Details["userId"];
+                    var deviceId = error.Details["deviceId"].ToString()!;
+                    var userId = error.Details["userId"].ToString()!;
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.DeviceTrustPage)
                         .WithQueryParam("device", deviceId)
@@ -162,7 +162,7 @@
 
                 if (error.Code == Errors.Common.UnverifiedEmail)
                 {
-                    var userId = error.Details["userId"];
+                    var userId = error.Details["userId"].ToString()!;
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.CompleteRegistrationPage)
                         .WithQueryParam("id", userId);
@@ -177,24 +177,21 @@
                     var maxFailedLoginAttempts = Convert.ToInt32(error.Details["maxFailedLoginAttempts"]);
                     var failedLoginAttempts = Convert.ToInt32(error.Details["failedLoginAttempts"]);
                     var attemptsLeft = maxFailedLoginAttempts- failedLoginAttempts;
-                    var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
+                    var message = $"Incorrect password. You have {attemptsLeft} attempts left.";
                     Snackbar.Add(message, Severity.Error);
                     return;
                 }
 
-                if (error.Code == Errors.Common.AccountLockedOut)
+                if (error.Code is Errors.Common.TooManyFailedLoginAttempts or Errors.Common.AccountLockedOut)
                 {
-                    Snackbar.Add(result.GetError().Description, Severity.Error);
-                }
-                else
-                {
-                    var userId = error.Details["userId"];
+                    var userId = error.Details["userId"].ToString()!;
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.LockedOutPage)
                         .WithQueryParam("id", userId);
 
                     NavigationManager.NavigateTo(builder.Build());
                 }
+                else Snackbar.Add(result.GetError().Description, Severity.Error);
             }
         }
     }

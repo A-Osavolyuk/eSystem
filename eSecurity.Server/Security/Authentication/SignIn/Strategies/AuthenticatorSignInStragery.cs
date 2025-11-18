@@ -82,8 +82,13 @@ public sealed class AuthenticatorSignInStrategy(
             user.FailedLoginAttempts += 1;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-                return Results.BadRequest(Errors.Common.InvalidCode,
-                    $"Invalid two-factor code {authenticatorPayload.Code}.");
+                return Results.BadRequest(Errors.Common.FailedLoginAttempt, "Invalid two-factor code.",
+                    new()
+                    {
+                        { "maxFailedLoginAttempts", _options.MaxFailedLoginAttempts },
+                        { "failedLoginAttempts", user.FailedLoginAttempts },
+                    });
+
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
@@ -92,8 +97,9 @@ public sealed class AuthenticatorSignInStrategy(
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
-            return Results.BadRequest(Errors.Common.AccountLockedOut,
-                "Account is locked out due to too many failed login attempts");
+            return Results.BadRequest(Errors.Common.TooManyFailedLoginAttempts,
+                "Account is locked out due to too many failed login attempts",
+                new() { { "userId", user.Id } });
         }
 
         if (user.FailedLoginAttempts > 0)
