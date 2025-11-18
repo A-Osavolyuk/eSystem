@@ -46,7 +46,7 @@
 
             if (result.Succeeded)
             {
-                var response = result.Get<TokenResponse>();
+                var response = result.Get();
 
                 await SignInAsync(
                     response.AccessToken,

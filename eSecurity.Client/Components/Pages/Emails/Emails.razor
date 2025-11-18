@@ -93,7 +93,7 @@
 
         if (result.Succeeded)
         {
-            var emails = result.Get<List<UserEmailDto>>()!;
+            var emails = result.Get()!;
             Model = new()
             {
                 Emails = emails,
@@ -108,7 +108,7 @@
     {
         var result = await UserService.GetUserLinkedAccountsAsync(UserState.UserId);
 
-        if (result.Succeeded) LinkedAccountsData = result.Get<UserLinkedAccountData>()!;
+        if (result.Succeeded) LinkedAccountsData = result.Get()!;
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

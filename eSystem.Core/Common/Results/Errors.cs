@@ -29,6 +29,7 @@ public partial class Errors
     public static class Common
     {
         public const string TooManyFailedLoginAttempts = "too_many_failed_login_attempts";
+        public const string FailedLoginAttempt = "failed_login_attempt";
         public const string InvalidCode = "invalid_code";
         public const string InvalidPayloadType = "invalid_payload_type";
         public const string InvalidDevice = "invalid_device";

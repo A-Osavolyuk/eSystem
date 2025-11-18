@@ -106,7 +106,7 @@ public sealed class PasswordSignInStrategy(
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            return Results.BadRequest(Errors.Common.AccountLockedOut,
+            return Results.BadRequest(Errors.Common.TooManyFailedLoginAttempts,
                 "Account is locked out due to too many failed login attempts");
         }
 

@@ -1,5 +1,7 @@
 using eSecurity.Client.Common.Http;
 using eSecurity.Core.Common.Requests;
+using eSecurity.Core.Common.Responses;
+using eSecurity.Core.Security.Authentication.Oidc;
 using eSystem.Core.Common.Http;
 
 namespace eSecurity.Client.Security.Authentication.Oidc;
@@ -8,24 +10,24 @@ public class ConnectService(IApiClient apiClient) : IConnectService
 {
     private readonly IApiClient _apiClient = apiClient;
     
-    public async ValueTask<Result> GetPublicKeysAsync()
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<JsonWebKeySet>> GetPublicKeysAsync()
+        => await _apiClient.SendAsync<JsonWebKeySet>(
             new HttpRequest()
             {
                 Method = HttpMethod.Get,
                 Url = "api/v1/Connect/.well-known/jwks.json",
             }, new HttpOptions() { Type = DataType.Text, Wrap = true });
 
-    public async ValueTask<Result> GetOpenidConfigurationAsync()
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<OpenIdOptions>> GetOpenidConfigurationAsync()
+        => await _apiClient.SendAsync<OpenIdOptions>(
             new HttpRequest()
             {
                 Method = HttpMethod.Get,
                 Url = "api/v1/Connect/.well-known/openid-configuration",
             }, new HttpOptions() { Type = DataType.Text, Wrap = true });
 
-    public async ValueTask<Result> AuthorizeAsync(AuthorizeRequest request)
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<AuthorizeResponse>> AuthorizeAsync(AuthorizeRequest request)
+        => await _apiClient.SendAsync<AuthorizeResponse>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -33,8 +35,8 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions() { Type = DataType.Text });
 
-    public async ValueTask<Result> TokenAsync(TokenRequest request)
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<TokenResponse>> TokenAsync(TokenRequest request)
+        => await _apiClient.SendAsync<TokenResponse>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -42,8 +44,8 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions() { Type = DataType.Text });
 
-    public async ValueTask<Result> LogoutAsync(LogoutRequest request)
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<LogoutResponse>> LogoutAsync(LogoutRequest request)
+        => await _apiClient.SendAsync<LogoutResponse>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,

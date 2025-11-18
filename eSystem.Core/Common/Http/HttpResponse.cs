@@ -1,24 +1,36 @@
 ﻿using System.Text.Json;
+using eSystem.Core.Common.Results;
 
 namespace eSystem.Core.Common.Http;
 
 public sealed class HttpResponse
 {
-    public string Message { get; set; } = string.Empty;
-    public object? Result { get; set; }
-    public bool Success { get; set; }
+    private Error? Error { get; set; }
+    public bool Succeeded { get; set; }
+    public static HttpResponse Success() => new(){ Succeeded = true };
+    public static HttpResponse Fail(Error error) => new(){ Succeeded = false, Error = error };
+    public Error GetError() => Error!;
+}
 
-    public static HttpResponse Create(string? message, object? result = null, bool isSucceeded = false)
+public sealed class HttpResponse<TResponse>
+{
+    private Error? Error { get; set; }
+    public bool Succeeded { get; set; }
+    private TResponse? Result { get; set; }
+
+    public static HttpResponse<TResponse> Success(TResponse response) => new()
     {
-        return new HttpResponse
-        {
-            Message = message ?? string.Empty,
-            Result = result,
-            Success = isSucceeded
-        };
-    }
+        Succeeded = true,
+        Result = response
+    };
     
-    public TValue Get<TValue>()
+    public static HttpResponse<TResponse> Fail(Error error) => new()
+    {
+        Succeeded = false,
+        Error = error
+    };
+    
+    public TResponse Get()
     {
         var options = new JsonSerializerOptions()
         {
@@ -27,7 +39,9 @@ public sealed class HttpResponse
         };
         
         var json = JsonSerializer.Serialize(Result, options);
-        var value = JsonSerializer.Deserialize<TValue>(json, options)!;
+        var value = JsonSerializer.Deserialize<TResponse>(json, options)!;
         return value;
     }
+    
+    public Error GetError() => Error!;
 }

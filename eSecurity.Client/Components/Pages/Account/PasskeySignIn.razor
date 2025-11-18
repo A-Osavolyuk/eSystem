@@ -92,7 +92,7 @@
             };
 
             var result = await PasskeyService.GenerateRequestOptionsAsync(request);
-            var options = result.Get<PublicKeyCredentialRequestOptions>()!;
+            var options = result.Get()!;
 
             if (result.Succeeded) await VerifyAsync(options);
             else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -117,28 +117,18 @@
 
             if (result.Succeeded)
             {
-                var response = result.Get<SignInResponse>()!;
+                var response = result.Get()!;
                 
                 UserState.UserId = response.UserId;
                 AuthenticationManager.Authorize();
             }
             else
             {
-                if (result.Value is null)
+                var error = result.GetError();
+
+                if (error.Code == Errors.Common.AccountLockedOut)
                 {
-                    Snackbar.Add(result.GetError().Description, Severity.Error);
-                    return;
-                }
-
-                var response = result.Get<SignInResponse>()!;
-
-                if (response.IsLockedOut)
-                {
-                    var builder = QueryBuilder.Create()
-                        .WithUri(Links.Account.LockedOutPage)
-                        .WithQueryParam("id", response.UserId.ToString());
-
-                    NavigationManager.NavigateTo(builder.Build());
+                    NavigationManager.NavigateTo(Links.Account.LockedOutPage);
                 }
                 else
                 {

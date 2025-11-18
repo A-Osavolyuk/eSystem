@@ -190,7 +190,7 @@
 
             if (result.Succeeded)
             {
-                var options = result.Get<PublicKeyCredentialCreationOptions>()!;
+                var options = result.Get()!;
                 await VerifyPasskeyAsync(options);
             }
             else Snackbar.Add(result.GetError().Description, Severity.Error);

@@ -32,7 +32,7 @@
 
             if (result.Succeeded)
             {
-                var response = result.Get<LoadOAuthSessionResponse>()!;
+                var response = result.Get()!;
                 
                 UserState.UserId = response.UserId;
                 AuthenticationManager.Authorize();

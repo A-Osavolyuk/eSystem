@@ -44,7 +44,7 @@
 
         if (result.Succeeded)
         {
-            var devices = result.Get<List<UserDeviceDto>>()!;
+            var devices = result.Get();
 
             Model = new UserDevicesModel() { Devices = devices };
         }

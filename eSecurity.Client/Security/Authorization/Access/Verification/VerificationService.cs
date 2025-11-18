@@ -8,7 +8,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<Result> SendCodeAsync(SendCodeRequest request)
+    public async ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -17,7 +17,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Url = "api/v1/Verification/code/send"
             }, new HttpOptions() { Type = DataType.Text });
 
-    public async ValueTask<Result> ResendCodeAsync(ResendCodeRequest request)
+    public async ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -27,7 +27,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             }, new HttpOptions() { Type = DataType.Text });
 
 
-    public async ValueTask<Result> VerifyCodeAsync(VerifyCodeRequest request)
+    public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -37,7 +37,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             }, new HttpOptions() { Type = DataType.Text });
 
 
-    public async ValueTask<Result> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request)
+    public async ValueTask<HttpResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -47,7 +47,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             }, new HttpOptions() { Type = DataType.Text });
 
 
-    public async ValueTask<Result> VerifyPasskeyAsync(VerifyPasskeyRequest request)
+    public async ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {

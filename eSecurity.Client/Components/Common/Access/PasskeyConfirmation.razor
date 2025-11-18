@@ -117,7 +117,7 @@
 
         if (result.Succeeded)
         {
-            var options = result.Get<PublicKeyCredentialRequestOptions>()!;
+            var options = result.Get()!;
             await VerifyAsync(options);
         }
         else

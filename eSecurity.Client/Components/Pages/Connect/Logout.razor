@@ -87,7 +87,7 @@
         {
             await AuthenticationManager.SignOutAsync();
             
-            var response = result.Get<LogoutResponse>();
+            var response = result.Get();
             NavigationManager.NavigateTo(response.RedirectUri);
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);

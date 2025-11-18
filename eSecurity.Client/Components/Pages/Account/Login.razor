@@ -118,7 +118,7 @@
 
             if (result.Succeeded)
             {
-                var response = result.Get<SignInResponse>()!;
+                var response = result.Get()!;
 
                 if (response.IsTwoFactorEnabled)
                 {
@@ -140,23 +140,16 @@
             }
             else
             {
-                if (result.Value is null)
+                var error = result.GetError();
+
+                if (error.Code == Errors.Common.UntrustedDevice)
                 {
-                    Snackbar.Add(result.GetError().Description, Severity.Error);
-                    return;
-                }
-
-                var response = result.Get<SignInResponse>()!;
-                var userId = response.UserId;
-
-                if (response is { IsDeviceTrusted: false, IsDeviceBlocked: false })
-                {
-                    var device = response.DeviceId;
-
+                    var deviceId = error.Details["deviceId"];
+                    var userId = error.Details["userId"];
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.DeviceTrustPage)
-                        .WithQueryParam("device", device.ToString()!)
-                        .WithQueryParam("user", userId.ToString()!);
+                        .WithQueryParam("device", deviceId)
+                        .WithQueryParam("user", userId);
 
                     if (!string.IsNullOrEmpty(ReturnUrl))
                         builder.WithQueryParam("return_url", ReturnUrl);
@@ -167,34 +160,38 @@
                     return;
                 }
 
-                if (!response.IsEmailConfirmed)
+                if (error.Code == Errors.Common.UnverifiedEmail)
                 {
+                    var userId = error.Details["userId"];
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.CompleteRegistrationPage)
-                        .WithQueryParam("id", userId.ToString()!);
+                        .WithQueryParam("id", userId);
 
                     Snackbar.Add(result.GetError().Description, Severity.Info);
                     NavigationManager.NavigateTo(builder.Build());
                     return;
                 }
 
-                if (response.FailedLoginAttempts < response.MaxFailedLoginAttempts && !response.IsLockedOut)
+                if (error.Code == Errors.Common.FailedLoginAttempt)
                 {
-                    var attemptsLeft = response.MaxFailedLoginAttempts - response.FailedLoginAttempts;
+                    var maxFailedLoginAttempts = Convert.ToInt32(error.Details["maxFailedLoginAttempts"]);
+                    var failedLoginAttempts = Convert.ToInt32(error.Details["failedLoginAttempts"]);
+                    var attemptsLeft = maxFailedLoginAttempts- failedLoginAttempts;
                     var message = $"Incorrect password. You have {attemptsLeft} attempts left, then account will be locked out.";
                     Snackbar.Add(message, Severity.Error);
                     return;
                 }
 
-                if (response is { FailedLoginAttempts: 0, IsLockedOut: false })
+                if (error.Code == Errors.Common.AccountLockedOut)
                 {
                     Snackbar.Add(result.GetError().Description, Severity.Error);
                 }
                 else
                 {
+                    var userId = error.Details["userId"];
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.LockedOutPage)
-                        .WithQueryParam("id", userId.ToString()!);
+                        .WithQueryParam("id", userId);
 
                     NavigationManager.NavigateTo(builder.Build());
                 }

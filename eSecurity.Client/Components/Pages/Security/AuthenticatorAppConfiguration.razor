@@ -175,7 +175,7 @@
 
         if (result.Succeeded)
         {
-            QrCode = result.Get<QrCode>()!;
+            QrCode = result.Get()!;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }

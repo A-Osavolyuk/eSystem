@@ -80,7 +80,7 @@
 
             if (result.Succeeded)
             {
-                _device = result.Get<UserDeviceDto>()!;
+                _device = result.Get()!;
                 await LoadAsync();
                 StateHasChanged();
             }
@@ -94,7 +94,7 @@
 
         if (result.Succeeded)
         {
-            var response = result.Get<UserEmailDto>()!;
+            var response = result.Get()!;
             _email = response.Email;
 
             _context = new MessageContext()
@@ -155,7 +155,7 @@
 
         if (result.Succeeded)
         {
-            var response = result.Get<TrustDeviceResponse>()!;
+            var response = result.Get()!;
 
             if (response!.IsTwoFactorEnabled)
             {

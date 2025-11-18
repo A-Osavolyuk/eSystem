@@ -1,27 +1,29 @@
 using eSecurity.Core.Common.Requests;
+using eSecurity.Core.Common.Responses;
+using eSystem.Core.Common.Http;
 
 namespace eSecurity.Client.Security;
 
 public interface ISecurityService
 {
-    public ValueTask<Result> SignInAsync(SignInRequest request);
-    public ValueTask<Result> SignUpAsync(SignUpRequest request);
+    public ValueTask<HttpResponse<SignInResponse>> SignInAsync(SignInRequest request);
+    public ValueTask<HttpResponse<SignUpResponse>> SignUpAsync(SignUpRequest request);
     
-    public ValueTask<Result> AddEmailAsync(AddEmailRequest request);
-    public ValueTask<Result> CheckEmailAsync(CheckEmailRequest request);
-    public ValueTask<Result> ChangeEmailAsync(ChangeEmailRequest request);
-    public ValueTask<Result> VerifyEmailAsync(VerifyEmailRequest request);
-    public ValueTask<Result> ManageEmailAsync(ManageEmailRequest request);
-    public ValueTask<Result> RemoveEmailAsync(RemoveEmailRequest request);
-    public ValueTask<Result> ResetEmailAsync(ResetEmailRequest request);
+    public ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request);
+    public ValueTask<HttpResponse> CheckEmailAsync(CheckEmailRequest request);
+    public ValueTask<HttpResponse> ChangeEmailAsync(ChangeEmailRequest request);
+    public ValueTask<HttpResponse> VerifyEmailAsync(VerifyEmailRequest request);
+    public ValueTask<HttpResponse> ManageEmailAsync(ManageEmailRequest request);
+    public ValueTask<HttpResponse> RemoveEmailAsync(RemoveEmailRequest request);
+    public ValueTask<HttpResponse> ResetEmailAsync(ResetEmailRequest request);
     
-    public ValueTask<Result> ChangeUsernameAsync(ChangeUsernameRequest request);
-    public ValueTask<Result> CheckAccountAsync(CheckAccountRequest request);
-    public ValueTask<Result> RecoverAccountAsync(RecoverAccountRequest request);
-    public ValueTask<Result> UnlockAccountAsync(UnlockAccountRequest request);
+    public ValueTask<HttpResponse> ChangeUsernameAsync(ChangeUsernameRequest request);
+    public ValueTask<HttpResponse<CheckAccountResponse>> CheckAccountAsync(CheckAccountRequest request);
+    public ValueTask<HttpResponse> RecoverAccountAsync(RecoverAccountRequest request);
+    public ValueTask<HttpResponse> UnlockAccountAsync(UnlockAccountRequest request);
     
-    public ValueTask<Result> AddPasswordAsync(AddPasswordRequest request);
-    public ValueTask<Result> ForgotPasswordAsync(ForgotPasswordRequest request);
-    public ValueTask<Result> ResetPasswordAsync(ResetPasswordRequest request);
-    public ValueTask<Result> ChangePasswordAsync(ChangePasswordRequest request);
+    public ValueTask<HttpResponse> AddPasswordAsync(AddPasswordRequest request);
+    public ValueTask<HttpResponse<ForgotPasswordResponse>> ForgotPasswordAsync(ForgotPasswordRequest request);
+    public ValueTask<HttpResponse> ResetPasswordAsync(ResetPasswordRequest request);
+    public ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request);
 }

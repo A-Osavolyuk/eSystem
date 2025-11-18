@@ -148,7 +148,7 @@
 
             if (result.Succeeded)
             {
-                var response = result.Get<CheckAccountResponse>()!;
+                var response = result.Get()!;
 
                 if (!response.Exists)
                 {

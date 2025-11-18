@@ -1,5 +1,6 @@
 using eSecurity.Client.Common.Http;
 using eSecurity.Core.Common.Requests;
+using eSecurity.Core.Common.Responses;
 using eSystem.Core.Common.Http;
 
 namespace eSecurity.Client.Security.Authorization.OAuth;
@@ -8,8 +9,8 @@ public class OAuthService(IApiClient apiClient) : IOAuthService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<Result> LoadSessionAsync(LoadOAuthSessionRequest request)
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<LoadOAuthSessionResponse>> LoadSessionAsync(LoadOAuthSessionRequest request)
+        => await _apiClient.SendAsync<LoadOAuthSessionResponse>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,

@@ -73,7 +73,7 @@
 
         if (result.Succeeded)
         {
-            Methods = result.Get<List<UserTwoFactorMethod>>()!;
+            Methods = result.Get()!;
             PreferredMethod = Methods.Single(x => x.Preferred).Method;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);

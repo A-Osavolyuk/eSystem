@@ -38,7 +38,7 @@ public class AuthenticationController(
         };
 
         Response.Cookies.Append(DefaultCookies.Session, protectedCookie, cookieOptions);
-        return Ok(HttpResponseBuilder.Create().Succeeded().Build());
+        return Ok(Results.Ok());
     }
 
     [HttpPost("refresh")]
@@ -52,7 +52,7 @@ public class AuthenticationController(
         };
 
         Response.Cookies.Append(DefaultCookies.RefreshToken, refreshToken, cookieOptions);
-        return Ok(HttpResponseBuilder.Create().Succeeded().Build());
+        return Ok(Results.Ok());
     }
 
     [HttpPost("sign-in")]
@@ -78,7 +78,7 @@ public class AuthenticationController(
             
         HttpContext.Response.Cookies.Append(DefaultCookies.RefreshToken, identity.RefreshToken, cookieOptions);
 
-        return Ok(HttpResponseBuilder.Create().Succeeded().Build());
+        return Ok(Results.Ok());
     }
 
     [HttpPost("sign-out")]
@@ -88,6 +88,6 @@ public class AuthenticationController(
         Response.Cookies.Delete(DefaultCookies.Session);
         Response.Cookies.Delete(DefaultCookies.RefreshToken);
 
-        return Ok(HttpResponseBuilder.Create().Succeeded().Build());
+        return Ok(Results.Ok());
     }
 }

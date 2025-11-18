@@ -9,4 +9,10 @@ public class Error
     
     [JsonPropertyName("error_description")]
     public required string Description { get; init; }
+    
+    [JsonPropertyName("error_uri")] 
+    public string? Uri { get; set; }
+
+    [JsonPropertyName("details")]
+    public Dictionary<string, string> Details { get; set; } = [];
 }

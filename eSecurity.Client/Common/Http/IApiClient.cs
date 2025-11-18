@@ -4,5 +4,6 @@ namespace eSecurity.Client.Common.Http;
 
 public interface IApiClient
 {
-    public ValueTask<Result> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions);
+    public ValueTask<HttpResponse<TResponse>> SendAsync<TResponse>(HttpRequest httpRequest, HttpOptions httpOptions);
+    public ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions);
 }

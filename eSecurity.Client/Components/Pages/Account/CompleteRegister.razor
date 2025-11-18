@@ -80,7 +80,7 @@
             var result = await UserService.GetUserPrimaryEmailAsync(UserId);
             if (result.Succeeded)
             {
-                var response = result.Get<UserEmailDto>()!;
+                var response = result.Get()!;
                 _email = response;
                 StateHasChanged();
 

@@ -124,7 +124,7 @@
 
             if (result.Succeeded)
             {
-                var response = result.Get<SignInResponse>()!;
+                var response = result.Get()!;
 
                 UserState.UserId = response.UserId;
                 await OnSignIn.InvokeAsync();

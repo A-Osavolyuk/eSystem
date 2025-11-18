@@ -139,7 +139,7 @@
 
         if (result.Succeeded)
         {
-            var response = result.Get<AuthorizeResponse>()!;
+            var response = result.Get()!;
             var cookie = new SessionCookie()
             {
                 SessionId = response.SessionId,

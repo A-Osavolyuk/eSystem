@@ -97,7 +97,7 @@
 
             if (result.Succeeded)
             {
-                var response = result.Get<SignUpResponse>()!;
+                var response = result.Get()!;
 
                 Snackbar.Add("Successfully signed-up. Not you need to verify your email address.", Severity.Success);
 

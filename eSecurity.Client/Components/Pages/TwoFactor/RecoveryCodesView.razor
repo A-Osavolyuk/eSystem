@@ -233,7 +233,7 @@
 
             if (result.Succeeded)
             {
-                Codes = result.Get<List<string>>()!;
+                Codes = result.Get()!;
                 StateHasChanged();
             }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -256,7 +256,7 @@
 
         if (result.Succeeded)
         {
-            Codes = result.Get<List<string>>()!;
+            Codes = result.Get()!;
             _recoveryCodesRegenerated = true;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);

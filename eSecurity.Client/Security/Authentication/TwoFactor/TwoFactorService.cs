@@ -1,4 +1,5 @@
 using eSecurity.Client.Common.Http;
+using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Common.Requests;
 using eSystem.Core.Common.Http;
 
@@ -8,7 +9,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<Result> EnableAsync(EnableTwoFactorRequest request)
+    public async ValueTask<HttpResponse> EnableAsync(EnableTwoFactorRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -17,7 +18,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/enable"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<Result> DisableAsync(DisableTwoFactorRequest request)
+    public async ValueTask<HttpResponse> DisableAsync(DisableTwoFactorRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -26,7 +27,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/disable"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<Result> PreferAsync(PreferTwoFactorMethodRequest request)
+    public async ValueTask<HttpResponse> PreferAsync(PreferTwoFactorMethodRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -35,8 +36,8 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/prefer"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<Result> GenerateQrCodeAsync(GenerateQrCodeRequest request)
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<QrCode>> GenerateQrCodeAsync(GenerateQrCodeRequest request)
+        => await _apiClient.SendAsync<QrCode>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -44,8 +45,8 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/qr-code/generate"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<Result> RegenerateQrCodeAsync(RegenerateQrCodeRequest request)
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<QrCode>> RegenerateQrCodeAsync(RegenerateQrCodeRequest request)
+        => await _apiClient.SendAsync<QrCode>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -53,7 +54,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/qr-code/regenerate"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<Result> ReconfigureAuthenticatorAsync(ReconfigureAuthenticatorRequest request)
+    public async ValueTask<HttpResponse> ReconfigureAuthenticatorAsync(ReconfigureAuthenticatorRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -62,7 +63,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/authenticator/reconfigure"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<Result> VerifyAuthenticatorAsync(VerifyAuthenticatorRequest request)
+    public async ValueTask<HttpResponse> VerifyAuthenticatorAsync(VerifyAuthenticatorRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
@@ -71,8 +72,8 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/authenticator/verify"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<Result> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request)
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<List<string>>> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request)
+        => await _apiClient.SendAsync<List<string>>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
@@ -80,8 +81,8 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/recovery-codes/generate"
             }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
 
-    public async ValueTask<Result> LoadRecoveryCodesAsync(LoadRecoveryCodesRequest request)
-        => await _apiClient.SendAsync(
+    public async ValueTask<HttpResponse<List<string>>> LoadRecoveryCodesAsync(LoadRecoveryCodesRequest request)
+        => await _apiClient.SendAsync<List<string>>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
