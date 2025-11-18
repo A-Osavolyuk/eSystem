@@ -7,6 +7,7 @@
 @using eSecurity.Client.Security.Authentication.Oidc.Token
 @using eSecurity.Core.Common.DTOs
 @using eSystem.Core.Security.Authentication.Oidc.Constants
+@using Microsoft.AspNetCore.Authentication.Cookies
 @using eSecurity.Core.Common.Responses
 
 @inherits PageBase
@@ -14,6 +15,7 @@
 @inject IConnectService ConnectService
 @inject IOptions<ClientOptions> ClientOptions
 @inject IFetchClient FetchClient
+@inject ITokenValidator TokenValidator
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject TokenProvider TokenProvider
 
@@ -60,12 +62,16 @@
     private async Task SignInAsync(string accessToken, string idToken, string refreshToken)
     {
         TokenProvider.AccessToken = accessToken;
-        TokenProvider.IdToken = idToken;
         
-        var tokenIdentity = new TokenIdentity()
+        var tokenResult = await TokenValidator.ValidateAsync(idToken);
+        if (!tokenResult.Succeeded) Snackbar.Add(tokenResult.GetError().Description, Severity.Error);
+        var claimValues = tokenResult.Get<List<ClaimValue>>();
+        
+        var tokenIdentity = new SignIdentity()
         {
             RefreshToken = refreshToken,
-            IdToken = idToken
+            Claims = claimValues,
+            Scheme = CookieAuthenticationDefaults.AuthenticationScheme
         };
         
         var fetchOptions = new FetchOptions()
@@ -79,9 +85,8 @@
 
         if (result.Succeeded)
         {
-            var response = result.Get<SignIdentity>();
-            var claims = response.Claims.Select(c => new Claim(c.Type, c.Value));
-            var claimsIdentity = new ClaimsIdentity(claims, response.Scheme);
+            var claims = claimValues.Select(c => new Claim(c.Type, c.Value));
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
             (AuthenticationStateProvider as ClaimAuthenticationStateProvider)!.SignIn(claimPrincipal);
         }

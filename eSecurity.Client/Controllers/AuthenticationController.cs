@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using eSecurity.Client.Security.Authentication;
+﻿using System.Security.Claims;
+using System.Text.Json;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Cookies;
@@ -8,7 +8,6 @@ using eSecurity.Core.Security.Cryptography.Protection.Constants;
 using eSystem.Core.Common.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,18 +56,17 @@ public class AuthenticationController(
     }
 
     [HttpPost("sign-in")]
-    public async Task<IActionResult> SignInAsync([FromBody] TokenIdentity tokenIdentity)
+    public async Task<IActionResult> SignInAsync([FromBody] SignIdentity identity)
     {
-        _tokenProvider.IdToken = tokenIdentity.IdToken;
-
-        var authenticationResult = await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
-        if (!authenticationResult.Succeeded)
-            return Unauthorized(HttpResponseBuilder.Create().Failed().WithMessage("Failed authentication.").Build());
-
+        var claims = identity.Claims.Select(x => new Claim(x.Type, x.Value));
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+        var authenticationProperties = new AuthenticationProperties() { IsPersistent = true };
+        
         await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            authenticationResult.Principal,
-            authenticationResult.Properties
+            identity.Scheme,
+            claimsPrincipal,
+            authenticationProperties
         );
 
         var cookieOptions = new CookieOptions()
@@ -78,19 +76,9 @@ public class AuthenticationController(
             MaxAge = TimeSpan.FromDays(30)
         };
             
-        HttpContext.Response.Cookies.Append(DefaultCookies.RefreshToken, tokenIdentity.RefreshToken, cookieOptions);
+        HttpContext.Response.Cookies.Append(DefaultCookies.RefreshToken, identity.RefreshToken, cookieOptions);
 
-        var signInIdentity = new SignIdentity()
-        {
-            Scheme = authenticationResult.Ticket.AuthenticationScheme,
-            Claims = authenticationResult.Principal.Claims.Select(claim => new ClaimValue()
-            {
-                Type = claim.Type,
-                Value = claim.Value
-            }).ToList()
-        };
-
-        return Ok(HttpResponseBuilder.Create().Succeeded().WithResult(signInIdentity).Build());
+        return Ok(HttpResponseBuilder.Create().Succeeded().Build());
     }
 
     [HttpPost("sign-out")]

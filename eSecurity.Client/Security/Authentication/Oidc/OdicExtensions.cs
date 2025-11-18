@@ -1,4 +1,5 @@
 using eSecurity.Client.Security.Authentication.Oidc.Clients;
+using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 
 namespace eSecurity.Client.Security.Authentication.Oidc;
@@ -9,6 +10,7 @@ public static class OdicExtensions
     {
         public void AddOidc()
         {
+            services.AddScoped<ITokenValidator, TokenValidator>();
             services.AddClient(cfg =>
             {
                 cfg.ClientAudience = "eSecurity";

@@ -15,7 +15,6 @@ using eSystem.Core.Security.Authentication.Oidc.Constants;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using AuthenticationManager = eSecurity.Client.Security.Authentication.AuthenticationManager;
-using Results = eSystem.Core.Common.Results.Results;
 
 namespace eSecurity.Client.Common.Http;
 

@@ -1,47 +1,37 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text.Encodings.Web;
-using eSecurity.Client.Security.Authentication.Oidc;
 using eSecurity.Client.Security.Authentication.Oidc.Clients;
-using eSecurity.Client.Security.Authentication.Oidc.Token;
+using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Authentication.Oidc;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace eSecurity.Client.Security.Authentication.Handlers.Jwt;
+namespace eSecurity.Client.Security.Authentication.Oidc.Token;
 
-public class JwtAuthenticationOptions : AuthenticationSchemeOptions{}
-
-public class JwtAuthenticationHandler(
-    IOptionsMonitor<JwtAuthenticationOptions> options,
-    ILoggerFactory logger,
-    UrlEncoder encoder,
-    TokenProvider tokenProvider,
+public class TokenValidator(
     IConnectService connectService,
-    IOptions<ClientOptions> clientOptions) : AuthenticationHandler<JwtAuthenticationOptions>(options, logger, encoder)
+    IOptions<ClientOptions> clientOptions) : ITokenValidator
 {
-    private readonly TokenProvider _tokenProvider = tokenProvider;
     private readonly IConnectService _connectService = connectService;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
-    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+    public async ValueTask<Result> ValidateAsync(string token)
     {
         var keysResult = await _connectService.GetPublicKeysAsync();
-        if (!keysResult.Succeeded) return AuthenticateResult.Fail(keysResult.GetError().Description);
+        if (!keysResult.Succeeded) return keysResult;
 
         var handler = new JwtSecurityTokenHandler();
-        var securityToken = handler.ReadJwtToken(_tokenProvider.IdToken);
-        if (securityToken is null) return AuthenticateResult.Fail("Invalid token.");
+        var securityToken = handler.ReadJwtToken(token);
+        if (securityToken is null) return Results.BadRequest("Invalid token.");
         
         var keys = new JsonWebKeySet(keysResult.Value!.ToString());
         var publicKey = keys.Keys.FirstOrDefault(x => x.KeyId == securityToken.Header.Kid);
-        if (publicKey is null) return AuthenticateResult.Fail("Invalid key.");
+        if (publicKey is null) return Results.BadRequest("Invalid key.");
 
         var openIdResult = await _connectService.GetOpenidConfigurationAsync();
-        if (openIdResult.Succeeded) return AuthenticateResult.Fail(keysResult.GetError().Description);
+        if (openIdResult.Succeeded) return openIdResult;
 
         var openIdOptions = openIdResult.Get<OpenIdOptions>();
         var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));
@@ -57,13 +47,15 @@ public class JwtAuthenticationHandler(
             IssuerSigningKey = signingKey,
         };
         
-        var principal = handler.ValidateToken(_tokenProvider.IdToken, parameters, out _);
-        if (principal is null) return AuthenticateResult.Fail("Invalid token.");
-        
-        var claimIdentity = new ClaimsIdentity(principal.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var claimPrincipal = new ClaimsPrincipal(claimIdentity);
-        var ticket = new AuthenticationTicket(claimPrincipal, CookieAuthenticationDefaults.AuthenticationScheme);
-        return AuthenticateResult.Success(ticket);
+        var principal = handler.ValidateToken(token, parameters, out _);
+        if (principal is null) return Results.BadRequest("Invalid token.");
+
+        var claims = principal.Claims.Select(x => new ClaimValue()
+        {
+            Type = x.Type, 
+            Value = x.Value
+        }).ToList();
+        return Results.Ok(claims);
     }
     
     private RSA CreateRsaFromJwk(JsonWebKey jwk)
