@@ -16,8 +16,10 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
     public async ValueTask<ConsentEntity?> FindAsync(UserEntity user, ClientEntity client,
         CancellationToken cancellationToken = default)
     {
-        return await _context.Consents.FirstOrDefaultAsync(
-            c => c.UserId == user.Id && c.ClientId == client.Id, cancellationToken);
+        return await _context.Consents
+            .Include(x => x.GrantedScopes)
+            .ThenInclude(x => x.Scope)
+            .FirstOrDefaultAsync(c => c.UserId == user.Id && c.ClientId == client.Id, cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(ConsentEntity consent, CancellationToken cancellationToken = default)

@@ -11,4 +11,6 @@ public class ConsentEntity : Entity
     public UserEntity User { get; set; } = null!;
     public ClientEntity Client { get; set; } = null!;
     public ICollection<GrantedScopeEntity> GrantedScopes { get; set; } = null!;
+    
+    public bool HasScope(string scope) => GrantedScopes.Any(x => x.Scope.Name == scope);
 }
