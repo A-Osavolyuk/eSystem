@@ -32,6 +32,16 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new GetJwksQuery());
         return ResultHandler.Handle(result);
     }
+    
+    [EndpointSummary("Client info")]
+    [EndpointDescription("Client info")]
+    [ProducesResponseType(200)]
+    [HttpGet("clients/{clientId}")]
+    public async ValueTask<IActionResult> GetClientInfoAsync(string clientId)
+    {
+        var result = await _sender.Send(new GetClientInfoQuery(clientId));
+        return ResultHandler.Handle(result);
+    }
 
     [EndpointSummary("Token")]
     [EndpointDescription("Token")]

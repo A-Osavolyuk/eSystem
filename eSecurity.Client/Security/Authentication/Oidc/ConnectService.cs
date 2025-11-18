@@ -2,6 +2,7 @@ using eSecurity.Client.Common.Http;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Oidc;
+using eSecurity.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Common.Http;
 
 namespace eSecurity.Client.Security.Authentication.Oidc;
@@ -25,6 +26,14 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Method = HttpMethod.Get,
                 Url = "api/v1/Connect/.well-known/openid-configuration",
             }, new HttpOptions() { Type = DataType.Text, Wrap = true });
+
+    public async ValueTask<HttpResponse<ClientInfo>> GetClientInfoAsync(string clientId)
+        => await _apiClient.SendAsync<ClientInfo>(
+            new HttpRequest()
+            {
+                Method = HttpMethod.Get,
+                Url = $"api/v1/Connect/clients/{clientId}",
+            }, new HttpOptions() { Type = DataType.Text });
 
     public async ValueTask<HttpResponse<AuthorizeResponse>> AuthorizeAsync(AuthorizeRequest request)
         => await _apiClient.SendAsync<AuthorizeResponse>(
