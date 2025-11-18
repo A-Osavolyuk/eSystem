@@ -19,21 +19,13 @@ public class GlobalExceptionHandler(
         {
             _logger.LogInformation("Handled validation exception");
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-            await httpContext.Response.WriteAsJsonAsync(
-                HttpResponseBuilder.Create()
-                    .Failed()
-                    .WithMessage(failedValidationException.Message)
-                    .Build(), cancellationToken);
+            await httpContext.Response.WriteAsJsonAsync(failedValidationException.Message, cancellationToken);
         }
         else
         {
             _logger.LogInformation("Handled global exception");
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            await httpContext.Response.WriteAsJsonAsync(
-                HttpResponseBuilder.Create()
-                    .Failed()
-                    .WithMessage(exception.Message)
-                    .Build(), cancellationToken);
+            await httpContext.Response.WriteAsJsonAsync(exception.Message, cancellationToken);
         }
         
         return true;

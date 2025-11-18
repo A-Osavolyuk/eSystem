@@ -30,12 +30,7 @@ public class ValidationFilter() : Attribute, IAsyncActionFilter
                     
                     if (!validationResult.IsValid)
                     {
-                        context.Result = new BadRequestObjectResult(
-                            HttpResponseBuilder.Create()
-                                .Failed()
-                                .WithResult(errors)
-                                .Build());
-                        
+                        context.Result = new BadRequestObjectResult(errors);
                         return;
                     }
                 }

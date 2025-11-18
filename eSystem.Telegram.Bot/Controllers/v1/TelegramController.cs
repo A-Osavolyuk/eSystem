@@ -54,7 +54,6 @@ public class TelegramController(
     public async ValueTask<ActionResult<HttpResponse>> SendAsync([FromBody] SendMessageRequest request)
     {
         await _bot.SendMessage(chatId: new ChatId(request.ChatId), text: request.Message);
-
-        return Ok(HttpResponseBuilder.Create().WithMessage("Message was successfully sent!").Build());
+        return Ok();
     }
 }
