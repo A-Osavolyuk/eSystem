@@ -51,12 +51,16 @@
         {
             if (string.IsNullOrEmpty(Prompt))
             {
-                NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(RedirectUri)
-                    .WithQueryParam("error", Errors.OAuth.InvalidRequest)
-                    .WithQueryParam("error_description", "Query parameter 'prompt' is required.")
-                    .Build());
+                if (!UserState.IsAuthenticated)
+                {
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(RedirectUri)
+                        .WithQueryParam("error", Errors.OAuth.LoginRequired)
+                        .WithQueryParam("error_description", "User must be authenticated.")
+                        .Build());
+                }
 
+                await OnAuthorizeAsync();
                 return;
             }
 
