@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authorization.OAuth;
 using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Policies;
 using eSecurity.Server.Security.Authorization.Roles;
+using eSecurity.Server.Security.Authorization.Scopes;
 
 namespace eSecurity.Server.Security.Authorization;
 
@@ -19,5 +20,7 @@ public static class AuthorizationExtensions
         builder.Services.AddOAuthAuthorization();
         builder.Services.AddPermissionManagement();
         builder.Services.AddConsentManagement();
+
+        builder.Services.AddScoped<IScopeManager, ScopeManager>();
     }
 }
