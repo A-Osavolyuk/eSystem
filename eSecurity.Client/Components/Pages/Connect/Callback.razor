@@ -26,11 +26,23 @@
 
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "error_description")]
+    public string? ErrorDescription { get; set; } = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            if (!string.IsNullOrEmpty(Error) && !string.IsNullOrEmpty(ErrorDescription))
+            {
+                Snackbar.Add(ErrorDescription, Severity.Error);
+                return;
+            }
+            
             var options = ClientOptions.Value;
 
             var request = new TokenRequest()
