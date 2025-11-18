@@ -28,7 +28,7 @@ public class TokenValidator(
         if (publicKey is null) return Results.BadRequest("Invalid key.");
 
         var openIdResult = await _connectService.GetOpenidConfigurationAsync();
-        if (openIdResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
+        if (!openIdResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
 
         var openIdOptions = openIdResult.Get();
         var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));
