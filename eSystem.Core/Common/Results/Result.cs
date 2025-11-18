@@ -41,13 +41,7 @@ public class Result
 
     public TResponse Get<TResponse>()
     {
-        var json = Value!.ToString()!;
-        var serializationOptions = new JsonSerializerOptions()
-        {
-            WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-        return JsonSerializer.Deserialize<TResponse>(json, serializationOptions)!;
+        return (TResponse)Value!;
     }
     
     public TResponse Match<TResponse>(Func<Result, TResponse> success, Func<Result, TResponse> failure)
