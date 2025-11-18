@@ -14,4 +14,5 @@ public interface IConnectService
     public ValueTask<HttpResponse<AuthorizeResponse>> AuthorizeAsync(AuthorizeRequest request);
     public ValueTask<HttpResponse<TokenResponse>> TokenAsync(TokenRequest request);
     public ValueTask<HttpResponse<LogoutResponse>> LogoutAsync(LogoutRequest request);
+    public ValueTask<HttpResponse> GrantConsentsAsync(GrantConsentsRequest request);
 }

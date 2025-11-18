@@ -61,4 +61,13 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Url = "api/v1/Connect/logout",
                 Data = request
             }, new HttpOptions() { Type = DataType.Text });
+
+    public async ValueTask<HttpResponse> GrantConsentsAsync(GrantConsentsRequest request)
+        => await _apiClient.SendAsync(
+            new HttpRequest()
+            {
+                Method = HttpMethod.Post,
+                Url = "api/v1/Connect/consents/grant",
+                Data = request
+            }, new HttpOptions() { Type = DataType.Text });
 }
