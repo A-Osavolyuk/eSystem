@@ -171,6 +171,15 @@
 
             NavigationManager.NavigateTo(builder.Build());
         }
+        else
+        {
+            var error = result.GetError();
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(RedirectUri)
+                .WithQueryParam("error", error.Code)
+                .WithQueryParam("error_description", error.Description)
+                .Build());
+        }
     }
 
     private void OnProcessConsent(string uri, string[] prompts)
