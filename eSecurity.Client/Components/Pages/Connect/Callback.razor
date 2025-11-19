@@ -74,6 +74,7 @@
     private async Task SignInAsync(string accessToken, string idToken, string refreshToken)
     {
         TokenProvider.AccessToken = accessToken;
+        TokenProvider.IdToken = idToken;
         
         var tokenResult = await TokenValidator.ValidateAsync(idToken);
         if (!tokenResult.Succeeded) Snackbar.Add(tokenResult.GetError().Description, Severity.Error);
