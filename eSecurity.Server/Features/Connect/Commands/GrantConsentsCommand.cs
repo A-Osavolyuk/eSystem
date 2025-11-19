@@ -23,10 +23,20 @@ public class GrantConsentsCommandHandler(
     public async Task<Result> Handle(GrantConsentsCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound("User was not found.");
+        if (user is null)
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "user_id is invalid."
+            });
 
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client was not found.");
+        if (client is null)
+            return Results.Unauthorized(new Error()
+            {
+                Code = Errors.OAuth.InvalidClient,
+                Description = "Invalid client."
+            });
 
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null)
@@ -49,7 +59,7 @@ public class GrantConsentsCommandHandler(
                     return Results.BadRequest(new Error()
                     {
                         Code = Errors.OAuth.InvalidScope,
-                        Description = $"Scope '{requestedScope}' is not supported."
+                        Description = $"'{requestedScope}' scope is not supported."
                     });
                 }
 
@@ -68,7 +78,7 @@ public class GrantConsentsCommandHandler(
                 return Results.BadRequest(new Error()
                 {
                     Code = Errors.OAuth.InvalidScope,
-                    Description = $"Scope '{requestedScope}' is not supported."
+                    Description = $"'{requestedScope}' scope is not supported."
                 });
             }
 
