@@ -1,5 +1,6 @@
 ﻿using eSystem.Core.Common.Exceptions;
 using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Results;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -19,13 +20,21 @@ public class GlobalExceptionHandler(
         {
             _logger.LogInformation("Handled validation exception");
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-            await httpContext.Response.WriteAsJsonAsync(failedValidationException.Message, cancellationToken);
+            await httpContext.Response.WriteAsJsonAsync(new Error()
+            {
+                Code = Results.Errors.OAuth.ServerError,
+                Description = failedValidationException.Message
+            }, cancellationToken);
         }
         else
         {
             _logger.LogInformation("Handled global exception");
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            await httpContext.Response.WriteAsJsonAsync(exception.Message, cancellationToken);
+            await httpContext.Response.WriteAsJsonAsync(new Error()
+            {
+                Code = Results.Errors.OAuth.ServerError,
+                Description = exception.Message
+            }, cancellationToken);
         }
         
         return true;
