@@ -15,7 +15,8 @@ public class ClaimAuthenticationStateProvider(
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        if (_httpContext.User.Identity?.IsAuthenticated != true) return Task.FromResult(_anonymous);
+        if (_httpContext.User.Identity?.IsAuthenticated != true)
+            return Task.FromResult(_anonymous);
         
         var principal = _httpContext.User;
         var claims = _httpContext.User.Claims.ToList();
@@ -52,6 +53,13 @@ public class ClaimAuthenticationStateProvider(
     }
 
     public Task SignOutAsync()
+    {
+        _userState.Clear();
+        NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
+        return Task.CompletedTask;
+    }
+    
+    public Task NotifyAsync()
     {
         NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
         return Task.CompletedTask;

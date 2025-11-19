@@ -40,6 +40,14 @@ public class AuthenticationController(
         Response.Cookies.Append(DefaultCookies.Session, protectedCookie, cookieOptions);
         return Ok(Results.Ok());
     }
+    
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete(DefaultCookies.Session);
+
+        return Ok(Results.Ok());
+    }
 
     [HttpPost("refresh")]
     public IActionResult Authorize([FromBody] string refreshToken)
@@ -85,7 +93,6 @@ public class AuthenticationController(
     public async Task<IActionResult> SignOutAsync()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        Response.Cookies.Delete(DefaultCookies.Session);
         Response.Cookies.Delete(DefaultCookies.RefreshToken);
 
         return Ok(Results.Ok());

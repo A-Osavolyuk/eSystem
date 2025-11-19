@@ -126,12 +126,16 @@ public class LogoutCommandHandler(
         var result = await _sessionManager.RemoveAsync(session, cancellationToken);
         if (!result.Succeeded) return result;
 
-        var queryBuilder = QueryBuilder.Create().WithUri(request.Request.PostLogoutRedirectUri);
-
-        if (!string.IsNullOrEmpty(request.Request.State))
-            queryBuilder.WithQueryParam("state", request.Request.State);
-
-        var response = new LogoutResponse() { RedirectUri = queryBuilder.Build() };
+        var postLogoutRedirectUris = client.PostLogoutRedirectUris
+            .Select(x => x.Uri)
+            .ToList();
+        
+        var response = new LogoutResponse()
+        {
+            State = request.Request.State,
+            PostLogoutRedirectUris = postLogoutRedirectUris
+        };
+        
         return Results.Ok(response);
     }
 }

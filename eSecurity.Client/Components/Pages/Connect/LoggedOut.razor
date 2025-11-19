@@ -1,0 +1,47 @@
+@page "/connect/logged-out"
+
+@inherits PageBase
+
+
+<Title Text="Logged out from eSystem Account"></Title>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4" Style="margin-top: 50px">
+        <MudStack Spacing="3">
+            <MudAlert 
+                Severity="Severity.Success"
+                Variant="Variant.Outlined"
+                ContentAlignment="HorizontalAlignment.Center">
+                <MudTextM3 Size="Size.Small" Typo="TypoM3.Headline" Align="Align.Center">
+                    You have been successfully logged out from eSystem Account
+                </MudTextM3>
+            </MudAlert>
+            <MudButton
+                Color="Color.Success"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                Href="@Links.Account.SignIn">
+                To sign in
+            </MudButton>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@if (_uris.Count > 0)
+{
+    foreach (var uri in _uris)
+    {
+        <iframe src="@uri" width="0" height="0" style="visibility:hidden; border:0;"></iframe>
+    }
+}
+
+@code {
+    private List<string> _uris = [];
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _uris = NavigationContext.GetValue<List<string>>() ?? [];
+        await AuthenticationManager.RefreshAsync();
+    }
+
+}

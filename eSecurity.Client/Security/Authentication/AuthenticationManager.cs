@@ -8,6 +8,7 @@ using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Trace;
 
 namespace eSecurity.Client.Security.Authentication;
 
@@ -27,7 +28,7 @@ public sealed class AuthenticationManager(
     public void Authorize()
     {
         var redirectUri = QueryBuilder.Create()
-            .WithUri("/connect/authorize")
+            .WithUri(Links.Connect.Authorize)
             .WithQueryParam("response_type", ResponseTypes.Code)
             .WithQueryParam("client_id", _clientOptions.ClientId)
             .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
@@ -54,5 +55,21 @@ public sealed class AuthenticationManager(
             await (_authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignOutAsync();
             await _storage.ClearAsync();
         }
+    }
+    
+    public async Task LogoutAsync()
+    {
+        var fetchOptions = new FetchOptions()
+        {
+            Method = HttpMethod.Post,
+            Url = $"{_navigationManager.BaseUri}api/authentication/logout",
+        };
+
+        await _fetchClient.FetchAsync(fetchOptions);
+    }
+
+    public async Task RefreshAsync()
+    {
+        await (_authenticationStateProvider as ClaimAuthenticationStateProvider)!.NotifyAsync();
     }
 }

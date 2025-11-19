@@ -49,21 +49,22 @@
 </MudGrid>
 
 @code {
+
     [SupplyParameterFromQuery(Name = "id_token_hint")]
     public string IdTokenHint { get; set; } = string.Empty;
-    
+
     [SupplyParameterFromQuery(Name = "post_logout_redirect_uri")]
     public string PostLogoutRedirectUri { get; set; } = string.Empty;
 
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
-    
+
     [SupplyParameterFromQuery(Name = "client_id")]
     public string? ClientId { get; set; }
-    
+
     [SupplyParameterFromQuery(Name = "logout_hint")]
     public string? LogoutHint { get; set; }
-    
+
     [SupplyParameterFromQuery(Name = "ui_locales")]
     public string? UiLocales { get; set; }
 
@@ -96,11 +97,11 @@
 
         if (result.Succeeded)
         {
-            await AuthenticationManager.SignOutAsync();
-            
+            await AuthenticationManager.LogoutAsync();
+
             var response = result.Get();
-            NavigationManager.NavigateTo(response.RedirectUri);
+            NavigationContext.Value = response.PostLogoutRedirectUris;
+            NavigationManager.NavigateTo(Links.Connect.LoggedOut);
         }
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

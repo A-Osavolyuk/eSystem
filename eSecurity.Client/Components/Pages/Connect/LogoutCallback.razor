@@ -2,9 +2,9 @@
 
 @inherits PageBase
 
-@if (!string.IsNullOrEmpty(State))
+@if (string.IsNullOrEmpty(Error) && string.IsNullOrEmpty(ErrorDescription))
 {
-    <Title Text="Logged out from eSystem Account"></Title>
+    <Title Text="Logging out..."></Title>
 }
 else
 {
@@ -12,20 +12,22 @@ else
 }
 
 @code {
-    [SupplyParameterFromQuery(Name = "state")]
-    public string State { get; set; } = string.Empty;
-    
     [SupplyParameterFromQuery(Name = "error")]
     public string? Error { get; set; } = string.Empty;
     
     [SupplyParameterFromQuery(Name = "error_description")]
     public string? ErrorDescription { get; set; } = string.Empty;
 
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!string.IsNullOrEmpty(Error) && !string.IsNullOrEmpty(ErrorDescription))
         {
             Snackbar.Add(ErrorDescription, Severity.Error);
         }
+        else
+        {
+            await AuthenticationManager.SignOutAsync();
+        }
     }
+
 }
