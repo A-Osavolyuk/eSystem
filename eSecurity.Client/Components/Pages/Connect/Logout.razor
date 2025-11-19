@@ -1,13 +1,18 @@
 @page "/connect/logout"
+
 @using eSecurity.Client.Security.Authentication.Oidc
-@using eSecurity.Core.Common.Responses
-@using eSecurity.Core.Security.Authentication.Oidc.Logout
+@using eSecurity.Client.Security.Authentication.Oidc.Clients
+@using eSecurity.Client.Security.Authentication.Oidc.Token
 
 @inherits PageBase
 
 @attribute [Authorize]
 
 @inject IConnectService ConnectService
+@inject IOptions<ClientOptions> ClientOptions
+@inject TokenProvider TokenProvider
+
+<Title Text="Logout from eSystem Account"></Title>
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="3" Style="margin-top: 50px;">
@@ -45,13 +50,13 @@
 
 @code {
     [SupplyParameterFromQuery(Name = "id_token_hint")]
-    public string? IdTokenHint { get; set; }
+    public string IdTokenHint { get; set; } = string.Empty;
     
     [SupplyParameterFromQuery(Name = "post_logout_redirect_uri")]
-    public string? PostLogoutRedirectUri { get; set; }
-    
+    public string PostLogoutRedirectUri { get; set; } = string.Empty;
+
     [SupplyParameterFromQuery(Name = "state")]
-    public string? State { get; set; }
+    public string State { get; set; } = string.Empty;
     
     [SupplyParameterFromQuery(Name = "client_id")]
     public string? ClientId { get; set; }
@@ -67,13 +72,19 @@
         LogoutRequest? request;
         if (string.IsNullOrEmpty(IdTokenHint) && string.IsNullOrEmpty(PostLogoutRedirectUri))
         {
-            request = new LogoutRequest() { Type = LogoutType.Manual };
+            var options = ClientOptions.Value;
+            request = new LogoutRequest()
+            {
+                ClientId = options.ClientId,
+                IdTokenHint = TokenProvider.IdToken!,
+                PostLogoutRedirectUri = options.PostLogoutRedirectUri,
+                State = Guid.CreateVersion7().ToString(),
+            };
         }
         else
         {
             request = new LogoutRequest()
             {
-                Type = LogoutType.Oidc,
                 ClientId = ClientId,
                 IdTokenHint = IdTokenHint,
                 PostLogoutRedirectUri = PostLogoutRedirectUri,

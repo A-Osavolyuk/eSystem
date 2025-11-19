@@ -1,9 +1,6 @@
 ﻿using eSecurity.Core.Security.Authentication.Oidc;
-using eSecurity.Core.Security.Authentication.Oidc.Logout;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
-using eSecurity.Server.Security.Authentication.Oidc.Logout;
-using eSecurity.Server.Security.Authentication.Oidc.Logout.Strategies;
 using eSecurity.Server.Security.Authentication.Oidc.Pkce;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
@@ -21,7 +18,6 @@ public static class OdicExtensions
         public void AddOidc()
         {
             services.AddPkceHandler();
-            services.AddLogoutFlow();
             services.AddTokenFlow();
             services.AddClientManagement();
             services.AddAuthorizationCodeManagement();
@@ -103,13 +99,6 @@ public static class OdicExtensions
         private void AddOpenidConfiguration(Action<OpenIdOptions> configure)
         {
             services.Configure(configure);
-        }
-
-        private void AddLogoutFlow()
-        {
-            services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
-            services.AddKeyedScoped<ILogoutStrategy, ManualLogoutStrategy>(LogoutType.Manual);
-            services.AddKeyedScoped<ILogoutStrategy, OidcLogoutStrategy>(LogoutType.Oidc);
         }
 
         private void AddPkceHandler()

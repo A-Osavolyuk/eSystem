@@ -53,8 +53,6 @@ public sealed class AuthenticationManager(
         {
             await (_authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignOutAsync();
             await _storage.ClearAsync();
-
-            _navigationManager.NavigateTo(Links.Account.SignIn);
         }
     }
 }
