@@ -21,23 +21,16 @@ public class TokenCommandHandler(
             return Results.BadRequest(new Error()
             {
                 Code = Errors.OAuth.InvalidRequest,
-                Description = $"'grant_type' param is required"
+                Description = "grant_type is required"
             });
-        
+
         if (string.IsNullOrEmpty(request.Request.ClientId))
             return Results.BadRequest(new Error()
             {
                 Code = Errors.OAuth.InvalidRequest,
-                Description = $"'client_id' param is required"
+                Description = "client_id is required"
             });
-        
-        if (string.IsNullOrEmpty(request.Request.RedirectUri))
-            return Results.BadRequest(new Error()
-            {
-                Code = Errors.OAuth.InvalidRequest,
-                Description = $"'redirect_uri' param is required"
-            });
-        
+
         if (!_options.GrantTypesSupported.Contains(request.Request.GrantType))
             return Results.BadRequest(new Error()
             {
@@ -45,7 +38,7 @@ public class TokenCommandHandler(
                 Description = $"'{request.Request.GrantType}' grant type is not supported"
             });
 
-        TokenPayload payload = request.Request.GrantType switch
+        TokenPayload? payload = request.Request.GrantType switch
         {
             GrantTypes.AuthorizationCode => new AuthorizationCodeTokenPayload()
             {
@@ -62,10 +55,18 @@ public class TokenCommandHandler(
                 GrantType = request.Request.GrantType,
                 ClientSecret = request.Request.ClientSecret,
                 RedirectUri = request.Request.RedirectUri,
-                RefreshToken = request.Request.RefreshToken
+                RefreshToken = request.Request.RefreshToken,
+                Scope = request.Request.Scope
             },
-            _ => throw new NotSupportedException("Unsupported grant type")
+            _ => null
         };
+
+        if (payload is null)
+            return Results.BadRequest(new Error
+            {
+                Code = Errors.OAuth.UnsupportedGrantType,
+                Description = $"'{request.Request.GrantType}' grant type is not supported"
+            });
 
         var strategy = _tokenStrategyResolver.Resolve(request.Request.GrantType);
         return await strategy.ExecuteAsync(payload, cancellationToken);

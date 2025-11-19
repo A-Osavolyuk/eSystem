@@ -53,46 +53,72 @@ public class AuthorizationCodeStrategy(
     {
         if (payload is not AuthorizationCodeTokenPayload authorizationPayload)
             throw new NotSupportedException("Payload type must be 'AuthorizationCodeTokenPayload'");
+        
+        if (string.IsNullOrEmpty(authorizationPayload.RedirectUri))
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "redirect_uri is required"
+            });
 
         var client = await _clientManager.FindByIdAsync(authorizationPayload.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client was not found.");
+        if (client is null)
+            return Results.Unauthorized(new Error()
+            {
+                Code = Errors.OAuth.InvalidClient,
+                Description = "Client was not found."
+            });
+
         if (!client.HasGrantType(authorizationPayload.GrantType))
-            return Results.BadRequest($"Client doesn't support grant type {authorizationPayload.GrantType}");
-        
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.UnsupportedGrantType,
+                Description = $"'{authorizationPayload.GrantType}' grant is not supported by client."
+            });
+
         var code = authorizationPayload.Code!;
-        var authorizationCode = await _authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
-        if (authorizationCode is null) return Results.NotFound("Authorization code not found.");
-        if (authorizationCode.Used) return Results.BadRequest("Authorization code has already been used.");
-        if (authorizationCode.ExpireDate < DateTimeOffset.UtcNow)
-            return Results.BadRequest("Authorization code has expired.");
-
         var redirectUri = authorizationPayload.RedirectUri;
-        if (string.IsNullOrEmpty(redirectUri) || !authorizationCode.RedirectUri.Equals(redirectUri))
-            return Results.BadRequest("Invalid redirect URI.");
+        var authorizationCode = await _authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
         
-        if (client.Id != authorizationCode.ClientId) return Results.BadRequest("Invalid client ID.");
-        if (!client.HasRedirectUri(redirectUri)) return Results.BadRequest("Invalid redirect URI.");
-
+        if (authorizationCode is null || authorizationCode.Used || 
+            authorizationCode.ExpireDate < DateTimeOffset.UtcNow || 
+            string.IsNullOrEmpty(redirectUri) || 
+            !authorizationCode.RedirectUri.Equals(redirectUri) || 
+            client.Id != authorizationCode.ClientId || 
+            !client.HasRedirectUri(redirectUri))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidGrant,
+                Description = "Invalid authorization code."
+            });
+        }
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {
-            if (string.IsNullOrEmpty(authorizationPayload.ClientSecret))
-                return Results.BadRequest("Client secret is required.");
-
-            if (!client.Secret.Equals(authorizationPayload.ClientSecret))
-                return Results.BadRequest("Invalid client secret.");
+            if (string.IsNullOrEmpty(authorizationPayload.ClientSecret)
+                || !client.Secret.Equals(authorizationPayload.ClientSecret))
+            {
+                return Results.Unauthorized(new Error()
+                {
+                    Code = Errors.OAuth.InvalidClient,
+                    Description = "Client authentication failed."
+                });
+            }
         }
 
         if (client is { Type: ClientType.Public, RequirePkce: true })
         {
-            if (string.IsNullOrWhiteSpace(authorizationCode.CodeChallenge))
-                return Results.BadRequest("Missing code challenge in authorization code.");
-
-            if (string.IsNullOrWhiteSpace(authorizationCode.CodeChallengeMethod))
-                return Results.BadRequest("Missing code challenge method in authorization code.");
-
-            if (string.IsNullOrWhiteSpace(authorizationPayload.CodeVerifier))
-                return Results.BadRequest("Missing code verifier in token request.");
+            if (string.IsNullOrWhiteSpace(authorizationCode.CodeChallenge)
+                || string.IsNullOrWhiteSpace(authorizationCode.CodeChallengeMethod)
+                || string.IsNullOrWhiteSpace(authorizationPayload.CodeVerifier))
+            {
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.OAuth.InvalidGrant,
+                    Description = "Invalid authorization code."
+                });
+            }
 
             var isValidPkce = _pkceHandler.Verify(
                 authorizationCode.CodeChallenge,
@@ -100,16 +126,25 @@ public class AuthorizationCodeStrategy(
                 authorizationPayload.CodeVerifier
             );
 
-            if (!isValidPkce) return Results.BadRequest("Invalid PKCE verification (code verifier mismatch).");
+            if (!isValidPkce)
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.OAuth.InvalidGrant,
+                    Description = "Invalid authorization code."
+                });
         }
 
         var device = authorizationCode.Device;
         var session = await _sessionManager.FindAsync(device, cancellationToken);
-        if (session is null) return Results.NotFound("Session not found.");
-        if (session.ExpireDate < DateTimeOffset.UtcNow) return Results.BadRequest("Session has expired.");
-
         var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow || user is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidGrant,
+                Description = "Invalid authorization code."
+            });
+        }
 
         var codeResult = await _authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
@@ -125,14 +160,14 @@ public class AuthorizationCodeStrategy(
             .WithNonce(authorizationCode.Nonce)
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
-        
+
         var response = new TokenResponse()
         {
             AccessToken = await _tokenFactory.CreateAsync(accessClaims, cancellationToken),
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = TokenTypes.Bearer,
         };
-        
+
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
             var refreshToken = new RefreshTokenEntity()
@@ -144,10 +179,10 @@ public class AuthorizationCodeStrategy(
                 ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };
-        
+
             var tokenResult = await _tokenManager.CreateAsync(refreshToken, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
-            
+
             var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
             var protectedRefreshToken = protector.Protect(refreshToken.Token);
             response.RefreshToken = protectedRefreshToken;
@@ -155,8 +190,9 @@ public class AuthorizationCodeStrategy(
 
         if (client.HasScope(Scopes.OpenId))
         {
+            var scopes = client.AllowedScopes.Select(x => x.Scope.Name).ToList();
             var idClaims = _claimBuilderFactory.CreateIdBuilder()
-                .WithOpenId(user, client)
+                .WithOpenId(user, scopes)
                 .WithIssuer(_options.Issuer)
                 .WithAudience(client.Audience)
                 .WithSubject(user.Id.ToString())
@@ -167,7 +203,7 @@ public class AuthorizationCodeStrategy(
                 .WithAuthenticationTime(DateTimeOffset.UtcNow)
                 .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime))
                 .Build();
-            
+
             response.IdToken = await _tokenFactory.CreateAsync(idClaims, cancellationToken);
         }
 

@@ -9,4 +9,5 @@ public class TokenRequest
     public string? Code { get; set; }
     public string? ClientSecret { get; set; }
     public string? CodeVerifier { get; set; }
+    public string? Scope { get; set; }
 }

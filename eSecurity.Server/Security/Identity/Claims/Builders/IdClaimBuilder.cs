@@ -14,12 +14,12 @@ public sealed class IdClaimBuilder : JwtClaimBuilderBase<IdClaimBuilder>
     public IdClaimBuilder WithAccessTokenHash(string hash) => Add(AppClaimTypes.AccessTokenHash, hash);
     public IdClaimBuilder WithAuthorizationCodeHash(string hash) => Add(AppClaimTypes.AuthorizationCodeHash, hash);
 
-    public IdClaimBuilder WithOpenId(UserEntity user, ClientEntity client)
+    public IdClaimBuilder WithOpenId(UserEntity user, List<string> scopes)
     {
-        if (client.HasScope(Scopes.Email)) WithEmail(user);
-        if (client.HasScope(Scopes.Phone)) WithPhone(user);
-        if (client.HasScope(Scopes.Profile)) WithProfile(user);
-        if (client.HasScope(Scopes.Address)) WithAddress(user);
+        if (scopes.Contains(Scopes.Email)) WithEmail(user);
+        if (scopes.Contains(Scopes.Phone)) WithPhone(user);
+        if (scopes.Contains(Scopes.Profile)) WithProfile(user);
+        if (scopes.Contains(Scopes.Address)) WithAddress(user);
 
         return this;
     }

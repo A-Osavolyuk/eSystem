@@ -17,6 +17,7 @@ public sealed class RefreshTokenPayload : TokenPayload
     public string? ClientSecret { get; set; }
     public string? RefreshToken { get; set; }
     public string? RedirectUri { get; set; }
+    public string? Scope { get; set; }
 }
 
 public class RefreshTokenStrategy(
@@ -45,40 +46,82 @@ public class RefreshTokenStrategy(
             throw new NotSupportedException("Payload type must be 'RefreshTokenPayload'.");
 
         var client = await _clientManager.FindByIdAsync(refreshPayload.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client was not found.");
+        if (client is null)
+            return Results.Unauthorized(new Error()
+            {
+                Code = Errors.OAuth.InvalidClient,
+                Description = "Invalid client."
+            });
+
         if (!client.HasGrantType(refreshPayload.GrantType))
-            return Results.BadRequest($"Client doesn't support grant type {refreshPayload.GrantType}");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.UnsupportedGrantType,
+                Description = $"'{refreshPayload.GrantType}' is not supported by client."
+            });
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
         var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
 
         var refreshToken = await _tokenManager.FindByTokenAsync(unprotectedToken, cancellationToken);
-        if (refreshToken is null) return Results.NotFound("Refresh token not found.");
-        if (!refreshToken.IsValid) return Results.BadRequest("Refresh token is invalid.");
+        if (refreshToken is null || !refreshToken.IsValid)
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.OAuth.InvalidGrant,
+                Description = "Invalid refresh token."
+            });
 
         if (refreshToken.Revoked)
         {
             //TODO: Implement revoked token reuse detection
         }
-        
-        if (client.Id != refreshToken.ClientId)
-            return Results.BadRequest("Invalid client ID.");
 
-        if (!client.AllowOfflineAccess || !client.HasScope(Scopes.OfflineAccess))
-            return Results.BadRequest("Offline access is not allowed for client.");
+        if (client.Id != refreshToken.ClientId)
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidGrant,
+                Description = "Invalid refresh token"
+            });
+
+        var requestedScopes = string.IsNullOrEmpty(refreshPayload.Scope)
+            ? client.AllowedScopes.Select(x => x.Scope.Name).ToList()
+            : refreshPayload.Scope!.Split(' ').ToList();
+        
+        if (!client.HasScopes(requestedScopes))
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidScope,
+                Description = "Requested scopes exceed originally granted scopes."
+            });
+        
+        if (requestedScopes.Contains(Scopes.OfflineAccess) && !client.AllowOfflineAccess)
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidScope,
+                Description = "offline_access scope was not originally granted."
+            });
 
         if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
         {
-            if (string.IsNullOrEmpty(refreshPayload.ClientSecret))
-                return Results.BadRequest("Client secret is required.");
-
-            if (!client.Secret.Equals(refreshPayload.ClientSecret))
-                return Results.BadRequest("Invalid client secret.");
+            if (string.IsNullOrEmpty(refreshPayload.ClientSecret)
+                || !client.Secret.Equals(refreshPayload.ClientSecret))
+            {
+                return Results.Unauthorized(new Error()
+                {
+                    Code = Errors.OAuth.InvalidClient,
+                    Description = "Client authentication failed."
+                });
+            }
         }
 
         var device = refreshToken.Session.Device;
         var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.OAuth.InvalidGrant,
+                Description = "Invalid refresh token."
+            });
 
         var accessTokenClaims = _claimBuilderFactory.CreateAccessBuilder()
             .WithIssuer(_options.Issuer)
@@ -126,10 +169,10 @@ public class RefreshTokenStrategy(
             response.RefreshToken = protectedToken;
         }
 
-        if (client.HasScope(Scopes.OpenId))
+        if (requestedScopes.Contains(Scopes.OpenId))
         {
             var idClaims = _claimBuilderFactory.CreateIdBuilder()
-                .WithOpenId(user, client)
+                .WithOpenId(user, requestedScopes)
                 .WithIssuer(_options.Issuer)
                 .WithAudience(client.Audience)
                 .WithSubject(user.Id.ToString())
