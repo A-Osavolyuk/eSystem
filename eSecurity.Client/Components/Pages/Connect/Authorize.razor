@@ -1,7 +1,6 @@
 @page "/connect/authorize"
 @using eSecurity.Client.Common.JS.Fetch
 @using eSecurity.Client.Security.Authentication.Oidc
-@using eSecurity.Core.Common.Responses
 @using eSystem.Core.Security.Authentication.Oidc.Constants
 @using eSystem.Core.Common.Results
 @using eSecurity.Core.Security.Cookies
@@ -11,7 +10,7 @@
 @inject IFetchClient FetchClient
 @inject IConnectService ConnectService
 
-<Title Text="Authorization"></Title>
+<Title Text="Authorization to eSystem Account"></Title>
 
 @code {
 

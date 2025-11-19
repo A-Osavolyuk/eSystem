@@ -2,7 +2,14 @@
 
 @inherits PageBase
 
-<Title Text="Logout callback"></Title>
+@if (!string.IsNullOrEmpty(State))
+{
+    <Title Text="Logged out from eSystem Account"></Title>
+}
+else
+{
+    <Title Text="Failed logout"></Title>
+}
 
 @code {
     [SupplyParameterFromQuery(Name = "state")]

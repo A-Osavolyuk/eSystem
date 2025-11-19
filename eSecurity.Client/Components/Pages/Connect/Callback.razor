@@ -8,7 +8,6 @@
 @using eSecurity.Core.Common.DTOs
 @using eSystem.Core.Security.Authentication.Oidc.Constants
 @using Microsoft.AspNetCore.Authentication.Cookies
-@using eSecurity.Core.Common.Responses
 
 @inherits PageBase
 
@@ -18,6 +17,15 @@
 @inject ITokenValidator TokenValidator
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject TokenProvider TokenProvider
+
+@if (!string.IsNullOrEmpty(Code))
+{
+    <Title Text="Authorizing to eSystem Account"></Title>
+}
+else
+{
+    <Title Text="Failed authorization"></Title>
+}
 
 @code {
 
