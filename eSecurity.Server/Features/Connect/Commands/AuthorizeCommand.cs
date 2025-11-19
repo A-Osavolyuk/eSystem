@@ -77,7 +77,7 @@ public class AuthorizeCommandHandler(
             return Results.NotFound(new Error()
             {
                 Code = Errors.OAuth.ServerError,
-                Description = "User was not found."
+                Description = "Invalid authorization session."
             });
         }
 
@@ -90,7 +90,7 @@ public class AuthorizeCommandHandler(
             return Results.NotFound(new Error()
             {
                 Code = Errors.OAuth.ServerError,
-                Description = "Invalid device."
+                Description = "Invalid authorization session."
             });
         }
 
@@ -107,10 +107,10 @@ public class AuthorizeCommandHandler(
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.NotFound(new Error()
+            return Results.Unauthorized(new Error()
             {
                 Code = Errors.OAuth.InvalidClient,
-                Description = "Client was not found."
+                Description = "Invalid client"
             });
         }
 
@@ -138,14 +138,14 @@ public class AuthorizeCommandHandler(
                 return Results.BadRequest(new Error()
                 {
                     Code = Errors.OAuth.InvalidRequest,
-                    Description = "'code_challenge' param is required for public clients."
+                    Description = "'code_challenge' param is required"
                 });
 
             if (string.IsNullOrEmpty(request.Request.CodeChallengeMethod))
                 return Results.BadRequest(new Error()
                 {
                     Code = Errors.OAuth.InvalidRequest,
-                    Description = "'code_challenge_method' param is required for public clients."
+                    Description = "'code_challenge_method' param is required"
                 });
         }
 
