@@ -197,7 +197,7 @@
         {
             UserId = UserState.UserId,
             ClientId = Guid.Parse(clientId),
-            Scopes = _scopes
+            Scopes = queryParams["scope"].Split(" ").ToList()
         };
         
         var result = await ConnectService.GrantConsentsAsync(request);
