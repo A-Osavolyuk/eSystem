@@ -26,18 +26,33 @@ public sealed class ManualLogoutStrategy(
     public async ValueTask<Result> ExecuteAsync(LogoutPayload payload, CancellationToken cancellationToken = default)
     {
         var protectedCookie = _cookieAccessor.Get(DefaultCookies.Session);
-        if (string.IsNullOrEmpty(protectedCookie)) return Results.BadRequest("Session doesn't exist.");
+        if (string.IsNullOrEmpty(protectedCookie))
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "Session cookie doesn't exist."
+            });
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
         var cookiesJson = protector.Unprotect(protectedCookie);
         var cookie = JsonSerializer.Deserialize<SessionCookie>(cookiesJson)!;
 
         var session = await _sessionManager.FindByIdAsync(cookie.SessionId, cancellationToken);
-        if (session is null) return Results.NotFound("Session was not found.");
+        if (session is null)
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Invalid session."
+            });
 
         var user = await _userManager.FindByIdAsync(cookie.UserId, cancellationToken);
-        if (user is null) return Results.NotFound("User was not found");
-        
+        if (user is null)
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Invalid session."
+            });
+
         var result = await _sessionManager.RemoveAsync(session, cancellationToken);
         if (!result.Succeeded) return result;
 

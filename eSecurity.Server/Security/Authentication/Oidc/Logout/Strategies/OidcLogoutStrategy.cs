@@ -35,20 +35,41 @@ public sealed class OidcLogoutStrategy(
         if (payload is not OidcLogoutPayload odicPayload)
             throw new NotSupportedException("Payload type must be 'OidcLogoutPayload'.");
 
-        if (string.IsNullOrEmpty(odicPayload.IdTokenHint)) 
-            return Results.BadRequest("Id token is empty.");
+        if (string.IsNullOrEmpty(odicPayload.PostLogoutRedirectUri))
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "post_logout_redirect_uri is required."
+            });
+
+        if (string.IsNullOrEmpty(odicPayload.IdTokenHint))
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "id_token_hint is required."
+            });
 
         var handler = new JwtSecurityTokenHandler();
         var securityToken = handler.ReadJwtToken(odicPayload.IdTokenHint);
-        if (securityToken is null) return Results.BadRequest("Id token is invalid.");
+        if (securityToken is null)
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "id_token_hint is invalid."
+            });
 
         var kid = Guid.Parse(securityToken.Header.Kid);
         var certificate = await _certificateProvider.FindByIdAsync(kid, cancellationToken);
-        if (certificate is null) return Results.NotFound("Public key not found.");
+        if (certificate is null)
+            return Results.InternalServerError(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Public key not found."
+            });
 
         var publicKey = certificate.Certificate.GetRSAPublicKey()!;
         var audiences = await _clientManager.GetAudiencesAsync(cancellationToken);
-        
+
         var validationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
@@ -60,18 +81,30 @@ public sealed class OidcLogoutStrategy(
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5)
         };
-        
+
         var principal = handler.ValidateToken(odicPayload.IdTokenHint, validationParameters, out var validatedToken);
-        if (validatedToken is null || principal is null) return Results.BadRequest("Invalid token.");
+        if (validatedToken is null || principal is null)
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "id_token_hint is invalid."
+            });
 
         var sid = principal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sid);
-        if (sid is null) return Results.BadRequest("Id token does not contain 'sid' claim.");
+        if (sid is null)
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "id_token_hint is invalid."
+            });
 
         var session = await _sessionManager.FindByIdAsync(Guid.Parse(sid.Value), cancellationToken);
-        if (session is null) return Results.NotFound("Session was not found.");
-
-        if (string.IsNullOrEmpty(odicPayload.PostLogoutRedirectUri))
-            return Results.BadRequest("Post logout redirect URI is empty.");
+        if (session is null)
+            return Results.InternalServerError(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Invalid session."
+            });
 
         ClientEntity? client;
         if (string.IsNullOrEmpty(odicPayload.ClientId))
@@ -83,17 +116,27 @@ public sealed class OidcLogoutStrategy(
         {
             client = await _clientManager.FindByIdAsync(odicPayload.ClientId, cancellationToken);
         }
+
+        if (client is null)
+            return Results.Unauthorized(new Error()
+            {
+                Code = Errors.OAuth.InvalidClient,
+                Description = "Invalid client."
+            });
         
-        if (client is null) return Results.NotFound("Client was not found.");
         if (!client.HasPostLogoutRedirectUri(odicPayload.PostLogoutRedirectUri))
-            return Results.BadRequest("Invalid post logout redirect URI.");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "post_logout_redirect_uri is invalid."
+            });
 
         var result = await _sessionManager.RemoveAsync(session, cancellationToken);
         if (result.Succeeded) return result;
 
         var queryBuilder = QueryBuilder.Create().WithUri(odicPayload.PostLogoutRedirectUri);
-        
-        if (!string.IsNullOrEmpty(odicPayload.State)) 
+
+        if (!string.IsNullOrEmpty(odicPayload.State))
             queryBuilder.WithQueryParam("state", odicPayload.State);
 
         var response = new LogoutResponse() { RedirectUri = queryBuilder.Build() };
