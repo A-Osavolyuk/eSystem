@@ -18,6 +18,7 @@ using eSystem.ServiceDefaults;
 using MudBlazor;
 using MudBlazor.Services;
 using MudExtensions.Services;
+using NavigationContext = eSecurity.Core.Common.Routing.NavigationContext;
 
 namespace eSecurity.Client.Extensions;
 
@@ -33,6 +34,7 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddHttpClient();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<IApiClient, ApiClient>();
+            builder.Services.AddScoped<NavigationContext>();
         
             builder.Services.AddSecurity();
             builder.Services.AddConfirmation();

@@ -5,6 +5,7 @@
 
 @code {
     [Inject] public NavigationManager NavigationManager { get; private set; } = null!;
+    [Inject] public NavigationContext NavigationContext { get; private set; } = null!;
     [Inject] public UserState UserState { get; private set; } = null!;
     [Inject] public AuthenticationManager AuthenticationManager { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; private set; } = null!;
