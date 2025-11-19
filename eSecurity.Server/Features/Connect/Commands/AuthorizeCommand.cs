@@ -6,6 +6,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
@@ -20,6 +21,7 @@ public class AuthorizeCommandHandler(
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
     IClientManager clientManager,
+    IConsentManager consentManager,
     IOptions<OpenIdOptions> options) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
@@ -27,6 +29,7 @@ public class AuthorizeCommandHandler(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly IClientManager _clientManager = clientManager;
+    private readonly IConsentManager _consentManager = consentManager;
     private readonly OpenIdOptions _options = options.Value;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
@@ -45,7 +48,7 @@ public class AuthorizeCommandHandler(
             return Results.BadRequest(new Error()
             {
                 Code = Errors.OAuth.InvalidRequest,
-                Description = "'nonce' param is required."
+                Description = "nonce is required."
             });
         }
         
@@ -70,40 +73,7 @@ public class AuthorizeCommandHandler(
                 Description = $"'{string.Join(" ", unsupportedScopes)}' scopes are invalid."
             });
         }
-
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null)
-        {
-            return Results.NotFound(new Error()
-            {
-                Code = Errors.OAuth.ServerError,
-                Description = "Invalid authorization session."
-            });
-        }
-
-        var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
-
-        var device = user.GetDevice(userAgent, ipAddress);
-        if (device is null)
-        {
-            return Results.NotFound(new Error()
-            {
-                Code = Errors.OAuth.ServerError,
-                Description = "Invalid authorization session."
-            });
-        }
-
-        var session = await _sessionManager.FindAsync(device, cancellationToken);
-        if (session is null)
-        {
-            return Results.NotFound(new Error()
-            {
-                Code = Errors.OAuth.ServerError,
-                Description = "Invalid authorization session."
-            });
-        }
-
+        
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
         {
@@ -119,7 +89,7 @@ public class AuthorizeCommandHandler(
             return Results.BadRequest(new Error()
             {
                 Code = Errors.OAuth.InvalidRequest,
-                Description = "'redirect_uri' is invalid."
+                Description = "redirect_uri is invalid."
             });
         }
         
@@ -138,15 +108,58 @@ public class AuthorizeCommandHandler(
                 return Results.BadRequest(new Error()
                 {
                     Code = Errors.OAuth.InvalidRequest,
-                    Description = "'code_challenge' param is required"
+                    Description = "code_challenge is required"
                 });
 
             if (string.IsNullOrEmpty(request.Request.CodeChallengeMethod))
                 return Results.BadRequest(new Error()
                 {
                     Code = Errors.OAuth.InvalidRequest,
-                    Description = "'code_challenge_method' param is required"
+                    Description = "code_challenge_method is required"
                 });
+        }
+
+        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        if (user is null)
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Invalid authorization session."
+            });
+        }
+
+        var consent = await _consentManager.FindAsync(user, client, cancellationToken);
+        if (consent is null || !consent.HasScopes(request.Request.Scopes))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.ConsentRequired,
+                Description = "User consent is required."
+            });
+        }
+
+        var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
+        var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
+
+        var device = user.GetDevice(userAgent, ipAddress);
+        if (device is null)
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Invalid authorization session."
+            });
+        }
+
+        var session = await _sessionManager.FindAsync(device, cancellationToken);
+        if (session is null)
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = Errors.OAuth.ServerError,
+                Description = "Invalid authorization session."
+            });
         }
 
         var code = _authorizationCodeManager.Generate();
