@@ -1,0 +1,8 @@
+@page "/connect/logout/callback"
+
+<Title Text="Logout callback"></Title>
+
+@code {
+    [SupplyParameterFromQuery(Name = "state")]
+    public string State { get; set; } = string.Empty;
+}
