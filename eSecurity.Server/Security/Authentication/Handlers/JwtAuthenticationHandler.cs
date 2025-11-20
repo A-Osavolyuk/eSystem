@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
 using eSecurity.Server.Security.Cryptography.Tokens.Jwt;
+using eSystem.Core.Common.Http.Constants;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;
@@ -24,11 +25,11 @@ public class JwtAuthenticationHandler(
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var authorizationHeader = Request.Headers.Authorization.ToString();
-        if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer ")) 
+        var header = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(header) || !header.StartsWith($"{AuthenticationTypes.Bearer} ")) 
             return AuthenticateResult.NoResult();
         
-        var token = authorizationHeader["Bearer ".Length..];
+        var token = header[$"{AuthenticationTypes.Bearer} ".Length..];
         var handler = new JwtSecurityTokenHandler();
         var securityToken = handler.ReadJwtToken(token);
         if (securityToken is null) return AuthenticateResult.Fail("Invalid token.");
