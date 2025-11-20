@@ -5,13 +5,15 @@ using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authorization.OAuth.Schemes;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Server.Controllers.v1;
 
-[Route("v{version:apiVersion}/[controller]")]
 [ApiController]
-[ApiVersion("1.0")]
 [AllowAnonymous]
+[ApiVersion("1.0")]
+[Produces(ContentTypes.Application.Json)]
+[Route("v{version:apiVersion}/[controller]")]
 public class OAuthController(ISender sender, ISignInManager signInManager) : ControllerBase
 {
     private readonly ISender _sender = sender;

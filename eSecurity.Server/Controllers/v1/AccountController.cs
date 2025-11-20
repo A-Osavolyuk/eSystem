@@ -1,12 +1,12 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Account.Commands;
-using eSystem.Core.Common.Errors;
-using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Server.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
+[Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
 public class AccountController(ISender sender) : ControllerBase
 {

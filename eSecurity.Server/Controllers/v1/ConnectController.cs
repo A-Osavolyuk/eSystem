@@ -8,9 +8,10 @@ using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Server.Controllers.v1;
 
-[Route("v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
+[Produces(ContentTypes.Application.Json)]
+[Route("v{version:apiVersion}/[controller]")]
 public class ConnectController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
