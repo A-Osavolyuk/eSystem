@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using System.Text;
-using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Client.Common.Http.Extensions;
 

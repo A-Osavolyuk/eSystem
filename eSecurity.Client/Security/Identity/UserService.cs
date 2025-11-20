@@ -15,7 +15,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/verification/methods"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -28,7 +28,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/emails/primary"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -40,7 +40,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/emails"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -52,7 +52,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/devices/{deviceId}"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -64,7 +64,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/devices"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -76,7 +76,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/linked-accounts"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -88,7 +88,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/2fa/methods"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -100,7 +100,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 Url = $"api/v1/User/{id}/login-methods"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 }

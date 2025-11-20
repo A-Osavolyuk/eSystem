@@ -7,4 +7,9 @@ public class ContentTypes
         public const string Json = "application/json";
         public const string XwwwFormUrlEncoded = "application/x-www-form-urlencoded";
     }
+
+    public static class Multipart
+    {
+        public const string FormData = "multipart/form-data";
+    }
 }

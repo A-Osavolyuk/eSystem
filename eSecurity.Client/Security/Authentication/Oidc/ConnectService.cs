@@ -19,7 +19,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Url = "api/v1/Connect/.well-known/jwks.json",
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -31,7 +31,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Url = "api/v1/Connect/.well-known/openid-configuration",
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -43,7 +43,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Url = $"api/v1/Connect/clients/{clientId}",
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -56,7 +56,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -69,7 +69,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Basic
             });
 
@@ -82,7 +82,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -95,7 +95,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 }

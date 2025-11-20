@@ -16,7 +16,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Url = "api/v1/Verification/code/send"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -29,7 +29,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Url = "api/v1/Verification/code/resend"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -43,7 +43,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Url = "api/v1/Verification/code/verify"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -57,7 +57,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Url = "api/v1/Verification/authenticator/verify"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -71,7 +71,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Url = "api/v1/Verification/passkey/verify"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 }

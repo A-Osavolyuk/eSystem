@@ -17,7 +17,7 @@ public class OAuthService(IApiClient apiClient) : IOAuthService
                 Url = "api/v1/OAuth/load"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 }

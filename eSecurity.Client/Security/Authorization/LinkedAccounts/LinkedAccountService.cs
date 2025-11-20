@@ -16,7 +16,7 @@ public class LinkedAccountService(IApiClient apiClient) : ILinkedAccountService
                 Url = "api/v1/LinkedAccount/disconnect"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 }

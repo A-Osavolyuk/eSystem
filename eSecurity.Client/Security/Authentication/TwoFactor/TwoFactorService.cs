@@ -1,7 +1,6 @@
 using eSecurity.Client.Common.Http;
 using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Common.Requests;
-using eSystem.Core.Common.Http.Context;
 
 namespace eSecurity.Client.Security.Authentication.TwoFactor;
 
@@ -18,7 +17,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/enable"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -31,7 +30,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/disable"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -44,7 +43,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/prefer"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -57,7 +56,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/qr-code/generate"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -70,7 +69,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/qr-code/regenerate"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -83,7 +82,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/authenticator/reconfigure"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -96,7 +95,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/authenticator/verify"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -109,7 +108,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/recovery-codes/generate"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -122,7 +121,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Url = "api/v1/TwoFactor/recovery-codes/load"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 }

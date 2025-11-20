@@ -17,7 +17,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
                 Url = "api/v1/Device/trust"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 }

@@ -18,7 +18,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Account/sign-in"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -31,7 +31,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Account/sign-up"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -44,7 +44,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Email/add"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -57,7 +57,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Email/check"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -70,7 +70,8 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Email/change"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -83,7 +84,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Email/verify"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -96,7 +97,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Email/manage"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -109,7 +110,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Email/remove"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -122,7 +123,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Email/reset"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -135,7 +136,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/User/username/change"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -148,7 +149,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Account/check"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -161,7 +162,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Account/recover"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -174,7 +175,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Account/unlock"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -187,7 +188,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Password/add"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
@@ -200,7 +201,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Password/forgot"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -213,7 +214,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Password/reset"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
@@ -226,7 +227,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Url = "api/v1/Password/change"
             }, new HttpOptions()
             {
-                Type = DataType.Text,
+                ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 }

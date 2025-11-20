@@ -4,6 +4,6 @@ namespace eSystem.Core.Common.Http;
 
 public sealed class HttpOptions
 {
-    public required DataType Type { get; set; }
     public required AuthenticationType Authentication { get; set; }
+    public required string ContentType { get; set; }
 }

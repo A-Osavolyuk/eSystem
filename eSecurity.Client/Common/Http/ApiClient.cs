@@ -48,7 +48,7 @@ public class ApiClient(
                 WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
-            
+
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 var content = await httpResponseMessage.Content.ReadAsAsync<TResponse>(serializationOptions);
@@ -62,7 +62,7 @@ public class ApiClient(
         {
             return HttpResponse<TResponse>.Fail(new Error()
             {
-                Code = Errors.Common.InternalServerError, 
+                Code = Errors.Common.InternalServerError,
                 Description = ex.Message
             });
         }
@@ -78,7 +78,7 @@ public class ApiClient(
                 WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
-            
+
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 return HttpResponse.Success();
@@ -91,7 +91,7 @@ public class ApiClient(
         {
             return HttpResponse.Fail(new Error()
             {
-                Code = Errors.Common.InternalServerError, 
+                Code = Errors.Common.InternalServerError,
                 Description = ex.Message
             });
         }
@@ -149,15 +149,21 @@ public class ApiClient(
             Data = request
         };
 
-        var httpOptions = new HttpOptions() { Type = DataType.Text, Authentication = AuthenticationType.Basic };
+
+        var httpOptions = new HttpOptions()
+        {
+            ContentType = ContentTypes.Application.Json,
+            Authentication = AuthenticationType.Basic
+        };
+
         var result = await SendAsync<TokenResponse>(httpRequest, httpOptions);
-        
+
         if (!result.Succeeded)
         {
             var error = result.GetError();
             return Results.BadRequest(new Error()
             {
-                Code = error.Code, 
+                Code = error.Code,
                 Description = error.Description,
             });
         }

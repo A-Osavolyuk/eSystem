@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace eSecurity.Client.Common.Http.Extensions;
@@ -27,21 +28,31 @@ public static class HttpRequestMethodExtensions
 
         public void AddContent(HttpRequest request, HttpOptions options)
         {
-            switch (options.Type)
+            switch (options.ContentType)
             {
-                case DataType.Text:
+                case ContentTypes.Application.Json:
                 {
                     if (request.Data is not null)
                     {
                         message.Content = new StringContent(JsonSerializer.Serialize(request.Data),
-                            Encoding.UTF8, "application/json");
+                            Encoding.UTF8, options.ContentType);
                     }
 
                     break;
                 }
-                case DataType.File:
+                case ContentTypes.Application.XwwwFormUrlEncoded:
                 {
-                    message.Headers.Add("Accept", "multipart/form-data");
+                    if (request.Data is not null)
+                    {
+                        var content = FormUrl.Encode(request.Data);
+                        message.Content = new FormUrlEncodedContent(content);
+                    }
+
+                    break;
+                }
+                case ContentTypes.Multipart.FormData:
+                {
+                    message.Headers.Add("Accept", options.ContentType);
 
                     var content = new MultipartFormDataContent();
 
