@@ -69,7 +69,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Data = request
             }, new HttpOptions()
             {
-                ContentType = ContentTypes.Application.Json,
+                ContentType = ContentTypes.Application.XwwwFormUrlEncoded,
                 Authentication = AuthenticationType.Basic
             });
 
