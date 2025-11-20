@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Results;
 using eSystem.Core.Requests.Storage;

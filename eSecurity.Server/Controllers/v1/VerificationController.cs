@@ -1,7 +1,5 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Verification.Commands;
-using eSystem.Core.Common.Errors;
-using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Server.Controllers.v1;

@@ -9,7 +9,6 @@ using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

@@ -3,8 +3,6 @@ using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Features.OAuth;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authorization.OAuth.Schemes;
-using eSystem.Core.Common.Errors;
-using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Server.Controllers.v1;

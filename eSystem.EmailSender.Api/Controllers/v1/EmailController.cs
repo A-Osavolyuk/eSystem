@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Common.Http;
-using eSystem.EmailSender.Api.Requests;
+﻿using eSystem.EmailSender.Api.Requests;
 using HttpResponse = eSystem.Core.Common.Http.HttpResponse;
 
 namespace eSystem.EmailSender.Api.Controllers.v1;

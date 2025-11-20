@@ -1,5 +1,4 @@
 using eSecurity.Core.Security.Authentication.Oidc;
-using eSecurity.Server.Security.Authentication.Oidc;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 

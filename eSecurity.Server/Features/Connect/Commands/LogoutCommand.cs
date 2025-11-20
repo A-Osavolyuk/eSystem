@@ -8,7 +8,6 @@ using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
 using eSecurity.Server.Security.Cryptography.Tokens.Jwt;
 using eSystem.Core.Security.Identity.Claims;
-using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

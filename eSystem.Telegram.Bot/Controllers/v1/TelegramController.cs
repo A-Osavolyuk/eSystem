@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Common.Http;
-using eSystem.Core.Requests.Telegram;
+﻿using eSystem.Core.Requests.Telegram;
 using HttpResponse = Microsoft.AspNetCore.Http.HttpResponse;
 
 namespace eSystem.Telegram.Bot.Controllers.v1;

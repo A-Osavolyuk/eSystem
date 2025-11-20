@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text.Json;
 using eSecurity.Client.Common.Http.Extensions;
 using eSecurity.Client.Common.JS.Fetch;
@@ -9,12 +8,10 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Common.Routing;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
-using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
-using AuthenticationManager = eSecurity.Client.Security.Authentication.AuthenticationManager;
 
 namespace eSecurity.Client.Common.Http;
 

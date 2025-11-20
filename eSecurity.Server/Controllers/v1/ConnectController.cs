@@ -2,8 +2,6 @@
 using eSecurity.Server.Features.Connect.Commands;
 using eSecurity.Server.Features.Connect.Queries;
 using eSecurity.Server.Security.Authentication.Handlers;
-using eSystem.Core.Common.Errors;
-using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Server.Controllers.v1;

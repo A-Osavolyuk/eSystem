@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.Common.Exceptions;
-using eSystem.Core.Common.Http;
 using eSystem.Core.Common.Results;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
