@@ -42,33 +42,7 @@ public class ApiClient(
     {
         try
         {
-            var message = new HttpRequestMessage();
-
-            if (httpOptions.Authentication == AuthenticationType.Bearer)
-            {
-                if (string.IsNullOrEmpty(_tokenProvider.AccessToken))
-                {
-                    var result = await RefreshAsync();
-
-                    if (!result.Succeeded)
-                    {
-                        _tokenProvider.Clear();
-                        _navigationManager.NavigateTo(Links.Account.SignIn);
-                    }
-                }
-
-                message.Headers.AddBearerAuthorization(_tokenProvider.AccessToken);
-            }
-
-            message.RequestUri = new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}");
-            message.Method = httpRequest.Method;
-            message.IncludeUserAgent(_httpContext);
-            message.IncludeCookies(_httpContext);
-            message.AddContent(httpRequest, httpOptions);
-
-            var httpClient = _clientFactory.CreateClient("eSecurity.Client");
-            var httpResponseMessage = await httpClient.SendAsync(message);
-
+            var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions);
             var serializationOptions = new JsonSerializerOptions()
             {
                 WriteIndented = true,
@@ -80,11 +54,9 @@ public class ApiClient(
                 var content = await httpResponseMessage.Content.ReadAsAsync<TResponse>(serializationOptions);
                 return HttpResponse<TResponse>.Success(content);
             }
-            else
-            {
-                var error = await httpResponseMessage.Content.ReadAsAsync<Error>(serializationOptions);
-                return HttpResponse<TResponse>.Fail(error);
-            }
+
+            var error = await httpResponseMessage.Content.ReadAsAsync<Error>(serializationOptions);
+            return HttpResponse<TResponse>.Fail(error);
         }
         catch (Exception ex)
         {
@@ -100,33 +72,7 @@ public class ApiClient(
     {
         try
         {
-            var message = new HttpRequestMessage();
-
-            if (httpOptions.Authentication == AuthenticationType.Bearer)
-            {
-                if (string.IsNullOrEmpty(_tokenProvider.AccessToken))
-                {
-                    var result = await RefreshAsync();
-
-                    if (!result.Succeeded)
-                    {
-                        _tokenProvider.Clear();
-                        _navigationManager.NavigateTo(Links.Account.SignIn);
-                    }
-                }
-
-                message.Headers.AddBearerAuthorization(_tokenProvider.AccessToken);
-            }
-
-            message.RequestUri = new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}");
-            message.Method = httpRequest.Method;
-            message.IncludeUserAgent(_httpContext);
-            message.IncludeCookies(_httpContext);
-            message.AddContent(httpRequest, httpOptions);
-
-            var httpClient = _clientFactory.CreateClient("eSecurity.Client");
-            var httpResponseMessage = await httpClient.SendAsync(message);
-
+            var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions);
             var serializationOptions = new JsonSerializerOptions()
             {
                 WriteIndented = true,
@@ -149,6 +95,40 @@ public class ApiClient(
                 Description = ex.Message
             });
         }
+    }
+
+    private async ValueTask<HttpResponseMessage> SendRequestAsync(HttpRequest httpRequest, HttpOptions httpOptions)
+    {
+        var message = new HttpRequestMessage();
+
+        if (httpOptions.Authentication == AuthenticationType.Bearer)
+        {
+            if (string.IsNullOrEmpty(_tokenProvider.AccessToken))
+            {
+                var result = await RefreshAsync();
+
+                if (!result.Succeeded)
+                {
+                    _tokenProvider.Clear();
+                    _navigationManager.NavigateTo(Links.Account.SignIn);
+                }
+            }
+
+            message.Headers.WithBearerAuthentication(_tokenProvider.AccessToken);
+        }
+        else if (httpOptions.Authentication == AuthenticationType.Basic)
+        {
+            message.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
+        }
+
+        message.RequestUri = new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}");
+        message.Method = httpRequest.Method;
+        message.IncludeUserAgent(_httpContext);
+        message.IncludeCookies(_httpContext);
+        message.AddContent(httpRequest, httpOptions);
+
+        var httpClient = _clientFactory.CreateClient("eSecurity.Client");
+        return await httpClient.SendAsync(message);
     }
 
     private async Task<Result> RefreshAsync()
