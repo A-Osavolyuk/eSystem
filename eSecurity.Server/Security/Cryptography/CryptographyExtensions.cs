@@ -13,7 +13,7 @@ public static class CryptographyExtensions
     {
         builder.Services.AddJwt(cfg =>
         {
-            cfg.Issuer = "http://localhost:5201";
+            cfg.Issuer = "https://localhost:6201";
             cfg.AccessTokenLifetime = TimeSpan.FromMinutes(10);
             cfg.IdTokenLifetime = TimeSpan.FromMinutes(10);
         });
