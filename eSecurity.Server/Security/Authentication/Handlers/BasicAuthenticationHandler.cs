@@ -54,11 +54,14 @@ public class BasicAuthenticationHandler(
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
-            var clientSecret = valueParts.Last();
-            if (client.Type == ClientType.Confidential && !client.Secret.Equals(clientSecret))
+            if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
             {
-                Context.Items["error"] = Errors.OAuth.InvalidClient;
-                return AuthenticateResult.Fail("Unauthorized.");
+                var clientSecret = valueParts.Last();
+                if (!client.Secret.Equals(clientSecret))
+                {
+                    Context.Items["error"] = Errors.OAuth.InvalidClient;
+                    return AuthenticateResult.Fail("Unauthorized.");
+                }
             }
 
             var ticket = CreateTicket(client);
@@ -81,7 +84,7 @@ public class BasicAuthenticationHandler(
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
-            if (client.Type == ClientType.Confidential)
+            if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
             {
                 if (!body.TryGetValue("client_secret", out var secret) || !client.Secret.Equals(secret))
                 {

@@ -79,12 +79,12 @@ public class AuthorizationCodeStrategy(
         var code = authorizationPayload.Code!;
         var redirectUri = authorizationPayload.RedirectUri;
         var authorizationCode = await _authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
-        
-        if (authorizationCode is null || authorizationCode.Used || 
-            authorizationCode.ExpireDate < DateTimeOffset.UtcNow || 
-            string.IsNullOrEmpty(redirectUri) || 
-            !authorizationCode.RedirectUri.Equals(redirectUri) || 
-            client.Id != authorizationCode.ClientId || 
+
+        if (authorizationCode is null || authorizationCode.Used ||
+            authorizationCode.ExpireDate < DateTimeOffset.UtcNow ||
+            string.IsNullOrEmpty(redirectUri) ||
+            !authorizationCode.RedirectUri.Equals(redirectUri) ||
+            client.Id != authorizationCode.ClientId ||
             !client.HasRedirectUri(redirectUri))
         {
             return Results.BadRequest(new Error()
@@ -92,19 +92,6 @@ public class AuthorizationCodeStrategy(
                 Code = Errors.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
             });
-        }
-
-        if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
-        {
-            if (string.IsNullOrEmpty(authorizationPayload.ClientSecret)
-                || !client.Secret.Equals(authorizationPayload.ClientSecret))
-            {
-                return Results.Unauthorized(new Error()
-                {
-                    Code = Errors.OAuth.InvalidClient,
-                    Description = "Client authentication failed."
-                });
-            }
         }
 
         if (client is { Type: ClientType.Public, RequirePkce: true })

@@ -86,33 +86,20 @@ public class RefreshTokenStrategy(
         var requestedScopes = string.IsNullOrEmpty(refreshPayload.Scope)
             ? client.AllowedScopes.Select(x => x.Scope.Name).ToList()
             : refreshPayload.Scope!.Split(' ').ToList();
-        
+
         if (!client.HasScopes(requestedScopes))
             return Results.BadRequest(new Error()
             {
                 Code = Errors.OAuth.InvalidScope,
                 Description = "Requested scopes exceed originally granted scopes."
             });
-        
+
         if (requestedScopes.Contains(Scopes.OfflineAccess) && !client.AllowOfflineAccess)
             return Results.BadRequest(new Error()
             {
                 Code = Errors.OAuth.InvalidScope,
                 Description = "offline_access scope was not originally granted."
             });
-
-        if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
-        {
-            if (string.IsNullOrEmpty(refreshPayload.ClientSecret)
-                || !client.Secret.Equals(refreshPayload.ClientSecret))
-            {
-                return Results.Unauthorized(new Error()
-                {
-                    Code = Errors.OAuth.InvalidClient,
-                    Description = "Client authentication failed."
-                });
-            }
-        }
 
         var device = refreshToken.Session.Device;
         var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
