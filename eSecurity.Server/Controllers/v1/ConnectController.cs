@@ -66,6 +66,18 @@ public class ConnectController(ISender sender) : ControllerBase
         return ResultHandler.Handle(result);
     }
     
+    [EndpointSummary("Revocation")]
+    [EndpointDescription("Revocation")]
+    [ProducesResponseType(200)]
+    [HttpPost("revocation")]
+    [Authorize(AuthenticationSchemes = BasicAuthenticationDefaults.AuthenticationScheme)]
+    [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
+    public async ValueTask<IActionResult> RevokeAsync([FromForm] RevocationRequest request)
+    {
+        var result = await _sender.Send(new RevokeCommand(request));
+        return ResultHandler.Handle(result);
+    }
+    
     [EndpointSummary("Authorize")]
     [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]
