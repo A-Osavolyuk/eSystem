@@ -1,30 +1,31 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eSecurity.Core.Common.Requests;
 
 public class TokenRequest
 {
-    [JsonPropertyName("grant_type")]
+    [FromForm(Name = "grant_type")]
     public required string GrantType { get; set; }
     
-    [JsonPropertyName("client_id")]
+    [FromForm(Name = "client_id")]
     public required string ClientId { get; set; }
     
-    [JsonPropertyName("redirect_uri")]
+    [FromForm(Name = "redirect_uri")]
     public string? RedirectUri { get; set; }
     
-    [JsonPropertyName("refresh_token")]
+    [FromForm(Name = "refresh_token")]
     public string? RefreshToken { get; set; }
     
-    [JsonPropertyName("code")]
+    [FromForm(Name = "code")]
     public string? Code { get; set; }
     
-    [JsonPropertyName("client_secret")]
+    [FromForm(Name = "client_secret")]
     public string? ClientSecret { get; set; }
     
-    [JsonPropertyName("code_verifier")]
+    [FromForm(Name = "code_verifier")]
     public string? CodeVerifier { get; set; }
     
-    [JsonPropertyName("scope")]
+    [FromForm(Name = "scope")]
     public string? Scope { get; set; }
 }

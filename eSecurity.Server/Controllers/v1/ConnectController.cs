@@ -1,8 +1,10 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Connect.Commands;
 using eSecurity.Server.Features.Connect.Queries;
+using eSecurity.Server.Security.Authentication.Handlers;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -57,7 +59,9 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Token")]
     [ProducesResponseType(200)]
     [HttpPost("token")]
-    public async ValueTask<IActionResult> TokenAsync([FromBody] TokenRequest request)
+    [Authorize(AuthenticationSchemes = BasicAuthenticationDefaults.AuthenticationScheme)]
+    [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
+    public async ValueTask<IActionResult> TokenAsync([FromForm] TokenRequest request)
     {
         var result = await _sender.Send(new TokenCommand(request));
         return ResultHandler.Handle(result);
