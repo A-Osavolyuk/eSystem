@@ -70,6 +70,9 @@ public static class AuthenticationExtensions
                 options.CallbackPath = settings.CallbackPath;
             })
             .AddScheme<JwtAuthenticationSchemeOptions, JwtAuthenticationHandler>(
-                JwtBearerDefaults.AuthenticationScheme, _ => {});
+                JwtBearerDefaults.AuthenticationScheme, _ => {})
+            .AddScheme<BasicAuthenticationSchemeOptions, BasicAuthenticationHandler>(
+                BasicAuthenticationDefaults.AuthenticationScheme, _ => {});
+        ;
     }
 }
