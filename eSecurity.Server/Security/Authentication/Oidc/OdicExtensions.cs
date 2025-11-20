@@ -30,17 +30,11 @@ public static class OdicExtensions
                 cfg.EndSessionEndpoint = "https://localhost:6501/connect/logout";
                 cfg.TokenEndpoint = "https://localhost:6201/api/v1/connect/token";
                 cfg.UserinfoEndpoint = "https://localhost:6201/api/v1/connect/userinfo";
-                cfg.IntrospectionEndpoint = "https://localhost:6201/api/v1/connect/introspect";
-                cfg.RevocationEndpoint = "https://localhost:6201/api/v1/connect/revoke";
+                cfg.IntrospectionEndpoint = "https://localhost:6201/api/v1/connect/introspection";
+                cfg.RevocationEndpoint = "https://localhost:6201/api/v1/connect/revocation";
                 cfg.JwksUri = "https://localhost:6201/api/v1/connect/jwks.json";
 
-                cfg.ResponseTypesSupported =
-                [
-                    ResponseTypes.Code,
-                    ResponseTypes.IdToken,
-                    ResponseTypes.Token
-                ];
-                
+                cfg.ResponseTypesSupported = [ResponseTypes.Code];
                 cfg.GrantTypesSupported =
                 [
                     GrantTypes.AuthorizationCode,
