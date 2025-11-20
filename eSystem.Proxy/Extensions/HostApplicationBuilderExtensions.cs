@@ -24,7 +24,7 @@ public static class HostApplicationBuilderExtensions
                 {
                     p.AllowAnyHeader();
                     p.AllowAnyMethod();
-                    p.WithOrigins("http://localhost:5501");
+                    p.WithOrigins("https://localhost:6501");
                     p.AllowCredentials();
                 });
             });
@@ -110,7 +110,7 @@ public static class HostApplicationBuilderExtensions
                     ClusterId = "security-cluster",
                     Destinations = new Dictionary<string, DestinationConfig>()
                     {
-                        ["security-destination"] = new() { Address = configuration["services:e-security-server:http:0"]! }
+                        ["security-destination"] = new() { Address = configuration["E-SECURITY-SERVER_HTTPS"]! }
                     }
                 },
                 new ClusterConfig
@@ -118,7 +118,7 @@ public static class HostApplicationBuilderExtensions
                     ClusterId = "files-cluster",
                     Destinations = new Dictionary<string, DestinationConfig>()
                     {
-                        ["files-destination"] = new() { Address = configuration["services:storage-api:http:0"]! }
+                        ["files-destination"] = new() { Address = configuration["STORAGE-API_HTTPS"]! }
                     }
                 }
             };
