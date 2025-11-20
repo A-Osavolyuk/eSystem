@@ -1,7 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using eSystem.Core.Common.Http;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace eSecurity.Client.Common.Http.Extensions;

@@ -5,7 +5,6 @@ using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
 using eSecurity.Core.Security.Cryptography.Protection.Constants;
-using eSystem.Core.Common.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;

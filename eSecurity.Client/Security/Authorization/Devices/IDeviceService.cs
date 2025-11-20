@@ -1,6 +1,5 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
-using eSystem.Core.Common.Http;
 
 namespace eSecurity.Client.Security.Authorization.Devices;
 

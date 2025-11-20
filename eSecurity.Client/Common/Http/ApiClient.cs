@@ -9,7 +9,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Common.Routing;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
-using eSystem.Core.Common.Http;
+using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using Microsoft.AspNetCore.Components;
@@ -44,7 +44,7 @@ public class ApiClient(
         {
             var message = new HttpRequestMessage();
 
-            if (httpOptions.WithBearer)
+            if (httpOptions.Authentication == AuthenticationType.Bearer)
             {
                 if (string.IsNullOrEmpty(_tokenProvider.AccessToken))
                 {
@@ -102,7 +102,7 @@ public class ApiClient(
         {
             var message = new HttpRequestMessage();
 
-            if (httpOptions.WithBearer)
+            if (httpOptions.Authentication == AuthenticationType.Bearer)
             {
                 if (string.IsNullOrEmpty(_tokenProvider.AccessToken))
                 {
@@ -169,7 +169,7 @@ public class ApiClient(
             Data = request
         };
 
-        var httpOptions = new HttpOptions() { Type = DataType.Text };
+        var httpOptions = new HttpOptions() { Type = DataType.Text, Authentication = AuthenticationType.Basic };
         var result = await SendAsync<TokenResponse>(httpRequest, httpOptions);
         
         if (!result.Succeeded)

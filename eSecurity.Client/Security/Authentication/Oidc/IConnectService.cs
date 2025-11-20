@@ -2,7 +2,6 @@ using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Oidc;
 using eSecurity.Core.Security.Authentication.Oidc.Client;
-using eSystem.Core.Common.Http;
 
 namespace eSecurity.Client.Security.Authentication.Oidc;
 

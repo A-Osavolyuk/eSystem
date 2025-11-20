@@ -1,7 +1,6 @@
 using eSecurity.Client.Common.Http;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
-using eSystem.Core.Common.Http;
 
 namespace eSecurity.Client.Security.Authorization.Devices;
 
@@ -16,5 +15,9 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Device/trust"
-            }, new HttpOptions() { Type = DataType.Text });
+            }, new HttpOptions()
+            {
+                Type = DataType.Text,
+                Authentication = AuthenticationType.None
+            });
 }

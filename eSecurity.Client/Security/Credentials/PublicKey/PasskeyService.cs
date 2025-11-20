@@ -1,14 +1,13 @@
 using eSecurity.Client.Common.Http;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Credentials.PublicKey;
-using eSystem.Core.Common.Http;
 
 namespace eSecurity.Client.Security.Credentials.PublicKey;
 
 public class PasskeyService(IApiClient apiClient) : IPasskeyService
 {
     private readonly IApiClient _apiClient = apiClient;
-    
+
     public async ValueTask<HttpResponse<PublicKeyCredentialRequestOptions>> GenerateRequestOptionsAsync(
         GenerateRequestOptionsRequest request)
         => await _apiClient.SendAsync<PublicKeyCredentialRequestOptions>(
@@ -17,7 +16,11 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Passkey/options/request"
-            }, new HttpOptions() { Type = DataType.Text });
+            }, new HttpOptions()
+            {
+                Type = DataType.Text,
+                Authentication = AuthenticationType.None
+            });
 
     public async ValueTask<HttpResponse<PublicKeyCredentialCreationOptions>> GenerateCreationOptionsAsync(
         GenerateCreationOptionsRequest request)
@@ -27,7 +30,11 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Passkey/options/creation"
-            }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
+            }, new HttpOptions()
+            {
+                Type = DataType.Text,
+                Authentication = AuthenticationType.Bearer
+            });
 
     public async ValueTask<HttpResponse> CreateAsync(CreatePasskeyRequest request)
         => await _apiClient.SendAsync(
@@ -36,7 +43,11 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Passkey/create"
-            }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
+            }, new HttpOptions()
+            {
+                Type = DataType.Text,
+                Authentication = AuthenticationType.Bearer
+            });
 
     public async ValueTask<HttpResponse> ChangeNameAsync(ChangePasskeyNameRequest request)
         => await _apiClient.SendAsync(
@@ -45,7 +56,11 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Passkey/change-name"
-            }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
+            }, new HttpOptions()
+            {
+                Type = DataType.Text,
+                Authentication = AuthenticationType.Bearer
+            });
 
     public async ValueTask<HttpResponse> RemoveAsync(RemovePasskeyRequest request)
         => await _apiClient.SendAsync(
@@ -54,5 +69,9 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Passkey/remove"
-            }, new HttpOptions() { Type = DataType.Text, WithBearer = true });
+            }, new HttpOptions()
+            {
+                Type = DataType.Text,
+                Authentication = AuthenticationType.Bearer
+            });
 }
