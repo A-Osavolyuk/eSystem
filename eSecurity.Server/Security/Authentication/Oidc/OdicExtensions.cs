@@ -25,15 +25,14 @@ public static class OdicExtensions
 
             services.AddOpenidConfiguration(cfg =>
             {
-                cfg.Issuer = "http://localhost:5201";
-
-                cfg.AuthorizationEndpoint = "http://localhost:5501/connect/authorize";
-                cfg.EndSessionEndpoint = "http://localhost:5501/connect/logout";
-                cfg.TokenEndpoint = "http://localhost:5201/api/v1/connect/token";
-                cfg.UserinfoEndpoint = "http://localhost:5201/api/v1/connect/userinfo";
-                cfg.IntrospectionEndpoint = "http://localhost:5201/api/v1/connect/introspect";
-                cfg.RevocationEndpoint = "http://localhost:5201/api/v1/connect/revoke";
-                cfg.JwksUri = "http://localhost:5201/api/v1/connect/jwks.json";
+                cfg.Issuer = "https://localhost:6201";
+                cfg.AuthorizationEndpoint = "https://localhost:6501/connect/authorize";
+                cfg.EndSessionEndpoint = "https://localhost:6501/connect/logout";
+                cfg.TokenEndpoint = "https://localhost:6201/api/v1/connect/token";
+                cfg.UserinfoEndpoint = "https://localhost:6201/api/v1/connect/userinfo";
+                cfg.IntrospectionEndpoint = "https://localhost:6201/api/v1/connect/introspect";
+                cfg.RevocationEndpoint = "https://localhost:6201/api/v1/connect/revoke";
+                cfg.JwksUri = "https://localhost:6201/api/v1/connect/jwks.json";
 
                 cfg.ResponseTypesSupported =
                 [
