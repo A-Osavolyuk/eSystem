@@ -11,11 +11,6 @@ public class BasicAuthenticationSchemeOptions : AuthenticationSchemeOptions
 {
 }
 
-public static class BasicAuthenticationDefaults
-{
-    public const string AuthenticationScheme = "Basic";
-}
-
 public class BasicAuthenticationHandler(
     IOptionsMonitor<BasicAuthenticationSchemeOptions> options,
     ILoggerFactory logger,

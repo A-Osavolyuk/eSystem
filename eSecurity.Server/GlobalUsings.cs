@@ -1,5 +1,6 @@
 ﻿global using System.Text;
 global using eSystem.Core.Common.Results;
+global using eSystem.Core.Security.Authentication.Constants;
 global using eSystem.ServiceDefaults;
 global using FluentValidation;
 global using MediatR;
