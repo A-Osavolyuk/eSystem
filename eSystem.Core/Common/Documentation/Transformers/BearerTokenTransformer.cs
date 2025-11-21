@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace eSystem.Core.Common.Documentation.Transformers;
 
@@ -18,15 +18,15 @@ public class BearerTokenTransformer : IOpenApiDocumentTransformer
             Description = "Enter your Bearer token in the format: `Bearer {token}`"
         });
         
-        document.SecurityRequirements.Add(new OpenApiSecurityRequirement
+        document.Security?.Add(new OpenApiSecurityRequirement
         {
             {
-                new OpenApiSecurityScheme
+                new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme)
                 {
-                    Reference = new OpenApiReference
+                    Reference = new OpenApiReferenceWithDescription()
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = JwtBearerDefaults.AuthenticationScheme
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
                     }
                 },
                 []

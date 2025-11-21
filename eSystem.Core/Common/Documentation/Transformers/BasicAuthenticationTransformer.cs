@@ -1,12 +1,13 @@
 ﻿using eSystem.Core.Security.Authentication.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace eSystem.Core.Common.Documentation.Transformers;
 
 public class BasicAuthenticationTransformer : IOpenApiDocumentTransformer
 {
+
     public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context,
         CancellationToken cancellationToken)
     {
@@ -19,18 +20,17 @@ public class BasicAuthenticationTransformer : IOpenApiDocumentTransformer
                 Description = "Enter your Basic Authentication value in the format: `Basic {value}`"
             });
 
-        document.SecurityRequirements.Add(new OpenApiSecurityRequirement
+        document.Security?.Add(new OpenApiSecurityRequirement
         {
             {
-                new OpenApiSecurityScheme
+                new OpenApiSecuritySchemeReference(BasicAuthenticationDefaults.AuthenticationScheme)
                 {
-                    Reference = new OpenApiReference
+                    Reference = new OpenApiReferenceWithDescription()
                     {
                         Type = ReferenceType.SecurityScheme,
                         Id = BasicAuthenticationDefaults.AuthenticationScheme
                     }
-                },
-                []
+                },[]
             }
         });
 
