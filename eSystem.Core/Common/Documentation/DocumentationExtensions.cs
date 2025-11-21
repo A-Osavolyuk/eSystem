@@ -14,6 +14,7 @@ public static class DocumentationExtensions
             builder.Services.AddOpenApi(options =>
             {
                 options.AddDocumentTransformer<BearerTokenTransformer>();
+                options.AddDocumentTransformer<BasicAuthenticationTransformer>();
             });
         }
     }
