@@ -1,4 +1,4 @@
-namespace eSystem.Core.Security.Authentication.Oidc.Constants;
+namespace eSecurity.Server.Security.Authentication.Oidc.Constants;
 
 public static class TokenAuthMethods
 {

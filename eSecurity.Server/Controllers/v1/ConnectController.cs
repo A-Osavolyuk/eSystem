@@ -78,6 +78,18 @@ public class ConnectController(ISender sender) : ControllerBase
         return ResultHandler.Handle(result);
     }
     
+    [EndpointSummary("Introspection")]
+    [EndpointDescription("Introspection")]
+    [ProducesResponseType(200)]
+    [HttpPost("introspection")]
+    [Authorize(AuthenticationSchemes = BasicAuthenticationDefaults.AuthenticationScheme)]
+    [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
+    public async ValueTask<IActionResult> IntrospectionAsync([FromForm] IntrospectionRequest request)
+    {
+        var result = await _sender.Send(new IntrospectionCommand(request));
+        return ResultHandler.Handle(result);
+    }
+    
     [EndpointSummary("Authorize")]
     [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]

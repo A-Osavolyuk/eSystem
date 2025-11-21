@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.Oidc.Constants;
+﻿namespace eSystem.Core.Security.Authentication.Oidc.Authorization;
 
 public static class ResponseTypes
 {
