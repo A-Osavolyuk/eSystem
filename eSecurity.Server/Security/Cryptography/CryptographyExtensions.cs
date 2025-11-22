@@ -11,11 +11,12 @@ public static class CryptographyExtensions
 {
     public static void AddCryptography(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddJwt(cfg =>
+        builder.Services.AddTokens(cfg =>
         {
             cfg.Issuer = "https://localhost:6201";
             cfg.AccessTokenLifetime = TimeSpan.FromMinutes(10);
             cfg.IdTokenLifetime = TimeSpan.FromMinutes(10);
+            cfg.OpaqueTokenLifetime = TimeSpan.FromMinutes(10);
         });
         
         builder.Services.AddSigning(cfg =>
@@ -24,19 +25,15 @@ public static class CryptographyExtensions
             cfg.CertificateLifetime = TimeSpan.FromDays(180);
             cfg.KeyLength = 256;
         });
+        
+        builder.Services.AddDataProtection();
 
         builder.Services.AddKeys();
         builder.Services.AddHashing();
-        builder.Services.AddProtection();
         builder.Services.AddScoped<ICodeFactory, CodeFactory>();
     }
     extension(IServiceCollection services)
     {
-        private void AddProtection()
-        {
-            services.AddDataProtection();
-        }
-
         private void AddHashing()
         {
             services.AddScoped<IHasherFactory, HasherFactory>();
@@ -55,7 +52,7 @@ public static class CryptographyExtensions
             services.AddScoped<ICertificateHandler, CertificateHandler>();
         }
 
-        private void AddJwt(Action<TokenOptions> configure)
+        private void AddTokens(Action<TokenOptions> configure)
         {
             services.Configure(configure);
         

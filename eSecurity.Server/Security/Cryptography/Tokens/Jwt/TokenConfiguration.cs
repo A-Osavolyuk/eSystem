@@ -5,4 +5,5 @@ public class TokenOptions
     public string Issuer { get; set; } = string.Empty;
     public TimeSpan AccessTokenLifetime { get; set; }
     public TimeSpan IdTokenLifetime { get; set; }
+    public TimeSpan OpaqueTokenLifetime { get; set; }
 }
