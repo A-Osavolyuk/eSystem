@@ -41,6 +41,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<AuthorizationCodeEntity> AuthorizationCodes { get; set; }
     public DbSet<ConsentEntity> Consents { get; set; }
     public DbSet<SigningCertificateEntity> Certificates { get; set; }
+    public DbSet<OpaqueTokenEntity> OpaqueTokens { get; set; }
+    public DbSet<OpaqueTokenScopeEntity> OpaqueTokensScopes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -447,6 +449,33 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<SigningCertificateEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
+        });
+
+        builder.Entity<OpaqueTokenEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Token).HasMaxLength(20);
+            
+            entity.HasOne(x => x.Client)
+                .WithMany()
+                .HasForeignKey(x => x.ClientId);
+            
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
+        });
+
+        builder.Entity<OpaqueTokenScopeEntity>(entity =>
+        {
+            entity.HasKey(x => new { x.Token, x.ScopeId });
+            
+            entity.HasOne(x => x.Token)
+                .WithMany(x => x.Scopes)
+                .HasForeignKey(x => x.TokenId);
+            
+            entity.HasOne(x => x.Scope)
+                .WithMany()
+                .HasForeignKey(x => x.ScopeId);
         });
     }
 }
