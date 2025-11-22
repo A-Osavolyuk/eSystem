@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
-using eSecurity.Server.Security.Cryptography.Tokens.Jwt;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Common.Http.Constants;
 using Microsoft.AspNetCore.Authentication;
 

@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace eSecurity.Server.Security.Cryptography.Tokens.Jwt;
+namespace eSecurity.Server.Security.Cryptography.Signing;
 
 public class JwtSigner() : IJwtSigner
 {

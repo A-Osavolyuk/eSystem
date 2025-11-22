@@ -4,10 +4,9 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Cryptography.Keys;
 using eSecurity.Server.Security.Cryptography.Tokens;
-using eSecurity.Server.Security.Cryptography.Tokens.Jwt;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
+using eSystem.Core.Security.Authentication.Oidc;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
@@ -22,20 +21,20 @@ public sealed class RefreshTokenPayload : TokenPayload
 
 public class RefreshTokenStrategy(
     IDataProtectionProvider protectionProvider,
-    ITokenFactory tokenFactory,
+    ITokenFactory<JwtTokenContext, string> jwtTokenFactory,
+    ITokenFactory<RefreshTokenContext, string> refreshTokenFactory,
     IClientManager clientManager,
     ITokenManager tokenManager,
     IUserManager userManager,
-    IKeyFactory keyFactory,
     IClaimBuilderFactory claimBuilderFactory,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
-    private readonly ITokenFactory _tokenFactory = tokenFactory;
+    private readonly ITokenFactory<JwtTokenContext, string> _jwtTokenFactory = jwtTokenFactory;
+    private readonly ITokenFactory<RefreshTokenContext, string> _refreshTokenFactory = refreshTokenFactory;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
-    private readonly IKeyFactory _keyFactory = keyFactory;
     private readonly IClaimBuilderFactory _claimBuilderFactory = claimBuilderFactory;
     private readonly TokenOptions _options = options.Value;
 
@@ -121,9 +120,10 @@ public class RefreshTokenStrategy(
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
 
+        var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims };
         var response = new TokenResponse()
         {
-            AccessToken = await _tokenFactory.CreateAsync(accessTokenClaims, cancellationToken),
+            AccessToken = await _jwtTokenFactory.CreateTokenAsync(accessTokenContext, cancellationToken),
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = TokenTypes.Bearer,
         };
@@ -131,12 +131,13 @@ public class RefreshTokenStrategy(
         if (client.RefreshTokenRotationEnabled)
         {
             var session = refreshToken.Session;
+            var refreshTokenContext = new RefreshTokenContext { Length = _options.RefreshTokenLength };
             var newRefreshToken = new RefreshTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                Token = _keyFactory.Create(20),
+                Token = await _refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
                 ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };
@@ -170,7 +171,8 @@ public class RefreshTokenStrategy(
                 .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime))
                 .Build();
 
-            response.IdToken = await _tokenFactory.CreateAsync(idClaims, cancellationToken);
+            var idTokenContext = new JwtTokenContext { Claims = idClaims };
+            response.IdToken = await _jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
         }
 
         return Results.Ok(response);

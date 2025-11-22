@@ -1,7 +1,6 @@
 using eSecurity.Core.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Constants;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 

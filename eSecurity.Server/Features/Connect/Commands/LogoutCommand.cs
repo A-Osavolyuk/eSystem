@@ -6,7 +6,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
-using eSecurity.Server.Security.Cryptography.Tokens.Jwt;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Connect.Commands;
