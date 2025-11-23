@@ -3,9 +3,9 @@ using eSystem.Core.Data.Seeding;
 
 namespace eSecurity.Server.Data.Seeding;
 
-public class ClientPostLogoutRedirectUriSeed : Seed<ClientPostLogoutRedirectUriEntity>
+public class ClientFrontChannelLogoutUriSeed : Seed<ClientFrontChannelLogoutUriEntity>
 {
-    public override List<ClientPostLogoutRedirectUriEntity> Get()
+    public override List<ClientFrontChannelLogoutUriEntity> Get()
     {
         return
         [
@@ -13,7 +13,7 @@ public class ClientPostLogoutRedirectUriSeed : Seed<ClientPostLogoutRedirectUriE
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
-                Uri = "https://localhost:6501/connect/logged-out",
+                Uri = "https://localhost:6501/connect/logout/callback",
                 CreateDate = DateTimeOffset.UtcNow,
             }
         ];
