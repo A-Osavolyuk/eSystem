@@ -125,14 +125,14 @@ public class LogoutCommandHandler(
         var result = await _sessionManager.RemoveAsync(session, cancellationToken);
         if (!result.Succeeded) return result;
 
-        var postLogoutRedirectUris = client.PostLogoutRedirectUris
+        var postLogoutRedirectUris = client.FrontChannelLogoutUris
             .Select(x => x.Uri)
             .ToList();
         
         var response = new LogoutResponse()
         {
             State = request.Request.State,
-            PostLogoutRedirectUris = postLogoutRedirectUris
+            Uris = postLogoutRedirectUris
         };
         
         return Results.Ok(response);

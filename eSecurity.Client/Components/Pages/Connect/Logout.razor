@@ -100,7 +100,7 @@
             await AuthenticationManager.LogoutAsync();
 
             var response = result.Get();
-            NavigationContext.Value = response.PostLogoutRedirectUris;
+            NavigationContext.Value = response.Uris;
             NavigationManager.NavigateTo(Links.Connect.LoggedOut);
         }
     }
