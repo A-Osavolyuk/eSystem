@@ -490,7 +490,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
 
         builder.Entity<OpaqueTokenScopeEntity>(entity =>
         {
-            entity.HasKey(x => new { x.Token, x.ScopeId });
+            entity.HasKey(x => new { x.TokenId, x.ScopeId });
             
             entity.HasOne(x => x.Token)
                 .WithMany(x => x.Scopes)
