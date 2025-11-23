@@ -49,7 +49,7 @@ public class BasicAuthenticationHandler(
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
-            if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
+            if (client is { ClientType: ClientType.Confidential, RequireClientSecret: true })
             {
                 var clientSecret = valueParts.Last();
                 if (!client.Secret.Equals(clientSecret))
@@ -79,7 +79,7 @@ public class BasicAuthenticationHandler(
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
-            if (client is { Type: ClientType.Confidential, RequireClientSecret: true })
+            if (client is { ClientType: ClientType.Confidential, RequireClientSecret: true })
             {
                 if (!body.TryGetValue("client_secret", out var secret) || !client.Secret.Equals(secret))
                 {
@@ -112,7 +112,7 @@ public class BasicAuthenticationHandler(
         var claims = new List<Claim>
         {
             new("client_id", client.Id.ToString()),
-            new("client_type", client.Type.ToString())
+            new("client_type", client.AccessTokenType.ToString())
         };
         var identity = new ClaimsIdentity(claims, BasicAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);

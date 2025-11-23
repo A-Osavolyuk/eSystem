@@ -1,4 +1,5 @@
 ﻿using eSecurity.Server.Security.Authentication.Oidc.Client;
+using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
@@ -6,7 +7,8 @@ namespace eSecurity.Server.Data.Entities;
 public class ClientEntity : Entity
 {
     public required Guid Id { get; set; }
-    public required ClientType Type { get; set; }
+    public required ClientType ClientType { get; set; }
+    public required AccessTokenType AccessTokenType { get; set; }
     public required string Name { get; set; }
     public required string Audience { get; set; }
     public required string Secret { get; set; }

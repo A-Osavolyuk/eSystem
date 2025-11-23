@@ -101,7 +101,7 @@ public class AuthorizeCommandHandler(
             });
         }
 
-        if (client is { Type: ClientType.Public, RequirePkce: true })
+        if (client is { ClientType: ClientType.Public, RequirePkce: true })
         {
             if (string.IsNullOrEmpty(request.Request.CodeChallenge))
                 return Results.BadRequest(new Error()

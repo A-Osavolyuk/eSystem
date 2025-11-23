@@ -21,7 +21,8 @@ public class ClientSeed : Seed<ClientEntity>
                 AllowOfflineAccess = true,
                 RefreshTokenRotationEnabled = false,
                 RefreshTokenLifetime = TimeSpan.FromDays(30),
-                Type = ClientType.Confidential,
+                ClientType = ClientType.Confidential,
+                AccessTokenType = AccessTokenType.Jwt,
                 CreateDate = DateTimeOffset.UtcNow
             }
         ];

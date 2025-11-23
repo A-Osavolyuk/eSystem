@@ -93,7 +93,7 @@ public class AuthorizationCodeStrategy(
             });
         }
 
-        if (client is { Type: ClientType.Public, RequirePkce: true })
+        if (client is { ClientType: ClientType.Public, RequirePkce: true })
         {
             if (string.IsNullOrWhiteSpace(authorizationCode.CodeChallenge)
                 || string.IsNullOrWhiteSpace(authorizationCode.CodeChallengeMethod)

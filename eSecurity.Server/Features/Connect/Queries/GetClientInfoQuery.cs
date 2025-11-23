@@ -15,11 +15,11 @@ public class GetClientInfoQueryHandler(IClientManager clientManager) : IRequestH
         var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
         if (client is null) return Results.NotFound("Client not found");
 
-        var clientType = client.Type switch
+        var clientType = client.ClientType switch
         {
             ClientType.Public => ClientTypes.Public,
             ClientType.Confidential => ClientTypes.Confidential,
-            _ => throw new NotSupportedException($"Client type {client.Type} not supported")
+            _ => throw new NotSupportedException($"Client type {client.AccessTokenType} not supported")
         };
 
         var response = new ClientInfo()
