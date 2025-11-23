@@ -1,5 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
+using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSystem.Core.Data.Seeding;
 
 namespace eSecurity.Server.Data.Seeding;
