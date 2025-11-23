@@ -34,6 +34,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<ClientAllowedScopeEntity> ClientAllowedScopes { get; set; }
     public DbSet<ClientRedirectUriEntity> ClientRedirectUris { get; set; }
     public DbSet<ClientPostLogoutRedirectUriEntity> ClientPostLogoutUris { get; set; }
+    public DbSet<ClientFrontChannelLogoutUriEntity> ClientFrontChannelLogoutUris { get; set; }
+    public DbSet<ClientBackChannelLogoutUriEntity> ClientBackChannelLogoutUris { get; set; }
     public DbSet<ClientGrantTypeEntity> ClientGrantTypes { get; set; }
     public DbSet<ScopeEntity> Scopes { get; set; }
     public DbSet<GrantedScopeEntity> GrantedScopes { get; set; }
@@ -335,6 +337,26 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
 
             entity.HasOne(x => x.Client)
                 .WithMany(x => x.PostLogoutRedirectUris)
+                .HasForeignKey(x => x.ClientId);
+        });
+        
+        builder.Entity<ClientFrontChannelLogoutUriEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Uri).HasMaxLength(200);
+
+            entity.HasOne(x => x.Client)
+                .WithMany(x => x.FrontChannelLogoutUris)
+                .HasForeignKey(x => x.ClientId);
+        });
+        
+        builder.Entity<ClientBackChannelLogoutUriEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Uri).HasMaxLength(200);
+
+            entity.HasOne(x => x.Client)
+                .WithMany(x => x.BackChannelLogoutUris)
                 .HasForeignKey(x => x.ClientId);
         });
 

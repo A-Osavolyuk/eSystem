@@ -20,10 +20,12 @@ public class ClientEntity : Entity
     public string? LogoUri { get; set; }
     public string? ClientUri { get; set; }
 
-    public ICollection<ClientRedirectUriEntity> RedirectUris { get; set; } = null!;
-    public ICollection<ClientPostLogoutRedirectUriEntity> PostLogoutRedirectUris { get; set; } = null!;
     public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
     public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
+    public ICollection<ClientRedirectUriEntity> RedirectUris { get; set; } = null!;
+    public ICollection<ClientPostLogoutRedirectUriEntity> PostLogoutRedirectUris { get; set; } = null!;
+    public ICollection<ClientFrontChannelLogoutUriEntity> FrontChannelLogoutUris { get; set; } = null!;
+    public ICollection<ClientBackChannelLogoutUriEntity> BackChannelLogoutUris { get; set; } = null!;
 
     public bool HasRedirectUri(string uri) 
         => RedirectUris.Any(r => r.Uri == uri);
