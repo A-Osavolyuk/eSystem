@@ -1,0 +1,36 @@
+﻿using System.Text.Json.Serialization;
+
+namespace eSecurity.Core.Common.Responses;
+
+public class IntrospectionResponse
+{
+    [JsonPropertyName("active")]
+    public required bool Active { get; set; }
+    
+    [JsonPropertyName("scope")]
+    public string? Scope { get; set; }
+    
+    [JsonPropertyName("client_id")]
+    public string? ClientId { get; set; }
+    
+    [JsonPropertyName("username")]
+    public string? Username { get; set; }
+    
+    [JsonPropertyName("token_type")]
+    public string? TokenType { get; set; }
+    
+    [JsonPropertyName("exp")]
+    public long? Expiration { get; set; }
+    
+    [JsonPropertyName("iat")]
+    public long? IssuedAt { get; set; }
+    
+    [JsonPropertyName("nbf")]
+    public long? NotBefore { get; set; }
+    
+    [JsonPropertyName("aud")]
+    public string? Audience { get; set; }
+    
+    [JsonPropertyName("iss")]
+    public string? Issuer { get; set; }
+}
