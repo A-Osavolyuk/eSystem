@@ -11,7 +11,7 @@ public class IntrospectionResponse
     public string? Scope { get; set; }
     
     [JsonPropertyName("client_id")]
-    public string? ClientId { get; set; }
+    public Guid? ClientId { get; set; }
     
     [JsonPropertyName("username")]
     public string? Username { get; set; }
@@ -33,4 +33,6 @@ public class IntrospectionResponse
     
     [JsonPropertyName("iss")]
     public string? Issuer { get; set; }
+
+    public static IntrospectionResponse Fail() => new IntrospectionResponse() { Active = false };
 }
