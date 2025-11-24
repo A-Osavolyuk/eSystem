@@ -52,7 +52,7 @@ public class BasicAuthenticationHandler(
             if (client is { ClientType: ClientType.Confidential, RequireClientSecret: true })
             {
                 var clientSecret = valueParts.Last();
-                if (!client.Secret.Equals(clientSecret))
+                if (!client.Secret!.Equals(clientSecret))
                 {
                     Context.Items["error"] = Errors.OAuth.InvalidClient;
                     return AuthenticateResult.Fail("Unauthorized.");
@@ -81,7 +81,7 @@ public class BasicAuthenticationHandler(
 
             if (client is { ClientType: ClientType.Confidential, RequireClientSecret: true })
             {
-                if (!body.TryGetValue("client_secret", out var secret) || !client.Secret.Equals(secret))
+                if (!body.TryGetValue("client_secret", out var secret) || !client.Secret!.Equals(secret))
                 {
                     Context.Items["error"] = Errors.OAuth.InvalidClient;
                     return AuthenticateResult.Fail("Unauthorized.");

@@ -374,12 +374,14 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Secret).HasMaxLength(200);
+            entity.Property(x => x.SectorIdentifierUri).HasMaxLength(200);
             entity.Property(x => x.Name).HasMaxLength(64);
             entity.Property(x => x.Audience).HasMaxLength(64);
             entity.Property(x => x.LogoUri).HasMaxLength(100);
             entity.Property(x => x.ClientUri).HasMaxLength(100);
             entity.Property(x => x.ClientType).HasEnumConversion();
             entity.Property(x => x.AccessTokenType).HasEnumConversion();
+            entity.Property(x => x.SubjectType).HasEnumConversion();
             entity.Property(x => x.RefreshTokenLifetime).HasConversion(
                 time => time.Ticks,
                 ticks => TimeSpan.FromTicks(ticks));

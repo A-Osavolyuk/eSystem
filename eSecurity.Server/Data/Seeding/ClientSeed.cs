@@ -24,6 +24,7 @@ public class ClientSeed : Seed<ClientEntity>
                 RefreshTokenLifetime = TimeSpan.FromDays(30),
                 ClientType = ClientType.Confidential,
                 AccessTokenType = AccessTokenType.Jwt,
+                SubjectType = SubjectType.Public,
                 CreateDate = DateTimeOffset.UtcNow
             }
         ];

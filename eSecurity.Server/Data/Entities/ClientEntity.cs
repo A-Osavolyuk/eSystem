@@ -7,16 +7,22 @@ namespace eSecurity.Server.Data.Entities;
 public class ClientEntity : Entity
 {
     public required Guid Id { get; set; }
-    public required ClientType ClientType { get; set; }
-    public required AccessTokenType AccessTokenType { get; set; }
     public required string Name { get; set; }
     public required string Audience { get; set; }
-    public required string Secret { get; set; }
-    public bool RequirePkce { get; set; }
+    public required ClientType ClientType { get; set; }
+    public required AccessTokenType AccessTokenType { get; set; }
+    
     public bool RequireClientSecret { get; set; }
+    public bool RequirePkce { get; set; }
+    public string? Secret { get; set; }
+    
     public bool AllowOfflineAccess { get; set; }
     public bool RefreshTokenRotationEnabled { get; set; } = true;
     public TimeSpan RefreshTokenLifetime { get; set; }
+    
+    public required SubjectType SubjectType { get; set; }
+    public string? SectorIdentifierUri { get; set; }
+    
     public string? LogoUri { get; set; }
     public string? ClientUri { get; set; }
 
