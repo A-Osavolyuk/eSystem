@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Common.Http;
+﻿namespace eSecurity.Client.Common.JS.Fetch;
 
 public static class Credentials
 {
