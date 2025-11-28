@@ -45,6 +45,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<SigningCertificateEntity> Certificates { get; set; }
     public DbSet<OpaqueTokenEntity> OpaqueTokens { get; set; }
     public DbSet<OpaqueTokenScopeEntity> OpaqueTokensScopes { get; set; }
+    public DbSet<PairwiseSubjectEntity> PairwiseSubjects { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -501,6 +502,22 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.Scope)
                 .WithMany()
                 .HasForeignKey(x => x.ScopeId);
+        });
+
+        builder.Entity<PairwiseSubjectEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            
+            entity.Property(x => x.SectorIdentifier).HasMaxLength(100);
+            entity.Property(x => x.SubjectIdentifier).HasMaxLength(256);
+            
+            entity.HasOne(x => x.Client)
+                .WithMany(x => x.PairwiseSubjects)
+                .HasForeignKey(x => x.ClientId);
+            
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
         });
     }
 }

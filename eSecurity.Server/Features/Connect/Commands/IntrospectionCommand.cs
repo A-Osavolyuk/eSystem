@@ -29,6 +29,13 @@ public class IntrospectionCommandHandler(
 
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrEmpty(request.Request.Token)) 
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = "token is required"
+            });
+        
         var handler = new JwtSecurityTokenHandler();
         var securityToken = handler.ReadJwtToken(request.Request.Token);
         if (securityToken is null) return Results.Ok(IntrospectionResponse.Fail());

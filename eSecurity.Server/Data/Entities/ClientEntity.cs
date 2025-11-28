@@ -26,6 +26,7 @@ public class ClientEntity : Entity
     public string? LogoUri { get; set; }
     public string? ClientUri { get; set; }
 
+    public ICollection<PairwiseSubjectEntity> PairwiseSubjects { get; set; } = null!;
     public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
     public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
     public ICollection<ClientRedirectUriEntity> RedirectUris { get; set; } = null!;
