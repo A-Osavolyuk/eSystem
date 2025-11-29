@@ -163,7 +163,7 @@ public class AuthorizationCodeStrategy(
                 ClientId = client.Id,
                 SessionId = session.Id,
                 Token = await _opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
-                TokenType = OpaqueTokenType.Refresh,
+                TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };

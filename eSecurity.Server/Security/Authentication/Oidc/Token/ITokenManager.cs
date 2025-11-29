@@ -4,6 +4,9 @@ namespace eSecurity.Server.Security.Authentication.Oidc.Token;
 
 public interface ITokenManager
 {
+    public Task<bool> IsOpaqueAsync(string token,
+        CancellationToken cancellationToken = default);
+    
     public Task<OpaqueTokenEntity?> FindByTokenAsync(string token,
         CancellationToken cancellationToken = default);
 

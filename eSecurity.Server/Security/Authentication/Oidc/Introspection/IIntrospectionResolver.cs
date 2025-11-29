@@ -2,5 +2,5 @@
 
 public interface IIntrospectionResolver
 {
-    public IIntrospectionStrategy Resolve(string tokenTypeHint);
+    public IIntrospectionStrategy Resolve(IntrospectionType type);
 }

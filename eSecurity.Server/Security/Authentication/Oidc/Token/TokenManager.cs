@@ -26,6 +26,11 @@ public sealed class TokenManager(
         return Results.Ok();
     }
 
+    public async Task<bool> IsOpaqueAsync(string token, CancellationToken cancellationToken = default)
+    {
+        return await _context.OpaqueTokens.AnyAsync(x => x.Token == token, cancellationToken);
+    }
+
     public async Task<OpaqueTokenEntity?> FindByTokenAsync(string token,
         CancellationToken cancellationToken = default)
     {
@@ -33,7 +38,7 @@ public sealed class TokenManager(
             .Include(x => x.Session)
             .ThenInclude(x => x.Device)
             .Include(x => x.Client)
-            .ThenInclude(x => x.AllowedScopes)
+            .Include(x => x.Scopes)
             .ThenInclude(x => x.Scope)
             .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
     }

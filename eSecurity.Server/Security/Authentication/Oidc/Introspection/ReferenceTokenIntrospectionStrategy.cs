@@ -4,7 +4,7 @@ using eSystem.Core.Security.Authentication.Oidc.Introspection;
 
 namespace eSecurity.Server.Security.Authentication.Oidc.Introspection;
 
-public class RefreshTokenIntrospectionStrategy(ITokenManager tokenManager) : IIntrospectionStrategy
+public class ReferenceTokenIntrospectionStrategy(ITokenManager tokenManager) : IIntrospectionStrategy
 {
     private readonly ITokenManager _tokenManager = tokenManager;
 
@@ -13,17 +13,23 @@ public class RefreshTokenIntrospectionStrategy(ITokenManager tokenManager) : IIn
     {
         var token = await _tokenManager.FindByTokenAsync(context.Token, cancellationToken);
         if (token is null || !token.IsValid) return Results.Ok(IntrospectionResponse.Fail());
-
-        var scope = string.Join(" ", token.Client.AllowedScopes.Select(x => x.Scope.Name));
+        
+        var tokenType = token.TokenType switch
+        {
+            OpaqueTokenType.AccessToken => IntrospectionTokenTypes.AccessToken,
+            OpaqueTokenType.RefreshToken => IntrospectionTokenTypes.RefreshToken,
+            _ => throw new NotSupportedException("Unsupported token type")
+        };
+        
         var response = new IntrospectionResponse()
         {
             Active = true,
-            TokenType = IntrospectionTokenTypes.RefreshToken,
+            TokenType = tokenType,
             ClientId = token.Client.Id,
             Subject = token.Session.Device.UserId.ToString(),
             IssuedAt = token.CreateDate!.Value.ToUnixTimeSeconds(),
             Expiration = token.ExpiredDate.ToUnixTimeSeconds(),
-            Scope = scope
+            Scope = string.Join(" ", token.Scopes.Select(x => x.Scope.Name))
         };
         
         return Results.Ok(response);

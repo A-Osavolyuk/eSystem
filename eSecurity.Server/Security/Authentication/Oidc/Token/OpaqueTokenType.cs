@@ -2,6 +2,6 @@
 
 public enum OpaqueTokenType
 {
-    Access,
-    Refresh
+    AccessToken,
+    RefreshToken
 }

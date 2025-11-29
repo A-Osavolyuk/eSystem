@@ -137,7 +137,7 @@ public class RefreshTokenStrategy(
                 ClientId = client.Id,
                 SessionId = session.Id,
                 Token = await _opaqueTokenFactoy.CreateTokenAsync(refreshTokenContext, cancellationToken),
-                TokenType = OpaqueTokenType.Refresh,
+                TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };

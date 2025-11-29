@@ -123,8 +123,8 @@ public static class OdicExtensions
         private void AddIntrospectionFlow()
         {
             services.AddScoped<IIntrospectionResolver, IntrospectionResolver>();
-            services.AddKeyedScoped<IIntrospectionStrategy, AccessTokenIntrospectionStrategy>(TokenTypeHints.AccessToken);
-            services.AddKeyedScoped<IIntrospectionStrategy, RefreshTokenIntrospectionStrategy>(TokenTypeHints.RefreshToken);
+            services.AddKeyedScoped<IIntrospectionStrategy, JwtTokenIntrospectionStrategy>(IntrospectionType.Jwt);
+            services.AddKeyedScoped<IIntrospectionStrategy, ReferenceTokenIntrospectionStrategy>(IntrospectionType.Reference);
         }
     }
 }

@@ -11,7 +11,7 @@ using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authentication.Oidc.Introspection;
 
-public sealed class AccessTokenIntrospectionStrategy(
+public sealed class JwtTokenIntrospectionStrategy(
     ICertificateProvider certificateProvider,
     IClientManager clientManager,
     ISessionManager sessionManager,

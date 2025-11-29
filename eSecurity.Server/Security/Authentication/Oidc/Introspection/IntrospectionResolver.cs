@@ -4,6 +4,6 @@ public class IntrospectionResolver(IServiceProvider serviceProvider) : IIntrospe
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public IIntrospectionStrategy Resolve(string tokenTypeHint) 
-        => _serviceProvider.GetRequiredKeyedService<IIntrospectionStrategy>(tokenTypeHint);
+    public IIntrospectionStrategy Resolve(IntrospectionType type) 
+        => _serviceProvider.GetRequiredKeyedService<IIntrospectionStrategy>(type);
 }
