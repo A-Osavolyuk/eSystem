@@ -22,7 +22,7 @@ public sealed class RefreshTokenPayload : TokenPayload
 public class RefreshTokenStrategy(
     IDataProtectionProvider protectionProvider,
     ITokenFactory<JwtTokenContext, string> jwtTokenFactory,
-    ITokenFactory<RefreshTokenContext, string> refreshTokenFactory,
+    ITokenFactory<OpaqueTokenContext, string> opaqueTokenFactoy,
     IClientManager clientManager,
     ITokenManager tokenManager,
     IUserManager userManager,
@@ -31,7 +31,7 @@ public class RefreshTokenStrategy(
 {
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly ITokenFactory<JwtTokenContext, string> _jwtTokenFactory = jwtTokenFactory;
-    private readonly ITokenFactory<RefreshTokenContext, string> _refreshTokenFactory = refreshTokenFactory;
+    private readonly ITokenFactory<OpaqueTokenContext, string> _opaqueTokenFactoy = opaqueTokenFactoy;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
@@ -131,13 +131,13 @@ public class RefreshTokenStrategy(
         if (client.RefreshTokenRotationEnabled)
         {
             var session = refreshToken.Session;
-            var refreshTokenContext = new RefreshTokenContext { Length = _options.RefreshTokenLength };
+            var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
             var newRefreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                Token = await _refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
+                Token = await _opaqueTokenFactoy.CreateTokenAsync(refreshTokenContext, cancellationToken),
                 TokenType = OpaqueTokenType.Refresh,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow

@@ -28,7 +28,7 @@ public class AuthorizationCodeStrategy(
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
     ITokenFactory<JwtTokenContext, string> jwtTokenFactory,
-    ITokenFactory<RefreshTokenContext, string> refreshTokenFactory,
+    ITokenFactory<OpaqueTokenContext, string> opaqueTokenFactory,
     ITokenManager tokenManager,
     IPkceHandler pkceHandler,
     IDataProtectionProvider protectionProvider,
@@ -40,7 +40,7 @@ public class AuthorizationCodeStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenFactory<JwtTokenContext, string> _jwtTokenFactory = jwtTokenFactory;
-    private readonly ITokenFactory<RefreshTokenContext, string> _refreshTokenFactory = refreshTokenFactory;
+    private readonly ITokenFactory<OpaqueTokenContext, string> _opaqueTokenFactory = opaqueTokenFactory;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
@@ -157,13 +157,13 @@ public class AuthorizationCodeStrategy(
 
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
-            var refreshTokenContext = new RefreshTokenContext { Length = _options.RefreshTokenLength };
+            var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
             var refreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                Token = await _refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
+                Token = await _opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
                 TokenType = OpaqueTokenType.Refresh,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
