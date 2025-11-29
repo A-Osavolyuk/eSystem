@@ -7,17 +7,17 @@ public class IntrospectionResponse
     [JsonPropertyName("active")]
     public required bool Active { get; set; }
     
-    [JsonPropertyName("scope")]
-    public string? Scope { get; set; }
+    [JsonPropertyName("token_type")]
+    public string? TokenType { get; set; }
     
     [JsonPropertyName("client_id")]
     public Guid? ClientId { get; set; }
     
+    [JsonPropertyName("sub")]
+    public string? Subject { get; set; }
+    
     [JsonPropertyName("username")]
     public string? Username { get; set; }
-    
-    [JsonPropertyName("token_type")]
-    public string? TokenType { get; set; }
     
     [JsonPropertyName("exp")]
     public long? Expiration { get; set; }
@@ -33,6 +33,9 @@ public class IntrospectionResponse
     
     [JsonPropertyName("iss")]
     public string? Issuer { get; set; }
+    
+    [JsonPropertyName("scope")]
+    public string? Scope { get; set; }
 
     public static IntrospectionResponse Fail() => new IntrospectionResponse() { Active = false };
 }

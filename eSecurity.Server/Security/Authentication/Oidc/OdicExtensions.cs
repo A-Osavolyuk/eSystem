@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
 using eSecurity.Server.Security.Authentication.Oidc.Constants;
+using eSecurity.Server.Security.Authentication.Oidc.Introspection;
 using eSecurity.Server.Security.Authentication.Oidc.Pkce;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
@@ -9,6 +10,7 @@ using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
 using eSecurity.Server.Security.Identity.Claims;
 using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Authorization;
+using eSystem.Core.Security.Authentication.Oidc.Revocation;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using SessionOptions = eSecurity.Server.Security.Authentication.Oidc.Session.SessionOptions;
 
@@ -22,6 +24,7 @@ public static class OdicExtensions
         {
             services.AddPkceHandler();
             services.AddTokenFlow();
+            services.AddIntrospectionFlow();
             services.AddClientManagement();
             services.AddAuthorizationCodeManagement();
             services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
@@ -108,13 +111,20 @@ public static class OdicExtensions
             services.Configure(configure);
         }
 
-        public void AddTokenFlow()
+        private void AddTokenFlow()
         {
             services.AddScoped<ITokenManager, TokenManager>();
             services.AddSingleton<IClaimBuilderFactory, ClaimBuilderFactory>();
             services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
             services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
             services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
+        }
+
+        private void AddIntrospectionFlow()
+        {
+            services.AddScoped<IIntrospectionResolver, IntrospectionResolver>();
+            services.AddKeyedScoped<IIntrospectionStrategy, AccessTokenIntrospectionStrategy>(TokenTypeHints.AccessToken);
+            services.AddKeyedScoped<IIntrospectionStrategy, RefreshTokenIntrospectionStrategy>(TokenTypeHints.RefreshToken);
         }
     }
 }
