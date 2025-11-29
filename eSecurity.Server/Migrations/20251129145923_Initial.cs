@@ -34,15 +34,18 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Audience = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    Secret = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    RequirePkce = table.Column<bool>(type: "bit", nullable: false),
+                    ClientType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AccessTokenType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RequireClientSecret = table.Column<bool>(type: "bit", nullable: false),
+                    RequirePkce = table.Column<bool>(type: "bit", nullable: false),
+                    Secret = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     AllowOfflineAccess = table.Column<bool>(type: "bit", nullable: false),
                     RefreshTokenRotationEnabled = table.Column<bool>(type: "bit", nullable: false),
                     RefreshTokenLifetime = table.Column<long>(type: "bigint", nullable: false),
+                    SubjectType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SectorIdentifierUri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     LogoUri = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ClientUri = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -113,6 +116,48 @@ namespace eSecurity.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Scopes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientBackChannelLogoutUris",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Uri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientBackChannelLogoutUris", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientBackChannelLogoutUris_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientFrontChannelLogoutUris",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Uri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientFrontChannelLogoutUris", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientFrontChannelLogoutUris_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -323,6 +368,35 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_LockoutStates", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LockoutStates_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PairwiseSubjects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SectorIdentifier = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    SubjectIdentifier = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PairwiseSubjects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PairwiseSubjects_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PairwiseSubjects_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -819,32 +893,59 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RefreshTokens",
+                name: "OpaqueTokens",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SessionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TokenType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Revoked = table.Column<bool>(type: "bit", nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    RevokeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RevokedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.PrimaryKey("PK_OpaqueTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_Clients_ClientId",
+                        name: "FK_OpaqueTokens_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_Sessions_SessionId",
+                        name: "FK_OpaqueTokens_Sessions_SessionId",
                         column: x => x.SessionId,
                         principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpaqueTokensScopes",
+                columns: table => new
+                {
+                    TokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ScopeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpaqueTokensScopes", x => new { x.TokenId, x.ScopeId });
+                    table.ForeignKey(
+                        name: "FK_OpaqueTokensScopes_OpaqueTokens_TokenId",
+                        column: x => x.TokenId,
+                        principalTable: "OpaqueTokens",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OpaqueTokensScopes_Scopes_ScopeId",
+                        column: x => x.ScopeId,
+                        principalTable: "Scopes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -863,6 +964,16 @@ namespace eSecurity.Server.Migrations
                 name: "IX_ClientAllowedScopes_ScopeId",
                 table: "ClientAllowedScopes",
                 column: "ScopeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientBackChannelLogoutUris_ClientId",
+                table: "ClientBackChannelLogoutUris",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientFrontChannelLogoutUris_ClientId",
+                table: "ClientFrontChannelLogoutUris",
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientGrantTypes_ClientId",
@@ -911,6 +1022,31 @@ namespace eSecurity.Server.Migrations
                 column: "LinkedAccountId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OpaqueTokens_ClientId",
+                table: "OpaqueTokens",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpaqueTokens_SessionId",
+                table: "OpaqueTokens",
+                column: "SessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpaqueTokensScopes_ScopeId",
+                table: "OpaqueTokensScopes",
+                column: "ScopeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PairwiseSubjects_ClientId",
+                table: "PairwiseSubjects",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PairwiseSubjects_UserId",
+                table: "PairwiseSubjects",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Passkeys_DeviceId",
                 table: "Passkeys",
                 column: "DeviceId",
@@ -926,16 +1062,6 @@ namespace eSecurity.Server.Migrations
                 name: "IX_Permissions_ResourceId",
                 table: "Permissions",
                 column: "ResourceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_ClientId",
-                table: "RefreshTokens",
-                column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_SessionId",
-                table: "RefreshTokens",
-                column: "SessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Resources_OwnerId",
@@ -1034,6 +1160,12 @@ namespace eSecurity.Server.Migrations
                 name: "ClientAllowedScopes");
 
             migrationBuilder.DropTable(
+                name: "ClientBackChannelLogoutUris");
+
+            migrationBuilder.DropTable(
+                name: "ClientFrontChannelLogoutUris");
+
+            migrationBuilder.DropTable(
                 name: "ClientGrantTypes");
 
             migrationBuilder.DropTable(
@@ -1055,13 +1187,16 @@ namespace eSecurity.Server.Migrations
                 name: "OAuthSessions");
 
             migrationBuilder.DropTable(
+                name: "OpaqueTokensScopes");
+
+            migrationBuilder.DropTable(
+                name: "PairwiseSubjects");
+
+            migrationBuilder.DropTable(
                 name: "Passkeys");
 
             migrationBuilder.DropTable(
                 name: "Passwords");
-
-            migrationBuilder.DropTable(
-                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
@@ -1100,13 +1235,13 @@ namespace eSecurity.Server.Migrations
                 name: "Consents");
 
             migrationBuilder.DropTable(
-                name: "Scopes");
-
-            migrationBuilder.DropTable(
                 name: "UserLinkedAccounts");
 
             migrationBuilder.DropTable(
-                name: "Sessions");
+                name: "OpaqueTokens");
+
+            migrationBuilder.DropTable(
+                name: "Scopes");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
@@ -1118,16 +1253,19 @@ namespace eSecurity.Server.Migrations
                 name: "Clients");
 
             migrationBuilder.DropTable(
-                name: "UserDevices");
+                name: "Sessions");
 
             migrationBuilder.DropTable(
                 name: "Resources");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "UserDevices");
 
             migrationBuilder.DropTable(
                 name: "ResourceOwners");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "PersonalData");

@@ -449,22 +449,26 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("RevokedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("TokenType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SessionId");
 
                     b.ToTable("OpaqueTokens");
                 });
@@ -674,47 +678,6 @@ namespace eSecurity.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PersonalData");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.RefreshTokenEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("ExpireDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("RevokeDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("Revoked")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("SessionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("SessionId");
-
-                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceEntity", b =>
@@ -1534,15 +1497,15 @@ namespace eSecurity.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
+                        .WithMany("OpaqueTokens")
+                        .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
 
-                    b.Navigation("User");
+                    b.Navigation("Session");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenScopeEntity", b =>
@@ -1614,25 +1577,6 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Resource");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.RefreshTokenEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Session");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceEntity", b =>
@@ -1894,7 +1838,7 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
-                    b.Navigation("RefreshTokens");
+                    b.Navigation("OpaqueTokens");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserDeviceEntity", b =>
