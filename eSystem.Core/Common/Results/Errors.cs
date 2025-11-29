@@ -15,6 +15,7 @@ public partial class Errors
         public const string UnauthorizedClient = "unauthorized_client";
         public const string UnsupportedGrantType = "unsupported_grant_type";
         public const string InvalidScope = "invalid_scope";
+        public const string InvalidToken = "invalid_token";
         public const string ServerError = "server_error";
         public const string TemporarilyUnavailable = "temporarily_unavailable";
 
