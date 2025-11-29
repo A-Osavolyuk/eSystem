@@ -132,17 +132,19 @@ public class RefreshTokenStrategy(
         {
             var session = refreshToken.Session;
             var refreshTokenContext = new RefreshTokenContext { Length = _options.RefreshTokenLength };
-            var newRefreshToken = new RefreshTokenEntity()
+            var newRefreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
                 Token = await _refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
-                ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                TokenType = OpaqueTokenType.Refresh,
+                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };
 
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, cancellationToken);
+            var scopes = client.AllowedScopes.Select(x => x.Scope);
+            var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
             var revokeResult = await _tokenManager.RevokeAsync(refreshToken, cancellationToken);

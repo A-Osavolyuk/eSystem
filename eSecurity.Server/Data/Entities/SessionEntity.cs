@@ -11,5 +11,5 @@ public class SessionEntity : Entity
     public bool IsActive { get; set; }
 
     public UserDeviceEntity Device { get; set; } = null!;
-    public ICollection<RefreshTokenEntity> RefreshTokens { get; set; } = null!;
+    public ICollection<OpaqueTokenEntity> OpaqueTokens { get; set; } = null!;
 }

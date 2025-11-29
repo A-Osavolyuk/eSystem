@@ -12,7 +12,7 @@ public class RefreshTokenIntrospectionStrategy(ITokenManager tokenManager) : IIn
         CancellationToken cancellationToken = default)
     {
         var token = await _tokenManager.FindByTokenAsync(context.Token, cancellationToken);
-        if (token is null || token.Revoked || !token.IsValid) return Results.Ok(IntrospectionResponse.Fail());
+        if (token is null || !token.IsValid) return Results.Ok(IntrospectionResponse.Fail());
 
         var scope = string.Join(" ", token.Client.AllowedScopes.Select(x => x.Scope.Name));
         var response = new IntrospectionResponse()
@@ -22,7 +22,7 @@ public class RefreshTokenIntrospectionStrategy(ITokenManager tokenManager) : IIn
             ClientId = token.Client.Id,
             Subject = token.Session.Device.UserId.ToString(),
             IssuedAt = token.CreateDate!.Value.ToUnixTimeSeconds(),
-            Expiration = token.ExpireDate.ToUnixTimeSeconds(),
+            Expiration = token.ExpiredDate.ToUnixTimeSeconds(),
             Scope = scope
         };
         

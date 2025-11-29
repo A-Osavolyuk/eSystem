@@ -8,18 +8,28 @@ public sealed class TokenManager(
 {
     private readonly AuthDbContext _context = context;
 
-    public async Task<Result> CreateAsync(RefreshTokenEntity token, 
+    public async Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<ScopeEntity> scopes,
         CancellationToken cancellationToken = default)
     {
-        await _context.RefreshTokens.AddAsync(token, cancellationToken);
+        var tokenScopes = scopes
+            .Select(s => new OpaqueTokenScopeEntity
+            {
+                ScopeId = s.Id,
+                TokenId = token.Id,
+                CreateDate = DateTimeOffset.UtcNow,
+            }).ToList();
+
+        await _context.OpaqueTokens.AddAsync(token, cancellationToken);
+        await _context.OpaqueTokensScopes.AddRangeAsync(tokenScopes, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+
         return Results.Ok();
     }
 
-    public async Task<RefreshTokenEntity?> FindByTokenAsync(string token, 
+    public async Task<OpaqueTokenEntity?> FindByTokenAsync(string token,
         CancellationToken cancellationToken = default)
     {
-        return await _context.RefreshTokens
+        return await _context.OpaqueTokens
             .Include(x => x.Session)
             .ThenInclude(x => x.Device)
             .Include(x => x.Client)
@@ -28,22 +38,22 @@ public sealed class TokenManager(
             .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
     }
 
-    public async Task<Result> RevokeAsync(RefreshTokenEntity token, 
+    public async Task<Result> RevokeAsync(OpaqueTokenEntity token,
         CancellationToken cancellationToken = default)
     {
         token.Revoked = true;
-        token.RevokeDate = DateTimeOffset.UtcNow;
+        token.RevokedDate = DateTimeOffset.UtcNow;
         token.UpdateDate = DateTimeOffset.UtcNow;
-        
-        _context.RefreshTokens.Update(token);
+
+        _context.OpaqueTokens.Update(token);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
     }
 
-    public async Task<Result> RemoveAsync(RefreshTokenEntity token, CancellationToken cancellationToken = default)
+    public async Task<Result> RemoveAsync(OpaqueTokenEntity token, CancellationToken cancellationToken = default)
     {
-        _context.RefreshTokens.Remove(token);
+        _context.OpaqueTokens.Remove(token);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();

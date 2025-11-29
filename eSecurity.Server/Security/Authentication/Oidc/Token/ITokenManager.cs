@@ -4,12 +4,15 @@ namespace eSecurity.Server.Security.Authentication.Oidc.Token;
 
 public interface ITokenManager
 {
-    public Task<RefreshTokenEntity?> FindByTokenAsync(string token, 
+    public Task<OpaqueTokenEntity?> FindByTokenAsync(string token,
         CancellationToken cancellationToken = default);
-    public Task<Result> CreateAsync(RefreshTokenEntity token, 
+
+    public Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<ScopeEntity> scopes,
         CancellationToken cancellationToken = default);
-    public Task<Result> RevokeAsync(RefreshTokenEntity token,
+
+    public Task<Result> RevokeAsync(OpaqueTokenEntity token,
         CancellationToken cancellationToken = default);
-    public Task<Result> RemoveAsync(RefreshTokenEntity token, 
+
+    public Task<Result> RemoveAsync(OpaqueTokenEntity token,
         CancellationToken cancellationToken = default);
 }

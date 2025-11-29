@@ -158,17 +158,19 @@ public class AuthorizationCodeStrategy(
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
             var refreshTokenContext = new RefreshTokenContext { Length = _options.RefreshTokenLength };
-            var refreshToken = new RefreshTokenEntity()
+            var refreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
                 Token = await _refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
-                ExpireDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                TokenType = OpaqueTokenType.Refresh,
+                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
             };
 
-            var tokenResult = await _tokenManager.CreateAsync(refreshToken, cancellationToken);
+            var scopes = client.AllowedScopes.Select(x => x.Scope);
+            var tokenResult = await _tokenManager.CreateAsync(refreshToken, scopes, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
 
             var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);

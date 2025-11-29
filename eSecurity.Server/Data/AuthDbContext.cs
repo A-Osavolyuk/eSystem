@@ -19,7 +19,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<PersonalDataEntity> PersonalData { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
-    public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<CodeEntity> Codes { get; set; }
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
@@ -441,22 +440,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
                 .HasForeignKey(x => x.ScopeId);
         });
 
-        builder.Entity<RefreshTokenEntity>(entity =>
-        {
-            entity.HasKey(k => k.Id);
-            entity.Property(x => x.Token).HasMaxLength(20);
-
-            entity.HasOne(rt => rt.Session)
-                .WithMany(s => s.RefreshTokens)
-                .HasForeignKey(rt => rt.SessionId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(rt => rt.Client)
-                .WithMany()
-                .HasForeignKey(rt => rt.ClientId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         builder.Entity<UserClientEntity>(entity =>
         {
             entity.HasKey(x => new { x.UserId, x.ClientId });
@@ -481,14 +464,15 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Token).HasMaxLength(20);
+            entity.Property(x => x.TokenType).HasEnumConversion();
             
             entity.HasOne(x => x.Client)
                 .WithMany()
                 .HasForeignKey(x => x.ClientId);
             
-            entity.HasOne(x => x.User)
-                .WithMany()
-                .HasForeignKey(x => x.UserId);
+            entity.HasOne(x => x.Session)
+                .WithMany(x => x.OpaqueTokens)
+                .HasForeignKey(x => x.SessionId);
         });
 
         builder.Entity<OpaqueTokenScopeEntity>(entity =>
