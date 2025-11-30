@@ -61,10 +61,10 @@ public class TokenValidator(
         var kid = Guid.Parse(securityToken.Header.Kid);
         var certificate = await _certificateProvider.FindByIdAsync(kid, cancellationToken);
         if (certificate is null)
-            return Results.InternalServerError(new Error()
+            return Results.Unauthorized(new Error()
             {
                 Code = Errors.OAuth.InvalidToken,
-                Description = "Certificate not found"
+                Description = "Invalid token"
             });
 
         var publicKey = certificate.Certificate.GetRSAPublicKey()!;
