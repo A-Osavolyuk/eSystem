@@ -12,7 +12,7 @@ namespace eSecurity.Server.Controllers.v1;
 public class ConnectController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
-    
+
     [EndpointSummary("OpenId configuration")]
     [EndpointDescription("OpenId configuration")]
     [ProducesResponseType(200)]
@@ -22,7 +22,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new GetOpenidConfigurationQuery());
         return ResultHandler.Handle(result);
     }
-    
+
     [EndpointSummary("Json Web Key")]
     [EndpointDescription("Json Web Key")]
     [ProducesResponseType(200)]
@@ -32,7 +32,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new GetJwksQuery());
         return ResultHandler.Handle(result);
     }
-    
+
     [EndpointSummary("Client info")]
     [EndpointDescription("Client info")]
     [ProducesResponseType(200)]
@@ -43,6 +43,41 @@ public class ConnectController(ISender sender) : ControllerBase
         return ResultHandler.Handle(result);
     }
     
+    [EndpointSummary("Userinfo")]
+    [EndpointDescription("Userinfo")]
+    [ProducesResponseType(200)]
+    [HttpGet("userinfo")]
+    public async ValueTask<IActionResult> GetUserInfoAsync()
+    {
+        if (Request.HasFormContentType)
+        {
+            const string description = "GET cannot have form body";
+            Response.Headers.Append(HeaderTypes.WwwAuthenticate,
+                $"Bearer error=\"{Errors.OAuth.InvalidRequest}\", error_description=\"{description}\"");
+            
+            return BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidRequest,
+                Description = description
+            });
+        }
+
+        
+        var result = await _sender.Send(new GetUserInfoQuery());
+        return ResultHandler.Handle(result);
+    }
+    
+    [EndpointSummary("Userinfo")]
+    [EndpointDescription("Userinfo")]
+    [ProducesResponseType(200)]
+    [HttpPost("userinfo")]
+    [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
+    public async ValueTask<IActionResult> PostUserInfoAsync([FromForm] UserInfoRequest request)
+    {
+        var result = await _sender.Send(new GetUserInfoQuery(request.AccessToken));
+        return ResultHandler.Handle(result);
+    }
+
     [EndpointSummary("Grant consents")]
     [EndpointDescription("Grant consents")]
     [ProducesResponseType(200)]
@@ -64,7 +99,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new TokenCommand(request));
         return ResultHandler.Handle(result);
     }
-    
+
     [EndpointSummary("Revocation")]
     [EndpointDescription("Revocation")]
     [ProducesResponseType(200)]
@@ -76,7 +111,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new RevokeCommand(request));
         return ResultHandler.Handle(result);
     }
-    
+
     [EndpointSummary("Introspection")]
     [EndpointDescription("Introspection")]
     [ProducesResponseType(200)]
@@ -88,7 +123,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new IntrospectionCommand(request));
         return ResultHandler.Handle(result);
     }
-    
+
     [EndpointSummary("Authorize")]
     [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]
@@ -98,7 +133,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new AuthorizeCommand(request));
         return ResultHandler.Handle(result);
     }
-    
+
     [EndpointSummary("Logout")]
     [EndpointDescription("Logout")]
     [ProducesResponseType(200)]
