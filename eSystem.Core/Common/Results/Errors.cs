@@ -23,6 +23,7 @@ public static class Errors
         public const string LoginRequired = "login_required";
         public const string ConsentRequired = "consent_required";
         public const string InteractionRequired = "interaction_required";
+        public const string InsufficientScope = "insufficient_scope";
 
         // ===== OpenID Connect Request Object Errors =====  
         public const string InvalidRequestUri = "invalid_request_uri";
