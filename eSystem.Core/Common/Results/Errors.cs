@@ -11,6 +11,7 @@ public static class Errors
         public const string UnauthorizedClient = "unauthorized_client";
         public const string UnsupportedGrantType = "unsupported_grant_type";
         public const string InvalidScope = "invalid_scope";
+        public const string InvalidToken = "invalid_token";
 
         // Optional OAuth 2.0 errors  
         public const string ServerError = "server_error";

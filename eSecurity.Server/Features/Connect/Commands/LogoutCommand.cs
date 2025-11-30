@@ -1,10 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;
@@ -14,14 +16,14 @@ namespace eSecurity.Server.Features.Connect.Commands;
 public record LogoutCommand(LogoutRequest Request) : IRequest<Result>;
 
 public class LogoutCommandHandler(
-    ICertificateProvider certificateProvider,
     IClientManager clientManager,
     ISessionManager sessionManager,
+    ITokenValidator tokenValidator,
     IOptions<TokenOptions> tokenOptions) : IRequestHandler<LogoutCommand, Result>
 {
-    private readonly ICertificateProvider _certificateProvider = certificateProvider;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ITokenValidator _tokenValidator = tokenValidator;
     private readonly TokenOptions _tokenOptions = tokenOptions.Value;
 
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
@@ -40,47 +42,10 @@ public class LogoutCommandHandler(
                 Description = "id_token_hint is required."
             });
 
-        var handler = new JwtSecurityTokenHandler();
-        var securityToken = handler.ReadJwtToken(request.Request.IdTokenHint);
-        if (securityToken is null)
-            return Results.BadRequest(new Error()
-            {
-                Code = Errors.OAuth.InvalidRequest,
-                Description = "id_token_hint is invalid."
-            });
-
-        var kid = Guid.Parse(securityToken.Header.Kid);
-        var certificate = await _certificateProvider.FindByIdAsync(kid, cancellationToken);
-        if (certificate is null)
-            return Results.InternalServerError(new Error()
-            {
-                Code = Errors.OAuth.ServerError,
-                Description = "Public key not found."
-            });
-
-        var publicKey = certificate.Certificate.GetRSAPublicKey()!;
-        var audiences = await _clientManager.GetAudiencesAsync(cancellationToken);
-
-        var validationParameters = new TokenValidationParameters()
-        {
-            ValidateIssuer = true,
-            ValidIssuer = _tokenOptions.Issuer,
-            ValidateAudience = true,
-            ValidAudiences = audiences,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new RsaSecurityKey(publicKey),
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(5)
-        };
-
-        var principal = handler.ValidateToken(request.Request.IdTokenHint, validationParameters, out var validatedToken);
-        if (validatedToken is null || principal is null)
-            return Results.BadRequest(new Error()
-            {
-                Code = Errors.OAuth.InvalidRequest,
-                Description = "id_token_hint is invalid."
-            });
-
+        var validationResult = await _tokenValidator.ValidateAsync(request.Request.IdTokenHint, cancellationToken);
+        if (!validationResult.Succeeded) return validationResult;
+        
+        var principal = validationResult.Get<ClaimsPrincipal>();
         var sid = principal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sid);
         if (sid is null)
             return Results.BadRequest(new Error()

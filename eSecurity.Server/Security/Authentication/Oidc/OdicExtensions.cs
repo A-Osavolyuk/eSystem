@@ -114,6 +114,7 @@ public static class OdicExtensions
         private void AddTokenFlow()
         {
             services.AddScoped<ITokenManager, TokenManager>();
+            services.AddScoped<ITokenValidator, TokenValidator>();
             services.AddSingleton<IClaimBuilderFactory, ClaimBuilderFactory>();
             services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
             services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
