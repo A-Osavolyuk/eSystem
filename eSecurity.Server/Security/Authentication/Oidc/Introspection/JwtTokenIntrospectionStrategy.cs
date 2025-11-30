@@ -82,14 +82,15 @@ public sealed class JwtTokenIntrospectionStrategy(
             {
                 Active = true,
                 Issuer = _tokenOptions.Issuer,
+                Audience = audienceClaim.Value,
                 Username = user.Username,
+                Subject = user.Id.ToString(),
                 ClientId = client.Id,
                 Scope = string.Join(" ", client.AllowedScopes.Select(x => x.Scope)),
                 TokenType = IntrospectionTokenTypes.AccessToken,
-                Audience = audienceClaim.Value,
                 NotBefore = notBeforeClaim is null ? null : long.Parse(notBeforeClaim.Value),
                 Expiration = long.Parse(expirationClaim.Value),
-                IssuedAt = long.Parse(issuedAtClaim.Value)
+                IssuedAt = long.Parse(issuedAtClaim.Value),
             };
 
             return Results.Ok(response);
