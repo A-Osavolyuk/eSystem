@@ -1,16 +1,11 @@
 ﻿using eSecurity.Core.Security.Authentication.Oidc;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
-using eSecurity.Server.Security.Authentication.Oidc.Constants;
-using eSecurity.Server.Security.Authentication.Oidc.Introspection;
 using eSecurity.Server.Security.Authentication.Oidc.Pkce;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
 using eSecurity.Server.Security.Identity.Claims;
-using eSystem.Core.Security.Authentication.Oidc;
-using eSystem.Core.Security.Authentication.Oidc.Authorization;
-using eSystem.Core.Security.Authentication.Oidc.Revocation;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using SessionOptions = eSecurity.Server.Security.Authentication.Oidc.Session.SessionOptions;
 
@@ -32,10 +27,6 @@ public static class OdicExtensions
             services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
             services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
             services.AddSingleton<IClaimBuilderFactory, ClaimBuilderFactory>();
-            
-            services.AddScoped<IIntrospectionResolver, IntrospectionResolver>();
-            services.AddKeyedScoped<IIntrospectionStrategy, JwtTokenIntrospectionStrategy>(IntrospectionType.Jwt);
-            services.AddKeyedScoped<IIntrospectionStrategy, ReferenceTokenIntrospectionStrategy>(IntrospectionType.Reference);
             
             services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
         }
