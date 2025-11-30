@@ -95,16 +95,30 @@ public class BasicAuthenticationHandler(
 
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        Response.StatusCode = StatusCodes.Status401Unauthorized;
-        Response.ContentType = ContentTypes.Application.Json;
+        var error = Context.Items["error"]?.ToString();
 
-        var error = new Error()
+        if (string.IsNullOrEmpty(error) || error == Errors.OAuth.ServerError)
         {
-            Code = Context.Items["error"]?.ToString() ?? Errors.OAuth.InvalidClient, 
-            Description = "Invalid client."
-        };
+            Response.StatusCode = StatusCodes.Status500InternalServerError;
+            Response.ContentType = ContentTypes.Application.Json;
         
-        await Response.WriteAsJsonAsync(error);
+            await Response.WriteAsJsonAsync(new Error()
+            {
+                Code = Errors.OAuth.ServerError, 
+                Description = "Server error."
+            });
+        }
+        else
+        {
+            Response.StatusCode = StatusCodes.Status401Unauthorized;
+            Response.ContentType = ContentTypes.Application.Json;
+        
+            await Response.WriteAsJsonAsync(new Error()
+            {
+                Code = error, 
+                Description = "Invalid client."
+            });
+        }
     }
 
     private AuthenticationTicket CreateTicket(ClientEntity client)
