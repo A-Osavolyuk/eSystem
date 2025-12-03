@@ -30,10 +30,10 @@ public static class CryptographyExtensions
         });
 
         builder.Services.AddDataProtection();
-
-        builder.Services.AddKeys();
-        builder.Services.AddHashing();
-        builder.Services.AddScoped<ICodeFactory, CodeFactory>();
+        builder.Services.AddScoped<IHasherFactory, HasherFactory>();
+        builder.Services.AddKeyedTransient<Hasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
+        builder.Services.AddTransient<ICodeFactory, CodeFactory>();
+        builder.Services.AddTransient<IKeyFactory, RandomKeyFactory>();
     }
 
     extension(IServiceCollection services)
