@@ -1,4 +1,5 @@
 using eSecurity.Core.Common.Requests;
+using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Authentication.Oidc.Revocation;
@@ -7,11 +8,8 @@ namespace eSecurity.Server.Features.Connect.Commands;
 
 public record RevokeCommand(RevocationRequest Request) : IRequest<Result>;
 
-public class RevokeCommandHandler(
-    IClientManager clientManager,
-    ITokenManager tokenManager) : IRequestHandler<RevokeCommand, Result>
+public class RevokeCommandHandler(ITokenManager tokenManager) : IRequestHandler<RevokeCommand, Result>
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
 
     public async Task<Result> Handle(RevokeCommand request, CancellationToken cancellationToken)
@@ -23,16 +21,18 @@ public class RevokeCommandHandler(
                 Description = "Token is missing."
             });
 
-        var tokenTypeHint = request.Request.TokenTypeHint;
-        if (string.IsNullOrEmpty(tokenTypeHint) || tokenTypeHint == TokenTypeHints.RefreshToken)
+        OpaqueTokenType? tokenType = request.Request.TokenTypeHint switch
         {
-            var token = await _tokenManager.FindByTokenAsync(request.Request.Token, cancellationToken);
-            if (token is null || token.Revoked) return Results.Ok();
+            TokenTypeHints.AccessToken => OpaqueTokenType.AccessToken,
+            TokenTypeHints.RefreshToken => OpaqueTokenType.RefreshToken,
+            _ => null
+        };
 
-            await _tokenManager.RevokeAsync(token, cancellationToken);
-        }
+        var token = !tokenType.HasValue
+            ? await _tokenManager.FindByTokenAsync(request.Request.Token, cancellationToken)
+            : await _tokenManager.FindByTokenAsync(request.Request.Token, tokenType.Value, cancellationToken);
 
-        //TODO: Implement access token revocation
-        return Results.Ok();
+        if (token is null || token.Revoked) return Results.Ok();
+        return await _tokenManager.RevokeAsync(token, cancellationToken);
     }
 }

@@ -8,6 +8,32 @@ public sealed class TokenManager(
 {
     private readonly AuthDbContext _context = context;
 
+    public async Task<OpaqueTokenEntity?> FindByTokenAsync(string token, OpaqueTokenType type, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.OpaqueTokens
+            .Where(x => x.Token == token && x.TokenType == type)
+            .Include(x => x.Session)
+            .ThenInclude(x => x.Device)
+            .Include(x => x.Client)
+            .Include(x => x.Scopes)
+            .ThenInclude(x => x.Scope)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+    
+    public async Task<OpaqueTokenEntity?> FindByTokenAsync(string token,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.OpaqueTokens
+            .Where(x => x.Token == token)
+            .Include(x => x.Session)
+            .ThenInclude(x => x.Device)
+            .Include(x => x.Client)
+            .Include(x => x.Scopes)
+            .ThenInclude(x => x.Scope)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<ScopeEntity> scopes,
         CancellationToken cancellationToken = default)
     {
@@ -29,18 +55,6 @@ public sealed class TokenManager(
     public async Task<bool> IsOpaqueAsync(string token, CancellationToken cancellationToken = default)
     {
         return await _context.OpaqueTokens.AnyAsync(x => x.Token == token, cancellationToken);
-    }
-
-    public async Task<OpaqueTokenEntity?> FindByTokenAsync(string token,
-        CancellationToken cancellationToken = default)
-    {
-        return await _context.OpaqueTokens
-            .Include(x => x.Session)
-            .ThenInclude(x => x.Device)
-            .Include(x => x.Client)
-            .Include(x => x.Scopes)
-            .ThenInclude(x => x.Scope)
-            .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
     }
 
     public async Task<Result> RevokeAsync(OpaqueTokenEntity token,

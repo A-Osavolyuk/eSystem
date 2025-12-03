@@ -9,6 +9,9 @@ public interface ITokenManager
     
     public Task<OpaqueTokenEntity?> FindByTokenAsync(string token,
         CancellationToken cancellationToken = default);
+    
+    public Task<OpaqueTokenEntity?> FindByTokenAsync(string token, OpaqueTokenType type,
+        CancellationToken cancellationToken = default);
 
     public Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<ScopeEntity> scopes,
         CancellationToken cancellationToken = default);

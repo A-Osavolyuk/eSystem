@@ -8,7 +8,7 @@ public class RevocationRequest
     public required string Token { get; set; }
     
     [FromForm(Name = "token_type_hint")]
-    public required string TokenTypeHint { get; set; }
+    public string? TokenTypeHint { get; set; }
     
     [FromForm(Name = "client_id")]
     public string? ClientId { get; set; }
