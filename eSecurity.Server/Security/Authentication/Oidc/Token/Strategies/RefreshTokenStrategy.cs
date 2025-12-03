@@ -20,8 +20,7 @@ public sealed class RefreshTokenPayload : TokenPayload
 
 public class RefreshTokenStrategy(
     IDataProtectionProvider protectionProvider,
-    ITokenFactory<JwtTokenContext, string> jwtTokenFactory,
-    ITokenFactory<OpaqueTokenContext, string> opaqueTokenFactoy,
+    ITokenFactoryProvider tokenFactoryProvider,
     IClientManager clientManager,
     ITokenManager tokenManager,
     IUserManager userManager,
@@ -29,8 +28,7 @@ public class RefreshTokenStrategy(
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
-    private readonly ITokenFactory<JwtTokenContext, string> _jwtTokenFactory = jwtTokenFactory;
-    private readonly ITokenFactory<OpaqueTokenContext, string> _opaqueTokenFactoy = opaqueTokenFactoy;
+    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
@@ -120,9 +118,10 @@ public class RefreshTokenStrategy(
             .Build();
 
         var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims };
+        var jwtTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
         var response = new TokenResponse()
         {
-            AccessToken = await _jwtTokenFactory.CreateTokenAsync(accessTokenContext, cancellationToken),
+            AccessToken = await jwtTokenFactory.CreateTokenAsync(accessTokenContext, cancellationToken),
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = TokenTypes.Bearer,
         };
@@ -131,12 +130,13 @@ public class RefreshTokenStrategy(
         {
             var session = refreshToken.Session;
             var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var opaqueTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var newRefreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                Token = await _opaqueTokenFactoy.CreateTokenAsync(refreshTokenContext, cancellationToken),
+                Token = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
@@ -173,7 +173,7 @@ public class RefreshTokenStrategy(
                 .Build();
 
             var idTokenContext = new JwtTokenContext { Claims = idClaims };
-            response.IdToken = await _jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
+            response.IdToken = await jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
         }
 
         return Results.Ok(response);

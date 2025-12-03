@@ -26,8 +26,7 @@ public class AuthorizationCodeStrategy(
     IClientManager clientManager,
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
-    ITokenFactory<JwtTokenContext, string> jwtTokenFactory,
-    ITokenFactory<OpaqueTokenContext, string> opaqueTokenFactory,
+    ITokenFactoryProvider tokenFactoryProvider,
     ITokenManager tokenManager,
     IPkceHandler pkceHandler,
     IDataProtectionProvider protectionProvider,
@@ -38,8 +37,7 @@ public class AuthorizationCodeStrategy(
     private readonly IClientManager _clientManager = clientManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
-    private readonly ITokenFactory<JwtTokenContext, string> _jwtTokenFactory = jwtTokenFactory;
-    private readonly ITokenFactory<OpaqueTokenContext, string> _opaqueTokenFactory = opaqueTokenFactory;
+    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
@@ -147,9 +145,10 @@ public class AuthorizationCodeStrategy(
             .Build();
 
         var accessTokenContext = new JwtTokenContext { Claims = accessClaims };
+        var jwtTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
         var response = new TokenResponse()
         {
-            AccessToken = await _jwtTokenFactory.CreateTokenAsync(accessTokenContext, cancellationToken),
+            AccessToken = await jwtTokenFactory.CreateTokenAsync(accessTokenContext, cancellationToken),
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = TokenTypes.Bearer,
         };
@@ -157,12 +156,13 @@ public class AuthorizationCodeStrategy(
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
             var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var opaqueTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var refreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                Token = await _opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
+                Token = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
@@ -194,7 +194,7 @@ public class AuthorizationCodeStrategy(
                 .Build();
 
             var idTokenContext = new JwtTokenContext { Claims = idClaims };
-            response.IdToken = await _jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
+            response.IdToken = await jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
         }
 
         return Results.Ok(response);

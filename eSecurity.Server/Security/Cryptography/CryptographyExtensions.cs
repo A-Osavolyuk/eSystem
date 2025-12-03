@@ -38,17 +38,6 @@ public static class CryptographyExtensions
 
     extension(IServiceCollection services)
     {
-        private void AddHashing()
-        {
-            services.AddScoped<IHasherFactory, HasherFactory>();
-            services.AddKeyedScoped<Hasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
-        }
-
-        private void AddKeys()
-        {
-            services.AddScoped<IKeyFactory, RandomKeyFactory>();
-        }
-
         private void AddSigning(Action<CertificateOptions> configure)
         {
             services.Configure(configure);
@@ -60,6 +49,7 @@ public static class CryptographyExtensions
         {
             services.Configure(configure);
 
+            services.AddScoped<ITokenFactoryProvider, TokenFactoryProvider>();
             services.AddScoped<ITokenFactory<JwtTokenContext, string>, JwtTokenFactory>();
             services.AddScoped<ITokenFactory<OpaqueTokenContext, string>, OpaqueTokenFactory>();
             services.AddScoped<IJwtSigner, JwtSigner>();
