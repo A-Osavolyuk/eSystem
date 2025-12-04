@@ -12,7 +12,7 @@ public sealed class TokenManager(
         CancellationToken cancellationToken = default)
     {
         return await _context.OpaqueTokens
-            .Where(x => x.Token == token && x.TokenType == type)
+            .Where(x => x.TokenHash == token && x.TokenType == type)
             .Include(x => x.Session)
             .ThenInclude(x => x.Device)
             .Include(x => x.Client)
@@ -25,7 +25,7 @@ public sealed class TokenManager(
         CancellationToken cancellationToken = default)
     {
         return await _context.OpaqueTokens
-            .Where(x => x.Token == token)
+            .Where(x => x.TokenHash == token)
             .Include(x => x.Session)
             .ThenInclude(x => x.Device)
             .Include(x => x.Client)
@@ -54,7 +54,7 @@ public sealed class TokenManager(
 
     public async Task<bool> IsOpaqueAsync(string token, CancellationToken cancellationToken = default)
     {
-        return await _context.OpaqueTokens.AnyAsync(x => x.Token == token, cancellationToken);
+        return await _context.OpaqueTokens.AnyAsync(x => x.TokenHash == token, cancellationToken);
     }
 
     public async Task<Result> RevokeAsync(OpaqueTokenEntity token,

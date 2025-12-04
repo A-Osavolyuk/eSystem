@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
 using eSecurity.Server.Security.Authentication.Oidc.Pkce;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.User;
@@ -29,6 +30,7 @@ public class AuthorizationCodeStrategy(
     ITokenFactoryProvider tokenFactoryProvider,
     ITokenManager tokenManager,
     IPkceHandler pkceHandler,
+    IHasherFactory hasherFactory,
     IDataProtectionProvider protectionProvider,
     IClaimBuilderFactory claimBuilderFactory,
     IOptions<TokenOptions> options) : ITokenStrategy
@@ -40,6 +42,7 @@ public class AuthorizationCodeStrategy(
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
+    private readonly IHasherFactory _hasherFactory = hasherFactory;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly IClaimBuilderFactory _claimBuilderFactory = claimBuilderFactory;
     private readonly TokenOptions _options = options.Value;
@@ -155,14 +158,17 @@ public class AuthorizationCodeStrategy(
 
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
-            var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
             var opaqueTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
+            var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var rawToken = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
+            var hash = hasher.Hash(rawToken);
             var refreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                Token = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
+                TokenHash = hash,
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
@@ -173,7 +179,7 @@ public class AuthorizationCodeStrategy(
             if (!tokenResult.Succeeded) return tokenResult;
 
             var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
-            var protectedRefreshToken = protector.Protect(refreshToken.Token);
+            var protectedRefreshToken = protector.Protect(rawToken);
             response.RefreshToken = protectedRefreshToken;
         }
 

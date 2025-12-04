@@ -2,6 +2,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
+using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.User;
@@ -25,6 +26,7 @@ public class RefreshTokenStrategy(
     ITokenManager tokenManager,
     IUserManager userManager,
     IClaimBuilderFactory claimBuilderFactory,
+    IHasherFactory hasherFactory,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
@@ -33,6 +35,7 @@ public class RefreshTokenStrategy(
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IClaimBuilderFactory _claimBuilderFactory = claimBuilderFactory;
+    private readonly IHasherFactory _hasherFactory = hasherFactory;
     private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
@@ -128,15 +131,17 @@ public class RefreshTokenStrategy(
 
         if (client.RefreshTokenRotationEnabled)
         {
-            var session = refreshToken.Session;
-            var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
             var opaqueTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
+            var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var rawToken = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
+            var hash = hasher.Hash(rawToken);
             var newRefreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
-                SessionId = session.Id,
-                Token = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken),
+                SessionId = refreshToken.Session.Id,
+                TokenHash = hash,
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow
@@ -149,12 +154,12 @@ public class RefreshTokenStrategy(
             var revokeResult = await _tokenManager.RevokeAsync(refreshToken, cancellationToken);
             if (!revokeResult.Succeeded) return revokeResult;
 
-            var protectedToken = protector.Protect(newRefreshToken.Token);
+            var protectedToken = protector.Protect(rawToken);
             response.RefreshToken = protectedToken;
         }
         else
         {
-            var protectedToken = protector.Protect(refreshToken.Token);
+            var protectedToken = protector.Protect(refreshToken.TokenHash);
             response.RefreshToken = protectedToken;
         }
 

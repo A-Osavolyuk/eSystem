@@ -10,7 +10,7 @@ public class OpaqueTokenEntity : Entity
     public Guid SessionId { get; set; }
 
     public required OpaqueTokenType TokenType { get; set; }
-    public required string Token { get; set; }
+    public required string TokenHash { get; set; }
     public bool Revoked { get; set; }
     public bool IsValid => !Revoked && DateTimeOffset.UtcNow < ExpiredDate;
     
