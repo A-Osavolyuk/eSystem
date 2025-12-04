@@ -60,9 +60,10 @@ public class RefreshTokenStrategy(
             });
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
+        var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
         var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
-
-        var refreshToken = await _tokenManager.FindByTokenAsync(unprotectedToken, cancellationToken);
+        var incomingHash = hasher.Hash(unprotectedToken);
+        var refreshToken = await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
         if (refreshToken is null || !refreshToken.IsValid)
             return Results.NotFound(new Error()
             {
@@ -132,16 +133,14 @@ public class RefreshTokenStrategy(
         if (client.RefreshTokenRotationEnabled)
         {
             var opaqueTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
             var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
             var rawToken = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
-            var hash = hasher.Hash(rawToken);
             var newRefreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = refreshToken.Session.Id,
-                TokenHash = hash,
+                TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 CreateDate = DateTimeOffset.UtcNow

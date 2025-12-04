@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
+using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Security.Authentication.Oidc.Introspection;
@@ -12,10 +13,12 @@ public record IntrospectionCommand(IntrospectionRequest Request) : IRequest<Resu
 public class IntrospectionCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
+    IHasherFactory hasherFactory,
     IOptions<TokenOptions> options) : IRequestHandler<IntrospectionCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
+    private readonly IHasherFactory _hasherFactory = hasherFactory;
     private readonly TokenOptions _options = options.Value;
 
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
@@ -27,7 +30,9 @@ public class IntrospectionCommandHandler(
                 Description = "token is required"
             });
 
-        var token = await _tokenManager.FindByTokenAsync(request.Request.Token, cancellationToken);
+        var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
+        var incomingHash = hasher.Hash(request.Request.Token);
+        var token = await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
         if (token is null || !token.IsValid) return Results.Ok(IntrospectionResponse.Fail());
         
         var user = await _userManager.FindByIdAsync(token.Session.Device.UserId, cancellationToken);
