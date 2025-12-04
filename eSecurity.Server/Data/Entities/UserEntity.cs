@@ -20,6 +20,9 @@ public class UserEntity : Entity
 
     public int CodeResendAttempts { get; set; }
     public DateTimeOffset? CodeResendAvailableDate { get; set; }
+
+    public string ZoneInfo { get; set; } = string.Empty;
+    public string Locale { get; set; } = string.Empty;
     
     public PasswordEntity? Password { get; set; }
     public PersonalDataEntity? PersonalData { get; set; }
