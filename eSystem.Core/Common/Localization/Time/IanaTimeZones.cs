@@ -230,6 +230,9 @@ public static class IanaTimeZones
     public static class Arctic
     {
         public const string Longyearbyen = "Arctic/Longyearbyen";
+        public const string Reykjavik = "Arctic/Reykjavik";
+        public const string Scorebysund = "Arctic/Scorebysund";
+        public const string Tromso = "Arctic/Tromso"; 
     }
 
     public static class Asia
