@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Security.Authentication.Oidc.Introspection;
+using eSystem.Core.Security.Authentication.Oidc.Revocation;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
@@ -30,9 +31,20 @@ public class IntrospectionCommandHandler(
                 Description = "token is required"
             });
 
+        OpaqueTokenType? opaqueTokenType = request.Request.TokenTypeHint switch
+        {
+            TokenTypeHints.AccessToken => OpaqueTokenType.AccessToken,
+            TokenTypeHints.RefreshToken => OpaqueTokenType.RefreshToken,
+            _ => null
+        };
+        
         var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
         var incomingHash = hasher.Hash(request.Request.Token);
-        var token = await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
+
+        var token = opaqueTokenType.HasValue
+            ? await _tokenManager.FindByTokenAsync(incomingHash, opaqueTokenType.Value, cancellationToken)
+            : await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
+        
         if (token is null || !token.IsValid) return Results.Ok(IntrospectionResponse.Fail());
         
         var user = await _userManager.FindByIdAsync(token.Session.Device.UserId, cancellationToken);
