@@ -109,20 +109,17 @@ public class GetUserInfoQueryHandler(
         {
             response.PreferredUsername = user.Username;
             response.UpdatedAt = user.UpdateDate?.ToUnixTimeSeconds();
+            response.Zoneinfo = user.ZoneInfo;
+            response.Locale = user.Locale;
 
             if (user.PersonalData is not null)
             {
-                //TODO: Implement retrieving user zoneinfo and locale
-
-                var personalData = user.PersonalData;
-                response.GivenName = personalData.FirstName;
-                response.FamilyName = personalData.LastName;
-                response.MiddleName = personalData.MiddleName;
-                response.Birthdate = personalData.BirthDate;
-                response.Gender = personalData.Gender.ToString().ToLowerInvariant();
-                response.Name = string.IsNullOrEmpty(personalData.MiddleName)
-                    ? string.Join(" ", [personalData.FirstName, personalData.LastName])
-                    : string.Join(" ", [personalData.FirstName, personalData.MiddleName, personalData.LastName]);
+                response.GivenName = user.PersonalData.FirstName;
+                response.FamilyName = user.PersonalData.LastName;
+                response.MiddleName = user.PersonalData.MiddleName;
+                response.Birthdate = user.PersonalData.BirthDate;
+                response.Gender = user.PersonalData.Gender.ToString().ToLowerInvariant();
+                response.Name = user.PersonalData.Fullname;
             }
         }
 

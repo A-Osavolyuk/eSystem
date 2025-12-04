@@ -49,24 +49,20 @@ public sealed class IdClaimBuilder : JwtClaimBuilderBase<IdClaimBuilder>
     private void WithProfile(UserEntity user)
     {
         Add(AppClaimTypes.PreferredUsername, user.Username);
+        Add(AppClaimTypes.ZoneInfo, user.ZoneInfo);
+        Add(AppClaimTypes.Locale, user.Locale);
 
         if (user.UpdateDate.HasValue) 
             Add(AppClaimTypes.UpdatedAt, user.UpdateDate.Value);
         
         if (user.PersonalData is not null)
         {
-            var personalData = user.PersonalData;
-            Add(AppClaimTypes.GivenName, personalData.FirstName);
-            Add(AppClaimTypes.FamilyName, personalData.LastName);
-            Add(AppClaimTypes.MiddleName, personalData.MiddleName);
-            Add(AppClaimTypes.Gender, personalData.Gender.ToString());
-            Add(AppClaimTypes.BirthDate, personalData.BirthDate);
-            
-            var fullName = string.Join(" ", new[] { personalData.FirstName, personalData.MiddleName, personalData.LastName }
-                .Where(x => !string.IsNullOrWhiteSpace(x)));
-            Add(AppClaimTypes.Name, fullName);
-            
-            //TODO: Implement user's local, zoneinfo and picture claims
+            Add(AppClaimTypes.GivenName, user.PersonalData.FirstName);
+            Add(AppClaimTypes.FamilyName, user.PersonalData.LastName);
+            Add(AppClaimTypes.MiddleName, user.PersonalData.MiddleName);
+            Add(AppClaimTypes.Gender, user.PersonalData.Gender.ToString().ToLowerInvariant());
+            Add(AppClaimTypes.BirthDate, user.PersonalData.BirthDate);
+            Add(AppClaimTypes.Name, user.PersonalData.Fullname);
         }
     }
 
