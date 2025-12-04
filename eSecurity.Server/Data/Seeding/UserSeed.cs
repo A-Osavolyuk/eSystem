@@ -1,4 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
+using eSystem.Core.Common.Localization.Locale;
+using eSystem.Core.Common.Localization.Time;
 using eSystem.Core.Data.Seeding;
 
 namespace eSecurity.Server.Data.Seeding;
@@ -15,6 +17,8 @@ public class UserSeed : Seed<UserEntity>
                 Username = "pipidastr",
                 NormalizedUsername = "PIPIDASTR".ToUpper(),
                 AccountConfirmed = true,
+                ZoneInfo = IanaTimeZones.Europe.Kiev,
+                Locale = Locales.Other.UkrainianUkraine
             }
         ];
     }
