@@ -2,5 +2,7 @@
 
 public enum HashAlgorithm
 {
-    Pbkdf2
+    Pbkdf2,
+    Sha256,
+    Sha512
 }
