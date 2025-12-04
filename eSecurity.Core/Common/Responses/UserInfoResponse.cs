@@ -57,5 +57,5 @@ public class UserInfoResponse
     public bool? PhoneNumberVerified { get; set; }
     
     [JsonPropertyName(AppClaimTypes.Address)]
-    public string? Address { get; set; }
+    public AddressClaim? Address { get; set; }
 }
