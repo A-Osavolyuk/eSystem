@@ -9,8 +9,6 @@ namespace eSecurity.Server.Data.Entities;
 public class UserEntity : Entity
 {
     public Guid Id { get; init; }
-    public Guid? PersonalDataId { get; set; }
-
     public string Username { get; set; } = string.Empty;
     public string NormalizedUsername { get; set; } = string.Empty;
     public DateTimeOffset? UsernameChangeDate { get; set; }

@@ -57,10 +57,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.NormalizedUsername).HasMaxLength(64);
             entity.Property(x => x.ZoneInfo).HasMaxLength(32);
             entity.Property(x => x.Locale).HasMaxLength(10);
-
-            entity.HasOne(p => p.PersonalData)
-                .WithOne(u => u.User)
-                .HasForeignKey<UserEntity>(p => p.PersonalDataId);
         });
 
         builder.Entity<PasswordEntity>(entity =>
@@ -133,6 +129,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.Property(x => x.FirstName).HasMaxLength(64);
             entity.Property(x => x.LastName).HasMaxLength(64);
             entity.Property(x => x.MiddleName).HasMaxLength(64);
+            
+            entity.HasOne(x => x.User)
+                .WithOne(x => x.PersonalData)
+                .HasForeignKey<PersonalDataEntity>(x => x.UserId);
         });
 
         builder.Entity<PermissionEntity>(entity =>
