@@ -14,7 +14,7 @@ public sealed class CodeManager(
 {
     private readonly AuthDbContext _context = context;
     private readonly ICodeFactory _codeFactory = codeFactory;
-    private readonly Hasher _hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
+    private readonly IHasher _hasher = hasherFactory.CreateHasher(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
         ActionType action, PurposeType purpose, CancellationToken cancellationToken = default)

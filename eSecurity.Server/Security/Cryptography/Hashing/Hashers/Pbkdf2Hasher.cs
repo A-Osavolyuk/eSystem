@@ -2,13 +2,13 @@
 
 namespace eSecurity.Server.Security.Cryptography.Hashing.Hashers;
 
-public class Pbkdf2Hasher : Hasher
+public class Pbkdf2Hasher : IHasher
 {
     private const int SaltSize = 16;
     private const int KeySize = 32;
     private const int Iterations = 10000;
 
-    public override string Hash(string value)
+    public string Hash(string value)
     {
         using var rng = RandomNumberGenerator.Create();
         var salt = new byte[SaltSize];
@@ -26,7 +26,7 @@ public class Pbkdf2Hasher : Hasher
         return Convert.ToBase64String(hashBytes);
     }
 
-    public override bool VerifyHash(string value, string hash)
+    public  bool VerifyHash(string value, string hash)
     {
         var hashBytes = Convert.FromBase64String(hash);
 

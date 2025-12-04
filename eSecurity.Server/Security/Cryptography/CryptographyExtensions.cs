@@ -33,9 +33,9 @@ public static class CryptographyExtensions
         builder.Services.AddTransient<ICodeFactory, CodeFactory>();
         builder.Services.AddTransient<IKeyFactory, RandomKeyFactory>();
         builder.Services.AddScoped<IHasherFactory, HasherFactory>();
-        builder.Services.AddKeyedTransient<Hasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
-        builder.Services.AddKeyedTransient<Hasher, Sha256Hasher>(HashAlgorithm.Sha256);
-        builder.Services.AddKeyedTransient<Hasher, Sha256Hasher>(HashAlgorithm.Sha512);
+        builder.Services.AddKeyedTransient<IHasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
+        builder.Services.AddKeyedTransient<IHasher, Sha256Hasher>(HashAlgorithm.Sha256);
+        builder.Services.AddKeyedTransient<IHasher, Sha256Hasher>(HashAlgorithm.Sha512);
     }
 
     extension(IServiceCollection services)

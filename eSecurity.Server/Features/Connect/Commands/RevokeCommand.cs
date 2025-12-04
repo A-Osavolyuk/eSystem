@@ -32,7 +32,7 @@ public class RevokeCommandHandler(
             _ => null
         };
 
-        var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
+        var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
         var incomingHash = hasher.Hash(request.Request.Token);
         var token = !tokenType.HasValue
             ? await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken)

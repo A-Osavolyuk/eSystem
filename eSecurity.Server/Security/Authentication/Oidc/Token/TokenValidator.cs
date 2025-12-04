@@ -26,7 +26,7 @@ public class TokenValidator(
     {
         if (await _tokenManager.IsOpaqueAsync(token, cancellationToken))
         {
-            var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
+            var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
             var incomingHash = hasher.Hash(token);
             var opaqueToken = await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
             if (opaqueToken is null || !opaqueToken.IsValid || opaqueToken.TokenType == OpaqueTokenType.RefreshToken)

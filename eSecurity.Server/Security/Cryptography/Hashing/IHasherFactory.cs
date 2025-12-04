@@ -2,5 +2,5 @@
 
 public interface IHasherFactory
 {
-    public Hasher Create(HashAlgorithm algorithm);
+    public IHasher CreateHasher(HashAlgorithm algorithm);
 }

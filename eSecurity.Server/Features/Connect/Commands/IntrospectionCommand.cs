@@ -30,7 +30,7 @@ public class IntrospectionCommandHandler(
                 Description = "token is required"
             });
 
-        var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
+        var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
         var incomingHash = hasher.Hash(request.Request.Token);
         var token = await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
         if (token is null || !token.IsValid) return Results.Ok(IntrospectionResponse.Fail());

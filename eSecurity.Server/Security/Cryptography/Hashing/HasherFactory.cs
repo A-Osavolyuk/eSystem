@@ -4,5 +4,5 @@ public class HasherFactory(IServiceProvider serviceProvider) : IHasherFactory
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public Hasher Create(HashAlgorithm algorithm) => _serviceProvider.GetRequiredKeyedService<Hasher>(algorithm);
+    public IHasher CreateHasher(HashAlgorithm algorithm) => _serviceProvider.GetRequiredKeyedService<IHasher>(algorithm);
 }

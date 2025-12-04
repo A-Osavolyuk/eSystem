@@ -159,7 +159,7 @@ public class AuthorizationCodeStrategy(
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
             var opaqueTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var hasher = _hasherFactory.Create(HashAlgorithm.Sha512);
+            var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
             var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
             var rawToken = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
             var hash = hasher.Hash(rawToken);

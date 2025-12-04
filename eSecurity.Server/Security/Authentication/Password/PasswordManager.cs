@@ -9,7 +9,7 @@ public class PasswordManager(
     IHasherFactory hasherFactory) : IPasswordManager
 {
     private readonly AuthDbContext _context = context;
-    private readonly Hasher _hasher = hasherFactory.Create(HashAlgorithm.Pbkdf2);
+    private readonly IHasher _hasher = hasherFactory.CreateHasher(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<Result> AddAsync(UserEntity user, string password, 
         CancellationToken cancellationToken = default)

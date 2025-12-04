@@ -2,9 +2,9 @@ using System.Security.Cryptography;
 
 namespace eSecurity.Server.Security.Cryptography.Hashing.Hashers;
 
-public class Sha256Hasher : Hasher
+public class Sha256Hasher : IHasher
 {
-    public override string Hash(string value)
+    public string Hash(string value)
     {
         using var sha = SHA256.Create();
         var bytes = Encoding.UTF8.GetBytes(value);
@@ -12,7 +12,7 @@ public class Sha256Hasher : Hasher
         return Convert.ToHexString(hash);
     }
 
-    public override bool VerifyHash(string value, string hash)
+    public bool VerifyHash(string value, string hash)
     {
         var incomingHash = Hash(value);
         return CryptographicOperations.FixedTimeEquals(
