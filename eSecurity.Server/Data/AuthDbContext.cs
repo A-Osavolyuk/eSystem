@@ -133,6 +133,15 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
             entity.HasOne(x => x.User)
                 .WithOne(x => x.PersonalData)
                 .HasForeignKey<PersonalDataEntity>(x => x.UserId);
+
+            entity.OwnsOne<Address>(e => e.Address, a =>
+            {
+                a.Property(x => x.StreetAddress).HasMaxLength(128);
+                a.Property(x => x.Country).HasMaxLength(64);
+                a.Property(x => x.Region).HasMaxLength(64);
+                a.Property(x => x.Locality).HasMaxLength(64);
+                a.Property(x => x.PostalCode).HasMaxLength(5);
+            });
         });
 
         builder.Entity<PermissionEntity>(entity =>

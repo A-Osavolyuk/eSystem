@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
@@ -123,9 +124,16 @@ public class GetUserInfoQueryHandler(
             }
         }
 
-        if (scopes.Contains(Scopes.Address))
+        if (scopes.Contains(Scopes.Address) && user.PersonalData?.Address is not null)
         {
-            //TODO: Implement address flow
+            response.Address = new AddressClaim()
+            {
+                Country = user.PersonalData.Address.Country,
+                Locality = user.PersonalData.Address.Locality,
+                PostalCode = user.PersonalData.Address.PostalCode,
+                StreetAddress = user.PersonalData.Address.StreetAddress,
+                Region = user.PersonalData.Address.Region,
+            };
         }
 
         return Results.Ok(response);

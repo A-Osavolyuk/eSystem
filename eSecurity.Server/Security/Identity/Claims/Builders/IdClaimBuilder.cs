@@ -1,3 +1,4 @@
+using System.Text.Json;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
@@ -68,6 +69,19 @@ public sealed class IdClaimBuilder : JwtClaimBuilderBase<IdClaimBuilder>
 
     private void WithAddress(UserEntity user)
     {
-        //TODO: Implement user address claim
+        if (user.PersonalData?.Address is not null)
+        {
+            var claim = new AddressClaim()
+            {
+                Country = user.PersonalData.Address.Country,
+                Locality = user.PersonalData.Address.Locality,
+                PostalCode = user.PersonalData.Address.PostalCode,
+                StreetAddress = user.PersonalData.Address.StreetAddress,
+                Region = user.PersonalData.Address.Region,
+            };
+            
+            var claimJson = JsonSerializer.Serialize(claim);
+            Add(AppClaimTypes.Address, claimJson);
+        }
     }
 }

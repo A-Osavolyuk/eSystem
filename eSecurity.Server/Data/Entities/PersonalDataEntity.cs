@@ -12,10 +12,21 @@ public class PersonalDataEntity : Entity
     public string? MiddleName { get; set; }
     public required Gender Gender { get; set; }
     public required DateTime BirthDate { get; set; }
+    public Address? Address { get; set; }
     
     public UserEntity User { get; set; } = null!;
 
     public string Fullname => string.IsNullOrEmpty(MiddleName)
         ? $"{FirstName} {LastName}"
         : $"{FirstName} {MiddleName} {LastName}";
+}
+
+[Owned]
+public class Address
+{
+    public required string StreetAddress { get; set; }
+    public required string Locality { get; set; }
+    public required string Region { get; set; }
+    public required string PostalCode { get; set; }
+    public required string Country { get; set; }
 }
