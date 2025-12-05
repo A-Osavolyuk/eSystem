@@ -413,6 +413,11 @@ namespace eSecurity.Server.Migrations
                     MiddleName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Address_StreetAddress = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Address_Locality = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Address_Region = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Address_PostalCode = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: true),
+                    Address_Country = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },

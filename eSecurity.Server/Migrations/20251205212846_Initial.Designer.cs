@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251205205638_Initial")]
+    [Migration("20251205212846_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1598,6 +1598,46 @@ namespace eSecurity.Server.Migrations
                         .HasForeignKey("eSecurity.Server.Data.Entities.PersonalDataEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsOne("eSecurity.Server.Data.Entities.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("PersonalDataEntityId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("nvarchar(64)");
+
+                            b1.Property<string>("Locality")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("nvarchar(64)");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(5)
+                                .HasColumnType("nvarchar(5)");
+
+                            b1.Property<string>("Region")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("nvarchar(64)");
+
+                            b1.Property<string>("StreetAddress")
+                                .IsRequired()
+                                .HasMaxLength(128)
+                                .HasColumnType("nvarchar(128)");
+
+                            b1.HasKey("PersonalDataEntityId");
+
+                            b1.ToTable("PersonalData");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PersonalDataEntityId");
+                        });
+
+                    b.Navigation("Address");
 
                     b.Navigation("User");
                 });
