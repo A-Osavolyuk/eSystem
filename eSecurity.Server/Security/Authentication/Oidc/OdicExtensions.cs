@@ -17,6 +17,7 @@ public static class OdicExtensions
     {
         public void AddOidc(Action<OpenIdOptions> configure)
         {
+            services.Configure(configure);
             services.AddScoped<IClientManager, ClientManager>();
             services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
             services.AddScoped<IPkceHandler, PkceHandler>();

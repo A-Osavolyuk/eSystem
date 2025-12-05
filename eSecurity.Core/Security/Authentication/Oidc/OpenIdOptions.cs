@@ -6,7 +6,6 @@ public class OpenIdOptions
 {
     [JsonPropertyName("issuer")]
     public string Issuer { get; set; } = string.Empty;
-    
 
     [JsonPropertyName("authorization_endpoint")]
     public string AuthorizationEndpoint { get; set; } = string.Empty;
