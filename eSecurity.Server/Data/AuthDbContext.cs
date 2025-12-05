@@ -465,7 +465,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
         builder.Entity<OpaqueTokenEntity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.TokenHash).HasMaxLength(20);
+            entity.Property(x => x.TokenHash).HasMaxLength(100);
             entity.Property(x => x.TokenType).HasEnumConversion();
             
             entity.HasOne(x => x.Client)

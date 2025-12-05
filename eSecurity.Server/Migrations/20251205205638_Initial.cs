@@ -57,24 +57,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PersonalData",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    MiddleName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PersonalData", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ResourceOwners",
                 columns: table => new
                 {
@@ -116,6 +98,29 @@ namespace eSecurity.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Scopes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    NormalizedUsername = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    UsernameChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    AccountConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
+                    CodeResendAttempts = table.Column<int>(type: "int", nullable: false),
+                    CodeResendAvailableDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ZoneInfo = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    Locale = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -221,33 +226,6 @@ namespace eSecurity.Server.Migrations
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PersonalDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    NormalizedUsername = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    UsernameChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    AccountConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
-                    CodeResendAttempts = table.Column<int>(type: "int", nullable: false),
-                    CodeResendAvailableDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_PersonalData_PersonalDataId",
-                        column: x => x.PersonalDataId,
-                        principalTable: "PersonalData",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -418,6 +396,31 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_Passwords", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Passwords_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PersonalData",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    MiddleName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonalData", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PersonalData_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -900,7 +903,7 @@ namespace eSecurity.Server.Migrations
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SessionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TokenType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    TokenHash = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Revoked = table.Column<bool>(type: "bit", nullable: false),
                     RevokedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -1064,6 +1067,12 @@ namespace eSecurity.Server.Migrations
                 column: "ResourceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PersonalData_UserId",
+                table: "PersonalData",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Resources_OwnerId",
                 table: "Resources",
                 column: "OwnerId");
@@ -1117,13 +1126,6 @@ namespace eSecurity.Server.Migrations
                 name: "IX_UserRoles_RoleId",
                 table: "UserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_PersonalDataId",
-                table: "Users",
-                column: "PersonalDataId",
-                unique: true,
-                filter: "[PersonalDataId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSecret_UserId",
@@ -1199,6 +1201,9 @@ namespace eSecurity.Server.Migrations
                 name: "Passwords");
 
             migrationBuilder.DropTable(
+                name: "PersonalData");
+
+            migrationBuilder.DropTable(
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
@@ -1266,9 +1271,6 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "PersonalData");
         }
     }
 }

@@ -454,8 +454,8 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<string>("TokenHash")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("TokenType")
                         .IsRequired()
@@ -675,7 +675,13 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("PersonalData");
                 });
@@ -1026,9 +1032,6 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
-                    b.Property<Guid?>("PersonalDataId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -1049,10 +1052,6 @@ namespace eSecurity.Server.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PersonalDataId")
-                        .IsUnique()
-                        .HasFilter("[PersonalDataId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -1589,6 +1588,17 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Resource");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PersonalDataEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
+                        .WithOne("PersonalData")
+                        .HasForeignKey("eSecurity.Server.Data.Entities.PersonalDataEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ResourceOwnerEntity", "Owner")
@@ -1669,15 +1679,6 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.PersonalDataEntity", "PersonalData")
-                        .WithOne("User")
-                        .HasForeignKey("eSecurity.Server.Data.Entities.UserEntity", "PersonalDataId");
-
-                    b.Navigation("PersonalData");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserLinkedAccountEntity", b =>
@@ -1833,12 +1834,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Scopes");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.PersonalDataEntity", b =>
-                {
-                    b.Navigation("User")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.RoleEntity", b =>
                 {
                     b.Navigation("Permissions");
@@ -1876,6 +1871,8 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Password");
 
                     b.Navigation("Permissions");
+
+                    b.Navigation("PersonalData");
 
                     b.Navigation("PhoneNumbers");
 
