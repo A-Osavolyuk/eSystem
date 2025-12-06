@@ -1,0 +1,20 @@
+﻿using eSecurity.Server.Data.Entities;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace eSecurity.Server.Data.Configurations;
+
+public sealed class GrantedScopeConfiguration : IEntityTypeConfiguration<GrantedScopeEntity>
+{
+    public void Configure(EntityTypeBuilder<GrantedScopeEntity> builder)
+    {
+        builder.HasKey(x => new { x.ScopeId, x.ConsentId });
+
+        builder.HasOne(x => x.Consent)
+            .WithMany(x => x.GrantedScopes)
+            .HasForeignKey(x => x.ConsentId);
+
+        builder.HasOne(x => x.Scope)
+            .WithMany()
+            .HasForeignKey(x => x.ScopeId);
+    }
+}
