@@ -136,11 +136,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
 
             entity.OwnsOne<Address>(e => e.Address, a =>
             {
-                a.Property(x => x.StreetAddress).HasMaxLength(128);
-                a.Property(x => x.Country).HasMaxLength(64);
-                a.Property(x => x.Region).HasMaxLength(64);
-                a.Property(x => x.Locality).HasMaxLength(64);
-                a.Property(x => x.PostalCode).HasMaxLength(5);
+                a.Property(x => x.StreetAddress).HasMaxLength(128).HasColumnName("StreetAddress");
+                a.Property(x => x.Country).HasMaxLength(64).HasColumnName("Country");
+                a.Property(x => x.Region).HasMaxLength(64).HasColumnName("Region");
+                a.Property(x => x.Locality).HasMaxLength(64).HasColumnName("Locality");
+                a.Property(x => x.PostalCode).HasMaxLength(5).HasColumnName("PostalCode");
             });
         });
 

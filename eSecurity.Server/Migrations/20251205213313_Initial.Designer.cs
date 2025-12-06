@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251205212846_Initial")]
+    [Migration("20251205213313_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1607,27 +1607,32 @@ namespace eSecurity.Server.Migrations
                             b1.Property<string>("Country")
                                 .IsRequired()
                                 .HasMaxLength(64)
-                                .HasColumnType("nvarchar(64)");
+                                .HasColumnType("nvarchar(64)")
+                                .HasColumnName("Country");
 
                             b1.Property<string>("Locality")
                                 .IsRequired()
                                 .HasMaxLength(64)
-                                .HasColumnType("nvarchar(64)");
+                                .HasColumnType("nvarchar(64)")
+                                .HasColumnName("Locality");
 
                             b1.Property<string>("PostalCode")
                                 .IsRequired()
                                 .HasMaxLength(5)
-                                .HasColumnType("nvarchar(5)");
+                                .HasColumnType("nvarchar(5)")
+                                .HasColumnName("PostalCode");
 
                             b1.Property<string>("Region")
                                 .IsRequired()
                                 .HasMaxLength(64)
-                                .HasColumnType("nvarchar(64)");
+                                .HasColumnType("nvarchar(64)")
+                                .HasColumnName("Region");
 
                             b1.Property<string>("StreetAddress")
                                 .IsRequired()
                                 .HasMaxLength(128)
-                                .HasColumnType("nvarchar(128)");
+                                .HasColumnType("nvarchar(128)")
+                                .HasColumnName("StreetAddress");
 
                             b1.HasKey("PersonalDataEntityId");
 
