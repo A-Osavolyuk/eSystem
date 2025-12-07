@@ -4,10 +4,14 @@ namespace eSecurity.Server.Security.Identity.Privacy;
 
 public interface IPersonalDataManager
 {
-    public ValueTask<Result> CreateAsync(PersonalDataEntity personalData, 
+    public ValueTask<PersonalDataEntity?> GetAsync(UserEntity user, CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> CreateAsync(PersonalDataEntity personalData,
         CancellationToken cancellationToken = default);
-    public ValueTask<Result> UpdateAsync(PersonalDataEntity personalData, 
+
+    public ValueTask<Result> UpdateAsync(PersonalDataEntity personalData,
         CancellationToken cancellationToken = default);
-    public ValueTask<Result> DeleteAsync(PersonalDataEntity personalData, 
+
+    public ValueTask<Result> DeleteAsync(PersonalDataEntity personalData,
         CancellationToken cancellationToken = default);
 }

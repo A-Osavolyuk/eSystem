@@ -1,4 +1,8 @@
-﻿using eSecurity.Server.Security.Identity.Options;
+﻿using eSecurity.Server.Security.Identity.Claims;
+using eSecurity.Server.Security.Identity.Claims.Builders;
+using eSecurity.Server.Security.Identity.Email;
+using eSecurity.Server.Security.Identity.Options;
+using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;
 using eSecurity.Server.Security.Identity.SignUp;
 using eSecurity.Server.Security.Identity.User;
@@ -14,6 +18,12 @@ public static class IdentityExtensions
             builder.Services.AddSignUpStrategies();
             builder.Services.AddScoped<IUserManager, UserManager>();
             builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
+            builder.Services.AddScoped<IEmailManager, EmailManager>();
+            builder.Services.AddScoped<IPhoneManager, PhoneManager>();
+            
+            builder.Services.AddScoped<IClaimFactoryProvider, ClaimFactoryProvider>();
+            builder.Services.AddScoped<IClaimFactory<AccessClaimsContext>, AccessClaimFactory>();
+            builder.Services.AddScoped<IClaimFactory<IdClaimsContext>, IdClaimsFactory>();
         
             builder.ConfigureIdentity(cfg =>
             {
