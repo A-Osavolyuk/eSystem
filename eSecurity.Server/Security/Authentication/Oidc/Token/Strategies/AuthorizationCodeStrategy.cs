@@ -142,7 +142,7 @@ public class AuthorizationCodeStrategy(
             .WithTokenId(Guid.CreateVersion7().ToString())
             .WithSessionId(session.Id.ToString())
             .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime))
+            .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime))
             .WithNonce(authorizationCode.Nonce)
             .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
             .Build();
