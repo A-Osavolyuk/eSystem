@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Identity.Email;
+using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Users.Queries;
@@ -10,10 +11,12 @@ public record GetUserStateQuery(Guid UserId) : IRequest<Result>;
 
 public class GetUserStateQueryHandler(
     IUserManager userManager,
-    IEmailManager emailManager) : IRequestHandler<GetUserStateQuery, Result>
+    IEmailManager emailManager,
+    IPhoneManager phoneManager) : IRequestHandler<GetUserStateQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly IPhoneManager _phoneManager = phoneManager;
 
     public async Task<Result> Handle(GetUserStateQuery request, CancellationToken cancellationToken)
     {
@@ -21,12 +24,13 @@ public class GetUserStateQueryHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
         var response = new UserStateDto()
         {
             UserId = user.Id,
             Username = user.Username,
             Email = email?.Email,
-            PhoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary)?.PhoneNumber,
+            PhoneNumber = phoneNumber?.PhoneNumber,
             LockedOut = user.LockoutState.Enabled,
             Roles = user.Roles.Select(x => new RoleDto()
             {

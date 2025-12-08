@@ -4,6 +4,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.Options;
+using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Phone;
@@ -13,20 +14,21 @@ public record ResetPhoneNumberCommand(ResetPhoneNumberRequest Request) : IReques
 public class ResetPhoneNumberCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager,
+    IPhoneManager phoneManager,
     IOptions<AccountOptions> options) : IRequestHandler<ResetPhoneNumberCommand, Result>
 {
     private readonly AccountOptions _options = options.Value;
     private readonly IUserManager _userManager = userManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IPhoneManager _phoneManager = phoneManager;
 
     public async Task<Result> Handle(ResetPhoneNumberCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
         
-        var userCurrentPhoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary);
-        if (userCurrentPhoneNumber is null) return Results.BadRequest("User's primary phone number is missing");
+        var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
+        if (phoneNumber is null) return Results.BadRequest("User's primary phone number is missing");
         
         if (_options.RequireUniquePhoneNumber)
         {
@@ -47,7 +49,7 @@ public class ResetPhoneNumberCommandHandler(
         var newPhoneNumber = request.Request.NewPhoneNumber;
         
         var result = await _userManager.ResetPhoneNumberAsync(user, 
-            userCurrentPhoneNumber.PhoneNumber, newPhoneNumber, cancellationToken);
+            phoneNumber.PhoneNumber, newPhoneNumber, cancellationToken);
         
         return result;
     }

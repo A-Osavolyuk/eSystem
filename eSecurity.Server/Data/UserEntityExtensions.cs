@@ -16,9 +16,6 @@ public static class UserEntityExtensions
         public UserLinkedAccountEntity? GetLinkedAccount(LinkedAccountType type)
             => user.LinkedAccounts.FirstOrDefault(x => x.Type == type);
 
-        public UserPhoneNumberEntity? GetPhoneNumber(PhoneNumberType type)
-            => user.PhoneNumbers.FirstOrDefault(x => x.Type == type);
-
         public UserTwoFactorMethodEntity? GetTwoFactorMethod(TwoFactorMethod method)
             => user.TwoFactorMethods.FirstOrDefault(x => x.Method == method);
 

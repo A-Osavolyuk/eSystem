@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Identity.Email;
+using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Users.Queries;
@@ -10,10 +11,12 @@ public sealed record GetUserQuery(Guid UserId) : IRequest<Result>;
 
 public sealed class GetUserQueryHandler(
     IUserManager userManager,
-    IEmailManager emailManager) : IRequestHandler<GetUserQuery, Result>
+    IEmailManager emailManager,
+    IPhoneManager phoneManager) : IRequestHandler<GetUserQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly IPhoneManager _phoneManager = phoneManager;
 
     public async Task<Result> Handle(GetUserQuery request,
         CancellationToken cancellationToken)
@@ -22,7 +25,7 @@ public sealed class GetUserQueryHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
-        var primaryPhoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary);
+        var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
 
         var response = new UserDto
         {
@@ -31,10 +34,10 @@ public sealed class GetUserQueryHandler(
             EmailConfirmed = email?.IsVerified,
             EmailChangeDate = email?.UpdateDate,
             EmailConfirmationDate = email?.VerifiedDate,
-            PhoneNumber = primaryPhoneNumber?.PhoneNumber,
-            PhoneNumberConfirmed = primaryPhoneNumber?.IsVerified,
-            PhoneNumberChangeDate = primaryPhoneNumber?.UpdateDate,
-            PhoneNumberConfirmationDate = primaryPhoneNumber?.VerifiedDate,
+            PhoneNumber = phoneNumber?.PhoneNumber,
+            PhoneNumberConfirmed = phoneNumber?.IsVerified,
+            PhoneNumberChangeDate = phoneNumber?.UpdateDate,
+            PhoneNumberConfirmationDate = phoneNumber?.VerifiedDate,
             Username = user.Username,
             UserNameChangeDate = user.UsernameChangeDate,
         };

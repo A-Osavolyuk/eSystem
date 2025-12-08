@@ -5,6 +5,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Identity.Email;
+using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Constants;
 using eSystem.Core.Security.Authentication.Oidc;
@@ -18,11 +19,13 @@ public class GetUserInfoQueryHandler(
     ITokenValidator tokenValidator,
     IUserManager userManager,
     IEmailManager emailManager,
+    IPhoneManager phoneManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserInfoQuery, Result>
 {
     private readonly ITokenValidator _tokenValidator = tokenValidator;
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
@@ -107,9 +110,12 @@ public class GetUserInfoQueryHandler(
 
         if (scopes.Contains(Scopes.Phone))
         {
-            var phoneNumber = user.GetPhoneNumber(PhoneNumberType.Primary)!;
-            response.PhoneNumber = phoneNumber.PhoneNumber;
-            response.PhoneNumberVerified = phoneNumber.IsVerified;
+            var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
+            if (phoneNumber is not null)
+            {
+                response.PhoneNumber = phoneNumber.PhoneNumber;
+                response.PhoneNumberVerified = phoneNumber.IsVerified;
+            }
         }
 
         if (scopes.Contains(Scopes.Profile))
