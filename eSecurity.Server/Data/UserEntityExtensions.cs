@@ -1,7 +1,6 @@
 ﻿using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Authorization.OAuth;
-using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
 
 namespace eSecurity.Server.Data;
@@ -21,8 +20,5 @@ public static class UserEntityExtensions
 
         public UserVerificationMethodEntity? GetVerificationMethod(VerificationMethod method)
             => user.VerificationMethods.FirstOrDefault(x => x.Method == method);
-
-        public int CountPasskeys() 
-            => user.Devices.Select(x => x.Passkey).Count();
     }
 }

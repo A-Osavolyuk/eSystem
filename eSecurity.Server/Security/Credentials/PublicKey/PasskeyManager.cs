@@ -10,27 +10,32 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<PasskeyEntity?> FindByCredentialIdAsync(string credentialId, CancellationToken cancellationToken)
+    public async ValueTask<List<PasskeyEntity>> GetAllAsync(UserDeviceEntity device,
+        CancellationToken cancellationToken)
     {
-        var entity = await _context.Passkeys
+        return await _context.Passkeys
+            .Where(x => x.DeviceId == device.Id)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async ValueTask<PasskeyEntity?> FindByCredentialIdAsync(string credentialId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Passkeys
             .Where(x => x.CredentialId == credentialId)
             .Include(x => x.Device)
             .FirstOrDefaultAsync(cancellationToken);
-        
-        return entity;
     }
-    
+
     public async ValueTask<PasskeyEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await _context.Passkeys
+        return await _context.Passkeys
             .Where(x => x.Id == id)
             .Include(x => x.Device)
             .FirstOrDefaultAsync(cancellationToken);
-        
-        return entity;
     }
 
-    public async ValueTask<Result> VerifyAsync(PasskeyEntity passkey, PublicKeyCredential credential, 
+    public async ValueTask<Result> VerifyAsync(PasskeyEntity passkey, PublicKeyCredential credential,
         string storedChallenge, CancellationToken cancellationToken)
     {
         var authenticatorAssertionResponse = credential.Response;
@@ -53,7 +58,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 
         _context.Passkeys.Update(passkey);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
@@ -61,7 +66,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
     {
         await _context.Passkeys.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
@@ -69,7 +74,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
     {
         _context.Passkeys.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
@@ -77,7 +82,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
     {
         _context.Passkeys.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 }

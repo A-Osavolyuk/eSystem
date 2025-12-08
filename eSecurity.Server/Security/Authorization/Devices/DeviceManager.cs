@@ -7,10 +7,18 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
 {
     private readonly AuthDbContext _context = context;
 
+    public async ValueTask<UserDeviceEntity?> FindAsync(UserEntity user, string userAgent, string ipAddress,
+        CancellationToken cancellationToken)
+    {
+        return await _context.UserDevices.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && 
+                 x.UserAgent == userAgent && 
+                 x.IpAddress == ipAddress, cancellationToken);
+    }
+
     public async ValueTask<UserDeviceEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var device = await _context.UserDevices.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-        return device;
+        return await _context.UserDevices.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
@@ -19,10 +27,10 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         {
             device.Device = "Desktop";
         }
-        
+
         await _context.UserDevices.AddAsync(device, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
@@ -30,7 +38,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
     {
         device.IsTrusted = true;
         device.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -42,7 +50,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         device.IsBlocked = true;
         device.BlockedDate = DateTimeOffset.UtcNow;
         device.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -54,7 +62,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         device.IsBlocked = false;
         device.BlockedDate = null;
         device.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 

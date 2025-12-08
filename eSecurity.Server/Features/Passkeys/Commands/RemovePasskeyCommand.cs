@@ -5,9 +5,11 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Common.Http.Context;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
 
@@ -18,12 +20,16 @@ public class RemovePasskeyCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager,
     ITwoFactorManager twoFactorManager,
+    IDeviceManager deviceManager,
+    IHttpContextAccessor contextAccessor,
     IOptions<SignInOptions> options) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly HttpContext _context = contextAccessor.HttpContext!;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
@@ -42,7 +48,13 @@ public class RemovePasskeyCommandHandler(
         
         if (!verificationResult.Succeeded) return verificationResult;
 
-        if (user.CountPasskeys() == 1)
+        var userAgent = _context.GetUserAgent();
+        var ipAddress = _context.GetIpV4();
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        if (device is null) return Results.NotFound("Device not found");
+
+        var passkeys = await _passkeyManager.GetAllAsync(device, cancellationToken);
+        if (passkeys.Count == 1)
         {
             if (user.HasTwoFactor(TwoFactorMethod.Passkey))
             {
