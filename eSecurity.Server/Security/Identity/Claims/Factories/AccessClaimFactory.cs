@@ -1,10 +1,8 @@
 ﻿using System.Security.Claims;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Security.Identity.Claims;
-using Microsoft.AspNetCore.Identity;
-using TokenOptions = eSecurity.Server.Security.Cryptography.Tokens.TokenOptions;
 
-namespace eSecurity.Server.Security.Identity.Claims;
+namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class AccessClaimsContext : ClaimsContext
 {

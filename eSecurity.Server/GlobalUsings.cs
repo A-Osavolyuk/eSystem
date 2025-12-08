@@ -12,3 +12,4 @@ global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
 global using Scalar.AspNetCore;
 global using Results = eSystem.Core.Common.Results.Results;
+global using TokenOptions = eSecurity.Server.Security.Cryptography.Tokens.TokenOptions;

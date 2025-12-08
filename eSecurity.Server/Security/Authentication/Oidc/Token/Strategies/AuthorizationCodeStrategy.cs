@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
+using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Security.Authentication.Oidc;
 using Microsoft.AspNetCore.DataProtection;
