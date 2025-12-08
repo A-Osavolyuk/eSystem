@@ -36,7 +36,9 @@ public class DisableTwoFactorCommandHandler(
         var result = await _verificationManager.PreferAsync(user, preferredMethod, cancellationToken);
         if (!result.Succeeded) return result;
 
-        var authenticatorMethod = user.GetVerificationMethod(VerificationMethod.AuthenticatorApp)!;
+        var authenticatorMethod = await _verificationManager.GetAsync(user, VerificationMethod.AuthenticatorApp, cancellationToken);
+        if (authenticatorMethod is null) return Results.NotFound("Method not found");
+        
         var authenticatorResult = await _verificationManager.UnsubscribeAsync(authenticatorMethod, cancellationToken);
         if (!authenticatorResult.Succeeded) return authenticatorResult;
         

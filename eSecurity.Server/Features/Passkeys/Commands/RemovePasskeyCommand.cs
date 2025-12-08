@@ -50,7 +50,6 @@ public class RemovePasskeyCommandHandler(
             if (user.HasTwoFactor(TwoFactorMethod.Passkey))
             {
                 var twoFactorMethod = user.GetTwoFactorMethod(TwoFactorMethod.Passkey)!;
-
                 if (twoFactorMethod.Preferred)
                 {
                     var preferredResult = await _twoFactorManager.PreferAsync(user, 
@@ -64,8 +63,9 @@ public class RemovePasskeyCommandHandler(
 
             if (user.HasVerification(VerificationMethod.Passkey))
             {
-                var method = user.GetVerificationMethod(VerificationMethod.Passkey)!;
-
+                var method = await _verificationManager.GetAsync(user, VerificationMethod.Passkey, cancellationToken);
+                if (method is null) return Results.NotFound("Method not found");
+                
                 if (method.Preferred)
                 {
                     var preferredMethod = user.HasVerification(VerificationMethod.AuthenticatorApp) 

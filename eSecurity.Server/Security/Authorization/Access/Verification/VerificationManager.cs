@@ -6,15 +6,24 @@ namespace eSecurity.Server.Security.Authorization.Access.Verification;
 
 public class VerificationManager(AuthDbContext context) : IVerificationManager
 {
+    private readonly AuthDbContext _context = context;
+    
+    public async ValueTask<UserVerificationMethodEntity?> GetAsync(UserEntity user, 
+        VerificationMethod method, CancellationToken cancellationToken = default)
+    {
+        return await _context.UserVerificationMethods.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Method == method, cancellationToken);
+    }
+
     public async ValueTask<Result> CreateAsync(UserEntity user,
         PurposeType purpose, ActionType action, CancellationToken cancellationToken = default)
     {
-        var existedEntity = await context.Verifications.FirstOrDefaultAsync(
+        var existedEntity = await _context.Verifications.FirstOrDefaultAsync(
             x => x.UserId == user.Id 
                  && x.Purpose == purpose 
                  && x.Action == action, cancellationToken);
 
-        if (existedEntity is not null) context.Verifications.Remove(existedEntity);
+        if (existedEntity is not null) _context.Verifications.Remove(existedEntity);
         
         var entity = new VerificationEntity()
         {
@@ -26,8 +35,8 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
             CreateDate = DateTimeOffset.UtcNow
         };
 
-        await context.Verifications.AddAsync(entity, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.Verifications.AddAsync(entity, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
     }
@@ -35,7 +44,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
     public async ValueTask<Result> VerifyAsync(UserEntity user,
         PurposeType resource, ActionType action, CancellationToken cancellationToken = default)
     {
-        var entity = await context.Verifications.SingleOrDefaultAsync(
+        var entity = await _context.Verifications.SingleOrDefaultAsync(
             x => x.UserId == user.Id
                  && x.Purpose == resource
                  && x.Action == action, cancellationToken);
@@ -58,7 +67,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
             preferredMethod.Preferred = false;
             preferredMethod.UpdateDate = DateTimeOffset.UtcNow;
             
-            context.UserVerificationMethods.Update(preferredMethod);
+            _context.UserVerificationMethods.Update(preferredMethod);
         }
 
         var entity = new UserVerificationMethodEntity()
@@ -69,8 +78,8 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
             CreateDate = DateTimeOffset.UtcNow
         };
         
-        await context.UserVerificationMethods.AddAsync(entity, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.UserVerificationMethods.AddAsync(entity, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Results.Ok();
     }
@@ -78,8 +87,8 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
     public async ValueTask<Result> UnsubscribeAsync(UserVerificationMethodEntity method,
         CancellationToken cancellationToken = default)
     {
-        context.UserVerificationMethods.Remove(method);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserVerificationMethods.Remove(method);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Results.Ok();
     }
@@ -94,15 +103,16 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         currentPreferredMethod.Preferred = false;
         currentPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
 
-        var nextPreferredMethod = user.GetVerificationMethod(method);
+        var nextPreferredMethod = await _context.UserVerificationMethods.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Method == method, cancellationToken);
         
         if (nextPreferredMethod is null) return Results.BadRequest($"User doesn't have verification method {method}.");
         
         nextPreferredMethod.Preferred = true;
         nextPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
         
-        context.UserVerificationMethods.UpdateRange(currentPreferredMethod, nextPreferredMethod);
-        await context.SaveChangesAsync(cancellationToken);
+        _context.UserVerificationMethods.UpdateRange(currentPreferredMethod, nextPreferredMethod);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Results.Ok();
     }

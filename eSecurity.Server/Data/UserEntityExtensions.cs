@@ -10,8 +10,5 @@ public static class UserEntityExtensions
     {
         public UserTwoFactorMethodEntity? GetTwoFactorMethod(TwoFactorMethod method)
             => user.TwoFactorMethods.FirstOrDefault(x => x.Method == method);
-
-        public UserVerificationMethodEntity? GetVerificationMethod(VerificationMethod method)
-            => user.VerificationMethods.FirstOrDefault(x => x.Method == method);
     }
 }
