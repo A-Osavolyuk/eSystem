@@ -32,7 +32,7 @@ public class AuthorizationCodeStrategy(
     IPkceHandler pkceHandler,
     IHasherFactory hasherFactory,
     IDataProtectionProvider protectionProvider,
-    IClaimBuilderFactory claimBuilderFactory,
+    IClaimFactoryProvider claimFactoryProvider,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -44,7 +44,7 @@ public class AuthorizationCodeStrategy(
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IHasherFactory _hasherFactory = hasherFactory;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
-    private readonly IClaimBuilderFactory _claimBuilderFactory = claimBuilderFactory;
+    private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
@@ -135,17 +135,14 @@ public class AuthorizationCodeStrategy(
         var codeResult = await _authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var accessClaims = _claimBuilderFactory.CreateAccessBuilder()
-            .WithIssuer(_options.Issuer)
-            .WithAudience(client.Audience)
-            .WithSubject(user.Id.ToString())
-            .WithTokenId(Guid.CreateVersion7().ToString())
-            .WithSessionId(session.Id.ToString())
-            .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime))
-            .WithNonce(authorizationCode.Nonce)
-            .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
-            .Build();
+        var accessClaimFactory = _claimFactoryProvider.GetClaimFactory<AccessClaimsContext>();
+        var accessClaims = await accessClaimFactory.GetClaimsAsync(user, new AccessClaimsContext()
+        {
+            Aud = client.Audience,
+            Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+            Sid = session.Id.ToString(),
+            Nonce = authorizationCode.Nonce
+        }, cancellationToken);
 
         var accessTokenContext = new JwtTokenContext { Claims = accessClaims };
         var jwtTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
@@ -185,19 +182,14 @@ public class AuthorizationCodeStrategy(
 
         if (client.HasScope(Scopes.OpenId))
         {
-            var scopes = client.AllowedScopes.Select(x => x.Scope.Name).ToList();
-            var idClaims = _claimBuilderFactory.CreateIdBuilder()
-                .WithOpenId(user, scopes)
-                .WithIssuer(_options.Issuer)
-                .WithAudience(client.Audience)
-                .WithSubject(user.Id.ToString())
-                .WithTokenId(Guid.CreateVersion7().ToString())
-                .WithSessionId(session.Id.ToString())
-                .WithNonce(authorizationCode.Nonce)
-                .WithIssuedTime(DateTimeOffset.UtcNow)
-                .WithAuthenticationTime(DateTimeOffset.UtcNow)
-                .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime))
-                .Build();
+            var idClaimFactory = _claimFactoryProvider.GetClaimFactory<IdClaimsContext>();
+            var idClaims = await idClaimFactory.GetClaimsAsync(user, new IdClaimsContext()
+            {
+                Aud = client.Audience,
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+                Sid = session.Id.ToString(),
+                AuthTime = DateTimeOffset.UtcNow,
+            }, cancellationToken);
 
             var idTokenContext = new JwtTokenContext { Claims = idClaims };
             response.IdToken = await jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);

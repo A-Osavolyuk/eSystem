@@ -5,7 +5,7 @@ namespace eSecurity.Server.Security.Identity.Claims;
 
 public abstract class ClaimsContext
 {
-    public required List<string> Scopes { get; set; }
+    public required IEnumerable<string> Scopes { get; set; }
     public required string Aud { get; set; }
     public required string Sid { get; set; }
 

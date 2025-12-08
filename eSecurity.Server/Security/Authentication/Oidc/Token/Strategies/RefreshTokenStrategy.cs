@@ -25,8 +25,8 @@ public class RefreshTokenStrategy(
     IClientManager clientManager,
     ITokenManager tokenManager,
     IUserManager userManager,
-    IClaimBuilderFactory claimBuilderFactory,
     IHasherFactory hasherFactory,
+    IClaimFactoryProvider claimFactoryProvider,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
@@ -34,8 +34,8 @@ public class RefreshTokenStrategy(
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
-    private readonly IClaimBuilderFactory _claimBuilderFactory = claimBuilderFactory;
     private readonly IHasherFactory _hasherFactory = hasherFactory;
+    private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
@@ -110,16 +110,13 @@ public class RefreshTokenStrategy(
                 Description = "Invalid refresh token."
             });
 
-        var accessTokenClaims = _claimBuilderFactory.CreateAccessBuilder()
-            .WithIssuer(_options.Issuer)
-            .WithAudience(client.Audience)
-            .WithSubject(user.Id.ToString())
-            .WithTokenId(Guid.CreateVersion7().ToString())
-            .WithSessionId(refreshToken.Session.Id.ToString())
-            .WithIssuedTime(DateTimeOffset.UtcNow)
-            .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime))
-            .WithScope(client.AllowedScopes.Select(x => x.Scope.Name))
-            .Build();
+        var accessClaimFactory = _claimFactoryProvider.GetClaimFactory<AccessClaimsContext>();
+        var accessTokenClaims = await accessClaimFactory.GetClaimsAsync(user, new AccessClaimsContext()
+        {
+            Aud = client.Audience,
+            Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+            Sid = refreshToken.Session.Id.ToString()
+        }, cancellationToken);
 
         var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims };
         var jwtTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
@@ -164,17 +161,14 @@ public class RefreshTokenStrategy(
 
         if (requestedScopes.Contains(Scopes.OpenId))
         {
-            var idClaims = _claimBuilderFactory.CreateIdBuilder()
-                .WithOpenId(user, requestedScopes)
-                .WithIssuer(_options.Issuer)
-                .WithAudience(client.Audience)
-                .WithSubject(user.Id.ToString())
-                .WithTokenId(Guid.CreateVersion7().ToString())
-                .WithSessionId(refreshToken.Session.Id.ToString())
-                .WithIssuedTime(DateTimeOffset.UtcNow)
-                .WithAuthenticationTime(DateTimeOffset.UtcNow)
-                .WithExpirationTime(DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime))
-                .Build();
+            var idClaimFactory = _claimFactoryProvider.GetClaimFactory<IdClaimsContext>();
+            var idClaims = await idClaimFactory.GetClaimsAsync(user, new IdClaimsContext()
+            {
+                Aud = client.Audience,
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+                Sid = refreshToken.Session.Id.ToString(),
+                AuthTime = DateTimeOffset.UtcNow
+            }, cancellationToken);
 
             var idTokenContext = new JwtTokenContext { Claims = idClaims };
             response.IdToken = await jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
