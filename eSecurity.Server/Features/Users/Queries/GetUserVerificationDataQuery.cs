@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 
@@ -11,9 +12,11 @@ public record GetUserVerificationDataQuery(Guid UserId) : IRequest<Result>;
 
 public class GetUserVerificationMethodsQueryHandler(
     IUserManager userManager,
+    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserVerificationDataQuery request, CancellationToken cancellationToken)
@@ -23,7 +26,7 @@ public class GetUserVerificationMethodsQueryHandler(
         
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = user.GetDevice(userAgent, ipAddress);
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null) return Results.BadRequest("Invalid device.");
 
         var response = new UserVerificationData()

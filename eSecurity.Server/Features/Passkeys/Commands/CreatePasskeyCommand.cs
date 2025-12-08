@@ -8,6 +8,7 @@ using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
@@ -24,6 +25,7 @@ public class CreatePasskeyCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     IVerificationManager verificationManager,
     ISessionStorage sessionStorage,
+    IDeviceManager deviceManager,
     IOptions<CredentialOptions> options) : IRequestHandler<CreatePasskeyCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
@@ -31,6 +33,7 @@ public class CreatePasskeyCommandHandler(
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
+    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -42,7 +45,7 @@ public class CreatePasskeyCommandHandler(
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = user.GetDevice(userAgent, ipAddress);
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null) return Results.BadRequest("Invalid device.");
 
         var verificationResult = await _verificationManager.VerifyAsync(user,

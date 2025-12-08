@@ -9,9 +9,6 @@ public static class UserEntityExtensions
 {
     extension(UserEntity user)
     {
-        public UserDeviceEntity? GetDevice(string userAgent, string ipAddress)
-            => user.Devices.FirstOrDefault(x => x.UserAgent == userAgent && x.IpAddress == ipAddress);
-
         public UserLinkedAccountEntity? GetLinkedAccount(LinkedAccountType type)
             => user.LinkedAccounts.FirstOrDefault(x => x.Type == type);
 

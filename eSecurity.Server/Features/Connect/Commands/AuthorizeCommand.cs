@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authorization.Consents;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 
@@ -21,6 +22,7 @@ public class AuthorizeCommandHandler(
     IAuthorizationCodeManager authorizationCodeManager,
     IClientManager clientManager,
     IConsentManager consentManager,
+    IDeviceManager deviceManager,
     IOptions<OpenIdOptions> options) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
@@ -29,6 +31,7 @@ public class AuthorizeCommandHandler(
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly OpenIdOptions _options = options.Value;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
@@ -141,7 +144,7 @@ public class AuthorizeCommandHandler(
         var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
 
-        var device = user.GetDevice(userAgent, ipAddress);
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null)
         {
             return Results.InternalServerError(new Error()

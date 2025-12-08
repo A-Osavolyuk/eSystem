@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
@@ -14,11 +15,13 @@ public sealed class PasskeySignInStrategy(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
     ISessionManager sessionManager,
+    IDeviceManager deviceManager,
     IHttpContextAccessor accessor) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
@@ -55,7 +58,7 @@ public sealed class PasskeySignInStrategy(
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
-        var device = user.GetDevice(userAgent, ipAddress);
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null) return Results.NotFound(new Error()
         {
             Code = Errors.Common.InvalidDevice, 

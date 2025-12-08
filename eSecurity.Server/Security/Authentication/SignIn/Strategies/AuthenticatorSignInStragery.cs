@@ -50,11 +50,10 @@ public sealed class AuthenticatorSignInStrategy(
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
-        var clientInfo = _httpContext.GetClientInfo()!;
-        var device = user.GetDevice(userAgent, ipAddress);
-
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null)
         {
+            var clientInfo = _httpContext.GetClientInfo()!;
             device = new UserDeviceEntity()
             {
                 Id = Guid.CreateVersion7(),

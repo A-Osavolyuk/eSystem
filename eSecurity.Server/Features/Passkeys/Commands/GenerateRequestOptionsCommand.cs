@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
 using eSecurity.Server.Data;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
@@ -17,12 +18,14 @@ public class GenerateRequestOptionsCommandHandler(
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
     ICredentialFactory credentialFactory,
+    IDeviceManager deviceManager,
     IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
     private readonly ICredentialFactory _credentialFactory = credentialFactory;
+    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -38,7 +41,7 @@ public class GenerateRequestOptionsCommandHandler(
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = user.GetDevice(userAgent, ipAddress);
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null) return Results.BadRequest("Invalid device.");
         if (device.Passkey is null) return Results.BadRequest("This device does not have a passkey.");
 
