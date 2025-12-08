@@ -11,11 +11,11 @@ public record DisconnectLinkedAccountCommand(DisconnectLinkedAccountRequest Requ
 
 public class DisconnectLinkedAccountCommandHandler(
     IUserManager userManager,
-    ILinkedAccountManager providerManager,
+    ILinkedAccountManager linkedAccountManager,
     IVerificationManager verificationManager) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly ILinkedAccountManager _providerManager = providerManager;
+    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
@@ -27,11 +27,11 @@ public class DisconnectLinkedAccountCommandHandler(
             PurposeType.LinkedAccount, ActionType.Disconnect, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
-        
-        var linkedAccount = user.GetLinkedAccount(request.Request.Type);;
+
+        var linkedAccount = await _linkedAccountManager.GetAsync(user, request.Request.Type, cancellationToken);
         if (linkedAccount is null) return Results.NotFound("Cannot find user linked account.");
 
-        var result = await _providerManager.RemoveAsync(linkedAccount, cancellationToken);
+        var result = await _linkedAccountManager.RemoveAsync(linkedAccount, cancellationToken);
         return result;
     }
 }

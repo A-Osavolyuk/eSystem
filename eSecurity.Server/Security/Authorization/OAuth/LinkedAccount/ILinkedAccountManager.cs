@@ -1,9 +1,12 @@
-﻿using eSecurity.Server.Data.Entities;
+﻿using eSecurity.Core.Security.Authorization.OAuth;
+using eSecurity.Server.Data.Entities;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 
 public interface ILinkedAccountManager
 {
+    public ValueTask<UserLinkedAccountEntity?> GetAsync(UserEntity user, 
+        LinkedAccountType type, CancellationToken cancellationToken = default);
     
     public ValueTask<Result> CreateAsync(UserLinkedAccountEntity linkedAccount,
         CancellationToken cancellationToken = default);

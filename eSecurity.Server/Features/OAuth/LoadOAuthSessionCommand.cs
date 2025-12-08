@@ -2,6 +2,7 @@
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authorization.OAuth;
+using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.OAuth;
@@ -10,9 +11,11 @@ public record LoadOAuthSessionCommand(LoadOAuthSessionRequest Request) : IReques
 
 public class LoadOAuthSessionCommandHandler(
     IUserManager userManager,
+    ILinkedAccountManager linkedAccountManager,
     IOAuthSessionManager sessionManager) : IRequestHandler<LoadOAuthSessionCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IOAuthSessionManager _sessionManager = sessionManager;
 
     public async Task<Result> Handle(LoadOAuthSessionCommand request, CancellationToken cancellationToken)
@@ -26,7 +29,9 @@ public class LoadOAuthSessionCommandHandler(
         var user = await _userManager.FindByIdAsync(session.LinkedAccount.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {session.LinkedAccount.UserId}");
 
-        var linkedAccount = user.GetLinkedAccount(session.LinkedAccount.Type)!;
+        var linkedAccount = await _linkedAccountManager.GetAsync(user, session.LinkedAccount.Type, cancellationToken);
+        if (linkedAccount is null) return Results.NotFound("Linked account not found");
+        
         var response = new LoadOAuthSessionResponse()
         {
             UserId = user.Id,

@@ -1,4 +1,5 @@
-﻿using eSecurity.Server.Data;
+﻿using eSecurity.Core.Security.Authorization.OAuth;
+using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
@@ -6,6 +7,13 @@ namespace eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
 {
     private readonly AuthDbContext _context = context;
+
+    public async ValueTask<UserLinkedAccountEntity?> GetAsync(UserEntity user, 
+        LinkedAccountType type, CancellationToken cancellationToken = default)
+    {
+        return await _context.UserLinkedAccounts.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Type == type, cancellationToken);
+    }
 
     public async ValueTask<Result> CreateAsync(UserLinkedAccountEntity linkedAccount, 
         CancellationToken cancellationToken = default)
