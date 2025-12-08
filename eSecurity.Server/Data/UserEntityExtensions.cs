@@ -16,12 +16,6 @@ public static class UserEntityExtensions
         public UserLinkedAccountEntity? GetLinkedAccount(LinkedAccountType type)
             => user.LinkedAccounts.FirstOrDefault(x => x.Type == type);
 
-        public UserEmailEntity? GetEmail(EmailType type)
-            => user.Emails.FirstOrDefault(x => x.Type == type);
-
-        public UserEmailEntity? GetEmail(string email)
-            => user.Emails.FirstOrDefault(x => x.Email == email);
-
         public UserPhoneNumberEntity? GetPhoneNumber(PhoneNumberType type)
             => user.PhoneNumbers.FirstOrDefault(x => x.Type == type);
 

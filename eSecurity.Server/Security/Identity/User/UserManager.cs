@@ -177,7 +177,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<Result> ManageEmailAsync(UserEntity user, EmailType type, string email,
         CancellationToken cancellationToken = default)
     {
-        var currentEmail = user.GetEmail(type);
+        var currentEmail = await _context.UserEmails.FirstOrDefaultAsync(x => x.Type == type, cancellationToken);
         if (currentEmail is not null)
         {
             currentEmail.Type = EmailType.Secondary;
@@ -185,7 +185,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             _context.UserEmails.Update(currentEmail);
         }
 
-        var nextEmail = user.GetEmail(email);
+        var nextEmail = await _context.UserEmails.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
         if (nextEmail is null) return Results.BadRequest($"User doesn't have email {email}.");
 
         nextEmail.Type = type;

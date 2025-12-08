@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 
@@ -12,10 +13,12 @@ public record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
 
 public class ResetEmailCommandHandler(
     IUserManager userManager,
+    IEmailManager emailManager,
     IVerificationManager verificationManager,
     IOptions<AccountOptions> options) : IRequestHandler<ResetEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly AccountOptions _options = options.Value;
 
@@ -25,8 +28,8 @@ public class ResetEmailCommandHandler(
 
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
-        
-        var userCurrentEmail = user.GetEmail(EmailType.Primary);
+
+        var userCurrentEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (userCurrentEmail is null) return Results.BadRequest("User's primary email address is missing");
 
         if (_options.RequireUniqueEmail)

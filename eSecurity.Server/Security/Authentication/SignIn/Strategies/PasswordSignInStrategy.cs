@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authorization.Devices;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
@@ -21,6 +22,7 @@ public sealed class PasswordSignInStrategy(
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
     IHttpContextAccessor accessor,
+    IEmailManager emailManager,
     IOptions<SignInOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -28,6 +30,7 @@ public sealed class PasswordSignInStrategy(
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _options = options.Value;
 
@@ -82,8 +85,10 @@ public sealed class PasswordSignInStrategy(
             if (!result.Succeeded) return result;
         }
 
-        var userPrimaryEmail = user.GetEmail(EmailType.Primary)!;
-        if (_options.RequireConfirmedEmail && !userPrimaryEmail.IsVerified)
+        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        if (email is null) return Results.NotFound("Email not found");
+        
+        if (_options.RequireConfirmedEmail && !email.IsVerified)
             return Results.BadRequest(new Error()
             {
                 Code = Errors.Common.UnverifiedEmail,

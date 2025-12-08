@@ -4,6 +4,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Constants;
 using eSystem.Core.Security.Authentication.Oidc;
@@ -16,10 +17,12 @@ public record GetUserInfoQuery(string? AccessToken = null) : IRequest<Result>;
 public class GetUserInfoQueryHandler(
     ITokenValidator tokenValidator,
     IUserManager userManager,
+    IEmailManager emailManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserInfoQuery, Result>
 {
     private readonly ITokenValidator _tokenValidator = tokenValidator;
     private readonly IUserManager _userManager = userManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
@@ -94,9 +97,12 @@ public class GetUserInfoQueryHandler(
         var scopes = scopeClaim.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (scopes.Contains(Scopes.Email))
         {
-            var email = user.GetEmail(EmailType.Primary)!;
-            response.Email = email.Email;
-            response.EmailVerified = email.IsVerified;
+            var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+            if (email is not null)
+            {
+                response.Email = email.Email;
+                response.EmailVerified = email.IsVerified;
+            }
         }
 
         if (scopes.Contains(Scopes.Phone))

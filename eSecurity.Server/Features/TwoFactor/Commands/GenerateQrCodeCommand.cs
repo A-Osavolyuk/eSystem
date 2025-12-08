@@ -5,6 +5,7 @@ using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using Microsoft.AspNetCore.DataProtection;
 
@@ -16,11 +17,13 @@ public class GenerateQrCodeCommandHandler(
     IUserManager userManager,
     IQrCodeFactory qrCodeFactory,
     ISecretManager secretManager,
+    IEmailManager emailManager,
     IDataProtectionProvider protectionProvider) : IRequestHandler<GenerateQrCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
     private readonly ISecretManager _secretManager = secretManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)
@@ -30,14 +33,13 @@ public class GenerateQrCodeCommandHandler(
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
         
-        var email = user.GetEmail(EmailType.Primary)?.Email!;
+        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        if (email is null) return Results.NotFound("Email not found");
 
         var userSecret = user.Secret;
         if (userSecret is null)
         {
             var secret = _secretManager.Generate();
-
-
             var protectedSecret = protector.Protect(secret);
             userSecret = new UserSecretEntity()
             {
@@ -52,7 +54,7 @@ public class GenerateQrCodeCommandHandler(
         }
 
         var unprotectedSecret = protector.Unprotect(userSecret.Secret);
-        var qrCode = _qrCodeFactory.Create(email, unprotectedSecret, QrCodeConfiguration.Issuer);
+        var qrCode = _qrCodeFactory.Create(unprotectedSecret, email.Email, QrCodeConfiguration.Issuer);
 
         return Results.Ok(qrCode);
     }

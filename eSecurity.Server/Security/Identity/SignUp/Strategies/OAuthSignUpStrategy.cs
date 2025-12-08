@@ -10,6 +10,7 @@ using eSecurity.Server.Security.Authorization.OAuth;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Roles;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;
@@ -35,6 +36,7 @@ public sealed class OAuthSignUpStrategy(
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
+    IEmailManager emailManager,
     ISessionManager sessionManager) : ISignUpStrategy
 {
     private readonly IPermissionManager _permissionManager = permissionManager;
@@ -44,6 +46,7 @@ public sealed class OAuthSignUpStrategy(
     private readonly IOAuthSessionManager _oauthSessionManager = oauthSessionManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager _sessionManager = sessionManager;
 
@@ -111,11 +114,14 @@ public sealed class OAuthSignUpStrategy(
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
+        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        if (email is null) return Results.NotFound("Email not found");
+        
         var message = new OAuthSignUpMessage()
         {
             Credentials = new Dictionary<string, string>()
             {
-                { "To", user.GetEmail(EmailType.Primary)?.Email! },
+                { "To", email.Email },
                 { "Subject", $"Account registered with {oauthPayload.Type.ToString()}" },
             },
             Payload = new()
