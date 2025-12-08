@@ -28,20 +28,28 @@ public class GetUserVerificationMethodsQueryHandler(
     {
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
-        
+
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null) return Results.BadRequest("Invalid device.");
-        
-        var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
+
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        if (email is null) return Results.BadRequest("Invalid email.");
+
+        var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
         var response = new UserVerificationData()
         {
-            PreferredMethod = user.TwoFactorEnabled ? VerificationMethod.AuthenticatorApp : VerificationMethod.Email,
-            EmailEnabled = email is not null,
+            EmailEnabled = true,
             PasskeyEnabled = passkey is not null,
             AuthenticatorEnabled = user.TwoFactorEnabled,
+            PreferredMethod = (user, passkey) switch
+            {
+                ({ TwoFactorEnabled: true }, null) => VerificationMethod.AuthenticatorApp,
+                ({ TwoFactorEnabled: true }, not null) => VerificationMethod.Passkey,
+                ({ TwoFactorEnabled: false }, not null) => VerificationMethod.Passkey,
+                _ => VerificationMethod.Email
+            },
         };
 
         return Results.Ok(response);
