@@ -1,7 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
-using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;

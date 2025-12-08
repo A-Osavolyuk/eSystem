@@ -1,6 +1,5 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
-using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authorization.OAuth;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Identity.User;

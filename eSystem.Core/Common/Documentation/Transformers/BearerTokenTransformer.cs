@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 
 namespace eSystem.Core.Common.Documentation.Transformers;

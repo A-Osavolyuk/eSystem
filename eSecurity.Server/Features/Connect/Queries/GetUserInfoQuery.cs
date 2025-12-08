@@ -1,8 +1,6 @@
 ﻿using System.Security.Claims;
-using System.Text.Json;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Identity;
-using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;

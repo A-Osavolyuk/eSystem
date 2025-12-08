@@ -1,7 +1,6 @@
 ﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
-using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;

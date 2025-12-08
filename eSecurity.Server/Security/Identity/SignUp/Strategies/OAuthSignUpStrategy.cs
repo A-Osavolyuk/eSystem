@@ -2,7 +2,6 @@ using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
-using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authorization.Devices;

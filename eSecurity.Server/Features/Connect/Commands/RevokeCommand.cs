@@ -1,6 +1,4 @@
 using eSecurity.Core.Common.Requests;
-using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Security.Authentication.Oidc.Revocation;

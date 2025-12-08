@@ -1,5 +1,4 @@
 ﻿using eSecurity.Server.Data.Entities;
-using eSystem.Core.Data;
 
 namespace eSecurity.Server.Data;
 

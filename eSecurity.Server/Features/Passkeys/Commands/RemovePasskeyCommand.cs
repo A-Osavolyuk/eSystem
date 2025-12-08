@@ -2,14 +2,11 @@
 using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
-using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Access.Verification;
-using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
 
@@ -49,18 +46,18 @@ public class RemovePasskeyCommandHandler(
         {
             if (user.HasTwoFactor(TwoFactorMethod.Passkey))
             {
-                var twoFactorMethod = await _twoFactorManager.GetAsync(user, TwoFactorMethod.Passkey, cancellationToken);
-                if (twoFactorMethod is null) return Results.NotFound("2FA method not found");
+                var method = await _twoFactorManager.GetAsync(user, TwoFactorMethod.Passkey, cancellationToken);
+                if (method is null) return Results.NotFound("2FA method not found");
                 
-                if (twoFactorMethod.Preferred)
+                if (method.Preferred)
                 {
                     var preferredResult = await _twoFactorManager.PreferAsync(user, 
                         TwoFactorMethod.AuthenticatorApp, cancellationToken);
                     if (!preferredResult.Succeeded) return preferredResult;
                 }
                 
-                var twoFactorResult = await _twoFactorManager.UnsubscribeAsync(twoFactorMethod, cancellationToken);
-                if (!twoFactorResult.Succeeded) return twoFactorResult;
+                var result = await _twoFactorManager.UnsubscribeAsync(method, cancellationToken);
+                if (!result.Succeeded) return result;
             }
 
             if (user.HasVerification(VerificationMethod.Passkey))
@@ -78,12 +75,11 @@ public class RemovePasskeyCommandHandler(
                     if (!methodResult.Succeeded) return methodResult;
                 }
                 
-                var unsubscribeResult = await _verificationManager.UnsubscribeAsync(method, cancellationToken);
-                if (!unsubscribeResult.Succeeded) return unsubscribeResult;
+                var result = await _verificationManager.UnsubscribeAsync(method, cancellationToken);
+                if (!result.Succeeded) return result;
             }
         }
 
-        var result = await _passkeyManager.DeleteAsync(passkey, cancellationToken);
-        return result;
+        return await _passkeyManager.DeleteAsync(passkey, cancellationToken);
     }
 }

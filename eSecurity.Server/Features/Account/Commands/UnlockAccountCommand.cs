@@ -1,6 +1,5 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authorization.Access;
-using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authorization.Access.Codes;
 using eSecurity.Server.Security.Authorization.Devices;

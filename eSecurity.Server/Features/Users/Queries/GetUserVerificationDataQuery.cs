@@ -1,7 +1,6 @@
 ﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
-using eSecurity.Server.Data;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;

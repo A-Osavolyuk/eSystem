@@ -5,7 +5,6 @@ using eSecurity.Server.Security.Authentication.Oidc.Pkce;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
-using eSecurity.Server.Security.Identity.Claims;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using SessionOptions = eSecurity.Server.Security.Authentication.Oidc.Session.SessionOptions;
 

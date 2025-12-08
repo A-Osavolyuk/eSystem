@@ -4,7 +4,6 @@ using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
-using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Access.Verification;
