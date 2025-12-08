@@ -8,5 +8,4 @@ public class UserVerificationData
     public bool EmailEnabled { get; set; }
     public bool AuthenticatorEnabled { get; set; }
     public bool PasskeyEnabled { get; set; }
-    public List<UserVerificationMethod> Methods { get; set; } = [];
 }

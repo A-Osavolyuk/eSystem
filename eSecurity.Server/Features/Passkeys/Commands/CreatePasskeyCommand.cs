@@ -90,14 +90,6 @@ public class CreatePasskeyCommandHandler(
 
             if (!twoFactorResult.Succeeded) return twoFactorResult;
         }
-
-        if (!user.HasVerification(VerificationMethod.Passkey))
-        {
-            var verificationMethodResult = await _verificationManager.SubscribeAsync(user,
-                VerificationMethod.Passkey, cancellationToken: cancellationToken);
-
-            if (!verificationMethodResult.Succeeded) return verificationMethodResult;
-        }
         
         return Results.Ok();
     }

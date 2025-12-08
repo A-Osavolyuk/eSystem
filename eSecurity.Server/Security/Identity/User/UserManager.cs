@@ -22,7 +22,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorMethods)
             .Include(x => x.LinkedAccounts)
-            .Include(x => x.VerificationMethods)
             .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
@@ -45,7 +44,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorMethods)
             .Include(x => x.LinkedAccounts)
-            .Include(x => x.VerificationMethods)
             .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
@@ -70,7 +68,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorMethods)
             .Include(x => x.LinkedAccounts)
-            .Include(x => x.VerificationMethods)
             .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
@@ -97,7 +94,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .ThenInclude(x => x.Permission)
             .Include(x => x.TwoFactorMethods)
             .Include(x => x.LinkedAccounts)
-            .Include(x => x.VerificationMethods)
             .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
@@ -401,21 +397,11 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             CreateDate = DateTimeOffset.UtcNow,
         };
 
-        var verificationMethod = new UserVerificationMethodEntity()
-        {
-            UserId = user.Id,
-            Id = Guid.CreateVersion7(),
-            Method = VerificationMethod.Email,
-            Preferred = true,
-            CreateDate = DateTimeOffset.UtcNow
-        };
-
         user.NormalizedUsername = user.Username.ToUpper();
         user.CreateDate = DateTimeOffset.UtcNow;
 
         await _context.Users.AddAsync(user, cancellationToken);
         await _context.LockoutStates.AddAsync(lockoutState, cancellationToken);
-        await _context.UserVerificationMethods.AddAsync(verificationMethod, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();

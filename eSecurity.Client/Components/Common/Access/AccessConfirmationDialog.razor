@@ -5,9 +5,7 @@
 @inject ISnackbar Snackbar
 @inject IUserService UserService
 
-@if (Model.Methods.Count > 0)
-{
-    <MudDialog Style="width: 600px">
+<MudDialog Style="width: 600px">
     <TitleContent>
         Access confirmation
     </TitleContent>
@@ -65,7 +63,7 @@
         </MudStack>
     </DialogContent>
 </MudDialog>
-}
+
 
 @code {
     [CascadingParameter] public IMudDialogInstance Dialog { get; set; } = null!;

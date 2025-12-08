@@ -19,6 +19,14 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
             .ToListAsync(cancellationToken);
     }
 
+    public async ValueTask<PasskeyEntity?> FindByDeviceAsync(UserDeviceEntity device, CancellationToken cancellationToken)
+    {
+        return await _context.Passkeys
+            .Where(x => x.DeviceId == device.Id)
+            .Include(x => x.Device)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async ValueTask<PasskeyEntity?> FindByCredentialIdAsync(string credentialId,
         CancellationToken cancellationToken)
     {

@@ -36,7 +36,6 @@ public class UserEntity : Entity
     public ICollection<UserTwoFactorMethodEntity> TwoFactorMethods { get; init; } = null!;
     public ICollection<UserLinkedAccountEntity> LinkedAccounts { get; init; } = null!;
     public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
-    public ICollection<UserVerificationMethodEntity> VerificationMethods { get; init; } = null!;
 
     public bool HasPassword() => Password is not null;
     public bool HasEmail(EmailType type) => Emails.Any(x => x.Type == type);
@@ -47,6 +46,4 @@ public class UserEntity : Entity
     public bool HasRecoveryCodes() => RecoveryCodes.Count > 0;
     public bool HasPasskeys() => Devices.Select(x => x.Passkey).Any(x => x is not null);
     public bool HasTwoFactor(TwoFactorMethod type) => TwoFactorMethods.Any(x => x.Method == type);
-    public bool HasVerification(VerificationMethod method)
-        => VerificationMethods.Any(x => x.Method == method);
 }

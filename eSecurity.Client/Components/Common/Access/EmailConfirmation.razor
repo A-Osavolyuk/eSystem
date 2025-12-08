@@ -55,7 +55,7 @@
             }
         </MudStack>
     </MudPaper>
-    @if (Model.Methods.Any(x => x.Method != VerificationMethod.Email))
+    @if (Model.PasskeyEnabled || Model.AuthenticatorEnabled)
     {
         <MudPaper Outlined="true" Class="py-3 px-5">
             <MudStack>

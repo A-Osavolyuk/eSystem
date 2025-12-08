@@ -10,9 +10,7 @@
 }
 else
 {
-    if (Model.Methods.Count > 0)
-    {
-        <MudGrid Justify="Justify.Center">
+    <MudGrid Justify="Justify.Center">
         <MudItem xs="3">
             <MudStack Justify="Justify.Center">
                 <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
@@ -62,7 +60,7 @@ else
                         <AuthenticatorConfirmation
                             Model="Model"
                             Context="Context"
-                            OnMethodChanged="ChangeMethodAsync" 
+                            OnMethodChanged="ChangeMethodAsync"
                             OnAccessConfirmed="ConfirmAccessAsync"/>
                         break;
                     }
@@ -70,7 +68,6 @@ else
             </MudStack>
         </MudItem>
     </MudGrid>
-    }
 }
 
 @code {
