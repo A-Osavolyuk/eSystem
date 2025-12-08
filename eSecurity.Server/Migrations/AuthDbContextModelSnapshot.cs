@@ -1284,35 +1284,6 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("UserTwoFactorMethods");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserVerificationMethodEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Method")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Preferred")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserVerificationMethods");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1830,17 +1801,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserVerificationMethodEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("VerificationMethods")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
@@ -1928,8 +1888,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Secret");
 
                     b.Navigation("TwoFactorMethods");
-
-                    b.Navigation("VerificationMethods");
                 });
 #pragma warning restore 612, 618
         }

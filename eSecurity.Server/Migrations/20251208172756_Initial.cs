@@ -650,28 +650,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserVerificationMethods",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Preferred = table.Column<bool>(type: "bit", nullable: false),
-                    Method = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserVerificationMethods", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserVerificationMethods_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Verifications",
                 columns: table => new
                 {
@@ -1144,11 +1122,6 @@ namespace eSecurity.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserVerificationMethods_UserId",
-                table: "UserVerificationMethods",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Verifications_UserId",
                 table: "Verifications",
                 column: "UserId");
@@ -1234,9 +1207,6 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserTwoFactorMethods");
-
-            migrationBuilder.DropTable(
-                name: "UserVerificationMethods");
 
             migrationBuilder.DropTable(
                 name: "Verifications");
