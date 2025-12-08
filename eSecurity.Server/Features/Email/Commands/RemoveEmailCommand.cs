@@ -14,15 +14,11 @@ public record RemoveEmailCommand(RemoveEmailRequest Request) : IRequest<Result>;
 
 public class RemoveEmailCommandHandler(
     IUserManager userManager,
-    IDeviceManager deviceManager,
     IPasskeyManager passkeyManager,
-    IHttpContextAccessor contextAccessor,
     IVerificationManager verificationManager) : IRequestHandler<RemoveEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
-    private readonly HttpContext _context = contextAccessor.HttpContext!;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(RemoveEmailCommand request, CancellationToken cancellationToken)
@@ -35,12 +31,7 @@ public class RemoveEmailCommandHandler(
         
         if (email.Type == EmailType.Primary)
         {
-            var userAgent = _context.GetUserAgent();
-            var idAddress = _context.GetIpV4();
-            var device = await _deviceManager.FindAsync(user, userAgent, idAddress, cancellationToken);
-            if (device is null) return Results.NotFound("Device not found");
-            
-            var passkeys = await _passkeyManager.GetAllAsync(device, cancellationToken);
+            var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);
             if (passkeys.Count == 0)
             {
                 return Results.BadRequest(

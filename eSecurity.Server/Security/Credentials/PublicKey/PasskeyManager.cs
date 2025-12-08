@@ -10,11 +10,12 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<List<PasskeyEntity>> GetAllAsync(UserDeviceEntity device,
+    public async ValueTask<List<PasskeyEntity>> GetAllAsync(UserEntity user,
         CancellationToken cancellationToken)
     {
         return await _context.Passkeys
-            .Where(x => x.DeviceId == device.Id)
+            .Where(x => _context.UserDevices
+                .Any(device => device.UserId == user.Id && device.Id == x.DeviceId))
             .ToListAsync(cancellationToken);
     }
 

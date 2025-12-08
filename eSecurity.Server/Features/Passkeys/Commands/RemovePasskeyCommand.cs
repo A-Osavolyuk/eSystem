@@ -20,16 +20,12 @@ public class RemovePasskeyCommandHandler(
     IUserManager userManager,
     IVerificationManager verificationManager,
     ITwoFactorManager twoFactorManager,
-    IDeviceManager deviceManager,
-    IHttpContextAccessor contextAccessor,
     IOptions<SignInOptions> options) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
-    private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly HttpContext _context = contextAccessor.HttpContext!;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
@@ -47,13 +43,8 @@ public class RemovePasskeyCommandHandler(
             PurposeType.Passkey, ActionType.Remove, cancellationToken);
         
         if (!verificationResult.Succeeded) return verificationResult;
-
-        var userAgent = _context.GetUserAgent();
-        var ipAddress = _context.GetIpV4();
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null) return Results.NotFound("Device not found");
-
-        var passkeys = await _passkeyManager.GetAllAsync(device, cancellationToken);
+        
+        var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);
         if (passkeys.Count == 1)
         {
             if (user.HasTwoFactor(TwoFactorMethod.Passkey))
