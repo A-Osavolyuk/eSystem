@@ -46,8 +46,7 @@ public class GetUserVerificationMethodsQueryHandler(
             PreferredMethod = (user, passkey) switch
             {
                 ({ TwoFactorEnabled: true }, null) => VerificationMethod.AuthenticatorApp,
-                ({ TwoFactorEnabled: true }, not null) => VerificationMethod.Passkey,
-                ({ TwoFactorEnabled: false }, not null) => VerificationMethod.Passkey,
+                ({ TwoFactorEnabled: true or false }, not null) => VerificationMethod.Passkey,
                 _ => VerificationMethod.Email
             },
         };
