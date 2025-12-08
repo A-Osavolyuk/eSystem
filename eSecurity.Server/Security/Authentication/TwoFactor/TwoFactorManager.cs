@@ -8,6 +8,13 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext _context = context;
 
+    public async ValueTask<UserTwoFactorMethodEntity?> GetAsync(UserEntity user, 
+        TwoFactorMethod method, CancellationToken cancellationToken = default)
+    {
+        return await _context.UserTwoFactorMethods.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Method == method, cancellationToken);
+    }
+
     public async ValueTask<Result> SubscribeAsync(UserEntity user, TwoFactorMethod method,
         bool preferred = false, CancellationToken cancellationToken = default)
     {
@@ -72,7 +79,11 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         currentPreferredMethod.Preferred = false;
         currentPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
         
-        var nextPreferredMethod = user.GetTwoFactorMethod(method)!;
+        var nextPreferredMethod = await _context.UserTwoFactorMethods.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Method == method, cancellationToken);
+
+        if (nextPreferredMethod is null) return Results.NotFound("Method not found");
+        
         nextPreferredMethod.Preferred = true;
         nextPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
         

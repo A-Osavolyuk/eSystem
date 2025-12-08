@@ -49,7 +49,9 @@ public class RemovePasskeyCommandHandler(
         {
             if (user.HasTwoFactor(TwoFactorMethod.Passkey))
             {
-                var twoFactorMethod = user.GetTwoFactorMethod(TwoFactorMethod.Passkey)!;
+                var twoFactorMethod = await _twoFactorManager.GetAsync(user, TwoFactorMethod.Passkey, cancellationToken);
+                if (twoFactorMethod is null) return Results.NotFound("2FA method not found");
+                
                 if (twoFactorMethod.Preferred)
                 {
                     var preferredResult = await _twoFactorManager.PreferAsync(user, 
