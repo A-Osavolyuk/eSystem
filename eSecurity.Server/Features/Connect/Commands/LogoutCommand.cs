@@ -76,7 +76,7 @@ public class LogoutCommandHandler(
                 Description = "Invalid client."
             });
         
-        if (!client.HasPostLogoutRedirectUri(request.Request.PostLogoutRedirectUri))
+        if (!client.HasUri(request.Request.PostLogoutRedirectUri, UriType.PostLogoutRedirect))
             return Results.BadRequest(new Error()
             {
                 Code = Errors.OAuth.InvalidRequest,
@@ -86,7 +86,8 @@ public class LogoutCommandHandler(
         var result = await _sessionManager.RemoveAsync(session, cancellationToken);
         if (!result.Succeeded) return result;
 
-        var postLogoutRedirectUris = client.FrontChannelLogoutUris
+        var postLogoutRedirectUris = client.Uris
+            .Where(x => x.Type == UriType.FrontChannelLogout)
             .Select(x => x.Uri)
             .ToList();
         

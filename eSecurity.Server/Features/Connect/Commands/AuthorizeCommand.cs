@@ -85,7 +85,7 @@ public class AuthorizeCommandHandler(
             });
         }
 
-        if (!client.HasRedirectUri(request.Request.RedirectUri))
+        if (!client.HasUri(request.Request.RedirectUri, UriType.Redirect))
         {
             return Results.BadRequest(new Error()
             {

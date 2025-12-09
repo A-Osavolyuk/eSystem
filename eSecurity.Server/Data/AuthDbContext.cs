@@ -29,11 +29,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<ClientEntity> Clients { get; set; }
     public DbSet<UserClientEntity> UserClients { get; set; }
     public DbSet<ClientAllowedScopeEntity> ClientAllowedScopes { get; set; }
-    public DbSet<ClientRedirectUriEntity> ClientRedirectUris { get; set; }
-    public DbSet<ClientPostLogoutRedirectUriEntity> ClientPostLogoutUris { get; set; }
-    public DbSet<ClientFrontChannelLogoutUriEntity> ClientFrontChannelLogoutUris { get; set; }
-    public DbSet<ClientBackChannelLogoutUriEntity> ClientBackChannelLogoutUris { get; set; }
     public DbSet<ClientGrantTypeEntity> ClientGrantTypes { get; set; }
+    public DbSet<ClientUriEntity> ClientUris { get; set; }
     public DbSet<ScopeEntity> Scopes { get; set; }
     public DbSet<GrantedScopeEntity> GrantedScopes { get; set; }
     public DbSet<SessionEntity> Sessions { get; set; }
@@ -43,7 +40,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OpaqueTokenEntity> OpaqueTokens { get; set; }
     public DbSet<OpaqueTokenScopeEntity> OpaqueTokensScopes { get; set; }
     public DbSet<PairwiseSubjectEntity> PairwiseSubjects { get; set; }
-    public DbSet<ClientUriEntity> ClientUris { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

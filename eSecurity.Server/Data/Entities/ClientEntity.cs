@@ -29,20 +29,15 @@ public class ClientEntity : Entity
     public ICollection<PairwiseSubjectEntity> PairwiseSubjects { get; set; } = null!;
     public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
     public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
-    public ICollection<ClientRedirectUriEntity> RedirectUris { get; set; } = null!;
-    public ICollection<ClientPostLogoutRedirectUriEntity> PostLogoutRedirectUris { get; set; } = null!;
-    public ICollection<ClientFrontChannelLogoutUriEntity> FrontChannelLogoutUris { get; set; } = null!;
-    public ICollection<ClientBackChannelLogoutUriEntity> BackChannelLogoutUris { get; set; } = null!;
     public ICollection<ClientUriEntity> Uris { get; set; } = null!;
-
-    public bool HasRedirectUri(string uri) 
-        => RedirectUris.Any(r => r.Uri == uri);
-    public bool HasPostLogoutRedirectUri(string uri) 
-        => PostLogoutRedirectUris.Any(r => r.Uri == uri);
+    
     public bool HasScopes(List<string> scopes)
         => scopes.All(scope => AllowedScopes.Any(x => x.Scope.Name == scope));
     public bool HasScope(string scope) 
         => AllowedScopes.Any(x => x.Scope.Name == scope);
     public bool HasGrantType(string grantType)
         => GrantTypes.Any(x => x.Type == grantType);
+    
+    public bool HasUri(string uri, UriType type) 
+        => Uris.Any(x => x.Uri == uri && x.Type == type);
 }

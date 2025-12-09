@@ -85,7 +85,7 @@ public class AuthorizationCodeStrategy(
             string.IsNullOrEmpty(redirectUri) ||
             !authorizationCode.RedirectUri.Equals(redirectUri) ||
             client.Id != authorizationCode.ClientId ||
-            !client.HasRedirectUri(redirectUri))
+            !client.HasUri(redirectUri, UriType.Redirect))
         {
             return Results.BadRequest(new Error()
             {
