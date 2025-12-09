@@ -31,7 +31,7 @@ public class ResetPhoneNumberCommandHandler(
         
         if (_options.RequireUniquePhoneNumber)
         {
-            var isTaken = await _userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
+            var isTaken = await _phoneManager.IsTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
         
@@ -47,7 +47,7 @@ public class ResetPhoneNumberCommandHandler(
         
         var newPhoneNumber = request.Request.NewPhoneNumber;
         
-        var result = await _userManager.ResetPhoneNumberAsync(user, 
+        var result = await _phoneManager.ResetAsync(user, 
             phoneNumber.PhoneNumber, newPhoneNumber, cancellationToken);
         
         return result;

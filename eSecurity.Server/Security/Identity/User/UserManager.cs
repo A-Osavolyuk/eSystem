@@ -107,32 +107,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return user;
     }
 
-    public async ValueTask<Result> SetPhoneNumberAsync(UserEntity user, string phoneNumber, PhoneNumberType type,
-        CancellationToken cancellationToken = default)
-    {
-        if (user.PhoneNumbers.Any(x => x.PhoneNumber == phoneNumber))
-            return Results.BadRequest("User already has this phone number");
-
-        var userPhoneNumber = new UserPhoneNumberEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            PhoneNumber = phoneNumber,
-            Type = type,
-            IsVerified = true,
-            VerifiedDate = DateTimeOffset.UtcNow,
-            CreateDate = DateTimeOffset.UtcNow
-        };
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
     public async ValueTask<Result> SetUsernameAsync(UserEntity user, string username,
         CancellationToken cancellationToken = default)
     {
@@ -141,101 +115,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         user.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.Users.Update(user);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user, string phoneNumber,
-        CancellationToken cancellationToken = default)
-    {
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
-        if (userPhoneNumber == null) return Results.NotFound($"User doesn't have phone number {phoneNumber}");
-
-        userPhoneNumber.IsVerified = true;
-        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
-        userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserPhoneNumbers.Update(userPhoneNumber);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> ResetPhoneNumberAsync(UserEntity user, string currentPhoneNumber,
-        string newPhoneNumber, CancellationToken cancellationToken = default)
-    {
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == currentPhoneNumber);
-        if (userPhoneNumber is null) return Results.NotFound($"User doesn't have phone number {currentPhoneNumber}");
-
-        userPhoneNumber.PhoneNumber = newPhoneNumber;
-        userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
-        userPhoneNumber.IsVerified = true;
-        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserPhoneNumbers.Update(userPhoneNumber);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> RemovePhoneNumberAsync(UserEntity user, string phoneNumber,
-        CancellationToken cancellationToken = default)
-    {
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
-        if (userPhoneNumber == null) return Results.NotFound($"User doesn't have phone number {phoneNumber}");
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserPhoneNumbers.Remove(userPhoneNumber);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> ChangePhoneNumberAsync(UserEntity user, string currentPhoneNumber,
-        string newPhoneNumber, CancellationToken cancellationToken = default)
-    {
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.PhoneNumber == currentPhoneNumber);
-        if (userPhoneNumber is null) return Results.NotFound($"User doesn't have phone number {currentPhoneNumber}");
-
-        userPhoneNumber.PhoneNumber = newPhoneNumber;
-        userPhoneNumber.UpdateDate = DateTimeOffset.UtcNow;
-        userPhoneNumber.IsVerified = true;
-        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserPhoneNumbers.Update(userPhoneNumber);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> AddPhoneNumberAsync(UserEntity user, string phoneNumber,
-        PhoneNumberType type, CancellationToken cancellationToken = default)
-    {
-        if (user.PhoneNumbers.Any(x => x.PhoneNumber == phoneNumber))
-            return Results.BadRequest("User already has this phone number");
-
-        var userPhoneNumber = new UserPhoneNumberEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            Type = type,
-            PhoneNumber = phoneNumber,
-            CreateDate = DateTimeOffset.UtcNow
-        };
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
@@ -301,15 +180,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         var normalizedUserName = userName.ToUpper();
         var result = await _context.Users.AnyAsync(
             u => u.NormalizedUsername == normalizedUserName, cancellationToken);
-
-        return result;
-    }
-
-    public async ValueTask<bool> IsPhoneNumberTakenAsync(string phoneNumber,
-        CancellationToken cancellationToken = default)
-    {
-        var result = await _context.UserPhoneNumbers
-            .AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
 
         return result;
     }

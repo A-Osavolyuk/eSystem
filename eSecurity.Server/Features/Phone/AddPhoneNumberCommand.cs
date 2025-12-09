@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Identity.Options;
+using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Phone;
@@ -9,10 +10,12 @@ public record AddPhoneNumberCommand(AddPhoneNumberRequest Request) : IRequest<Re
 
 public class AddPhoneNumberCommandHandler(
     IUserManager userManager,
+    IPhoneManager phoneManager,
     IOptions<AccountOptions> options) : IRequestHandler<AddPhoneNumberCommand, Result>
 {
     private readonly AccountOptions _options = options.Value;
     private readonly IUserManager _userManager = userManager;
+    private readonly IPhoneManager _phoneManager = phoneManager;
 
     public async Task<Result> Handle(AddPhoneNumberCommand request, CancellationToken cancellationToken)
     {
@@ -33,11 +36,11 @@ public class AddPhoneNumberCommandHandler(
 
         if (_options.RequireUniquePhoneNumber)
         {
-            var isTaken = await _userManager.IsPhoneNumberTakenAsync(request.Request.PhoneNumber, cancellationToken);
+            var isTaken = await _phoneManager.IsTakenAsync(request.Request.PhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
 
-        var result = await _userManager.AddPhoneNumberAsync(user, request.Request.PhoneNumber,
+        var result = await _phoneManager.AddAsync(user, request.Request.PhoneNumber,
             request.Request.Type, cancellationToken);
 
         if (!result.Succeeded) return result;

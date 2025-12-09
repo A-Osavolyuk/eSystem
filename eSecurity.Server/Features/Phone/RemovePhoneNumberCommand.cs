@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Phone;
@@ -11,9 +12,11 @@ public record RemovePhoneNumberCommand(RemovePhoneNumberRequest Request) : IRequ
 
 public class RemovePhoneNumberCommandHandler(
     IUserManager userManager,
+    IPhoneManager phoneManager,
     IVerificationManager verificationManager) : IRequestHandler<RemovePhoneNumberCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(RemovePhoneNumberCommand request, CancellationToken cancellationToken)
@@ -32,7 +35,7 @@ public class RemovePhoneNumberCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await _userManager.RemovePhoneNumberAsync(user, request.Request.PhoneNumber, cancellationToken);
+        var result = await _phoneManager.RemoveAsync(user, request.Request.PhoneNumber, cancellationToken);
         return result;
     }
 }

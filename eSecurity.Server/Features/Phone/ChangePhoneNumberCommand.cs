@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.Options;
+using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Phone;
@@ -11,10 +12,12 @@ public sealed record ChangePhoneNumberCommand(ChangePhoneNumberRequest Request) 
 
 public sealed class RequestChangePhoneNumberCommandHandler(
     IUserManager userManager,
+    IPhoneManager phoneManager,
     IVerificationManager verificationManager,
     IOptions<AccountOptions> options) : IRequestHandler<ChangePhoneNumberCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly AccountOptions _options = options.Value;
 
@@ -32,7 +35,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
 
         if (_options.RequireUniquePhoneNumber)
         {
-            var isTaken = await _userManager.IsPhoneNumberTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
+            var isTaken = await _phoneManager.IsTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
             if (isTaken) return Results.BadRequest("This phone number is already taken");
         }
 
@@ -46,7 +49,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
 
         if (!newPhoneNumberVerificationResult.Succeeded) return newPhoneNumberVerificationResult;
 
-        var result = await _userManager.ChangePhoneNumberAsync(user, userPhoneNumber.PhoneNumber,
+        var result = await _phoneManager.ChangeAsync(user, userPhoneNumber.PhoneNumber,
             request.Request.NewPhoneNumber, cancellationToken);
 
         return result;
