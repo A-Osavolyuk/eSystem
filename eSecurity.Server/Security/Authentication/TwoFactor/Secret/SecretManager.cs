@@ -11,7 +11,7 @@ public sealed class SecretManager(
     private readonly AuthDbContext _context = context;
     private readonly IKeyFactory _keyFactory = keyFactory;
 
-    public async ValueTask<UserSecretEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<UserSecretEntity?> GetAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var userSecret = await _context.UserSecret.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
         return userSecret;

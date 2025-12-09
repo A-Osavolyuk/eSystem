@@ -15,15 +15,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         var user = await _context.Users
             .Where(x => _context.UserEmails
                 .Any(e => e.UserId == e.Id && e.Type == EmailType.Primary))
-            .Include(x => x.Roles)
-            .ThenInclude(x => x.Role)
-            .Include(x => x.Permissions)
-            .ThenInclude(x => x.Permission)
-            .Include(x => x.PersonalData)
-            .Include(x => x.LockoutState)
-            .Include(x => x.Devices)
-            .ThenInclude(x => x.Passkey)
-            .Include(x => x.Secret)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -32,15 +23,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<UserEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var user = await _context.Users.Where(x => x.Id == id)
-            .Include(x => x.Roles)
-            .ThenInclude(x => x.Role)
-            .Include(x => x.Permissions)
-            .ThenInclude(x => x.Permission)
-            .Include(x => x.PersonalData)
-            .Include(x => x.LockoutState)
-            .Include(x => x.Devices)
-            .ThenInclude(x => x.Passkey)
-            .Include(x => x.Secret)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -50,15 +32,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     {
         var normalizedUserName = name.ToUpper();
         var user = await _context.Users.Where(x => x.NormalizedUsername == normalizedUserName)
-            .Include(x => x.Roles)
-            .ThenInclude(x => x.Role)
-            .Include(x => x.Permissions)
-            .ThenInclude(x => x.Permission)
-            .Include(x => x.PersonalData)
-            .Include(x => x.LockoutState)
-            .Include(x => x.Devices)
-            .ThenInclude(x => x.Passkey)
-            .Include(x => x.Secret)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -70,15 +43,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         var user = await _context.Users
             .Where(x => _context.UserPhoneNumbers
                 .Any(e => e.UserId == x.Id && e.PhoneNumber == phoneNumber))
-            .Include(x => x.Roles)
-            .ThenInclude(x => x.Role)
-            .Include(x => x.Permissions)
-            .ThenInclude(x => x.Permission)
-            .Include(x => x.PersonalData)
-            .Include(x => x.LockoutState)
-            .Include(x => x.Devices)
-            .ThenInclude(x => x.Passkey)
-            .Include(x => x.Secret)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;

@@ -80,7 +80,10 @@ public sealed class OAuthSignInStrategy(
             if (!deviceResult.Succeeded) return deviceResult;
         }
 
-        if (user.LockoutState.Enabled)
+        var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
+        if (lockoutState is null) return Results.NotFound("State not found");
+        
+        if (lockoutState.Enabled)
         {
             var lockoutResult = await _lockoutManager.UnblockAsync(user, cancellationToken);
             if (!lockoutResult.Succeeded) return lockoutResult;

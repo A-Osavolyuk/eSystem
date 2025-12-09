@@ -10,7 +10,7 @@ public sealed class UserPermissionConfiguration : IEntityTypeConfiguration<UserP
         builder.HasKey(ur => new { ur.UserId, Id = ur.PermissionId });
 
         builder.HasOne(ur => ur.User)
-            .WithMany(u => u.Permissions)
+            .WithMany()
             .HasForeignKey(ur => ur.UserId);
 
         builder.HasOne(ur => ur.Permission)

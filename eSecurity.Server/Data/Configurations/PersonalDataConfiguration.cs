@@ -15,7 +15,7 @@ public sealed class PersonalDataConfiguration : IEntityTypeConfiguration<Persona
         builder.Property(x => x.MiddleName).HasMaxLength(64);
             
         builder.HasOne(x => x.User)
-            .WithOne(x => x.PersonalData)
+            .WithOne()
             .HasForeignKey<PersonalDataEntity>(x => x.UserId);
 
         builder.OwnsOne<Address>(e => e.Address, a =>

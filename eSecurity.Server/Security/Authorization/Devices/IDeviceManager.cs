@@ -4,6 +4,9 @@ namespace eSecurity.Server.Security.Authorization.Devices;
 
 public interface IDeviceManager
 {
+    public ValueTask<List<UserDeviceEntity>> GetAllAsync(UserEntity user, 
+        CancellationToken cancellationToken = default);
+    
     public ValueTask<UserDeviceEntity?> FindAsync(UserEntity user, string userAgent, string ipAddress,
         CancellationToken cancellationToken);
 

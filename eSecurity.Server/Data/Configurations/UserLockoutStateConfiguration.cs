@@ -11,7 +11,7 @@ public sealed class UserLockoutStateConfiguration : IEntityTypeConfiguration<Use
         builder.Property(x => x.Description).HasMaxLength(3000);
 
         builder.HasOne(p => p.User)
-            .WithOne(u => u.LockoutState)
+            .WithOne()
             .HasForeignKey<UserLockoutStateEntity>(x => x.UserId);
     }
 }

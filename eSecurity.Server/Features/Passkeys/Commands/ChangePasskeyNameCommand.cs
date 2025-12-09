@@ -20,11 +20,7 @@ public class ChangePasskeyNameCommandHandler(
         if (!await _passkeyManager.HasAsync(user, cancellationToken)) 
             return Results.BadRequest("User does not have any passkeys.");
 
-        var passkey = user.Devices
-            .Where(x => x.Passkey is not null)
-            .Select(x => x.Passkey!)
-            .FirstOrDefault(x => x.Id == request.Request.PasskeyId);
-        
+        var passkey = await _passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);
         if (passkey is null) return Results.NotFound("Cannot find user's passkey.");
 
         passkey.DisplayName = request.Request.DisplayName;

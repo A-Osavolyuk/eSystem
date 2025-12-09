@@ -98,7 +98,10 @@ public sealed class PasswordSignInStrategy(
                 Details = new() { { "userId", user.Id } }
             });
 
-        if (user.LockoutState.Enabled)
+        var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
+        if (lockoutState is null) return Results.NotFound("State not found");
+        
+        if (lockoutState.Enabled)
             return Results.BadRequest(new Error()
             {
                 Code = Errors.Common.AccountLockedOut,

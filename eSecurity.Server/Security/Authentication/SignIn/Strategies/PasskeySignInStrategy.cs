@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
+using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
@@ -15,12 +16,14 @@ public sealed class PasskeySignInStrategy(
     IPasskeyManager passkeyManager,
     ISessionManager sessionManager,
     IDeviceManager deviceManager,
+    ILockoutManager lockoutManager,
     IHttpContextAccessor accessor) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
@@ -47,7 +50,10 @@ public sealed class PasskeySignInStrategy(
         var result = await _passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!result.Succeeded) return result;
 
-        if (user.LockoutState.Enabled)
+        var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
+        if (lockoutState is null) return Results.NotFound("State not found");
+        
+        if (lockoutState.Enabled)
             return Results.BadRequest(new Error()
             {
                 Code = Errors.Common.AccountLockedOut, 

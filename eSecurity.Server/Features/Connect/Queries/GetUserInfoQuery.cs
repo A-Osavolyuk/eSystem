@@ -4,6 +4,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
+using eSecurity.Server.Security.Identity.Privacy;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Constants;
 using eSystem.Core.Security.Authentication.Oidc;
@@ -18,12 +19,14 @@ public class GetUserInfoQueryHandler(
     IUserManager userManager,
     IEmailManager emailManager,
     IPhoneManager phoneManager,
+    IPersonalDataManager personalDataManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserInfoQuery, Result>
 {
     private readonly ITokenValidator _tokenValidator = tokenValidator;
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
+    private readonly IPersonalDataManager _personalDataManager = personalDataManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
@@ -116,6 +119,7 @@ public class GetUserInfoQueryHandler(
             }
         }
 
+        var personalData = await _personalDataManager.GetAsync(user, cancellationToken);
         if (scopes.Contains(Scopes.Profile))
         {
             response.PreferredUsername = user.Username;
@@ -123,26 +127,26 @@ public class GetUserInfoQueryHandler(
             response.Zoneinfo = user.ZoneInfo;
             response.Locale = user.Locale;
 
-            if (user.PersonalData is not null)
+            if (personalData is not null)
             {
-                response.GivenName = user.PersonalData.FirstName;
-                response.FamilyName = user.PersonalData.LastName;
-                response.MiddleName = user.PersonalData.MiddleName;
-                response.Birthdate = user.PersonalData.BirthDate;
-                response.Gender = user.PersonalData.Gender.ToString().ToLowerInvariant();
-                response.Name = user.PersonalData.Fullname;
+                response.GivenName = personalData.FirstName;
+                response.FamilyName = personalData.LastName;
+                response.MiddleName = personalData.MiddleName;
+                response.Birthdate = personalData.BirthDate;
+                response.Gender = personalData.Gender.ToString().ToLowerInvariant();
+                response.Name = personalData.Fullname;
             }
         }
 
-        if (scopes.Contains(Scopes.Address) && user.PersonalData?.Address is not null)
+        if (scopes.Contains(Scopes.Address) && personalData?.Address is not null)
         {
             response.Address = new AddressClaim()
             {
-                Country = user.PersonalData.Address.Country,
-                Locality = user.PersonalData.Address.Locality,
-                PostalCode = user.PersonalData.Address.PostalCode,
-                StreetAddress = user.PersonalData.Address.StreetAddress,
-                Region = user.PersonalData.Address.Region,
+                Country = personalData.Address.Country,
+                Locality = personalData.Address.Locality,
+                PostalCode = personalData.Address.PostalCode,
+                StreetAddress = personalData.Address.StreetAddress,
+                Region = personalData.Address.Region,
             };
         }
 

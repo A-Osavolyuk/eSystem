@@ -16,7 +16,7 @@ public sealed class UserDeviceConfiguration : IEntityTypeConfiguration<UserDevic
         builder.Property(x => x.IpAddress).HasMaxLength(15);
 
         builder.HasOne(x => x.User)
-            .WithMany(x => x.Devices)
+            .WithMany()
             .HasForeignKey(x => x.UserId);
     }
 }

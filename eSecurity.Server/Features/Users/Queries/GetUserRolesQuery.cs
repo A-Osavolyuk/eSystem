@@ -1,13 +1,18 @@
 ﻿using eSecurity.Core.Common.DTOs;
+using eSecurity.Server.Security.Authorization.Permissions;
+using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
 public sealed record GetUserRolesQuery(Guid Id) : IRequest<Result>;
 
-public sealed class GetUserRolesQueryHandler(IUserManager userManager) : IRequestHandler<GetUserRolesQuery, Result>
+public sealed class GetUserRolesQueryHandler(
+    IUserManager userManager,
+    IRoleManager roleManager) : IRequestHandler<GetUserRolesQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IRoleManager _roleManager = roleManager;
 
     public async Task<Result> Handle(GetUserRolesQuery request,
         CancellationToken cancellationToken)
@@ -15,10 +20,8 @@ public sealed class GetUserRolesQueryHandler(IUserManager userManager) : IReques
         var user = await _userManager.FindByIdAsync(request.Id, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
 
-        var roles = user.Roles.Select(x => x.Role).ToList();
-        if (!roles.Any()) return Results.NotFound($"Cannot find roles for user with ID {request.Id}.");
-
-        var result = roles.Select(role => new RoleDto()
+        var roles = await _roleManager.GetAllAsync(user, cancellationToken);
+        var result = roles.Select(x => x.Role).Select(role => new RoleDto()
         {
             Id = role.Id,
             Name = role.Name,

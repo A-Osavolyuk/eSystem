@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Security.Authorization.OAuth;
-using eSystem.Core.Data.Entities;
+﻿using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
 
@@ -17,11 +16,4 @@ public class UserEntity : Entity
 
     public string ZoneInfo { get; set; } = string.Empty;
     public string Locale { get; set; } = string.Empty;
-    
-    public PersonalDataEntity? PersonalData { get; set; }
-    public UserSecretEntity? Secret { get; set; }
-    public UserLockoutStateEntity LockoutState { get; set; } = null!;
-    public ICollection<UserPermissionsEntity> Permissions { get; init; } = null!;
-    public ICollection<UserRoleEntity> Roles { get; init; } = null!;
-    public ICollection<UserDeviceEntity> Devices { get; init; } = null!;
 }

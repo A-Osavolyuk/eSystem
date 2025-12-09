@@ -7,11 +7,12 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<List<RoleEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<List<UserRoleEntity>> GetAllAsync(UserEntity user, 
+        CancellationToken cancellationToken = default)
     {
-        var roles = await _context.Roles
-            .Include(x => x.Permissions)
-            .ThenInclude(x => x.Permission)
+        var roles = await _context.UserRoles
+            .Where(x => x.UserId == user.Id)
+            .Include(x => x.Role)
             .ToListAsync(cancellationToken);
         
         return roles;
@@ -26,89 +27,6 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
             .FirstOrDefaultAsync(cancellationToken);
         
         return role;
-    }
-    
-    public async ValueTask<RoleEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var role = await _context.Roles            
-            .Where(x => x.Id == id)
-            .Include(x => x.Permissions)
-            .ThenInclude(x => x.Permission)
-            .FirstOrDefaultAsync(cancellationToken);
-        
-        return role;
-    }
-
-    public async ValueTask<Result> DeleteAsync(RoleEntity entity, CancellationToken cancellationToken = default)
-    {
-        _context.Roles.Remove(entity);
-        await _context.SaveChangesAsync(cancellationToken);
-        
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> CreateAsync(RoleEntity entity, CancellationToken cancellationToken = default)
-    {
-        await _context.Roles.AddAsync(entity, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-        
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> UpdateAsync(RoleEntity entity, CancellationToken cancellationToken = default)
-    {
-        _context.Update(entity);
-        await _context.SaveChangesAsync(cancellationToken);
-        
-        return  Results.Ok();
-    }
-    
-    public async ValueTask<Result> UnassignAsync(UserEntity user, string roleName,
-        CancellationToken cancellationToken = default)
-    {
-        var role = await _context.UserRoles
-            .FirstOrDefaultAsync(x => x.UserId == user.Id
-                                      && (x.Role.Name == roleName || x.Role.NormalizedName == roleName),
-                cancellationToken);
-
-        if (role is null)
-        {
-            return Results.NotFound("User not in role");
-        }
-
-        _context.UserRoles.Remove(role);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> UnassignAsync(UserEntity user, RoleEntity role,
-        CancellationToken cancellationToken = default)
-    {
-        var userRole = await _context.UserRoles
-            .FirstOrDefaultAsync(x => x.UserId == user.Id && x.RoleId == role.Id, cancellationToken);
-        
-        if (userRole is null)
-        {
-            return Results.NotFound("User not in role");
-        }
-        
-        _context.UserRoles.Remove(userRole);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> UnassignAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        var userRoles = await _context.UserRoles
-            .Where(x => x.UserId == user.Id)
-            .ToListAsync(cancellationToken);
-        
-        _context.UserRoles.RemoveRange(userRoles);
-        await _context.SaveChangesAsync(cancellationToken);
-        
-        return Results.Ok();
     }
 
     public async ValueTask<Result> AssignAsync(UserEntity user, RoleEntity role,

@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 
@@ -10,34 +11,38 @@ public record CheckAccountCommand(CheckAccountRequest Request) : IRequest<Result
 
 public class CheckAccountCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager) : IRequestHandler<CheckAccountCommand, Result>
+    IEmailManager emailManager,
+    ILockoutManager lockoutManager) : IRequestHandler<CheckAccountCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly ILockoutManager _lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(CheckAccountCommand request, CancellationToken cancellationToken)
     {
         CheckAccountResponse? response;
-        
-        var user = await _userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
 
+        var user = await _userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
         if (user is null)
         {
             response = new CheckAccountResponse { Exists = false };
             return Results.Ok(response);
         }
 
-        if (user.LockoutState.Enabled)
-        {
-            response = new CheckAccountResponse
+        var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
+        if (lockoutState is null) return Results.NotFound("State not found");
+
+            if (lockoutState.Enabled)
             {
-                Exists = true,
-                UserId = user.Id,
-                IsLockedOut = user.LockoutState.Enabled,
-            };
-            
-            return Results.Ok(response);
-        }
+                response = new CheckAccountResponse
+                {
+                    Exists = true,
+                    UserId = user.Id,
+                    IsLockedOut = lockoutState.Enabled,
+                };
+
+                return Results.Ok(response);
+            }
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Recovery, cancellationToken);
         if (email is null)
@@ -48,10 +53,10 @@ public class CheckAccountCommandHandler(
                 UserId = user.Id,
                 HasRecoveryEmail = false,
             };
-            
+
             return Results.Ok(response);
         }
-        
+
         response = new CheckAccountResponse
         {
             Exists = true,
@@ -59,7 +64,7 @@ public class CheckAccountCommandHandler(
             HasRecoveryEmail = true,
             RecoveryEmail = email.Email
         };
-        
+
         return Results.Ok(response);
     }
 }

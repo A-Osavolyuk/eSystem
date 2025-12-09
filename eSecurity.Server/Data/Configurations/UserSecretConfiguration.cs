@@ -10,7 +10,7 @@ public sealed class UserSecretConfiguration : IEntityTypeConfiguration<UserSecre
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Secret).HasMaxLength(200);
         builder.HasOne(x => x.User)
-            .WithOne(x => x.Secret)
+            .WithOne()
             .HasForeignKey<UserSecretEntity>(x => x.UserId);
     }
 }

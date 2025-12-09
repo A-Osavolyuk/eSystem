@@ -8,26 +8,36 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<Result> BlockPermanentlyAsync(UserEntity user, LockoutType type, 
-         string? description = null, CancellationToken cancellationToken = default)
+    public async ValueTask<UserLockoutStateEntity?> GetAsync(UserEntity user,
+        CancellationToken cancellationToken = default)
     {
-        var state = user.LockoutState;
-        
+        return await _context.LockoutStates.FirstOrDefaultAsync(
+            x => x.UserId == user.Id, cancellationToken);
+    }
+
+    public async ValueTask<Result> BlockPermanentlyAsync(UserEntity user, LockoutType type,
+        string? description = null, CancellationToken cancellationToken = default)
+    {
+        var state = await GetAsync(user, cancellationToken);
+        if (state is null) return Results.NotFound("State not found");
+
         state.Permanent = true;
         state.Type = type;
         state.Description = description;
-        state.EndDate = null;
         state.StartDate = DateTimeOffset.UtcNow;
-        
+
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
-    public async ValueTask<Result> BlockTemporaryAsync(UserEntity user, LockoutType type, LockoutPeriod period, 
+    public async ValueTask<Result> BlockTemporaryAsync(UserEntity user, LockoutType type, LockoutPeriod period,
         string? description = null, CancellationToken cancellationToken = default)
     {
+        var state = await GetAsync(user, cancellationToken);
+        if (state is null) return Results.NotFound("State not found");
+        
         var duration = period switch
         {
             LockoutPeriod.Day => TimeSpan.FromDays(TimePeriods.Day),
@@ -37,52 +47,50 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
             LockoutPeriod.Year => TimeSpan.FromDays(TimePeriods.Year),
             _ => throw new NotSupportedException("Not supported lockout period")
         };
-        
-        var state = user.LockoutState;
-        var startDate = DateTimeOffset.UtcNow;
-        
+
         state.Permanent = false;
         state.Type = type;
         state.Description = description;
-        state.EndDate = startDate.Add(duration);
-        state.StartDate = startDate;
-        
+        state.EndDate = DateTimeOffset.UtcNow.Add(duration);
+        state.StartDate = DateTimeOffset.UtcNow;
+
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
-    
-    public async ValueTask<Result> BlockTemporaryAsync(UserEntity user, LockoutType type, TimeSpan duration, 
+
+    public async ValueTask<Result> BlockTemporaryAsync(UserEntity user, LockoutType type, TimeSpan duration,
         string? description = null, CancellationToken cancellationToken = default)
     {
-        var state = user.LockoutState;
-        var startDate = DateTimeOffset.UtcNow;
-        
+        var state = await GetAsync(user, cancellationToken);
+        if (state is null) return Results.NotFound("State not found");
+
         state.Permanent = false;
         state.Type = type;
         state.Description = description;
-        state.EndDate = startDate.Add(duration);
-        state.StartDate = startDate;
-        
+        state.EndDate = DateTimeOffset.UtcNow.Add(duration);
+        state.StartDate = DateTimeOffset.UtcNow;
+
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
-    public async ValueTask<Result> UnblockAsync(UserEntity userEntity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> UnblockAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var entity = await _context.LockoutStates.FirstAsync(x => x.UserId == userEntity.Id, cancellationToken);
-        
-        entity.Permanent = false;
-        entity.UpdateDate = DateTimeOffset.UtcNow;
-        entity.Type = LockoutType.None;
-        entity.StartDate = DateTimeOffset.UtcNow;
-        entity.EndDate = DateTimeOffset.UtcNow;
-        entity.Description = null;
+        var state = await GetAsync(user, cancellationToken);
+        if (state is null) return Results.NotFound("State not found");
 
-        _context.LockoutStates.Update(entity);
+        state.Permanent = false;
+        state.UpdateDate = DateTimeOffset.UtcNow;
+        state.Type = LockoutType.None;
+        state.StartDate = DateTimeOffset.UtcNow;
+        state.EndDate = DateTimeOffset.UtcNow;
+        state.Description = null;
+
+        _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();

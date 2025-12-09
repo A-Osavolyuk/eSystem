@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.TwoFactor;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
@@ -16,6 +17,7 @@ public class GetUserLoginMethodsQueryHandler(
     IPasskeyManager passkeyManager,
     IPasswordManager passwordManager,
     ITwoFactorManager twoFactorManager,
+    IDeviceManager deviceManager,
     ILinkedAccountManager linkedAccountManager,
     IHttpContextAccessor accessor) : IRequestHandler<GetUserLoginMethodsQuery, Result>
 {
@@ -23,6 +25,7 @@ public class GetUserLoginMethodsQueryHandler(
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
@@ -32,8 +35,13 @@ public class GetUserLoginMethodsQueryHandler(
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
 
         var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        if (device is null) return Results.BadRequest("Invalid device");
+
         var password = await _passwordManager.GetAsync(user, cancellationToken);
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);
+        var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);
 
         var response = new UserLoginMethodsDto()
         {
@@ -46,7 +54,8 @@ public class GetUserLoginMethodsQueryHandler(
             {
                 PreferredMethod = (await _twoFactorManager.GetPreferredAsync(user, cancellationToken))?.Method,
                 Enabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken),
-                PasskeyEnabled = await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken),
+                PasskeyEnabled =
+                    await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken),
                 SmsEnabled = await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Sms, cancellationToken),
                 AuthenticatorEnabled = await _twoFactorManager.HasMethodAsync(
                     user, TwoFactorMethod.AuthenticatorApp, cancellationToken),
@@ -64,15 +73,13 @@ public class GetUserLoginMethodsQueryHandler(
             PasskeysData = new PasskeysData()
             {
                 HasPasskeys = await _passkeyManager.HasAsync(user, cancellationToken),
-                Passkeys = user.Devices
-                    .Where(x => x.Passkey is not null)
-                    .Select(device => new UserPasskeyDto()
+                Passkeys = passkeys.Select(passkey => new UserPasskeyDto()
                     {
-                        Id = device.Passkey!.Id,
-                        CurrentKey = device.UserAgent!.Equals(userAgent),
-                        DisplayName = device.Passkey!.DisplayName,
-                        LastSeenDate = device.Passkey!.LastSeenDate,
-                        CreateDate = device.Passkey!.CreateDate
+                        Id = passkey.Id,
+                        CurrentKey = passkey.DeviceId == device.Id,
+                        DisplayName = passkey.DisplayName,
+                        LastSeenDate = passkey.LastSeenDate,
+                        CreateDate = passkey.CreateDate
                     })
                     .ToList()
             }

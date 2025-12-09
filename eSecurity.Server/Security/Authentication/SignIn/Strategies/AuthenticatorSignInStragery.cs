@@ -72,7 +72,7 @@ public sealed class AuthenticatorSignInStrategy(
             if (!result.Succeeded) return result;
         }
 
-        var userSecret = await _secretManager.FindAsync(user, cancellationToken);
+        var userSecret = await _secretManager.GetAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
