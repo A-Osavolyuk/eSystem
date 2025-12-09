@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251208172756_Initial")]
+    [Migration("20251209173618_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1035,9 +1035,6 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
@@ -1433,7 +1430,7 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("Consents")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1543,7 +1540,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.PasswordEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithOne("Password")
+                        .WithOne()
                         .HasForeignKey("eSecurity.Server.Data.Entities.PasswordEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1565,7 +1562,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.PersonalDataEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithOne("PersonalData")
+                        .WithOne()
                         .HasForeignKey("eSecurity.Server.Data.Entities.PersonalDataEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1668,7 +1665,7 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("Clients")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1681,7 +1678,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserDeviceEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("Devices")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1692,7 +1689,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEmailEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("Emails")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1703,7 +1700,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserLinkedAccountEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("LinkedAccounts")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1714,7 +1711,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserLockoutStateEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithOne("LockoutState")
+                        .WithOne()
                         .HasForeignKey("eSecurity.Server.Data.Entities.UserLockoutStateEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1731,7 +1728,7 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("Permissions")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1744,7 +1741,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserPhoneNumberEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("PhoneNumbers")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1755,7 +1752,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserRecoveryCodeEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("RecoveryCodes")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1772,7 +1769,7 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("Roles")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1785,7 +1782,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserSecretEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithOne("Secret")
+                        .WithOne()
                         .HasForeignKey("eSecurity.Server.Data.Entities.UserSecretEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1796,7 +1793,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserTwoFactorMethodEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany("TwoFactorMethods")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1859,38 +1856,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Passkey");
 
                     b.Navigation("Sessions");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEntity", b =>
-                {
-                    b.Navigation("Clients");
-
-                    b.Navigation("Consents");
-
-                    b.Navigation("Devices");
-
-                    b.Navigation("Emails");
-
-                    b.Navigation("LinkedAccounts");
-
-                    b.Navigation("LockoutState")
-                        .IsRequired();
-
-                    b.Navigation("Password");
-
-                    b.Navigation("Permissions");
-
-                    b.Navigation("PersonalData");
-
-                    b.Navigation("PhoneNumbers");
-
-                    b.Navigation("RecoveryCodes");
-
-                    b.Navigation("Roles");
-
-                    b.Navigation("Secret");
-
-                    b.Navigation("TwoFactorMethods");
                 });
 #pragma warning restore 612, 618
         }

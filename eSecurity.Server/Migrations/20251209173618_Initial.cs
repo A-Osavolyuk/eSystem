@@ -109,7 +109,6 @@ namespace eSecurity.Server.Migrations
                     NormalizedUsername = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     UsernameChangeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     AccountConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
                     CodeResendAttempts = table.Column<int>(type: "int", nullable: false),
                     CodeResendAvailableDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
