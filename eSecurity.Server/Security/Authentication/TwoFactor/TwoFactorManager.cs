@@ -8,19 +8,34 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<UserTwoFactorMethodEntity?> GetAsync(UserEntity user, 
+    public async ValueTask<List<UserTwoFactorMethodEntity>> GetAllAsync(UserEntity user, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.UserTwoFactorMethods
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async ValueTask<UserTwoFactorMethodEntity?> GetAsync(UserEntity user,
         TwoFactorMethod method, CancellationToken cancellationToken = default)
     {
         return await _context.UserTwoFactorMethods.FirstOrDefaultAsync(
             x => x.UserId == user.Id && x.Method == method, cancellationToken);
     }
 
+    public async ValueTask<UserTwoFactorMethodEntity?> GetPreferredAsync(UserEntity user, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.UserTwoFactorMethods.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Preferred, cancellationToken);
+    }
+
     public async ValueTask<Result> SubscribeAsync(UserEntity user, TwoFactorMethod method,
         bool preferred = false, CancellationToken cancellationToken = default)
     {
-        if (preferred && user.TwoFactorMethods.Any(x => x.Preferred))
+        var preferredMethod = await GetPreferredAsync(user, cancellationToken);
+        if (preferred && preferredMethod is not null)
         {
-            var preferredMethod = user.TwoFactorMethods.First(x => x.Preferred);
             preferredMethod.Preferred = false;
             preferredMethod.UpdateDate = DateTimeOffset.UtcNow;
 
@@ -35,13 +50,6 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
             CreateDate = DateTimeOffset.UtcNow
         };
 
-        if (!user.TwoFactorEnabled)
-        {
-            user.TwoFactorEnabled = true;
-            user.UpdateDate = DateTimeOffset.UtcNow;
-        }
-
-        _context.Users.Update(user);
         await _context.UserTwoFactorMethods.AddAsync(userProvider, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -51,11 +59,9 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     public async ValueTask<Result> UnsubscribeAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
-        user.TwoFactorEnabled = false;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserTwoFactorMethods.RemoveRange(user.TwoFactorMethods);
+        var methods = await GetAllAsync(user, cancellationToken);
+        
+        _context.UserTwoFactorMethods.RemoveRange(methods);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
@@ -73,23 +79,33 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     public async ValueTask<Result> PreferAsync(UserEntity user,
         TwoFactorMethod method, CancellationToken cancellationToken = default)
     {
-        if (user.TwoFactorMethods.Count == 1) return Results.BadRequest("Cannot change the only preferred method");
+        if (await _context.UserTwoFactorMethods.CountAsync(
+                x => x.UserId == user.Id, cancellationToken) == 1)
+            return Results.BadRequest("Cannot change the only preferred method");
 
-        var currentPreferredMethod = user.TwoFactorMethods.Single(x => x.Preferred);
+        var currentPreferredMethod = await GetPreferredAsync(user, cancellationToken);
+        if (currentPreferredMethod is null) return Results.BadRequest("Invalid method");
+        
         currentPreferredMethod.Preferred = false;
         currentPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
-        
-        var nextPreferredMethod = await _context.UserTwoFactorMethods.FirstOrDefaultAsync(
-            x => x.UserId == user.Id && x.Method == method, cancellationToken);
 
+        var nextPreferredMethod = await GetAsync(user, method, cancellationToken);
         if (nextPreferredMethod is null) return Results.NotFound("Method not found");
-        
+
         nextPreferredMethod.Preferred = true;
         nextPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         _context.UserTwoFactorMethods.UpdateRange([currentPreferredMethod, nextPreferredMethod]);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
+
+    public async ValueTask<bool> HasMethodAsync(UserEntity user, TwoFactorMethod method,
+        CancellationToken cancellationToken = default) => await _context.UserTwoFactorMethods.AnyAsync(
+        x => x.UserId == user.Id && x.Method == method, cancellationToken);
+
+    public async ValueTask<bool> IsEnabledAsync(UserEntity user, CancellationToken cancellationToken = default)
+        => await _context.UserTwoFactorMethods.AnyAsync(
+            x => x.UserId == user.Id, cancellationToken);
 }

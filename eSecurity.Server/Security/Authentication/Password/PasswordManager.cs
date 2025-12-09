@@ -11,7 +11,10 @@ public class PasswordManager(
     private readonly AuthDbContext _context = context;
     private readonly IHasher _hasher = hasherFactory.CreateHasher(HashAlgorithm.Pbkdf2);
 
-    public async ValueTask<Result> AddAsync(UserEntity user, string password, 
+    public async ValueTask<PasswordEntity?> GetAsync(UserEntity user, CancellationToken cancellationToken = default)
+        => await _context.Passwords.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
+
+    public async ValueTask<Result> AddAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {
         var passwordEntity = new PasswordEntity()
@@ -21,54 +24,61 @@ public class PasswordManager(
             Hash = _hasher.Hash(password),
             CreateDate = DateTimeOffset.UtcNow
         };
-        
+
         await _context.Passwords.AddAsync(passwordEntity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
-    public async ValueTask<Result> ChangeAsync(UserEntity user, string newPassword, 
+    public async ValueTask<Result> ChangeAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var passwordEntity = user.Password;
+        var passwordEntity = await GetAsync(user, cancellationToken);
         if (passwordEntity is null) return Results.BadRequest("User doesn't have password yet.");
-        
+
         passwordEntity.Hash = _hasher.Hash(newPassword);
         passwordEntity.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         _context.Passwords.Update(passwordEntity);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
-    public async ValueTask<Result> ResetAsync(UserEntity user, string newPassword, 
+    public async ValueTask<Result> ResetAsync(UserEntity user, string newPassword,
         CancellationToken cancellationToken = default)
     {
-        var passwordEntity = user.Password;
+        var passwordEntity = await GetAsync(user, cancellationToken);
         if (passwordEntity is null) return Results.BadRequest("User doesn't have password yet.");
-        
+
         passwordEntity.Hash = _hasher.Hash(newPassword);
         passwordEntity.UpdateDate = DateTimeOffset.UtcNow;
-        
+
         _context.Passwords.Update(passwordEntity);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
     public async ValueTask<Result> RemoveAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var passwordEntity = user.Password;
+        var passwordEntity = await GetAsync(user, cancellationToken);
         if (passwordEntity is null) return Results.BadRequest("User doesn't have password yet.");
-        
+
         _context.Passwords.Remove(passwordEntity);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
 
-    public bool Check(UserEntity user, string password) 
-        => user.Password is not null && _hasher.VerifyHash(password, user.Password.Hash);
+    public async ValueTask<bool> HasAsync(UserEntity user, CancellationToken cancellationToken = default)
+        => await _context.Passwords.AnyAsync(x => x.UserId == user.Id, cancellationToken);
+
+    public async ValueTask<bool> CheckAsync(UserEntity user, string password,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await GetAsync(user, cancellationToken);
+        return entity is not null && entity.Hash == _hasher.Hash(password);
+    }
 }

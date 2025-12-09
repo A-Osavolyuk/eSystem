@@ -38,4 +38,5 @@ public interface IEmailManager
         EmailType type, CancellationToken cancellationToken = default);
     
     public ValueTask<bool> IsTakenAsync(string email, CancellationToken cancellationToken = default);
+    public ValueTask<bool> HasAsync(UserEntity user, EmailType type, CancellationToken cancellationToken = default);
 }

@@ -2,6 +2,7 @@
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
@@ -14,11 +15,13 @@ public class TrustDeviceCommandHandler(
     IUserManager userManager,
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
+    ITwoFactorManager twoFactorManager,
     IVerificationManager verificationManager) : IRequestHandler<TrustDeviceCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(TrustDeviceCommand request, CancellationToken cancellationToken)
@@ -37,7 +40,7 @@ public class TrustDeviceCommandHandler(
         var deviceResult = await _deviceManager.TrustAsync(device, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
-        if (user.HasMethods() && user.TwoFactorEnabled)
+        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
             return Results.Ok(new TrustDeviceResponse()
             {

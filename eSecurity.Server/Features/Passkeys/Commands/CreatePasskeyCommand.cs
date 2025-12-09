@@ -83,7 +83,7 @@ public class CreatePasskeyCommandHandler(
         var result = await _passkeyManager.CreateAsync(passkey, cancellationToken);
         if (!result.Succeeded) return result;
 
-        if (user.TwoFactorEnabled && !user.HasTwoFactor(TwoFactorMethod.Passkey))
+        if (!await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken))
         {
             var twoFactorResult = await _twoFactorManager.SubscribeAsync(user,
                 TwoFactorMethod.Passkey, cancellationToken: cancellationToken);

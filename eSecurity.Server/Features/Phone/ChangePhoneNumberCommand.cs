@@ -30,8 +30,8 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         if (request.Request.Type is PhoneNumberType.Secondary)
             return Results.BadRequest("Cannot change a secondary phone number.");
 
-        var userPhoneNumber = user.PhoneNumbers.FirstOrDefault(x => x.Type == request.Request.Type);
-        if (userPhoneNumber is null) return Results.BadRequest("User's phone number is missing.");
+        var phoneNumber = await _phoneManager.FindByTypeAsync(user, request.Request.Type, cancellationToken);
+        if (phoneNumber is null) return Results.BadRequest("User's phone number is missing.");
 
         if (_options.RequireUniquePhoneNumber)
         {
@@ -49,7 +49,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
 
         if (!newPhoneNumberVerificationResult.Succeeded) return newPhoneNumberVerificationResult;
 
-        var result = await _phoneManager.ChangeAsync(user, userPhoneNumber.PhoneNumber,
+        var result = await _phoneManager.ChangeAsync(user, phoneNumber.PhoneNumber,
             request.Request.NewPhoneNumber, cancellationToken);
 
         return result;

@@ -1,15 +1,19 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Account.Commands;
 
 public record CheckAccountCommand(CheckAccountRequest Request) : IRequest<Result>;
 
-public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHandler<CheckAccountCommand, Result>
+public class CheckAccountCommandHandler(
+    IUserManager userManager,
+    IEmailManager emailManager) : IRequestHandler<CheckAccountCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IEmailManager _emailManager = emailManager;
 
     public async Task<Result> Handle(CheckAccountCommand request, CancellationToken cancellationToken)
     {
@@ -34,9 +38,8 @@ public class CheckAccountCommandHandler(IUserManager userManager) : IRequestHand
             
             return Results.Ok(response);
         }
-        
-        var email = user.Emails.FirstOrDefault(x => x is { Type: EmailType.Recovery, IsVerified: true });
 
+        var email = await _emailManager.FindByTypeAsync(user, EmailType.Recovery, cancellationToken);
         if (email is null)
         {
             response = new CheckAccountResponse

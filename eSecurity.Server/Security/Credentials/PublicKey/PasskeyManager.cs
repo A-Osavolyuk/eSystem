@@ -71,6 +71,14 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         return Results.Ok();
     }
 
+    public async ValueTask<bool> HasAsync(UserEntity user, CancellationToken cancellationToken)
+    {
+        return await _context.Passkeys
+            .Where(x => _context.UserDevices
+                .Any(device => device.UserId == user.Id && device.Id == x.DeviceId))
+            .AnyAsync(cancellationToken);
+    }
+
     public async ValueTask<Result> CreateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
     {
         await _context.Passkeys.AddAsync(entity, cancellationToken);

@@ -12,7 +12,7 @@ public sealed class UserPhoneNumberConfiguration : IEntityTypeConfiguration<User
         builder.Property(x => x.PhoneNumber).HasMaxLength(18);
         builder.Property(x => x.Type).HasEnumConversion();
         builder.HasOne(u => u.User)
-            .WithMany(x => x.PhoneNumbers)
+            .WithMany()
             .HasForeignKey(x => x.UserId);
     }
 }

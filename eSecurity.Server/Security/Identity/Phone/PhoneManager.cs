@@ -159,6 +159,13 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
     public async ValueTask<bool> IsTakenAsync(string phoneNumber,
         CancellationToken cancellationToken = default) => await ExistsAsync(phoneNumber, cancellationToken);
 
+    public async ValueTask<bool> HasAsync(UserEntity user, PhoneNumberType type,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.UserPhoneNumbers.AnyAsync(
+            x => x.UserId == user.Id && x.Type == PhoneNumberType.Primary, cancellationToken);
+    }
+
     private async ValueTask<bool> ExistsAsync(string phoneNumber, CancellationToken cancellationToken = default)
         => await _context.UserPhoneNumbers.AnyAsync(x => x.PhoneNumber == phoneNumber, cancellationToken);
 }

@@ -6,6 +6,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Password;
+using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
@@ -22,6 +23,7 @@ public sealed class PasswordSignInStrategy(
     ISessionManager sessionManager,
     IHttpContextAccessor accessor,
     IEmailManager emailManager,
+    ITwoFactorManager twoFactorManager,
     IOptions<SignInOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -30,6 +32,7 @@ public sealed class PasswordSignInStrategy(
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _options = options.Value;
 
@@ -56,7 +59,8 @@ public sealed class PasswordSignInStrategy(
         }
 
         if (user is null) return Results.NotFound($"Cannot find user with login {passwordPayload.Login}.");
-        if (!user.HasPassword()) return Results.BadRequest("Cannot log in, you don't have a password.");
+        if (!await _passwordManager.HasAsync(user, cancellationToken)) 
+            return Results.BadRequest("Cannot log in, you don't have a password.");
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
@@ -102,10 +106,10 @@ public sealed class PasswordSignInStrategy(
                 Details = new() { { "userId", user.Id } }
             });
 
-        if (!user.HasPassword()) return Results.BadRequest("User doesn't have a password.");
-
-        var isValidPassword = _passwordManager.Check(user, passwordPayload.Password);
-        if (!isValidPassword)
+        if (!await _passwordManager.HasAsync(user, cancellationToken)) 
+            return Results.BadRequest("User doesn't have a password.");
+        
+        if (!await _passwordManager.CheckAsync(user, passwordPayload.Password, cancellationToken))
         {
             user.FailedLoginAttempts += 1;
 
@@ -172,7 +176,7 @@ public sealed class PasswordSignInStrategy(
 
         var response = new SignInResponse() { UserId = user.Id, };
 
-        if (user.HasMethods() && user.TwoFactorEnabled)
+        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
             response.IsTwoFactorEnabled = true;
 
         await _sessionManager.CreateAsync(device, cancellationToken);

@@ -17,14 +17,14 @@ public sealed class OAuthSignInStrategy(
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
-    ILinkedAccountManager providerManager,
+    ILinkedAccountManager linkedAccountManager,
     IOAuthSessionManager oauthSessionManager,
     ISessionManager sessionManager) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
-    private readonly ILinkedAccountManager _providerManager = providerManager;
+    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IOAuthSessionManager _oauthSessionManager = oauthSessionManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -94,9 +94,9 @@ public sealed class OAuthSignInStrategy(
             CreateDate = DateTimeOffset.UtcNow,
         };
 
-        if (!user.HasLinkedAccount(oauthPayload.LinkedAccount))
+        if (!await _linkedAccountManager.HasAsync(user, oauthPayload.LinkedAccount, cancellationToken))
         {
-            var connectResult = await _providerManager.CreateAsync(linkedAccount, cancellationToken);
+            var connectResult = await _linkedAccountManager.CreateAsync(linkedAccount, cancellationToken);
             if (!connectResult.Succeeded) return connectResult;
         }
 

@@ -10,7 +10,7 @@ public sealed class ConsentConfiguration : IEntityTypeConfiguration<ConsentEntit
         builder.HasKey(x => x.Id);
 
         builder.HasOne(x => x.User)
-            .WithMany(x => x.Consents)
+            .WithMany()
             .HasForeignKey(x => x.UserId);
 
         builder.HasOne(x => x.Client)

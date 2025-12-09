@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.Email;
@@ -16,12 +17,14 @@ public class GetUserVerificationMethodsQueryHandler(
     IDeviceManager deviceManager,
     IPasskeyManager passkeyManager,
     IEmailManager emailManager,
+    ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserVerificationDataQuery request, CancellationToken cancellationToken)
@@ -38,15 +41,17 @@ public class GetUserVerificationMethodsQueryHandler(
         if (email is null) return Results.BadRequest("Invalid email.");
 
         var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
+        var twoFactorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken);
+        
         var response = new UserVerificationData()
         {
             EmailEnabled = true,
             PasskeyEnabled = passkey is not null,
-            AuthenticatorEnabled = user.TwoFactorEnabled,
-            PreferredMethod = (user, passkey) switch
+            AuthenticatorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken),
+            PreferredMethod = (twoFactorEnabled, passkey) switch
             {
-                ({ TwoFactorEnabled: true }, null) => VerificationMethod.AuthenticatorApp,
-                ({ TwoFactorEnabled: true or false }, not null) => VerificationMethod.Passkey,
+                (true, null) => VerificationMethod.AuthenticatorApp,
+                (_, not null) => VerificationMethod.Passkey,
                 _ => VerificationMethod.Email
             },
         };

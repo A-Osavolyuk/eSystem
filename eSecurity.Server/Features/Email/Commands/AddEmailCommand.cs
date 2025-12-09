@@ -22,7 +22,8 @@ public class AddEmailCommandHandler(
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        if (user.Emails.Count(x => x is { Type: EmailType.Secondary }) >= _options.SecondaryEmailMaxCount)
+        var secondaryEmails = await _emailManager.GetAllAsync(user, EmailType.Secondary, cancellationToken);
+        if (secondaryEmails.Count >= _options.SecondaryEmailMaxCount)
             return Results.BadRequest("User already has maximum count of secondary emails.");
 
         if (_options.RequireUniqueEmail)

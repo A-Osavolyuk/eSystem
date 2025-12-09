@@ -22,7 +22,8 @@ public class EnableTwoFactorCommandHandler(
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        if (user.TwoFactorEnabled) return Results.BadRequest("2FA already enabled.");
+        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken)) 
+            return Results.BadRequest("2FA already enabled.");
 
         var enableVerificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.TwoFactor, ActionType.Enable, cancellationToken);

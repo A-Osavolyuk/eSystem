@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
@@ -13,11 +14,13 @@ public sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<R
 public sealed class RequestChangeEmailCommandHandler(
     IUserManager userManager,
     IEmailManager emailManager,
+    ILinkedAccountManager linkedAccountManager,
     IVerificationManager verificationManager,
     IOptions<AccountOptions> options) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly AccountOptions _options = options.Value;
 
@@ -30,7 +33,7 @@ public sealed class RequestChangeEmailCommandHandler(
         if (request.Request.Type is EmailType.Secondary)
             return Results.BadRequest("Cannot change a secondary phone number.");
 
-        var currentEmail = user.Emails.FirstOrDefault(x => x.Type == request.Request.Type);
+        var currentEmail = await _emailManager.FindByTypeAsync(user, request.Request.Type, cancellationToken);
         if (currentEmail is null) return Results.BadRequest("User's primary email address is missing");
 
         if (_options.RequireUniqueEmail)
@@ -39,7 +42,7 @@ public sealed class RequestChangeEmailCommandHandler(
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
-        if (user.HasLinkedAccounts())
+        if (await _linkedAccountManager.HasAsync(user, cancellationToken))
             return Results.BadRequest("Cannot change email, first disconnect linked accounts.");
 
         var currentEmailVerificationResult = await _verificationManager.VerifyAsync(user,

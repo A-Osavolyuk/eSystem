@@ -14,14 +14,21 @@ public sealed class RecoverManager(
     private readonly IDataProtector _protector = protectionProvider.CreateProtector(ProtectionPurposes.RecoveryCode);
     private readonly IRecoveryCodeFactory _recoveryCodeFactory = recoveryCodeFactory;
 
-    public List<string> Unprotect(UserEntity user)
+    public async ValueTask<List<string>> UnprotectAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        return user.RecoveryCodes.Select(code => _protector.Unprotect(code.ProtectedCode)).ToList();
+        return await _context.UserRecoveryCodes
+            .Where(x => x.UserId == user.Id)
+            .Select(code => _protector.Unprotect(code.ProtectedCode))
+            .ToListAsync(cancellationToken);
     }
 
     public async ValueTask<List<string>> GenerateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        if (user.RecoveryCodes.Count > 0) _context.UserRecoveryCodes.RemoveRange(user.RecoveryCodes);
+        var recoveryCodes = await _context.UserRecoveryCodes
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+        
+        if (recoveryCodes.Count > 0) _context.UserRecoveryCodes.RemoveRange(recoveryCodes);
 
         var codes = _recoveryCodeFactory.Create().ToList();
         var entities = codes
@@ -44,14 +51,18 @@ public sealed class RecoverManager(
     public async ValueTask<Result> VerifyAsync(UserEntity user, string code,
         CancellationToken cancellationToken = default)
     {
-        if (user.RecoveryCodes.Count == 0) return Results.BadRequest("User does not have any recovery code.");
+        var recoveryCodes = await _context.UserRecoveryCodes
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync(cancellationToken);
         
-        var entity = user.RecoveryCodes.FirstOrDefault(
+        if (recoveryCodes.Count == 0) return Results.BadRequest("User does not have any recovery code.");
+        
+        var recoveryCode = recoveryCodes.FirstOrDefault(
             x => _protector.Unprotect(x.ProtectedCode) == code);
         
-        if (entity is null) return Results.BadRequest("Invalid recovery code.");
+        if (recoveryCode is null) return Results.BadRequest("Invalid recovery code.");
 
-        _context.UserRecoveryCodes.Remove(entity);
+        _context.UserRecoveryCodes.Remove(recoveryCode);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
@@ -62,10 +73,13 @@ public sealed class RecoverManager(
         var codes = await _context.UserRecoveryCodes
             .Where(x => x.UserId == user.Id)
             .ToListAsync(cancellationToken);
-        
+
         _context.UserRecoveryCodes.RemoveRange(codes);
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return Results.Ok();
     }
+
+    public async ValueTask<bool> HasAsync(UserEntity user, CancellationToken cancellationToken = default)
+        => await _context.UserRecoveryCodes.AnyAsync(x => x.UserId == user.Id, cancellationToken);
 }

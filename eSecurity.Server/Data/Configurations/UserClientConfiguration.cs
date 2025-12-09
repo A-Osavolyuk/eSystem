@@ -10,7 +10,7 @@ public sealed class UserClientConfiguration : IEntityTypeConfiguration<UserClien
         builder.HasKey(x => new { x.UserId, x.ClientId });
 
         builder.HasOne(x => x.User)
-            .WithMany(x => x.Clients)
+            .WithMany()
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 

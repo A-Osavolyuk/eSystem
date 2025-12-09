@@ -14,4 +14,6 @@ public interface IPasskeyManager
     public ValueTask<Result> DeleteAsync(PasskeyEntity entity, CancellationToken cancellationToken = default);
     public ValueTask<Result> VerifyAsync(PasskeyEntity passkey, PublicKeyCredential credential,
         string storedChallenge, CancellationToken cancellationToken);
+    
+    public ValueTask<bool> HasAsync(UserEntity user, CancellationToken cancellationToken);
 }

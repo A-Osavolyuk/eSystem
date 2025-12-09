@@ -18,7 +18,7 @@ public class LoadRecoveryCodesCommandHandler(
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        var codes = _recoverManager.Unprotect(user);
+        var codes = _recoverManager.UnprotectAsync(user);
         return Results.Ok(codes);
     }
 }

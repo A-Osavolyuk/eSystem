@@ -11,7 +11,7 @@ public sealed class UserRecoveryCodeConfiguration : IEntityTypeConfiguration<Use
         builder.Property(x => x.ProtectedCode).HasMaxLength(150);
 
         builder.HasOne(x => x.User)
-            .WithMany(x => x.RecoveryCodes)
+            .WithMany()
             .HasForeignKey(x => x.UserId);
     }
 }

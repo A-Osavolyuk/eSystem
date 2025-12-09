@@ -12,7 +12,7 @@ public sealed class UserLinkedAccountConfiguration : IEntityTypeConfiguration<Us
         builder.Property(x => x.Type).HasEnumConversion();
 
         builder.HasOne(x => x.User)
-            .WithMany(x => x.LinkedAccounts)
+            .WithMany()
             .HasForeignKey(x => x.UserId);
     }
 }

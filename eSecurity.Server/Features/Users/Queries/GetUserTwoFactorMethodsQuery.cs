@@ -1,27 +1,31 @@
 ﻿using eSecurity.Core.Common.DTOs;
+using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
 public record GetUserTwoFactorMethodsQuery(Guid Id) : IRequest<Result>;
 
-public class GetUserProvidersQueryHandler(IUserManager userManager) : IRequestHandler<GetUserTwoFactorMethodsQuery, Result>
+public class GetUserProvidersQueryHandler(
+    IUserManager userManager,
+    ITwoFactorManager twoFactorManager) : IRequestHandler<GetUserTwoFactorMethodsQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(GetUserTwoFactorMethodsQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Id, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
 
-        var providers = user.TwoFactorMethods.ToList();
-        var result = providers.Select(provider => new UserTwoFactorMethod()
+        var methods = await _twoFactorManager.GetAllAsync(user, cancellationToken);
+        var response = methods.Select(provider => new UserTwoFactorMethod()
         {
             Method = provider.Method,
             Preferred = provider.Preferred,
             UpdateDate = provider.UpdateDate,
         }).ToList();
         
-        return Results.Ok(result);
+        return Results.Ok(response);
     }
 }

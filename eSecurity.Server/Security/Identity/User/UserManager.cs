@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Security.Authentication.Lockout;
-using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
@@ -14,22 +13,17 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     {
         var normalizedEmail = email.ToUpper();
         var user = await _context.Users
-            .Include(x => x.Emails)
-            .Where(x => x.Emails.Any(e => e.NormalizedEmail == normalizedEmail && e.Type == EmailType.Primary))
+            .Where(x => _context.UserEmails
+                .Any(e => e.UserId == e.Id && e.Type == EmailType.Primary))
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.TwoFactorMethods)
-            .Include(x => x.LinkedAccounts)
-            .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .ThenInclude(x => x.Passkey)
-            .Include(x => x.PhoneNumbers)
             .Include(x => x.Secret)
-            .Include(x => x.Password)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -42,17 +36,11 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.TwoFactorMethods)
-            .Include(x => x.LinkedAccounts)
-            .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .ThenInclude(x => x.Passkey)
-            .Include(x => x.Emails)
-            .Include(x => x.PhoneNumbers)
             .Include(x => x.Secret)
-            .Include(x => x.Password)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -66,17 +54,11 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.TwoFactorMethods)
-            .Include(x => x.LinkedAccounts)
-            .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .ThenInclude(x => x.Passkey)
-            .Include(x => x.Emails)
-            .Include(x => x.PhoneNumbers)
             .Include(x => x.Secret)
-            .Include(x => x.Password)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;
@@ -86,22 +68,17 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         CancellationToken cancellationToken = default)
     {
         var user = await _context.Users
-            .Include(x => x.PhoneNumbers)
-            .Where(x => x.PhoneNumbers.Any(p => p.PhoneNumber == phoneNumber && p.Type == PhoneNumberType.Primary))
+            .Where(x => _context.UserPhoneNumbers
+                .Any(e => e.UserId == x.Id && e.PhoneNumber == phoneNumber))
             .Include(x => x.Roles)
             .ThenInclude(x => x.Role)
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
-            .Include(x => x.TwoFactorMethods)
-            .Include(x => x.LinkedAccounts)
-            .Include(x => x.RecoveryCodes)
             .Include(x => x.PersonalData)
             .Include(x => x.LockoutState)
             .Include(x => x.Devices)
             .ThenInclude(x => x.Passkey)
-            .Include(x => x.PhoneNumbers)
             .Include(x => x.Secret)
-            .Include(x => x.Password)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         return user;

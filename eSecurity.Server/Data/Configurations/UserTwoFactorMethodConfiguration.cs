@@ -11,7 +11,7 @@ public sealed class UserTwoFactorMethodConfiguration : IEntityTypeConfiguration<
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Method).HasEnumConversion();
         builder.HasOne(x => x.User)
-            .WithMany(x => x.TwoFactorMethods)
+            .WithMany()
             .HasForeignKey(x => x.UserId);
     }
 }

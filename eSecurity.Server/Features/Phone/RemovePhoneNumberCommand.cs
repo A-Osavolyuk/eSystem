@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
@@ -13,10 +14,12 @@ public record RemovePhoneNumberCommand(RemovePhoneNumberRequest Request) : IRequ
 public class RemovePhoneNumberCommandHandler(
     IUserManager userManager,
     IPhoneManager phoneManager,
+    ITwoFactorManager twoFactorManager,
     IVerificationManager verificationManager) : IRequestHandler<RemovePhoneNumberCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(RemovePhoneNumberCommand request, CancellationToken cancellationToken)
@@ -24,10 +27,10 @@ public class RemovePhoneNumberCommandHandler(
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
 
-        if (!user.HasPhoneNumber(PhoneNumberType.Primary)) return Results.BadRequest(
-            "Cannot remove phone number. Phone number is not provided.");
+        if (!await _phoneManager.HasAsync(user, PhoneNumberType.Primary, cancellationToken)) 
+            return Results.BadRequest("Cannot remove phone number. Phone number is not provided.");
 
-        if (user.HasTwoFactor(TwoFactorMethod.Sms))
+        if (await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Sms, cancellationToken))
             return Results.BadRequest("Cannot remove phone number. First disable 2FA with SMS.");
         
         var verificationResult = await _verificationManager.VerifyAsync(user, 

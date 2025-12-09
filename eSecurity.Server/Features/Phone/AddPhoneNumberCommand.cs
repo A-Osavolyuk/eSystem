@@ -22,15 +22,16 @@ public class AddPhoneNumberCommandHandler(
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
 
-        if (user.PhoneNumbers.Count(x => x.Type is PhoneNumberType.Primary)
+        var phoneNumbers = await _phoneManager.GetAllAsync(user, cancellationToken);
+        if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Primary)
             >= _options.PrimaryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Primary)
             return Results.BadRequest("User already has a primary phone number.");
         
-        if (user.PhoneNumbers.Count(x => x.Type is PhoneNumberType.Recovery)
+        if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Recovery)
             >= _options.RecoveryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Recovery)
             return Results.BadRequest("User already has a recovery phone number.");
 
-        if (user.PhoneNumbers.Count(x => x.Type is PhoneNumberType.Secondary)
+        if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Secondary)
             >= _options.SecondaryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Secondary)
             return Results.BadRequest("User already has maximum count of secondary phone numbers.");
 

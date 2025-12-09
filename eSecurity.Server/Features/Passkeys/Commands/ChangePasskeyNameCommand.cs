@@ -17,7 +17,8 @@ public class ChangePasskeyNameCommandHandler(
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        if (!user.HasPasskeys()) return Results.BadRequest("User does not have any passkeys.");
+        if (!await _passkeyManager.HasAsync(user, cancellationToken)) 
+            return Results.BadRequest("User does not have any passkeys.");
 
         var passkey = user.Devices
             .Where(x => x.Passkey is not null)

@@ -10,7 +10,7 @@ public sealed class PasswordConfiguration : IEntityTypeConfiguration<PasswordEnt
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Hash).HasMaxLength(1000);
         builder.HasOne(x => x.User)
-            .WithOne(x => x.Password)
+            .WithOne()
             .HasForeignKey<PasswordEntity>(x => x.UserId);
     }
 }
