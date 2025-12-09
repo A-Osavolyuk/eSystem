@@ -99,33 +99,6 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("ClientAllowedScopes");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientBackChannelLogoutUriEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Uri")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("ClientBackChannelLogoutUris");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -196,33 +169,6 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientFrontChannelLogoutUriEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Uri")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("ClientFrontChannelLogoutUris");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientGrantTypeEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -250,10 +196,13 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("ClientGrantTypes");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientPostLogoutRedirectUriEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ClientEntityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ClientId")
@@ -262,46 +211,25 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Uri")
+                    b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("ClientPostLogoutUris");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientRedirectUriEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Uri")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClientEntityId");
+
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientRedirectUris");
+                    b.ToTable("ClientUris");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.CodeEntity", b =>
@@ -1352,28 +1280,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Scope");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientBackChannelLogoutUriEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
-                        .WithMany("BackChannelLogoutUris")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientFrontChannelLogoutUriEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
-                        .WithMany("FrontChannelLogoutUris")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientGrantTypeEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
@@ -1385,21 +1291,14 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientPostLogoutRedirectUriEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
                 {
-                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
-                        .WithMany("PostLogoutRedirectUris")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", null)
+                        .WithMany("Uris")
+                        .HasForeignKey("ClientEntityId");
 
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientRedirectUriEntity", b =>
-                {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
-                        .WithMany("RedirectUris")
+                        .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1813,17 +1712,11 @@ namespace eSecurity.Server.Migrations
                 {
                     b.Navigation("AllowedScopes");
 
-                    b.Navigation("BackChannelLogoutUris");
-
-                    b.Navigation("FrontChannelLogoutUris");
-
                     b.Navigation("GrantTypes");
 
                     b.Navigation("PairwiseSubjects");
 
-                    b.Navigation("PostLogoutRedirectUris");
-
-                    b.Navigation("RedirectUris");
+                    b.Navigation("Uris");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ConsentEntity", b =>

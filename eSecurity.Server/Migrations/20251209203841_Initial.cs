@@ -123,48 +123,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientBackChannelLogoutUris",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Uri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientBackChannelLogoutUris", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientBackChannelLogoutUris_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientFrontChannelLogoutUris",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Uri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientFrontChannelLogoutUris", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientFrontChannelLogoutUris_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ClientGrantTypes",
                 columns: table => new
                 {
@@ -186,41 +144,27 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientPostLogoutUris",
+                name: "ClientUris",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Uri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Uri = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
+                    ClientEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientPostLogoutUris", x => x.Id);
+                    table.PrimaryKey("PK_ClientUris", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientPostLogoutUris_Clients_ClientId",
-                        column: x => x.ClientId,
+                        name: "FK_ClientUris_Clients_ClientEntityId",
+                        column: x => x.ClientEntityId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientRedirectUris",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Uri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientRedirectUris", x => x.Id);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ClientRedirectUris_Clients_ClientId",
+                        name: "FK_ClientUris_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
@@ -951,28 +895,18 @@ namespace eSecurity.Server.Migrations
                 column: "ScopeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientBackChannelLogoutUris_ClientId",
-                table: "ClientBackChannelLogoutUris",
-                column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClientFrontChannelLogoutUris_ClientId",
-                table: "ClientFrontChannelLogoutUris",
-                column: "ClientId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ClientGrantTypes_ClientId",
                 table: "ClientGrantTypes",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientPostLogoutUris_ClientId",
-                table: "ClientPostLogoutUris",
-                column: "ClientId");
+                name: "IX_ClientUris_ClientEntityId",
+                table: "ClientUris",
+                column: "ClientEntityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientRedirectUris_ClientId",
-                table: "ClientRedirectUris",
+                name: "IX_ClientUris_ClientId",
+                table: "ClientUris",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
@@ -1139,19 +1073,10 @@ namespace eSecurity.Server.Migrations
                 name: "ClientAllowedScopes");
 
             migrationBuilder.DropTable(
-                name: "ClientBackChannelLogoutUris");
-
-            migrationBuilder.DropTable(
-                name: "ClientFrontChannelLogoutUris");
-
-            migrationBuilder.DropTable(
                 name: "ClientGrantTypes");
 
             migrationBuilder.DropTable(
-                name: "ClientPostLogoutUris");
-
-            migrationBuilder.DropTable(
-                name: "ClientRedirectUris");
+                name: "ClientUris");
 
             migrationBuilder.DropTable(
                 name: "Codes");
