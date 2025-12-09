@@ -33,6 +33,7 @@ public class ClientEntity : Entity
     public ICollection<ClientPostLogoutRedirectUriEntity> PostLogoutRedirectUris { get; set; } = null!;
     public ICollection<ClientFrontChannelLogoutUriEntity> FrontChannelLogoutUris { get; set; } = null!;
     public ICollection<ClientBackChannelLogoutUriEntity> BackChannelLogoutUris { get; set; } = null!;
+    public ICollection<ClientUriEntity> Uris { get; set; } = null!;
 
     public bool HasRedirectUri(string uri) 
         => RedirectUris.Any(r => r.Uri == uri);
