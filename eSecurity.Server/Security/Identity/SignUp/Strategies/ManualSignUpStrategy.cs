@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Roles;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
@@ -24,6 +25,7 @@ public sealed class ManualSignUpStrategy(
     IPermissionManager permissionManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
+    IEmailManager emailManager,
     IHttpContextAccessor httpContextAccessor,
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
@@ -32,6 +34,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IPermissionManager _permissionManager = permissionManager;
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly AccountOptions _options = options.Value;
 
@@ -43,7 +46,7 @@ public sealed class ManualSignUpStrategy(
         
         if (_options.RequireUniqueEmail)
         {
-            var isTaken = await _userManager.IsEmailTakenAsync(manualPayload.Email, cancellationToken);
+            var isTaken = await _emailManager.IsTakenAsync(manualPayload.Email, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
@@ -66,7 +69,7 @@ public sealed class ManualSignUpStrategy(
         var passwordResult = await _passwordManager.AddAsync(user, manualPayload.Password, cancellationToken);
         if (!passwordResult.Succeeded) return passwordResult;
 
-        var setResult = await _userManager.SetEmailAsync(user, manualPayload.Email,
+        var setResult = await _emailManager.SetAsync(user, manualPayload.Email,
             EmailType.Primary, cancellationToken);
 
         if (setResult.Succeeded) return setResult;

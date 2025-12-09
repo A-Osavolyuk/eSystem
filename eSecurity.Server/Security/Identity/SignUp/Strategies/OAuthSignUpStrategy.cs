@@ -58,7 +58,7 @@ public sealed class OAuthSignUpStrategy(
         var session = await _oauthSessionManager.FindAsync(oauthPayload.SessionId, oauthPayload.Token, cancellationToken);
         if (session is null) return Results.NotFound("Session was not found");
 
-        var taken = await _userManager.IsEmailTakenAsync(oauthPayload.Email, cancellationToken);
+        var taken = await _emailManager.IsTakenAsync(oauthPayload.Email, cancellationToken);
         if (taken) return Results.BadRequest("Email is already taken");
 
         var user = new UserEntity()
@@ -70,7 +70,7 @@ public sealed class OAuthSignUpStrategy(
         var createResult = await _userManager.CreateAsync(user, cancellationToken: cancellationToken);
         if (!createResult.Succeeded) return createResult;
 
-        var setResult = await _userManager.SetEmailAsync(user, oauthPayload.Email, EmailType.Primary, cancellationToken);
+        var setResult = await _emailManager.SetAsync(user, oauthPayload.Email, EmailType.Primary, cancellationToken);
         if (!setResult.Succeeded) return setResult;
 
         var role = await _roleManager.FindByNameAsync("User", cancellationToken);

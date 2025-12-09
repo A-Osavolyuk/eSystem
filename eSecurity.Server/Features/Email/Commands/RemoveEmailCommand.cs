@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Credentials.PublicKey;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Email.Commands;
@@ -11,10 +12,12 @@ public record RemoveEmailCommand(RemoveEmailRequest Request) : IRequest<Result>;
 
 public class RemoveEmailCommandHandler(
     IUserManager userManager,
+    IEmailManager emailManager,
     IPasskeyManager passkeyManager,
     IVerificationManager verificationManager) : IRequestHandler<RemoveEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
@@ -47,7 +50,7 @@ public class RemoveEmailCommandHandler(
 
         if (!verificationResult.Succeeded) return verificationResult;
         
-        var result = await _userManager.RemoveEmailAsync(user, request.Request.Email, cancellationToken);
+        var result = await _emailManager.RemoveAsync(user, request.Request.Email, cancellationToken);
         return result;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 
@@ -9,9 +10,11 @@ public record AddEmailCommand(AddEmailRequest Request) : IRequest<Result>;
 
 public class AddEmailCommandHandler(
     IUserManager userManager,
+    IEmailManager emailManager,
     IOptions<AccountOptions> options) : IRequestHandler<AddEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly AccountOptions _options = options.Value;
 
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
@@ -24,12 +27,12 @@ public class AddEmailCommandHandler(
 
         if (_options.RequireUniqueEmail)
         {
-            var taken = await _userManager.IsEmailTakenAsync(request.Request.Email, cancellationToken);
+            var taken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
             if (taken) return Results.BadRequest("Email already taken.");
         }
 
         var email = request.Request.Email;
-        var result = await _userManager.AddEmailAsync(user, email, EmailType.Secondary, cancellationToken);
+        var result = await _emailManager.AddAsync(user, email, EmailType.Secondary, cancellationToken);
         
         return result;
     }

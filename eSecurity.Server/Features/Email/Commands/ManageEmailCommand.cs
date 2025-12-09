@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Email.Commands;
@@ -9,9 +10,11 @@ public record ManageEmailCommand(ManageEmailRequest Request) : IRequest<Result>;
 
 public class ManageEmailCommandHandler(
     IUserManager userManager,
+    IEmailManager emailManager,
     IVerificationManager verificationManager) : IRequestHandler<ManageEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(ManageEmailCommand request, CancellationToken cancellationToken)
@@ -27,7 +30,7 @@ public class ManageEmailCommandHandler(
         
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await _userManager.ManageEmailAsync(user, type, email, cancellationToken);
+        var result = await _emailManager.ManageAsync(user, type, email, cancellationToken);
         return result;
     }
 }

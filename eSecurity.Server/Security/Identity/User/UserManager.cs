@@ -107,30 +107,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return user;
     }
 
-    public async ValueTask<Result> SetEmailAsync(UserEntity user, string email, EmailType type,
-        CancellationToken cancellationToken = default)
-    {
-        var userEmail = new UserEmailEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            Email = email,
-            NormalizedEmail = email.ToUpperInvariant(),
-            Type = type,
-            IsVerified = true,
-            VerifiedDate = DateTimeOffset.UtcNow,
-            CreateDate = DateTimeOffset.UtcNow
-        };
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        await _context.UserEmails.AddAsync(userEmail, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
     public async ValueTask<Result> SetPhoneNumberAsync(UserEntity user, string phoneNumber, PhoneNumberType type,
         CancellationToken cancellationToken = default)
     {
@@ -170,47 +146,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return Results.Ok();
     }
 
-    public async ValueTask<Result> ManageEmailAsync(UserEntity user, EmailType type, string email,
-        CancellationToken cancellationToken = default)
-    {
-        var currentEmail = await _context.UserEmails.FirstOrDefaultAsync(x => x.Type == type, cancellationToken);
-        if (currentEmail is not null)
-        {
-            currentEmail.Type = EmailType.Secondary;
-            currentEmail.UpdateDate = DateTimeOffset.UtcNow;
-            _context.UserEmails.Update(currentEmail);
-        }
-
-        var nextEmail = await _context.UserEmails.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
-        if (nextEmail is null) return Results.BadRequest($"User doesn't have email {email}.");
-
-        nextEmail.Type = type;
-        nextEmail.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.UserEmails.Update(nextEmail);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> VerifyEmailAsync(UserEntity user, string email,
-        CancellationToken cancellationToken = default)
-    {
-        var userEmail = user.Emails.FirstOrDefault(x => x.Email == email);
-        if (userEmail == null) return Results.NotFound($"User doesn't have email {email}");
-
-        userEmail.IsVerified = true;
-        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
-        userEmail.CreateDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserEmails.Update(userEmail);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
     public async ValueTask<Result> VerifyPhoneNumberAsync(UserEntity user, string phoneNumber,
         CancellationToken cancellationToken = default)
     {
@@ -224,27 +159,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         _context.Users.Update(user);
         _context.UserPhoneNumbers.Update(userPhoneNumber);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> ResetEmailAsync(UserEntity user, string currentEmail,
-        string newEmail, CancellationToken cancellationToken = default)
-    {
-        var userEmail = user.Emails.FirstOrDefault(x => x.Email == currentEmail);
-        if (userEmail is null) return Results.NotFound($"User doesn't have email {currentEmail}");
-
-        userEmail.Email = newEmail;
-        userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
-        userEmail.IsVerified = true;
-        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
-        userEmail.UpdateDate = DateTimeOffset.UtcNow;
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
@@ -279,41 +193,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         _context.Users.Update(user);
         _context.UserPhoneNumbers.Remove(userPhoneNumber);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> RemoveEmailAsync(UserEntity user, string email,
-        CancellationToken cancellationToken = default)
-    {
-        var userEmail = user.Emails.First(x => x.Email == email);
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserEmails.Remove(userEmail);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> ChangeEmailAsync(UserEntity user, string currentEmail, string newEmail,
-        CancellationToken cancellationToken = default)
-    {
-        var userEmail = user.Emails.FirstOrDefault(x => x.Email == currentEmail);
-        if (userEmail is null) return Results.NotFound($"User doesn't have email {currentEmail}");
-
-        userEmail.Email = newEmail;
-        userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
-        userEmail.IsVerified = true;
-        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
-        userEmail.UpdateDate = DateTimeOffset.UtcNow;
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
@@ -357,31 +236,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
         _context.Users.Update(user);
         await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
-    public async ValueTask<Result> AddEmailAsync(UserEntity user, string email,
-        EmailType type, CancellationToken cancellationToken = default)
-    {
-        if (user.Emails.Any(x => x.Email == email))
-            return Results.BadRequest("User already has this email");
-
-        var userEmail = new UserEmailEntity()
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            Email = email,
-            NormalizedEmail = email.ToUpperInvariant(),
-            Type = type,
-            CreateDate = DateTimeOffset.UtcNow
-        };
-
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        await _context.UserEmails.AddAsync(userEmail, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
@@ -447,16 +301,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         var normalizedUserName = userName.ToUpper();
         var result = await _context.Users.AnyAsync(
             u => u.NormalizedUsername == normalizedUserName, cancellationToken);
-
-        return result;
-    }
-
-    public async ValueTask<bool> IsEmailTakenAsync(string email,
-        CancellationToken cancellationToken = default)
-    {
-        var normalizedEmail = email.ToUpper();
-        var result = await _context.UserEmails.AnyAsync(
-            u => u.NormalizedEmail == normalizedEmail, cancellationToken);
 
         return result;
     }

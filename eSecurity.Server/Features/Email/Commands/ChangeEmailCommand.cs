@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 
@@ -11,10 +12,12 @@ public sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<R
 
 public sealed class RequestChangeEmailCommandHandler(
     IUserManager userManager,
+    IEmailManager emailManager,
     IVerificationManager verificationManager,
     IOptions<AccountOptions> options) : IRequestHandler<ChangeEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IEmailManager _emailManager = emailManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly AccountOptions _options = options.Value;
 
@@ -32,7 +35,7 @@ public sealed class RequestChangeEmailCommandHandler(
 
         if (_options.RequireUniqueEmail)
         {
-            var isTaken = await _userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
+            var isTaken = await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
@@ -49,7 +52,7 @@ public sealed class RequestChangeEmailCommandHandler(
 
         if (!newEmailVerificationResult.Succeeded) return newEmailVerificationResult;
 
-        var result = await _userManager.ChangeEmailAsync(user, currentEmail.Email,
+        var result = await _emailManager.ChangeAsync(user, currentEmail.Email,
             request.Request.NewEmail, cancellationToken);
 
         return result;

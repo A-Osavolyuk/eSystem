@@ -33,7 +33,7 @@ public class ResetEmailCommandHandler(
 
         if (_options.RequireUniqueEmail)
         {
-            var isTaken = await _userManager.IsEmailTakenAsync(request.Request.NewEmail, cancellationToken);
+            var isTaken = await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken) return Results.BadRequest("This email address is already taken");
         }
 
@@ -47,7 +47,7 @@ public class ResetEmailCommandHandler(
 
         if (!verifyVerificationResult.Succeeded) return verifyVerificationResult;
 
-        var result = await _userManager.ResetEmailAsync(user, userCurrentEmail.Email, newEmail, cancellationToken);
+        var result = await _emailManager.ResetAsync(user, userCurrentEmail.Email, newEmail, cancellationToken);
         return result;
     }
 }
