@@ -14,7 +14,7 @@ public sealed class PasskeyConfiguration : IEntityTypeConfiguration<PasskeyEntit
         builder.Property(x => x.Type).HasMaxLength(32);
 
         builder.HasOne(x => x.Device)
-            .WithOne(x => x.Passkey)
+            .WithOne()
             .HasForeignKey<PasskeyEntity>(x => x.DeviceId);
     }
 }

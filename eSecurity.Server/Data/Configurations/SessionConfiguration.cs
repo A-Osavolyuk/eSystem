@@ -10,7 +10,7 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<SessionEntit
         builder.HasKey(x => x.Id);
 
         builder.HasOne(x => x.Device)
-            .WithMany(x => x.Sessions)
+            .WithMany()
             .HasForeignKey(x => x.DeviceId);
     }
 }

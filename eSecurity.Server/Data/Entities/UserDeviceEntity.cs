@@ -22,6 +22,4 @@ public class UserDeviceEntity : Entity
     public DateTimeOffset? BlockedDate { get; set; }
 
     public UserEntity User { get; set; } = null!;
-    public PasskeyEntity? Passkey { get; set; }
-    public ICollection<SessionEntity> Sessions { get; set; } = null!;
 }

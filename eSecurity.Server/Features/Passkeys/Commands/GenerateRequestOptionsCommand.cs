@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
 using eSecurity.Server.Security.Authorization.Devices;
+using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
@@ -18,6 +19,7 @@ public class GenerateRequestOptionsCommandHandler(
     IChallengeFactory challengeFactory,
     ICredentialFactory credentialFactory,
     IDeviceManager deviceManager,
+    IPasskeyManager passkeyManager,
     IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
@@ -25,6 +27,7 @@ public class GenerateRequestOptionsCommandHandler(
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
     private readonly ICredentialFactory _credentialFactory = credentialFactory;
     private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -42,10 +45,12 @@ public class GenerateRequestOptionsCommandHandler(
         var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null) return Results.BadRequest("Invalid device.");
-        if (device.Passkey is null) return Results.BadRequest("This device does not have a passkey.");
+        
+        var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
+        if (passkey is null) return Results.BadRequest("This device does not have a passkey.");
 
         var challenge = _challengeFactory.Create();
-        var options = _credentialFactory.CreateRequestOptions(device.Passkey, challenge, _credentialOptions);
+        var options = _credentialFactory.CreateRequestOptions(passkey, challenge, _credentialOptions);
 
         _sessionStorage.Set(ChallengeSessionKeys.Assertion, challenge);
         return Results.Ok(options);
