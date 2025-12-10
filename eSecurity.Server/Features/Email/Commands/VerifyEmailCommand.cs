@@ -21,16 +21,13 @@ public sealed class VerifyEmailCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found");
 
         var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Email, ActionType.Verify, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var confirmResult = await _emailManager.VerifyAsync(user, request.Request.Email, cancellationToken);
-        if (!confirmResult.Succeeded) return confirmResult;
-
-        return Results.Ok("Your email address was successfully confirmed.");
+        return await _emailManager.VerifyAsync(user, request.Request.Email, cancellationToken);
     }
 }

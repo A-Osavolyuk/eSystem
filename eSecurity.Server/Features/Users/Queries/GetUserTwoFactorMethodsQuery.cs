@@ -16,7 +16,7 @@ public class GetUserProvidersQueryHandler(
     public async Task<Result> Handle(GetUserTwoFactorMethodsQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Id, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var methods = await _twoFactorManager.GetAllAsync(user, cancellationToken);
         var response = methods.Select(provider => new UserTwoFactorMethod()

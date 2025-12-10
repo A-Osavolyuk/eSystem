@@ -34,10 +34,10 @@ public class RemovePasskeyCommandHandler(
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var passkey = await _passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);
-        if (passkey is null) return Results.NotFound($"Cannot find passkey with ID {request.Request.PasskeyId}.");
+        if (passkey is null) return Results.NotFound("Passkey not found.");
 
         if ((await _emailManager.HasAsync(user, EmailType.Primary, cancellationToken) && 
              _options.RequireConfirmedEmail) || !await _passwordManager.HasAsync(user, cancellationToken))
@@ -54,7 +54,7 @@ public class RemovePasskeyCommandHandler(
             if (await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken))
             {
                 var method = await _twoFactorManager.GetAsync(user, TwoFactorMethod.Passkey, cancellationToken);
-                if (method is null) return Results.NotFound("2FA method not found");
+                if (method is null) return Results.NotFound("Method not found");
 
                 if (method.Preferred)
                 {

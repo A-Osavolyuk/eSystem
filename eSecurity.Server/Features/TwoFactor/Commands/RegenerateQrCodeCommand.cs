@@ -22,7 +22,7 @@ public class RegenerateQrCodeCommandHandler(
     public async Task<Result> Handle(RegenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var secret = _secretManager.Generate();
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);

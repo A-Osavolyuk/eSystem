@@ -27,10 +27,17 @@ public class TrustDeviceCommandHandler(
     public async Task<Result> Handle(TrustDeviceCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
         
         var device = await _deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
-        if (device is null) return Results.NotFound($"Cannot find user with ID {request.Request.DeviceId}.");
+        if (device is null || device.IsBlocked || !device.IsTrusted)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidDevice,
+                Description = "Invalid device."
+            });
+        }
         
         var verificationResult = await _verificationManager.VerifyAsync(user, 
             PurposeType.Device, ActionType.Trust, cancellationToken);

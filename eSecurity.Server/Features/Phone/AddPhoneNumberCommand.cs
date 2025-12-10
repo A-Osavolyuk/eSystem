@@ -20,25 +20,50 @@ public class AddPhoneNumberCommandHandler(
     public async Task<Result> Handle(AddPhoneNumberCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        if (user is null) return Results.NotFound("User not found.");
 
         var phoneNumbers = await _phoneManager.GetAllAsync(user, cancellationToken);
         if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Primary)
             >= _options.PrimaryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Primary)
-            return Results.BadRequest("User already has a primary phone number.");
-        
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPhone,
+                Description = "User already has a primary phone number."
+            });
+        }
+
         if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Recovery)
             >= _options.RecoveryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Recovery)
-            return Results.BadRequest("User already has a recovery phone number.");
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPhone,
+                Description = "User already has a recovery phone number."
+            });
+        }
 
         if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Secondary)
             >= _options.SecondaryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Secondary)
-            return Results.BadRequest("User already has maximum count of secondary phone numbers.");
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPhone,
+                Description = "User already has maximum count of secondary phone numbers."
+            });
+        }
 
         if (_options.RequireUniquePhoneNumber)
         {
             var isTaken = await _phoneManager.IsTakenAsync(request.Request.PhoneNumber, cancellationToken);
-            if (isTaken) return Results.BadRequest("This phone number is already taken");
+            if (isTaken)
+            {
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.PhoneTaken,
+                    Description = "This phone number is already taken"
+                });
+            }
         }
 
         var result = await _phoneManager.AddAsync(user, request.Request.PhoneNumber,

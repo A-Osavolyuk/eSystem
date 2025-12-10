@@ -16,7 +16,7 @@ public class GetUserEmailsQueryHandler(
     public async Task<Result> Handle(GetUserEmailsQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
         
         var emails = await _emailManager.GetAllAsync(user, cancellationToken);
         var response = emails.Select(email => new UserEmailDto()

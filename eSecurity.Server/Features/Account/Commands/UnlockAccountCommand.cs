@@ -27,13 +27,20 @@ public class UnlockAccountCommandHandler(
     public async Task<Result> Handle(UnlockAccountCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found");
 
         var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null) return Results.BadRequest("Invalid device.");
-        
+        if (device is null || device.IsBlocked || !device.IsTrusted)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidDevice,
+                Description = "Invalid device"
+            });
+
+        }
         var code = request.Request.Code;
         var verificationResult = await _codeManager.VerifyAsync(user, code, SenderType.Email, 
             ActionType.Unlock, PurposeType.Account, cancellationToken);

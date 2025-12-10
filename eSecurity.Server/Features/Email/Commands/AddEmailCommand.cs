@@ -20,16 +20,26 @@ public class AddEmailCommandHandler(
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found");
 
         var secondaryEmails = await _emailManager.GetAllAsync(user, EmailType.Secondary, cancellationToken);
         if (secondaryEmails.Count >= _options.SecondaryEmailMaxCount)
-            return Results.BadRequest("User already has maximum count of secondary emails.");
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.MaxEmailsCount,
+                Description = "User already has maximum count of secondary emails."
+            });
+        }
 
         if (_options.RequireUniqueEmail)
         {
             var taken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
-            if (taken) return Results.BadRequest("Email already taken.");
+            if (taken) return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.EmailTaken,
+                Description = "Email is already taken"
+            });
         }
 
         var email = request.Request.Email;

@@ -16,11 +16,10 @@ public class GetUserPersonalQueryHandler(
     public async Task<Result> Handle(GetUserPersonalQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var personalData = await _personalDataManager.GetAsync(user, cancellationToken);
-        if (personalData is null) return Results.NotFound(
-            $"Cannot find personal data of user with ID {request.UserId}.");
+        if (personalData is null) return Results.NotFound("Personal data not found.");
         
         var response = new UserPersonalDto()
         {

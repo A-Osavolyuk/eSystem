@@ -26,15 +26,29 @@ public class ResetEmailCommandHandler(
         var newEmail = request.Request.NewEmail;
 
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        if (user is null) return Results.NotFound("User not found.");
 
         var userCurrentEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
-        if (userCurrentEmail is null) return Results.BadRequest("User's primary email address is missing");
+        if (userCurrentEmail is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidEmail,
+                Description = "User's primary email address is missing"
+            });
+        }
 
         if (_options.RequireUniqueEmail)
         {
             var isTaken = await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken);
-            if (isTaken) return Results.BadRequest("This email address is already taken");
+            if (isTaken)
+            {
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.EmailTaken,
+                    Description = "User's primary email address is missing"
+                });
+            }
         }
 
         var resetVerificationResult = await _verificationManager.VerifyAsync(user,

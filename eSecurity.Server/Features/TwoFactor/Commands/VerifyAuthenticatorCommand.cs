@@ -14,7 +14,7 @@ public class VerifyAuthenticatorCommandHandler(
     public async Task<Result> Handle(VerifyAuthenticatorCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
         
         var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, request.Request.Secret);
         return verified ? Results.Ok() : Results.BadRequest("Invalid code.");

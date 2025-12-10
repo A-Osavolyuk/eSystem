@@ -35,14 +35,30 @@ public static class Errors
     
     public static class Common
     {
+        public const string InvalidPayloadType = "invalid_payload_type";
+        public const string InvalidPassword = "invalid_password";
+        public const string InvalidDevice = "invalid_device";
+        public const string InvalidEmail = "invalid_email";
+        public const string InvalidPhone = "invalid_phone";
+        public const string InvalidLockoutState = "invalid_lockout_state";
+        public const string InvalidCredentials = "invalid_credentials";
+        public const string InvalidSession = "invalid_session";
+        public const string InvalidRp = "invalid_rp";
+        public const string InvalidChallenge = "invalid_challenge";
+
+        public const string EmailTaken = "email_taken";
+        public const string PhoneTaken = "phone_taken";
+        public const string UsernameTaken = "username_taken";
+        
         public const string TooManyFailedLoginAttempts = "too_many_failed_login_attempts";
         public const string FailedLoginAttempt = "failed_login_attempt";
-        public const string InvalidPayloadType = "invalid_payload_type";
-        public const string InvalidDevice = "invalid_device";
         public const string UntrustedDevice = "untrusted_device";
         public const string UnverifiedEmail = "unverified_email";
         public const string AccountLockedOut = "account_locked_out";
         public const string BlockedDevice = "blocked_device";
+        public const string MaxEmailsCount = "max_emails_count";
+        public const string LinkedAccountConnected = "linked_account_connected";
+        
         public const string BadRequest = "bad_request";
         public const string Unauthorized = "unauthotized";
         public const string Forbidden = "forbidden";

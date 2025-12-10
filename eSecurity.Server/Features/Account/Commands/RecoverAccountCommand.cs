@@ -21,15 +21,27 @@ public class RecoverAccountCommandHandler(
     public async Task<Result> Handle(RecoverAccountCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var userPrimaryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
-        if (userPrimaryEmail is null) return Results.BadRequest("User does not have a primary email.");
-        if (!userPrimaryEmail.IsVerified) return Results.BadRequest("User's primary email is not verified.");
+        if (userPrimaryEmail is null || !userPrimaryEmail.IsVerified)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidEmail,
+                Description = "Invalid primary email"
+            });
+        }
 
         var userRecoveryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Recovery, cancellationToken);
-        if (userRecoveryEmail is null) return Results.BadRequest("User does not have a recovery email.");
-        if (!userRecoveryEmail.IsVerified) return Results.BadRequest("User's recovery email is not verified.");
+        if (userRecoveryEmail is null || !userRecoveryEmail.IsVerified)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidEmail,
+                Description = "Invalid recovery email"
+            });
+        }
 
         var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Account, ActionType.Recover, cancellationToken);

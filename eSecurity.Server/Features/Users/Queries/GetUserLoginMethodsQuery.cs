@@ -32,12 +32,19 @@ public class GetUserLoginMethodsQueryHandler(
     public async Task<Result> Handle(GetUserLoginMethodsQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null) return Results.BadRequest("Invalid device");
+        if (device is null || device.IsBlocked || !device.IsTrusted)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidDevice,
+                Description = "Invalid device"
+            });
+        }
 
         var password = await _passwordManager.GetAsync(user, cancellationToken);
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);

@@ -24,15 +24,29 @@ public class ResetPhoneNumberCommandHandler(
     public async Task<Result> Handle(ResetPhoneNumberCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        if (user is null) return Results.NotFound("User not found.");
         
         var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
-        if (phoneNumber is null) return Results.BadRequest("User's primary phone number is missing");
+        if (phoneNumber is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPhone,
+                Description = "User's primary phone number is missing"
+            });
+        }
         
         if (_options.RequireUniquePhoneNumber)
         {
             var isTaken = await _phoneManager.IsTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
-            if (isTaken) return Results.BadRequest("This phone number is already taken");
+            if (isTaken)
+            {
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.PhoneTaken,
+                    Description = "This phone number is already taken"
+                });
+            }
         }
         
         var resetVerificationResult = await _verificationManager.VerifyAsync(user,

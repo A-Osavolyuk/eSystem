@@ -34,20 +34,33 @@ public class GenerateRequestOptionsCommandHandler(
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByUsernameAsync(request.Request.Username!, cancellationToken);
-
         if (user is null)
         {
             user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-            if (user is null) return Results.NotFound("Cannot find user.");
+            if (user is null) return Results.NotFound("User not found.");
         }
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null) return Results.BadRequest("Invalid device.");
+        if (device is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidDevice,
+                Description = "Invalid device."
+            });
+        }
         
         var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
-        if (passkey is null) return Results.BadRequest("This device does not have a passkey.");
+        if (passkey is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidDevice,
+                Description = "This device does not have a passkey."
+            });
+        }
 
         var challenge = _challengeFactory.Create();
         var options = _credentialFactory.CreateRequestOptions(passkey, challenge, _credentialOptions);

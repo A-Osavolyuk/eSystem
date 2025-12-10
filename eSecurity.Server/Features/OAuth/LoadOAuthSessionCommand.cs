@@ -20,13 +20,17 @@ public class LoadOAuthSessionCommandHandler(
     public async Task<Result> Handle(LoadOAuthSessionCommand request, CancellationToken cancellationToken)
     {
         var session = await _sessionManager.FindAsync(request.Request.SessionId, request.Request.Token, cancellationToken);
-        if (session is null || session.ExpiredDate < DateTimeOffset.UtcNow) 
-            return Results.NotFound("Session was not found or already expired.");
-
-        if (session.LinkedAccount is null) return Results.InternalServerError("Invalid session.");
+        if (session is null || session.ExpiredDate < DateTimeOffset.UtcNow || session.LinkedAccount is null)
+        {
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.Common.InvalidSession,
+                Description = "Invalid session"
+            });
+        }
         
         var user = await _userManager.FindByIdAsync(session.LinkedAccount.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {session.LinkedAccount.UserId}");
+        if (user is null) return Results.NotFound("User not found");
 
         var linkedAccount = await _linkedAccountManager.GetAsync(user, session.LinkedAccount.Type, cancellationToken);
         if (linkedAccount is null) return Results.NotFound("Linked account not found");

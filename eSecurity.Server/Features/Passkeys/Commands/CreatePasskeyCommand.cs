@@ -40,12 +40,19 @@ public class CreatePasskeyCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null) return Results.BadRequest("Invalid device.");
+        if (device is null || device.IsBlocked || !device.IsTrusted)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidDevice,
+                Description = "Invalid device."
+            });
+        }
 
         var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Passkey, ActionType.Create, cancellationToken);
@@ -54,17 +61,37 @@ public class CreatePasskeyCommandHandler(
 
         var credentialResponse = request.Request.Response;
         var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
-        if (clientData is null) return Results.BadRequest("Invalid client data");
-        if (clientData.Type != ClientDataTypes.Create) return Results.BadRequest("Invalid type");
+        if (clientData is null || clientData.Type != ClientDataTypes.Create)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidCredentials,
+                Description = "Invalid credentials."
+            });
+        }
 
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
         var savedChallenge = _sessionStorage.Get(ChallengeSessionKeys.Attestation);
-        if (savedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
+        if (savedChallenge != base64Challenge)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidChallenge,
+                Description = "Challenge mismatch"
+            });
+        }
 
         var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
         var source = Encoding.UTF8.GetBytes(_credentialOptions.Domain.ToArray());
         var rpHash = SHA256.HashData(source);
-        if (!authData.RpIdHash.SequenceEqual(rpHash)) return Results.BadRequest("Invalid RP ID");
+        if (!authData.RpIdHash.SequenceEqual(rpHash))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidRp,
+                Description = "Invalid RP ID"
+            });
+        }
 
         var passkey = new PasskeyEntity()
         {

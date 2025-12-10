@@ -30,7 +30,7 @@ public class GenerateQrCodeCommandHandler(
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
         
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null) return Results.NotFound("Email not found");

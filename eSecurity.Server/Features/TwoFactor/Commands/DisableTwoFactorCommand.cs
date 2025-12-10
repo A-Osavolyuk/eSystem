@@ -20,7 +20,7 @@ public class DisableTwoFactorCommandHandler(
     public async Task<Result> Handle(DisableTwoFactorCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken)) 
             return Results.BadRequest("2FA already disabled.");
         

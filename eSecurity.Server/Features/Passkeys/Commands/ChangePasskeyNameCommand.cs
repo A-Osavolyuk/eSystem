@@ -16,12 +16,12 @@ public class ChangePasskeyNameCommandHandler(
     public async Task<Result> Handle(ChangePasskeyNameCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
         if (!await _passkeyManager.HasAsync(user, cancellationToken)) 
             return Results.BadRequest("User does not have any passkeys.");
 
         var passkey = await _passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);
-        if (passkey is null) return Results.NotFound("Cannot find user's passkey.");
+        if (passkey is null) return Results.NotFound("Passkey not found.");
 
         passkey.DisplayName = request.Request.DisplayName;
         passkey.UpdateDate = DateTimeOffset.UtcNow;

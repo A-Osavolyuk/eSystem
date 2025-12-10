@@ -21,7 +21,7 @@ public sealed class GetUserQueryHandler(
         CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);

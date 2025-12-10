@@ -16,7 +16,7 @@ public class GetUserPhoneNumbersQueryHandler(
     public async Task<Result> Handle(GetUserPhoneNumbersQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var phoneNumbers = await _phoneManager.GetAllAsync(user, cancellationToken);
         var response = phoneNumbers.Select(phoneNumber => new UserPhoneNumberDto()

@@ -27,24 +27,37 @@ public class RemoveEmailCommandHandler(
     public async Task<Result> Handle(RemoveEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var email = await _emailManager.FindByEmailAsync(user, request.Request.Email, cancellationToken);
-        if (email is null) return Results.NotFound($"User doesn't have this email {request.Request.Email}.");
-        
+        if (email is null)
+        {
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.Common.InvalidEmail,
+                Description = "User doesn't owe this email."
+            });
+        }
+
         if (email.Type == EmailType.Primary)
         {
             var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);
             if (passkeys.Count == 0)
             {
-                return Results.BadRequest(
-                    "Cannot remove the primary email, because it is the only authentication method");
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.InvalidEmail,
+                    Description = "Cannot remove the primary email, because it is the only authentication method"
+                });
             }
 
             if (await _linkedAccountManager.HasAsync(user, cancellationToken))
             {
-                return Results.BadRequest(
-                    "Cannot remove the primary email, because there are one or more linked accounts");
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.LinkedAccountConnected,
+                    Description = "Cannot remove the primary email, because there are one or more linked accounts"
+                });
             }
         }
 
@@ -52,7 +65,7 @@ public class RemoveEmailCommandHandler(
             PurposeType.Email, ActionType.Remove, cancellationToken);
 
         if (!verificationResult.Succeeded) return verificationResult;
-        
+
         var result = await _emailManager.RemoveAsync(user, request.Request.Email, cancellationToken);
         return result;
     }

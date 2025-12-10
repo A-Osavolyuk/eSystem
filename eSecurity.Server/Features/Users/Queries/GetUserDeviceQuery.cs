@@ -16,10 +16,10 @@ public class GetUserDeviceQueryHandler(
     public async Task<Result> Handle(GetUserDeviceQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"User with ID {request.UserId} was not found.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var device = await _deviceManager.FindByIdAsync(request.DeviceId, cancellationToken);
-        if (device is null) return Results.NotFound($"Device with ID {request.DeviceId} was not found.");
+        if (device is null) return Results.NotFound("Device not found.");
 
         var response = new UserDeviceDto()
         {

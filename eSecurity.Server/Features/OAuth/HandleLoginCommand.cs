@@ -50,7 +50,11 @@ public sealed class HandleOAuthLoginCommandHandler(
             .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
         //TODO: Implement redirect to fallback page on error
-        if (email is null) return Results.BadRequest("Email is not provider in credentials");
+        if (email is null) return Results.BadRequest(new Error()
+        {
+            Code = Errors.Common.InvalidCredentials,
+            Description = "Email is not provided in credentials"
+        });
 
         var user = await _userManager.FindByEmailAsync(email, cancellationToken);
         if (user is null)

@@ -30,19 +30,26 @@ public class CheckAccountCommandHandler(
         }
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
-        if (lockoutState is null) return Results.NotFound("State not found");
-
-            if (lockoutState.Enabled)
+        if (lockoutState is null)
+        {
+            return Results.NotFound(new Error()
             {
-                response = new CheckAccountResponse
-                {
-                    Exists = true,
-                    UserId = user.Id,
-                    IsLockedOut = lockoutState.Enabled,
-                };
+                Code = Errors.Common.InvalidLockoutState,
+                Description = "Invalid state"
+            });
+        }
 
-                return Results.Ok(response);
-            }
+        if (lockoutState.Enabled)
+        {
+            response = new CheckAccountResponse
+            {
+                Exists = true,
+                UserId = user.Id,
+                IsLockedOut = lockoutState.Enabled,
+            };
+
+            return Results.Ok(response);
+        }
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Recovery, cancellationToken);
         if (email is null)

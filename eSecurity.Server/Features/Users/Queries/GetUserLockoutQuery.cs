@@ -16,7 +16,7 @@ public class GetLockoutStateQueryHandler(
     public async Task<Result> Handle(GetUserLockoutQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Id, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Id}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null) return Results.NotFound("State not found");

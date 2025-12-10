@@ -22,14 +22,20 @@ public class RemovePasswordCommandHandler(
     public async Task<Result> Handle(RemovePasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        if (user is null) return Results.NotFound("User not found.");
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
-            return Results.BadRequest("User doesn't have a password.");
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPassword,
+                Description = "User doesn't have a password."
+            });
+        }
 
         if (!await _linkedAccountManager.HasAsync(user, cancellationToken) && 
             !await _passkeyManager.HasAsync(user, cancellationToken))
-            return Results.BadRequest("You need to configure sign-in with passkey or linked external account.");
+            return Results.BadRequest("You need to configure another sign-in method.");
 
         var result = await _passwordManager.RemoveAsync(user, cancellationToken);
         return result;

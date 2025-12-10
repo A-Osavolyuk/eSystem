@@ -32,12 +32,16 @@ public class GenerateCreationOptionsCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found");
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null) return Results.BadRequest("Invalid device.");
+        if (device is null) return Results.BadRequest(new Error()
+        {
+            Code = Errors.Common.InvalidDevice,
+            Description = "Invalid device."
+        });
 
         var challenge = _challengeFactory.Create();
         var displayName = request.Request.DisplayName;

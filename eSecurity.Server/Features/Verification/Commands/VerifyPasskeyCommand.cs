@@ -26,13 +26,27 @@ public class VerifyPasskeyCommandHandler(
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
         var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
-        if (passkey is null) return Results.BadRequest("Invalid credential");
+        if (passkey is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidCredentials,
+                Description = "Invalid credential"
+            });
+        }
 
         var user = await _userManager.FindByIdAsync(passkey.Device.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {passkey.Device.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
         var savedChallenge = _httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
-        if (string.IsNullOrEmpty(savedChallenge)) return Results.BadRequest("Invalid challenge");
+        if (string.IsNullOrEmpty(savedChallenge))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidChallenge,
+                Description = "Invalid challenge"
+            });
+        }
 
         var verificationResult = await _passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;

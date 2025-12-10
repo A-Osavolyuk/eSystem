@@ -17,13 +17,25 @@ public sealed class ChangePasswordCommandHandler(
             CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
-        
-        if (!await _passwordManager.HasAsync(user, cancellationToken)) 
-            return Results.BadRequest("User does not have a password.");
-        
-        if (!await _passwordManager.CheckAsync(user, request.Request.CurrentPassword, cancellationToken)) 
-            return Results.BadRequest("Wrong password.");
+        if (user is null) return Results.NotFound("User not found.");
+
+        if (!await _passwordManager.HasAsync(user, cancellationToken))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPassword,
+                Description = "User does not have a password."
+            });
+        }
+
+        if (!await _passwordManager.CheckAsync(user, request.Request.CurrentPassword, cancellationToken))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = "Invalid password",
+                Description = "Invalid password."
+            });
+        }
         
         var result = await _passwordManager.ChangeAsync(user, request.Request.NewPassword, cancellationToken);
 

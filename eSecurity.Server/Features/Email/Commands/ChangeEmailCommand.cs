@@ -28,22 +28,44 @@ public sealed class RequestChangeEmailCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        if (user is null) return Results.NotFound("User not found.");
 
         if (request.Request.Type is EmailType.Secondary)
-            return Results.BadRequest("Cannot change a secondary phone number.");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidEmail,
+                Description = "Cannot change a secondary phone number."
+            });
 
         var currentEmail = await _emailManager.FindByTypeAsync(user, request.Request.Type, cancellationToken);
-        if (currentEmail is null) return Results.BadRequest("User's primary email address is missing");
+        if (currentEmail is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidEmail,
+                Description = "User's primary email address is missing"
+            });
+        }
 
         if (_options.RequireUniqueEmail)
         {
             var isTaken = await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken);
-            if (isTaken) return Results.BadRequest("This email address is already taken");
+            if (isTaken)
+            {
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.EmailTaken,
+                    Description = "Email address is already taken"
+                });
+            }
         }
 
         if (await _linkedAccountManager.HasAsync(user, cancellationToken))
-            return Results.BadRequest("Cannot change email, first disconnect linked accounts.");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.LinkedAccountConnected,
+                Description = "Cannot change email, first disconnect linked accounts."
+            });
 
         var currentEmailVerificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Email, ActionType.Change, cancellationToken);

@@ -16,10 +16,14 @@ public class AddPasswordCommandHandler(
     public async Task<Result> Handle(AddPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}");
+        if (user is null) return Results.NotFound("User not found.");
         
         if (await _passwordManager.HasAsync(user, cancellationToken)) 
-            return Results.BadRequest("User already has a password.");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPassword,
+                Description = "User already has a password."
+            });
         
         var result = await _passwordManager.AddAsync(user, request.Request.Password, cancellationToken);
         return result;

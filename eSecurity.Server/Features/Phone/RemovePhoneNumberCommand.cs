@@ -25,13 +25,25 @@ public class RemovePhoneNumberCommandHandler(
     public async Task<Result> Handle(RemovePhoneNumberCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null) return Results.NotFound($"Cannot find user with ID {request.Request.UserId}.");
+        if (user is null) return Results.NotFound("User not found.");
 
-        if (!await _phoneManager.HasAsync(user, PhoneNumberType.Primary, cancellationToken)) 
-            return Results.BadRequest("Cannot remove phone number. Phone number is not provided.");
+        if (!await _phoneManager.HasAsync(user, PhoneNumberType.Primary, cancellationToken))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPhone,
+                Description = "Cannot remove phone number. Phone number is not provided."
+            });
+        }
 
         if (await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Sms, cancellationToken))
-            return Results.BadRequest("Cannot remove phone number. First disable 2FA with SMS.");
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPhone,
+                Description = "Cannot remove phone number. First disable 2FA with SMS."
+            });
+        }
         
         var verificationResult = await _verificationManager.VerifyAsync(user, 
             PurposeType.PhoneNumber, ActionType.Remove, cancellationToken);

@@ -25,7 +25,11 @@ public sealed class OAuthLoginCommandHandler(
         //TODO: Implement redirect to fallback on error
         if (!_options.AllowOAuthLogin)
         {
-            return Results.BadRequest("Signing with linked account is not allowed.");
+            return Results.InternalServerError(new Error()
+            {
+                Code = Errors.Common.InternalServerError,
+                Description = "OAuth is not allowed"
+            });
         }
         
         var randomBytes = KeyGeneration.GenerateRandomKey(20);
