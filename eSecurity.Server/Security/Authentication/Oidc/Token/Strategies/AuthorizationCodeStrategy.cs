@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
 using eSecurity.Server.Security.Authentication.Oidc.Pkce;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
@@ -25,15 +26,16 @@ public sealed class AuthorizationCodeTokenPayload : TokenPayload
 
 public class AuthorizationCodeStrategy(
     IUserManager userManager,
-    IClientManager clientManager,
-    ISessionManager sessionManager,
-    IAuthorizationCodeManager authorizationCodeManager,
-    ITokenFactoryProvider tokenFactoryProvider,
-    ITokenManager tokenManager,
     IPkceHandler pkceHandler,
+    ITokenManager tokenManager,
+    IDeviceManager deviceManager,
+    IClientManager clientManager,
     IHasherFactory hasherFactory,
+    ISessionManager sessionManager,
     IDataProtectionProvider protectionProvider,
     IClaimFactoryProvider claimFactoryProvider,
+    ITokenFactoryProvider tokenFactoryProvider,
+    IAuthorizationCodeManager authorizationCodeManager,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -42,6 +44,7 @@ public class AuthorizationCodeStrategy(
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IHasherFactory _hasherFactory = hasherFactory;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
@@ -121,7 +124,16 @@ public class AuthorizationCodeStrategy(
                 });
         }
 
-        var device = authorizationCode.Device;
+        var device = await _deviceManager.FindByIdAsync(authorizationCode.DeviceId, cancellationToken);
+        if (device is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.OAuth.InvalidGrant,
+                Description = "Invalid authorization code."
+            });
+        }
+        
         var session = await _sessionManager.FindAsync(device, cancellationToken);
         var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
         if (session is null || session.ExpireDate < DateTimeOffset.UtcNow || user is null)

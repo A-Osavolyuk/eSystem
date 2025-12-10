@@ -14,9 +14,8 @@ public class AuthorizationCodeManager(
     public async ValueTask<AuthorizationCodeEntity?> FindByCodeAsync(string code, 
         CancellationToken cancellationToken = default)
     {
-        return await _context.AuthorizationCodes
-            .Include(x => x.Device)
-            .FirstOrDefaultAsync(c => c.Code == code, cancellationToken);
+        return await _context.AuthorizationCodes.FirstOrDefaultAsync(
+            c => c.Code == code, cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(AuthorizationCodeEntity code, 
