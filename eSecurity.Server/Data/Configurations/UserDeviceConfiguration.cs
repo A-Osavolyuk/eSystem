@@ -17,6 +17,7 @@ public sealed class UserDeviceConfiguration : IEntityTypeConfiguration<UserDevic
 
         builder.HasOne(x => x.User)
             .WithMany()
-            .HasForeignKey(x => x.UserId);
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

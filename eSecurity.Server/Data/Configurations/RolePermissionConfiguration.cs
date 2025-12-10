@@ -11,10 +11,12 @@ public sealed class RolePermissionConfiguration : IEntityTypeConfiguration<RoleP
 
         builder.HasOne(x => x.Role)
             .WithMany(x => x.Permissions)
-            .HasForeignKey(x => x.RoleId);
+            .HasForeignKey(x => x.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Permission)
             .WithMany()
-            .HasForeignKey(x => x.PermissionId);
+            .HasForeignKey(x => x.PermissionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

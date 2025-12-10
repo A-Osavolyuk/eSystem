@@ -15,6 +15,7 @@ public sealed class PasskeyConfiguration : IEntityTypeConfiguration<PasskeyEntit
 
         builder.HasOne(x => x.Device)
             .WithOne()
-            .HasForeignKey<PasskeyEntity>(x => x.DeviceId);
+            .HasForeignKey<PasskeyEntity>(x => x.DeviceId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

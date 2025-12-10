@@ -14,6 +14,7 @@ public sealed class VerificationConfiguration : IEntityTypeConfiguration<Verific
 
         builder.HasOne(x => x.User)
             .WithMany()
-            .HasForeignKey(x => x.UserId);
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

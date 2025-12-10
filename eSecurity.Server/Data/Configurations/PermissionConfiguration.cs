@@ -9,8 +9,10 @@ public sealed class PermissionConfiguration : IEntityTypeConfiguration<Permissio
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Name).HasMaxLength(64);
+        
         builder.HasOne<ResourceEntity>(x => x.Resource)
             .WithMany()
-            .HasForeignKey(x => x.ResourceId);
+            .HasForeignKey(x => x.ResourceId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

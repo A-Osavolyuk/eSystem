@@ -9,8 +9,10 @@ public sealed class PasswordConfiguration : IEntityTypeConfiguration<PasswordEnt
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Hash).HasMaxLength(1000);
+        
         builder.HasOne(x => x.User)
             .WithOne()
-            .HasForeignKey<PasswordEntity>(x => x.UserId);
+            .HasForeignKey<PasswordEntity>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

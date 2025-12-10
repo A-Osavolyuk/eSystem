@@ -12,6 +12,7 @@ public sealed class UserRecoveryCodeConfiguration : IEntityTypeConfiguration<Use
 
         builder.HasOne(x => x.User)
             .WithMany()
-            .HasForeignKey(x => x.UserId);
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -14,10 +14,12 @@ public sealed class OpaqueTokenConfiguration : IEntityTypeConfiguration<OpaqueTo
             
         builder.HasOne(x => x.Client)
             .WithMany()
-            .HasForeignKey(x => x.ClientId);
+            .HasForeignKey(x => x.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
             
         builder.HasOne(x => x.Session)
             .WithMany(x => x.OpaqueTokens)
-            .HasForeignKey(x => x.SessionId);
+            .HasForeignKey(x => x.SessionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

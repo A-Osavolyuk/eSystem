@@ -12,6 +12,7 @@ public sealed class ResourceConfiguration : IEntityTypeConfiguration<ResourceEnt
 
         builder.HasOne(x => x.Owner)
             .WithMany()
-            .HasForeignKey(x => x.OwnerId);
+            .HasForeignKey(x => x.OwnerId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

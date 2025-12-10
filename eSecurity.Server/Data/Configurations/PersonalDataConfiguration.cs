@@ -16,7 +16,8 @@ public sealed class PersonalDataConfiguration : IEntityTypeConfiguration<Persona
             
         builder.HasOne(x => x.User)
             .WithOne()
-            .HasForeignKey<PersonalDataEntity>(x => x.UserId);
+            .HasForeignKey<PersonalDataEntity>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.OwnsOne<Address>(e => e.Address, a =>
         {

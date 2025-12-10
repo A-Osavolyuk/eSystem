@@ -11,10 +11,12 @@ public sealed class UserPermissionConfiguration : IEntityTypeConfiguration<UserP
 
         builder.HasOne(ur => ur.User)
             .WithMany()
-            .HasForeignKey(ur => ur.UserId);
+            .HasForeignKey(ur => ur.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(ur => ur.Permission)
             .WithMany()
-            .HasForeignKey(ur => ur.PermissionId);
+            .HasForeignKey(ur => ur.PermissionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

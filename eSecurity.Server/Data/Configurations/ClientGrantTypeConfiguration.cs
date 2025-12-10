@@ -12,6 +12,7 @@ public sealed class ClientGrantTypeConfiguration : IEntityTypeConfiguration<Clie
 
         builder.HasOne(x => x.Client)
             .WithMany(x => x.GrantTypes)
-            .HasForeignKey(x => x.ClientId);
+            .HasForeignKey(x => x.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

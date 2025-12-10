@@ -12,6 +12,7 @@ public sealed class UserLockoutStateConfiguration : IEntityTypeConfiguration<Use
 
         builder.HasOne(p => p.User)
             .WithOne()
-            .HasForeignKey<UserLockoutStateEntity>(x => x.UserId);
+            .HasForeignKey<UserLockoutStateEntity>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

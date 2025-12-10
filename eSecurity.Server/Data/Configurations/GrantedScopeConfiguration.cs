@@ -11,10 +11,12 @@ public sealed class GrantedScopeConfiguration : IEntityTypeConfiguration<Granted
 
         builder.HasOne(x => x.Consent)
             .WithMany(x => x.GrantedScopes)
-            .HasForeignKey(x => x.ConsentId);
+            .HasForeignKey(x => x.ConsentId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Scope)
             .WithMany()
-            .HasForeignKey(x => x.ScopeId);
+            .HasForeignKey(x => x.ScopeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

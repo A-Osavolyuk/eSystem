@@ -11,6 +11,7 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<SessionEntit
 
         builder.HasOne(x => x.Device)
             .WithMany()
-            .HasForeignKey(x => x.DeviceId);
+            .HasForeignKey(x => x.DeviceId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
