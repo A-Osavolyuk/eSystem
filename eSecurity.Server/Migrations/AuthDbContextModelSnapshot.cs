@@ -1425,7 +1425,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.PasskeyEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
-                        .WithOne("Passkey")
+                        .WithOne()
                         .HasForeignKey("eSecurity.Server.Data.Entities.PasskeyEntity", "DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1544,7 +1544,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
-                        .WithMany("Sessions")
+                        .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1739,13 +1739,6 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.Navigation("OpaqueTokens");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserDeviceEntity", b =>
-                {
-                    b.Navigation("Passkey");
-
-                    b.Navigation("Sessions");
                 });
 #pragma warning restore 612, 618
         }

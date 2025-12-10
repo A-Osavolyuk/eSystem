@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251209203841_Initial")]
+    [Migration("20251210085140_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1428,7 +1428,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.PasskeyEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
-                        .WithOne("Passkey")
+                        .WithOne()
                         .HasForeignKey("eSecurity.Server.Data.Entities.PasskeyEntity", "DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1547,7 +1547,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
-                        .WithMany("Sessions")
+                        .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1742,13 +1742,6 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.Navigation("OpaqueTokens");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserDeviceEntity", b =>
-                {
-                    b.Navigation("Passkey");
-
-                    b.Navigation("Sessions");
                 });
 #pragma warning restore 612, 618
         }
