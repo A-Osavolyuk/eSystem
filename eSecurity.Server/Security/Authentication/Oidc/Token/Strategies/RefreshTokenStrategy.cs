@@ -2,6 +2,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
+using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
@@ -27,6 +28,7 @@ public class RefreshTokenStrategy(
     ITokenManager tokenManager,
     IUserManager userManager,
     IHasherFactory hasherFactory,
+    ISessionManager sessionManager,
     IClaimFactoryProvider claimFactoryProvider,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
@@ -36,6 +38,7 @@ public class RefreshTokenStrategy(
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IHasherFactory _hasherFactory = hasherFactory;
+    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
 
@@ -74,7 +77,15 @@ public class RefreshTokenStrategy(
 
         if (refreshToken.Revoked)
         {
-            //TODO: Implement revoked token reuse detection
+            var sessionResult = await _sessionManager.RemoveAsync(refreshToken.Session, cancellationToken);
+            if (!sessionResult.Succeeded)
+            {
+                return Results.InternalServerError(new Error()
+                {
+                    Code = Errors.OAuth.ServerError,
+                    Description = "Server error"
+                });
+            }
         }
 
         if (client.Id != refreshToken.ClientId)
