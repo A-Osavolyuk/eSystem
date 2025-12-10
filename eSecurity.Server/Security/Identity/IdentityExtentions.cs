@@ -1,5 +1,6 @@
 ﻿using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
+using eSecurity.Server.Security.Identity.Claims.Subject;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.Phone;
@@ -20,6 +21,7 @@ public static class IdentityExtensions
             builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
             builder.Services.AddScoped<IEmailManager, EmailManager>();
             builder.Services.AddScoped<IPhoneManager, PhoneManager>();
+            builder.Services.AddScoped<IPairwiseSubjectFactory, PairwiseSubjectFactory>();
             
             builder.Services.AddScoped<IClaimFactoryProvider, ClaimFactoryProvider>();
             builder.Services.AddScoped<IClaimFactory<AccessClaimsContext>, AccessClaimFactory>();
