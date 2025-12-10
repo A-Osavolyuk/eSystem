@@ -12,20 +12,20 @@ public class TokenValidator(
     ICertificateProvider certificateProvider,
     IClientManager clientManager,
     ITokenManager tokenManager,
-    IHasherFactory hasherFactory,
+    IHasherProvider hasherProvider,
     IOptions<TokenOptions> tokenOptions) : ITokenValidator
 {
     private readonly ICertificateProvider _certificateProvider = certificateProvider;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IHasherFactory _hasherFactory = hasherFactory;
+    private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly TokenOptions _tokenOptions = tokenOptions.Value;
 
     public async ValueTask<Result> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {
         if (await _tokenManager.IsOpaqueAsync(token, cancellationToken))
         {
-            var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
+            var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
             var incomingHash = hasher.Hash(token);
             var opaqueToken = await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
             if (opaqueToken is null || !opaqueToken.IsValid || opaqueToken.TokenType == OpaqueTokenType.RefreshToken)

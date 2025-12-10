@@ -9,10 +9,10 @@ public record RevokeCommand(RevocationRequest Request) : IRequest<Result>;
 
 public class RevokeCommandHandler(
     ITokenManager tokenManager,
-    IHasherFactory hasherFactory) : IRequestHandler<RevokeCommand, Result>
+    IHasherProvider hasherProvider) : IRequestHandler<RevokeCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IHasherFactory _hasherFactory = hasherFactory;
+    private readonly IHasherProvider _hasherProvider = hasherProvider;
 
     public async Task<Result> Handle(RevokeCommand request, CancellationToken cancellationToken)
     {
@@ -30,7 +30,7 @@ public class RevokeCommandHandler(
             _ => null
         };
 
-        var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
+        var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
         var incomingHash = hasher.Hash(request.Request.Token);
         var token = !tokenType.HasValue
             ? await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken)

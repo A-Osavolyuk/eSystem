@@ -30,7 +30,7 @@ public class AuthorizationCodeStrategy(
     ITokenManager tokenManager,
     IDeviceManager deviceManager,
     IClientManager clientManager,
-    IHasherFactory hasherFactory,
+    IHasherProvider hasherProvider,
     ISessionManager sessionManager,
     IDataProtectionProvider protectionProvider,
     IClaimFactoryProvider claimFactoryProvider,
@@ -46,7 +46,7 @@ public class AuthorizationCodeStrategy(
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
-    private readonly IHasherFactory _hasherFactory = hasherFactory;
+    private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
@@ -169,7 +169,7 @@ public class AuthorizationCodeStrategy(
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
             var opaqueTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
+            var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
             var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
             var rawToken = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
             var hash = hasher.Hash(rawToken);

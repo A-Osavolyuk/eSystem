@@ -13,12 +13,12 @@ public record IntrospectionCommand(IntrospectionRequest Request) : IRequest<Resu
 public class IntrospectionCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
-    IHasherFactory hasherFactory,
+    IHasherProvider hasherProvider,
     IOptions<TokenOptions> options) : IRequestHandler<IntrospectionCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
-    private readonly IHasherFactory _hasherFactory = hasherFactory;
+    private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly TokenOptions _options = options.Value;
 
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
@@ -37,7 +37,7 @@ public class IntrospectionCommandHandler(
             _ => null
         };
         
-        var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
+        var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
         var incomingHash = hasher.Hash(request.Request.Token);
 
         var token = opaqueTokenType.HasValue

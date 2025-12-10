@@ -6,10 +6,10 @@ namespace eSecurity.Server.Security.Authentication.Password;
 
 public class PasswordManager(
     AuthDbContext context,
-    IHasherFactory hasherFactory) : IPasswordManager
+    IHasherProvider hasherProvider) : IPasswordManager
 {
     private readonly AuthDbContext _context = context;
-    private readonly IHasher _hasher = hasherFactory.CreateHasher(HashAlgorithm.Pbkdf2);
+    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<PasswordEntity?> GetAsync(UserEntity user, CancellationToken cancellationToken = default)
         => await _context.Passwords.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);

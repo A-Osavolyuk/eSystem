@@ -9,12 +9,12 @@ namespace eSecurity.Server.Security.Authorization.Access.Codes;
 
 public sealed class CodeManager(
     AuthDbContext context,
-    IHasherFactory hasherFactory,
+    IHasherProvider hasherProvider,
     ICodeFactory codeFactory) : ICodeManager
 {
     private readonly AuthDbContext _context = context;
     private readonly ICodeFactory _codeFactory = codeFactory;
-    private readonly IHasher _hasher = hasherFactory.CreateHasher(HashAlgorithm.Pbkdf2);
+    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
         ActionType action, PurposeType purpose, CancellationToken cancellationToken = default)

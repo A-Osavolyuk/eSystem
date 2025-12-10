@@ -27,7 +27,7 @@ public class RefreshTokenStrategy(
     IClientManager clientManager,
     ITokenManager tokenManager,
     IUserManager userManager,
-    IHasherFactory hasherFactory,
+    IHasherProvider hasherProvider,
     ISessionManager sessionManager,
     IClaimFactoryProvider claimFactoryProvider,
     IOptions<TokenOptions> options) : ITokenStrategy
@@ -37,7 +37,7 @@ public class RefreshTokenStrategy(
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
-    private readonly IHasherFactory _hasherFactory = hasherFactory;
+    private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
@@ -64,7 +64,7 @@ public class RefreshTokenStrategy(
             });
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
-        var hasher = _hasherFactory.CreateHasher(HashAlgorithm.Sha512);
+        var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
         var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
         var incomingHash = hasher.Hash(unprotectedToken);
         var refreshToken = await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
