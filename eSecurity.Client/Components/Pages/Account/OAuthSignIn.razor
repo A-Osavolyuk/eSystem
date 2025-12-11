@@ -14,8 +14,11 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "sessionId")] public string SessionId { get; set; } = string.Empty;
-    [SupplyParameterFromQuery(Name = "token")] public string Token { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "sessionId")] 
+    public string SessionId { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "token")] 
+    public string Token { get; set; } = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

@@ -59,7 +59,7 @@
         var baseUri = $"{NavigationManager.BaseUri}account/oauth";
         var uri = $"{gatewayPath}/api/v1/OAuth/login/{type}";
         var returnUri = $"{baseUri}/sign-in";
-        var fallbackUri = $"{baseUri}/fallback";
+        var fallbackUri = $"{baseUri}/fallback?provider={type}";
         
         var builder = QueryBuilder.Create()
             .WithUri(uri)
