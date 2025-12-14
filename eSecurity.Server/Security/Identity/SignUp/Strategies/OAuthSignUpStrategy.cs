@@ -23,6 +23,7 @@ public sealed class OAuthSignUpPayload : SignUpPayload
     public required LinkedAccountType Type { get; set; }
     public required string Email { get; set; }
     public required string ReturnUri { get; set; }
+    public required string FallbackUri { get; set; }
     public required string Token { get; set; }
 }
 
@@ -53,13 +54,33 @@ public sealed class OAuthSignUpStrategy(
         CancellationToken cancellationToken = default)
     {
         if (payload is not OAuthSignUpPayload oauthPayload)
-            return Results.BadRequest("Invalid payload");
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.InvalidPayloadType,
+                Description = "Invalid payload"
+            });
+        }
 
         var session = await _oauthSessionManager.FindAsync(oauthPayload.SessionId, oauthPayload.Token, cancellationToken);
-        if (session is null) return Results.NotFound("Session was not found");
+        if (session is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.NotFound,
+                Description = "Session not found"
+            });
+        }
 
         var taken = await _emailManager.IsTakenAsync(oauthPayload.Email, cancellationToken);
-        if (taken) return Results.BadRequest("Email is already taken");
+        if (taken)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.EmailTaken,
+                Description = "Email is already taken"
+            });
+        }
 
         var user = new UserEntity()
         {

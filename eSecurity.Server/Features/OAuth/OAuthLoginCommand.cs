@@ -21,15 +21,13 @@ public sealed class OAuthLoginCommandHandler(
         CancellationToken cancellationToken)
     {
         var fallbackUri = request.FallbackUri;
-        
-        //TODO: Implement redirect to fallback on error
         if (!_options.AllowOAuthLogin)
         {
-            return Results.InternalServerError(new Error()
-            {
-                Code = Errors.Common.InternalServerError,
-                Description = "OAuth is not allowed"
-            });
+            return Results.Found(QueryBuilder.Create()
+                .WithUri(fallbackUri)
+                .WithQueryParam("error", Errors.OAuth.ServerError)
+                .WithQueryParam("error_description", "OAuth is not allowed")
+                .Build());
         }
         
         var randomBytes = KeyGeneration.GenerateRandomKey(20);

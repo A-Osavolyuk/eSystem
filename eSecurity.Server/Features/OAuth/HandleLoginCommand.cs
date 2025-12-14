@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Identity.SignUp;
 using eSecurity.Server.Security.Identity.SignUp.Strategies;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Features.OAuth;
 
@@ -43,18 +44,26 @@ public sealed class HandleOAuthLoginCommandHandler(
             _ => throw new NotSupportedException("Unknown linked account type")
          };
 
-        if (!string.IsNullOrEmpty(request.RemoteError)) 
-            return Results.InternalServerError(request.RemoteError);
+        if (!string.IsNullOrEmpty(request.RemoteError))
+        {
+            return Results.Found(QueryBuilder.Create()
+                .WithUri(fallbackUri)
+                .WithQueryParam("error", Errors.OAuth.ServerError)
+                .WithQueryParam("error_description", request.RemoteError)
+                .Build());
+        }
 
         var email = request.AuthenticationResult.Principal.Claims
             .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
-        //TODO: Implement redirect to fallback page on error
-        if (email is null) return Results.BadRequest(new Error()
+        if (email is null)
         {
-            Code = Errors.Common.InvalidCredentials,
-            Description = "Email is not provided in credentials"
-        });
+            return Results.Found(QueryBuilder.Create()
+                .WithUri(fallbackUri)
+                .WithQueryParam("error", Errors.Common.InvalidCredentials)
+                .WithQueryParam("error_description", "Email was not provided in credentials.")
+                .Build());
+        }
 
         var user = await _userManager.FindByEmailAsync(email, cancellationToken);
         if (user is null)
@@ -65,15 +74,21 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Type = linkedAccountType,
                 Email = email,
                 ReturnUri = request.ReturnUri!,
+                FallbackUri = fallbackUri,
                 Token = token,
                 SessionId = Guid.Parse(sessionId),
             };
             
             var signUpResult = await signUpStrategy.ExecuteAsync(signUpPayload, cancellationToken);
+            if (signUpResult.Succeeded) return signUpResult;
             
-            return !signUpResult.Succeeded 
-                ? Results.Found(fallbackUri) 
-                : signUpResult;
+            var signUpError = signUpResult.GetError();
+            return Results.Found(QueryBuilder.Create()
+                .WithUri(fallbackUri)
+                .WithQueryParam("error", signUpError.Code)
+                .WithQueryParam("error_description", signUpError.Description)
+                .Build());
+
         }
 
         var signInPayload = new OAuthSignInPayload()
@@ -86,6 +101,14 @@ public sealed class HandleOAuthLoginCommandHandler(
         };
         
         var strategy = _signInResolver.Resolve(SignInType.OAuth);
-        return await strategy.ExecuteAsync(signInPayload, cancellationToken);
+        var signInResult = await strategy.ExecuteAsync(signInPayload, cancellationToken);
+        if (signInResult.Succeeded) return signInResult;
+        
+        var signInError = signInResult.GetError();
+        return Results.Found(QueryBuilder.Create()
+            .WithUri(fallbackUri)
+            .WithQueryParam("error", signInError.Code)
+            .WithQueryParam("error_description", signInError.Description)
+            .Build());
     }
 }

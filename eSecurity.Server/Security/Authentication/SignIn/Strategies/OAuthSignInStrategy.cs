@@ -32,15 +32,17 @@ public sealed class OAuthSignInStrategy(
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
-        if(payload is not OAuthSignInPayload oauthPayload)
+        if (payload is not OAuthSignInPayload oauthPayload)
+        {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPayloadType, 
-                Description = "Invalid payload type"
+                Code = Errors.Common.InvalidPayloadType,
+                Description = "Invalid payload"
             });
+        }
 
         var user = await _userManager.FindByEmailAsync(oauthPayload.Email, cancellationToken);
-        if (user is null) return Results.BadRequest($"Cannot find user with email {oauthPayload.Email}.");
+        if (user is null) return Results.BadRequest("User not found.");
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
@@ -66,14 +68,16 @@ public sealed class OAuthSignInStrategy(
             var result = await _deviceManager.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
-        
-        if (device.IsBlocked) 
+
+        if (device.IsBlocked)
+        {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.BlockedDevice, 
+                Code = Errors.Common.BlockedDevice,
                 Description = "Device is blocked"
             });
-        
+        }
+
         if (!device.IsTrusted)
         {
             var deviceResult = await _deviceManager.TrustAsync(device, cancellationToken);
@@ -82,7 +86,7 @@ public sealed class OAuthSignInStrategy(
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null) return Results.NotFound("State not found");
-        
+
         if (lockoutState.Enabled)
         {
             var lockoutResult = await _lockoutManager.UnblockAsync(user, cancellationToken);
@@ -103,21 +107,22 @@ public sealed class OAuthSignInStrategy(
             if (!connectResult.Succeeded) return connectResult;
         }
 
-        var session = await _oauthSessionManager.FindAsync(oauthPayload.SessionId, oauthPayload.Token, cancellationToken);
-        if (session is null) return Results.BadRequest($"Cannot find session with id {oauthPayload.SessionId}.");
+        var sid = oauthPayload.SessionId;
+        var session = await _oauthSessionManager.FindAsync(sid, oauthPayload.Token, cancellationToken);
+        if (session is null) return Results.BadRequest("Session not found.");
 
         session.SignType = OAuthSignType.SignIn;
         session.LinkedAccountId = linkedAccount.Id;
 
         var updateResult = await _oauthSessionManager.UpdateAsync(session, cancellationToken);
         if (!updateResult.Succeeded) return updateResult;
-        
+
         await _sessionManager.CreateAsync(device, cancellationToken);
 
         var builder = QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("sessionId", session.Id.ToString())
             .WithQueryParam("token", oauthPayload.Token);
-        
+
         return Results.Ok(builder.Build());
     }
 }

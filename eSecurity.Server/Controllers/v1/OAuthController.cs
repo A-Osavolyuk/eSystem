@@ -45,9 +45,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
             AuthenticationDefaults.AuthenticationScheme);
         
         var result = await _sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
-        return result.Match(
-            s => Redirect(s.Value!.ToString()!),
-            f => Redirect(f.Value!.ToString()!));
+        return Redirect(result.Value!.ToString()!);
     }
     
     [EndpointSummary("Load session")]
