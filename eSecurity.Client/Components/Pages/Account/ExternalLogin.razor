@@ -55,17 +55,9 @@
 @code {
     private void OnOAuth(string type)
     {
-        var gatewayPath = Configuration["services:proxy:http:0"]!;
-        var baseUri = $"{NavigationManager.BaseUri}account/oauth";
-        var uri = $"{gatewayPath}/api/v1/OAuth/login/{type}";
-        var returnUri = $"{baseUri}/sign-in";
-        var fallbackUri = $"{baseUri}/fallback?provider={type}";
-        
-        var builder = QueryBuilder.Create()
-            .WithUri(uri)
-            .WithQueryParam("returnUri", returnUri)
-            .WithQueryParam("fallbackUri", fallbackUri);
-        
-        NavigationManager.NavigateTo(builder.Build());
+        NavigationManager.NavigateTo(QueryBuilder.Create()
+            .WithUri($"{Configuration["services:proxy:http:0"]!}/api/v1/OAuth/login/{type}")
+            .WithQueryParam("returnUri", $"{NavigationManager.BaseUri}account/oauth/sign-in")
+            .Build());
     }
 }

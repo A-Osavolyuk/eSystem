@@ -14,7 +14,7 @@ namespace eSecurity.Server.Features.OAuth;
 public sealed record HandleLoginCommand(
     AuthenticationResult AuthenticationResult,
     string? RemoteError,
-    string? ReturnUri) : IRequest<Result>;
+    string ReturnUri) : IRequest<Result>;
 
 public sealed class HandleOAuthLoginCommandHandler(
     IUserManager userManager,
@@ -30,12 +30,11 @@ public sealed class HandleOAuthLoginCommandHandler(
     {
         var authenticationResult = request.AuthenticationResult;
         var items = authenticationResult.Properties.Items;
-        var linkedAccountName = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
-        var fallbackUri = items["fallbackUri"]!;
+        var provider = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
         var sessionId = items["sessionId"]!;
         var token = items["token"]!;
 
-        var linkedAccountType = linkedAccountName switch
+        var linkedAccountType = provider switch
         {
             AuthenticationTypes.Google => LinkedAccountType.Google,
             AuthenticationTypes.Facebook => LinkedAccountType.Facebook,
@@ -47,7 +46,8 @@ public sealed class HandleOAuthLoginCommandHandler(
         if (!string.IsNullOrEmpty(request.RemoteError))
         {
             return Results.Found(QueryBuilder.Create()
-                .WithUri(fallbackUri)
+                .WithUri(request.ReturnUri)
+                .WithQueryParam("provider", provider)
                 .WithQueryParam("error", Errors.OAuth.ServerError)
                 .WithQueryParam("error_description", request.RemoteError)
                 .Build());
@@ -59,7 +59,8 @@ public sealed class HandleOAuthLoginCommandHandler(
         if (email is null)
         {
             return Results.Found(QueryBuilder.Create()
-                .WithUri(fallbackUri)
+                .WithUri(request.ReturnUri)
+                .WithQueryParam("provider", provider)
                 .WithQueryParam("error", Errors.Common.InvalidCredentials)
                 .WithQueryParam("error_description", "Email was not provided in credentials.")
                 .Build());
@@ -73,8 +74,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             {
                 Type = linkedAccountType,
                 Email = email,
-                ReturnUri = request.ReturnUri!,
-                FallbackUri = fallbackUri,
+                ReturnUri = request.ReturnUri,
                 Token = token,
                 SessionId = Guid.Parse(sessionId),
             };
@@ -84,7 +84,8 @@ public sealed class HandleOAuthLoginCommandHandler(
             
             var signUpError = signUpResult.GetError();
             return Results.Found(QueryBuilder.Create()
-                .WithUri(fallbackUri)
+                .WithUri(request.ReturnUri)
+                .WithQueryParam("provider", provider)
                 .WithQueryParam("error", signUpError.Code)
                 .WithQueryParam("error_description", signUpError.Description)
                 .Build());
@@ -93,10 +94,10 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         var signInPayload = new OAuthSignInPayload()
         {
-            LinkedAccount = linkedAccountType,
             Email = email,
-            ReturnUri = request.ReturnUri!,
             Token = token,
+            LinkedAccount = linkedAccountType,
+            ReturnUri = request.ReturnUri!,
             SessionId = Guid.Parse(sessionId),
         };
         
@@ -106,7 +107,8 @@ public sealed class HandleOAuthLoginCommandHandler(
         
         var signInError = signInResult.GetError();
         return Results.Found(QueryBuilder.Create()
-            .WithUri(fallbackUri)
+            .WithUri(request.ReturnUri)
+            .WithQueryParam("provider", provider)
             .WithQueryParam("error", signInError.Code)
             .WithQueryParam("error_description", signInError.Description)
             .Build());

@@ -21,9 +21,9 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointDescription("OAuth login")]
     [ProducesResponseType(200)]
     [HttpGet("login/{type}")]
-    public async ValueTask<IActionResult> OAuthLoginAsync(string type, string returnUri, string fallbackUri)
+    public async ValueTask<IActionResult> OAuthLoginAsync(string type, string returnUri)
     {
-        var result = await _sender.Send(new OAuthLoginCommand(type, returnUri, fallbackUri));
+        var result = await _sender.Send(new OAuthLoginCommand(type, returnUri));
 
         return result.Match<IActionResult>(
             s =>
@@ -38,8 +38,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointDescription("Handles OAuth login")]
     [ProducesResponseType(200)]
     [HttpGet("handle")]
-    public async ValueTask<IActionResult> HandleOAuthLoginAsync(string? remoteError = null,
-        string? returnUri = null)
+    public async ValueTask<IActionResult> HandleOAuthLoginAsync(string returnUri, string? remoteError = null)
     {
         var authenticationResult = await _signInManager.AuthenticateAsync(
             AuthenticationDefaults.AuthenticationScheme);

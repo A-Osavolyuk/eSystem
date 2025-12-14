@@ -19,6 +19,18 @@
     
     [SupplyParameterFromQuery(Name = "token")] 
     public string Token { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "state")] 
+    public string State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "provider")] 
+    public string? Provider { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "error")] 
+    public string? Error { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "error_description")] 
+    public string? ErrorDescription { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

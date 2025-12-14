@@ -8,7 +8,7 @@ using OtpNet;
 
 namespace eSecurity.Server.Features.OAuth;
 
-public sealed record OAuthLoginCommand(string Type, string ReturnUri, string FallbackUri) : IRequest<Result>;
+public sealed record OAuthLoginCommand(string Type, string ReturnUri) : IRequest<Result>;
 
 public sealed class OAuthLoginCommandHandler(
     IOAuthSessionManager sessionManager,
@@ -20,11 +20,11 @@ public sealed class OAuthLoginCommandHandler(
     public async Task<Result> Handle(OAuthLoginCommand request,
         CancellationToken cancellationToken)
     {
-        var fallbackUri = request.FallbackUri;
         if (!_options.AllowOAuthLogin)
         {
             return Results.Found(QueryBuilder.Create()
-                .WithUri(fallbackUri)
+                .WithUri(request.ReturnUri)
+                .WithQueryParam("provider", request.Type)
                 .WithQueryParam("error", Errors.OAuth.ServerError)
                 .WithQueryParam("error_description", "OAuth is not allowed")
                 .Build());
@@ -49,7 +49,6 @@ public sealed class OAuthLoginCommandHandler(
             RedirectUri = builder.Build(),
             Items = 
             {
-                { "fallbackUri", fallbackUri },
                 { "sessionId", session.Id.ToString() },
                 { "token", token },
             }

@@ -23,7 +23,6 @@ public sealed class OAuthSignUpPayload : SignUpPayload
     public required LinkedAccountType Type { get; set; }
     public required string Email { get; set; }
     public required string ReturnUri { get; set; }
-    public required string FallbackUri { get; set; }
     public required string Token { get; set; }
 }
 
