@@ -20,10 +20,10 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [EndpointSummary("OAuth login")]
     [EndpointDescription("OAuth login")]
     [ProducesResponseType(200)]
-    [HttpGet("login/{type}")]
-    public async ValueTask<IActionResult> OAuthLoginAsync(string type, string returnUri)
+    [HttpGet("login")]
+    public async ValueTask<IActionResult> OAuthLoginAsync(string provide, string returnUri, string? state)
     {
-        var result = await _sender.Send(new OAuthLoginCommand(type, returnUri));
+        var result = await _sender.Send(new OAuthLoginCommand(provide, returnUri));
 
         return result.Match<IActionResult>(
             s =>

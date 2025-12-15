@@ -1,4 +1,7 @@
-﻿@using eSecurity.Core.Security.Authorization.OAuth.Constants
+﻿@using System.Text.Json
+@using eSecurity.Core.Security.Authorization.OAuth
+@using eSecurity.Core.Security.Authorization.OAuth.Constants
+@using eSystem.Core.Security.Cryptography.Encoding
 
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
@@ -10,7 +13,7 @@
                 ButtonType="ButtonType.Button"
                 StartIcon="@Icons.Custom.Brands.Google"
                 Variant="Variant.Filled"
-                OnClick="@(() => OnOAuth(ExternalAccounts.Google))"
+                Href="@(BuildUrl(ExternalAccounts.Google))"
                 Color="Color.Primary"
                 FullWidth="true">
                 Google
@@ -21,7 +24,7 @@
                 ButtonType="ButtonType.Button"
                 StartIcon="@Icons.Custom.Brands.Facebook"
                 Variant="Variant.Filled"
-                OnClick="@(() => OnOAuth(ExternalAccounts.Facebook))"
+                Href="@(BuildUrl(ExternalAccounts.Facebook))"
                 Color="Color.Primary"
                 FullWidth="true">
                 Facebook
@@ -32,7 +35,7 @@
                 ButtonType="ButtonType.Button"
                 StartIcon="@Icons.Custom.Brands.Microsoft"
                 Variant="Variant.Filled"
-                OnClick="@(() => OnOAuth(ExternalAccounts.Microsoft))"
+                Href="@(BuildUrl(ExternalAccounts.Microsoft))"
                 Color="Color.Primary"
                 FullWidth="true">
                 Microsoft
@@ -43,7 +46,7 @@
                 ButtonType="ButtonType.Button"
                 StartIcon="@Icons.Custom.Brands.X"
                 Variant="Variant.Filled"
-                OnClick="@(() => OnOAuth(ExternalAccounts.X))"
+                Href="@(BuildUrl(ExternalAccounts.X))"
                 Color="Color.Primary"
                 FullWidth="true">
                 X
@@ -53,11 +56,37 @@
 </MudPaper>
 
 @code {
-    private void OnOAuth(string type)
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
+    
+    private string BuildUrl(string type)
     {
-        NavigationManager.NavigateTo(QueryBuilder.Create()
-            .WithUri($"{Configuration["services:proxy:http:0"]!}/api/v1/OAuth/login/{type}")
-            .WithQueryParam("returnUri", $"{NavigationManager.BaseUri}account/oauth/sign-in")
-            .Build());
+        var builder = QueryBuilder.Create()
+            .WithUri($"{Configuration["services:proxy:http:0"]!}/api/v1/OAuth/login")
+            .WithQueryParam("provider", type)
+            .WithQueryParam("returnUri", $"{NavigationManager.BaseUri}account/oauth/sign-in");
+        
+        if (!string.IsNullOrEmpty(ReturnUrl))
+        {
+            var queryParams = QueryParser.GetQueryParameters(ReturnUrl);
+            var state = new OAuthState()
+            {
+                ResponseType = queryParams.GetValueOrDefault("response_type"),
+                ClientId = queryParams.GetValueOrDefault("client_id"),
+                RedirectUri = queryParams.GetValueOrDefault("redirect_uri"),
+                Scope = queryParams.GetValueOrDefault("scope"),
+                Nonce = queryParams.GetValueOrDefault("nonce"),
+                State = queryParams.GetValueOrDefault("state"),
+                Prompt = queryParams.GetValueOrDefault("prompt")
+            };
+            var stateJson = JsonSerializer.Serialize(state);
+            var stateBytes = Encoding.UTF8.GetBytes(stateJson);
+            var base64State = WebEncoders.Base64UrlEncode(stateBytes);
+            
+            builder.WithQueryParam("state", base64State);
+        }
+
+        return builder.Build();
     }
 }
