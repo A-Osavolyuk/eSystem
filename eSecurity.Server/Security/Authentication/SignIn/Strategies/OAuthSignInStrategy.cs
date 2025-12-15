@@ -118,11 +118,10 @@ public sealed class OAuthSignInStrategy(
         if (!updateResult.Succeeded) return updateResult;
 
         await _sessionManager.CreateAsync(device, cancellationToken);
-
-        var builder = QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
+        return Results.Ok(QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("sessionId", session.Id.ToString())
-            .WithQueryParam("token", oauthPayload.Token);
-
-        return Results.Ok(builder.Build());
+            .WithQueryParam("token", oauthPayload.Token)
+            .WithQueryParam("state", oauthPayload.State)
+            .Build());
     }
 }

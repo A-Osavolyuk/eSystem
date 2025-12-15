@@ -8,7 +8,7 @@ using OtpNet;
 
 namespace eSecurity.Server.Features.OAuth;
 
-public sealed record OAuthLoginCommand(string Type, string ReturnUri) : IRequest<Result>;
+public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string State) : IRequest<Result>;
 
 public sealed class OAuthLoginCommandHandler(
     IOAuthSessionManager sessionManager,
@@ -24,7 +24,7 @@ public sealed class OAuthLoginCommandHandler(
         {
             return Results.Found(QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
-                .WithQueryParam("provider", request.Type)
+                .WithQueryParam("provider", request.Provider)
                 .WithQueryParam("error", Errors.OAuth.ServerError)
                 .WithQueryParam("error_description", "OAuth is not allowed")
                 .Build());
@@ -51,6 +51,7 @@ public sealed class OAuthLoginCommandHandler(
             {
                 { "sessionId", session.Id.ToString() },
                 { "token", token },
+                { "state", request.State },
             }
         };
         
@@ -58,7 +59,7 @@ public sealed class OAuthLoginCommandHandler(
         
         var result = Results.Ok(new OAuthLoginResponse()
         {
-            Provider = request.Type,
+            Provider = request.Provider,
             AuthenticationProperties = properties
         });
         

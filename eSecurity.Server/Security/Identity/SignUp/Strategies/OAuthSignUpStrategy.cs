@@ -24,6 +24,7 @@ public sealed class OAuthSignUpPayload : SignUpPayload
     public required string Email { get; set; }
     public required string ReturnUri { get; set; }
     public required string Token { get; set; }
+    public required string State { get; set; }
 }
 
 public sealed class OAuthSignUpStrategy(
@@ -170,12 +171,10 @@ public sealed class OAuthSignUpStrategy(
         if (!sessionResult.Succeeded) return sessionResult;
 
         await _sessionManager.CreateAsync(newDevice, cancellationToken);
-
-
-        var builder = QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
+        return Results.Ok(QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("sessionId", session.Id.ToString())
-            .WithQueryParam("token", oauthPayload.Token);
-
-        return Results.Ok(builder.Build());
+            .WithQueryParam("token", oauthPayload.Token)
+            .WithQueryParam("state", oauthPayload.State)
+            .Build());
     }
 }
