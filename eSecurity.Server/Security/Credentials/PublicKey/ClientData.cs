@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using eSystem.Core.Security.Cryptography.Encoding;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace eSecurity.Server.Security.Credentials.PublicKey;
 
@@ -20,7 +21,7 @@ public class ClientData
 
     public static ClientData? Parse(string clientDataJson)
     {
-        var bytes = Base64Url.Decode(clientDataJson);
+        var bytes = WebEncoders.Base64UrlDecode(clientDataJson);
         var json = Encoding.UTF8.GetString(bytes);
         var clientData = JsonSerializer.Deserialize<ClientData>(json);
         

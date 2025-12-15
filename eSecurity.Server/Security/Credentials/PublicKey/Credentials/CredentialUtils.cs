@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using eSecurity.Core.Security.Credentials.PublicKey;
 using eSystem.Core.Security.Cryptography.Encoding;
+using Microsoft.AspNetCore.WebUtilities;
 using PeterO.Cbor;
 
 namespace eSecurity.Server.Security.Credentials.PublicKey.Credentials;
@@ -9,7 +10,7 @@ public static class CredentialUtils
 {
     public static string ToBase64String(string value)
     {
-        var bytes = Base64Url.Decode(value);
+        var bytes = WebEncoders.Base64UrlDecode(value);
         var base64 = Convert.ToBase64String(bytes);
         
         return base64;
@@ -17,7 +18,7 @@ public static class CredentialUtils
 
     public static uint ParseSignCount(string authenticatorData)
     {
-        var authenticatorDataBytes = Base64Url.Decode(authenticatorData);
+        var authenticatorDataBytes = WebEncoders.Base64UrlDecode(authenticatorData);
         var signCountBytes = authenticatorDataBytes.Skip(33).Take(4).ToArray();
         if (BitConverter.IsLittleEndian) Array.Reverse(signCountBytes);
         var signCount = BitConverter.ToUInt32(signCountBytes, 0);
@@ -26,9 +27,9 @@ public static class CredentialUtils
 
     public static bool VerifySignature(AuthenticatorAssertionResponse response, byte[] publicKey)
     {
-        var authenticatorDataBytes = Base64Url.Decode(response.AuthenticatorData);
-        var signature = Base64Url.Decode(response.Signature);
-        var clientDataJson = Base64Url.Decode(response.ClientDataJson);
+        var authenticatorDataBytes = WebEncoders.Base64UrlDecode(response.AuthenticatorData);
+        var signature = WebEncoders.Base64UrlDecode(response.Signature);
+        var clientDataJson = WebEncoders.Base64UrlDecode(response.ClientDataJson);
         var clientDataHash = SHA256.HashData(clientDataJson);
 
         var signedData = authenticatorDataBytes.Concat(clientDataHash).ToArray();

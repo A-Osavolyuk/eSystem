@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace eSecurity.Server.Security.Authentication.Oidc.Pkce;
 
@@ -18,7 +19,7 @@ public class PkceHandler : IPkceHandler
         {
             var bytes = Encoding.UTF8.GetBytes(codeVerifier);
             var hash = SHA256.HashData(bytes);
-            return Base64Url.Encode(hash);
+            return WebEncoders.Base64UrlEncode(hash);
         }
         
         return codeVerifier;
