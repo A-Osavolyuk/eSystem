@@ -1,10 +1,13 @@
 ﻿@using System.Text.Json
+@using eSecurity.Client.Security.Authentication.Oidc.Clients
 @using eSecurity.Core.Security.Authorization.OAuth
 @using eSecurity.Core.Security.Authorization.OAuth.Constants
+@using eSystem.Core.Security.Authentication.Oidc.Authorization
 @using eSystem.Core.Security.Cryptography.Encoding
 
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
+@inject IOptions<ClientOptions> ClientOptions
 
 <MudPaper Outlined Class="pa-3">
     <MudGrid Spacing="1" Justify="Justify.Center">
@@ -63,14 +66,15 @@
     private string BuildUrl(string type)
     {
         var builder = QueryBuilder.Create()
-            .WithUri($"{Configuration["services:proxy:http:0"]!}/api/v1/OAuth/login")
+            .WithUri($"{Configuration["services:proxy:https:0"]!}/api/v1/OAuth/login")
             .WithQueryParam("provider", type)
             .WithQueryParam("returnUri", $"{NavigationManager.BaseUri}account/oauth/sign-in");
-        
+
+        OAuthState? state;
         if (!string.IsNullOrEmpty(ReturnUrl))
         {
             var queryParams = QueryParser.GetQueryParameters(ReturnUrl);
-            var state = new OAuthState()
+            state = new OAuthState()
             {
                 ResponseType = queryParams.GetValueOrDefault("response_type"),
                 ClientId = queryParams.GetValueOrDefault("client_id"),
@@ -80,12 +84,27 @@
                 State = queryParams.GetValueOrDefault("state"),
                 Prompt = queryParams.GetValueOrDefault("prompt")
             };
-            var stateJson = JsonSerializer.Serialize(state);
-            var stateBytes = Encoding.UTF8.GetBytes(stateJson);
-            var base64State = WebEncoders.Base64UrlEncode(stateBytes);
-            
-            builder.WithQueryParam("state", base64State);
         }
+        else
+        {
+            var options = ClientOptions.Value;
+            state = new OAuthState()
+            {
+                ResponseType = ResponseTypes.Code,
+                ClientId = options.ClientId,
+                RedirectUri = options.CallbackUri,
+                Scope = string.Join(" ", options.Scopes),
+                Nonce = "1234567890",
+                State = "1234567890",
+                Prompt = Prompts.Consent
+            };
+        }
+        
+        var stateJson = JsonSerializer.Serialize(state);
+        var stateBytes = Encoding.UTF8.GetBytes(stateJson);
+        var base64State = WebEncoders.Base64UrlEncode(stateBytes);
+            
+        builder.WithQueryParam("state", base64State);
 
         return builder.Build();
     }
