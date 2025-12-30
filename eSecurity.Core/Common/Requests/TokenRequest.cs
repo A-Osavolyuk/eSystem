@@ -27,4 +27,10 @@ public class TokenRequest
     
     [FromForm(Name = "scope")]
     public string? Scope { get; set; }
+    
+    [FromForm(Name = "client_assertion")]
+    public string? ClientAssertion { get; set; }
+    
+    [FromForm(Name = "client_assertion_type")]
+    public string? ClientAssertionType { get; set; }
 }
