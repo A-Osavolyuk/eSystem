@@ -15,7 +15,6 @@ namespace eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
 
 public sealed class RefreshTokenPayload : TokenPayload
 {
-    public string? ClientSecret { get; set; }
     public string? RefreshToken { get; set; }
     public string? RedirectUri { get; set; }
     public string? Scope { get; set; }

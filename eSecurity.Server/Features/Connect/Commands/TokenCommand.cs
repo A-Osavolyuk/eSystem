@@ -44,7 +44,6 @@ public class TokenCommandHandler(
             {
                 ClientId = request.Request.ClientId,
                 GrantType = request.Request.GrantType,
-                ClientSecret = request.Request.ClientSecret,
                 CodeVerifier = request.Request.CodeVerifier,
                 RedirectUri = request.Request.RedirectUri,
                 Code = request.Request.Code
@@ -53,7 +52,6 @@ public class TokenCommandHandler(
             {
                 ClientId = request.Request.ClientId,
                 GrantType = request.Request.GrantType,
-                ClientSecret = request.Request.ClientSecret,
                 RedirectUri = request.Request.RedirectUri,
                 RefreshToken = request.Request.RefreshToken,
                 Scope = request.Request.Scope
