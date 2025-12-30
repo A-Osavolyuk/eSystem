@@ -149,7 +149,7 @@ public class ApiClient(
 
         var httpOptions = new HttpOptions()
         {
-            ContentType = ContentTypes.Application.Json,
+            ContentType = ContentTypes.Application.XwwwFormUrlEncoded,
             Authentication = AuthenticationType.Basic
         };
 
