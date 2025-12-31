@@ -21,72 +21,72 @@ public static class AuthenticationExtensions
     public static void AddAuthentication(this IHostApplicationBuilder builder)
     {
         var configuration = builder.Configuration;
-        
+
         builder.Services.AddPasswordManagement();
         builder.Services.AddSignInStrategies();
         builder.Services.Add2Fa();
         builder.Services.AddLockout();
         builder.Services.AddOidc(cfg =>
-            {
-                cfg.Issuer = "https://localhost:6201";
-                cfg.AuthorizationEndpoint = "https://localhost:6501/connect/authorize";
-                cfg.EndSessionEndpoint = "https://localhost:6501/connect/logout";
-                cfg.TokenEndpoint = "https://localhost:6201/api/v1/connect/token";
-                cfg.UserinfoEndpoint = "https://localhost:6201/api/v1/connect/userinfo";
-                cfg.IntrospectionEndpoint = "https://localhost:6201/api/v1/connect/introspection";
-                cfg.RevocationEndpoint = "https://localhost:6201/api/v1/connect/revocation";
-                cfg.JwksUri = "https://localhost:6201/api/v1/connect/jwks.json";
+        {
+            cfg.Issuer = "https://localhost:6201";
+            cfg.AuthorizationEndpoint = "https://localhost:6501/connect/authorize";
+            cfg.EndSessionEndpoint = "https://localhost:6501/connect/logout";
+            cfg.TokenEndpoint = "https://localhost:6201/api/v1/connect/token";
+            cfg.UserinfoEndpoint = "https://localhost:6201/api/v1/connect/userinfo";
+            cfg.IntrospectionEndpoint = "https://localhost:6201/api/v1/connect/introspection";
+            cfg.RevocationEndpoint = "https://localhost:6201/api/v1/connect/revocation";
+            cfg.JwksUri = "https://localhost:6201/api/v1/connect/jwks.json";
 
-                cfg.ResponseTypesSupported = [ResponseTypes.Code];
-                cfg.GrantTypesSupported =
-                [
-                    GrantTypes.AuthorizationCode,
-                    GrantTypes.RefreshToken
-                ];
-                
-                cfg.PromptValuesSupported =
-                [
-                    Prompts.None,
-                    Prompts.Login,
-                    Prompts.Consent,
-                    Prompts.SelectAccount
-                ];
+            cfg.ResponseTypesSupported = [ResponseTypes.Code];
+            cfg.GrantTypesSupported =
+            [
+                GrantTypes.AuthorizationCode,
+                GrantTypes.RefreshToken
+            ];
 
-                cfg.SubjectTypesSupported = [SubjectTypes.Public, SubjectTypes.Pairwise];
-                cfg.IdTokenSigningAlgValuesSupported = [SecurityAlgorithms.RsaSha256];
-                cfg.TokenEndpointAuthMethodsSupported =
-                [
-                    TokenAuthMethods.ClientSecretBasic,
-                    TokenAuthMethods.ClientSecretJwt,
-                    TokenAuthMethods.ClientSecretPost,
-                    TokenAuthMethods.PrivateKeyJwt,
-                    TokenAuthMethods.None
-                ];
+            cfg.PromptValuesSupported =
+            [
+                Prompts.None,
+                Prompts.Login,
+                Prompts.Consent,
+                Prompts.SelectAccount
+            ];
 
-                cfg.CodeChallengeMethodsSupported = [ChallengeMethods.S256];
-                cfg.ScopesSupported =
-                [
-                    Scopes.OfflineAccess,
-                    Scopes.OpenId,
-                    Scopes.Email,
-                    Scopes.Profile,
-                    Scopes.Phone,
-                    Scopes.Address
-                ];
+            cfg.SubjectTypesSupported = [SubjectTypes.Public, SubjectTypes.Pairwise];
+            cfg.IdTokenSigningAlgValuesSupported = [SecurityAlgorithms.RsaSha256];
+            cfg.TokenEndpointAuthMethodsSupported =
+            [
+                TokenAuthMethods.ClientSecretBasic,
+                TokenAuthMethods.ClientSecretJwt,
+                TokenAuthMethods.ClientSecretPost,
+                TokenAuthMethods.PrivateKeyJwt,
+                TokenAuthMethods.None
+            ];
 
-                cfg.BackchannelLogoutSupported = false;
-                cfg.BackchannelLogoutSessionSupported = false;
+            cfg.CodeChallengeMethodsSupported = [ChallengeMethods.S256];
+            cfg.ScopesSupported =
+            [
+                Scopes.OfflineAccess,
+                Scopes.OpenId,
+                Scopes.Email,
+                Scopes.Profile,
+                Scopes.Phone,
+                Scopes.Address
+            ];
 
-                cfg.FrontchannelLogoutSupported = true;
-                cfg.FrontchannelLogoutSessionSupported = true;
-            });
-        
+            cfg.BackchannelLogoutSupported = false;
+            cfg.BackchannelLogoutSessionSupported = false;
+
+            cfg.FrontchannelLogoutSupported = true;
+            cfg.FrontchannelLogoutSessionSupported = true;
+        });
+
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = AuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = AuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(AuthenticationDefaults.AuthenticationScheme, options =>
@@ -105,6 +105,7 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
+                options.SignInScheme = AuthenticationDefaults.AuthenticationScheme;
             })
             .AddFacebook(options =>
             {
@@ -115,6 +116,7 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
+                options.SignInScheme = AuthenticationDefaults.AuthenticationScheme;
             })
             .AddMicrosoftAccount(options =>
             {
@@ -125,10 +127,11 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
+                options.SignInScheme = AuthenticationDefaults.AuthenticationScheme;
             })
             .AddScheme<JwtAuthenticationSchemeOptions, JwtAuthenticationHandler>(
-                JwtBearerDefaults.AuthenticationScheme, _ => {})
+                JwtBearerDefaults.AuthenticationScheme, _ => { })
             .AddScheme<BasicAuthenticationSchemeOptions, BasicAuthenticationHandler>(
-                BasicAuthenticationDefaults.AuthenticationScheme, _ => {});
+                BasicAuthenticationDefaults.AuthenticationScheme, _ => { });
     }
 }
