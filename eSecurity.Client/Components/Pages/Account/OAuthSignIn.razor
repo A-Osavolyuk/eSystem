@@ -1,4 +1,5 @@
 ﻿@page "/account/oauth/sign-in/"
+@using System.Text.Json
 @using eSecurity.Client.Security.Authorization.OAuth
 @using eSecurity.Core.Security.Authorization.OAuth
 
@@ -8,9 +9,28 @@
 <Title Text="Sign in via OAuth" />
 
 <MudGrid Justify="Justify.Center">
-    <MudItem xs="4" Style="margin-top: 150px">
-        <MudLoading Loading="true" LoaderType="LoaderType.Circular" Text="Processing OAuth session..."></MudLoading>
-    </MudItem>
+    @if (string.IsNullOrEmpty(Error) && string.IsNullOrEmpty(ErrorDescription))
+    {
+        <MudItem xs="4" Style="margin-top: 150px">
+            <MudLoading Loading="true" LoaderType="LoaderType.Circular" Text="Processing OAuth session..."/>
+        </MudItem>
+    }
+    else
+    {
+        <MudItem xs="4" Style="margin-top: 150px">
+            <MudPaper Outlined="true" Class="pa-5">
+                <MudStack Spacing="3">
+                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
+                        Authorization Error
+                    </MudTextM3>
+                    <MudStack Spacing="1">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Large" Class="fw-bold">Error: @Error</MudTextM3>
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Large" Class="fw-bold">Description: @ErrorDescription</MudTextM3>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    }
 </MudGrid>
 
 @code {
@@ -23,9 +43,6 @@
     [SupplyParameterFromQuery(Name = "state")] 
     public string State { get; set; } = string.Empty;
     
-    [SupplyParameterFromQuery(Name = "provider")] 
-    public string? Provider { get; set; }
-    
     [SupplyParameterFromQuery(Name = "error")] 
     public string? Error { get; set; }
     
@@ -34,7 +51,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && !string.IsNullOrEmpty(SessionId) && !string.IsNullOrEmpty(Token))
         {
             var request = new LoadOAuthSessionRequest()
             {
@@ -49,23 +66,10 @@
                 var response = result.Get()!;
                 
                 UserState.UserId = response.UserId;
-                AuthenticationManager.Authorize();
-                
-                //TODO: Handle different OAuth sign types
 
-                if (response.SignType == OAuthSignType.SignIn)
-                {
-                    Snackbar.Add($"Successfully signed in with {response.LinkedAccount}", Severity.Success);
-                    NavigationManager.NavigateTo(Links.Account.Profile);
-                }
-                else
-                {
-                    var builder = QueryBuilder.Create()
-                        .WithUri(Links.Account.OAuthSignedUpPage)
-                        .WithQueryParam("provider", response.LinkedAccount);
-                    
-                    NavigationManager.NavigateTo(builder.Build());
-                }
+                var encodedState = WebEncoders.Base64UrlDecode(State);
+                var stateJson = Encoding.UTF8.GetString(encodedState);
+                var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
             }
             else
             {
