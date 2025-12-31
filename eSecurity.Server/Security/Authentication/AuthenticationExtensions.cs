@@ -94,7 +94,7 @@ public static class AuthenticationExtensions
                 options.Cookie.Name = DefaultCookies.External;
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.MaxAge = TimeSpan.FromDays(30);
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(5);
             })
             .AddGoogle(options =>
             {
