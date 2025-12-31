@@ -1,0 +1,40 @@
+﻿@page "account/oauth/handle"
+
+@inherits PageBase
+
+<Title Text="Handling OAuth session..."/>
+
+@code {
+    [SupplyParameterFromQuery(Name = "sessionId")]
+    public string SessionId { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "token")]
+    public string Token { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? ErrorCode { get; set; }
+
+    [SupplyParameterFromQuery(Name = "error_description")]
+    public string? ErrorDescription { get; set; }
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(ErrorCode) && !string.IsNullOrEmpty(ErrorDescription))
+        {
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(Links.OAuth.Error)
+                .WithQueryParam("error", ErrorCode)
+                .WithQueryParam("error_description", ErrorDescription)
+                .Build());
+        }
+        else
+        {
+            
+        }
+    }
+}

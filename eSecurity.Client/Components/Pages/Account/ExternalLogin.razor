@@ -68,7 +68,7 @@
         var builder = QueryBuilder.Create()
             .WithUri($"{Configuration["services:proxy:https:0"]!}/api/v1/OAuth/login")
             .WithQueryParam("provider", type)
-            .WithQueryParam("returnUri", $"{NavigationManager.BaseUri}account/oauth/sign-in");
+            .WithQueryParam("returnUri", $"{NavigationManager.BaseUri}account/oauth/handle");
 
         OAuthState? state;
         if (!string.IsNullOrEmpty(ReturnUrl))

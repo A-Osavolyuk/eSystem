@@ -30,7 +30,6 @@ public static class Links
         public const string RecoveryCodesViewPage = "/account/2fa/recovery-codes/view";
         public const string RecoveryCodesPrintPage = "/account/2fa/recovery-codes/print";
         public const string EnableTwoFactorPage = "/account/2fa/enable";
-        public const string OAuthSignedUpPage = "/account/oauth/signed-up";
         public const string EmailsPage = "/account/emails";
         public const string EmailChangePage = "/account/email/change";
         public const string EmailVerifyPage = "/account/email/verify";
@@ -41,5 +40,13 @@ public static class Links
         public const string SettingsPage = "/account/settings";
         public const string DevicesPage = "/account/devices";
         public const string PhoneNumbersPage = "/account/phone-numbers";
+    }
+
+    public static class OAuth
+    {
+        public const string SignUp = "/account/oauth/sign-up";
+        public const string SignIn = "/account/oauth/sign-in";
+        public const string Error = "/account/oauth/error";
+        public const string Handle = "/account/oauth/handle";
     }
 }

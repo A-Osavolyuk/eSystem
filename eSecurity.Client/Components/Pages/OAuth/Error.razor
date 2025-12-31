@@ -1,0 +1,33 @@
+﻿@page "/account/oauth/error"
+
+@inherits PageBase
+
+<Title Text="OAuth Error"/>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4" Style="margin-top: 150px">
+        <MudPaper Outlined="true" Class="pa-5">
+            <MudStack Spacing="3">
+                <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
+                    Authorization Error
+                </MudTextM3>
+                <MudStack Spacing="1">
+                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Large" Class="fw-bold">
+                        Error: @ErrorCode
+                    </MudTextM3>
+                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Large" Class="fw-bold">
+                        Description: @ErrorDescription
+                    </MudTextM3>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? ErrorCode { get; set; }
+
+    [SupplyParameterFromQuery(Name = "error_description")]
+    public string? ErrorDescription { get; set; }
+}
