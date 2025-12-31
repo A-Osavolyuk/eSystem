@@ -39,7 +39,7 @@ public class LoadOAuthSessionCommandHandler(
         {
             UserId = user.Id,
             SignType = session.SignType,
-            LinkedAccount = linkedAccount.Type.ToString(),
+            Provider = linkedAccount.Type.ToString(),
         };
 
         return Results.Ok(response);
