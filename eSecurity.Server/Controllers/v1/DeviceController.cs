@@ -27,7 +27,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [EndpointDescription("Block device")]
     [ProducesResponseType(200)]
     [HttpPost("block")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> BlockAsync([FromBody] BlockDeviceRequest request)
     {
         var result = await _sender.Send(new BlockDeviceCommand(request));
@@ -38,7 +38,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [EndpointDescription("Unblock device")]
     [ProducesResponseType(200)]
     [HttpPost("unblock")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> UnblockAsync([FromBody] UnblockDeviceRequest request)
     {
         var result = await _sender.Send(new UnblockDeviceCommand(request));
@@ -49,7 +49,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [EndpointDescription("Verify device")]
     [ProducesResponseType(200)]
     [HttpPost("verify")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyDeviceRequest request)
     {
         var result = await _sender.Send(new VerifyDeviceCommand(request));

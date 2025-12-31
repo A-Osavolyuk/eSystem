@@ -16,7 +16,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Enable 2FA")]
     [ProducesResponseType(200)]
     [HttpPost("enable")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> EnableAsync([FromBody] EnableTwoFactorRequest request)
     {
         var result = await _sender.Send(new EnableTwoFactorCommand(request));
@@ -27,7 +27,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Disable 2FA")]
     [ProducesResponseType(200)]
     [HttpPost("disable")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> DisableAsync([FromBody] DisableTwoFactorRequest request)
     {
         var result = await _sender.Send(new DisableTwoFactorCommand(request));
@@ -38,7 +38,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Prefer 2FA method")]
     [ProducesResponseType(200)]
     [HttpPost("prefer")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> PreferAsync([FromBody] PreferTwoFactorMethodRequest request)
     {
         var result = await _sender.Send(new PreferTwoFactorMethodCommand(request));
@@ -49,7 +49,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Generate QR code")]
     [ProducesResponseType(200)]
     [HttpPost("qr-code/generate")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GenerateQrCodeAsync([FromBody] GenerateQrCodeRequest request)
     {
         var result = await _sender.Send(new GenerateQrCodeCommand(request));
@@ -60,7 +60,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Regenerate QR code")]
     [ProducesResponseType(200)]
     [HttpPost("qr-code/regenerate")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> RegenerateQrCodeAsync([FromBody] RegenerateQrCodeRequest request)
     {
         var result = await _sender.Send(new RegenerateQrCodeCommand(request));
@@ -71,7 +71,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Generate recovery codes")]
     [ProducesResponseType(200)]
     [HttpPost("recovery-code/generate")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GenerateRecoveryCodesAsync([FromBody] GenerateRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new GenerateRecoveryCodesCommand(request));
@@ -82,7 +82,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Load recovery codes")]
     [ProducesResponseType(200)]
     [HttpPost("recovery-code/load")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> LoadRecoveryCodesAsync([FromBody] LoadRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new LoadRecoveryCodesCommand(request));
@@ -93,7 +93,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Revoke recovery codes")]
     [ProducesResponseType(200)]
     [HttpPost("recovery-code/revoke")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> RevokeRecoveryCodesAsync([FromBody] RevokeRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new RevokeRecoveryCodesCommand(request));
@@ -104,7 +104,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Verify authenticator")]
     [ProducesResponseType(200)]
     [HttpPost("authenticator/verify")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> VerifyAuthenticatorAsync([FromBody] VerifyAuthenticatorRequest request)
     {
         var result = await _sender.Send(new VerifyAuthenticatorCommand(request));
@@ -115,7 +115,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Reconfigure authenticator")]
     [ProducesResponseType(200)]
     [HttpPost("authenticator/reconfigure")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ReconfigureAuthenticatorAsync([FromBody] ReconfigureAuthenticatorRequest request)
     {
         var result = await _sender.Send(new ReconfigureAuthenticatorCommand(request));

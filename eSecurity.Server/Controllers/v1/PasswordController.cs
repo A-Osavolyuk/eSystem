@@ -16,7 +16,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [EndpointDescription("Add password")]
     [ProducesResponseType(200)]
     [HttpPost("add")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> AddAsync([FromBody] AddPasswordRequest request)
     {
         var result = await _sender.Send(new AddPasswordCommand(request));
@@ -27,7 +27,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [EndpointDescription("Change password")]
     [ProducesResponseType(200)]
     [HttpPost("change")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangePasswordRequest request)
     {
         var result = await _sender.Send(new ChangePasswordCommand(request));
@@ -49,7 +49,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [EndpointDescription("Remove password")]
     [ProducesResponseType(200)]
     [HttpPost("remove")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasswordRequest request)
     {
         var result = await _sender.Send(new RemovePasswordCommand(request));

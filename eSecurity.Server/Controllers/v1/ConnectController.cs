@@ -47,6 +47,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Userinfo")]
     [ProducesResponseType(200)]
     [HttpGet("userinfo")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserInfoAsync()
     {
         if (Request.HasFormContentType)

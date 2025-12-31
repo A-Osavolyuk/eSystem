@@ -16,7 +16,7 @@ public class LinkedAccountController(ISender sender) : ControllerBase
     [EndpointDescription("Disconnect linked account")]
     [ProducesResponseType(200)]
     [HttpPost("disconnect")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> DisconnectAsync([FromBody] DisconnectLinkedAccountRequest request)
     {
         var result = await _sender.Send(new DisconnectLinkedAccountCommand(request));

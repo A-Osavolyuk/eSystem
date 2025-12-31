@@ -17,7 +17,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Change username")]
     [ProducesResponseType(200)]
     [HttpPost("username/change")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> EnableAsync([FromBody] ChangeUsernameRequest request)
     {
         var result = await _sender.Send(new ChangeUsernameCommand(request));
@@ -28,7 +28,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserQuery(userId));
@@ -39,7 +39,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's state")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/state")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserStateAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserStateQuery(userId));
@@ -50,7 +50,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's roles")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/roles")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserRolesAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserRolesQuery(userId));
@@ -72,7 +72,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's verification methods")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/verification/methods")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserVerificationMethodsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserVerificationDataQuery(userId));
@@ -83,7 +83,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's personal data")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/privacy")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserPersonalDataAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPersonalQuery(userId));
@@ -105,7 +105,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's linked accounts")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/linked-accounts")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserLinkedAccountsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserLinkedAccountDataQuery(userId));
@@ -116,7 +116,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's login methods")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/login-methods")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserLoginMethodsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserLoginMethodsQuery(userId));
@@ -127,7 +127,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's devices")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/devices")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserDevicesQuery(userId));
@@ -149,7 +149,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's emails")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/emails")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserEmailsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserEmailsQuery(userId));
@@ -171,7 +171,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's phone numbers")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}/phone-numbers")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPhoneNumbersQuery(userId));

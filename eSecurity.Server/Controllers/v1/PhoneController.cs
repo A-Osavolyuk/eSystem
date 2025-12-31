@@ -38,7 +38,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [EndpointDescription("Add phone number")]
     [ProducesResponseType(200)]
     [HttpPost("add")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> AddAsync([FromBody] AddPhoneNumberRequest request)
     {
         var result = await _sender.Send(new AddPhoneNumberCommand(request));
@@ -49,7 +49,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [EndpointDescription("Change phone number")]
     [ProducesResponseType(200)]
     [HttpPost("change")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangePhoneNumberRequest request)
     {
         var result = await _sender.Send(new ChangePhoneNumberCommand(request));
@@ -60,7 +60,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [EndpointDescription("Reset phone number")]
     [ProducesResponseType(200)]
     [HttpPost("reset")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetPhoneNumberRequest request)
     {
         var result = await _sender.Send(new ResetPhoneNumberCommand(request));
@@ -71,7 +71,7 @@ public class PhoneController(ISender sender) : ControllerBase
     [EndpointDescription("Remove phone number")]
     [ProducesResponseType(200)]
     [HttpPost("remove")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePhoneNumberRequest request)
     {
         var result = await _sender.Send(new RemovePhoneNumberCommand(request));

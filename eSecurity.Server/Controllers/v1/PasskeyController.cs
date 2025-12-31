@@ -16,7 +16,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [EndpointDescription("Generate public key credential creation options")]
     [ProducesResponseType(200)]
     [HttpPost("options/creation")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GenerateCreationOptionsAsync(
         [FromBody] GenerateCreationOptionsRequest request)
     {
@@ -39,7 +39,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [EndpointDescription("Create passkey")]
     [ProducesResponseType(200)]
     [HttpPost("create")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> CreateAsync([FromBody] CreatePasskeyRequest request)
     {
         var result = await _sender.Send(new CreatePasskeyCommand(request));
@@ -50,7 +50,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [EndpointDescription("Remove passkey")]
     [ProducesResponseType(200)]
     [HttpPost("remove")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasskeyRequest request)
     {
         var result = await _sender.Send(new RemovePasskeyCommand(request));
@@ -61,7 +61,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [EndpointDescription("Change passkey display name")]
     [ProducesResponseType(200)]
     [HttpPost("change-name")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ChangeNameAsync([FromBody] ChangePasskeyNameRequest request)
     {
         var result = await _sender.Send(new ChangePasskeyNameCommand(request));

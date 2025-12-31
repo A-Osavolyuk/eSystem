@@ -38,7 +38,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointDescription("Add email")]
     [ProducesResponseType(200)]
     [HttpPost("add")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> AddAsync([FromBody] AddEmailRequest request)
     {
         var result = await _sender.Send(new AddEmailCommand(request));
@@ -49,7 +49,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointDescription("Change email")]
     [ProducesResponseType(200)]
     [HttpPost("change")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangeEmailRequest request)
     {
         var result = await _sender.Send(new ChangeEmailCommand(request));
@@ -60,7 +60,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointDescription("Reset email")]
     [ProducesResponseType(200)]
     [HttpPost("reset")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetEmailRequest request)
     {
         var result = await _sender.Send(new ResetEmailCommand(request));
@@ -71,7 +71,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointDescription("Remove email")]
     [ProducesResponseType(200)]
     [HttpPost("remove")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemoveEmailRequest request)
     {
         var result = await _sender.Send(new RemoveEmailCommand(request));
@@ -82,7 +82,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointDescription("Manage email")]
     [ProducesResponseType(200)]
     [HttpPost("manage")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ManageAsync([FromBody] ManageEmailRequest request)
     {
         var result = await _sender.Send(new ManageEmailCommand(request));
