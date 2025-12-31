@@ -48,7 +48,6 @@ public sealed class HandleOAuthLoginCommandHandler(
         {
             return Results.Found(QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
-                .WithQueryParam("provider", provider)
                 .WithQueryParam("error", Errors.OAuth.ServerError)
                 .WithQueryParam("error_description", request.RemoteError)
                 .Build());
@@ -61,7 +60,6 @@ public sealed class HandleOAuthLoginCommandHandler(
         {
             return Results.Found(QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
-                .WithQueryParam("provider", provider)
                 .WithQueryParam("error", Errors.Common.InvalidCredentials)
                 .WithQueryParam("error_description", "Email was not provided in credentials.")
                 .Build());
@@ -87,7 +85,6 @@ public sealed class HandleOAuthLoginCommandHandler(
             var signUpError = signUpResult.GetError();
             return Results.Found(QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
-                .WithQueryParam("provider", provider)
                 .WithQueryParam("error", signUpError.Code)
                 .WithQueryParam("error_description", signUpError.Description)
                 .Build());
@@ -111,7 +108,6 @@ public sealed class HandleOAuthLoginCommandHandler(
         var signInError = signInResult.GetError();
         return Results.Found(QueryBuilder.Create()
             .WithUri(request.ReturnUri)
-            .WithQueryParam("provider", provider)
             .WithQueryParam("error", signInError.Code)
             .WithQueryParam("error_description", signInError.Description)
             .Build());
