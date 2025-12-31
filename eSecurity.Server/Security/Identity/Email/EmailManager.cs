@@ -181,9 +181,9 @@ public class EmailManager(AuthDbContext context) : IEmailManager
 
     public async ValueTask<bool> IsTakenAsync(string email, CancellationToken cancellationToken = default)
     {
+        var normalizedEmail = email.ToUpperInvariant();
         return await _context.UserEmails.AnyAsync(
-            u => u.NormalizedEmail.Equals(email, StringComparison.CurrentCultureIgnoreCase),
-            cancellationToken);
+            u => u.NormalizedEmail == normalizedEmail, cancellationToken);
     }
 
     public async ValueTask<bool> HasAsync(UserEntity user, EmailType type, CancellationToken cancellationToken = default)

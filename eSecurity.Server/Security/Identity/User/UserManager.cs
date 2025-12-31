@@ -13,9 +13,10 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     {
         var normalizedEmail = email.ToUpper();
         var user = await _context.Users
-            .Where(x => _context.UserEmails
-                .Any(e => e.UserId == e.Id && e.Type == EmailType.Primary))
-            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(u => _context.UserEmails
+                .Any(e => e.UserId == u.Id &&
+                          e.Type == EmailType.Primary &&
+                          e.Email == normalizedEmail), cancellationToken);
 
         return user;
     }
