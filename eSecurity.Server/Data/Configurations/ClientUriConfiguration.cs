@@ -13,7 +13,7 @@ public class ClientUriConfiguration : IEntityTypeConfiguration<ClientUriEntity>
         builder.Property(x => x.Type).HasEnumConversion();
         
         builder.HasOne(x => x.Client)
-            .WithMany()
+            .WithMany(x => x.Uris)
             .HasForeignKey(x => x.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
     }
