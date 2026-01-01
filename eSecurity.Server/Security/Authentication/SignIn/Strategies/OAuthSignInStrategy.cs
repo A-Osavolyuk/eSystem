@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Utilities.Query;
+using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -111,7 +112,7 @@ public sealed class OAuthSignInStrategy(
         var session = await _oauthSessionManager.FindAsync(sid, oauthPayload.Token, cancellationToken);
         if (session is null) return Results.BadRequest("Session not found.");
 
-        session.SignType = OAuthSignType.SignIn;
+        session.Flow = OAuthFlow.SignIn;
         session.LinkedAccountId = linkedAccount.Id;
 
         var updateResult = await _oauthSessionManager.UpdateAsync(session, cancellationToken);

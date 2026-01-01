@@ -14,6 +14,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Utilities.Query;
+using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
 
@@ -164,7 +165,7 @@ public sealed class OAuthSignUpStrategy(
         var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);
         if (!linkedAccountResult.Succeeded) return linkedAccountResult;
 
-        session.SignType = OAuthSignType.SignUp;
+        session.Flow = OAuthFlow.SignUp;
         session.LinkedAccountId = userLinkedAccount.Id;
 
         var sessionResult = await _oauthSessionManager.UpdateAsync(session, cancellationToken);

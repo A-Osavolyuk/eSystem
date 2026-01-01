@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Security.Authorization.OAuth;
 using eSystem.Core.Data.Entities;
+using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 
 namespace eSecurity.Server.Data.Entities;
 
@@ -9,7 +10,7 @@ public class OAuthSessionEntity : Entity
     public Guid? LinkedAccountId { get; set; }
     
     public string Token { get; set; } = string.Empty;
-    public OAuthSignType SignType { get; set; }
+    public OAuthFlow Flow { get; set; }
     public DateTimeOffset? ExpiredDate { get; set; }
     
     public UserLinkedAccountEntity? LinkedAccount { get; set; }

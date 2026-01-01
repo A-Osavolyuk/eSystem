@@ -10,7 +10,7 @@ public sealed class OAuthSessionConfiguration : IEntityTypeConfiguration<OAuthSe
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Token).HasMaxLength(32);
-        builder.Property(x => x.SignType).HasEnumConversion();
+        builder.Property(x => x.Flow).HasEnumConversion();
 
         builder.HasOne(x => x.LinkedAccount)
             .WithMany()

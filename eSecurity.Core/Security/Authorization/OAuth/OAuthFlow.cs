@@ -1,8 +1,7 @@
 ﻿namespace eSecurity.Core.Security.Authorization.OAuth;
 
-public enum OAuthSignType
+public enum OAuthFlow
 {
-    None,
     SignIn,
     SignUp
 }

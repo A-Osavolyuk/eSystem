@@ -38,7 +38,7 @@ public class LoadOAuthSessionCommandHandler(
         var response = new LoadOAuthSessionResponse()
         {
             UserId = user.Id,
-            SignType = session.SignType,
+            Flow = session.Flow,
             Provider = linkedAccount.Type.ToString(),
         };
 
