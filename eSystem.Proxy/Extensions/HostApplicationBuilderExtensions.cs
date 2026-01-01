@@ -110,7 +110,7 @@ public static class HostApplicationBuilderExtensions
                     ClusterId = "security-cluster",
                     Destinations = new Dictionary<string, DestinationConfig>()
                     {
-                        ["security-destination"] = new() { Address = configuration["E-SECURITY-SERVER_HTTPS"]! }
+                        ["security-destination"] = new() { Address = configuration["E_SECURITY_SERVER_HTTPS"]! }
                     }
                 },
                 new ClusterConfig
@@ -118,7 +118,7 @@ public static class HostApplicationBuilderExtensions
                     ClusterId = "files-cluster",
                     Destinations = new Dictionary<string, DestinationConfig>()
                     {
-                        ["files-destination"] = new() { Address = configuration["STORAGE-API_HTTPS"]! }
+                        ["files-destination"] = new() { Address = configuration["STORAGE_API_HTTPS"]! }
                     }
                 }
             };
