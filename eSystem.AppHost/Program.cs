@@ -55,9 +55,23 @@ var storageApi = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(blobs).WaitFor(blobs);
 
-var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
-    .WithReference(securityServer).WaitFor(securityServer)
-    .WithReference(storageApi).WaitFor(storageApi);
+var proxy = builder.AddYarp("proxy")
+    .WithConfiguration(cfg =>
+    {
+        cfg.AddRoute("/api/v1/Account/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/Connect/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/Device/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/Email/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/LinkedAccount/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/OAuth/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/Passkey/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/Password/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/Phone/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/TwoFactor/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/User/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/Verification/{**catch-all}", securityServer);
+        cfg.AddRoute("/api/v1/Files/{**catch-all}", storageApi);
+    });
 
 var securityClient = builder.AddProject<Projects.eSecurity_Client>("e-security-client")
     .WithReference(securityServer).WaitFor(securityServer)

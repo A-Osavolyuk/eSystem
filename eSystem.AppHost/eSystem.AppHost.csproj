@@ -22,6 +22,7 @@
         <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.1.0" />
         <PackageReference Include="Aspire.Hosting.Redis" Version="13.1.0" />
         <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.1.0" />
+        <PackageReference Include="Aspire.Hosting.Yarp" Version="13.1.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -38,7 +39,6 @@
         <ProjectReference Include="..\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
         <ProjectReference Include="..\eSystem.Storage.Api\eSystem.Storage.Api.csproj" />
         <ProjectReference Include="..\eSystem.MessageBus\eSystem.MessageBus.csproj" />
-        <ProjectReference Include="..\eSystem.Proxy\eSystem.Proxy.csproj" />
         <ProjectReference Include="..\eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />
         <ProjectReference Include="..\eSystem.Telegram.Bot\eSystem.Telegram.Bot.csproj" />
     </ItemGroup>

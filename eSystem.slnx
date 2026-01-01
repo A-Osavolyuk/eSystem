@@ -4,8 +4,8 @@
     <Project Path="eSystem.Core\eSystem.Core.csproj" />
   </Folder>
   <Folder Name="/src/eSecurity/">
-    <Project Path="eSecurity.Client\eSecurity.Client.csproj" Type="Classic C#" />
-    <Project Path="eSecurity.Core\eSecurity.Core.csproj" Type="Classic C#" />
+    <Project Path="eSecurity.Client\eSecurity.Client.csproj" Type="C#" />
+    <Project Path="eSecurity.Core\eSecurity.Core.csproj" Type="C#" />
     <Project Path="eSecurity.Server\eSecurity.Server.csproj" />
   </Folder>
   <Folder Name="/src/Hosting/">
@@ -18,9 +18,6 @@
     <Project Path="eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />
     <Project Path="eSystem.Storage.Api\eSystem.Storage.Api.csproj" />
     <Project Path="eSystem.Telegram.Bot\eSystem.Telegram.Bot.csproj" />
-  </Folder>
-  <Folder Name="/src/Proxy/">
-    <Project Path="eSystem.Proxy\eSystem.Proxy.csproj" />
   </Folder>
   <Folder Name="/tests/" />
 </Solution>
