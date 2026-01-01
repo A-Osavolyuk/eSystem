@@ -172,8 +172,8 @@
 
                 if (error.Code == Errors.Common.FailedLoginAttempt)
                 {
-                    var maxFailedLoginAttempts = Convert.ToInt32(error.Details["maxFailedLoginAttempts"]);
-                    var failedLoginAttempts = Convert.ToInt32(error.Details["failedLoginAttempts"]);
+                    var maxFailedLoginAttempts = Convert.ToInt32(error.Details["maxFailedLoginAttempts"].ToString());
+                    var failedLoginAttempts = Convert.ToInt32(error.Details["failedLoginAttempts"].ToString());
                     var attemptsLeft = maxFailedLoginAttempts- failedLoginAttempts;
                     var message = $"Incorrect password. You have {attemptsLeft} attempts left.";
                     Snackbar.Add(message, Severity.Error);
