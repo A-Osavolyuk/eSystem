@@ -23,22 +23,10 @@ public sealed class GetUserQueryHandler(
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
-        var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
-
         var response = new UserDto
         {
             Id = user.Id,
-            Email = email?.Email,
-            EmailConfirmed = email?.IsVerified,
-            EmailChangeDate = email?.UpdateDate,
-            EmailConfirmationDate = email?.VerifiedDate,
-            PhoneNumber = phoneNumber?.PhoneNumber,
-            PhoneNumberConfirmed = phoneNumber?.IsVerified,
-            PhoneNumberChangeDate = phoneNumber?.UpdateDate,
-            PhoneNumberConfirmationDate = phoneNumber?.VerifiedDate,
             Username = user.Username,
-            UserNameChangeDate = user.UsernameChangeDate,
         };
         
         return Results.Ok(response);
