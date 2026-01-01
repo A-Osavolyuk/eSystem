@@ -28,7 +28,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user")]
     [ProducesResponseType(200)]
     [HttpGet("{userId:guid}")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [AllowAnonymous]
     public async ValueTask<IActionResult> GetUserAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserQuery(userId));
