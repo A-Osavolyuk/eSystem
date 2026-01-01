@@ -151,18 +151,12 @@ namespace eSecurity.Server.Migrations
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Uri = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    ClientEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientUris", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientUris_Clients_ClientEntityId",
-                        column: x => x.ClientEntityId,
-                        principalTable: "Clients",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ClientUris_Clients_ClientId",
                         column: x => x.ClientId,
@@ -898,11 +892,6 @@ namespace eSecurity.Server.Migrations
                 name: "IX_ClientGrantTypes_ClientId",
                 table: "ClientGrantTypes",
                 column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClientUris_ClientEntityId",
-                table: "ClientUris",
-                column: "ClientEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientUris_ClientId",

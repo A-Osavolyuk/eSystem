@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260101013545_Initial")]
+    [Migration("20260101220756_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -205,9 +205,6 @@ namespace eSecurity.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ClientEntityId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
@@ -227,8 +224,6 @@ namespace eSecurity.Server.Migrations
                         .HasColumnType("nvarchar(2048)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ClientEntityId");
 
                     b.HasIndex("ClientId");
 
@@ -1296,12 +1291,8 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
                 {
-                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", null)
-                        .WithMany("Uris")
-                        .HasForeignKey("ClientEntityId");
-
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
-                        .WithMany()
+                        .WithMany("Uris")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
