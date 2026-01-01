@@ -79,6 +79,6 @@ public class PasswordManager(
         CancellationToken cancellationToken = default)
     {
         var entity = await GetAsync(user, cancellationToken);
-        return entity is not null && entity.Hash == _hasher.Hash(password);
+        return entity is not null && _hasher.VerifyHash(password, entity.Hash);
     }
 }
