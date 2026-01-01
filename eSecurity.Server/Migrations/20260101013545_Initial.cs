@@ -753,7 +753,7 @@ namespace eSecurity.Server.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LinkedAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Token = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    SignType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Flow = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)

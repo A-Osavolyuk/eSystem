@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20251210085140_Initial")]
+    [Migration("20260101013545_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -337,12 +337,12 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("ExpiredDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("LinkedAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SignType")
+                    b.Property<string>("Flow")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("LinkedAccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Token")
                         .IsRequired()
