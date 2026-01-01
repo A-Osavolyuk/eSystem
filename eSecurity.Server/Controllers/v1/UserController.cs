@@ -35,28 +35,6 @@ public class UserController(ISender sender) : ControllerBase
         return ResultHandler.Handle(result);
     }
     
-    [EndpointSummary("Get user's state")]
-    [EndpointDescription("Get user's state")]
-    [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/state")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserStateAsync(Guid userId)
-    {
-        var result = await _sender.Send(new GetUserStateQuery(userId));
-        return ResultHandler.Handle(result);
-    }
-    
-    [EndpointSummary("Get user's roles")]
-    [EndpointDescription("Get user's roles")]
-    [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/roles")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserRolesAsync(Guid userId)
-    {
-        var result = await _sender.Send(new GetUserRolesQuery(userId));
-        return ResultHandler.Handle(result);
-    }
-    
     [EndpointSummary("Get user's 2FA methods")]
     [EndpointDescription("Get user's 2FA methods")]
     [ProducesResponseType(200)]
