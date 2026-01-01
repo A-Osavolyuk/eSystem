@@ -73,8 +73,7 @@ var proxy = builder.AddYarp("proxy")
         cfg.AddRoute("/api/v1/Files/{**catch-all}", storageApi);
     });
 
-var securityClient = builder.AddProject<Projects.eSecurity_Client>("e-security-client")
-    .WithReference(securityServer).WaitFor(securityServer)
+builder.AddProject<Projects.eSecurity_Client>("e-security-client")
     .WithReference(proxy).WaitFor(proxy);
 
 var app = builder.Build();
