@@ -1,6 +1,10 @@
 ﻿@page "account/oauth/handle"
 
+@using eSecurity.Client.Security.Authorization.OAuth
+@using eSecurity.Core.Security.Authorization.OAuth
 @inherits PageBase
+
+@inject IOAuthService OAuthService
 
 <Title Text="Handling OAuth session..."/>
 
@@ -13,16 +17,14 @@
 
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
-    
+
     [SupplyParameterFromQuery(Name = "error")]
     public string? ErrorCode { get; set; }
 
     [SupplyParameterFromQuery(Name = "error_description")]
     public string? ErrorDescription { get; set; }
-}
 
-@code {
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!string.IsNullOrEmpty(ErrorCode) && !string.IsNullOrEmpty(ErrorDescription))
         {
@@ -34,7 +36,34 @@
         }
         else
         {
-            
+            var request = new LoadOAuthSessionRequest()
+            {
+                SessionId = Guid.Parse(SessionId),
+                Token = Token
+            };
+
+            var result = await OAuthService.LoadSessionAsync(request);
+
+            if (result.Succeeded)
+            {
+                var response = result.Get();
+                UserState.UserId = response.UserId;
+
+                if (response.Flow == OAuthFlow.SignIn)
+                {
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(Links.OAuth.SignIn)
+                        .WithQueryParam("state", State)
+                        .Build());
+                }
+                else NavigationManager.NavigateTo(Links.OAuth.SignUp);
+            }
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
         }
     }
+
 }
