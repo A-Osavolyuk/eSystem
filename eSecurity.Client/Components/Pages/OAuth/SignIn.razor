@@ -1,25 +1,23 @@
 ﻿@page "/account/oauth/sign-in/"
 
-@using System.Text.Json
-@using eSecurity.Core.Security.Authorization.OAuth
-
 @inherits PageBase
 
 <Title Text="Sign-in for eSecurity via OAuth"/>
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "state")]
-    public string State { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "redirect_uri")]
+    public string? RedirectUri { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        if (firstRender)
+        if (string.IsNullOrEmpty(RedirectUri))
         {
-            var encodedState = WebEncoders.Base64UrlDecode(State);
-            var stateJson = Encoding.UTF8.GetString(encodedState);
-            var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(Links.OAuth.Error)
+                .WithQueryParam("error", Errors.OAuth.InvalidRequestUri)
+                .WithQueryParam("error_description", "The redirect_uri parameter is missing.")
+                .Build());
         }
     }
-
 }

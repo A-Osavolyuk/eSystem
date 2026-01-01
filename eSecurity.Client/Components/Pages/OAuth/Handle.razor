@@ -2,6 +2,7 @@
 
 @using eSecurity.Client.Security.Authorization.OAuth
 @using eSecurity.Core.Security.Authorization.OAuth
+
 @inherits PageBase
 
 @inject IOAuthService OAuthService
@@ -51,9 +52,24 @@
 
                 if (response.Flow == OAuthFlow.SignIn)
                 {
+                    var encodedState = WebEncoders.Base64UrlDecode(State);
+                    var stateJson = Encoding.UTF8.GetString(encodedState);
+                    var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
+
+                    if (state is null)
+                    {
+                        NavigationManager.NavigateTo(QueryBuilder.Create()
+                            .WithUri(Links.OAuth.Error)
+                            .WithQueryParam("error", Errors.OAuth.InvalidRequestUri)
+                            .WithQueryParam("error_description", "The state parameter is invalid.")
+                            .Build());
+                        
+                        return;
+                    }
+                    
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.OAuth.SignIn)
-                        .WithQueryParam("state", State)
+                        .WithQueryParam("redirect_uri", GetRedirectUri(state))
                         .Build());
                 }
                 else NavigationManager.NavigateTo(Links.OAuth.SignUp);
@@ -64,6 +80,34 @@
                 Snackbar.Add(error.Description, Severity.Error);
             }
         }
+    }
+    
+    private string GetRedirectUri(OAuthState state)
+    {
+        var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize);
+
+        if (!string.IsNullOrEmpty(state!.ResponseType))
+            builder.WithQueryParam("response_type", state.ResponseType);
+
+        if (!string.IsNullOrEmpty(state.ClientId))
+            builder.WithQueryParam("client_id", state.ClientId);
+
+        if (!string.IsNullOrEmpty(state.RedirectUri))
+            builder.WithQueryParam("redirect_uri", state.RedirectUri);
+
+        if (!string.IsNullOrEmpty(state.Scope))
+            builder.WithQueryParam("scope", state.Scope);
+
+        if (!string.IsNullOrEmpty(state.Nonce))
+            builder.WithQueryParam("nonce", state.Nonce);
+
+        if (!string.IsNullOrEmpty(state.State))
+            builder.WithQueryParam("state", state.State);
+
+        if (!string.IsNullOrEmpty(state.Prompt))
+            builder.WithQueryParam("prompt", state.Prompt);
+
+        return builder.Build();
     }
 
 }
