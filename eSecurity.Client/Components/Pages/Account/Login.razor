@@ -1,4 +1,6 @@
 ﻿@page "/account/sign-in"
+
+@using eSecurity.Client.Components.Pages.OAuth
 @using eSecurity.Client.Security
 @using eSecurity.Core.Security.Authentication.SignIn
 
@@ -10,82 +12,93 @@
 <Title Text="Sign in for eSecurity"/>
 
 <MudGrid Justify="Justify.Center">
-    <MudItem xs="4" Style="margin-top: 150px">
-        <MudStack Spacing="1" Justify="Justify.Center">
-            <MudPaper Outlined Class="pa-3">
-                <MudText Align="Align.Center" Typo="Typo.h4">
-                    Sign in for eSecurity
-                </MudText>
-            </MudPaper>
-            <MudPaper Outlined Class="pa-3">
-                <MudForm
-                    @ref="_form"
-                    Model="Model"
-                    Validation="Validator.ValidateValue">
-                    <MudTextField
-                        @bind-Value="Model.Login"
-                        For="(() => Model.Login)"
-                        Label="Login"
-                        Immediate
-                        Variant="Variant.Outlined"/>
-                    <MudPasswordField
-                        PasswordMode="true"
-                        @bind-Value="Model.Password"
-                        For="(() => Model.Password)"
-                        Label="Password"
-                        Immediate
-                        Variant="Variant.Outlined"/>
-                    <MudLoadingButton
-                        LoadingAdornment="Adornment.End"
-                        ButtonType="ButtonType.Button"
-                        OnClick="@(async () => await OnSignInAsync())"
-                        StartIcon="@Icons.Material.Filled.Login"
-                        Disabled="@(string.IsNullOrEmpty(Model.Password) || string.IsNullOrEmpty(Model.Login))"
-                        Variant="Variant.Filled"
-                        Color="Color.Primary"
-                        Class="mt-3"
-                        FullWidth="true">
-                        Sign in
-                    </MudLoadingButton>
-                </MudForm>
-            </MudPaper>
-            <MudPaper Class="pa-3" Outlined="true">
-                <MudLoadingButton
-                    LoadingAdornment="Adornment.End"
-                    ButtonType="ButtonType.Button"
-                    StartIcon="@Icons.Material.Filled.Key"
-                    Variant="Variant.Filled"
-                    Color="Color.Primary"
-                    Href="@Links.Account.PasskeySignInPage"
-                    FullWidth="true">
-                    Sign in with Passkey
-                </MudLoadingButton>
-            </MudPaper>
-            <ExternalLogin/>
-            <MudPaper Outlined Class="pa-3">
-                <MudText Align="Align.Center">
-                    Do not have an account yet?
-                    <MudLink Href="@Links.Account.SignUp">
-                        Sign up
-                    </MudLink>
-                </MudText>
-            </MudPaper>
-            <MudPaper Outlined Class="pa-3">
-                <MudText Align="Align.Center">
-                    Forgot your password?
-                    <MudLink Href="@OnForgotPassword()">
-                        Reset password
-                    </MudLink>
-                </MudText>
-            </MudPaper>
-            <MudPaper Outlined Class="pa-3">
-                <MudText Align="Align.Center">
-                    Lost access to your account?
-                    <MudLink Href="@OnRecoverAccount()">
-                        Recover account
-                    </MudLink>
-                </MudText>
-            </MudPaper>
+    <MudItem xs="4" Style="margin-top: 50px">
+        <MudStack Spacing="2" Justify="Justify.Center">
+            <MudStack Spacing="1">
+                <MudPaper Outlined Class="pa-3">
+                    <MudText Align="Align.Center" Typo="Typo.h4">
+                        Sign in for eSecurity
+                    </MudText>
+                </MudPaper>
+                <MudPaper Outlined Class="pa-3">
+                    <MudForm
+                        @ref="_form"
+                        Model="Model"
+                        Validation="Validator.ValidateValue">
+                        <MudTextField
+                            @bind-Value="Model.Login"
+                            For="(() => Model.Login)"
+                            Label="Login"
+                            Immediate
+                            Variant="Variant.Outlined"/>
+                        <MudPasswordField
+                            PasswordMode="true"
+                            @bind-Value="Model.Password"
+                            For="(() => Model.Password)"
+                            Label="Password"
+                            Immediate
+                            Variant="Variant.Outlined"/>
+                        <MudLoadingButton
+                            LoadingAdornment="Adornment.End"
+                            ButtonType="ButtonType.Button"
+                            OnClick="@(async () => await OnSignInAsync())"
+                            StartIcon="@Icons.Material.Filled.Login"
+                            Disabled="@(string.IsNullOrEmpty(Model.Password) || string.IsNullOrEmpty(Model.Login))"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            Class="mt-3"
+                            FullWidth="true">
+                            Sign in
+                        </MudLoadingButton>
+                    </MudForm>
+                </MudPaper>
+            </MudStack>
+            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
+                <MudDivider Style="max-width: 45%"/>
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
+                <MudDivider Style="max-width: 45%"/>
+            </MudStack>
+            <MudStack Spacing="1">
+                <MudPaper Class="pa-3" Outlined="true">
+                    <MudStack Spacing="1">
+                        <MudLoadingButton
+                            LoadingAdornment="Adornment.End"
+                            ButtonType="ButtonType.Button"
+                            StartIcon="@Icons.Material.Filled.Key"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            Href="@Links.Account.PasskeySignInPage"
+                            FullWidth="true">
+                            Sign in with Passkey
+                        </MudLoadingButton>
+                        <Providers/>
+                    </MudStack>
+                </MudPaper>
+                <MudPaper Outlined Class="pa-3">
+                    <MudText Align="Align.Center">
+                        Do not have an account yet?
+                        <MudLink Href="@Links.Account.SignUp">
+                            Sign up
+                        </MudLink>
+                    </MudText>
+                </MudPaper>
+                <MudPaper Outlined Class="pa-3">
+                    <MudText Align="Align.Center">
+                        Forgot your password?
+                        <MudLink Href="@OnForgotPassword()">
+                            Reset password
+                        </MudLink>
+                    </MudText>
+                </MudPaper>
+                <MudPaper Outlined Class="pa-3">
+                    <MudText Align="Align.Center">
+                        Lost access to your account?
+                        <MudLink Href="@OnRecoverAccount()">
+                            Recover account
+                        </MudLink>
+                    </MudText>
+                </MudPaper>
+            </MudStack>
         </MudStack>
     </MudItem>
 </MudGrid>
