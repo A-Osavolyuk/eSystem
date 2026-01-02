@@ -12,4 +12,5 @@ public interface IUserService
     public ValueTask<HttpResponse<UserLinkedAccountData>> GetUserLinkedAccountsAsync(Guid id);
     public ValueTask<HttpResponse<List<UserTwoFactorMethod>>> GetUserTwoFactorMethodsAsync(Guid id);
     public ValueTask<HttpResponse<UserLoginMethodsDto>> GetUserLoginMethodsAsync(Guid id);
+    public ValueTask<HttpResponse<UserDto>> GetUserAsync(Guid id);
 }

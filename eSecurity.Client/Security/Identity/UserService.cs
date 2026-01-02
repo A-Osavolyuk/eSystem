@@ -103,4 +103,16 @@ public class UserService(IApiClient apiClient) : IUserService
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
+
+    public async ValueTask<HttpResponse<UserDto>> GetUserAsync(Guid id)
+        => await _apiClient.SendAsync<UserDto>(
+            new HttpRequest()
+            {
+                Method = HttpMethod.Get,
+                Url = $"api/v1/User/{id}"
+            }, new HttpOptions()
+            {
+                ContentType = ContentTypes.Application.Json,
+                Authentication = AuthenticationType.None
+            });
 }

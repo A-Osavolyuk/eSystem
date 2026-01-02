@@ -1,12 +1,14 @@
 @page "/connect/consents"
 
 @using eSecurity.Client.Security.Authentication.Oidc
+@using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Security.Authentication.Oidc.Client
 @using eSystem.Core.Security.Authentication.Oidc
 
 @inherits PageBase
 
 @inject IConnectService ConnectService
+@inject IUserService UserService
 
 <Title Text="Grant consents"></Title>
 
@@ -35,7 +37,7 @@
                                 FallbackSrc="/images/avatar.jpg"/>
                         </MudAvatar>
                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                            pipidastr
+                            @_username
                         </MudTextM3>
                     </MudStack>
                     <MudTextM3 Size="Size.Large" Typo="TypoM3.Body" Class="fw-bold">
@@ -147,6 +149,7 @@
 
     private List<string> _scopes = [];
     private ClientInfo _clientInfo = new();
+    private string _username = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -158,8 +161,16 @@
 
         var clientId = queryParams["client_id"];
         var result = await ConnectService.GetClientInfoAsync(clientId);
-        if (result.Succeeded) _clientInfo = result.Get();
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
+        if (result.Succeeded)
+        {
+            _clientInfo = result.Get();
+            await LoadUserAsync();
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Code, Severity.Error);
+        }
     }
 
     private void OnCancel()
@@ -214,6 +225,21 @@
                 .WithQueryParam("error_description", error.Description);
             
             NavigationManager.NavigateTo(builder.Build());
+        }
+    }
+
+    private async Task LoadUserAsync()
+    {
+        var result = await UserService.GetUserAsync(UserState.UserId);
+        if (result.Succeeded)
+        {
+            var user = result.Get();
+            _username = user.Username;
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Code, Severity.Error);
         }
     }
 }
