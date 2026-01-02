@@ -16,8 +16,8 @@ public static class WebApplicationExtensions
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
             app.UseAntiforgery();
-            app.UseStatusCodePagesWithRedirects("/not-found");
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
         }
