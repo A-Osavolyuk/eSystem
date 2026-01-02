@@ -1,15 +1,54 @@
 ﻿@page "/account/oauth/sign-in/"
 
+@inject IUserService UserService
+
+@using eSecurity.Client.Security.Identity
+
 @inherits PageBase
 
 <Title Text="Sign-in for eSecurity via OAuth"/>
 
-@code {
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="3" Style="margin-top: 50px;">
+        <MudStack Spacing="2">
+            <MudPaper Outlined="true" Class="px-5 py-4">
+                <MudGrid>
+                    <MudItem xs="1">
+                        <MudAvatar Size="Size.Medium">
+                            <MudImage
+                                Src="/images/avatar.jpg"
+                                Alt="Avatar"
+                                FallbackSrc="/images/avatar.jpg"/>
+                        </MudAvatar>
+                    </MudItem>
+                    <MudItem xs="10">
+                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                            <MudTextM3 Class="pt-2">
+                                Continue as <strong>@_username</strong>
+                            </MudTextM3>
+                        </MudStack>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+            <MudButton
+                Size="Size.Large"
+                Color="Color.Info"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                Href="@RedirectUri">
+                Continue
+            </MudButton>
+        </MudStack>
+    </MudItem>
+</MudGrid>
 
+@code {
     [SupplyParameterFromQuery(Name = "redirect_uri")]
     public string? RedirectUri { get; set; }
+    
+    private string _username = string.Empty;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (string.IsNullOrEmpty(RedirectUri))
         {
@@ -18,6 +57,20 @@
                 .WithQueryParam("error", Errors.OAuth.InvalidRequestUri)
                 .WithQueryParam("error_description", "The redirect_uri parameter is missing.")
                 .Build());
+        }
+        else
+        {
+            var result = await UserService.GetUserAsync(UserState.UserId);
+            if (result.Succeeded)
+            {
+                var user = result.Get();
+                _username = user.Username;
+            }
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Code, Severity.Error);
+            }
         }
     }
 }
