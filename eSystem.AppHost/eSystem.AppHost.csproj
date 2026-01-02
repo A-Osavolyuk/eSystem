@@ -37,6 +37,7 @@
         <ProjectReference Include="..\eSecurity.Client\eSecurity.Client.csproj" />
         <ProjectReference Include="..\eSecurity.Server\eSecurity.Server.csproj" />
         <ProjectReference Include="..\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
+        <ProjectReference Include="..\eSystem.Proxy\eSystem.Proxy.csproj" />
         <ProjectReference Include="..\eSystem.Storage.Api\eSystem.Storage.Api.csproj" />
         <ProjectReference Include="..\eSystem.MessageBus\eSystem.MessageBus.csproj" />
         <ProjectReference Include="..\eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />
