@@ -93,17 +93,18 @@ public sealed class OAuthSignInStrategy(
             var lockoutResult = await _lockoutManager.UnblockAsync(user, cancellationToken);
             if (!lockoutResult.Succeeded) return lockoutResult;
         }
-
-        var linkedAccount = new UserLinkedAccountEntity()
+        
+        var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.LinkedAccount, cancellationToken);
+        if (linkedAccount is null)
         {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            Type = oauthPayload.LinkedAccount,
-            CreateDate = DateTimeOffset.UtcNow,
-        };
-
-        if (!await _linkedAccountManager.HasAsync(user, oauthPayload.LinkedAccount, cancellationToken))
-        {
+            linkedAccount = new UserLinkedAccountEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                Type = oauthPayload.LinkedAccount,
+                CreateDate = DateTimeOffset.UtcNow,
+            };
+            
             var connectResult = await _linkedAccountManager.CreateAsync(linkedAccount, cancellationToken);
             if (!connectResult.Succeeded) return connectResult;
         }
