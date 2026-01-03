@@ -31,14 +31,14 @@ public static class CredentialUtils
         var signature = WebEncoders.Base64UrlDecode(response.Signature);
         var clientDataJson = WebEncoders.Base64UrlDecode(response.ClientDataJson);
         var clientDataHash = SHA256.HashData(clientDataJson);
-
         var signedData = authenticatorDataBytes.Concat(clientDataHash).ToArray();
+        var signedDataHash = SHA256.HashData(signedData);
 
         using var key = ImportCosePublicKey(publicKey);
 
         var valid = key switch
         {
-            ECDsa ecdsa => ecdsa.VerifyData(signedData, signature, HashAlgorithmName.SHA256),
+            ECDsa ecdsa => ecdsa.VerifyHash(signedDataHash, signature, DSASignatureFormat.Rfc3279DerSequence),
             RSA rsa => rsa.VerifyData(signedData, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1),
             _ => throw new NotSupportedException("Unsupported key type")
         };
