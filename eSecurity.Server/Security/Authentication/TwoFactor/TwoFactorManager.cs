@@ -107,5 +107,5 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
 
     public async ValueTask<bool> IsEnabledAsync(UserEntity user, CancellationToken cancellationToken = default)
         => await _context.UserTwoFactorMethods.AnyAsync(
-            x => x.UserId == user.Id, cancellationToken);
+            x => x.UserId == user.Id && x.Method == TwoFactorMethod.AuthenticatorApp, cancellationToken);
 }
