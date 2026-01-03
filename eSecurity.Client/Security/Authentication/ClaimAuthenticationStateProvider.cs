@@ -31,9 +31,9 @@ public class ClaimAuthenticationStateProvider(
             _userState.Credentials.Username = username;
         }
 
-        if (principal.HasClaim(x => x.Type == AppClaimTypes.Email))
+        if (principal.HasClaim(x => x.Type == ClaimTypes.Email))
         {
-            var email = claims.Single(x => x.Type == AppClaimTypes.Email).Value;
+            var email = claims.Single(x => x.Type == ClaimTypes.Email).Value;
             _userState.Credentials.Email = email;
         }
 
