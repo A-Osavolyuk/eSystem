@@ -4,13 +4,15 @@
 @inject ISnackbar Snackbar
 @inject IUserService UserService
 
-@if (Confirmed)
+@if (_confirmed)
 {
     @AccessConfirmed
 }
 else
 {
-    <MudGrid Justify="Justify.Center">
+    if (_model is not null)
+    {
+        <MudGrid Justify="Justify.Center">
         <MudItem xs="3">
             <MudStack Justify="Justify.Center">
                 <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
@@ -35,12 +37,12 @@ else
                         </MudItem>
                     </MudGrid>
                 </MudPaper>
-                @switch (Model.PreferredMethod)
+                @switch (_model.PreferredMethod)
                 {
                     case VerificationMethod.Email:
                     {
                         <EmailConfirmation
-                            Model="Model"
+                            Model="_model"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync"
                             OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -49,7 +51,7 @@ else
                     case VerificationMethod.Passkey:
                     {
                         <PasskeyConfirmation
-                            Model="Model"
+                            Model="_model"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync"
                             OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -58,7 +60,7 @@ else
                     case VerificationMethod.AuthenticatorApp:
                     {
                         <AuthenticatorConfirmation
-                            Model="Model"
+                            Model="_model"
                             Context="Context"
                             OnMethodChanged="ChangeMethodAsync"
                             OnAccessConfirmed="ConfirmAccessAsync"/>
@@ -68,14 +70,15 @@ else
             </MudStack>
         </MudItem>
     </MudGrid>
+    }
 }
 
 @code {
     [Parameter] public ConfirmationContext Context { get; set; } = null!;
     [Parameter] public RenderFragment AccessConfirmed { get; set; } = null!;
 
-    private UserVerificationData Model { get; set; } = new();
-    private bool Confirmed { get; set; } = false;
+    private UserVerificationData? _model;
+    private bool _confirmed;
 
     protected override async Task OnInitializedAsync()
     {
@@ -85,12 +88,12 @@ else
     private async Task ChangeMethodAsync(VerificationMethod method)
     {
         await InvokeAsync(StateHasChanged);
-        Model.PreferredMethod = method;
+        _model?.PreferredMethod = method;
     }
 
     private async Task ConfirmAccessAsync()
     {
-        Confirmed = true;
+        _confirmed = true;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -98,7 +101,7 @@ else
     {
         var result = await UserService.GetUserVerificationMethodsAsync(UserState.UserId);
 
-        if (result.Succeeded) Model = result.Get()!;
+        if (result.Succeeded) _model = result.Get()!;
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
