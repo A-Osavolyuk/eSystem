@@ -39,7 +39,7 @@ public class RemovePasskeyCommandHandler(
         var passkey = await _passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);
         if (passkey is null) return Results.NotFound("Passkey not found.");
 
-        if ((await _emailManager.HasAsync(user, EmailType.Primary, cancellationToken) && 
+        if ((!await _emailManager.HasAsync(user, EmailType.Primary, cancellationToken) && 
              _options.RequireConfirmedEmail) || !await _passwordManager.HasAsync(user, cancellationToken))
             return Results.BadRequest("You need to enable another authentication method first.");
 
