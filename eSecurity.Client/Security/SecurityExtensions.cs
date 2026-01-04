@@ -58,6 +58,7 @@ public static class SecurityExtensions
             services.AddScoped<IConnectService, ConnectService>();
             services.AddScoped<ITwoFactorService, TwoFactorService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUsernameService, UsernameService>();
             services.AddScoped<IPasskeyService, PasskeyService>();
         }
     }
