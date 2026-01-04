@@ -11,6 +11,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
+                Data = request,
                 Method = HttpMethod.Post,
                 Url = "api/v1/Username/set"
             }, new HttpOptions()
@@ -23,6 +24,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
+                Data = request,
                 Method = HttpMethod.Put,
                 Url = "api/v1/Username/change"
             }, new HttpOptions()
@@ -35,6 +37,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
+                Data = request,
                 Method = HttpMethod.Post,
                 Url = "api/v1/Username/check"
             }, new HttpOptions()
