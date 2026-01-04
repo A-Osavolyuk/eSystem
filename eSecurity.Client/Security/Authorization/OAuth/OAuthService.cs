@@ -18,6 +18,6 @@ public class OAuthService(IApiClient apiClient) : IOAuthService
             }, new HttpOptions()
             {
                 ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
+                Authentication = AuthenticationType.None
             });
 }
