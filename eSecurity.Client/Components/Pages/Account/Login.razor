@@ -16,28 +16,33 @@
         <MudStack Spacing="2" Justify="Justify.Center">
             <MudStack Spacing="1">
                 <MudPaper Outlined Class="pa-3">
-                    <MudText Align="Align.Center" Typo="Typo.h4">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                         Sign in for eSecurity
-                    </MudText>
+                    </MudTextM3>
                 </MudPaper>
                 <MudPaper Outlined Class="pa-3">
-                    <MudForm
-                        @ref="_form"
-                        Model="Model"
-                        Validation="Validator.ValidateValue">
-                        <MudTextField
-                            @bind-Value="Model.Login"
-                            For="(() => Model.Login)"
-                            Label="Login"
-                            Immediate
-                            Variant="Variant.Outlined"/>
-                        <MudPasswordField
-                            PasswordMode="true"
-                            @bind-Value="Model.Password"
-                            For="(() => Model.Password)"
-                            Label="Password"
-                            Immediate
-                            Variant="Variant.Outlined"/>
+                    <MudStack Spacing="2">
+                        <MudForm
+                            @ref="_form"
+                            Model="Model"
+                            Validation="Validator.ValidateValue">
+                            <MudTextFieldExtended
+                                Margin="Margin.Dense"
+                                @bind-Value="Model.Login"
+                                For="(() => Model.Login)"
+                                Label="Login"
+                                Immediate
+                                Variant="Variant.Outlined"/>
+                            <MudPasswordField
+                                Margin="Margin.Dense"
+                                PasswordMode="true"
+                                @bind-Value="Model.Password"
+                                For="(() => Model.Password)"
+                                Label="Password"
+                                Immediate
+                                Variant="Variant.Outlined"
+                                IconSize="Size.Small"/>
+                        </MudForm>
                         <MudLoadingButton
                             LoadingAdornment="Adornment.End"
                             ButtonType="ButtonType.Button"
@@ -46,11 +51,11 @@
                             Disabled="@(string.IsNullOrEmpty(Model.Password) || string.IsNullOrEmpty(Model.Login))"
                             Variant="Variant.Filled"
                             Color="Color.Primary"
-                            Class="mt-3"
-                            FullWidth="true">
+                            FullWidth="true"
+                            Size="Size.Small">
                             Sign in
                         </MudLoadingButton>
-                    </MudForm>
+                    </MudStack>
                 </MudPaper>
             </MudStack>
             <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
@@ -68,6 +73,7 @@
                             Variant="Variant.Filled"
                             Color="Color.Primary"
                             Href="@Links.Account.PasskeySignInPage"
+                            Size="Size.Small"
                             FullWidth="true">
                             Continue with Passkey
                         </MudLoadingButton>
@@ -75,28 +81,28 @@
                     </MudStack>
                 </MudPaper>
                 <MudPaper Outlined Class="pa-3">
-                    <MudText Align="Align.Center">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                         Do not have an account yet?
-                        <MudLink Href="@Links.Account.SignUp">
+                        <MudLink Typo="Typo.body2" Href="@Links.Account.SignUp">
                             Sign up
                         </MudLink>
-                    </MudText>
+                    </MudTextM3>
                 </MudPaper>
                 <MudPaper Outlined Class="pa-3">
-                    <MudText Align="Align.Center">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                         Forgot your password?
-                        <MudLink Href="@OnForgotPassword()">
+                        <MudLink Typo="Typo.body2" Href="@OnForgotPassword()">
                             Reset password
                         </MudLink>
-                    </MudText>
+                    </MudTextM3>
                 </MudPaper>
                 <MudPaper Outlined Class="pa-3">
-                    <MudText Align="Align.Center">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                         Lost access to your account?
-                        <MudLink Href="@OnRecoverAccount()">
+                        <MudLink Typo="Typo.body2" Href="@OnRecoverAccount()">
                             Recover account
                         </MudLink>
-                    </MudText>
+                    </MudTextM3>
                 </MudPaper>
             </MudStack>
         </MudStack>

@@ -19,14 +19,15 @@
     <MudItem xs="4" Style="margin-top: 50px">
         <MudStack Spacing="1">
             <MudPaper Outlined="true" Class="pa-3">
-                <MudText Align="Align.Center" Typo="Typo.h4">
+                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                     Sign in for eSecurity
-                </MudText>
+                </MudTextM3>
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
                 <MudForm @ref="_form" Model="Model" Validation="Validator.ValidateValue">
-                    <MudStack Spacing="3">
-                        <MudTextField
+                    <MudStack Spacing="2">
+                        <MudTextFieldExtended
+                            Margin="Margin.Dense"
                             @bind-Value="Model.Username"
                             For="@(() => Model.Username)"
                             Label="Username"
@@ -41,6 +42,7 @@
                             Disabled="@(string.IsNullOrEmpty(Model.Username))"
                             Variant="Variant.Filled"
                             Color="Color.Primary"
+                            Size="Size.Small"
                             FullWidth="true">
                             Sign in
                         </MudLoadingButton>
@@ -55,6 +57,7 @@
             <MudPaper Class="pa-3" Outlined="true">
                 <MudStack Spacing="1">
                     <MudLoadingButton
+                        Size="Size.Small"
                         LoadingAdornment="Adornment.End"
                         ButtonType="ButtonType.Button"
                         Href="@Links.Account.SignIn"
@@ -68,12 +71,12 @@
                 </MudStack>
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
-                <MudText Align="Align.Center">
+                <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                     Do not have an account yet?
-                    <MudLink Href="@Links.Account.SignUp">
+                    <MudLink Typo="Typo.body2" Href="@Links.Account.SignUp">
                         Sign up
                     </MudLink>
-                </MudText>
+                </MudTextM3>
             </MudPaper>
         </MudStack>
     </MudItem>
