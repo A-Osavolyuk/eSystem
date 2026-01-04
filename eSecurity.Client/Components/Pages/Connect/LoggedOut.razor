@@ -7,23 +7,36 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="4" Style="margin-top: 50px">
-        <MudStack Spacing="3">
-            <MudAlert 
-                Severity="Severity.Success"
-                Variant="Variant.Outlined"
-                ContentAlignment="HorizontalAlignment.Center">
-                <MudTextM3 Size="Size.Small" Typo="TypoM3.Headline" Align="Align.Center">
-                    You have been successfully logged out from eSystem Account
-                </MudTextM3>
-            </MudAlert>
-            <MudButton
-                Color="Color.Success"
-                Variant="Variant.Filled"
-                ButtonType="ButtonType.Button"
-                Href="@Links.Account.SignIn">
-                To sign in
-            </MudButton>
-        </MudStack>
+        <MudPaper Outlined="true" Class="pa-5">
+            <MudStack Spacing="4" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                    <MudIcon
+                        Color="Color.Success"
+                        Size="Size.Large"
+                        Style="font-size: 4rem"
+                        Icon="@Icons.Material.Outlined.CheckCircleOutline"/>
+                    <MudStack Spacing="1">
+                        <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
+                            You have been successfully logged out
+                        </MudTextM3>
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center" Class="opacity-50">
+                            Thank you for been with us!
+                        </MudTextM3>
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center" Class="opacity-50">
+                            Come back soon.
+                        </MudTextM3>
+                    </MudStack>
+                </MudStack>
+                <MudButton
+                    Color="Color.Success"
+                    Variant="Variant.Filled"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium"
+                    Href="@Links.Account.SignIn">
+                    Click here to continue
+                </MudButton>
+            </MudStack>
+        </MudPaper>
     </MudItem>
 </MudGrid>
 
@@ -37,7 +50,7 @@
 
 @code {
     private List<string> _uris = [];
-    
+
     protected override async Task OnInitializedAsync()
     {
         _uris = NavigationContext.GetValue<List<string>>() ?? [];
