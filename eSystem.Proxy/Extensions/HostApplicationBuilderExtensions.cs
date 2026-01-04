@@ -36,6 +36,11 @@ public static class HostApplicationBuilderExtensions
             {
                 new RouteConfig
                 {
+                    RouteId = "username-route", ClusterId = "security-cluster",
+                    Match = new RouteMatch { Path = "/api/v1/Username/{**catch-all}" }
+                },
+                new RouteConfig
+                {
                     RouteId = "account-route", ClusterId = "security-cluster",
                     Match = new RouteMatch { Path = "/api/v1/Account/{**catch-all}" }
                 },

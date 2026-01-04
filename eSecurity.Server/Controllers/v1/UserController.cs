@@ -1,5 +1,4 @@
 using eSecurity.Core.Common.Requests;
-using eSecurity.Server.Features.Users.Commands;
 using eSecurity.Server.Features.Users.Queries;
 using eSystem.Core.Common.Http.Constants;
 
@@ -12,17 +11,6 @@ namespace eSecurity.Server.Controllers.v1;
 public class UserController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
-    
-    [EndpointSummary("Change username")]
-    [EndpointDescription("Change username")]
-    [ProducesResponseType(200)]
-    [HttpPost("username/change")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> EnableAsync([FromBody] ChangeUsernameRequest request)
-    {
-        var result = await _sender.Send(new ChangeUsernameCommand(request));
-        return ResultHandler.Handle(result);
-    }
     
     [EndpointSummary("Get user")]
     [EndpointDescription("Get user")]

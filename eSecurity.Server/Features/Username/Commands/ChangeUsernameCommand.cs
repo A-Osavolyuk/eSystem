@@ -2,7 +2,7 @@
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 
-namespace eSecurity.Server.Features.Users.Commands;
+namespace eSecurity.Server.Features.Username.Commands;
 
 public record ChangeUsernameCommand(ChangeUsernameRequest Request) : IRequest<Result>;
 
