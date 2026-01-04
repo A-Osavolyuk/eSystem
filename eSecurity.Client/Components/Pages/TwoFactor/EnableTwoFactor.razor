@@ -154,7 +154,7 @@
                                                     <MudStack Spacing="2">
                                                         <MudButton
                                                             Size="Size.Small"
-                                                            Color="Color.Success"
+                                                            Color="Color.Primary"
                                                             Variant="Variant.Filled"
                                                             ButtonType="ButtonType.Button"
                                                             OnClick="@(async () => await OnVerifyAsync())">
@@ -210,7 +210,7 @@
                                                     <MudStack Row="true" Justify="Justify.FlexEnd">
                                                         <MudLoadingButton
                                                             Size="Size.Small"
-                                                            Color="Color.Success"
+                                                            Color="Color.Primary"
                                                             Variant="Variant.Filled"
                                                             ButtonType="ButtonType.Button"
                                                             OnClick="@(async () => await OnDownloadAsync())">
@@ -222,7 +222,7 @@
                                                         <MudLoadingButton
                                                             Size="Size.Small"
                                                             Disabled="@(!DownloadedCodes)"
-                                                            Color="Color.Success"
+                                                            Color="Color.Primary"
                                                             Variant="Variant.Filled"
                                                             ButtonType="ButtonType.Button"
                                                             OnClick="@(async () => await OnEnableAsync())">
@@ -261,7 +261,7 @@
                                             <AdditionalMethods Methods="Methods"/>
                                             <MudStack Row="true" Justify="Justify.Center">
                                                 <MudButton
-                                                    FullWidth="true"
+                                                    FullWidth="false"
                                                     ButtonType="ButtonType.Button"
                                                     Variant="Variant.Filled"
                                                     Color="Color.Success"
