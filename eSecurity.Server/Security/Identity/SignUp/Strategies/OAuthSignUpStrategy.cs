@@ -173,7 +173,7 @@ public sealed class OAuthSignUpStrategy(
 
         await _sessionManager.CreateAsync(newDevice, cancellationToken);
         return Results.Ok(QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
-            .WithQueryParam("sessionId", session.Id.ToString())
+            .WithQueryParam("sid", session.Id.ToString())
             .WithQueryParam("token", oauthPayload.Token)
             .WithQueryParam("state", oauthPayload.State)
             .Build());

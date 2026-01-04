@@ -31,7 +31,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         var authenticationResult = request.AuthenticationResult;
         var items = authenticationResult.Properties.Items;
         var provider = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
-        var sessionId = items["sessionId"]!;
+        var sessionId = items["sid"]!;
         var token = items["token"]!;
         var state = items["state"]!;
 

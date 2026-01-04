@@ -10,7 +10,7 @@
 <Title Text="Handling OAuth session..."/>
 
 @code {
-    [SupplyParameterFromQuery(Name = "sessionId")]
+    [SupplyParameterFromQuery(Name = "sid")]
     public string SessionId { get; set; } = string.Empty;
 
     [SupplyParameterFromQuery(Name = "token")]
@@ -49,30 +49,38 @@
             {
                 var response = result.Get();
                 UserState.UserId = response.UserId;
+                
+                var encodedState = WebEncoders.Base64UrlDecode(State);
+                var stateJson = Encoding.UTF8.GetString(encodedState);
+                var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
+
+                if (state is null)
+                {
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(Links.OAuth.Error)
+                        .WithQueryParam("error", Errors.OAuth.InvalidRequestUri)
+                        .WithQueryParam("error_description", "The state parameter is invalid.")
+                        .Build());
+                        
+                    return;
+                }
 
                 if (response.Flow == OAuthFlow.SignIn)
                 {
-                    var encodedState = WebEncoders.Base64UrlDecode(State);
-                    var stateJson = Encoding.UTF8.GetString(encodedState);
-                    var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
-
-                    if (state is null)
-                    {
-                        NavigationManager.NavigateTo(QueryBuilder.Create()
-                            .WithUri(Links.OAuth.Error)
-                            .WithQueryParam("error", Errors.OAuth.InvalidRequestUri)
-                            .WithQueryParam("error_description", "The state parameter is invalid.")
-                            .Build());
-                        
-                        return;
-                    }
-                    
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.OAuth.SignIn)
                         .WithQueryParam("redirect_uri", GetRedirectUri(state))
                         .Build());
                 }
-                else NavigationManager.NavigateTo(Links.OAuth.SignUp);
+                else
+                {
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(Links.OAuth.SignUp)
+                        .WithQueryParam("sid", SessionId)
+                        .WithQueryParam("token", Token)
+                        .WithQueryParam("redirect_uri", GetRedirectUri(state))
+                        .Build());
+                }
             }
             else
             {

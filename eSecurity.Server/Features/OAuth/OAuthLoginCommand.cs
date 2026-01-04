@@ -48,7 +48,7 @@ public sealed class OAuthLoginCommandHandler(
             RedirectUri = builder.Build(),
             Items = 
             {
-                { "sessionId", session.Id.ToString() },
+                { "sid", session.Id.ToString() },
                 { "token", token },
                 { "state", request.State },
             }
