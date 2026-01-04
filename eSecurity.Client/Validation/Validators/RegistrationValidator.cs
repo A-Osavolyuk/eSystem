@@ -19,10 +19,5 @@ public class RegistrationValidator : Validator<SignUpModel>
             .MaximumLength(32).WithMessage("Field cannot exceed 32 characters.");
 
         RuleFor(p => p.Password).SetValidator(new PasswordValidator());
-
-        RuleFor(p => p.ConfirmPassword)
-            .NotEmpty().WithMessage("You must confirm your password.")
-            .Equal(x => x.Password).WithMessage("Must be the same with password.");
-
     }
 }

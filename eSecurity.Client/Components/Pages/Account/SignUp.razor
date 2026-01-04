@@ -1,4 +1,5 @@
 ﻿@page "/account/sign-up"
+@using eSecurity.Client.Components.Pages.OAuth
 @using eSecurity.Client.Security
 @inherits PageBase
 
@@ -21,17 +22,17 @@
                     Model="Model"
                     Validation="Validator.ValidateValue">
                     <MudTextField
-                        @bind-Value="Model.Email"
-                        For="(() => Model.Email)"
-                        InputType="InputType.Email"
-                        Label="Email"
-                        Immediate
-                        Variant="Variant.Outlined"/>
-                    <MudTextField
                         @bind-Value="Model.Username"
                         For="(() => Model.Username)"
                         InputType="InputType.Email"
                         Label="Username"
+                        Immediate
+                        Variant="Variant.Outlined"/>
+                    <MudTextField
+                        @bind-Value="Model.Email"
+                        For="(() => Model.Email)"
+                        InputType="InputType.Email"
+                        Label="Email"
                         Immediate
                         Variant="Variant.Outlined"/>
                     <MudPasswordField
@@ -42,15 +43,6 @@
                         InputType="InputType.Password"
                         Immediate
                         Variant="Variant.Outlined"/>
-                    <MudPasswordField
-                        PasswordMode="true"
-                        @bind-Value="Model.ConfirmPassword"
-                        For="(() => Model.ConfirmPassword)"
-                        Label="Confirm Password"
-                        InputType="InputType.Password"
-                        Immediate
-                        Variant="Variant.Outlined"/>
-
                     <MudLoadingButton
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Material.Filled.AppRegistration"
@@ -62,6 +54,14 @@
                         Sign up
                     </MudLoadingButton>
                 </MudForm>
+            </MudPaper>
+            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
+                <MudDivider Style="max-width: 45%"/>
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
+                <MudDivider Style="max-width: 45%"/>
+            </MudStack>
+            <MudPaper Class="pa-3" Outlined="true">
+                <Providers/>
             </MudPaper>
             <MudPaper Outlined Class="pa-3">
                 <MudText Align="Align.Center">Already have an account?
