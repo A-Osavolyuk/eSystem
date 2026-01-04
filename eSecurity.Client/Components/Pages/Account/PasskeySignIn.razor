@@ -1,5 +1,6 @@
 ﻿@page "/account/passkeys/sign-in"
 @using eSecurity.Client.Common.JS.WebAuthN
+@using eSecurity.Client.Components.Pages.OAuth
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Credentials.PublicKey
 @using eSecurity.Core.Security.Authentication.SignIn
@@ -14,12 +15,12 @@
 
 <Title Text="Sign in with Passkey"></Title>
 
-<MudGrid Justify="Justify.Center" Style="margin-top: 150px">
-    <MudItem xs="4">
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4" Style="margin-top: 50px">
         <MudStack Spacing="1">
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center" Typo="Typo.h4">
-                    Sign in with Passkey
+                    Sign in for eSecurity
                 </MudText>
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
@@ -37,6 +38,7 @@
                             ButtonType="ButtonType.Button"
                             OnClick="@(async () => await OnSubmitAsync())"
                             StartIcon="@Icons.Material.Filled.Login"
+                            Disabled="@(string.IsNullOrEmpty(Model.Username))"
                             Variant="Variant.Filled"
                             Color="Color.Primary"
                             FullWidth="true">
@@ -45,27 +47,31 @@
                     </MudStack>
                 </MudForm>
             </MudPaper>
-            <MudPaper Outlined="true" Class="pa-3">
-                <MudText Align="Align.Center">
-                    Have an account with password? Go to
-                    <MudLink Href="@Links.Account.SignIn">
-                        Sign in
-                    </MudLink>
-                </MudText>
+            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
+                <MudDivider Style="max-width: 45%"/>
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
+                <MudDivider Style="max-width: 45%"/>
+            </MudStack>
+            <MudPaper Class="pa-3" Outlined="true">
+                <MudStack Spacing="1">
+                    <MudLoadingButton
+                        LoadingAdornment="Adornment.End"
+                        ButtonType="ButtonType.Button"
+                        Href="@Links.Account.SignIn"
+                        StartIcon="@Icons.Material.Filled.Password"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        FullWidth="true">
+                        Continue with Password
+                    </MudLoadingButton>
+                    <Providers/>
+                </MudStack>
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
                 <MudText Align="Align.Center">
                     Do not have an account yet?
                     <MudLink Href="@Links.Account.SignUp">
                         Sign up
-                    </MudLink>
-                </MudText>
-            </MudPaper>
-            <MudPaper Outlined="true" Class="pa-3">
-                <MudText Align="Align.Center">
-                    Or you can sign up with
-                    <MudLink Href="@Links.Account.PasskeySignInPage">
-                        Passkey
                     </MudLink>
                 </MudText>
             </MudPaper>
@@ -116,7 +122,7 @@
             if (result.Succeeded)
             {
                 var response = result.Get()!;
-                
+
                 UserState.UserId = response.UserId;
                 AuthenticationManager.Authorize();
             }
