@@ -23,6 +23,17 @@ public class UsernameController(ISender sender) : ControllerBase
         return ResultHandler.Handle(result);
     }
     
+    [EndpointSummary("Check username")]
+    [EndpointDescription("Check username")]
+    [ProducesResponseType(200)]
+    [HttpPost("check")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> CheckAsync([FromBody] CheckUsernameRequest request)
+    {
+        var result = await _sender.Send(new CheckUsernameCommand(request));
+        return ResultHandler.Handle(result);
+    }
+    
     [EndpointSummary("Change username")]
     [EndpointDescription("Change username")]
     [ProducesResponseType(200)]
