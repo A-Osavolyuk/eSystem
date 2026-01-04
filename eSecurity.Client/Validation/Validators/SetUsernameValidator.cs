@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace eSecurity.Client.Validation.Validators;
 
-public class AddUsernameValidator : Validator<AddUsernameModel>
+public class SetUsernameValidator : Validator<SetUsernameModel>
 {
-    public AddUsernameValidator()
+    public SetUsernameValidator()
     {
         RuleFor(model => model.Username)
             .NotEmpty().WithMessage("Field is required.")
