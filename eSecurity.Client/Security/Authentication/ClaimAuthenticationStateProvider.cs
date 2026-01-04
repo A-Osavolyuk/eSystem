@@ -20,7 +20,7 @@ public class ClaimAuthenticationStateProvider(
         
         var principal = _httpContext.User;
         var claims = _httpContext.User.Claims.ToList();
-        var userId = Guid.Parse(claims.Single(x => x.Type == ClaimTypes.NameIdentifier).Value);
+        var userId = Guid.Parse(claims.Single(x => x.Type == AppClaimTypes.Sub).Value);
         
         _userState.UserId = userId;
         _userState.Credentials = new UserCredentials();
@@ -31,9 +31,9 @@ public class ClaimAuthenticationStateProvider(
             _userState.Credentials.Username = username;
         }
 
-        if (principal.HasClaim(x => x.Type == ClaimTypes.Email))
+        if (principal.HasClaim(x => x.Type == AppClaimTypes.Email))
         {
-            var email = claims.Single(x => x.Type == ClaimTypes.Email).Value;
+            var email = claims.Single(x => x.Type == AppClaimTypes.Email).Value;
             _userState.Credentials.Email = email;
         }
 

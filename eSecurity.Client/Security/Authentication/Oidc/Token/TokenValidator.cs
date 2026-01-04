@@ -19,7 +19,7 @@ public class TokenValidator(
         var keysResult = await _connectService.GetPublicKeysAsync();
         if (!keysResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
 
-        var handler = new JwtSecurityTokenHandler();
+        var handler = new JwtSecurityTokenHandler { MapInboundClaims = false };
         var securityToken = handler.ReadJwtToken(token);
         if (securityToken is null) return Results.BadRequest("Invalid token.");
         
