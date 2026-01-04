@@ -5,8 +5,9 @@
 
 @inherits PageBase
 
-@inject IUserService UserService
+@inject IUsernameService UsernameService
 @inject IOAuthService OAuthService
+@inject SetUsernameValidator Validator
 
 <Title Text="OAuth sign up"/>
 
@@ -15,7 +16,7 @@
     <MudGrid Justify="Justify.Center">
         <MudItem xs="3" Style="margin-top: 50px">
             <MudStack Spacing="1">
-                <MudPaper Outlined="true" Class="pa-5">
+                <MudPaper Outlined="true" Class="pa-3">
                     <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
                         Set an username
                     </MudTextM3>
@@ -29,10 +30,11 @@
                             Now you can set username, otherwise your email address will be used as username.
                         </MudTextM3>
                         <MudStack Spacing="1">
-                            <MudForm @ref="_form" Model="_model">
+                            <MudForm @ref="_form" Model="_model" Validation="Validator.ValidateValue">
                                 <MudTextFieldExtended
                                     Label="Username"
                                     @bind-Value="_model.Username"
+                                    For="@(() => _model.Username)"
                                     Margin="Margin.Dense"
                                     Variant="Variant.Outlined"
                                     Immediate="true"
@@ -43,7 +45,8 @@
                             Color="Color.Primary"
                             Variant="Variant.Filled"
                             ButtonType="ButtonType.Button"
-                            Size="Size.Small">
+                            Size="Size.Small"
+                            OnClick="@(async () => await OnSetAsync())">
                             Set username
                         </MudButton>
                     </MudStack>
@@ -64,7 +67,7 @@
     [SupplyParameterFromQuery(Name = "redirect_uri")]
     public string RedirectUri { get; set; } = string.Empty;
 
-    private MudForm? _form = new();
+    private MudForm _form = new();
     private SetUsernameModel _model = new();
     private string _provider = string.Empty;
 
@@ -90,4 +93,28 @@
         }
     }
 
+    private async Task OnSetAsync()
+    {
+        await _form.Validate();
+        
+        if (_form.IsValid)
+        {
+            var request = new SetUsernameRequest()
+            {
+                UserId = UserState.UserId,
+                Username = _model.Username
+            };
+            
+            var result = await UsernameService.SetUsernameAsync(request);
+            if (result.Succeeded)
+            {
+                NavigationManager.NavigateTo(RedirectUri);
+            }
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
+        }
+    }
 }
