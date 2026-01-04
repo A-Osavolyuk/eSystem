@@ -70,7 +70,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Generate recovery codes")]
     [EndpointDescription("Generate recovery codes")]
     [ProducesResponseType(200)]
-    [HttpPost("recovery-code/generate")]
+    [HttpPost("recovery-codes/generate")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GenerateRecoveryCodesAsync([FromBody] GenerateRecoveryCodesRequest request)
     {
@@ -81,7 +81,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Load recovery codes")]
     [EndpointDescription("Load recovery codes")]
     [ProducesResponseType(200)]
-    [HttpPost("recovery-code/load")]
+    [HttpPost("recovery-codes/load")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> LoadRecoveryCodesAsync([FromBody] LoadRecoveryCodesRequest request)
     {
@@ -92,7 +92,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointSummary("Revoke recovery codes")]
     [EndpointDescription("Revoke recovery codes")]
     [ProducesResponseType(200)]
-    [HttpPost("recovery-code/revoke")]
+    [HttpPost("recovery-codes/revoke")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> RevokeRecoveryCodesAsync([FromBody] RevokeRecoveryCodesRequest request)
     {
