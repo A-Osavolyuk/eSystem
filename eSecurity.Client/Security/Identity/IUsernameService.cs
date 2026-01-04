@@ -6,4 +6,5 @@ public interface IUsernameService
 {
     public ValueTask<HttpResponse> SetUsernameAsync(SetUsernameRequest request);
     public ValueTask<HttpResponse> ChangeUsernameAsync(ChangeUsernameRequest request);
+    public ValueTask<HttpResponse> CheckUsernameAsync(CheckUsernameRequest request);
 }

@@ -30,4 +30,16 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
+
+    public async ValueTask<HttpResponse> CheckUsernameAsync(CheckUsernameRequest request)
+        => await _apiClient.SendAsync(
+            new HttpRequest()
+            {
+                Method = HttpMethod.Post,
+                Url = "api/v1/Username/check"
+            }, new HttpOptions()
+            {
+                ContentType = ContentTypes.Application.Json,
+                Authentication = AuthenticationType.None
+            });
 }
