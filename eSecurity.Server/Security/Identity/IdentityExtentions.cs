@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;
 using eSecurity.Server.Security.Identity.SignUp;
 using eSecurity.Server.Security.Identity.User;
+using eSecurity.Server.Security.Identity.User.Username;
 
 namespace eSecurity.Server.Security.Identity;
 
@@ -18,6 +19,7 @@ public static class IdentityExtensions
         {
             builder.Services.AddSignUpStrategies();
             builder.Services.AddScoped<IUserManager, UserManager>();
+            builder.Services.AddScoped<IUsernameManager, UsernameManager>();
             builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
             builder.Services.AddScoped<IEmailManager, EmailManager>();
             builder.Services.AddScoped<IPhoneManager, PhoneManager>();

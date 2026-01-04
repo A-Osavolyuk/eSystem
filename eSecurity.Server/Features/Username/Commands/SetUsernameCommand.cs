@@ -1,20 +1,24 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.User;
+using eSecurity.Server.Security.Identity.User.Username;
 
 namespace eSecurity.Server.Features.Username.Commands;
 
 public sealed record SetUsernameCommand(SetUsernameRequest Request) : IRequest<Result>;
 
-public sealed class SetUsernameCommandHandler(IUserManager userManager) : IRequestHandler<SetUsernameCommand, Result>
+public sealed class SetUsernameCommandHandler(
+    IUserManager userManager,
+    IUsernameManager usernameManager) : IRequestHandler<SetUsernameCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IUsernameManager _usernameManager = usernameManager;
 
     public async Task<Result> Handle(SetUsernameCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found");
 
-        if (await _userManager.IsUsernameTakenAsync(request.Request.Username, cancellationToken))
+        if (await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
         {
             return Results.BadRequest(new Error()
             {
@@ -23,6 +27,6 @@ public sealed class SetUsernameCommandHandler(IUserManager userManager) : IReque
             });
         }
 
-        return await _userManager.SetUsernameAsync(user, request.Request.Username, cancellationToken);
+        return await _usernameManager.SetAsync(user, request.Request.Username, cancellationToken);
     }
 }

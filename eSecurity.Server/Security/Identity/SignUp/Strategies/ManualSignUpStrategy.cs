@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
+using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Common.Http.Context;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
@@ -21,6 +22,7 @@ public sealed class ManualSignUpPayload : SignUpPayload
 
 public sealed class ManualSignUpStrategy(
     IUserManager userManager,
+    IUsernameManager usernameManager,
     IPasswordManager passwordManager,
     IPermissionManager permissionManager,
     IRoleManager roleManager,
@@ -30,6 +32,7 @@ public sealed class ManualSignUpStrategy(
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IUsernameManager _usernameManager = usernameManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly IPermissionManager _permissionManager = permissionManager;
     private readonly IRoleManager _roleManager = roleManager;
@@ -52,7 +55,7 @@ public sealed class ManualSignUpStrategy(
 
         if (_options.RequireUniqueUserName)
         {
-            var isUserNameTaken = await _userManager.IsUsernameTakenAsync(manualPayload.Username, cancellationToken);
+            var isUserNameTaken = await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken);
             if (isUserNameTaken) return Results.NotFound("Username is already taken");
         }
 

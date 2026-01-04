@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
+using eSecurity.Server.Security.Identity.User.Username;
 
 namespace eSecurity.Server.Features.Username.Commands;
 
@@ -8,28 +9,31 @@ public record ChangeUsernameCommand(ChangeUsernameRequest Request) : IRequest<Re
 
 public class ChangeUsernameCommandHandler(
     IUserManager userManager,
-    IOptions<AccountOptions> options) : IRequestHandler<ChangeUsernameCommand, Result>
+    IOptions<AccountOptions> options,
+    IUsernameManager usernameManager) : IRequestHandler<ChangeUsernameCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IUsernameManager _usernameManager = usernameManager;
     private readonly AccountOptions _options = options.Value;
 
     public async Task<Result> Handle(ChangeUsernameCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
-        if (user.Username == request.Request.Username) return Results.BadRequest("Username must be unique.");
-        
-        if (_options.RequireUniqueUserName)
+        if (user.Username == request.Request.Username) 
+            return Results.BadRequest("Username must be unique.");
+
+        if (_options.RequireUniqueUserName &&
+            await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
         {
-            var isUserNameTaken = await _userManager.IsUsernameTakenAsync(request.Request.Username, cancellationToken);
-            if (isUserNameTaken) return Results.NotFound(new Error()
+            return Results.NotFound(new Error()
             {
                 Code = Errors.Common.UsernameTaken,
                 Description = "Username is already taken"
             });
         }
-        
-        var result = await _userManager.ChangeUsernameAsync(user, request.Request.Username, cancellationToken);
+
+        var result = await _usernameManager.ChangeAsync(user, request.Request.Username, cancellationToken);
         return result;
     }
 }

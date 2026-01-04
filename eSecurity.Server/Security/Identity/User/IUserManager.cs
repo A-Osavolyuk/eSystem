@@ -10,18 +10,10 @@ public interface IUserManager
     
     public ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
         CancellationToken cancellationToken = default);
-    
-    public ValueTask<Result> SetUsernameAsync(UserEntity user, string username, 
-        CancellationToken cancellationToken = default);
 
     public ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default);
 
     public ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName,
-        CancellationToken cancellationToken = default);
-
     public ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default);
-
-    public ValueTask<bool> IsUsernameTakenAsync(string userName, CancellationToken cancellationToken = default);
 }

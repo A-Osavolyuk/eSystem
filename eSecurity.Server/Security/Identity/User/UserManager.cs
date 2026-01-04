@@ -49,19 +49,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return user;
     }
 
-    public async ValueTask<Result> SetUsernameAsync(UserEntity user, string username,
-        CancellationToken cancellationToken = default)
-    {
-        user.Username = username;
-        user.UsernameChangeDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
     public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var lockoutState = new UserLockoutStateEntity()
@@ -93,20 +80,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return Results.Ok();
     }
 
-    public async ValueTask<Result> ChangeUsernameAsync(UserEntity user, string userName,
-        CancellationToken cancellationToken = default)
-    {
-        user.Username = userName;
-        user.NormalizedUsername = userName.ToUpper();
-        user.UsernameChangeDate = DateTimeOffset.UtcNow;
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Ok();
-    }
-
     public async ValueTask<Result> DeleteAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
@@ -114,15 +87,5 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();
-    }
-
-    public async ValueTask<bool> IsUsernameTakenAsync(string userName,
-        CancellationToken cancellationToken = default)
-    {
-        var normalizedUserName = userName.ToUpper();
-        var result = await _context.Users.AnyAsync(
-            u => u.NormalizedUsername == normalizedUserName, cancellationToken);
-
-        return result;
     }
 }
