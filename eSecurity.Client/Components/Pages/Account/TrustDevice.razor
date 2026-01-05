@@ -27,9 +27,9 @@
                         To sign-in on new device, please enter 6-digit code the letter sent to:
                         <strong>@_email</strong>
                     </MudTextM3>
-                    <MudForm @ref="_form" Model="Model">
+                    <MudForm @ref="_form" Model="_model">
                         <MudTextFieldExtended
-                            @bind-Value="Model.Code"
+                            @bind-Value="_model.Code"
                             Variant="Variant.Outlined"
                             Margin="Margin.Dense"
                             Placeholder="XXXXXX"
@@ -40,9 +40,9 @@
                     <MudLoadingButton
                         ButtonType="ButtonType.Button"
                         Variant="Variant.Filled"
-                        Color="Color.Success"
+                        Color="Color.Primary"
                         Size="Size.Small"
-                        Disabled="@(Model.Code.Length <= 5)"
+                        Disabled="@(_model.Code.Length <= 5)"
                         OnClick="@(async () => await OnTrustAsync())">
                         Submit
                     </MudLoadingButton>
@@ -61,11 +61,9 @@
     [SupplyParameterFromQuery(Name = "user")]
     public Guid UserId { get; set; }
     
-    public TrustDeviceModel Model = new();
-
+    private TrustDeviceModel _model = new();
     private MudForm _form = new();
     private readonly PatternMask _mask = new("000000");
-
     private string? _email;
     private MessageContext? _context;
     private UserDeviceDto _device = new();
@@ -129,7 +127,7 @@
 
         if (_form.IsValid)
         {
-            var request = _context!.ToVerifyCodeRequest(Model.Code);
+            var request = _context!.ToVerifyCodeRequest(_model.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded)

@@ -22,34 +22,34 @@
                             <MudItem xs="8">
                                 <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                                             Account check
-                                        </MudText>
+                                        </MudTextM3>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudStack>
-                                            <MudText Align="Align.Center" Typo="Typo.body1"
-                                                     Style="width: 55ch; margin: auto">
+                                        <MudStack Spacing="3">
+                                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                                 To recover your account, we need first find your account and check
                                                 access recovery requirements. If you have verified recovery email
                                                 address, we will send recovery code via an email message, when you
                                                 enter 6-digit recovery code from the email, we will set your recovery
                                                 email address as primary. Please, enter your username.
-                                            </MudText>
+                                            </MudTextM3>
                                             <MudForm
                                                 @ref="_checkAccountForm"
                                                 Model="_recoverAccountModel">
-                                                <MudTextField
+                                                <MudTextFieldExtended
                                                     Label="Username"
                                                     For="@(() => _recoverAccountModel.Username)"
                                                     Variant="Variant.Outlined"
                                                     Immediate
-                                                    @bind-Value="_recoverAccountModel.Username"/>
+                                                    @bind-Value="_recoverAccountModel.Username"
+                                                    Margin="Margin.Dense"/>
                                             </MudForm>
                                             <MudLoadingButton
-                                                Size="Size.Large" FullWidth
+                                                Size="Size.Small" 
+                                                FullWidth="true"
                                                 Variant="Variant.Filled"
-                                                Class="mt-2"
                                                 Color="Color.Primary"
                                                 ButtonType="ButtonType.Button"
                                                 OnClick="@(async () => await OnCheckAsync())">
@@ -68,31 +68,32 @@
                             <MudItem xs="8">
                                 <MudStack Spacing="1" Justify="Justify.Center">
                                     <MudPaper Outlined Class="pa-3">
-                                        <MudText Align="Align.Center" Typo="Typo.h4">
+                                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
                                             Account recovery
-                                        </MudText>
+                                        </MudTextM3>
                                     </MudPaper>
                                     <MudPaper Outlined Class="pa-3">
                                         <MudStack Spacing="1">
-                                            <MudText Align="Align.Center" Typo="Typo.body1"
-                                                     Style="width: 55ch; margin: auto">
+                                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                                 Enter 6-digit code from the email we sent you to:
                                                 <strong>@_recoveryEmail</strong>
-                                            </MudText>
+                                            </MudTextM3>
                                             <MudForm
                                                 @ref="_verifyCodeForm"
                                                 Model="_codeModel"
                                                 Validation="Validator.ValidateValue">
-                                                <MudCodeInput
-                                                    Count="6"
-                                                    Margin="Margin.Normal"
-                                                    Spacing="2"
-                                                    Class="d-flex align-items-center"
+                                                <MudTextFieldExtended
                                                     @bind-Value="_codeModel.Code"
-                                                    Variant="Variant.Outlined"/>
+                                                    Variant="Variant.Outlined"
+                                                    Margin="Margin.Dense"
+                                                    Placeholder="XXXXXX"
+                                                    Mask="_mask"
+                                                    Clearable="true"
+                                                    Immediate="true"/>
                                             </MudForm>
                                             <MudLoadingButton
-                                                Size="Size.Large" FullWidth
+                                                Size="Size.Small" 
+                                                FullWidth="true"
                                                 Variant="Variant.Filled"
                                                 Class="mt-2"
                                                 Color="Color.Primary"
@@ -124,6 +125,7 @@
     private MudStepperExtended _stepper = new();
     private MudForm _checkAccountForm = new();
     private MudForm _verifyCodeForm = new();
+    private readonly PatternMask _mask = new("000000");
 
     private Guid _userId;
     private string? _recoveryEmail;

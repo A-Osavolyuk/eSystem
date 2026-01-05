@@ -8,43 +8,43 @@
 <Title Text="Account recovery"></Title>
 
 <MudGrid Justify="Justify.Center">
-    <MudItem xs="4">
+    <MudItem xs="4" Style="margin-top: 50px">
         <MudStack Spacing="1" Justify="Justify.Center">
             <MudPaper Outlined="true" Class="pa-3">
-                <MudText Align="Align.Center" Typo="Typo.h4"> Account recovery</MudText>
+                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                    Account recovery
+                </MudTextM3>
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
-                <MudForm
-                    @ref="_form"
-                    Model="_model"
-                    Validation="Validator.ValidateValue">
-                    <MudStack Spacing="2">
-                        <MudText Align="Align.Center">
-                            Your account was locked out due to reason: 'Too many failed login attempts'.
-                            To recover access to your account, please check your email address, we sent you the
-                            letter
-                            with recovery code.
-                        </MudText>
-
-                        <MudCodeInput
-                            Count="6"
-                            Margin="Margin.Normal"
-                            Spacing="2"
-                            Class="d-flex align-items-center"
+                <MudStack Spacing="2">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                        Your account was locked out due to reason: 'Too many failed login attempts'.
+                        To recover access to your account, please check your email address, we sent you the
+                        letter with recovery code.
+                    </MudTextM3>
+                    <MudForm
+                        @ref="_form"
+                        Model="_model"
+                        Validation="Validator.ValidateValue">
+                        <MudTextFieldExtended
                             @bind-Value="_model.Code"
-                            Variant="Variant.Outlined"/>
-
-                        <MudLoadingButton
-                            FullWidth="true"
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            ButtonType="ButtonType.Button"
-                            Disabled="@(_model.Code.Length <= 5)"
-                            OnClick="@(async () => await OnRecoverAsync())">
-                            Recover
-                        </MudLoadingButton>
-                    </MudStack>
-                </MudForm>
+                            Variant="Variant.Outlined"
+                            Margin="Margin.Dense"
+                            Placeholder="XXXXXX"
+                            Mask="_mask"
+                            Clearable="true"
+                            Immediate="true"/>
+                    </MudForm>
+                    <MudLoadingButton
+                        FullWidth="true"
+                        Color="Color.Primary"
+                        Variant="Variant.Filled"
+                        ButtonType="ButtonType.Button"
+                        Disabled="@(_model.Code.Length <= 5)"
+                        OnClick="@(async () => await OnRecoverAsync())">
+                        Recover
+                    </MudLoadingButton>
+                </MudStack>
             </MudPaper>
             <CodeResend Context="_context"></CodeResend>
         </MudStack>
@@ -55,7 +55,7 @@
 
     [SupplyParameterFromQuery(Name = "id")]
     private Guid UserId { get; set; }
-    
+
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
 
@@ -63,6 +63,7 @@
 
     private MudForm _form = new();
     private MessageContext? _context;
+    private readonly PatternMask _mask = new("000000");
 
     protected override void OnInitialized()
     {
@@ -104,4 +105,5 @@
             }
         }
     }
+
 }
