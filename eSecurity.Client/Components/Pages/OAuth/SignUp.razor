@@ -38,7 +38,9 @@
                                     Margin="Margin.Dense"
                                     Variant="Variant.Outlined"
                                     Immediate="true"
-                                    Clearable="true"/>
+                                    Clearable="true"
+                                    Error="@_showError"
+                                    ErrorText="@_error"/>
                             </MudForm>
                         </MudStack>
                         <MudButton
@@ -69,7 +71,10 @@
 
     private MudForm _form = new();
     private SetUsernameModel _model = new();
+
     private string _provider = string.Empty;
+    private string? _error;
+    private bool _showError;
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,7 +101,7 @@
     private async Task OnSetAsync()
     {
         await _form.Validate();
-        
+
         if (_form.IsValid)
         {
             var request = new SetUsernameRequest()
@@ -104,7 +109,7 @@
                 UserId = UserState.UserId,
                 Username = _model.Username
             };
-            
+
             var result = await UsernameService.SetUsernameAsync(request);
             if (result.Succeeded)
             {
@@ -113,8 +118,15 @@
             else
             {
                 var error = result.GetError();
-                Snackbar.Add(error.Description, Severity.Error);
+                if (error.Code == Errors.Common.UsernameTaken)
+                {
+                    _error = "Username is already taken.";
+                    _showError = true;
+                }
+                else
+                    Snackbar.Add(error.Description, Severity.Error);
             }
         }
     }
+
 }
