@@ -68,7 +68,7 @@
     public UserVerificationData Model { get; set; } = new();
 
     private CodeModel CodeModel { get; set; } = new();
-    private PatternMask _mask = new("000000");
+    private readonly PatternMask _mask = new("000000");
     private MudForm _form = new();
 
     private async Task OnVerifyAsync()

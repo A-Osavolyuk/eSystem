@@ -70,7 +70,7 @@
     public string RedirectUri { get; set; } = string.Empty;
 
     private MudForm _form = new();
-    private SetUsernameModel _model = new();
+    private readonly SetUsernameModel _model = new();
 
     private string _provider = string.Empty;
     private string? _error;

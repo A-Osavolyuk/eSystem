@@ -77,10 +77,10 @@
                     }
                     <MudForm
                         @ref="_form"
-                        Model="Model"
+                        Model="_model"
                         Validation="Validator.ValidateValue">
                         <MudTextFieldExtended
-                            @bind-Value="Model.Code"
+                            @bind-Value="_model.Code"
                             Variant="Variant.Outlined"
                             Margin="Margin.Dense"
                             Placeholder="XXXXXX"
@@ -93,7 +93,7 @@
                         Variant="Variant.Filled"
                         Color="Color.Primary"
                         Size="Size.Small"
-                        Disabled="@(Model.Code.Length <= 5)"
+                        Disabled="@(_model.Code.Length <= 5)"
                         OnClick="@(async () => await OnVerifyEmailAsync())">
                         Verify
                     </MudLoadingButton>
@@ -123,9 +123,9 @@
     [SupplyParameterFromQuery(Name = "type")]
     private string Type { get; set; } = string.Empty;
 
-    private VerifyEmailModel Model { get; set; } = new();
+    private readonly VerifyEmailModel _model = new();
 
-    private PatternMask _mask = new("000000");
+    private readonly PatternMask _mask = new("000000");
     private MudForm _form = new();
     private MessageContext? _context;
 
@@ -170,7 +170,7 @@
 
         if (_form.IsValid)
         {
-            var request = _context!.ToVerifyCodeRequest(Model.Code);
+            var request = _context!.ToVerifyCodeRequest(_model.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();

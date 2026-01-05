@@ -16,7 +16,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudForm
                     @ref="_form"
-                    Model="Model"
+                    Model="_model"
                     Validation="Validator.ValidateValue">
                     <MudStack Spacing="2">
                         <MudText Align="Align.Center">
@@ -31,7 +31,7 @@
                             Margin="Margin.Normal"
                             Spacing="2"
                             Class="d-flex align-items-center"
-                            @bind-Value="Model.Code"
+                            @bind-Value="_model.Code"
                             Variant="Variant.Outlined"/>
 
                         <MudLoadingButton
@@ -39,7 +39,7 @@
                             Color="Color.Primary"
                             Variant="Variant.Filled"
                             ButtonType="ButtonType.Button"
-                            Disabled="@(Model.Code.Length <= 5)"
+                            Disabled="@(_model.Code.Length <= 5)"
                             OnClick="@(async () => await OnRecoverAsync())">
                             Recover
                         </MudLoadingButton>
@@ -59,7 +59,7 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
 
-    private CodeModel Model { get; set; } = new();
+    private readonly CodeModel _model = new();
 
     private MudForm _form = new();
     private MessageContext? _context;
@@ -87,7 +87,7 @@
         {
             var request = new UnlockAccountRequest()
             {
-                Code = Model.Code,
+                Code = _model.Code,
                 UserId = UserId
             };
 

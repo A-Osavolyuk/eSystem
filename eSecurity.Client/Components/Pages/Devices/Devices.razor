@@ -9,7 +9,7 @@
 
 <Title Text="Device and sessions"></Title>
 
-@if (Model is not null)
+@if (_model is not null)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
@@ -18,7 +18,7 @@
                 <MudDivider/>
                 <MudStack Spacing="2" Justify="Justify.Center">
                     <DevicesSection
-                        Model="Model"/>
+                        Model="_model"/>
                 </MudStack>
             </MudStack>
         </MudItem>
@@ -26,7 +26,7 @@
 }
 
 @code {
-    private UserDevicesModel? Model { get; set; }
+    private UserDevicesModel? _model;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -45,7 +45,7 @@
         {
             var devices = result.Get();
 
-            Model = new UserDevicesModel() { Devices = devices };
+            _model = new UserDevicesModel() { Devices = devices };
         }
         else
         {

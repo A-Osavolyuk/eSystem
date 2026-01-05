@@ -53,7 +53,7 @@
     <MudStack>
         <MudBarcode
             BarcodeFormat="BarcodeFormat.QR_CODE"
-            @bind-Value="QrCode.Value"
+            @bind-Value="_qrCode.Value"
             Height="200"
             Width="200"/>
     </MudStack>
@@ -85,7 +85,7 @@
         </MudTextM3>
         <MudForm
             @ref="_form"
-            Model="Model"
+            Model="_model"
             Validation="Validator.ValidateValue">
             <MudStack Row="true" AlignItems="AlignItems.Center">
                 <MudStack Row="true" Style="width: 300px">
@@ -95,7 +95,7 @@
                         Immediate="true"
                         Mask="@_mask"
                         Placeholder="XXXXXX"
-                        @bind-Value="Model.Code"
+                        @bind-Value="_model.Code"
                         Disabled="_codeValid"/>
                 </MudStack>
                 @if (_codeValid)
@@ -130,7 +130,7 @@
                         Color="Color.Success"
                         Variant="Variant.Filled"
                         ButtonType="ButtonType.Button"
-                        Disabled="@(Model.Code.Length < 6)"
+                        Disabled="@(_model.Code.Length < 6)"
                         OnClick="@(async () => await OnVerifyCodeAsync())">
                         Verify
                     </MudButton>
@@ -151,11 +151,11 @@
 @code {
     [Parameter] public EventCallback OnClose { get; set; }
 
-    private CodeModel Model { get; set; } = new();
-    private QrCode QrCode { get; set; } = new();
+    private readonly CodeModel _model = new();
+    private QrCode _qrCode = new();
 
     private MudForm _form = new();
-    private PatternMask _mask = new("000000");
+    private readonly PatternMask _mask = new("000000");
     private bool _codeValid;
     private bool _showError;
 
@@ -175,7 +175,7 @@
 
         if (result.Succeeded)
         {
-            QrCode = result.Get()!;
+            _qrCode = result.Get()!;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
@@ -192,7 +192,7 @@
 
         var parameters = new DialogParameters<AuthenticatorSecretDialog>()
         {
-            { dialog => dialog.Secret, QrCode.Secret }
+            { dialog => dialog.Secret, _qrCode.Secret }
         };
 
         await DialogService.ShowAsync<AuthenticatorSecretDialog>("Your two-factor secret", parameters, options);
@@ -204,8 +204,8 @@
         var request = new VerifyAuthenticatorRequest()
         {
             UserId = UserState.UserId,
-            Code = Model.Code,
-            Secret = QrCode.Secret
+            Code = _model.Code,
+            Secret = _qrCode.Secret
         };
 
         var result = await TwoFactorService.VerifyAuthenticatorAsync(request);
@@ -219,7 +219,7 @@
         var request = new ReconfigureAuthenticatorRequest()
         {
             UserId = UserState.UserId,
-            Secret = QrCode.Secret
+            Secret = _qrCode.Secret
         };
 
         var result = await TwoFactorService.ReconfigureAuthenticatorAsync(request);

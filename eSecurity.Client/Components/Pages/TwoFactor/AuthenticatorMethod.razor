@@ -97,8 +97,7 @@
     [Parameter] 
     public List<UserTwoFactorMethod> Methods { get; set; } = [];
     
-    public CodeModel Model { get; set; } = new();
-
+    private CodeModel Model = new();
     private MudForm _form = new();
     private readonly PatternMask _mask = new("000000");
     private bool _expanded;

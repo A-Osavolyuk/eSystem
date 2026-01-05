@@ -20,11 +20,11 @@
                 <MudStack Spacing="2">
                     <MudForm
                         @ref="_form"
-                        Model="Model"
+                        Model="_model"
                         Validation="Validator.ValidateValue">
                         <MudTextFieldExtended
-                            @bind-Value="Model.Username"
-                            For="(() => Model.Username)"
+                            @bind-Value="_model.Username"
+                            For="(() => _model.Username)"
                             InputType="InputType.Email"
                             Label="Username"
                             Immediate="true"
@@ -33,8 +33,8 @@
                             Error="_showUsernameError"
                             ErrorText="@_usernameError"/>
                         <MudTextFieldExtended
-                            @bind-Value="Model.Email"
-                            For="(() => Model.Email)"
+                            @bind-Value="_model.Email"
+                            For="(() => _model.Email)"
                             InputType="InputType.Email"
                             Label="Email"
                             Immediate="true"
@@ -44,8 +44,8 @@
                             ErrorText="@_emailError"/>
                         <MudPasswordField
                             PasswordMode="true"
-                            @bind-Value="Model.Password"
-                            For="(() => Model.Password)"
+                            @bind-Value="_model.Password"
+                            For="(() => _model.Password)"
                             Label="Password"
                             InputType="InputType.Password"
                             IconSize="Size.Small"
@@ -86,7 +86,7 @@
 </MudGrid>
 
 @code {
-    private SignUpModel Model { get; set; } = new();
+    private readonly SignUpModel _model = new();
 
     private MudForm _form = new();
 
@@ -105,9 +105,9 @@
         {
             var request = new SignUpRequest()
             {
-                Email = Model.Email,
-                Password = Model.Password,
-                Username = Model.Username
+                Email = _model.Email,
+                Password = _model.Password,
+                Username = _model.Username
             };
 
             var result = await SecurityService.SignUpAsync(request);

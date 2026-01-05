@@ -11,7 +11,7 @@
     <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
         Enter one of the 16 recovery codes saved during 2FA configuration.
     </MudTextM3>
-    <MudForm @ref="_form" Model="Model">
+    <MudForm @ref="_form" Model="_model">
         <MudTextFieldExtended
             Mask="_mask"
             Placeholder="XXXXXXXXXX"
@@ -19,8 +19,8 @@
             Margin="Margin.Dense"
             Clearable="true"
             Immediate="true"
-            @bind-Value="Model.Code"
-            For="() => Model.Code"/>
+            @bind-Value="_model.Code"
+            For="() => _model.Code"/>
     </MudForm>
     <MudStack Spacing="2">
         <MudButton
@@ -28,7 +28,7 @@
             Color="Color.Success"
             Variant="Variant.Filled"
             ButtonType="ButtonType.Button"
-            Disabled="@(Model.Code.Length < 9)"
+            Disabled="@(_model.Code.Length < 9)"
             OnClick="@(async () => await OnSignInAsync())">
             Verify
         </MudButton>
@@ -98,8 +98,7 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
     
-    public CodeModel Model { get; set; } = new();
-    
+    private CodeModel _model = new();
     private MudForm _form = new();
     private readonly PatternMask _mask = new("**********");
     private bool _expanded;
@@ -114,7 +113,7 @@
             {
                 Payload = new RecoveryCodeSignInPayload()
                 {
-                    Code = Model.Code,
+                    Code = _model.Code,
                     UserId = UserId
                 }
             };

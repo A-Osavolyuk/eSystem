@@ -60,10 +60,10 @@
                                                     </MudTextM3>
                                                     <MudForm 
                                                         @ref="_form" 
-                                                        Model="Model" 
+                                                        Model="_model" 
                                                         Validation="Validator.ValidateValue">
                                                         <MudTextFieldExtended
-                                                            @bind-Value="Model.DisplayName"
+                                                            @bind-Value="_model.DisplayName"
                                                             Margin="Margin.Dense"
                                                             Variant="Variant.Outlined"
                                                             Immediate="true"
@@ -158,7 +158,7 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
 
-    private CreatePasskeyModel Model { get; set; } = new();
+    private readonly CreatePasskeyModel _model = new();
     private MudStepperExtended _stepper = new();
     private ConfirmationContext? _context;
     private MudForm _form = new();
@@ -183,7 +183,7 @@
             var request = new GenerateCreationOptionsRequest()
             {
                 UserId = UserState.UserId,
-                DisplayName = Model.DisplayName
+                DisplayName = _model.DisplayName
             };
 
             var result = await PasskeyService.GenerateCreationOptionsAsync(request);
@@ -206,7 +206,7 @@
             var request = new CreatePasskeyRequest()
             {
                 UserId = UserState.UserId,
-                DisplayName = Model.DisplayName,
+                DisplayName = _model.DisplayName,
                 Response = assertResponse
             };
 

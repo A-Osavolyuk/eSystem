@@ -10,13 +10,13 @@
 
 <Title Text="Two-factor login"/>
 
-@if (Methods.Any())
+@if (_methods.Any())
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="3">
             <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
                 <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.LockPerson"/>
-                @if (PreferredMethod != TwoFactorMethod.RecoveryCode)
+                @if (_preferredMethod != TwoFactorMethod.RecoveryCode)
                 {
                     <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
                         Two-factor authentication
@@ -28,12 +28,12 @@
                         Two-factor recovery
                     </MudTextM3>
                 }
-                @switch (PreferredMethod)
+                @switch (_preferredMethod)
                 {
                     case TwoFactorMethod.AuthenticatorApp:
                     {
                         <AuthenticatorMethod
-                            Methods="Methods"
+                            Methods="_methods"
                             OnSignIn="SignIn"
                             OnChangeMethod="ChangeMethod"/>
                         break;
@@ -41,7 +41,7 @@
                     case TwoFactorMethod.Passkey:
                     {
                         <PasskeyMethod
-                            Methods="Methods"
+                            Methods="_methods"
                             OnSignIn="SignIn"
                             OnChangeMethod="ChangeMethod"/>
                         break;
@@ -49,7 +49,7 @@
                     case TwoFactorMethod.RecoveryCode:
                     {
                         <RecoveryCodeMethod
-                            Methods="Methods"
+                            Methods="_methods"
                             OnSignIn="SignIn"
                             OnChangeMethod="ChangeMethod"/>
                         break;
@@ -64,8 +64,8 @@
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
 
-    private List<UserTwoFactorMethod> Methods { get; set; } = [];
-    private TwoFactorMethod PreferredMethod { get; set; }
+    private List<UserTwoFactorMethod> _methods = [];
+    private TwoFactorMethod _preferredMethod;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,15 +73,15 @@
 
         if (result.Succeeded)
         {
-            Methods = result.Get()!;
-            PreferredMethod = Methods.Single(x => x.Preferred).Method;
+            _methods = result.Get()!;
+            _preferredMethod = _methods.Single(x => x.Preferred).Method;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
     private void ChangeMethod(TwoFactorMethod method)
     {
-        PreferredMethod = method;
+        _preferredMethod = method;
     }
 
     private void SignIn()

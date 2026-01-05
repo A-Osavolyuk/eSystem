@@ -102,7 +102,7 @@
 
     private CodeModel CodeModel { get; set; } = new();
 
-    private PatternMask _mask = new PatternMask("000000");
+    private readonly PatternMask _mask = new PatternMask("000000");
     private MudForm _form = new();
     private bool _sendStage = true;
 

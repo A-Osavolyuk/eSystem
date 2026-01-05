@@ -129,7 +129,7 @@
                                                         </MudTextM3>
                                                         <MudForm
                                                             @ref="_form"
-                                                            Model="Model"
+                                                            Model="_model"
                                                             Validation="Validator.ValidateValue">
                                                             <MudStack Row="true" Spacing="1">
                                                                 <MudTextFieldExtended
@@ -138,7 +138,7 @@
                                                                     Immediate="true"
                                                                     Mask="@_mask"
                                                                     Placeholder="XXXXXX"
-                                                                    @bind-Value="Model.Code"/>
+                                                                    @bind-Value="_model.Code"/>
                                                             </MudStack>
                                                         </MudForm>
                                                         @if (_showError)
@@ -287,14 +287,12 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
 
-    private CodeModel Model { get; set; } = new();
-
+    private readonly CodeModel _model = new();
     private MudStepperExtended _stepper = new();
     private MudForm _form = new();
     private ConfirmationContext? _confirmationContext;
     private readonly PatternMask _mask = new("000000");
     private bool _showError;
-
     private bool DownloadedCodes { get; set; }
     private QrCode QrCode { get; set; } = new();
     private List<string> Codes { get; set; } = [];
@@ -335,7 +333,7 @@
             UserId = UserState.UserId,
             Purpose = PurposeType.AuthenticatorApp,
             Action = ActionType.Subscribe,
-            Code = Model.Code
+            Code = _model.Code
         };
 
         var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);

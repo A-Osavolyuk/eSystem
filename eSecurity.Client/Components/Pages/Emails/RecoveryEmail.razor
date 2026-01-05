@@ -104,10 +104,8 @@
 
 @code {
     [Parameter] public UserEmailDto Email { get; set; } = new();
-
     [Parameter] public EventCallback OnRefresh { get; set; }
     
-
     private string OnVerify()
     {
         return QueryBuilder.Create()

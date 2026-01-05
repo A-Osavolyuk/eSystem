@@ -12,7 +12,7 @@
 
 <Title Text="Emails"></Title>
 
-@if (Model is not null)
+@if (_model is not null)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
@@ -21,7 +21,7 @@
                     Emails
                 </MudTextM3>
                 <MudDivider/>
-                @if (Model.Emails.All(x => x.Type != EmailType.Recovery))
+                @if (_model.Emails.All(x => x.Type != EmailType.Recovery))
                 {
                     <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
@@ -30,7 +30,7 @@
                         </MudTextM3>
                     </MudAlert>
                 }
-                @foreach (var email in Model.Emails.OrderBy(email => email.Type))
+                @foreach (var email in _model.Emails.OrderBy(email => email.Type))
                 {
                     switch (email.Type)
                     {
@@ -39,7 +39,7 @@
                             <PrimaryEmail 
                                 OnRefresh="RefreshAsync"
                                 Email="email"
-                                LinkedAccountData="LinkedAccountsData"/> 
+                                LinkedAccountData="_linkedAccountsData"/> 
                             break;
                         }
                         case EmailType.Recovery:
@@ -59,16 +59,16 @@
                     }
                 }
                 <AddEmail OnRefresh="RefreshAsync"/>
-                <PreferredPrimaryEmail Model="Model"/>
-                <PreferredRecoveryEmail Model="Model"/>
+                <PreferredPrimaryEmail Model="_model"/>
+                <PreferredRecoveryEmail Model="_model"/>
             </MudStack>
         </MudItem>
     </MudGrid>
 }
 
 @code {
-    private UserEmailsModel? Model { get; set; }
-    private UserLinkedAccountData? LinkedAccountsData { get; set; }
+    private UserEmailsModel? _model;
+    private UserLinkedAccountData? _linkedAccountsData;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -94,7 +94,7 @@
         if (result.Succeeded)
         {
             var emails = result.Get()!;
-            Model = new()
+            _model = new()
             {
                 Emails = emails,
                 PrimaryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Primary),
@@ -108,7 +108,7 @@
     {
         var result = await UserService.GetUserLinkedAccountsAsync(UserState.UserId);
 
-        if (result.Succeeded) LinkedAccountsData = result.Get()!;
+        if (result.Succeeded) _linkedAccountsData = result.Get()!;
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

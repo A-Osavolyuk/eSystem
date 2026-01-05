@@ -61,10 +61,10 @@
     [SupplyParameterFromQuery(Name = "user")]
     public Guid UserId { get; set; }
     
-    public TrustDeviceModel Model { get; set; } = new();
+    public TrustDeviceModel Model = new();
 
     private MudForm _form = new();
-    private PatternMask _mask = new("000000");
+    private readonly PatternMask _mask = new("000000");
 
     private string? _email;
     private MessageContext? _context;

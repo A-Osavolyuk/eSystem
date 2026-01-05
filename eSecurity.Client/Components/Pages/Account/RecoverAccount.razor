@@ -38,13 +38,13 @@
                                             </MudText>
                                             <MudForm
                                                 @ref="_checkAccountForm"
-                                                Model="RecoverAccountModel">
+                                                Model="_recoverAccountModel">
                                                 <MudTextField
                                                     Label="Username"
-                                                    For="@(() => RecoverAccountModel.Username)"
+                                                    For="@(() => _recoverAccountModel.Username)"
                                                     Variant="Variant.Outlined"
                                                     Immediate
-                                                    @bind-Value="RecoverAccountModel.Username"/>
+                                                    @bind-Value="_recoverAccountModel.Username"/>
                                             </MudForm>
                                             <MudLoadingButton
                                                 Size="Size.Large" FullWidth
@@ -81,14 +81,14 @@
                                             </MudText>
                                             <MudForm
                                                 @ref="_verifyCodeForm"
-                                                Model="CodeModel"
+                                                Model="_codeModel"
                                                 Validation="Validator.ValidateValue">
                                                 <MudCodeInput
                                                     Count="6"
                                                     Margin="Margin.Normal"
                                                     Spacing="2"
                                                     Class="d-flex align-items-center"
-                                                    @bind-Value="CodeModel.Code"
+                                                    @bind-Value="_codeModel.Code"
                                                     Variant="Variant.Outlined"/>
                                             </MudForm>
                                             <MudLoadingButton
@@ -96,7 +96,7 @@
                                                 Variant="Variant.Filled"
                                                 Class="mt-2"
                                                 Color="Color.Primary"
-                                                Disabled="@(CodeModel.Code.Length <= 5)"
+                                                Disabled="@(_codeModel.Code.Length <= 5)"
                                                 ButtonType="ButtonType.Button"
                                                 OnClick="@(async () => await OnVerifyAsync())">
                                                 Confirm
@@ -118,8 +118,8 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
     
-    private RecoverAccountModel RecoverAccountModel { get; set; } = new();
-    private CodeModel CodeModel { get; set; } = new();
+    private readonly RecoverAccountModel _recoverAccountModel = new();
+    private readonly CodeModel _codeModel = new();
 
     private MudStepperExtended _stepper = new();
     private MudForm _checkAccountForm = new();
@@ -137,7 +137,7 @@
         {
             var request = new CheckAccountRequest()
             {
-                Username = RecoverAccountModel.Username
+                Username = _recoverAccountModel.Username
             };
 
             var result = await SecurityService.CheckAccountAsync(request);
@@ -203,7 +203,7 @@
 
         if (_verifyCodeForm.IsValid)
         {
-            var request = _context!.ToVerifyCodeRequest(CodeModel.Code);
+            var request = _context!.ToVerifyCodeRequest(_codeModel.Code);
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();

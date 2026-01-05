@@ -12,7 +12,7 @@
 
 <Title Text="Password and authentication"></Title>
 
-@if (Model is not null)
+@if (_model is not null)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="6">
@@ -23,15 +23,15 @@
                     </MudText>
                     <MudPaper Class="pt-3 pb-3" Outlined="true">
                         <MudStack Spacing="3">
-                            <PasswordSection Model="Model.PasswordData" OnRefresh="RefreshAsync"/>
+                            <PasswordSection Model="_model.PasswordData" OnRefresh="RefreshAsync"/>
                             <MudDivider/>
-                            <LinkedAccountsSection Model="Model.LinkedAccountsData"/>
+                            <LinkedAccountsSection Model="_model.LinkedAccountsData"/>
                             <MudDivider/>
-                            <PasskeysSection OnRefresh="RefreshAsync" Model="Model.PasskeysData"/>
+                            <PasskeysSection OnRefresh="RefreshAsync" Model="_model.PasskeysData"/>
                         </MudStack>
                     </MudPaper>
                 </MudStack>
-                <TwoFactorSection Model="Model.TwoFactorData" OnRefresh="RefreshAsync"/>
+                <TwoFactorSection Model="_model.TwoFactorData" OnRefresh="RefreshAsync"/>
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -44,7 +44,7 @@ else
 }
 
 @code {
-    private UserLoginMethodsDto? Model { get; set; }
+    private UserLoginMethodsDto? _model;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -66,7 +66,7 @@ else
         var result = await UserService.GetUserLoginMethodsAsync(UserState.UserId);
         if (result.Succeeded)
         {
-            Model = result.Get()!;
+            _model = result.Get()!;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }

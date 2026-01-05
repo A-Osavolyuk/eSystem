@@ -128,11 +128,11 @@
                             }
                             <MudStack>
                                 <MudStack Spacing="5" Justify="Justify.Center" AlignItems="AlignItems.Center" Class="pb-5 px-5">
-                                    @if (Codes.Count > 0)
+                                    @if (_codes.Count > 0)
                                     {
                                         <MudStack Row="true" Class="px-5">
                                             <MudGrid Justify="Justify.Center" Spacing="1">
-                                                @foreach (var recoveryCode in Codes)
+                                                @foreach (var recoveryCode in _codes)
                                                 {
                                                     <MudItem xs="6">
                                                         <MudTextM3 Align="Align.Center" Typo="TypoM3.Title" Size="Size.Large">
@@ -220,7 +220,7 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
 
-    private List<string> Codes { get; set; } = [];
+    private List<string> _codes = [];
     private ConfirmationContext? _confirmationContext;
     private bool _recoveryCodesRegenerated;
 
@@ -233,7 +233,7 @@
 
             if (result.Succeeded)
             {
-                Codes = result.Get()!;
+                _codes = result.Get()!;
                 StateHasChanged();
             }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -256,7 +256,7 @@
 
         if (result.Succeeded)
         {
-            Codes = result.Get()!;
+            _codes = result.Get()!;
             _recoveryCodesRegenerated = true;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -264,13 +264,13 @@
     
     private async Task OnDownloadAsync()
     {
-        await DownloadManager.DownloadAsync("eaccount-recovery-codes.txt", Codes);
+        await DownloadManager.DownloadAsync("eaccount-recovery-codes.txt", _codes);
         Snackbar.Add("Downloaded", Severity.Success);
     }
 
     private async Task OnCopyAsync()
     {
-        var codes = string.Join(' ', Codes);
+        var codes = string.Join(' ', _codes);
         await ClipboardManager.CopyAsync(codes);
         Snackbar.Add("Copied", Severity.Success);
     }

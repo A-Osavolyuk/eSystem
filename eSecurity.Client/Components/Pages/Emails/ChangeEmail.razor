@@ -193,7 +193,7 @@
     private ChangeEmailModel ChangeModel { get; set; } = new();
     private CodeModel ConfirmModel { get; set; } = new();
 
-    private PatternMask _mask = new("000000");
+    private readonly PatternMask _mask = new("000000");
     private MudStepperExtended _stepper = new();
     private MudForm _changeForm = new();
     private MudForm _confirmForm = new();
