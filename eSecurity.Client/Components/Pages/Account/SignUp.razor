@@ -29,7 +29,9 @@
                             Label="Username"
                             Immediate="true"
                             Margin="Margin.Dense"
-                            Variant="Variant.Outlined"/>
+                            Variant="Variant.Outlined"
+                            Error="_showUsernameError"
+                            ErrorText="@_usernameError"/>
                         <MudTextFieldExtended
                             @bind-Value="Model.Email"
                             For="(() => Model.Email)"
@@ -37,7 +39,9 @@
                             Label="Email"
                             Immediate="true"
                             Margin="Margin.Dense"
-                            Variant="Variant.Outlined"/>
+                            Variant="Variant.Outlined"
+                            Error="_showEmailError"
+                            ErrorText="@_emailError"/>
                         <MudPasswordField
                             PasswordMode="true"
                             @bind-Value="Model.Password"
@@ -56,7 +60,7 @@
                         Color="Color.Primary"
                         FullWidth="true"
                         Size="Size.Small"
-                        OnClick="@(async () => await OnSignUpAsync())">
+                        OnClick="@(async () => await OnSubmit())">
                         Create account
                     </MudLoadingButton>
                 </MudStack>
@@ -86,8 +90,15 @@
 
     private MudForm _form = new();
 
-    private async Task OnSignUpAsync()
+    private bool _showUsernameError;
+    private string? _usernameError;
+    
+    private bool _showEmailError;
+    private string? _emailError;
+
+    private async Task OnSubmit()
     {
+        ResetValidation();
         await _form.Validate();
 
         if (_form.IsValid)
@@ -116,10 +127,27 @@
             }
             else
             {
-                Snackbar.Add(result.GetError().Description, Severity.Error);
+                var error = result.GetError();
+                if (error.Code == Errors.Common.UsernameTaken)
+                {
+                    _showUsernameError = true;
+                    _usernameError = error.Description;
+                }
+                else if (error.Code == Errors.Common.EmailTaken)
+                {
+                    _showEmailError = true;
+                    _emailError = error.Description;
+                }
+                else Snackbar.Add(result.GetError().Description, Severity.Error);
             }
         }
     }
 
-
+    private void ResetValidation()
+    {
+        _showEmailError = false;
+        _showUsernameError = false;
+        _usernameError = null;
+        _emailError = null;
+    }
 }
