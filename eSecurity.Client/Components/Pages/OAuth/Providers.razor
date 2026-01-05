@@ -88,8 +88,8 @@
                 ClientId = options.ClientId,
                 RedirectUri = options.CallbackUri,
                 Scope = string.Join(" ", options.Scopes),
-                Nonce = "1234567890",
-                State = "1234567890",
+                Nonce = Guid.NewGuid().ToString(),
+                State = Guid.NewGuid().ToString(),
                 Prompt = Prompts.Consent
             };
         }

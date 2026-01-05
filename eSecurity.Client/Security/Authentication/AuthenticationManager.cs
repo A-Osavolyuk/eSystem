@@ -31,8 +31,8 @@ public sealed class AuthenticationManager(
             .WithQueryParam("client_id", _clientOptions.ClientId)
             .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
             .WithQueryParam("scope", string.Join(" ", _clientOptions.Scopes))
-            .WithQueryParam("nonce", "1234567890")
-            .WithQueryParam("state", "1234567890")
+            .WithQueryParam("nonce", Guid.NewGuid().ToString())
+            .WithQueryParam("state", Guid.NewGuid().ToString())
             .WithQueryParam("prompt", Prompts.Consent)
             .Build();
         
