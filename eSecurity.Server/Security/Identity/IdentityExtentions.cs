@@ -50,7 +50,7 @@ public static class IdentityExtensions
                     options.RequireUniqueEmail = true;
                     options.RequireUniqueRecoveryEmail = true;
                     options.RequireUniquePhoneNumber = true;
-                    options.RequireUniqueUserName = true;
+                    options.RequireUniqueUsername = true;
             
                     options.PrimaryEmailMaxCount = 1;
                     options.SecondaryEmailMaxCount = 3;

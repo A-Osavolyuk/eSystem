@@ -41,22 +41,30 @@ public sealed class ManualSignUpStrategy(
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly AccountOptions _options = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(SignUpPayload payload, 
+    public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
         CancellationToken cancellationToken = default)
     {
         if (payload is not ManualSignUpPayload manualPayload)
             return Results.BadRequest("Incorrect payload type");
         
-        if (_options.RequireUniqueEmail)
+        if (_options.RequireUniqueUsername && 
+            await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken))
         {
-            var isTaken = await _emailManager.IsTakenAsync(manualPayload.Email, cancellationToken);
-            if (isTaken) return Results.BadRequest("This email address is already taken");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.UsernameTaken,
+                Description = "This username is already taken"
+            });
         }
 
-        if (_options.RequireUniqueUserName)
+        if (_options.RequireUniqueEmail && 
+            await _emailManager.IsTakenAsync(manualPayload.Email, cancellationToken))
         {
-            var isUserNameTaken = await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken);
-            if (isUserNameTaken) return Results.NotFound("Username is already taken");
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.EmailTaken,
+                Description = "This email is already taken."
+            });
         }
 
         var user = new UserEntity()
@@ -68,7 +76,7 @@ public sealed class ManualSignUpStrategy(
 
         var createResult = await _userManager.CreateAsync(user, cancellationToken);
         if (!createResult.Succeeded) return createResult;
-        
+
         var passwordResult = await _passwordManager.AddAsync(user, manualPayload.Password, cancellationToken);
         if (!passwordResult.Succeeded) return passwordResult;
 

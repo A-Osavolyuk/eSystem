@@ -23,7 +23,7 @@ public class ChangeUsernameCommandHandler(
         if (user.Username == request.Request.Username) 
             return Results.BadRequest("Username must be unique.");
 
-        if (_options.RequireUniqueUserName &&
+        if (_options.RequireUniqueUsername &&
             await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
         {
             return Results.NotFound(new Error()
