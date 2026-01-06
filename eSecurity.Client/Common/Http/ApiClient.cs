@@ -28,25 +28,25 @@ public class ApiClient(
     private readonly GatewayOptions _gatewayOptions = gatewayOptions;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
+    private readonly JsonSerializerOptions _serializationOptions = new JsonSerializerOptions()
+    {
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
     public async ValueTask<HttpResponse<TResponse>> SendAsync<TResponse>(
         HttpRequest httpRequest, HttpOptions httpOptions)
     {
         try
         {
             var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions);
-            var serializationOptions = new JsonSerializerOptions()
-            {
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-
             if (httpResponseMessage.IsSuccessStatusCode)
             {
-                var content = await httpResponseMessage.Content.ReadAsAsync<TResponse>(serializationOptions);
+                var content = await httpResponseMessage.Content.ReadAsync<TResponse>(_serializationOptions);
                 return HttpResponse<TResponse>.Success(content);
             }
 
-            var error = await httpResponseMessage.Content.ReadAsAsync<Error>(serializationOptions);
+            var error = await httpResponseMessage.Content.ReadAsync<Error>(_serializationOptions);
             return HttpResponse<TResponse>.Fail(error);
         }
         catch (Exception ex)
@@ -64,18 +64,12 @@ public class ApiClient(
         try
         {
             var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions);
-            var serializationOptions = new JsonSerializerOptions()
-            {
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 return HttpResponse.Success();
             }
 
-            var error = await httpResponseMessage.Content.ReadAsAsync<Error>(serializationOptions);
+            var error = await httpResponseMessage.Content.ReadAsync<Error>(_serializationOptions);
             return HttpResponse.Fail(error);
         }
         catch (Exception ex)
