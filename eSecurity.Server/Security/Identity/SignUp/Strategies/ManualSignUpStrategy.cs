@@ -85,7 +85,7 @@ public sealed class ManualSignUpStrategy(
         var setResult = await _emailManager.SetAsync(user, manualPayload.Email,
             EmailType.Primary, cancellationToken);
 
-        if (setResult.Succeeded) return setResult;
+        if (!setResult.Succeeded) return setResult;
 
         var role = await _roleManager.FindByNameAsync("User", cancellationToken);
         if (role is null) return Results.NotFound("Cannot find role with name User");
