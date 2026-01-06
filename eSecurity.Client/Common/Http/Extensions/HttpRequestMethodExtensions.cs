@@ -13,7 +13,7 @@ public static class HttpRequestMethodExtensions
         public void IncludeUserAgent(HttpContext context)
         {
             var userAgent = context.Request.Headers.UserAgent.ToString();
-            message.Headers.Add("User-Agent", userAgent);
+            message.Headers.Add(HeaderTypes.UserAgent, userAgent);
         }
 
         public void IncludeCookies(HttpContext context)
@@ -23,7 +23,7 @@ public static class HttpRequestMethodExtensions
                 .Select(cookie => $"{cookie.Key}={cookie.Value}")
                 .Aggregate((acc, item) => $"{acc}; {item}");
             
-            message.Headers.Add("Cookie", cookies);
+            message.Headers.Add(HeaderTypes.Cookie, cookies);
         }
 
         public void AddContent(HttpRequest request, HttpOptions options)
@@ -52,7 +52,7 @@ public static class HttpRequestMethodExtensions
                 }
                 case ContentTypes.Multipart.FormData:
                 {
-                    message.Headers.Add("Accept", options.ContentType);
+                    message.Headers.Add(HeaderTypes.Accept, options.ContentType);
 
                     var content = new MultipartFormDataContent();
 

@@ -18,18 +18,12 @@ namespace eSecurity.Client.Common.Http;
 public class ApiClient(
     HttpClient httpClient,
     IHttpContextAccessor httpContextAccessor,
-    ICookieAccessor cookieAccessor,
-    IFetchClient fetchClient,
-    NavigationManager navigationManager,
     TokenProvider tokenProvider,
     GatewayOptions gatewayOptions,
     IOptions<ClientOptions> clientOptions) : IApiClient
 {
     private readonly HttpClient _httpClient = httpClient;
-    private readonly ICookieAccessor _cookieAccessor = cookieAccessor;
-    private readonly IFetchClient _fetchClient = fetchClient;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
-    private readonly NavigationManager _navigationManager = navigationManager;
     private readonly TokenProvider _tokenProvider = tokenProvider;
     private readonly GatewayOptions _gatewayOptions = gatewayOptions;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
@@ -100,17 +94,6 @@ public class ApiClient(
 
         if (httpOptions.Authentication == AuthenticationType.Bearer)
         {
-            if (string.IsNullOrEmpty(_tokenProvider.AccessToken))
-            {
-                var result = await RefreshAsync();
-
-                if (!result.Succeeded)
-                {
-                    _tokenProvider.Clear();
-                    _navigationManager.NavigateTo(Links.Account.SignIn);
-                }
-            }
-
             message.Headers.WithBearerAuthentication(_tokenProvider.AccessToken);
         }
         else if (httpOptions.Authentication == AuthenticationType.Basic)
@@ -125,56 +108,5 @@ public class ApiClient(
         message.AddContent(httpRequest, httpOptions);
         
         return await _httpClient.SendAsync(message);
-    }
-
-    private async Task<Result> RefreshAsync()
-    {
-        var refreshToken = _cookieAccessor.Get(DefaultCookies.RefreshToken)!;
-        var request = new TokenRequest()
-        {
-            ClientId = _clientOptions.ClientId,
-            ClientSecret = _clientOptions.ClientSecret,
-            RefreshToken = refreshToken,
-            GrantType = GrantTypes.RefreshToken
-        };
-
-        var httpRequest = new HttpRequest()
-        {
-            Method = HttpMethod.Post,
-            Url = "api/v1/Connect/token",
-            Data = request
-        };
-
-
-        var httpOptions = new HttpOptions()
-        {
-            ContentType = ContentTypes.Application.XwwwFormUrlEncoded,
-            Authentication = AuthenticationType.Basic
-        };
-
-        var result = await SendAsync<TokenResponse>(httpRequest, httpOptions);
-
-        if (!result.Succeeded)
-        {
-            var error = result.GetError();
-            return Results.BadRequest(new Error()
-            {
-                Code = error.Code,
-                Description = error.Description,
-            });
-        }
-
-        var response = result.Get();
-        _tokenProvider.AccessToken = response.AccessToken;
-        _tokenProvider.IdToken = response.IdToken;
-
-        var fetchOptions = new FetchOptions()
-        {
-            Method = HttpMethod.Post,
-            Url = $"{_navigationManager.BaseUri}api/authentication/refresh",
-            Body = refreshToken
-        };
-
-        return await _fetchClient.FetchAsync(fetchOptions);
     }
 }

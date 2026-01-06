@@ -25,6 +25,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddValidation<IAssemblyMarker>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddTransient<RefreshTokenHandler>();
+            builder.Services.AddHttpClient("Raw");
             builder.Services.AddHttpClient<IApiClient, ApiClient>()
                 .AddHttpMessageHandler<RefreshTokenHandler>();
             

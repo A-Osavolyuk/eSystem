@@ -2,6 +2,9 @@
 
 public static class HeaderTypes
 {
+    // Custom
+    public const string XRetry = "X-Retry";
+    
     // Authentication
     public const string Authorization = "Authorization";
     public const string WwwAuthenticate = "WWW-Authenticate";
