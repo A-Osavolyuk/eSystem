@@ -34,7 +34,7 @@
                     {
                         <AuthenticatorMethod
                             Methods="_methods"
-                            OnSignIn="SignIn"
+                            OnSignIn="OnSignIn"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -42,7 +42,7 @@
                     {
                         <PasskeyMethod
                             Methods="_methods"
-                            OnSignIn="SignIn"
+                            OnSignIn="OnSignIn"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -50,7 +50,7 @@
                     {
                         <RecoveryCodeMethod
                             Methods="_methods"
-                            OnSignIn="SignIn"
+                            OnSignIn="OnSignIn"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -84,7 +84,7 @@
         _preferredMethod = method;
     }
 
-    private void SignIn()
+    private void OnSignIn()
     {
         AuthenticationManager.Authorize();
     }
