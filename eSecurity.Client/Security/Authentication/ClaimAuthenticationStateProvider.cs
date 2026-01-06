@@ -18,36 +18,15 @@ public class ClaimAuthenticationStateProvider(
         if (_httpContext.User.Identity?.IsAuthenticated != true)
             return Task.FromResult(_anonymous);
         
-        var principal = _httpContext.User;
-        var claims = _httpContext.User.Claims.ToList();
-        var userId = Guid.Parse(claims.Single(x => x.Type == AppClaimTypes.Sub).Value);
+        InitializeState(_httpContext.User);
         
-        _userState.UserId = userId;
-        _userState.Credentials = new UserCredentials();
-
-        if (principal.HasClaim(x => x.Type == AppClaimTypes.PreferredUsername))
-        {
-            var username = claims.Single(x => x.Type == AppClaimTypes.PreferredUsername).Value;
-            _userState.Credentials.Username = username;
-        }
-
-        if (principal.HasClaim(x => x.Type == AppClaimTypes.Email))
-        {
-            var email = claims.Single(x => x.Type == AppClaimTypes.Email).Value;
-            _userState.Credentials.Email = email;
-        }
-
-        if (principal.HasClaim(x => x.Type == AppClaimTypes.PhoneNumber))
-        {
-            var phoneNumber = claims.Single(x => x.Type == AppClaimTypes.PhoneNumber).Value;
-            _userState.Credentials.PhoneNumber = phoneNumber;
-        }
-        
-        return Task.FromResult(new AuthenticationState(principal));
+        return Task.FromResult(new AuthenticationState(_httpContext.User));
     }
 
     public void SignIn(ClaimsPrincipal principal)
     {
+        InitializeState(principal);
+        
         var state = new AuthenticationState(principal);
         NotifyAuthenticationStateChanged(Task.FromResult(state));
     }
@@ -63,5 +42,34 @@ public class ClaimAuthenticationStateProvider(
     {
         NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
         return Task.CompletedTask;
+    }
+
+    private void InitializeState(ClaimsPrincipal principal)
+    {
+        _userState.Credentials = new UserCredentials();
+        
+        if (principal.HasClaim(x => x.Type == AppClaimTypes.Sub))
+        {
+            var userId = principal.Claims.Single(x => x.Type == AppClaimTypes.Sub).Value;
+            _userState.UserId = Guid.Parse(userId);
+        }
+
+        if (principal.HasClaim(x => x.Type == AppClaimTypes.PreferredUsername))
+        {
+            var username = principal.Claims.Single(x => x.Type == AppClaimTypes.PreferredUsername).Value;
+            _userState.Credentials.Username = username;
+        }
+
+        if (principal.HasClaim(x => x.Type == AppClaimTypes.Email))
+        {
+            var email = principal.Claims.Single(x => x.Type == AppClaimTypes.Email).Value;
+            _userState.Credentials.Email = email;
+        }
+
+        if (principal.HasClaim(x => x.Type == AppClaimTypes.PhoneNumber))
+        {
+            var phoneNumber = principal.Claims.Single(x => x.Type == AppClaimTypes.PhoneNumber).Value;
+            _userState.Credentials.PhoneNumber = phoneNumber;
+        }
     }
 }
