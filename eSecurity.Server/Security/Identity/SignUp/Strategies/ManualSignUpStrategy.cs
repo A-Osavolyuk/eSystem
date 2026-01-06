@@ -38,7 +38,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailManager _emailManager = emailManager;
-    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
@@ -72,6 +72,8 @@ public sealed class ManualSignUpStrategy(
             Id = Guid.CreateVersion7(),
             Username = manualPayload.Username,
             NormalizedUsername = manualPayload.Username.ToUpperInvariant(),
+            Locale = _httpContext.GetLocale()!,
+            ZoneInfo = _httpContext.GetTimeZone()!,
         };
 
         var createResult = await _userManager.CreateAsync(user, cancellationToken);
@@ -102,9 +104,9 @@ public sealed class ManualSignUpStrategy(
             }
         }
 
-        var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
-        var clientInfo = _httpContextAccessor.HttpContext?.GetClientInfo()!;
+        var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
+        var clientInfo = _httpContext.GetClientInfo();
 
         var newDevice = new UserDeviceEntity()
         {
