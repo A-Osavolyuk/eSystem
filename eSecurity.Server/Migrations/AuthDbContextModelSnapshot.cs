@@ -55,8 +55,8 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<string>("Nonce")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("RedirectUri")
                         .IsRequired()

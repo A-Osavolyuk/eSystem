@@ -664,7 +664,7 @@ namespace eSecurity.Server.Migrations
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Code = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Nonce = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Nonce = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     RedirectUri = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CodeChallenge = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     CodeChallengeMethod = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: true),
