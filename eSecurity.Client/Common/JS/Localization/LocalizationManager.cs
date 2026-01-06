@@ -9,6 +9,6 @@ public class LocalizationManager(IJSRuntime jsRuntime) : ILocalizationManager
     public async ValueTask<string> GetLocaleAsync()
         => await _jsRuntime.InvokeAsync<string>("getLocale");
 
-    public async ValueTask<string> GetTimezoneAsync()
+    public async ValueTask<string> GetTimeZoneAsync()
         => await _jsRuntime.InvokeAsync<string>("getTimezone");
 }

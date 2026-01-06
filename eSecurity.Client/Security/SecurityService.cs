@@ -18,7 +18,9 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions()
             {
                 ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
+                Authentication = AuthenticationType.None,
+                WithLocale = true,
+                WithTimezone = true
             });
 
     public async ValueTask<HttpResponse<SignUpResponse>> SignUpAsync(SignUpRequest request)
@@ -31,7 +33,9 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             }, new HttpOptions()
             {
                 ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
+                Authentication = AuthenticationType.None,
+                WithLocale = true,
+                WithTimezone = true
             });
 
     public async ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request)

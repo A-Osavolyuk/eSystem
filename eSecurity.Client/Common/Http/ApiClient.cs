@@ -14,12 +14,14 @@ public class ApiClient(
     TokenProvider tokenProvider,
     GatewayOptions gatewayOptions,
     IOptions<ClientOptions> clientOptions,
+    ILocalizationManager localizationManager,
     IHttpContextAccessor httpContextAccessor) : IApiClient
 {
     private readonly HttpClient _httpClient = httpClient;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly TokenProvider _tokenProvider = tokenProvider;
     private readonly GatewayOptions _gatewayOptions = gatewayOptions;
+    private readonly ILocalizationManager _localizationManager = localizationManager;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
     private readonly JsonSerializerOptions _serializationOptions = new JsonSerializerOptions()
@@ -88,13 +90,19 @@ public class ApiClient(
         {
             message.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
         }
+
+        if (httpOptions.WithTimezone)
+            message.Headers.WithTimeZone(await _localizationManager.GetTimeZoneAsync());
         
+        if (httpOptions.WithLocale)
+            message.Headers.WithLocale(await _localizationManager.GetLocaleAsync());
+
         message.RequestUri = new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}");
         message.Method = httpRequest.Method;
         message.Headers.WithUserAgent(_httpContext.GetUserAgent());
         message.Headers.WithCookies(_httpContext.GetCookies());
         message.AddContent(httpRequest, httpOptions);
-        
+
         return await _httpClient.SendAsync(message);
     }
 }

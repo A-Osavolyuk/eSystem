@@ -3,5 +3,5 @@
 public interface ILocalizationManager
 {
     public ValueTask<string> GetLocaleAsync();
-    public ValueTask<string> GetTimezoneAsync();
+    public ValueTask<string> GetTimeZoneAsync();
 }

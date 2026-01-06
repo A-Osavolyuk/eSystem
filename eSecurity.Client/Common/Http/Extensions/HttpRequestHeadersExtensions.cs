@@ -35,7 +35,7 @@ public static class HttpRequestHeadersExtensions
             headers.Add(HeaderTypes.XLocale, locale);
         }
         
-        public void WithTimezone(string timezone)
+        public void WithTimeZone(string timezone)
         {
             headers.Add(HeaderTypes.XTimezone, timezone);
         }
