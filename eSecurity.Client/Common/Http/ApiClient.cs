@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 namespace eSecurity.Client.Common.Http;
 
 public class ApiClient(
-    IHttpClientFactory clientFactory,
+    HttpClient httpClient,
     IHttpContextAccessor httpContextAccessor,
     ICookieAccessor cookieAccessor,
     IFetchClient fetchClient,
@@ -25,7 +25,7 @@ public class ApiClient(
     GatewayOptions gatewayOptions,
     IOptions<ClientOptions> clientOptions) : IApiClient
 {
-    private readonly IHttpClientFactory _clientFactory = clientFactory;
+    private readonly HttpClient _httpClient = httpClient;
     private readonly ICookieAccessor _cookieAccessor = cookieAccessor;
     private readonly IFetchClient _fetchClient = fetchClient;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -123,9 +123,8 @@ public class ApiClient(
         message.IncludeUserAgent(_httpContext);
         message.IncludeCookies(_httpContext);
         message.AddContent(httpRequest, httpOptions);
-
-        var httpClient = _clientFactory.CreateClient("eSecurity.Client");
-        return await httpClient.SendAsync(message);
+        
+        return await _httpClient.SendAsync(message);
     }
 
     private async Task<Result> RefreshAsync()
