@@ -1,6 +1,7 @@
 using eSecurity.Client.Common.JS.Clipboard;
 using eSecurity.Client.Common.JS.Download;
 using eSecurity.Client.Common.JS.Fetch;
+using eSecurity.Client.Common.JS.Localization;
 using eSecurity.Client.Common.JS.Print;
 using eSecurity.Client.Common.JS.WebAuthN;
 
@@ -15,5 +16,6 @@ public static class JsExtensions
         services.AddScoped<ClipboardManager>();
         services.AddScoped<PrintManager>();
         services.AddScoped<WebAuthNManager>();
+        services.AddScoped<ILocalizationManager, LocalizationManager>();
     }
 }
