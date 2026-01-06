@@ -139,8 +139,6 @@
 
                 if (response.IsTwoFactorEnabled)
                 {
-                    Snackbar.Add(result.GetError().Description, Severity.Success);
-
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.TwoFactorLoginPage)
                         .WithQueryParam("id", response.UserId.ToString());
