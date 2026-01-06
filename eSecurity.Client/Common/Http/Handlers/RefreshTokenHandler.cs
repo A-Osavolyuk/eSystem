@@ -9,6 +9,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Common.Routing;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
+using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
@@ -55,8 +56,8 @@ public class RefreshTokenHandler(
                 requestMessage.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
                 requestMessage.Method = HttpMethod.Post;
                 requestMessage.RequestUri = new Uri($"{_gatewayOptions.Url}/api/v1/Connect/token");
-                requestMessage.IncludeCookies(_httpContext);
-                requestMessage.IncludeUserAgent(_httpContext);
+                requestMessage.Headers.WithCookies(_httpContext.GetCookies());
+                requestMessage.Headers.WithUserAgent(_httpContext.GetUserAgent());
                 
                 var refreshToken = _cookieAccessor.Get(DefaultCookies.RefreshToken);
                 if (string.IsNullOrWhiteSpace(refreshToken))

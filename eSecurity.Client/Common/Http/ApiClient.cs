@@ -1,7 +1,9 @@
 using System.Text.Json;
 using eSecurity.Client.Common.Http.Extensions;
+using eSecurity.Client.Common.JS.Localization;
 using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
+using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Network.Gateway;
 using Microsoft.Extensions.Options;
 
@@ -9,10 +11,10 @@ namespace eSecurity.Client.Common.Http;
 
 public class ApiClient(
     HttpClient httpClient,
-    IHttpContextAccessor httpContextAccessor,
     TokenProvider tokenProvider,
     GatewayOptions gatewayOptions,
-    IOptions<ClientOptions> clientOptions) : IApiClient
+    IOptions<ClientOptions> clientOptions,
+    IHttpContextAccessor httpContextAccessor) : IApiClient
 {
     private readonly HttpClient _httpClient = httpClient;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -86,11 +88,11 @@ public class ApiClient(
         {
             message.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
         }
-
+        
         message.RequestUri = new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}");
         message.Method = httpRequest.Method;
-        message.IncludeUserAgent(_httpContext);
-        message.IncludeCookies(_httpContext);
+        message.Headers.WithUserAgent(_httpContext.GetUserAgent());
+        message.Headers.WithCookies(_httpContext.GetCookies());
         message.AddContent(httpRequest, httpOptions);
         
         return await _httpClient.SendAsync(message);

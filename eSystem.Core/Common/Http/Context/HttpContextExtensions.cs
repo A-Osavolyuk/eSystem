@@ -26,5 +26,15 @@ public static class HttpContextExtensions
             var clientInfo = parser.Parse(userAgent);
             return clientInfo;
         }
+        
+        public string GetCookies()
+        {
+            var cookies = context.Request.Cookies
+                .ToDictionary(cookie => cookie.Key, cookie => cookie.Value)
+                .Select(cookie => $"{cookie.Key}={cookie.Value}")
+                .Aggregate((acc, item) => $"{acc}; {item}");
+            
+            return cookies;
+        }
     }
 }

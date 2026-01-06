@@ -10,22 +10,6 @@ public static class HttpRequestMethodExtensions
 {
     extension(HttpRequestMessage message)
     {
-        public void IncludeUserAgent(HttpContext context)
-        {
-            var userAgent = context.Request.Headers.UserAgent.ToString();
-            message.Headers.Add(HeaderTypes.UserAgent, userAgent);
-        }
-
-        public void IncludeCookies(HttpContext context)
-        {
-            var cookies = context.Request.Cookies
-                .ToDictionary(cookie => cookie.Key, cookie => cookie.Value)
-                .Select(cookie => $"{cookie.Key}={cookie.Value}")
-                .Aggregate((acc, item) => $"{acc}; {item}");
-            
-            message.Headers.Add(HeaderTypes.Cookie, cookies);
-        }
-
         public void AddContent(HttpRequest request, HttpOptions options)
         {
             switch (options.ContentType)

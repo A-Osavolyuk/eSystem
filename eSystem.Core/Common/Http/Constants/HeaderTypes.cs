@@ -4,6 +4,8 @@ public static class HeaderTypes
 {
     // Custom
     public const string XRetry = "X-Retry";
+    public const string XTimezone = "X-Timezone";
+    public const string XLocale = "X-Locale";
     
     // Authentication
     public const string Authorization = "Authorization";

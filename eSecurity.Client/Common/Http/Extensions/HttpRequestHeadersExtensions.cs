@@ -19,5 +19,25 @@ public static class HttpRequestHeadersExtensions
             
             headers.Authorization = new AuthenticationHeaderValue(AuthenticationTypes.Basic, base64);
         }
+        
+        public void WithUserAgent(string userAgent)
+        {
+            headers.Add(HeaderTypes.UserAgent, userAgent);
+        }
+        
+        public void WithCookies(string cookies)
+        {
+            headers.Add(HeaderTypes.Cookie, cookies);
+        }
+
+        public void WithLocale(string locale)
+        {
+            headers.Add(HeaderTypes.XLocale, locale);
+        }
+        
+        public void WithTimezone(string timezone)
+        {
+            headers.Add(HeaderTypes.XTimezone, timezone);
+        }
     }
 }
