@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace eSecurity.Server.Security.Credentials.PublicKey;

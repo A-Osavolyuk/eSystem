@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using eSystem.Core.Security.Authentication.Oidc.Token;
-using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace eSecurity.Server.Security.Authentication.Oidc.Pkce;

@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Security.Authorization.OAuth;
-using eSystem.Core.Data.Entities;
+﻿using eSystem.Core.Data.Entities;
 using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 
 namespace eSecurity.Server.Data.Entities;

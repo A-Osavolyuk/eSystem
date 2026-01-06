@@ -1,7 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authentication.Password;
-using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Password.Commands;

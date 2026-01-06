@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Common.DTOs;
-using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;

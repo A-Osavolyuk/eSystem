@@ -12,7 +12,6 @@ using eSecurity.Core.Security.Cookies.Constants;
 using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 

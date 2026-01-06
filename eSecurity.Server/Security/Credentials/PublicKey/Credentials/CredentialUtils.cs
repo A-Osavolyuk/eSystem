@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using eSecurity.Core.Security.Credentials.PublicKey;
-using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.WebUtilities;
 using PeterO.Cbor;
 
