@@ -5,7 +5,7 @@
 @inject ISnackbar Snackbar
 @inject IVerificationService VerificationService
 
-<MudStack Spacing="3">
+<MudStack Spacing="1">
     <MudPaper Outlined="true" Class="pa-5">
         <MudStack Spacing="3">
             <MudForm @ref="_form" Model="CodeModel">
@@ -21,7 +21,7 @@
                 ButtonType="ButtonType.Button"
                 Variant="Variant.Filled"
                 Color="Color.Primary"
-                Size="Size.Medium"
+                Size="Size.Small"
                 FullWidth="true"
                 Disabled="@(CodeModel.Code.Length <= 5)"
                 OnClick="@(async () => await OnVerifyAsync())">

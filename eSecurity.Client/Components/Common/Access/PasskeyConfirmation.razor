@@ -10,7 +10,7 @@
 @inject IPasskeyService PasskeyService
 @inject IVerificationService VerificationService
 
-<MudStack Spacing="3">
+<MudStack Spacing="1">
     <MudPaper Outlined="true" Class="pa-5">
         <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
             <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Key"/>
@@ -35,7 +35,7 @@
                         ButtonType="ButtonType.Button"
                         Variant="Variant.Filled"
                         Color="Color.Primary"
-                        Size="Size.Medium"
+                        Size="Size.Small"
                         FullWidth="true"
                         OnClick="@(async () => await OnVerifyAsync())">
                         Retry passkey
@@ -57,7 +57,7 @@
                         ButtonType="ButtonType.Button"
                         Variant="Variant.Filled"
                         Color="Color.Primary"
-                        Size="Size.Medium"
+                        Size="Size.Small"
                         FullWidth="true"
                         OnClick="@(async () => await OnVerifyAsync())">
                         Use passkey

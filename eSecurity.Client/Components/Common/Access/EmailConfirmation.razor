@@ -5,7 +5,7 @@
 @inject ISnackbar Snackbar
 @inject IVerificationService VerificationService
 
-<MudStack Spacing="3">
+<MudStack Spacing="1">
     <MudPaper Outlined="true" Class="pa-5">
         <MudStack>
             @if (_sendStage)
@@ -17,7 +17,7 @@
                     Color="Color.Primary"
                     Variant="Variant.Filled"
                     ButtonType="ButtonType.Button"
-                    Size="Size.Medium"
+                    Size="Size.Small"
                     OnClick="@(async () => await OnSendAsync())">
                     Verify via email
                 </MudButton>
@@ -46,7 +46,7 @@
                     ButtonType="ButtonType.Button"
                     Variant="Variant.Filled"
                     Color="Color.Primary"
-                    Size="Size.Medium"
+                    Size="Size.Small"
                     FullWidth="true"
                     Disabled="@(CodeModel.Code.Length <= 5)"
                     OnClick="@(async () => await OnVerifyAsync())">
