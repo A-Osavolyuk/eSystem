@@ -40,7 +40,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OpaqueTokenEntity> OpaqueTokens { get; set; }
     public DbSet<OpaqueTokenScopeEntity> OpaqueTokensScopes { get; set; }
     public DbSet<PairwiseSubjectEntity> PairwiseSubjects { get; set; }
-    public DbSet<LoginSessionEntity> LoginSessions { get; set; }
+    public DbSet<SignInSessionEntity> SignInSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -2,7 +2,7 @@
 
 namespace eSecurity.Server.Data.Entities;
 
-public class LoginSessionEntity : Entity
+public class SignInSessionEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }

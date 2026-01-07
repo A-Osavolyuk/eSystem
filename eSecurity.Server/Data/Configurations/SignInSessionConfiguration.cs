@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
 
-public class LoginSessionConfiguration : IEntityTypeConfiguration<LoginSessionEntity>
+public class SignInSessionConfiguration : IEntityTypeConfiguration<SignInSessionEntity>
 {
-    public void Configure(EntityTypeBuilder<LoginSessionEntity> builder)
+    public void Configure(EntityTypeBuilder<SignInSessionEntity> builder)
     {
         builder.HasKey(x => x.Id);
 

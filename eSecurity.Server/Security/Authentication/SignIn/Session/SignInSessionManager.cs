@@ -7,17 +7,17 @@ public class SignInSessionManager(AuthDbContext context) : ISignInSessionManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<LoginSessionEntity?> FindByIdAsync(Guid sessionId,
+    public async ValueTask<SignInSessionEntity?> FindByIdAsync(Guid sessionId,
         CancellationToken cancellationToken = default)
     {
-        return await _context.LoginSessions.FirstOrDefaultAsync(
+        return await _context.SignInSessions.FirstOrDefaultAsync(
             x => x.Id == sessionId, cancellationToken);
     }
 
-    public async ValueTask<Result> CreateAsync(LoginSessionEntity session,
+    public async ValueTask<Result> CreateAsync(SignInSessionEntity session,
         CancellationToken cancellationToken = default)
     {
-        await _context.LoginSessions.AddAsync(session, cancellationToken);
+        await _context.SignInSessions.AddAsync(session, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         return Results.Ok();
     }
