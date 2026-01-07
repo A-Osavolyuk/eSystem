@@ -19,6 +19,7 @@ public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHand
             AuthenticatorSignInPayload => SignInType.AuthenticatorApp,
             OAuthSignInPayload => SignInType.OAuth,
             RecoveryCodeSignInPayload => SignInType.RecoveryCode,
+            TrustDeviceSignInPayload => SignInType.DeviceTrust,
             _ => throw new NotSupportedException("Unknown payload")
         };
         if (type == SignInType.OAuth) return Results.BadRequest("Unsupported for manual call");

@@ -12,17 +12,6 @@ public class DeviceController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
     
-    [EndpointSummary("Trust device")]
-    [EndpointDescription("Trust device")]
-    [ProducesResponseType(200)]
-    [HttpPost("trust")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> TrustAsync([FromBody] TrustDeviceRequest request)
-    {
-        var result = await _sender.Send(new TrustDeviceCommand(request));
-        return ResultHandler.Handle(result);
-    }
-    
     [EndpointSummary("Block device")]
     [EndpointDescription("Block device")]
     [ProducesResponseType(200)]
