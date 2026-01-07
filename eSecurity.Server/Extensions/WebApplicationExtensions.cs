@@ -26,6 +26,17 @@ public static class WebApplicationExtensions
                     
                     await response.WriteAsJsonAsync(error);
                 }
+                else if (response.StatusCode == StatusCodes.Status415UnsupportedMediaType)
+                {
+                    response.ContentType = ContentTypes.Application.Json;
+                    var error = new Error()
+                    {
+                        Code = Errors.Common.UnsupportedMediaType,
+                        Description = "Unsupported media type"
+                    };
+                    
+                    await response.WriteAsJsonAsync(error);
+                }
             });
             app.UseStaticFiles();
             app.UseRouting();
