@@ -1,6 +1,7 @@
 ﻿@page "/account/email/reset"
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
+@using eSecurity.Client.Security.Identity
 @inherits PageBase
 
 @attribute [Authorize]
@@ -9,6 +10,7 @@
 @inject CodeModelValidator Validator
 @inject IVerificationService VerificationService
 @inject ISecurityService SecurityService
+@inject IEmailService EmailService
 
 <Title Text="Reset email"></Title>
 
@@ -185,7 +187,7 @@
                 Email = _resetModel.NewEmail
             };
 
-            var result = await SecurityService.CheckEmailAsync(request);
+            var result = await EmailService.CheckEmailAsync(request);
 
             if (result.Succeeded) await SendCodeAsync();
             else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -223,7 +225,7 @@
             NewEmail = _resetModel.NewEmail,
         };
 
-        var result = await SecurityService.ResetEmailAsync(request);
+        var result = await EmailService.ResetEmailAsync(request);
 
         if (result.Succeeded)
         {

@@ -1,6 +1,7 @@
 ﻿@page "/account/email/manage"
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
+@using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Security.Identity
 
 @inherits PageBase
@@ -10,6 +11,7 @@
 @inject CodeModelValidator Validator
 @inject IVerificationService VerificationService
 @inject ISecurityService SecurityService
+@inject IEmailService EmailService
 
 <Title Text="Manage email"></Title>
 
@@ -120,7 +122,7 @@
             Type = type
         };
 
-        var result = await SecurityService.ManageEmailAsync(request);
+        var result = await EmailService.ManageEmailAsync(request);
 
         if (result.Succeeded)
         {

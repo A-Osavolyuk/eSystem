@@ -1,8 +1,10 @@
-﻿@using eSecurity.Client.Security
+﻿@using eSecurity.Client.Security.Identity
+@using eSecurity.Client.Security
 @inject UserState UserState
 @inject AddEmailValidator Validator
 @inject ISnackbar Snackbar
 @inject ISecurityService SecurityService
+@inject IEmailService EmailService
 
 <MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="1">
@@ -63,7 +65,7 @@
                 Email = Model.Email!
             };
 
-            var result = await SecurityService.CheckEmailAsync(request);
+            var result = await EmailService.CheckEmailAsync(request);
 
             if (result.Succeeded)
             {
@@ -88,7 +90,7 @@
             Email = Model.Email!,
         };
 
-        var result = await SecurityService.AddEmailAsync(request);
+        var result = await EmailService.AddEmailAsync(request);
 
         if (result.Succeeded)
         {

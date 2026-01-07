@@ -1,6 +1,7 @@
 ﻿@page "/account/email/change"
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
+@using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Security.Identity
 
 @inherits PageBase
@@ -11,6 +12,7 @@
 @inject CodeModelValidator Validator
 @inject ISecurityService SecurityService
 @inject IVerificationService VerificationService
+@inject IEmailService EmailService
 
 @switch (Type)
 {
@@ -250,7 +252,7 @@
             Type = type,
         };
 
-        var result = await SecurityService.ChangeEmailAsync(request);
+        var result = await EmailService.ChangeEmailAsync(request);
 
         if (result.Succeeded)
         {

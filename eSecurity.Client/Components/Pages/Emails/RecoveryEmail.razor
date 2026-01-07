@@ -1,8 +1,10 @@
 ﻿@using eSecurity.Client.Security
+@using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Common.DTOs
 
 @inject ISnackbar Snackbar
 @inject ISecurityService SecurityService
+@inject IEmailService EmailService
 @inject UserState UserState
 @inject ConfirmationManager ConfirmationManager
 
@@ -138,7 +140,7 @@
                 Email = email
             };
 
-            var result = await SecurityService.RemoveEmailAsync(request);
+            var result = await EmailService.RemoveEmailAsync(request);
 
             if (result.Succeeded)
             {

@@ -2,11 +2,13 @@
 
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
+@using eSecurity.Client.Security.Identity
 @inherits PageBase
 
 @inject VerifyEmailValidator Validator
 @inject IVerificationService VerificationService
 @inject ISecurityService SecurityService
+@inject IEmailService EmailService
 
 @attribute [Authorize]
 
@@ -194,7 +196,7 @@
             Email = email
         };
 
-        var result = await SecurityService.VerifyEmailAsync(request);
+        var result = await EmailService.VerifyEmailAsync(request);
 
         if (result.Succeeded)
         {

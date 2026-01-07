@@ -9,6 +9,7 @@
 @inject IVerificationService VerificationService
 @inject IUserService UserService
 @inject ISecurityService SecurityService
+@inject IEmailService EmailService
 
 <Title Text="Registration completion"></Title>
 
@@ -132,7 +133,7 @@
             Email = _email?.Email!
         };
 
-        var result = await SecurityService.VerifyEmailAsync(request);
+        var result = await EmailService.VerifyEmailAsync(request);
 
         if (result.Succeeded)
         {

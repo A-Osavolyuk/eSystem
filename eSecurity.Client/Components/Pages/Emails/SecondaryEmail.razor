@@ -1,4 +1,5 @@
 ﻿@using eSecurity.Client.Security
+@using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Common.DTOs
 
 @inject ISnackbar Snackbar
@@ -6,6 +7,7 @@
 @inject UserState UserState
 @inject ConfirmationManager ConfirmationManager
 @inject ISecurityService SecurityService
+@inject IEmailService EmailService
 
 <MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="0">
@@ -124,7 +126,7 @@
                 Email = email
             };
 
-            var result = await SecurityService.RemoveEmailAsync(request);
+            var result = await EmailService.RemoveEmailAsync(request);
 
             if (result.Succeeded)
             {
