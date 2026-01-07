@@ -54,6 +54,7 @@
                             Variant="Variant.Outlined"/>
                     </MudForm>
                     <MudLoadingButton
+                        Disabled="IsDisabled()"
                         ButtonType="ButtonType.Button"
                         StartIcon="@Icons.Material.Filled.AppRegistration"
                         Variant="Variant.Filled"
@@ -150,4 +151,9 @@
         _usernameError = null;
         _emailError = null;
     }
+    
+    private bool IsDisabled() 
+        => string.IsNullOrEmpty(_model.Username) ||
+           string.IsNullOrEmpty(_model.Email) ||
+           string.IsNullOrEmpty(_model.Password);
 }
