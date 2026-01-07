@@ -137,11 +137,26 @@
             {
                 var response = result.Get()!;
 
+                if (!response.IsDeviceTrusted)
+                {
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.Account.DeviceTrustPage)
+                        .WithQueryParam("sid", response.SessionId.ToString());
+
+                    if (!string.IsNullOrEmpty(ReturnUrl))
+                        builder.WithQueryParam("return_url", ReturnUrl);
+                    
+                    Snackbar.Add("This device is untrusted. You need to trust it first.", Severity.Info);
+                    
+                    NavigationManager.NavigateTo(builder.Build());
+                    return;
+                }
+
                 if (response.IsTwoFactorEnabled)
                 {
                     var builder = QueryBuilder.Create()
                         .WithUri(Links.Account.TwoFactorLoginPage)
-                        .WithQueryParam("id", response.UserId.ToString());
+                        .WithQueryParam("sid", response.SessionId.ToString());
 
                     if (!string.IsNullOrEmpty(ReturnUrl))
                         builder.WithQueryParam("return_url", ReturnUrl);
@@ -156,25 +171,7 @@
             else
             {
                 var error = result.GetError();
-
-                if (error.Code == Errors.Common.UntrustedDevice)
-                {
-                    var deviceId = error.Details["deviceId"].ToString()!;
-                    var userId = error.Details["userId"].ToString()!;
-                    var builder = QueryBuilder.Create()
-                        .WithUri(Links.Account.DeviceTrustPage)
-                        .WithQueryParam("device", deviceId)
-                        .WithQueryParam("user", userId);
-
-                    if (!string.IsNullOrEmpty(ReturnUrl))
-                        builder.WithQueryParam("return_url", ReturnUrl);
-
-                    NavigationManager.NavigateTo(builder.Build());
-
-                    Snackbar.Add(result.GetError().Description, Severity.Info);
-                    return;
-                }
-
+                
                 if (error.Code == Errors.Common.UnverifiedEmail)
                 {
                     var userId = error.Details["userId"].ToString()!;

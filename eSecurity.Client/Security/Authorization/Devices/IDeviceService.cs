@@ -5,5 +5,4 @@ namespace eSecurity.Client.Security.Authorization.Devices;
 
 public interface IDeviceService
 {
-    public ValueTask<HttpResponse<TrustDeviceResponse>> TrustAsync(TrustDeviceRequest request);
 }

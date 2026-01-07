@@ -1,4 +1,5 @@
 using eSecurity.Client.Common.Http;
+using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 
@@ -36,6 +37,18 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Authentication = AuthenticationType.None,
                 WithLocale = true,
                 WithTimezone = true
+            });
+
+    public async ValueTask<HttpResponse<SignInSessionDto>> GetSignInSessionAsync(Guid sid)
+        => await _apiClient.SendAsync<SignInSessionDto>(
+            new HttpRequest()
+            {
+                Method = HttpMethod.Post,
+                Url = $"api/v1/Account/sign-in/session/{sid}"
+            }, new HttpOptions()
+            {
+                ContentType = ContentTypes.Application.Json,
+                Authentication = AuthenticationType.None
             });
 
     public async ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request)

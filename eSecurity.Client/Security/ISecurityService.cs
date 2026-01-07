@@ -1,3 +1,4 @@
+using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 
@@ -7,6 +8,8 @@ public interface ISecurityService
 {
     public ValueTask<HttpResponse<SignInResponse>> SignInAsync(SignInRequest request);
     public ValueTask<HttpResponse<SignUpResponse>> SignUpAsync(SignUpRequest request);
+    
+    public ValueTask<HttpResponse<SignInSessionDto>> GetSignInSessionAsync(Guid sid);
     
     public ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request);
     public ValueTask<HttpResponse> CheckEmailAsync(CheckEmailRequest request);
