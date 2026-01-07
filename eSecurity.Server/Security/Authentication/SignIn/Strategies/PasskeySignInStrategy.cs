@@ -64,15 +64,16 @@ public sealed class PasskeySignInStrategy(
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null) return Results.NotFound(new Error()
+        if (device is null)
         {
-            Code = Errors.Common.InvalidDevice, 
-            Description = "Invalid device."
-        });
+            return Results.NotFound(new Error()
+            {
+                Code = Errors.Common.InvalidDevice, 
+                Description = "Invalid device."
+            });
+        }
 
         await _sessionManager.CreateAsync(device, cancellationToken);
-
-        var response = new SignInResponse() { UserId = user.Id, };
-        return Results.Ok(response);
+        return Results.Ok(new SignInResponse() { UserId = user.Id, });
     }
 }

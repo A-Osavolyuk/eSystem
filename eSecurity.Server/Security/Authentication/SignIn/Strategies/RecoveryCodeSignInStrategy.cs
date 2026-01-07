@@ -101,11 +101,8 @@ public sealed class RecoveryCodeSignInStrategy(
             var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
-
-        var response = new SignInResponse() { UserId = user.Id, };
-
+        
         await _sessionManager.CreateAsync(device, cancellationToken);
-
-        return Results.Ok(response);
+        return Results.Ok(new SignInResponse() { UserId = user.Id, });
     }
 }

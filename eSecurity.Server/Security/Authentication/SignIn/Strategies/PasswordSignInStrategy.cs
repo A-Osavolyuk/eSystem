@@ -6,6 +6,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Password;
+using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.Email;
@@ -24,6 +25,7 @@ public sealed class PasswordSignInStrategy(
     IHttpContextAccessor accessor,
     IEmailManager emailManager,
     ITwoFactorManager twoFactorManager,
+    ISignInSessionManager signInSessionManager,
     IOptions<SignInOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -33,6 +35,7 @@ public sealed class PasswordSignInStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly ISignInSessionManager _signInSessionManager = signInSessionManager;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _options = options.Value;
 
@@ -59,7 +62,7 @@ public sealed class PasswordSignInStrategy(
         }
 
         if (user is null) return Results.NotFound($"Cannot find user with login {passwordPayload.Login}.");
-        if (!await _passwordManager.HasAsync(user, cancellationToken)) 
+        if (!await _passwordManager.HasAsync(user, cancellationToken))
             return Results.BadRequest("Cannot log in, you don't have a password.");
 
         var userAgent = _httpContext.GetUserAgent()!;
@@ -89,7 +92,7 @@ public sealed class PasswordSignInStrategy(
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null) return Results.NotFound("Email not found");
-        
+
         if (_options.RequireConfirmedEmail && !email.IsVerified)
             return Results.BadRequest(new Error()
             {
@@ -100,7 +103,7 @@ public sealed class PasswordSignInStrategy(
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null) return Results.NotFound("State not found");
-        
+
         if (lockoutState.Enabled)
             return Results.BadRequest(new Error()
             {
@@ -109,9 +112,9 @@ public sealed class PasswordSignInStrategy(
                 Details = new() { { "userId", user.Id } }
             });
 
-        if (!await _passwordManager.HasAsync(user, cancellationToken)) 
+        if (!await _passwordManager.HasAsync(user, cancellationToken))
             return Results.BadRequest("User doesn't have a password.");
-        
+
         if (!await _passwordManager.CheckAsync(user, passwordPayload.Password, cancellationToken))
         {
             user.FailedLoginAttempts += 1;
@@ -155,35 +158,34 @@ public sealed class PasswordSignInStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        if (_options.RequireTrustedDevice)
+        if (device.IsBlocked)
         {
-            if (device.IsBlocked)
-                return Results.BadRequest(new Error()
-                {
-                    Code = Errors.Common.BlockedDevice,
-                    Description = "Cannot sign in, device is blocked."
-                });
+            return Results.BadRequest(new Error()
+            {
+                Code = Errors.Common.BlockedDevice,
+                Description = "Cannot sign in, device is blocked."
+            });
 
-            if (!device.IsTrusted)
-                return Results.BadRequest(new Error()
-                {
-                    Code = Errors.Common.UntrustedDevice,
-                    Description = "You need to trust this device before sign in.",
-                    Details = new()
-                    {
-                        { "userId", user.Id },
-                        { "deviceId", device.Id }
-                    }
-                });
         }
 
-        var response = new SignInResponse() { UserId = user.Id, };
-
-        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
-            response.IsTwoFactorEnabled = true;
-
+        var signInSession = new SignInSessionEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            CreateDate = DateTimeOffset.UtcNow,
+            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(5),
+        };
+        
+        var signInSessionResult = await _signInSessionManager.CreateAsync(signInSession, cancellationToken);
+        if (!signInSessionResult.Succeeded) return signInSessionResult;
+        
         await _sessionManager.CreateAsync(device, cancellationToken);
-
-        return Results.Ok(response);
+        return Results.Ok(new SignInResponse()
+        {
+            UserId = user.Id,
+            SessionId = signInSession.Id,
+            IsDeviceTrusted = device.IsTrusted,
+            IsTwoFactorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken),
+        });
     }
 }
