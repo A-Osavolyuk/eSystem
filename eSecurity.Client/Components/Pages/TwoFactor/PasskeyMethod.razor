@@ -79,15 +79,12 @@
     [Parameter] 
     public List<UserTwoFactorMethod> Methods { get; set; } = [];
 
-    [SupplyParameterFromQuery(Name = "id")]
-    public Guid UserId { get; set; }
-
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
 
     private async Task OnSignInAsync()
     {
-        var request = new GenerateRequestOptionsRequest() { UserId = UserId };
+        var request = new GenerateRequestOptionsRequest() { UserId = UserState.UserId };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
         if (result.Succeeded)
@@ -112,15 +109,9 @@
                 Credential = credential,
             }
         };
+        
         var result = await SecurityService.SignInAsync(request);
-
-        if (result.Succeeded)
-        {
-            var response = result.Get()!;
-
-            UserState.UserId = response.UserId;
-            await OnSignIn.InvokeAsync();
-        }
+        if (result.Succeeded) await OnSignIn.InvokeAsync();
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

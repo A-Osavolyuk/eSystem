@@ -79,10 +79,6 @@
 </MudPaper>
 
 @code {
-
-    [SupplyParameterFromQuery(Name = "id")]
-    public Guid UserId { get; set; }
-
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
 
@@ -107,19 +103,12 @@
                 Payload = new AuthenticatorSignInPayload()
                 {
                     Code = _model.Code,
-                    UserId = UserId
+                    UserId = UserState.UserId
                 }
             };
 
             var result = await SecurityService.SignInAsync(request);
-
-            if (result.Succeeded)
-            {
-                var response = result.Get()!;
-
-                UserState.UserId = response.UserId;
-                await OnSignIn.InvokeAsync();
-            }
+            if (result.Succeeded) await OnSignIn.InvokeAsync();
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }

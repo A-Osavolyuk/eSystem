@@ -1,5 +1,6 @@
 ﻿@page "/account/2fa/sign-in"
 
+@using eSecurity.Client.Security
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authentication.TwoFactor
@@ -7,6 +8,7 @@
 @inherits PageBase
 
 @inject IUserService UserService
+@inject ISecurityService SecurityService
 
 <Title Text="Two-factor login"/>
 
@@ -38,7 +40,7 @@
                     {
                         <AuthenticatorMethod
                             Methods="_methods"
-                            OnSignIn="OnSignIn"
+                            OnSignIn="@(() => AuthenticationManager.Authorize())"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -46,7 +48,7 @@
                     {
                         <PasskeyMethod
                             Methods="_methods"
-                            OnSignIn="OnSignIn"
+                            OnSignIn="@(() => AuthenticationManager.Authorize())"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -54,7 +56,7 @@
                     {
                         <RecoveryCodeMethod
                             Methods="_methods"
-                            OnSignIn="OnSignIn"
+                            OnSignIn="@(() => AuthenticationManager.Authorize())"
                             OnChangeMethod="ChangeMethod"/>
                         break;
                     }
@@ -66,32 +68,42 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "id")]
-    public Guid UserId { get; set; }
+    [SupplyParameterFromQuery(Name = "sid")]
+    public Guid SessionId { get; set; }
 
     private List<UserTwoFactorMethod> _methods = [];
     private TwoFactorMethod _preferredMethod;
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await UserService.GetUserTwoFactorMethodsAsync(UserId);
-
+        var result = await SecurityService.GetSignInSessionAsync(SessionId);
+        if (result.Succeeded)
+        {
+            var response = result.Get()!;
+            UserState.UserId = response.UserId;
+            await LoadMethods();
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+    }
+    
+    private async Task LoadMethods()
+    {
+        var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.UserId);
         if (result.Succeeded)
         {
             _methods = result.Get()!;
             _preferredMethod = _methods.Single(x => x.Preferred).Method;
         }
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
     }
 
-    private void ChangeMethod(TwoFactorMethod method)
-    {
-        _preferredMethod = method;
-    }
-
-    private void OnSignIn()
-    {
-        AuthenticationManager.Authorize();
-    }
-
+    private void ChangeMethod(TwoFactorMethod method) => _preferredMethod = method;
 }
