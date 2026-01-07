@@ -1,4 +1,5 @@
 ﻿using eSecurity.Core.Common.DTOs;
+using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
@@ -22,10 +23,13 @@ public sealed class GetUserQueryHandler(
         var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
+        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+
         var response = new UserDto
         {
             Id = user.Id,
             Username = user.Username,
+            Email = email?.Email
         };
         
         return Results.Ok(response);
