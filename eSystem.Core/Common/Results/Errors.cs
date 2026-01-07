@@ -60,6 +60,7 @@ public static class Errors
         public const string LinkedAccountConnected = "linked_account_connected";
         
         public const string BadRequest = "bad_request";
+        public const string MethodNotAllowed = "method_not_allowed";
         public const string Unauthorized = "unauthotized";
         public const string Forbidden = "forbidden";
         public const string NotFound = "not_found";
